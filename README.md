@@ -14,7 +14,6 @@ Factsheet is not yet ready for installation.
 Factsheet is not operational yet.
 
 ## License
-Factsheet is licensed under the GNU GPL 3.0 with the complete license in
-file [LICENSE](./LICENSE).
-
+Factsheet is licensed under the GNU General Public License v3.0 with the
+complete license in file [LICENSE](./LICENSE).
 
