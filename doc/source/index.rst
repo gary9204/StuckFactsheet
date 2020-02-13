@@ -6,9 +6,16 @@
 Welcome to Factsheet's documentation!
 =====================================
 
+Factsheet is an application to explore facts about algebraic structures. 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   intro
+   toc_src
+   toc_test
+   test_manual/toc_test_manual  
 
 
 
