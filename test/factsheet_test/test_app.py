@@ -11,6 +11,14 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
+class TestFactsheet:
+    """Unit tests for application class Factsheet."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        pass
+
+
 class TestApp:
     """Unit tests for Factsheet application entry."""
 

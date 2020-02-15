@@ -1,22 +1,24 @@
 factsheet\_test package
 =======================
 
-Submodules
-----------
-
-factsheet\_test.test\_app module
---------------------------------
-
-.. automodule:: factsheet_test.test_app
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
 .. automodule:: factsheet_test
    :members:
    :undoc-members:
    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+
+   factsheet_test.algebra
+   factsheet_test.control
+   factsheet_test.model
+   factsheet_test.view
+
+Submodules
+----------
+
+.. toctree::
+
+   factsheet_test.test_app
