@@ -3,6 +3,9 @@ factsheet.model.sheet - defines data representation of a factsheet.
 """
 
 
+from factsheet.types_abstract import abc_sheet as ASHEET
+
+
 class Sheet:
     """Data representation of a factsheet.
 
@@ -13,20 +16,27 @@ class Sheet:
     """
 
     def __init__(self):
-        pass
+        self._observers = dict()
+        self._unsaved_changes = False
 
-    def add_observer(self, px_observer):
-        """Add observer to notification list."""
-        pass
+    def add_observer(self, px_observer: ASHEET.ObserverSheet):
+        """Add observer to notification list.
+
+        :param px_observer: observer to notify"""
+        self._observers[id(px_observer)] = px_observer
 
     def delete_sheet(self):
-        """Send delete notice to all observers the remove all observers."""
-        pass
+        """Send delete notice to all observers and remove all observers."""
+        while self._observers:
+            _id_obs, obs = self._observers.popitem()
+            obs.on_delete_model_sheet()
 
-    def remove_observer(self, px_observer):
-        """Remove observer from notification list."""
-        pass
+    def remove_observer(self, px_observer: ASHEET.ObserverSheet):
+        """Remove observer from notification list.
+
+        :param px_observer: stop notifying this observer"""
+        _ = self._observers.pop(id(px_observer))
 
     def unsaved_changes(self):
         """Return True when factsheet contains unsaved changes."""
-        pass
+        return self._unsaved_changes
