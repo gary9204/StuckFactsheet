@@ -1,27 +1,27 @@
 """
-factsheet.types_abstract.abc_sheet - abstract data types for Factsheet
-    classes.
+factsheet.types_abstract.abc_sheet - defines abstract data types classes
+    for sheets.
 """
 
 
 class ObserverSheet:
-    """Observer pattern interface for a fact sheet model.
+    """Defines interface for class observing sheet model.
 
-    .. note:: ObserverSheet is an abstract interface.  It is not
-       possible to derive ObserverSheet from abc.ABC.  View classes that
-       implement the interface derive from GTK base classes, which
-       conflict with ABC.
+    .. note:: ObserverSheet is an abstract interface for an Observer
+       pattern.  View classes that implement the interface may derive
+       from GTK base classes, which conflict with ABC.  Hence, it is not
+       possible to derive ObserverSheet from abc.ABC.
     """
 
-    def on_changed_name(self) -> None:
-        """Respond to change in factsheet name.
+    def on_changed_name_sheet(self) -> None:
+        """Respond to change in sheet name.
 
         The default behavior is to do nothing.
         """
         pass
 
-    def on_delete_sheet(self) -> None:
-        """Respond to factsheet deletion.
+    def on_delete_model_sheet(self) -> None:
+        """Respond to deletion of model for sheet.
 
         The default behavior is to do nothing.
         """
