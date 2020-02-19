@@ -2,6 +2,9 @@
 factsheet.control.control - mediates from view to model of s factsheet.
 """
 
+from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.model import sheet as MSHEET
+
 
 class Sheet(object):
     """Mediates user actions at view to model updates for a factsheet.
@@ -11,21 +14,37 @@ class Sheet(object):
     the collection of factsheet views (such as add or close a view).
     """
 
-    def __init__(self, params):
+    def __init__(self):
+        self._model = None
+
+    def attach_view(self, px_view):
+        """Add model observer."""
         pass
 
-    def add_view(self, px_view):
-        """Binds view to model and adds it to the collection of views."""
+    def delete(self):
+        """Delete factsheet unconditionally."""
         pass
 
-    def delete_sheet(self):
-        """Remove all sheet views and release sheet model and control."""
+    def delete_safe(self):
+        """Delete factsheet provided no changes will be lost."""
+        return ASHEET.ALLOWED
+
+    def detach_view(self, px_view):
+        """Remove model observer unconditionally."""
         pass
 
-    def remove_view(self, px_view):
-        """Unbinds view from model and removes it from collection of views."""
+    def detach_view_safe(self, px_view):
+        """Remove model observer provided no changes will be lost."""
+        return ASHEET.ALLOWED
+
+    @classmethod
+    def load(cls, p_path):
+        """Create control with model from file."""
         pass
 
-    def unsaved_changes(self):
-        """Return True when factsheet contains unsaved changes."""
-        pass
+    @classmethod
+    def new(cls):
+        """Create control with default model."""
+        control = Sheet()
+        control._model = MSHEET.Sheet()
+        return control

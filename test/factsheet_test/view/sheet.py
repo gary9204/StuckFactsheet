@@ -64,12 +64,11 @@ class TestSheet:
         # Setup
         # Test
 
-    def test_on_close_view(self, monkeypatch, patch_factsheet, capfd):
+    def test_on_close_view(self, patch_factsheet, capfd):
         """Confirm response to request to close view.
-        Case: no unsaved changes
-        Case: unsaved changes, other views
-        Case: unsaved changes, user approves close
-        Case: unsaved changes, user cancels close
+        Case: close allowed
+        Case: close disallowed, user approves close
+        Case: close disallowed, user cancels close
         """
         # Setup
         class PatchDetachViewSafe(CSHEET.Sheet):
@@ -100,9 +99,9 @@ class TestSheet:
     @pytest.mark.skip(reason='Pending implementation')
     def test_on_delete_sheet(self):
         """Confirm response to request to delete factsheet.
-        Case: no unsaved changes
-        Case: unsaved changes, user approves delete
-        Case: unsaved changes, user cancels delete
+        Case: deletion allowed
+        Case: deletion disallowed, user approves delete
+        Case: deletion disallowed, user cancels delete
         """
         # Setup
         # Test
