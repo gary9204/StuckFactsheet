@@ -1,7 +1,11 @@
 """
 factsheet.types_abstract.abc_sheet - defines abstract data types classes
-    for sheets.
+for sheets.
 """
+
+
+ALLOWED = True
+CONTINUE_GTK = False
 
 
 class ObserverSheet:
@@ -13,15 +17,15 @@ class ObserverSheet:
        possible to derive ObserverSheet from abc.ABC.
     """
 
-    def on_changed_name_sheet(self) -> None:
-        """Respond to change in sheet name.
+    def update_name(self) -> None:
+        """Respond to notice of sheet name change.
 
         The default behavior is to do nothing.
         """
         pass
 
-    def on_delete_model_sheet(self) -> None:
-        """Respond to deletion of model for sheet.
+    def detach(self) -> None:
+        """Respond to notice to detach observer from model.
 
         The default behavior is to do nothing.
         """

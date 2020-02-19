@@ -50,7 +50,7 @@ class TestSheet:
         for obs in observers:
             target.add_observer(obs)
         # Test
-        target.delete_sheet()
+        target.delete()
         assert 0 == len(target._observers)
         for obs in observers:
             assert N_CALLS == obs.n_delete_model

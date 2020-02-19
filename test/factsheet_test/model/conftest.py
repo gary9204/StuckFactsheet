@@ -15,10 +15,10 @@ def patch_observer_sheet():
             self.n_changed_name = 0
             self.n_delete_model = 0
 
-        def on_changed_name_sheet(self)->None:
+        def update_name(self)->None:
             self.n_changed_name += 1
 
-        def on_delete_model_sheet(self)->None:
+        def detach(self)->None:
             self.n_delete_model += 1
 
     return ObserverSheet

@@ -25,11 +25,11 @@ class Sheet:
         :param px_observer: observer to notify"""
         self._observers[id(px_observer)] = px_observer
 
-    def delete_sheet(self):
+    def delete(self):
         """Send delete notice to all observers and remove all observers."""
         while self._observers:
             _id_obs, obs = self._observers.popitem()
-            obs.on_delete_model_sheet()
+            obs.detach()
 
     def remove_observer(self, px_observer: ASHEET.ObserverSheet):
         """Remove observer from notification list.

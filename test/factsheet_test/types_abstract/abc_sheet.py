@@ -1,6 +1,6 @@
 """
 factsheet_test.types_abstract.abc_sheet - unit tests for sheet abstract
-    data types
+data types
 """
 
 
@@ -12,16 +12,16 @@ class TestObserverSheet:
     Unit tests for Sheet abstract data
     """
 
-    def test_on_changed_name_sheet(self):
+    def test_update_name(self):
         """Confirm interface defined."""
         # Setup
         obs = ASHEET.ObserverSheet()
         # Test
-        assert obs.on_changed_name_sheet() is None
+        assert obs.update_name() is None
 
-    def test_on_delete_model_sheet(self):
+    def test_detach(self):
         """Confirm interface defined."""
         # Setup
         obs = ASHEET.ObserverSheet()
         # Test
-        assert obs.on_delete_model_sheet() is None
+        assert obs.detach() is None
