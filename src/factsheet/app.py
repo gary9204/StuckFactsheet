@@ -1,5 +1,5 @@
 """
-factsheet.app - define Factsheet application and entry point.
+Defines Factsheet application and entry point.
 """
 
 
@@ -39,8 +39,7 @@ from factsheet.view import sheet as VSHEET  # noqa: #402
 
 
 class Factsheet(Gtk.Application):
-    """Factsheet applications
-    """
+    """Defines Factsheet application representation."""
 
     def __init__(self, *args: typing.Tuple, **kwargs: typing.Dict):
         """Register application with GTK.
@@ -53,19 +52,17 @@ class Factsheet(Gtk.Application):
                          *args, **kwargs)
 
     def do_activate(self):
-        """Create and display an initial factsheet with default content. """
+        """Create and display an initial factsheet with default content."""
         _ = VSHEET.Sheet.new_factsheet(self)
 
     def do_shutdown(self):
         """Application teardown. """
         Gtk.Application.do_shutdown(self)
-#         print('Factsheet application shutdown.')
         logger.info('Factsheet application shutdown.')
 
     def do_startup(self):
         """Application setup within GTK. """
         Gtk.Application.do_startup(self)
-#         print('Factsheet application startup.')
         logger.info('Factsheet application startup.')
 
 

@@ -1,11 +1,10 @@
 """
-factsheet_test.test_app - unit tests for Factsheet applicaton entry.
+Unit tests for Application class Factsheet and application entry point.
 """
 
 import gi   # type: ignore[import]
 
 import factsheet.app as APP
-# from factsheet.view import sheet as VSHEET
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -77,10 +76,10 @@ class TestFactsheet:
 
 
 class TestApp:
-    """Unit tests for Factsheet application entry."""
+    """Unit tests for Factsheet application entry point."""
 
     def test_run_app(self, monkeypatch):
-        """Confirm application starts GTK."""
+        """Confirm application starts."""
         # Setup
         class PatchRun:
             def __init__(self): self.called = False
