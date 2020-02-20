@@ -3,16 +3,39 @@ factsheet.app - define Factsheet application and entry point.
 """
 
 
-import gi   # type: ignore[import]
+import logging   # type: ignore[import]
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
 import sys
 import typing   # noqa
 
-from factsheet.view import sheet as VSHEET
-
-
+import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+# Establish base logger before importing any Factsheetmodules
+logger = logging.getLogger('Main')
+logger.setLevel(logging.INFO)
+
+path_log = Path('factsheet.log')
+formatter = logging.Formatter(
+    '[%(asctime)-8s.%(msecs)03d] | %(levelname)-8s | %(name)s | '
+    '%(funcName)-20s | %(message)s', datefmt='%H:%M:%S')
+file_handler = RotatingFileHandler(path_log, backupCount=9)
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+if path_log.exists() and path_log.stat().st_size > 0:
+    file_handler.doRollover()
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+from factsheet.view import sheet as VSHEET  # noqa: #402
 
 
 class Factsheet(Gtk.Application):
@@ -36,12 +59,14 @@ class Factsheet(Gtk.Application):
     def do_shutdown(self):
         """Application teardown. """
         Gtk.Application.do_shutdown(self)
-        print('Factsheet application shutdown.')
+#         print('Factsheet application shutdown.')
+        logger.info('Factsheet application shutdown.')
 
     def do_startup(self):
         """Application setup within GTK. """
         Gtk.Application.do_startup(self)
-        print('Factsheet application startup.')
+#         print('Factsheet application startup.')
+        logger.info('Factsheet application startup.')
 
 
 def run_app():

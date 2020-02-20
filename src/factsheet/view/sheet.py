@@ -3,6 +3,7 @@ factsheet.view.sheet - maintains presentation of factsheet in a window.
 """
 
 import gi   # type: ignore[import]
+import logging
 import typing   # noqa
 
 from factsheet.types_abstract import abc_sheet as ASHEET
@@ -12,6 +13,10 @@ from factsheet.view import ui as UI
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+logger = logging.getLogger('Main.VSHEET')
+logger.debug('Imported View Sheet module.')
+# logger.propagate = True
 
 
 class Sheet(Gtk.ApplicationWindow, ASHEET.ObserverSheet):

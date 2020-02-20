@@ -3,7 +3,6 @@ factsheet_test.test_app - unit tests for Factsheet applicaton entry.
 """
 
 import gi   # type: ignore[import]
-import pytest   # type: ignore[import]
 
 import factsheet.app as APP
 # from factsheet.view import sheet as VSHEET
