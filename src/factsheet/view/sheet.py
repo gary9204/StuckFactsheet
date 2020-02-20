@@ -2,13 +2,13 @@
 factsheet.view.sheet - maintains presentation of factsheet in a window.
 """
 
-import typing
+import gi   # type: ignore[import]
+import typing   # noqa
 
 from factsheet.types_abstract import abc_sheet as ASHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.view import ui as UI
 
-import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -36,6 +36,8 @@ class Sheet(Gtk.ApplicationWindow, ASHEET.ObserverSheet):
         self.set_titlebar(get_object('ui_app_head'))
         # Signals
         _id = self.connect('delete-event', self.on_close_view)
+        #
+        self.show_all()
 
     def detach(self):
         """Stop observing model and close view.
@@ -78,8 +80,9 @@ class Sheet(Gtk.ApplicationWindow, ASHEET.ObserverSheet):
     @classmethod
     def new_factsheet(cls, px_app):
         """Create factsheet with default contents."""
-        view = Sheet(px_app)
+        view = Sheet(application=px_app)
         control = CSHEET.Sheet.new()
+        view._control = control
         control.attach_view(view)
         return control
 
