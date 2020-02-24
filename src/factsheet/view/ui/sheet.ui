@@ -13,7 +13,7 @@
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">&lt;i&gt;Factsheet Menu&lt;/i&gt;</property>
+            <property name="label" translatable="yes">&lt;i&gt;Application Menu&lt;/i&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">center</property>
           </object>
@@ -24,7 +24,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="intro_app">
+          <object class="GtkModelButton" id="menu_app_intro">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -38,7 +38,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="help_app">
+          <object class="GtkModelButton" id="menu_app_help">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -52,7 +52,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="about_app">
+          <object class="GtkModelButton" id="menu_app_about">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -90,7 +90,7 @@
     <property name="icon_name">document-save-as</property>
     <property name="icon_size">3</property>
   </object>
-  <object class="GtkHeaderBar" id="ui_app_head">
+  <object class="GtkHeaderBar" id="ui_head_app">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Oops! Sheet title is missing.</property>
@@ -209,7 +209,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkBox" id="ui_sheet_context">
+  <object class="GtkBox" id="ui_context_sheet">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
