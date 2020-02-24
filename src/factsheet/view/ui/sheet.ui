@@ -2,42 +2,210 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkPopoverMenu" id="context_menu_app">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">&lt;i&gt;Factsheet Menu&lt;/i&gt;</property>
+            <property name="use_markup">True</property>
+            <property name="justify">center</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="intro_app">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.show_intro_app</property>
+            <property name="text" translatable="yes">Introduction</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="help_app">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.show_help_app</property>
+            <property name="text" translatable="yes">Help</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="about_app">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.show_about_app</property>
+            <property name="text" translatable="yes">About</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkImage" id="image_menu_app">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">format-justify-fill</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="image_new">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-new</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="image_save_as">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-save-as</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkHeaderBar" id="ui_app_head">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Oops! Sheet title is missing.</property>
     <property name="has_subtitle">False</property>
+    <property name="spacing">0</property>
     <property name="show_close_button">True</property>
     <child>
-      <object class="GtkImage">
+      <object class="GtkButtonBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="icon_name">accessories-calculator</property>
-        <property name="icon_size">3</property>
+        <property name="layout_style">start</property>
+        <child>
+          <object class="GtkButton">
+            <property name="label" translatable="yes">Open</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.load_sheet</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="halign">start</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+            <property name="non_homogeneous">True</property>
+          </packing>
+        </child>
       </object>
     </child>
     <child>
-      <object class="GtkImage">
+      <object class="GtkButton">
+        <property name="label" translatable="yes"> </property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="icon_name">format-justify-fill</property>
-        <property name="icon_size">3</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <property name="action_name">win.new_sheet</property>
+        <property name="image">image_new</property>
+        <property name="always_show_image">True</property>
       </object>
       <packing>
-        <property name="pack_type">end</property>
         <property name="position">1</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage">
+      <object class="GtkButton">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="icon_name">help-contents</property>
-        <property name="icon_size">3</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <property name="action_name">win.show_menu_app</property>
+        <property name="image">image_menu_app</property>
       </object>
       <packing>
         <property name="pack_type">end</property>
         <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButtonBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="layout_style">start</property>
+        <child>
+          <object class="GtkButton">
+            <property name="label" translatable="yes">Save</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.save_sheet</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="halign">start</property>
+            <property name="action_name">win.save_as_sheet</property>
+            <property name="image">image_save_as</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+            <property name="non_homogeneous">True</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
+        <property name="position">3</property>
       </packing>
     </child>
   </object>
