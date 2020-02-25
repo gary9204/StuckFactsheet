@@ -25,17 +25,15 @@ class TestSheet:
         # Setup
         factsheet = patch_factsheet()
         # Test
-        target = VSHEET.Sheet(application=factsheet)
+        target = VSHEET.Sheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        assert target.get_application() is factsheet
 
         assert target._control is None
-
-        assert isinstance(target.get_child(), Gtk.Box)
-        assert isinstance(target.get_titlebar(), Gtk.HeaderBar)
+        assert isinstance(target._window, Gtk.ApplicationWindow)
+        assert target._window.get_application() is factsheet
 
     def test_init_signals(self, patch_factsheet, capfd):
         """Confirm initialization.
@@ -43,18 +41,18 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        window_gtype = GO.type_from_name(GO.type_name(VSHEET.Sheet))
+        window_gtype = GO.type_from_name(GO.type_name(Gtk.ApplicationWindow))
         delete_signal = GO.signal_lookup('delete-event', window_gtype)
         # Test
-        target = VSHEET.Sheet(application=factsheet)
+        target = VSHEET.Sheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        assert target.get_application() is factsheet
+        assert target._window.get_application() is factsheet
 
         delete_id = GO.signal_handler_find(
-            target, GO.SignalMatchType.ID, delete_signal,
+            target._window, GO.SignalMatchType.ID, delete_signal,
             0, None, None, None)
         assert 0 != delete_id
 
@@ -83,7 +81,7 @@ class TestSheet:
 
         factsheet = patch_factsheet()
 
-        target = VSHEET.Sheet(application=factsheet)
+        target = VSHEET.Sheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -149,19 +147,21 @@ class TestSheet:
             CSHEET.Sheet, 'attach_view', patch_attach_view)
         factsheet = patch_factsheet()
 
-        target = VSHEET.Sheet(application=factsheet)
+        target = VSHEET.Sheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         # Test
-        control = target.new_factsheet(target.get_application())
+        control = target.new_factsheet(target._window.get_application())
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         assert isinstance(control, CSHEET.Sheet)
         assert isinstance(control.view, VSHEET.Sheet)
+        assert control.view._window.get_application() is factsheet
+        assert control.view._control is control
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_update_name(self):

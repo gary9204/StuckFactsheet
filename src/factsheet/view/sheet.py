@@ -19,7 +19,7 @@ logger.debug('Imported View Sheet module.')
 # logger.propagate = True
 
 
-class Sheet(Gtk.ApplicationWindow, ASHEET.ObserverSheet):
+class Sheet(ASHEET.ObserverSheet):
     """Presentation window for a fact sheet.
 
     View class Sheet maintains presentation of a factsheet.  The
@@ -28,21 +28,22 @@ class Sheet(Gtk.ApplicationWindow, ASHEET.ObserverSheet):
     implements methods to maintain the presentation in response to user
     actions (such as finding a topic or going to the table of contents
     for the factsheet).
+
+    :param px_app: application to which factsheet belongs
     """
 
-    def __init__(self, *_args, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *, px_app: Gtk.Application):
         self._control = None
 
         # Window elements
         builder = Gtk.Builder.new_from_file(UI.UI_DIR + 'sheet.ui')
         get_object = builder.get_object
-        self.add(get_object('ui_sheet_context'))
-        self.set_titlebar(get_object('ui_app_head'))
+        self._window = get_object('ui_sheet')
+        self._window.set_application(px_app)
         # Signals
-        _id = self.connect('delete-event', self.on_close_view)
+        _id = self._window.connect('delete-event', self.on_close_view)
         #
-        self.show_all()
+        self._window.show_all()
 
     def detach(self):
         """Stop observing model and close view.
@@ -83,12 +84,15 @@ class Sheet(Gtk.ApplicationWindow, ASHEET.ObserverSheet):
         raise NotImplementedError
 
     @classmethod
-    def new_factsheet(cls, px_app):
-        """Create factsheet with default contents."""
-        view = Sheet(application=px_app)
+    def new_factsheet(cls, px_app: Gtk.Application):
+        """Create factsheet with default contents.
+
+        :param px_app: application to which the factsheet belongs.
+        """
+        view = Sheet(px_app=px_app)
         control = CSHEET.Sheet.new()
-        view._control = control
         control.attach_view(view)
+        view._control = control
         return control
 
     def update_name(self):

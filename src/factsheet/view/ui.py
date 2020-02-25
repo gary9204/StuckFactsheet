@@ -19,21 +19,13 @@ elements.
 
    Glade definition for application About dialog.
 
-.. data:: BACKGROUNE_APP
-
-   Glade definition for application Background dialog.
-
-.. data:: DESIGN_APP
-
-   Glade definition for application Design Notes dialog.
-
 .. data:: HELP_APP
 
    Glade definition for application Help dialog.
 
-.. data:: Release_APP
+.. data:: INTRO_APP
 
-   Glade definition for application Release Notes dialog.
+   Glade definition for application Introduction dialog.
 """
 
 
@@ -52,10 +44,8 @@ builder_guide_sheet = Gtk.Builder.new_from_file(UI_DIR + 'guide_sheet.ui')
 get_object_guide_sheet = builder_guide_sheet.get_object
 
 ABOUT_APP = get_object_guide_sheet('ui_about_app')
-BACKGROUND_APP = get_object_guide_sheet('ui_background_app')
-DESIGN_APP = get_object_guide_sheet('ui_design_app')
 HELP_APP = get_object_guide_sheet('ui_help_app')
-RELEASE_APP = get_object_guide_sheet('ui_release_app')
+INTRO_APP = get_object_guide_sheet('ui_intro_app')
 
 del builder_guide_sheet
 del get_object_guide_sheet

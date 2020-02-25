@@ -3,6 +3,7 @@ Unit tests for Application class Factsheet and application entry point.
 """
 
 import gi   # type: ignore[import]
+import pytest
 
 import factsheet.app as APP
 
@@ -34,10 +35,10 @@ class TestFactsheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-    def test_do_shutdown(self, monkeypatch, capfd):
+    def test_do_shutdown(self, monkeypatch, caplog):
         """Confirm application teardown."""
         # Setup
-        # Bare call to superclass do_startup causes segmentation fault
+        # Bare call to superclass do_shutdown causes segmentation fault
         class PatchAppDoShutdown:
             def __init__(self): self.called = False
 
@@ -47,14 +48,15 @@ class TestFactsheet:
         monkeypatch.setattr(
             Gtk.Application, 'do_shutdown', patch.do_shutdown)
 
+        N_LOGS = 1
         target = APP.Factsheet()
         # Test
         target.do_shutdown()
         assert patch.called
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert 'Factsheet application shutdown.' in snapshot.out
+        assert N_LOGS == len(caplog.records)
+        assert 'Factsheet application shutdown.' in caplog.text
 
-    def test_do_startup(self, monkeypatch, capfd):
+    def test_do_startup(self, monkeypatch, caplog):
         """Confirm application setup."""
         # Setup
         # Bare call to superclass do_startup causes segmentation fault
@@ -67,12 +69,13 @@ class TestFactsheet:
         monkeypatch.setattr(
             Gtk.Application, 'do_startup', patch.do_startup)
 
+        N_LOGS = 1
         target = APP.Factsheet()
         # Test
         target.do_startup()
         assert patch.called
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert 'Factsheet application startup.' in snapshot.out
+        assert N_LOGS == len(caplog.records)
+        assert 'Factsheet application startup.' in caplog.text
 
 
 class TestApp:
