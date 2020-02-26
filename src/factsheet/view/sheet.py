@@ -1,17 +1,20 @@
 """
-factsheet.view.sheet - maintains presentation of factsheet in a window.
+Maintains presentation of factsheet in a window.
 """
 
 import gi   # type: ignore[import]
 import logging
 import typing   # noqa
 
-from factsheet.types_abstract import abc_sheet as ASHEET
+import factsheet as FS
 from factsheet.control import sheet as CSHEET
+from factsheet.types_abstract import abc_sheet as ASHEET
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gio   # type: ignore[import]    # noqa: E402
+from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.VSHEET')
@@ -40,6 +43,13 @@ class Sheet(ASHEET.ObserverSheet):
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
         self._window.set_application(px_app)
+        # Actions
+        UI.new_activate_action(
+            self._window, 'show_about_app', self.on_show_about_app)
+        UI.new_activate_action(
+            self._window, 'show_help_app', self.on_show_help_app)
+        UI.new_activate_action(
+            self._window, 'show_intro_app', self.on_show_intro_app)
         # Signals
         _id = self._window.connect('delete-event', self.on_close_view)
         #
@@ -71,12 +81,40 @@ class Sheet(ASHEET.ObserverSheet):
         raise NotImplementedError
 
     def on_new_sheet(self):
-        """Act on request to reate a new factsheet with default contents."""
+        """Act on request to create a new factsheet with default contents."""
         raise NotImplementedError
 
     def on_open_view(self):
         """Act on request to open another view of factsheet."""
         raise NotImplementedError
+
+    def on_show_about_app(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant):
+        """Display application Aboutdialog."""
+        dialog = UI.ABOUT_APP
+        app = self._window.get_application()
+        dialog.set_transient_for(app.get_windows()[0])
+        dialog.set_version(FS.__version__)
+        _ = dialog.run()
+        dialog.hide()
+
+    def on_show_help_app(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant):
+        """Display application Help dialog."""
+        dialog = UI.HELP_APP
+        app = self._window.get_application()
+        dialog.set_transient_for(app.get_windows()[0])
+        _ = dialog.run()
+        dialog.hide()
+
+    def on_show_intro_app(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant):
+        """Display application Introduction dialog."""
+        dialog = UI.INTRO_APP
+        app = self._window.get_application()
+        dialog.set_transient_for(app.get_windows()[0])
+        _ = dialog.run()
+        dialog.hide()
 
     @classmethod
     def open_factsheet(cls, px_app, px_path):

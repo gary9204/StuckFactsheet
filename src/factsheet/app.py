@@ -39,14 +39,14 @@ from factsheet.view import sheet as VSHEET  # noqa: #402
 
 
 class Factsheet(Gtk.Application):
-    """Defines Factsheet application representation."""
+    """Defines Factsheet application representation.
+
+    :param args: superclass positional parameters
+    :param kwargs: superclass keyword parameters
+    """
 
     def __init__(self, *args: typing.Tuple, **kwargs: typing.Dict):
-        """Register application with GTK.
-
-        :param args: superclass positional parameters
-        :param kwargs: superclass keyword parameters
-        """
+        """Register application with GTK."""
         super().__init__(application_id='com.novafolks.g2alpha',
                          flags=Gio.ApplicationFlags.FLAGS_NONE,
                          *args, **kwargs)

@@ -1,5 +1,5 @@
 """
-factsheet.model.sheet - defines data representation of a factsheet.
+Defines data representation of a factsheet.
 """
 
 
@@ -22,7 +22,7 @@ class Sheet:
     def add_observer(self, px_observer: ASHEET.ObserverSheet):
         """Add observer to notification list.
 
-        :param px_observer: observer to notify"""
+        $param px_observer$ observer to notify"""
         self._observers[id(px_observer)] = px_observer
 
     def delete(self):
@@ -34,7 +34,7 @@ class Sheet:
     def remove_observer(self, px_observer: ASHEET.ObserverSheet):
         """Remove observer from notification list.
 
-        :param px_observer: stop notifying this observer"""
+        $param px_observer$ stop notifying this observer"""
         _ = self._observers.pop(id(px_observer))
 
     def unsaved_changes(self):

@@ -3,7 +3,6 @@ Unit tests for Application class Factsheet and application entry point.
 """
 
 import gi   # type: ignore[import]
-import pytest
 
 import factsheet.app as APP
 
