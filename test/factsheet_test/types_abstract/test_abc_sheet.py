@@ -1,6 +1,5 @@
 """
-factsheet_test.types_abstract.abc_sheet - unit tests for sheet abstract
-data types
+Unit tests for sheet abstract data type classes.
 """
 
 

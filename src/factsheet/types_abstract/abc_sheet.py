@@ -1,6 +1,5 @@
 """
-factsheet.types_abstract.abc_sheet - defines abstract data types classes
-for sheets.
+Defines abstract data types classes for sheets.
 """
 
 
