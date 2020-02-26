@@ -5,5 +5,5 @@ Tests Cases
    :maxdepth: 1
 
    case_run_app
-
+   case_app_dialogs
 
