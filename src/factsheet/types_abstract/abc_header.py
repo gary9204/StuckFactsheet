@@ -3,6 +3,9 @@ Defines abstract data type classes for factsheet headers.
 """
 
 import abc
+import typing
+
+from factsheet.types_abstract import abc_view as AVIEW
 
 
 class InterfaceStaleFile(abc.ABC):
@@ -26,4 +29,36 @@ class InterfaceStaleFile(abc.ABC):
     @abc.abstractmethod
     def set_stale(self):
         """Mark the model in memory changed from model in file."""
+        raise NotImplementedError
+
+
+class AbstractTextModel(InterfaceStaleFile):
+    """Defines interfaces common to model text attributes.
+
+    .. tip:: Two text attributes are equivalent when their string
+       representations are the same.
+    """
+
+    def __eq__(self, px_other: typing.Any) -> bool:
+        """Return True when other is text attribute with same string
+        representation.
+        """
+        if not isinstance(px_other, AbstractTextModel):
+            return False
+
+        return str(self) == str(px_other)
+
+    @abc.abstractmethod
+    def __str__(self) -> str:
+        """Return attribute contents as text."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def attach_view(self, pm_view: AVIEW.AbstractTextView):
+        """Add view to update display when text changes."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def detach_view(self, pm_view: AVIEW.AbstractTextView):
+        """Remove view of changes to text."""
         raise NotImplementedError
