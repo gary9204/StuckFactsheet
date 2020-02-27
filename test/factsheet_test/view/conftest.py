@@ -5,7 +5,7 @@ factsheet_test.view.conftest - test fixtures for View classes.
 
 import pytest   # type: ignore[import]
 
-from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ASHEET
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')

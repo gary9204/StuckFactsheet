@@ -2,7 +2,7 @@
 factsheet.control.control - mediates from view to model of s factsheet.
 """
 
-from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ASHEET
 from factsheet.model import sheet as MSHEET
 
 

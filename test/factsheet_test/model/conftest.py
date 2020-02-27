@@ -5,7 +5,7 @@ factsheet_test.model.conftest - test fixtures for Model classes.
 
 import pytest   # type: ignore[import]
 
-from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ASHEET
 
 
 @pytest.fixture

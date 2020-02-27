@@ -8,7 +8,7 @@ import typing   # noqa
 
 import factsheet as FS
 from factsheet.control import sheet as CSHEET
-from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ASHEET
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')

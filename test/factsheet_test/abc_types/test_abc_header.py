@@ -4,42 +4,7 @@ Unit tests for header abstract data type classes.
 
 import pytest   # type: ignore[import]
 
-from factsheet.types_abstract import abc_header as AHEADER
-
-
-class TestInterfaceStaleFile:
-    """Unit tests for interfaces to detect out-of-date model."""
-
-    def test_abstract_class(self):
-        """Confirm the interface class is abstract."""
-        # Setup
-        # Test
-        with pytest.raises(TypeError):
-            _ = AHEADER.InterfaceStaleFile()
-
-    @pytest.mark.parametrize('name_method', [
-        'is_fresh',
-        'is_stale',
-        'set_fresh',
-        'set_stale',
-        ])
-    def test_must_override(self, name_method):
-        """Confirm each method must be overridden."""
-        # Setup
-        class PatchInterface(AHEADER.InterfaceStaleFile):
-            def is_fresh(self): super().is_fresh()
-
-            def is_stale(self): super().is_stale()
-
-            def set_fresh(self): super().set_fresh()
-
-            def set_stale(self): super().set_stale()
-
-        target = PatchInterface()
-        # Test
-        with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
-            method()
+from factsheet.abc_types import abc_header as AHEADER
 
 
 class TestAbstractTextModel:
@@ -98,7 +63,7 @@ class TestAbstractTextModel:
         'detach_view',
         ])
     def test_must_override(self, name_method):
-        """Confirm method is abstract."""
+        """Confirm each method must be overridden."""
         # Setup
         class PatchTextModel(AHEADER.AbstractTextModel):
             def __eq__(self, _o): return False
@@ -118,6 +83,70 @@ class TestAbstractTextModel:
             def set_stale(self): super().set_stale()
 
         target = PatchTextModel()
+        # Test
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, name_method)
+            method()
+
+
+class TestFactoryHeader:
+    """Unit tests for abstract Header factory. """
+
+    def test_abstract_class(self):
+        """Confirm the interface class is abstract."""
+        # Setup
+        # Test
+        with pytest.raises(TypeError):
+            _ = AHEADER.FactoryHeader()
+
+    @pytest.mark.parametrize('name_method', [
+        'new_title_model',
+        'new_title_view',
+        ])
+    def test_must_override(self, name_method):
+        """Confirm each method must be overridden."""
+        # Setup
+        class PatchFactory(AHEADER.FactoryHeader):
+            def new_title_model(self): super().new_title_model()
+
+            def new_title_view(self): super().new_title_view()
+
+        target = PatchFactory()
+        # Test
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, name_method)
+            method()
+
+
+class TestInterfaceStaleFile:
+    """Unit tests for interfaces to detect out-of-date model."""
+
+    def test_abstract_class(self):
+        """Confirm the interface class is abstract."""
+        # Setup
+        # Test
+        with pytest.raises(TypeError):
+            _ = AHEADER.InterfaceStaleFile()
+
+    @pytest.mark.parametrize('name_method', [
+        'is_fresh',
+        'is_stale',
+        'set_fresh',
+        'set_stale',
+        ])
+    def test_must_override(self, name_method):
+        """Confirm each method must be overridden."""
+        # Setup
+        class PatchInterface(AHEADER.InterfaceStaleFile):
+            def is_fresh(self): super().is_fresh()
+
+            def is_stale(self): super().is_stale()
+
+            def set_fresh(self): super().set_fresh()
+
+            def set_stale(self): super().set_stale()
+
+        target = PatchInterface()
         # Test
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)

@@ -3,7 +3,7 @@ Defines data representation of a factsheet.
 """
 
 
-from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ASHEET
 
 
 class Sheet:

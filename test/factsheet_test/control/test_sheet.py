@@ -5,7 +5,7 @@ factsheet_test.control.test_sheet - unit tests for control class Sheet.
 
 import pytest   # type: ignore[import]
 
-from factsheet.types_abstract import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ASHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.model import sheet as MSHEET
 

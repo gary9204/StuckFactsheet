@@ -1,6 +1,5 @@
 """
-factsheet.types_abstract - defines Factsheet classes for abstract data
-types.
+Defines Factsheet classes for abstract data types.
 
 Application Factsheet is based on a Model-View-Controller (MVC) design.
 The initial implementation is based on GTK, which is a MVC-based

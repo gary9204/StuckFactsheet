@@ -3,7 +3,7 @@ Unit tests for sheet abstract data type classes.
 """
 
 
-import factsheet.types_abstract.abc_sheet as ASHEET
+import factsheet.abc_types.abc_sheet as ASHEET
 
 
 class TestObserverSheet:

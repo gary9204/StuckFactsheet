@@ -3,7 +3,7 @@ Unit tests for view abstract data type classes.
 """
 
 
-from factsheet.types_abstract import abc_view as AVIEW
+from factsheet.abc_types import abc_view as AVIEW
 
 
 class TestAbstractTextView:
