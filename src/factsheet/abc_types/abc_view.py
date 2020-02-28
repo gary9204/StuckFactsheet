@@ -1,5 +1,5 @@
 """
-Defines View abstract data type classes.
+Defines abstract data type classes for factsheet View classes.
 
 .. data:: AbstractTextView
 

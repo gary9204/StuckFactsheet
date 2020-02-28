@@ -1,5 +1,5 @@
 """
-Defines abstract data type classes for factsheet headers.
+Defines abstract data type classes for factsheet Header classes.
 """
 
 import abc
@@ -61,18 +61,4 @@ class AbstractTextModel(InterfaceStaleFile):
     @abc.abstractmethod
     def detach_view(self, pm_view: AVIEW.AbstractTextView):
         """Remove view of changes to text."""
-        raise NotImplementedError
-
-
-class FactoryHeader(abc.ABC):
-    """Defines abstract factory to produce components for Header classes."""
-
-    @abc.abstractmethod
-    def new_title_model(self):
-        """Return new instance of Model class Title."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def new_title_view(self):
-        """Return new instance of View class Title."""
         raise NotImplementedError

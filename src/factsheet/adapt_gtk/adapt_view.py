@@ -1,5 +1,5 @@
 """
-Defines view classes that implement abstract text attribute.
+Defines GTK-based View classes that implement abstract View classes.
 
 See :class:`.AbstractTextModel`.
 
@@ -20,8 +20,9 @@ See :class:`.AbstractTextModel`.
    TextView.html#Gtk.TextView
 """
 
-
+import abc
 import gi   # type: ignore[import]
+
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402

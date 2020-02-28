@@ -1,5 +1,5 @@
 """
-Unit tests for header abstract data type classes.
+Unit tests for Header abstract data type classes.
 """
 
 import pytest   # type: ignore[import]
@@ -83,35 +83,6 @@ class TestAbstractTextModel:
             def set_stale(self): super().set_stale()
 
         target = PatchTextModel()
-        # Test
-        with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
-            method()
-
-
-class TestFactoryHeader:
-    """Unit tests for abstract Header factory. """
-
-    def test_abstract_class(self):
-        """Confirm the interface class is abstract."""
-        # Setup
-        # Test
-        with pytest.raises(TypeError):
-            _ = AHEADER.FactoryHeader()
-
-    @pytest.mark.parametrize('name_method', [
-        'new_title_model',
-        'new_title_view',
-        ])
-    def test_must_override(self, name_method):
-        """Confirm each method must be overridden."""
-        # Setup
-        class PatchFactory(AHEADER.FactoryHeader):
-            def new_title_model(self): super().new_title_model()
-
-            def new_title_view(self): super().new_title_view()
-
-        target = PatchFactory()
         # Test
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)

@@ -1,5 +1,6 @@
 """
-Unit tests for view classes that implement abstract text attribute.
+Unit tests for GTK-based View classes that implement abstract View
+classes.
 
 See :mod:`.adapt_view`.
 """
