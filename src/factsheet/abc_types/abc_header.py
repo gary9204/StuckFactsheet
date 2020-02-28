@@ -13,7 +13,7 @@ class InterfaceStaleFile(abc.ABC):
 
     @abc.abstractmethod
     def is_fresh(self):
-        """Return True when there are not unsaved changes to model."""
+        """Return True when there are no unsaved changes to model."""
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -23,12 +23,12 @@ class InterfaceStaleFile(abc.ABC):
 
     @abc.abstractmethod
     def set_fresh(self):
-        """Mark the model in memory consistent with model in file."""
+        """Mark model in memory consistent with file contents."""
         raise NotImplementedError
 
     @abc.abstractmethod
     def set_stale(self):
-        """Mark the model in memory changed from model in file."""
+        """Mark model in memory changed from file contents."""
         raise NotImplementedError
 
 
