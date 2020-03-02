@@ -9,7 +9,7 @@ import gi   # type: ignore[import]
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_header as ABC_HEAD
+from factsheet.abc_types import abc_head as ABC_HEAD
 from factsheet.adapt_gtk import adapt_view as AVIEW
 
 gi.require_version('Gtk', '3.0')
@@ -72,11 +72,11 @@ class AdaptEntryBuffer(ABC_HEAD.AbstractTextModel):
                     hex(id_view),
                     self.__class__.__name__, self.detach_view.__name__))
 
-    def is_fresh(self):
+    def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to buffer."""
         return not self._stale
 
-    def is_stale(self):
+    def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to buffer."""
         return self._stale
 

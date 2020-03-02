@@ -17,7 +17,7 @@ class TestFactoryHeader:
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = ABC_FACTORY.FactoryHeader()
+            _ = ABC_FACTORY.FactoryHead()
 
     @pytest.mark.parametrize('name_method', [
         'new_title_model',
@@ -26,7 +26,7 @@ class TestFactoryHeader:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchFactory(ABC_FACTORY.FactoryHeader):
+        class PatchFactory(ABC_FACTORY.FactoryHead):
             def new_title_model(self): super().new_title_model()
 
             def new_title_view(self): super().new_title_view()

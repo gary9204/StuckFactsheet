@@ -31,11 +31,15 @@ Defines constants, functions, and objects for user interface elements.
 import os.path
 import typing
 
+from factsheet.adapt_gtk import adapt_factory as AFACTORY
+
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
+
+FACTORY_HEADER = AFACTORY.FactoryHead()
 
 
 CANCEL_GTK = True

@@ -20,7 +20,6 @@ See :class:`.AbstractTextModel`.
    TextView.html#Gtk.TextView
 """
 
-import abc
 import gi   # type: ignore[import]
 
 

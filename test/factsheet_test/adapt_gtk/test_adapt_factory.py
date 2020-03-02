@@ -11,12 +11,12 @@ from factsheet.adapt_gtk import adapt_view as AVIEW
 
 
 class TestFactoryHeaderGtk:
-    """Unit tests for :class:`.FactoryHeaderGtk`."""
+    """Unit tests for :class:`~.adapt_factory.FactoryHead`."""
 
     def test_new_title_model(self):
         """Confirm factory produces model Title instance. """
         # Setup
-        factory = AFACTORY.FactoryHeaderGtk()
+        factory = AFACTORY.FactoryHead()
         text = 'Something completely different'
         # Test
         title_model = factory.new_title_model(p_text=text)
@@ -26,7 +26,7 @@ class TestFactoryHeaderGtk:
     def test_new_title_view(self):
         """Confirm factory produces model Title instance. """
         # Setup
-        factory = AFACTORY.FactoryHeaderGtk()
+        factory = AFACTORY.FactoryHead()
         # Test
         title_view = factory.new_title_view()
         assert isinstance(title_view, AVIEW.AdaptEntry)

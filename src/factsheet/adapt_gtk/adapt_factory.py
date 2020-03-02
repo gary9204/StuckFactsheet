@@ -10,9 +10,9 @@ from factsheet.adapt_gtk import adapt_text as ATEXT
 from factsheet.adapt_gtk import adapt_view as AVIEW
 
 
-class FactoryHeaderGtk(ABC_FACTORY.FactoryHeader):
+class FactoryHead(ABC_FACTORY.FactoryHead):
     """Implements GTK-based factory for abstract factory class
-    :class:`.FactoryHeader`."""
+    :class:`.FactoryHead`."""
 
     def new_title_model(self, p_text: str = '') -> ATEXT.AdaptEntryBuffer:
         """Return new instance of Gtk-based Title model."""
