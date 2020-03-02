@@ -4,7 +4,7 @@ Unit tests for Header abstract data type classes.
 
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_header as AHEADER
+from factsheet.abc_types import abc_head as ABC_HEAD
 
 
 class TestAbstractTextModel:
@@ -15,7 +15,7 @@ class TestAbstractTextModel:
         # No Setup
         # Test
         with pytest.raises(TypeError):
-            _target = AHEADER.AbstractTextModel()
+            _target = ABC_HEAD.AbstractTextModel()
 
     def test_eq(self):
         """Confirm equivalence comparison.
@@ -26,7 +26,7 @@ class TestAbstractTextModel:
         #. Case: confirm not-equal defined
         """
         # Setup
-        class PatchTextModel(AHEADER.AbstractTextModel):
+        class PatchTextModel(ABC_HEAD.AbstractTextModel):
             def __init__(self, p_text): self.text = p_text
 
             def __str__(self): return self.text
@@ -65,7 +65,7 @@ class TestAbstractTextModel:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchTextModel(AHEADER.AbstractTextModel):
+        class PatchTextModel(ABC_HEAD.AbstractTextModel):
             def __eq__(self, _o): return False
 
             def __str__(self): super().__str__()
@@ -97,7 +97,7 @@ class TestInterfaceStaleFile:
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = AHEADER.InterfaceStaleFile()
+            _ = ABC_HEAD.InterfaceStaleFile()
 
     @pytest.mark.parametrize('name_method', [
         'is_fresh',
@@ -108,7 +108,7 @@ class TestInterfaceStaleFile:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchInterface(AHEADER.InterfaceStaleFile):
+        class PatchInterface(ABC_HEAD.InterfaceStaleFile):
             def is_fresh(self): super().is_fresh()
 
             def is_stale(self): super().is_stale()
