@@ -39,7 +39,8 @@ from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-FACTORY_HEADER = AFACTORY.FactoryHead()
+#: Factory to produce :class:`Head` components. See :class:`.abc_factory`.
+FACTORY_HEAD = AFACTORY.FactoryHead()
 
 
 CANCEL_GTK = True

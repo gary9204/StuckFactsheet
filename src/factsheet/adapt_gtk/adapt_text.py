@@ -29,13 +29,44 @@ class AdaptEntryBuffer(ABC_HEAD.AbstractTextModel):
     :param p_text: initial buffer contents (default: empty)
     """
 
+    def __getstate__(self) -> typing.Dict:
+        """Return model text attribute in form pickle can persist.
+
+        Persistent form of text attribute consists of text only.
+        """
+        state = self.__dict__.copy()
+        state['ex_text'] = str(self._buffer.get_text())
+        del state['_buffer']
+        del state['_stale']
+        del state['_views']
+        return state
+
     def __init__(self, p_text: str = ''):
         self._buffer = Gtk.EntryBuffer(text=p_text)
-        self._buffer.connect('deleted-text', lambda *_a: self.set_stale)
-        self._buffer.connect('inserted-text', lambda *_a: self.set_stale)
-
+        _ = self._buffer.connect(
+            'deleted-text', lambda *_a: self.set_stale)
+        _ = self._buffer.connect(
+            'inserted-text', lambda *_a: self.set_stale)
         self._stale = False
         self._views: typing.Dict[int, Gtk.Entry] = dict()
+
+    def __setstate__(self, px_state: typing.Dict):
+        """Reconstruct model text attribute from state pickle loads.
+
+        Reconstructed attribute is marked fresh and has no no views.
+
+        :param px_state: unpickled state of stored text attribute.
+        """
+        self.__dict__.update(px_state)
+        self._buffer = Gtk.EntryBuffer(
+            text=self.ex_text)   # type: ignore[attr-defined]
+        del self.ex_text       # type: ignore[attr-defined]
+        _ = self._buffer.connect(
+            'deleted-text', lambda *_a: self.set_stale)
+        _ = self._buffer.connect(
+            'inserted-text', lambda *_a: self.set_stale)
+        self._stale = False
+        self._views = dict()
 
     def __str__(self) -> str:
         """Return buffer contents as text."""

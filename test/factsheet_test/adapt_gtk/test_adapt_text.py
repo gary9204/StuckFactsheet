@@ -6,7 +6,10 @@ See :mod:`.adapt_text`.
 
 import gi   # type: ignore[import]
 import logging
+import pickle
 import pytest   # type: ignore[import]
+
+from pathlib import Path
 
 from factsheet.adapt_gtk import adapt_text as ATEXT
 from factsheet.adapt_gtk import adapt_view as AVIEW
@@ -16,9 +19,79 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
+@pytest.fixture
+def PatchConnect():
+    """PyTest fixture."""
+    class Connect:
+        ID_STUB = 42
+
+        def __init__(self): self.called_names = list()
+
+        def connect(self, name, _function):
+            self.called_names.append(name)
+            return self.ID_STUB
+
+    return Connect
+
+
 class TestAdaptEntryBuffer:
     """Unit tests for :class:`.AdaptEntryBuffer` implementation of
     :class:`.AbstractTextModel`."""
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format."""
+        # Setup
+        path = Path(str(tmp_path / 'get_set.fsg'))
+        view = AVIEW.AdaptEntry()
+        text = 'Something completely different'
+        source = ATEXT.AdaptEntryBuffer(p_text=text)
+        source.attach_view(view)
+        source._stale = True
+        # Test
+        with path.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+
+        with path.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+
+        assert str(source) == str(target)
+        assert not hasattr(target, 'ex_text')
+        assert not target._stale
+        assert isinstance(target._views, dict)
+        assert not target._views
+
+    @pytest.mark.parametrize('name_signal, n_default', [
+        ('deleted-text', 0),
+        ('inserted-text', 0),
+        ])
+    def test_get_set_signals(self, tmp_path, name_signal, n_default):
+        """Confirm reconstruction of signal connections."""
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(Gtk.EntryBuffer))
+        signal = GO.signal_lookup(name_signal, origin_gtype)
+
+        path = Path(str(tmp_path / 'get_set.fsg'))
+        text = 'Something completely different'
+        source = ATEXT.AdaptEntryBuffer(p_text=text)
+        # Test
+        with path.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+
+        with path.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                target._buffer, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(target._buffer, id_signal)
+
+        assert (n_default + 1) == n_handlers
 
     def test_init(self):
         """Confirm initialization with arguments. """
@@ -28,6 +101,7 @@ class TestAdaptEntryBuffer:
         target = ATEXT.AdaptEntryBuffer(p_text=text)
         assert isinstance(target._buffer, Gtk.EntryBuffer)
         assert text == str(target._buffer.get_text())
+
         assert not target._stale
         assert isinstance(target._views, dict)
         assert not target._views
