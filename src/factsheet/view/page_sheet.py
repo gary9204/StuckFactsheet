@@ -6,9 +6,8 @@ import gi   # type: ignore[import]
 import logging
 import typing   # noqa
 
-import factsheet as FS
 from factsheet.control import sheet as CSHEET
-from factsheet.abc_types import abc_sheet as ASHEET
+from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -22,7 +21,7 @@ logger.debug('Imported View Sheet module.')
 # logger.propagate = True
 
 
-class Sheet(ASHEET.ObserverSheet):
+class PageSheet(VINFOID.ViewInfoId):
     """Presentation window for a fact sheet.
 
     View class Sheet maintains presentation of a factsheet.  The
@@ -33,26 +32,28 @@ class Sheet(ASHEET.ObserverSheet):
     for the factsheet).
 
     :param px_app: application to which factsheet belongs
+    :param kwargs: superclass keyword parameters
     """
+    NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
-    def __init__(self, *, px_app: Gtk.Application):
+    def __init__(self, *, px_app: Gtk.Application, **kwargs):
         self._control = None
 
-        # Window elements
-        builder = Gtk.Builder.new_from_file(UI.UI_DIR + 'sheet.ui')
+        builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
         self._window.set_application(px_app)
-        # Actions
-        UI.new_activate_action(
-            self._window, 'show_about_app', self.on_show_about_app)
-        UI.new_activate_action(
-            self._window, 'show_help_app', self.on_show_help_app)
-        UI.new_activate_action(
-            self._window, 'show_intro_app', self.on_show_intro_app)
-        # Signals
+        super().__init__(get_object, **kwargs)
+
+        UI.new_action_active_dialog(self._window, 'show_about_app',
+                                    self.on_show_dialog, UI.ABOUT_APP)
+        UI.new_action_active_dialog(self._window, 'show_help_app',
+                                    self.on_show_dialog, UI.HELP_APP)
+        UI.new_action_active_dialog(self._window, 'show_intro_app',
+                                    self.on_show_dialog, UI.INTRO_APP)
+
         _id = self._window.connect('delete-event', self.on_close_view)
-        #
+
         self._window.show_all()
 
     def detach(self):
@@ -68,9 +69,11 @@ class Sheet(ASHEET.ObserverSheet):
         cancel the request.  Close unconditionally if no changes would
         be lost.
         """
+        raise NotImplementedError
+        assert self._control is not None
         allowed = self._control.detach_view_safe(self)
         if allowed:
-            return ASHEET.CONTINUE_GTK    # Stub - unconditional close
+            return not UI.CANCEL_GTK    # Stub - unconditional close
 
     def on_delete_sheet(self):
         """Act on request to delete factsheet."""
@@ -88,33 +91,16 @@ class Sheet(ASHEET.ObserverSheet):
         """Act on request to open another view of factsheet."""
         raise NotImplementedError
 
-    def on_show_about_app(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant):
-        """Display application Aboutdialog."""
-        dialog = UI.ABOUT_APP
-        app = self._window.get_application()
-        dialog.set_transient_for(app.get_windows()[0])
-        dialog.set_version(FS.__version__)
-        _ = dialog.run()
-        dialog.hide()
+    def on_show_dialog(self, _action: Gio.SimpleAction,
+                       _target: GLib.Variant, px_dialog: Gtk.Dialog):
+        """Display informational dialog.
 
-    def on_show_help_app(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant):
-        """Display application Help dialog."""
-        dialog = UI.HELP_APP
+        :param px_dialog: informational dialog.
+        """
         app = self._window.get_application()
-        dialog.set_transient_for(app.get_windows()[0])
-        _ = dialog.run()
-        dialog.hide()
-
-    def on_show_intro_app(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant):
-        """Display application Introduction dialog."""
-        dialog = UI.INTRO_APP
-        app = self._window.get_application()
-        dialog.set_transient_for(app.get_windows()[0])
-        _ = dialog.run()
-        dialog.hide()
+        px_dialog.set_transient_for(app.get_windows()[0])
+        _ = px_dialog.run()
+        px_dialog.hide()
 
     @classmethod
     def open_factsheet(cls, px_app, px_path):
@@ -127,7 +113,7 @@ class Sheet(ASHEET.ObserverSheet):
 
         :param px_app: application to which the factsheet belongs.
         """
-        view = Sheet(px_app=px_app)
+        view = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.new()
         control.attach_view(view)
         view._control = control

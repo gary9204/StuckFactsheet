@@ -1,13 +1,12 @@
 """
 Unit tests for View class Sheet.
 """
-
-
+from pathlib import Path
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_sheet as ASHEET
 from factsheet.control import sheet as CSHEET
-from factsheet.view import sheet as VSHEET
+from factsheet.view import page_sheet as VSHEET
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -18,14 +17,20 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class TestSheet:
     """Unit tests for View class Sheet."""
 
+    PATH_DIR_UI_TEST = Path(__file__).parent
+    NAME_FILE_UI_TEST = str(PATH_DIR_UI_TEST / 'test_page_sheet.ui')
+
     def test_init(self, patch_factsheet, capfd):
         """Confirm initialization.
         Case: visual elements
         """
         # Setup
+        PatchSheet = VSHEET.PageSheet
+        PatchSheet.NAME_FILE_SHEET_UI = self.NAME_FILE_UI_TEST
+        TEST_TITLE_UI = 'Sheet title'
         factsheet = patch_factsheet()
         # Test
-        target = VSHEET.Sheet(px_app=factsheet)
+        target = PatchSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -34,10 +39,13 @@ class TestSheet:
         assert target._control is None
         assert isinstance(target._window, Gtk.ApplicationWindow)
         assert target._window.get_application() is factsheet
+        assert TEST_TITLE_UI == target.get_view_title().get_text()
 
         assert target._window.lookup_action('show_about_app') is not None
         assert target._window.lookup_action('show_help_app') is not None
         assert target._window.lookup_action('show_intro_app') is not None
+
+        assert target._window.is_visible()
 
     def test_init_signals(self, patch_factsheet, capfd):
         """Confirm initialization.
@@ -48,7 +56,7 @@ class TestSheet:
         window_gtype = GO.type_from_name(GO.type_name(Gtk.ApplicationWindow))
         delete_signal = GO.signal_lookup('delete-event', window_gtype)
         # Test
-        target = VSHEET.Sheet(px_app=factsheet)
+        target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -66,6 +74,7 @@ class TestSheet:
         # Setup
         # Test
 
+    @pytest.mark.skip(reason='Updating to PageHead')
     def test_on_close_view(self, patch_factsheet, capfd):
         """Confirm response to request to close view.
         Case: close allowed
@@ -85,7 +94,7 @@ class TestSheet:
 
         factsheet = patch_factsheet()
 
-        target = VSHEET.Sheet(px_app=factsheet)
+        target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -134,25 +143,18 @@ class TestSheet:
         # Test
         pass
 
-    @pytest.mark.parametrize('name_method', [
-        'on_show_about_app',
-        'on_show_help_app',
-        'on_show_intro_app',
-        ])
-    def test_on_show_dialogs(
-            self, patch_factsheet, capfd, name_method, monkeypatch):
-        """Confirm running of dialogs.
+    def test_on_show_dialog(self, patch_factsheet, capfd, monkeypatch):
+        """Confirm handler runs dialog.
 
         See manual tests for dialog content checks.
         """
         # Setup
         factsheet = patch_factsheet()
-        target = VSHEET.Sheet(px_app=factsheet)
+        target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        target_method = getattr(target, name_method)
 
         class DialogPatch:
             def __init__(self): self.called = False
@@ -165,9 +167,12 @@ class TestSheet:
         window = Gtk.ApplicationWindow()
         monkeypatch.setattr(
             Gtk.Application, 'get_windows', lambda *_args: [window])
+        dialog = Gtk.Dialog()
+        dialog.set_visible(True)
         # Test
-        target_method(None, None)
+        target.on_show_dialog(None, None, dialog)
         assert patch.called
+        assert not dialog.is_visible()
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_open_factsheet(self):
@@ -176,6 +181,7 @@ class TestSheet:
         # Test
         pass
 
+    @pytest.mark.skip(reason='Updating to PageHead')
     def test_new_factsheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm factsheet creation with default contents."""
         # Setup
@@ -186,7 +192,7 @@ class TestSheet:
             CSHEET.Sheet, 'attach_view', patch_attach_view)
         factsheet = patch_factsheet()
 
-        target = VSHEET.Sheet(px_app=factsheet)
+        target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -198,7 +204,7 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         assert isinstance(control, CSHEET.Sheet)
-        assert isinstance(control.view, VSHEET.Sheet)
+        assert isinstance(control.view, VSHEET.PageSheet)
         assert control.view._window.get_application() is factsheet
         assert control.view._control is control
 
