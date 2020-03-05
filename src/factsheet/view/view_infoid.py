@@ -21,11 +21,11 @@ class ViewInfoId:
         ID in user interface file for element to display page title.
     """
 
-    UI_ID_TITLE: typing.ClassVar[str] = 'ui_title_page_head'
+    UI_ID_TITLE: typing.ClassVar[str] = 'ui_title_infoid'
 
     def __init__(self, px_get_object: typing.Callable, **_kwargs) -> None:
         self._view_title = px_get_object(self.UI_ID_TITLE)
 
     def get_view_title(self) -> AVIEW.AdaptEntry:
-        """Return page's title display element."""
+        """Return view's title display element."""
         return self._view_title

@@ -1,37 +1,40 @@
 """
-Defines identification information class for Factsheet components.
+Defines identification information for Factsheet :mod:`~factsheet.model`
+components.
 """
 
 import typing
 
-from factsheet.abc_types import abc_head as ABC_HEAD
-from factsheet.view import page_head as VPHEAD
+from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.view import view_infoid as VINFOID
 
-from factsheet.view import ui as VUI
+from factsheet.view import ui as UI
 
 
-class Head(ABC_HEAD.InterfaceStaleFile):
-    """Defines identification information common to Factsheet components.
+class InfoId(ABC_INFOID.InterfaceStaleFile):
+    """Defines identification information common to Factsheetcomponents.
 
     The Factsheet model includes components for factsheets, topics, and
     facts.  These components have identification information in common.
-    The information represented by `Head` is as follows.
+    The information represented by `InfoId` is as follows.
 
-     * ID: component identifier that is unique for lifetime of component.
+     * ID: identifier that is unique for lifetime of the component.
      * Aspect: identifies contribution of component (for example, set).
-     * Name: short identifier (suitable, for example, as label).
-     * Title: one-line description of model contents.
-     * Summary: description of model, which adds detail to title.
+     * Name: short, editable identifier (suitable, for example, as
+       label).
+     * Title: one-line, editable description of component contents.
+     * Summary: editable description of component, which adds detail to
+       title.
 
-    .. tip:: Two `Head` instances are equivalent when their aspects,
+    .. tip:: Two `InfoId` instances are equivalent when their aspects,
        names, titles, and summaries are the same.
     """
 
-    def __init__(self, *, p_aspect: str, p_title: str = '', **_kwargs):
+    def __init__(self, *, p_aspect: str, p_title: str = '') -> None:
         self._aspect = p_aspect
-        self._id = id(self)
+        self._id_model = id(self)
         self._stale = False
-        self._title = VUI.FACTORY_HEAD.new_title_model(p_title)
+        self._title = UI.FACTORY_INFOID.new_model_title(p_title)
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same aspect name, summary, and
@@ -39,7 +42,7 @@ class Head(ABC_HEAD.InterfaceStaleFile):
 
         :param px_other: object to compare with self.
         """
-        if not isinstance(px_other, Head):
+        if not isinstance(px_other, InfoId):
             return False
 
         if not self._aspect == px_other._aspect:
@@ -50,21 +53,25 @@ class Head(ABC_HEAD.InterfaceStaleFile):
 
         return True
 
-    def attach_page(self, pm_page: VPHEAD.PageHead, **_kwargs):
-        """Add view to update display when header attributes change."""
-        self._title.attach_view(pm_page.get_title())
-
-    def detach_page(self, pm_page: VPHEAD.PageHead, **_kwargs):
-        """Remove view of changes to header attributes."""
-        self._title.detach_view(pm_page.get_title())
-
-    def get_id(self) -> int:
-        """Return component identifier."""
-        return self._id
-
-    def get_aspect(self) -> str:
-        """Return component contribution to model."""
+    @property
+    def aspect(self) -> str:
+        """Return component contribution to :mod:`~factsheet.model`."""
         return self._aspect
+
+    def attach_view(self, pm_view: VINFOID.ViewInfoId) -> None:
+        """Add view to update display when identification information
+        changes.
+        """
+        self._title.attach_view(pm_view.get_view_title())
+
+    def detach_view(self, pm_view: VINFOID.ViewInfoId) -> None:
+        """Remove view of changes to identification information."""
+        self._title.detach_view(pm_view.get_view_title())
+
+    @property
+    def id_model(self) -> int:
+        """Return component identifier."""
+        return self._id_model
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to
@@ -100,3 +107,8 @@ class Head(ABC_HEAD.InterfaceStaleFile):
     def set_stale(self):
         """Mark header in memory changed from file contents."""
         self._stale = True
+
+    @property
+    def title(self) -> str:
+        """Return text of component title."""
+        return str(self._title)
