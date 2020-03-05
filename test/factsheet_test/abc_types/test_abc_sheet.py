@@ -1,26 +1,35 @@
 """
-Unit tests for sheet abstract data type classes.
+Unit tests for factsheet document abstract data type classes.
 """
+import pytest   # type: ignore[import]
+
+import factsheet.abc_types.abc_sheet as ABC_SHEET
 
 
-import factsheet.abc_types.abc_sheet as ASHEET
+class TestFactoryInfoId:
+    """Unit tests for interface :class:`.InterfaceSignalsSheet`."""
 
-
-class TestObserverSheet:
-    """
-    Unit tests for Sheet abstract data
-    """
-
-    def test_update_name(self):
-        """Confirm interface defined."""
+    def test_abstract_class(self):
+        """Confirm the interface class is abstract."""
         # Setup
-        obs = ASHEET.ObserverSheet()
         # Test
-        assert obs.update_name() is None
+        with pytest.raises(TypeError):
+            _ = ABC_SHEET.InterfaceSignalsSheet()
 
-    def test_detach(self):
-        """Confirm interface defined."""
+    @pytest.mark.parametrize('name_method', [
+        'detach',
+        'update_name',
+        ])
+    def test_must_override(self, name_method):
+        """Confirm each method must be overridden."""
         # Setup
-        obs = ASHEET.ObserverSheet()
+        class PatchFactory(ABC_SHEET.InterfaceSignalsSheet):
+            def detach(self): super().detach()
+
+            def update_name(self): super().update_name()
+
+        target = PatchFactory()
         # Test
-        assert obs.detach() is None
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, name_method)
+            method()

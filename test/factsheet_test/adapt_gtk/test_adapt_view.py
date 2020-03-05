@@ -1,10 +1,9 @@
 """
-Unit tests for GTK-based View classes that implement abstract View
-classes.
+Unit tests for GTK-based :mod:`~factsheet.view` classes that implement
+abstract classes.
 
 See :mod:`.adapt_view`.
 """
-
 import gi   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_view as AVIEW

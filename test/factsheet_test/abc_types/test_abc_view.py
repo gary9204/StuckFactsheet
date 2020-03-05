@@ -3,10 +3,8 @@ Unit tests for View abstract data type classes.
 
 See :mod:`.abc_view`.
 """
-
-
-from factsheet.abc_types import abc_view as AVIEW
-from factsheet.adapt_gtk import adapt_view as ADAPT_VIEW
+from factsheet.abc_types import abc_view as ABC_VIEW
+from factsheet.adapt_gtk import adapt_view as AVIEW
 
 
 class TestAbstractTextView:
@@ -15,9 +13,9 @@ class TestAbstractTextView:
     def test_constraints(self):
         """Confirm definition of :data:`.AbstractTextView`."""
         # Setup
-        constraints = [ADAPT_VIEW.AdaptEntry, ADAPT_VIEW.AdaptTextView]
+        constraints = [AVIEW.AdaptEntry, AVIEW.AdaptTextView]
         # Test
-        target = AVIEW.AbstractTextView.__constraints__
+        target = ABC_VIEW.AbstractTextView.__constraints__
         for c in constraints:
             assert c in target
         assert len(constraints) == len(target)

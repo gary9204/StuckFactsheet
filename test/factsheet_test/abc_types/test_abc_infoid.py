@@ -1,21 +1,23 @@
 """
-Unit tests for Header abstract data type classes.
-"""
+Unit tests for identification information abstract data type classes.
 
+See :mod:`.ABC_INFOID`.
+"""
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_head as ABC_HEAD
+from factsheet.abc_types import abc_infoid as ABC_INFOID
 
 
 class TestAbstractTextModel:
-    """Unit tests for interfaces common to model text attributes."""
+    """Unit tests for interfaces common to model text attributes.
+    See :class:`.AbstractTextModel`."""
 
     def test_abstract(self):
         """Confirm class is abstract."""
         # No Setup
         # Test
         with pytest.raises(TypeError):
-            _target = ABC_HEAD.AbstractTextModel()
+            _target = ABC_INFOID.AbstractTextModel()
 
     def test_eq(self):
         """Confirm equivalence comparison.
@@ -26,7 +28,7 @@ class TestAbstractTextModel:
         #. Case: confirm not-equal defined
         """
         # Setup
-        class PatchTextModel(ABC_HEAD.AbstractTextModel):
+        class PatchTextModel(ABC_INFOID.AbstractTextModel):
             def __init__(self, p_text): self.text = p_text
 
             def __str__(self): return self.text
@@ -65,7 +67,7 @@ class TestAbstractTextModel:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchTextModel(ABC_HEAD.AbstractTextModel):
+        class PatchTextModel(ABC_INFOID.AbstractTextModel):
             def __eq__(self, _o): return False
 
             def __str__(self): super().__str__()
@@ -90,14 +92,15 @@ class TestAbstractTextModel:
 
 
 class TestInterfaceStaleFile:
-    """Unit tests for interfaces to detect out-of-date model."""
+    """Unit tests for interfaces to detect out-of-date model.
+    See :class:`.InterfaceStaleFile`."""
 
     def test_abstract_class(self):
         """Confirm the interface class is abstract."""
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = ABC_HEAD.InterfaceStaleFile()
+            _ = ABC_INFOID.InterfaceStaleFile()
 
     @pytest.mark.parametrize('name_method', [
         'is_fresh',
@@ -108,7 +111,7 @@ class TestInterfaceStaleFile:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchInterface(ABC_HEAD.InterfaceStaleFile):
+        class PatchInterface(ABC_INFOID.InterfaceStaleFile):
             def is_fresh(self): super().is_fresh()
 
             def is_stale(self): super().is_stale()

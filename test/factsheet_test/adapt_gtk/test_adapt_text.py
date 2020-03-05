@@ -3,7 +3,6 @@ Unit tests for model classes that implement abstract text attribute.
 
 See :mod:`.adapt_text`.
 """
-
 import gi   # type: ignore[import]
 import logging
 import pickle

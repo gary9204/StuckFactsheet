@@ -1,7 +1,8 @@
 """
-Defines GTK-based View classes that implement abstract View classes.
+Defines GTK-based :mod:`~factsheet.view` classes that implement abstract
+classes.
 
-See :class:`.AbstractTextModel`.
+See :class:`.AbstractTextView`.
 
 .. data:: AdaptEntry
 
@@ -13,7 +14,7 @@ See :class:`.AbstractTextModel`.
 
 .. data:: AdaptTextView
 
-   Adapts `Gtk.TextView`_ widget to display a text attribute.    # type: ignore
+   Adapts `Gtk.TextView`_ widget to display a text attribute.
 
 .. _Gtk.TextView:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/

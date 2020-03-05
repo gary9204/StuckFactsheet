@@ -3,13 +3,11 @@ Defines model classes that implement abstract text attribute.
 
 See :class:`.AbstractTextModel`.
 """
-
-
 import gi   # type: ignore[import]
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_head as ABC_HEAD
+from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.adapt_gtk import adapt_view as AVIEW
 
 gi.require_version('Gtk', '3.0')
@@ -18,8 +16,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 logger = logging.getLogger('Main.adapt_text')
 
 
-class AdaptEntryBuffer(ABC_HEAD.AbstractTextModel):
-    """Implements model text attribute class :class:`.AbstractTextModel`
+class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
+    """Implements model text attribute :class:`.AbstractTextModel`
     using `Gtk.EntryBuffer`_.
 
     .. _Gtk.EntryBuffer:

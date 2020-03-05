@@ -1,7 +1,8 @@
 """
-Defines abstract data type classes for factsheet Header classes.
-"""
+Defines abstract data type classes for identification information.
 
+See :class:`.model.InfoId` and derived classes.
+"""
 import abc
 import typing
 

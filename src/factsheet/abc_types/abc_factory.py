@@ -5,26 +5,24 @@ Defines abstract factory classes.
 
 import abc
 
-from factsheet.abc_types import abc_head as ABC_HEAD
+from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_view as ABC_VIEW
 
 
-class FactoryHead(abc.ABC):
-    """Defines abstract factory to produce components for `Head`
-    classes.
+class FactoryInfoId(abc.ABC):
+    """Defines abstract factory to produce identification information
+    components for :class:`.model.InfoId`.
     """
 
     @abc.abstractmethod
-    def new_title_model(
-            self, p_text: str = '') -> ABC_HEAD.AbstractTextModel:
-        """Return new instance of :mod:`~.factsheet.model` title for
-        :class:`.Head`.
+    def new_model_title(
+            self, p_text: str = '') -> ABC_INFOID.AbstractTextModel:
+        """Return new instance of title for :class:`.model.InfoId`.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_title_view(self) -> ABC_VIEW.AbstractTextView:
-        """Return new instance of :mod:`~.factsheet.view` title for
-        :class:`.PageHead`.
+    def new_view_title(self) -> ABC_VIEW.AbstractTextView:
+        """Return new instance of title for :class:`.view.ViewInfoId`.
         """
         raise NotImplementedError
