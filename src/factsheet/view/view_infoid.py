@@ -29,3 +29,8 @@ class ViewInfoId:
     def get_view_title(self) -> AVIEW.AdaptEntry:
         """Return view's title display element."""
         return self._view_title
+
+    @property
+    def title(self) -> str:
+        """Return text of title."""
+        return self._view_title.get_text()

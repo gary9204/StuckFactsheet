@@ -1,5 +1,7 @@
 """
-Unit tests for View class Sheet.
+Unit tests for class to display Factsheet document.
+
+See :mod:`.page_sheet`.
 """
 from pathlib import Path
 import pytest   # type: ignore[import]
@@ -7,6 +9,7 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_sheet as ASHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.view import page_sheet as VSHEET
+from factsheet.view import view_infoid as VINFOID
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -25,12 +28,13 @@ class TestSheet:
         Case: visual elements
         """
         # Setup
-        PatchSheet = VSHEET.PageSheet
-        PatchSheet.NAME_FILE_SHEET_UI = self.NAME_FILE_UI_TEST
+        PatchPageSheet = VSHEET.PageSheet
+        PatchPageSheet.NAME_FILE_SHEET_UI = self.NAME_FILE_UI_TEST
         TEST_TITLE_UI = 'Sheet title'
+
         factsheet = patch_factsheet()
         # Test
-        target = PatchSheet(px_app=factsheet)
+        target = PatchPageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -39,7 +43,8 @@ class TestSheet:
         assert target._control is None
         assert isinstance(target._window, Gtk.ApplicationWindow)
         assert target._window.get_application() is factsheet
-        assert TEST_TITLE_UI == target.get_view_title().get_text()
+        assert isinstance(target._infoid, VINFOID.ViewInfoId)
+        assert TEST_TITLE_UI == target._infoid.title
 
         assert target._window.lookup_action('show_about_app') is not None
         assert target._window.lookup_action('show_help_app') is not None
@@ -73,6 +78,18 @@ class TestSheet:
         """Confirm view detaches from control and closes."""
         # Setup
         # Test
+
+    def test_get_infoid(self, patch_factsheet, capfd):
+        """Confirm returns InfoId attribute."""
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        assert target._infoid is target.get_infoid()
 
     @pytest.mark.skip(reason='Updating to PageHead')
     def test_on_close_view(self, patch_factsheet, capfd):
@@ -207,6 +224,35 @@ class TestSheet:
         assert isinstance(control.view, VSHEET.PageSheet)
         assert control.view._window.get_application() is factsheet
         assert control.view._control is control
+
+#     @pytest.mark.parametrize('name_attr, name_prop', [
+#         ['_infoid', 'infoid'],
+#         ])
+#     def test_property(self, patch_factsheet, name_attr, name_prop, capfd):
+#         """Confirm properties are get-only.
+#
+#         #. Case: read
+#         #. Case: no replace
+#         #. Case: no delete
+#         """
+#         # Setup
+#         factsheet = patch_factsheet()
+#         target = VSHEET.PageSheet(px_app=factsheet)
+#         value_attr = getattr(target, name_attr)
+#         target_prop = getattr(VSHEET.PageSheet, name_prop)
+#         value_prop = getattr(target, name_prop)
+#
+#         snapshot = capfd.readouterr()   # Resets the internal buffer
+#         assert not snapshot.out
+#         assert 'Gtk-CRITICAL' in snapshot.err
+#         assert 'GApplication::startup signal' in snapshot.err
+#         # Test: read
+#         assert target_prop.fget is not None
+#         assert str(value_attr) == str(value_prop)
+#         # Test: no replace
+#         assert target_prop.fset is None
+#         # Test: no delete
+#         assert target_prop.fdel is None
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_update_name(self):

@@ -179,8 +179,8 @@ class TestAdaptEntryBuffer:
         views = [AVIEW.AdaptEntry() for _ in range(N_VIEWS)]
         for view in views:
             target.attach_view(view)
-        N_DUPLICATE = 1
-        view_duplicate = views[N_DUPLICATE]
+        I_DUPLICATE = 1
+        view_duplicate = views[I_DUPLICATE]
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(

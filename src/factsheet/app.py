@@ -1,8 +1,6 @@
 """
 Defines Factsheet application and entry point.
 """
-
-
 import logging   # type: ignore[import]
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -35,7 +33,7 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
-from factsheet.view import sheet as VSHEET  # noqa: #402
+from factsheet.view import page_sheet as VSHEET  # noqa: #402
 
 
 class Factsheet(Gtk.Application):
@@ -53,7 +51,7 @@ class Factsheet(Gtk.Application):
 
     def do_activate(self):
         """Create and display an initial factsheet with default content."""
-        _ = VSHEET.Sheet.new_factsheet(self)
+        _ = VSHEET.PageSheet.new_factsheet(self)
 
     def do_shutdown(self):
         """Application teardown. """

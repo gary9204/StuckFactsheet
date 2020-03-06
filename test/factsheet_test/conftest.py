@@ -6,6 +6,29 @@ Test fixtures for Factsheet as a whole.
 import pytest   # type: ignore[import]
 
 
+import gi   # type: ignore[import]
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gio   # type: ignore[import]    # noqa: E402
+from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+@pytest.fixture
+def patch_factsheet():
+    class Factsheet(Gtk.Application):
+        def __init__(self, *args, **kwargs):
+            super().__init__(application_id='com.novafolks.factsheet',
+                             flags=Gio.ApplicationFlags.FLAGS_NONE,
+                             *args, **kwargs)
+
+        def do_activate(self):
+            pass
+
+        def do_startup(self):
+            Gtk.Application.do_startup(self)
+
+    return Factsheet
+
+
 @pytest.fixture
 def PatchLogger():
     """Return stub class for logging."""

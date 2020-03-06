@@ -19,7 +19,22 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
-def stock_args():
+def factory_view_infoid():
+    """Test fixture based on `test_view_infoid.ui`."""
+    def new_view_info():
+        PATH_DIR_UI = Path(__file__).parent.parent / 'view'
+        NAME_FILE_UI = str(PATH_DIR_UI / 'test_view_infoid.ui')
+
+        builder = Gtk.Builder.new_from_file(NAME_FILE_UI)
+        get_object = builder.get_object
+        view_infoid = VINFOID.ViewInfoId(get_object)
+        return view_infoid
+
+    return new_view_info
+
+
+@pytest.fixture
+def args_infoid_stock():
     return dict(
         p_aspect='section',
         # p_name='Stock InfoId Name',
@@ -31,7 +46,7 @@ def stock_args():
 class TestInfoId:
     """Unit tests for :class:`.InfoId`."""
 
-    def test_eq(self, stock_args):
+    def test_eq(self, args_infoid_stock):
         """Confirm equivalence operator.
 
         #. Case: type difference.
@@ -40,7 +55,7 @@ class TestInfoId:
         #. Case: equivalent
         """
         # Setup
-        source = MINFOID.InfoId(**stock_args)
+        source = MINFOID.InfoId(**args_infoid_stock)
         # Test: type difference.
         assert not source.__eq__('Something completely different')
         # Test: aspect difference.
@@ -59,64 +74,54 @@ class TestInfoId:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_init(self, stock_args):
+    def test_init(self, args_infoid_stock):
         """Confirm initialization."""
         # Setup
         # Test
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
 
-        assert stock_args['p_aspect'] == target._aspect
+        assert args_infoid_stock['p_aspect'] == target._aspect
         assert id(target) == target._id_model
         assert not target._stale
 
         assert isinstance(target._title, ABC_INFOID.AbstractTextModel)
-        assert stock_args['p_title'] == str(target._title)
+        assert args_infoid_stock['p_title'] == str(target._title)
 
-    def test_init_default(self, stock_args):
+    def test_init_default(self, args_infoid_stock):
         """Confirm initialization with default arguments."""
         # Setup
         # Test
-        target = MINFOID.InfoId(p_aspect=stock_args['p_aspect'])
+        target = MINFOID.InfoId(p_aspect=args_infoid_stock['p_aspect'])
         assert '' == str(target._title)
 
-    def test_attach_view(self, stock_args):
-        """Confirm page addition."""
+    def test_attach_view(self, factory_view_infoid, args_infoid_stock):
+        """Confirm view addition."""
         # Setup
         TEXT_TITLE_UI = 'Page title'
-        PATH_DIR_UI = Path(__file__).parent.parent / 'view'
-        NAME_FILE_UI = str(PATH_DIR_UI / 'test_view_infoid.ui')
-
-        builder = Gtk.Builder.new_from_file(NAME_FILE_UI)
-        get_object = builder.get_object
-        view_infoid = VINFOID.ViewInfoId(get_object)
+        view_infoid = factory_view_infoid()
         assert TEXT_TITLE_UI == view_infoid._view_title.get_text()
 
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         # Test
         target.attach_view(view_infoid)
-        assert view_infoid._view_title.get_text() == str(target._title)
+        assert view_infoid.title == str(target._title)
 
-    def test_detach_page(self, stock_args):
-        """Confirm page removal."""
+    def test_detach_view(self, factory_view_infoid, args_infoid_stock):
+        """Confirm view removal."""
         # Setup
         TEXT_TITLE_UI = 'Page title'
-        PATH_DIR_UI = Path(__file__).parent.parent / 'view'
-        NAME_FILE_UI = str(PATH_DIR_UI / 'test_view_infoid.ui')
-
-        builder = Gtk.Builder.new_from_file(NAME_FILE_UI)
-        get_object = builder.get_object
-        view_infoid = VINFOID.ViewInfoId(get_object)
+        view_infoid = factory_view_infoid()
         assert TEXT_TITLE_UI == view_infoid._view_title.get_text()
 
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         target.attach_view(view_infoid)
         assert view_infoid._view_title.get_text() == str(target._title)
         # Test
         target.detach_view(view_infoid)
-        assert stock_args['p_title'] == str(target._title)
+        assert args_infoid_stock['p_title'] == str(target._title)
         assert '' == view_infoid._view_title.get_text()
 
-    def test_is_fresh(self, stock_args):
+    def test_is_fresh(self, args_infoid_stock):
         """Confirm return is accurate.
 
         #. Case: InfoId stale, title fresh
@@ -124,7 +129,7 @@ class TestInfoId:
         #. Case: InfoId fresh, title fresh
         """
         # Setup
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         # Test: InfoId stale, title fresh
         target._stale = True
         target._title.set_fresh()
@@ -141,7 +146,7 @@ class TestInfoId:
         assert target.is_fresh()
         assert not target._stale
 
-    def test_is_stale(self, stock_args):
+    def test_is_stale(self, args_infoid_stock):
         """Confirm return is accurate.
 
         #. Case: InfoId stale, title fresh
@@ -149,7 +154,7 @@ class TestInfoId:
         #. Case: InfoId fresh, title fresh
         """
         # Setup
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         # Test: InfoId stale, title fresh
         target._stale = True
         target._title.set_fresh()
@@ -171,7 +176,7 @@ class TestInfoId:
         ['_id_model', 'id_model'],
         ['_title', 'title'],
         ])
-    def test_property(self, stock_args, name_attr, name_prop):
+    def test_property(self, args_infoid_stock, name_attr, name_prop):
         """Confirm properties are get-only.
 
         #. Case: read
@@ -179,9 +184,9 @@ class TestInfoId:
         #. Case: no delete
         """
         # Setup
-        target_prop = getattr(MINFOID.InfoId, name_prop)
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         value_attr = getattr(target, name_attr)
+        target_prop = getattr(MINFOID.InfoId, name_prop)
         value_prop = getattr(target, name_prop)
         # Test: read
         assert target_prop.fget is not None
@@ -191,7 +196,7 @@ class TestInfoId:
         # Test: no delete
         assert target_prop.fdel is None
 
-    def test_set_fresh(self, stock_args):
+    def test_set_fresh(self, args_infoid_stock):
         """Confirm all attributes set.
 
         #. Case: InfoId fresh, title fresh
@@ -200,7 +205,7 @@ class TestInfoId:
         #. Case: InfoId stale, title stale
          """
         # Setup
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         # Test: InfoId fresh, title fresh
         target._stale = False
         target._title.set_fresh()
@@ -226,7 +231,7 @@ class TestInfoId:
         assert not target._stale
         assert target._title.is_fresh()
 
-    def test_set_stale(self, stock_args):
+    def test_set_stale(self, args_infoid_stock):
         """Confirm all attributes set.
 
         #. Case: InfoId fresh, title fresh
@@ -235,7 +240,7 @@ class TestInfoId:
         #. Case: InfoId stale, title stale
          """
         # Setup
-        target = MINFOID.InfoId(**stock_args)
+        target = MINFOID.InfoId(**args_infoid_stock)
         # Test: InfoId fresh, title fresh
         target._stale = False
         target._title.set_fresh()

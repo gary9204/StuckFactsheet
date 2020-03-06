@@ -5,7 +5,7 @@ See :mod:`.view_infoid`.
 """
 import gi   # type: ignore[import]
 from pathlib import Path
-# import pytest   # type: ignore[import]
+import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_view as AVIEW
 from factsheet.view import view_infoid as VINFOID
@@ -39,3 +39,29 @@ class TestInfoId:
         target = VINFOID.ViewInfoId(get_object)
         # Test
         assert target.get_view_title() is target._view_title
+
+    @pytest.mark.parametrize('name_attr, name_prop', [
+        ['_view_title', 'title'],
+        ])
+    def test_property_text(self, name_attr, name_prop):
+        """Confirm properties are get-only.
+
+        #. Case: read
+        #. Case: no replace
+        #. Case: no delete
+        """
+        # Setup
+        builder = Gtk.Builder.new_from_file(self.NAME_TEST_FILE_UI)
+        get_object = builder.get_object
+        target = VINFOID.ViewInfoId(get_object)
+        value_attr = getattr(target, name_attr)
+        target_prop = getattr(VINFOID.ViewInfoId, name_prop)
+        value_prop = getattr(target, name_prop)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr.props.text == value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+

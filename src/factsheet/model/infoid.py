@@ -61,11 +61,16 @@ class InfoId(ABC_INFOID.InterfaceStaleFile):
     def attach_view(self, pm_view: VINFOID.ViewInfoId) -> None:
         """Add view to update display when identification information
         changes.
+
+        :param pm_view: view to add
         """
         self._title.attach_view(pm_view.get_view_title())
 
     def detach_view(self, pm_view: VINFOID.ViewInfoId) -> None:
-        """Remove view of changes to identification information."""
+        """Remove view of identification information.
+
+        :param pm_view: view to remove
+        """
         self._title.detach_view(pm_view.get_view_title())
 
     @property
@@ -100,12 +105,16 @@ class InfoId(ABC_INFOID.InterfaceStaleFile):
         return False
 
     def set_fresh(self):
-        """Mark header in memory consistent with file contents."""
+        """Mark identification information in memory consistent with
+        file contents.
+        """
         self._stale = False
         self._title.set_fresh()
 
     def set_stale(self):
-        """Mark header in memory changed from file contents."""
+        """Mark identification information in memory changed from file
+        contents.
+        """
         self._stale = True
 
     @property

@@ -1,97 +1,325 @@
 """
-factsheet_test.model.sheet - unit tests for Model class Sheet.
+Unit tests for :mod:`~factsheet.model` for Factsheet document.
 """
+import logging
+from pathlib import Path
+import pytest   # type: ignore[import]
 
-
-# from factsheet.abc_types import abc_sheet as ASHEET
+from factsheet.model import infoid as MINFOID
 from factsheet.model import sheet as MSHEET
+from factsheet.view import page_sheet as VSHEET
+
+
+@pytest.fixture
+def factory_page_sheet(patch_factsheet, capfd):
+    """Test fixture based on `test_page_sheet.ui` definition."""
+    def new_page_sheet():
+        PATH_DIR_UI_TEST = Path(__file__).parent.parent / 'view'
+        NAME_FILE_UI_TEST = str(PATH_DIR_UI_TEST / 'test_page_sheet.ui')
+        PatchPageSheet = VSHEET.PageSheet
+        PatchPageSheet.NAME_FILE_SHEET_UI = NAME_FILE_UI_TEST
+
+        factsheet = patch_factsheet()
+        page_sheet = PatchPageSheet(px_app=factsheet)
+        _snapshot = capfd.readouterr()   # Resets the internal buffer
+        return page_sheet
+
+    return new_page_sheet
 
 
 class TestSheet:
-    """Unit tests for Model class Sheet."""
+    """Unit tests for :mod:`~factsheet.model` class :class:`Sheet`."""
 
     def test_init(self):
         """Confirm initialization."""
         # Setup
+        ASPECT = MSHEET.Sheet.ASPECT
+        TEXT_TITLE = 'Something completely different'
+        # Test
+        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        assert not target._stale
+        assert isinstance(target._pages, dict)
+        assert not target._pages
+        assert isinstance(target._infoid, MINFOID.InfoId)
+        assert ASPECT == target._infoid.aspect
+        assert TEXT_TITLE == target._infoid.title
+
+    def test_init_default(self):
+        """Confirm initialization with default arguments."""
+        # Setup
+        TEXT_TITLE_DEFAULT = ''
         # Test
         target = MSHEET.Sheet()
-        assert dict() == target._observers
-        assert not target._unsaved_changes
+        assert TEXT_TITLE_DEFAULT == target._infoid.title
 
-    def test_add_observer(self, patch_observer_sheet):
-        """Confirm addition of observer.
-        Case: add novel observer
+    def test_attach_page(self, factory_page_sheet):
+        """Confirm page addition.
+        Case: page not attached initially
         """
         # Setup
-        N_OBS = 3
-        observers = [patch_observer_sheet() for _ in range(N_OBS)]
-        target = MSHEET.Sheet()
-        # Test
-        for obs in observers:
-            target.add_observer(obs)
-            assert target._observers[id(obs)] is obs
-        assert N_OBS == len(target._observers)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
-    def test_add_observer_dup(self):
-        """Confirm addition of observer.
-        Case: log duplicate observer
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        assert pages[0].get_infoid().title != target._infoid.title
+        # Test
+        for page in pages:
+            target.attach_page(page)
+            assert target._infoid.title == page.get_infoid().title
+            assert target._pages[id(page)] is page
+        assert len(pages) == len(target._pages)
+
+    def test_attach_page_warn(
+            self, factory_page_sheet, PatchLogger, monkeypatch):
+        """Confirm page addition.
+        Case: page attached initially
         """
         # Setup
-        # Test
-#         assert False
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
-    def test_delete_sheet(self, patch_observer_sheet):
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        assert pages[0].get_infoid().title != target._infoid.title
+        for page in pages:
+            target.attach_page(page)
+        assert N_PAGES == len(target._pages)
+        I_DUPLIDATE = 1
+        page_dup = pages[I_DUPLIDATE]
+
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Duplicate page: {} (Sheet.attach_page)'
+            ''.format(hex(id(page_dup))))
+        # Test
+        target.attach_page(page_dup)
+        assert len(pages) == len(target._pages)
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
+
+    def test_delete(self, monkeypatch, factory_page_sheet):
         """Confirm notifications and removals."""
         # Setup
-        N_OBS = 3
-        observers = [patch_observer_sheet() for _ in range(N_OBS)]
-        N_CALLS = 1
-        target = MSHEET.Sheet()
-        for obs in observers:
-            target.add_observer(obs)
+        class PatchDetach:
+            def __init__(self): self.n_calls = 0
+
+            def detach(self): self.n_calls += 1
+
+        patch_detach = PatchDetach()
+        monkeypatch.setattr(
+            VSHEET.PageSheet, 'detach', patch_detach.detach)
+
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        TITLE_DETACHED = ''
+
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            target.attach_page(page)
+        assert N_PAGES == len(target._pages)
         # Test
         target.delete()
-        assert 0 == len(target._observers)
-        for obs in observers:
-            assert N_CALLS == obs.n_delete_model
+        assert not target._pages
+        for page in pages:
+            assert TITLE_DETACHED == page.get_infoid().title
+        assert N_PAGES == patch_detach.n_calls
 
-    def test_remove_observer(self, patch_observer_sheet):
-        """Confirm removal of observer.
-        Case: remove observer
+    def test_detach_page(self, factory_page_sheet):
+        """Confirm page removal.
+        Case: page attached initially
         """
         # Setup
-        N_OBS = 3
-        observers = [patch_observer_sheet() for _ in range(N_OBS)]
-        target = MSHEET.Sheet()
-        for obs in observers:
-            target.add_observer(obs)
-        I_OBS_T = 1
-        obs_t = observers.pop(I_OBS_T)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        TITLE_DETACHED = ''
+
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        assert pages[0].get_infoid().title != target._infoid.title
+        for page in pages:
+            target.attach_page(page)
+        I_REMOVE = 1
+        page_rem = pages.pop(I_REMOVE)
         # Test
-        target.remove_observer(obs_t)
-        assert (N_OBS - 1) == len(target._observers)
-        for obs in observers:
-            assert target._observers[id(obs)] is obs
+        target.detach_page(page_rem)
+        assert TITLE_MODEL == target._infoid.title
+        assert TITLE_DETACHED == page_rem.get_infoid().title
+        assert len(pages) == len(target._pages)
+        for page in pages:
+            assert target._pages[id(page)] is page
 
-    def test_remove_observer_missing(self):
-        """Confirm removal of observer.
-        Case log missing observer
-        """
+    def test_detach_page_views(self, factory_page_sheet):
+        """Confirm removal of views."""
         # Setup
+        TITLE_DETACHED = ''
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+
+        page = factory_page_sheet()
+        target.attach_page(page)
         # Test
-#         assert False
+        target._detach_page_views(page)
+        assert TITLE_MODEL == target._infoid.title
+        assert TITLE_DETACHED == page.get_infoid().title
 
-    def test_unsaved_changes(self):
-        """Confirm change report.
-        Case: no unsaved changes
-        Case: some uncaved change
-        # Test: no unsaved changes
-        # Test: some uncaved change
+    def test_detach_page_warn(
+            self, factory_page_sheet, PatchLogger, monkeypatch):
+        """Confirm page removal.
+        Case: page not attached initially
         """
         # Setup
-        target = MSHEET.Sheet()
-        # Test: no unsaved changes
-        assert not target.unsaved_changes()
-        # Test: some uncaved change
-        target._unsaved_changes = True
-        assert target.unsaved_changes()
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        assert pages[0].get_infoid().title != target._infoid.title
+        for page in pages:
+            target.attach_page(page)
+        I_DUPLICATE = 1
+        page_dup = pages.pop(I_DUPLICATE)
+        target.detach_page(page_dup)
+        assert len(pages) == len(target._pages)
+
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Missing page: {} (Sheet.detach_page)'
+            ''.format(hex(id(page_dup))))
+        # Test
+        target.detach_page(page_dup)
+        assert len(pages) == len(target._pages)
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
+
+    def test_is_fresh(self):
+        """Confirm return is accurate.
+
+        #. Case: Sheet stale, identification information fresh
+        #. Case: Sheet fresh, identification information stale
+        #. Case: Sheet fresh, identification information fresh
+        """
+        # Setup
+        TEXT_TITLE = 'Something completely different'
+        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        # Test: InfoId stale, identification information fresh
+        target._stale = True
+        target._infoid.set_fresh()
+        assert not target.is_fresh()
+        assert target._stale
+        # Test: InfoId fresh, identification information stale
+        target._stale = False
+        target._infoid.set_stale()
+        assert not target.is_fresh()
+        assert target._stale
+        # Test: InfoId fresh, identification information fresh
+        assert not target.is_fresh()
+        target._stale = False
+        target._infoid.set_fresh()
+        assert target.is_fresh()
+        assert not target._stale
+
+    def test_is_stale(self):
+        """Confirm return is accurate.
+
+        #. Case: Sheet stale, identification information fresh
+        #. Case: Sheet fresh, identification information stale
+        #. Case: Sheet fresh, identification information fresh
+        """
+        # Setup
+        TEXT_TITLE = 'Something completely different'
+        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        # Test: Sheet stale, identification information fresh
+        target._stale = True
+        target._infoid.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, identification information stale
+        target._stale = False
+        target._infoid.set_stale()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, identification information fresh
+        target._stale = False
+        target._infoid.set_fresh()
+        assert not target.is_stale()
+        assert not target._stale
+
+    def test_set_fresh(self):
+        """Confirm all attributes set.
+
+        #. Case: Sheet fresh, identification information fresh
+        #. Case: Sheet stale, identification information fresh
+        #. Case: Sheet fresh, identification information stale
+        #. Case: Sheet stale, identification information stale
+         """
+        # Setup
+        TEXT_TITLE = 'Something completely different'
+        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        # Test: Sheet fresh, identification information fresh
+        target._stale = False
+        target._infoid.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._infoid.is_fresh()
+        # Test: Sheet stale, identification information fresh
+        target._stale = True
+        target._infoid.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._infoid.is_fresh()
+        # Test: Sheet fresh, identification information stale
+        target._stale = False
+        target._infoid.set_stale()
+        target.set_fresh()
+        assert not target._stale
+        assert target._infoid.is_fresh()
+        # Test: Sheet stale, identification information stale
+        target._stale = True
+        target._infoid.set_stale()
+        target.set_fresh()
+        assert not target._stale
+        assert target._infoid.is_fresh()
+
+    def test_set_stale(self):
+        """Confirm all attributes set.
+
+        #. Case: Sheet fresh, identification information fresh
+        #. Case: Sheet stale, identification information fresh
+        #. Case: Sheet fresh, identification information stale
+        #. Case: Sheet stale, identification information stale
+         """
+        # Setup
+        TEXT_TITLE = 'Something completely different'
+        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        # Test: Sheet fresh, identification information fresh
+        target._stale = False
+        target._infoid.set_fresh()
+        target.set_stale()
+        assert target._stale
+        assert target._infoid.is_fresh()
+        # Test: Sheet stale, identification information fresh
+        target._stale = True
+        target._infoid.set_fresh()
+        target.set_stale()
+        assert target._stale
+        assert target._infoid.is_fresh()
+        # Test: Sheet fresh, identification information stale
+        target._stale = False
+        target._infoid.set_stale()
+        target.set_stale()
+        assert target._stale
+        assert target._infoid.is_stale()
+        # Test: Sheet stale, identification information stale
+        target._stale = True
+        target._infoid.set_stale()
+        target.set_stale()
+        assert target._stale
+        assert target._infoid.is_stale()

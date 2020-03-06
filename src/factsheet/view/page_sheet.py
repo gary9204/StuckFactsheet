@@ -1,7 +1,6 @@
 """
-Maintains presentation of factsheet in a window.
+Defines class to display Factsheet document in a window.
 """
-
 import gi   # type: ignore[import]
 import logging
 import typing   # noqa
@@ -21,29 +20,31 @@ logger.debug('Imported View Sheet module.')
 # logger.propagate = True
 
 
-class PageSheet(VINFOID.ViewInfoId):
-    """Presentation window for a fact sheet.
+# class PageSheet(VINFOID.ViewInfoId):
 
-    View class Sheet maintains presentation of a factsheet.  The
-    presentation consists of the collection of topics a user selects
-    along with descriptive information for the factsheet.  The class
-    implements methods to maintain the presentation in response to user
-    actions (such as finding a topic or going to the table of contents
-    for the factsheet).
+class PageSheet:
+    """Displays Factsheet document and translates user actions.
+
+    Class `PageSheet` maintains presentation of a Factsheet.  The class
+    displays the content of a factsheet model.  It translates a user's
+    actions at the user interface into requests to update the model and
+    its presentation.
 
     :param px_app: application to which factsheet belongs
     :param kwargs: superclass keyword parameters
     """
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
-    def __init__(self, *, px_app: Gtk.Application, **kwargs):
+    def __init__(self, *, px_app: Gtk.Application):
         self._control = None
-
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
         self._window.set_application(px_app)
-        super().__init__(get_object, **kwargs)
+        self._infoid = VINFOID.ViewInfoId(get_object)
+        self._window.show_all()
+
+        _id = self._window.connect('delete-event', self.on_close_view)
 
         UI.new_action_active_dialog(self._window, 'show_about_app',
                                     self.on_show_dialog, UI.ABOUT_APP)
@@ -52,14 +53,14 @@ class PageSheet(VINFOID.ViewInfoId):
         UI.new_action_active_dialog(self._window, 'show_intro_app',
                                     self.on_show_dialog, UI.INTRO_APP)
 
-        _id = self._window.connect('delete-event', self.on_close_view)
-
-        self._window.show_all()
-
     def detach(self):
         """Stop observing model and close view.
         """
         raise NotImplementedError
+
+    def get_infoid(self) -> VINFOID.ViewInfoId:
+        """Return view of factsheet identification information."""
+        return self._infoid
 
     def on_close_view(self, _widget: Gtk.Widget, _event: Gdk.Event):
         """Act on request to close view.

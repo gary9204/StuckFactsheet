@@ -37,7 +37,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="ui_title_page_head">
+              <object class="GtkEntry" id="ui_title_infoid">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="text" translatable="yes">Sheet title</property>
