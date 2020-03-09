@@ -10,7 +10,7 @@ from factsheet.abc_types import abc_factory as ABC_FACTORY
 
 
 class TestFactoryInfoId:
-    """Unit tests for abstract factory :class:`.FactoryInfoId`."""
+    """Unit tests for abstract factory :class:`~.abc_factory.FactoryInfoId`."""
 
     def test_abstract_class(self):
         """Confirm the factory class is abstract."""

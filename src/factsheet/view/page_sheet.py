@@ -5,6 +5,7 @@ import gi   # type: ignore[import]
 import logging
 import typing   # noqa
 
+from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
@@ -22,7 +23,7 @@ logger.debug('Imported View Sheet module.')
 
 # class PageSheet(VINFOID.ViewInfoId):
 
-class PageSheet:
+class PageSheet(ABC_SHEET.InterfacePageSheet):
     """Displays Factsheet document and translates user actions.
 
     Class `PageSheet` maintains presentation of a Factsheet.  The class
@@ -35,7 +36,7 @@ class PageSheet:
     """
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
-    def __init__(self, *, px_app: Gtk.Application):
+    def __init__(self, *, px_app: Gtk.Application) -> None:
         self._control = None
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
@@ -46,6 +47,11 @@ class PageSheet:
 
         _id = self._window.connect('delete-event', self.on_close_view)
 
+        UI.new_action_active(
+            self._window, 'new_sheet', self.on_new_sheet)
+        UI.new_action_active(
+            self._window, 'open_page_sheet', self.on_open_page)
+
         UI.new_action_active_dialog(self._window, 'show_about_app',
                                     self.on_show_dialog, UI.ABOUT_APP)
         UI.new_action_active_dialog(self._window, 'show_help_app',
@@ -53,7 +59,7 @@ class PageSheet:
         UI.new_action_active_dialog(self._window, 'show_intro_app',
                                     self.on_show_dialog, UI.INTRO_APP)
 
-    def detach(self):
+    def detach(self) -> None:
         """Stop observing model and close view.
         """
         raise NotImplementedError
@@ -62,7 +68,8 @@ class PageSheet:
         """Return view of factsheet identification information."""
         return self._infoid
 
-    def on_close_view(self, _widget: Gtk.Widget, _event: Gdk.Event):
+    def on_close_view(
+            self, _widget: Gtk.Widget, _event: Gdk.Event) -> None:
         """Act on request to close view.
 
         A user may ask to close the last factsheet view when there are
@@ -70,30 +77,39 @@ class PageSheet:
         cancel the request.  Close unconditionally if no changes would
         be lost.
         """
-        raise NotImplementedError
         assert self._control is not None
         allowed = self._control.detach_view_safe(self)
         if allowed:
             return not UI.CANCEL_GTK    # Stub - unconditional close
 
-    def on_delete_sheet(self):
+    def on_delete_sheet(self, _action: Gio.SimpleAction,
+                        _target: GLib.Variant) -> None:
         """Act on request to delete factsheet."""
         raise NotImplementedError
 
-    def on_load_sheet(self):
+    def on_load_sheet(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
         """Act on request to load a factsheet from file."""
         raise NotImplementedError
 
-    def on_new_sheet(self):
+    def on_new_sheet(self, _action: Gio.SimpleAction,
+                     _target: GLib.Variant) -> None:
         """Act on request to create a new factsheet with default contents."""
-        raise NotImplementedError
+        app = self._window.get_application()
+        _control = PageSheet.new_factsheet(px_app=app)
 
-    def on_open_view(self):
+    def on_open_page(self, _action: Gio.SimpleAction,
+                     _target: GLib.Variant) -> None:
         """Act on request to open another view of factsheet."""
-        raise NotImplementedError
+        assert self._control is not None
+        app = self._window.get_application()
+        page = PageSheet(px_app=app)
+        self._control.attach_page(page)
+        page._control = self._control
 
     def on_show_dialog(self, _action: Gio.SimpleAction,
-                       _target: GLib.Variant, px_dialog: Gtk.Dialog):
+                       _target: GLib.Variant, px_dialog: Gtk.Dialog
+                       ) -> None:
         """Display informational dialog.
 
         :param px_dialog: informational dialog.
@@ -109,15 +125,15 @@ class PageSheet:
         raise NotImplementedError
 
     @classmethod
-    def new_factsheet(cls, px_app: Gtk.Application):
+    def new_factsheet(cls, px_app: Gtk.Application) -> CSHEET.Sheet:
         """Create factsheet with default contents.
 
         :param px_app: application to which the factsheet belongs.
         """
-        view = PageSheet(px_app=px_app)
+        page = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.new()
-        control.attach_view(view)
-        view._control = control
+        control.attach_page(page)
+        page._control = control
         return control
 
     def update_name(self):

@@ -7,24 +7,27 @@ import factsheet.abc_types.abc_sheet as ABC_SHEET
 
 
 class TestFactoryInfoId:
-    """Unit tests for interface :class:`.InterfaceSignalsSheet`."""
+    """Unit tests for interface :class:`.InterfacePageSheet`."""
 
     def test_abstract_class(self):
         """Confirm the interface class is abstract."""
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = ABC_SHEET.InterfaceSignalsSheet()
+            _ = ABC_SHEET.InterfacePageSheet()
 
     @pytest.mark.parametrize('name_method', [
         'detach',
+        'get_infoid',
         'update_name',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchFactory(ABC_SHEET.InterfaceSignalsSheet):
+        class PatchFactory(ABC_SHEET.InterfacePageSheet):
             def detach(self): super().detach()
+
+            def get_infoid(self): super().get_infoid()
 
             def update_name(self): super().update_name()
 

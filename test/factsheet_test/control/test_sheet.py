@@ -1,8 +1,7 @@
 """
-factsheet_test.control.test_sheet - unit tests for control class Sheet.
+Unit tests for class that mediates from :mod:`~factsheet.view` to
+:mod:`~factsheet.model` of a factsheet
 """
-
-
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_sheet as ASHEET
@@ -20,43 +19,79 @@ class TestControlSheet:
         target = CSHEET.Sheet()
         assert target._model is None
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_attach_view(self):
-        """Confirm observer addition."""
+    def test_attach_page(self, monkeypatch):
+        """Confirm page addition."""
         # Setup
-        # Test
+        class PatchModel:
+            def __init__(self): self.called = False
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_delete(self):
+            def attach_page(self, _page): self.called = True
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'attach_page', patch_model.attach_page)
+
+        target = CSHEET.Sheet.new()
+        # Test
+        target.attach_page(None)
+        assert patch_model.called
+
+    def test_delete_force(self, monkeypatch):
         """Confirm unconditional deletion."""
         # Setup
+        class PatchModel:
+            def __init__(self): self.called = False
+
+            def delete(self): self.called = True
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'delete', patch_model.delete)
+
+        target = CSHEET.Sheet.new()
         # Test
+        target.delete_force()
+        assert patch_model.called
 
     @pytest.mark.skip(reason='Pending implementation')
-    def test_delete_safe(self):
+    def test_delete_safe(self, monkeypatch):
         """Confirm deletion with guard for unsaved changes.
         Case: no unsaved changes
         Case: unsaved changes
         """
         # Setup
-        # Test
+        class PatchModel:
+            def __init__(self): self.called = False
+
+            def delete(self): self.called = True
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'delete', patch_model.delete)
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'is_stale', lambda: False)
+
+        target = CSHEET.Sheet.new()
+        response = target.delete_safe()
+        assert ASHEET.ALLOWED
+        assert patch_model.called
 
     @pytest.mark.skip(reason='Pending implementation')
-    def test_detach_view(self):
+    def test_detach_page(self):
         """Confirm observer deletion."""
         # Setup
         # Test
 
-    def test_detach_view_safe(self):
+    def test_detach_page_safe(self):
         """Confirm observer deletion with guard for unsaved changes.
         Case: no unsaved changes
-        Case: unsaved changes, multiple views
-        Case: unsaved changes, single view
+        Case: unsaved changes, multiple pages
+        Case: unsaved changes, single page
         """
         # Setup
         target = CSHEET.Sheet()
         # Test
-        assert target.detach_view_safe(None) is ASHEET.ALLOWED
+        assert target.detach_page_safe(None) is ASHEET.ALLOWED
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_load(self):

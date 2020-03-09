@@ -6,7 +6,8 @@ import typing   # noqa
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.model import infoid as MINFOID
-from factsheet.view import page_sheet as VSHEET
+# from factsheet.view import page_sheet as VSHEET
+from factsheet.abc_types import abc_sheet as ABC_SHEET
 
 logger = logging.getLogger('Main.model.sheet')
 
@@ -26,11 +27,11 @@ class Sheet(ABC_INFOID.InterfaceStaleFile):
 
     def __init__(self, *, p_title: str = '') -> None:
         self._stale = False
-        self._pages: typing.Dict[int, VSHEET.PageSheet] = dict()
+        self._pages: typing.Dict[int, ABC_SHEET.InterfacePageSheet] = dict()
         self._infoid = MINFOID.InfoId(
             p_aspect=self.ASPECT, p_title=p_title)
 
-    def attach_page(self, pm_page: VSHEET.PageSheet) -> None:
+    def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Add page to update display when sheet changes.
 
         Log warning when requested page is already attached.
@@ -55,7 +56,7 @@ class Sheet(ABC_INFOID.InterfaceStaleFile):
             self._detach_page_views(page)
             page.detach()
 
-    def detach_page(self, pm_page: VSHEET.PageSheet) -> None:
+    def detach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Remove one page from sheet.
 
         Log warning when requested page is not attached.
@@ -74,7 +75,8 @@ class Sheet(ABC_INFOID.InterfaceStaleFile):
 
         self._detach_page_views(pm_page)
 
-    def _detach_page_views(self, pm_page: VSHEET.PageSheet) -> None:
+    def _detach_page_views(
+            self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """For each sheet component, remove the view for the component.
 
         :param pm_page: page with views to remove.
@@ -104,6 +106,10 @@ class Sheet(ABC_INFOID.InterfaceStaleFile):
             return True
 
         return False
+
+    def n_pages(self) -> int:
+        """Return number of pages attached to factsheet."""
+        return len(self._pages)
 
     def set_fresh(self) -> None:
         """Mark factsheet in memory consistent with file contents."""

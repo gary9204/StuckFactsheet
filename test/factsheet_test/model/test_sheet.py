@@ -252,6 +252,21 @@ class TestSheet:
         assert not target.is_stale()
         assert not target._stale
 
+    def test_n_pages(self, factory_page_sheet):
+        """Confrim reported number of pages."""
+        # Setup
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        assert pages[0].get_infoid().title != target._infoid.title
+        # Test
+        for i, page in enumerate(pages):
+            assert i == target.n_pages()
+            target.attach_page(page)
+        assert N_PAGES == target.n_pages()
+
     def test_set_fresh(self):
         """Confirm all attributes set.
 

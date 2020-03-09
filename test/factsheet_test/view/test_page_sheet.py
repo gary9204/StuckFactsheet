@@ -46,6 +46,9 @@ class TestSheet:
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
         assert TEST_TITLE_UI == target._infoid.title
 
+        assert target._window.lookup_action('open_page_sheet') is not None
+        assert target._window.lookup_action('new_sheet') is not None
+
         assert target._window.lookup_action('show_about_app') is not None
         assert target._window.lookup_action('show_help_app') is not None
         assert target._window.lookup_action('show_intro_app') is not None
@@ -146,19 +149,44 @@ class TestSheet:
         # Test
         pass
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_on_new_sheet(self):
+    def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm response to request to create default factsheet."""
         # Setup
-        # Test
-        pass
+        class PatchNew:
+            def __init__(self): self.called = False
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_on_open_view(self):
+            def new_factsheet(self, px_app):
+                _ = px_app
+                self.called = True
+
+        patch_new = PatchNew()
+        monkeypatch.setattr(
+            VSHEET.PageSheet, 'new_factsheet', patch_new.new_factsheet)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        target.on_new_sheet(None, None)
+        assert patch_new.called
+
+    def test_on_open_page(self, patch_factsheet, capfd):
         """Confirm response to request to open new view."""
         # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        control = CSHEET.Sheet.new()
+        target._control = control
         # Test
-        pass
+        target.on_open_page(None, None)
+        assert 1 == control._model.n_pages()
 
     def test_on_show_dialog(self, patch_factsheet, capfd, monkeypatch):
         """Confirm handler runs dialog.
@@ -198,15 +226,14 @@ class TestSheet:
         # Test
         pass
 
-    @pytest.mark.skip(reason='Updating to PageHead')
     def test_new_factsheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm factsheet creation with default contents."""
         # Setup
-        def patch_attach_view(self, px_view):
-            self.view = px_view
+        def patch_attach_page(self, pm_view):
+            self.view = pm_view
 
         monkeypatch.setattr(
-            CSHEET.Sheet, 'attach_view', patch_attach_view)
+            CSHEET.Sheet, 'attach_page', patch_attach_page)
         factsheet = patch_factsheet()
 
         target = VSHEET.PageSheet(px_app=factsheet)
