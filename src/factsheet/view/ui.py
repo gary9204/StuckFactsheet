@@ -7,8 +7,11 @@ Defines constants, functions, and objects for user interface elements.
 
 .. data:: CANCEL_GTK
 
-   Value to cancel processing of a GTK signal.  For example, see
-   GtkWidget `delete-event`_ signal.
+   Value to cancel processing of a GtkWidget `delete-event`_ signal.
+
+.. data:: CLOSE_GTK
+
+   Value to continue processing of a GtkWidget `delete-event`_ signal.
 
 .. _delete-event:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Widget.html
@@ -31,8 +34,6 @@ Defines constants, functions, and objects for user interface elements.
    Factsheet Introduction dialog.
 
 """
-
-
 import typing
 
 from pathlib import Path
@@ -45,7 +46,9 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
-CANCEL_GTK = True
+
+CLOSE_GTK = False
+CANCEL_GTK = not CLOSE_GTK
 
 DIR_UI = Path(__file__).parent / 'ui'
 

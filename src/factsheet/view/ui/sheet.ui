@@ -75,78 +75,6 @@
   <object class="GtkPopoverMenu" id="context_menu_sheet">
     <property name="can_focus">False</property>
     <child>
-      <object class="GtkBox" id="menu_sheet">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">&lt;i&gt;Factsheet Menu&lt;/i&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="show_submenu_display">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes">Display ...</property>
-            <property name="menu_name">submenu1</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="show_submenu_file">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes">File ...</property>
-            <property name="menu_name">submenu2</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="show_help_sheet">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">win.show_help_sheet</property>
-            <property name="text" translatable="yes">Help</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">5</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="submenu">main</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkBox" id="submenu_display">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -194,6 +122,20 @@
           </packing>
         </child>
         <child>
+          <object class="GtkModelButton" id="display_close_window">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.close_page_sheet</property>
+            <property name="text" translatable="yes">Close window</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkModelButton" id="display_help">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -204,11 +146,8 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
       <packing>
@@ -281,6 +220,78 @@
       <packing>
         <property name="submenu">submenu2</property>
         <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="menu_sheet">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">&lt;i&gt;Factsheet Menu&lt;/i&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="show_submenu_display">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Display ...</property>
+            <property name="menu_name">submenu1</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="show_submenu_file">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">File ...</property>
+            <property name="menu_name">submenu2</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="show_help_sheet">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.show_help_sheet</property>
+            <property name="text" translatable="yes">Help</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">3</property>
       </packing>
     </child>
   </object>
@@ -631,7 +642,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">&lt;i&gt;Cancel the close or discard changes?&lt;/i&gt;</property>
+                <property name="label" translatable="yes">&lt;i&gt;Cancel close or continue to close and discard changes?&lt;/i&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="justify">center</property>
                 <property name="wrap">True</property>

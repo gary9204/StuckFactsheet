@@ -42,9 +42,9 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
     def __init__(self, p_text: str = ''):
         self._buffer = Gtk.EntryBuffer(text=p_text)
         _ = self._buffer.connect(
-            'deleted-text', lambda *_a: self.set_stale)
+            'deleted-text', lambda *_a: self.set_stale())
         _ = self._buffer.connect(
-            'inserted-text', lambda *_a: self.set_stale)
+            'inserted-text', lambda *_a: self.set_stale())
         self._stale = False
         self._views: typing.Dict[int, Gtk.Entry] = dict()
 
@@ -60,9 +60,9 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
             text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
         _ = self._buffer.connect(
-            'deleted-text', lambda *_a: self.set_stale)
+            'deleted-text', lambda *_a: self.set_stale())
         _ = self._buffer.connect(
-            'inserted-text', lambda *_a: self.set_stale)
+            'inserted-text', lambda *_a: self.set_stale())
         self._stale = False
         self._views = dict()
 

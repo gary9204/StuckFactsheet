@@ -4,9 +4,31 @@ Unit tests for class that mediates from :mod:`~factsheet.view` to
 """
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.model import sheet as MSHEET
+
+
+@pytest.fixture
+def patch_model_safe():
+    class PatchSafe(MSHEET.Sheet):
+        def __init__(self, p_stale, p_n_pages):
+            super().__init__()
+            self._stale = p_stale
+            self._n_pages = p_n_pages
+            self.n_delete = 0
+            self.n_detach = 0
+
+        def n_pages(self) -> int:
+            return self._n_pages
+
+        def delete(self):
+            self.n_delete += 1
+
+        def detach_page(self, _view):
+            self.n_detach += 1
+
+    return PatchSafe
 
 
 class TestControlSheet:
@@ -71,27 +93,64 @@ class TestControlSheet:
         monkeypatch.setattr(
             MSHEET.Sheet, 'is_stale', lambda: False)
 
-        target = CSHEET.Sheet.new()
-        response = target.delete_safe()
-        assert ASHEET.ALLOWED
+        # target = CSHEET.Sheet.new()
+        # update in progress
+        # response = target.delete_safe()
         assert patch_model.called
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_detach_page(self):
-        """Confirm observer deletion."""
+    def test_detach_page_force(self, patch_model_safe):
+        """Confirm page removed unconditionally."""
         # Setup
+        patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
+        target = CSHEET.Sheet()
+        target._model = patch_model
+        N_DETACH = 1
         # Test
+        target.detach_page_force(None)
+        assert N_DETACH == patch_model.n_detach
 
-    def test_detach_page_safe(self):
-        """Confirm observer deletion with guard for unsaved changes.
-        Case: no unsaved changes
+    def test_detach_page_safe_fresh(self, patch_model_safe):
+        """Confirm page removed with guard for unsaved changes.
         Case: unsaved changes, multiple pages
         Case: unsaved changes, single page
         """
         # Setup
+        patch_model = patch_model_safe(p_stale=False, p_n_pages=1)
         target = CSHEET.Sheet()
+        target._model = patch_model
+        N_DETACH = 1
         # Test
-        assert target.detach_page_safe(None) is ASHEET.ALLOWED
+        assert target.detach_page_safe(None) is (
+            ABC_SHEET.EffectSafe.COMPLETED)
+        assert N_DETACH == patch_model.n_detach
+
+    def test_detach_page_safe_stale_multiple(self, patch_model_safe):
+        """Confirm page removed with guard for unsaved changes.
+        Case: unsaved changes, multiple pages
+        """
+        # Setup
+        patch_model = patch_model_safe(p_stale=True, p_n_pages=2)
+        target = CSHEET.Sheet()
+        target._model = patch_model
+        N_DETACH = 1
+        # Test
+        assert target.detach_page_safe(None) is (
+            ABC_SHEET.EffectSafe.COMPLETED)
+        assert N_DETACH == patch_model.n_detach
+
+    def test_detach_page_safe_stale_single(self, patch_model_safe):
+        """Confirm page removed with guard for unsaved changes.
+        Case: unsaved changes, single page
+        """
+        # Setup
+        patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
+        target = CSHEET.Sheet()
+        target._model = patch_model
+        N_DETACH = 0
+        # Test
+        assert target.detach_page_safe(None) is (
+            ABC_SHEET.EffectSafe.NO_EFFECT)
+        assert N_DETACH == patch_model.n_detach
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_load(self):

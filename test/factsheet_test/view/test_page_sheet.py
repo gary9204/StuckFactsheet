@@ -6,15 +6,46 @@ See :mod:`.page_sheet`.
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_sheet as ASHEET
+from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.view import page_sheet as VSHEET
+from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+@pytest.fixture
+def patch_control_safe():
+    class PatchSafe(CSHEET.Sheet):
+        def __init__(self, p_effect):
+            super().__init__()
+            self.n_delete_force = 0
+            self.n_delete_safe = 0
+            self.n_detach_force = 0
+            self.n_detach_safe = 0
+            self.effect = p_effect
+
+        def delete_force(self, _view):
+            self.n_delete_force += 1
+            return self.effect
+
+        def delete_safe(self, _view):
+            self.n_delete_safe += 1
+            return self.effect
+
+        def detach_page_force(self, _view):
+            self.n_detach_force += 1
+            return self.effect
+
+        def detach_page_safe(self, _view):
+            self.n_detach_safe += 1
+            return self.effect
+
+    return PatchSafe
 
 
 class TestSheet:
@@ -46,8 +77,11 @@ class TestSheet:
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
         assert TEST_TITLE_UI == target._infoid.title
 
-        assert target._window.lookup_action('open_page_sheet') is not None
+        assert isinstance(target._dialog_warn, Gtk.Dialog)
+
+        assert target._window.lookup_action('close_page_sheet') is not None
         assert target._window.lookup_action('new_sheet') is not None
+        assert target._window.lookup_action('open_page_sheet') is not None
 
         assert target._window.lookup_action('show_about_app') is not None
         assert target._window.lookup_action('show_help_app') is not None
@@ -94,38 +128,77 @@ class TestSheet:
         # Test
         assert target._infoid is target.get_infoid()
 
-    @pytest.mark.skip(reason='Updating to PageHead')
-    def test_on_close_view(self, patch_factsheet, capfd):
-        """Confirm response to request to close view.
-        Case: close allowed
-        Case: close disallowed, user approves close
-        Case: close disallowed, user cancels close
+    def test_on_close_page_safe(
+            self, patch_factsheet, capfd, patch_control_safe):
+        """Confirm response to request to close page.
+        Case: safe to close
         """
         # Setup
-        class PatchDetachViewSafe(CSHEET.Sheet):
-            def __init__(self, p_result):
-                super().__init__()
-                self.n_calls = 0
-                self.result = p_result
-
-            def detach_view_safe(self, _view):
-                self.n_calls += 1
-                return self.result
-
         factsheet = patch_factsheet()
-
         target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        control = PatchDetachViewSafe(ASHEET.ALLOWED)
+        control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
         target._control = control
-        N_CALLS = 1
+        N_CALLS_SAFE = 1
+        N_CALLS_FORCE = 0
+        # Test
+        assert target.on_close_page(None, None) is UI.CLOSE_GTK
+        assert N_CALLS_SAFE == control.n_detach_safe
+        assert N_CALLS_FORCE == control.n_delete_force
+
+    def test_on_close_page_cancel(
+            self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
+        """Confirm response to request to close page.
+        Case: not safe to close, user cancels close
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        monkeypatch.setattr(
+            Gtk.Dialog, 'run', lambda _self: Gtk.ResponseType.CANCEL)
+
+        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        target._control = control
+        N_CALLS_SAFE = 1
+        N_CALLS_FORCE = 0
         # Test -- stub
-        assert target.on_close_view(None, None) is ASHEET.CONTINUE_GTK
-        assert N_CALLS == control.n_calls
+        assert target.on_close_page(None, None) is UI.CANCEL_GTK
+        assert N_CALLS_SAFE == control.n_detach_safe
+        assert N_CALLS_FORCE == control.n_detach_force
+
+    def test_on_close_page_discard(
+            self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
+        """Confirm response to request to close page.
+        Case: not safe to close, user approves close
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        monkeypatch.setattr(
+            Gtk.Dialog, 'run', lambda _self: Gtk.ResponseType.APPLY)
+
+        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        target._control = control
+        N_CALLS_SAFE = 1
+        N_CALLS_FORCE = 1
+        # Test -- stub
+        assert target.on_close_page(None, None) is UI.CLOSE_GTK
+        assert N_CALLS_SAFE == control.n_detach_safe
+        assert N_CALLS_FORCE == control.n_detach_force
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_on_delete_sheet(self):

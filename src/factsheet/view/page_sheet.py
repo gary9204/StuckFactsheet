@@ -45,8 +45,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._infoid = VINFOID.ViewInfoId(get_object)
         self._window.show_all()
 
-        _id = self._window.connect('delete-event', self.on_close_view)
+        self._dialog_warn = get_object('ui_dialog_warn_data_loss')
+        self._warning = get_object('ui_warning_data_loss')
 
+        _id = self._window.connect('delete-event', self.on_close_page)
+
+        UI.new_action_active(self._window, 'close_page_sheet',
+                             lambda _w, _e: self._window.close())
         UI.new_action_active(
             self._window, 'new_sheet', self.on_new_sheet)
         UI.new_action_active(
@@ -68,23 +73,44 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """Return view of factsheet identification information."""
         return self._infoid
 
-    def on_close_view(
-            self, _widget: Gtk.Widget, _event: Gdk.Event) -> None:
+    def on_close_page(
+            self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
         """Act on request to close view.
 
-        A user may ask to close the last factsheet view when there are
-        unsaved changes.  If so, get user's approval before closing or
-        cancel the request.  Close unconditionally if no changes would
-        be lost.
+        A user may ask to close the last factsheet page when there are
+        unsaved changes.  If so, the method gets user's approval before
+        closing or cancels the request.  The method closes the page
+        unconditionally if no changes would be lost.
+
+        :returns: :data:`CANCEL_GTK` when user cancels page close.
+        :returns: :data:`CLOSE_GTK` when user approves page close.
         """
         assert self._control is not None
-        allowed = self._control.detach_view_safe(self)
-        if allowed:
-            return not UI.CANCEL_GTK    # Stub - unconditional close
+        effect = self._control.detach_page_safe(self)
+        if effect is ABC_SHEET.EffectSafe.COMPLETED:
+            return UI.CLOSE_GTK
+
+        self._warning.set_markup(
+            'Factsheet "<b>{}</b>" contains unsaved changes.  All unsaved '
+            'changes will be discarded if you close.'
+            ''.format('Unnamed'))
+        response = self._dialog_warn.run()
+        self._dialog_warn.hide()
+        if response == Gtk.ResponseType.APPLY:
+            self._control.detach_page_force(self)
+            return UI.CLOSE_GTK
+
+        return UI.CANCEL_GTK
 
     def on_delete_sheet(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
-        """Act on request to delete factsheet."""
+        """Act on request to delete factsheet.
+
+        A user may ask to close a factsheet when there are unsaved
+        changes.  If so, the method gets user's approval before closing
+        or cancels the request.  The method closes the factsheet
+        unconditionally if no changes would be lost.
+        """
         raise NotImplementedError
 
     def on_load_sheet(self, _action: Gio.SimpleAction,
