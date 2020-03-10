@@ -75,7 +75,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
-        """Act on request to close view.
+        """Close page gurading against data loss.
 
         A user may ask to close the last factsheet page when there are
         unsaved changes.  If so, the method gets user's approval before
@@ -94,6 +94,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             'Factsheet "<b>{}</b>" contains unsaved changes.  All unsaved '
             'changes will be discarded if you close.'
             ''.format('Unnamed'))
+        self._dialog_warn.set_transient_for(self._window)
         response = self._dialog_warn.run()
         self._dialog_warn.hide()
         if response == Gtk.ResponseType.APPLY:
@@ -126,7 +127,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def on_open_page(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
-        """Act on request to open another view of factsheet."""
+        """Open another view of factsheet."""
         assert self._control is not None
         app = self._window.get_application()
         page = PageSheet(px_app=app)
@@ -140,8 +141,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         :param px_dialog: informational dialog.
         """
-        app = self._window.get_application()
-        px_dialog.set_transient_for(app.get_windows()[0])
+        px_dialog.set_transient_for(self._window)
         _ = px_dialog.run()
         px_dialog.hide()
 
