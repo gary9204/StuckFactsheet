@@ -87,6 +87,10 @@ class TestSheet:
         assert target._window.lookup_action('show_help_app') is not None
         assert target._window.lookup_action('show_intro_app') is not None
 
+        assert target._window.lookup_action('show_help_sheet') is not None
+        assert target._window.lookup_action(
+            'show_help_sheet_display') is not None
+
         assert target._window.is_visible()
 
     def test_init_signals(self, patch_factsheet, capfd):

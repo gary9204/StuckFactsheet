@@ -18,10 +18,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.VSHEET')
 logger.debug('Imported View Sheet module.')
-# logger.propagate = True
 
-
-# class PageSheet(VINFOID.ViewInfoId):
 
 class PageSheet(ABC_SHEET.InterfacePageSheet):
     """Displays Factsheet document and translates user actions.
@@ -45,9 +42,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._infoid = VINFOID.ViewInfoId(get_object)
         self._window.show_all()
 
-        self._dialog_warn = get_object('ui_dialog_warn_data_loss')
-        self._warning = get_object('ui_warning_data_loss')
-
         _id = self._window.connect('delete-event', self.on_close_page)
 
         UI.new_action_active(self._window, 'close_page_sheet',
@@ -63,6 +57,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
                                     self.on_show_dialog, UI.HELP_APP)
         UI.new_action_active_dialog(self._window, 'show_intro_app',
                                     self.on_show_dialog, UI.INTRO_APP)
+
+        UI.new_action_active_dialog(
+            self._window, 'show_help_sheet',
+            self.on_show_dialog, UI.HELP_SHEET)
+        UI.new_action_active_dialog(
+            self._window, 'show_help_sheet_display',
+            self.on_show_dialog, UI.HELP_SHEET_DISPLAY)
 
     def detach(self) -> None:
         """Stop observing model and close view.
@@ -90,13 +91,16 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         if effect is ABC_SHEET.EffectSafe.COMPLETED:
             return UI.CLOSE_GTK
 
-        self._warning.set_markup(
-            'Factsheet "<b>{}</b>" contains unsaved changes.  All unsaved '
-            'changes will be discarded if you close.'
+        dialog_warn = UI.DIALOG_DATA_LOSS
+        dialog_warn.set_transient_for(self._window)
+        warning = UI.WARNING_DATA_LOSS
+        warning.set_markup(
+            'Factsheet "<b>{}</b>" contains unsaved changes.  All'
+            'unsaved changes will be discarded if you close.'
             ''.format('Unnamed'))
-        self._dialog_warn.set_transient_for(self._window)
-        response = self._dialog_warn.run()
-        self._dialog_warn.hide()
+
+        response = dialog_warn.run()
+        dialog_warn.hide()
         if response == Gtk.ResponseType.APPLY:
             self._control.detach_page_force(self)
             return UI.CLOSE_GTK

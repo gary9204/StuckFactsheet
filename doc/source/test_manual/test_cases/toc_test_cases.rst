@@ -2,10 +2,8 @@ Tests Cases
 ===========
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   case_run_app
-   case_app_dialogs
-   case_sheet_new
-   case_page_new
+   toc_app_cases
+   toc_sheet_cases
 
