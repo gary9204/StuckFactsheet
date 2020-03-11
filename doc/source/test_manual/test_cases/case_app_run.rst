@@ -1,4 +1,4 @@
-Case Run application
+Case Application Run
 ====================
 
 **Purpose:** demonstrate starting and stopping Factsheet.
@@ -12,7 +12,7 @@ Steps
 1. a. **Step:** ``python3 -m factsheet.app``
    #. *Expect:* Desktop displays a Factsheet window.
 
-#. a. **Step:** Click close icon (x) in the window header bar.
+#. a. **Step:** Click window **close icon** (window title far right).
    #. *Expect:* Factsheet window closes.
 
 

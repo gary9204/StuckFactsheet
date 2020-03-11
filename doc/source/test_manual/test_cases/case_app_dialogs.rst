@@ -6,49 +6,48 @@ Introduction.
 
 Setup
 -----
-Apply :doc:`../test_helpers/help_start_application`
+None
 
 Steps -- About
 --------------
-1. a. **Step:** Click application menu (title upper right).
-   #. *Expect:* Application Menu appears.
+1. a. **Step:** Start application with
+      :doc:`../test_helpers/help_start_application`
+   #. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Click About menu item.
-   #. *Expect:* About dialog appears.
+#. a. **Step:** Click Application **menu icon > About** (window title on right).
+   #. *Expect:* Application About dialog appears.
 
 #. a. **Step:** Review dialog contents (title, version, text, etc.).
    #. *Expect:* Content is current and correct.
 
-#. a. **Step:** Click dialog close button (title upper right).
-   #. *Expect:* Dialog disappears.
+#. a. **Step:** Click dialog **close icon** (dialog title far right).
+   #. *Expect:* Dialog disappears. Factsheet window reamins.
 
 Steps -- Help
 -------------
-1. a. **Step:** Click application menu (title upper right).
-   #. *Expect:* Application Menu appears.
-
-#. a. **Step:** Click Help menu item.
-   #. *Expect:* Help dialog appears.
+1. a. **Step:** Click Application **menu icon > Help** (window title on right).
+   #. *Expect:* Application Help dialog appears.
 
 #. a. **Step:** Review dialog contents (title, text, etc.).
    #. *Expect:* Content is current and correct.
 
-#. a. **Step:** Click dialog close button (title upper right).
-   #. *Expect:* Dialog disappears.
+#. a. **Step:** Click dialog **close icon** (dialog title far right).
+   #. *Expect:* Dialog disappears. Factsheet window remains.
 
 Steps -- Introduction
 ---------------------
-1. a. **Step:** Click application menu (title upper right).
-   #. *Expect:* Application Menu appears.
-
-#. a. **Step:** Click Introduction menu item.
-   #. *Expect:* Introduction dialog appears.
+1. a. **Step:** Click Application **menu icon > Introduction** (window
+      title on right).
+   #. *Expect:* Application Introduction dialog appears.
 
 #. a. **Step:** Review dialog contents (title, text, etc.).
    #. *Expect:* Content is current and correct.
 
-#. a. **Step:** Click dialog close button (title upper right).
+#. a. **Step:** Click dialog **close icon** (dialog title far right).
    #. *Expect:* Dialog disappears.
+
+#. a. **Step:** Click window **close icon** (window title far right).
+   #. *Expect:* Window disappears and application closes.
 
 Teardown
 --------
