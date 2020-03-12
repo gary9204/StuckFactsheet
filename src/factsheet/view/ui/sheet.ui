@@ -325,7 +325,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">start</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_open">
                 <property name="label" translatable="yes">Open</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -339,7 +339,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkMenuButton">
+              <object class="GtkMenuButton" id="button_recent">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -358,7 +358,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton">
+          <object class="GtkButton" id="button_new">
             <property name="label" translatable="yes"> </property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -374,7 +374,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkMenuButton">
+          <object class="GtkMenuButton" id="button_menu">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -399,7 +399,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">start</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_save">
                 <property name="label" translatable="yes">Save</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -413,7 +413,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_save_as">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

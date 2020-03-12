@@ -218,7 +218,6 @@ class TestAdaptEntryBuffer:
         view_remove = views.pop(N_REMOVE)
         # Test
         target.detach_view(view_remove)
-        assert target._buffer is not view_remove.get_buffer()
         assert len(views) == len(target._views)
         for view in views:
             assert target._buffer is view.get_buffer()

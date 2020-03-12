@@ -77,8 +77,6 @@ class TestSheet:
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
         assert TEST_TITLE_UI == target._infoid.title
 
-        assert isinstance(target._dialog_warn, Gtk.Dialog)
-
         assert target._window.lookup_action('close_page_sheet') is not None
         assert target._window.lookup_action('new_sheet') is not None
         assert target._window.lookup_action('open_page_sheet') is not None

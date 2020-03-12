@@ -93,8 +93,8 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         """
         id_view = id(pm_view)
         try:
-            _ = self._views.pop(id_view)
-            pm_view.set_buffer(Gtk.EntryBuffer())
+            _view = self._views.pop(id_view)
+#             pm_view.set_buffer(Gtk.EntryBuffer())
         except KeyError:
             logger.warning(
                 'Missing view: {} ({}.{})'.format(

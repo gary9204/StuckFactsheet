@@ -1,4 +1,4 @@
-Case New Factsheet
+Case Factsheet New
 ==================
 
 **Purpose:** demonstrate Factsheet creation.

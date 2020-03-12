@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.adapt_gtk import adapt_text as ATEXT
 from factsheet.model import infoid as MINFOID
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
@@ -106,9 +107,19 @@ class TestInfoId:
         target.attach_view(view_infoid)
         assert view_infoid.title == str(target._title)
 
-    def test_detach_view(self, factory_view_infoid, args_infoid_stock):
+    def test_detach_view(self, monkeypatch, factory_view_infoid,
+                         args_infoid_stock):
         """Confirm view removal."""
         # Setup
+        class PatchTextModel:
+            def __init__(self): self.called = False
+
+            def detach_view(self, _v): self.called = True
+
+        patch_text = PatchTextModel()
+        monkeypatch.setattr(ATEXT.AdaptEntryBuffer, 'detach_view',
+                            patch_text.detach_view)
+
         TEXT_TITLE_UI = 'Page title'
         view_infoid = factory_view_infoid()
         assert TEXT_TITLE_UI == view_infoid._view_title.get_text()
@@ -118,8 +129,7 @@ class TestInfoId:
         assert view_infoid._view_title.get_text() == str(target._title)
         # Test
         target.detach_view(view_infoid)
-        assert args_infoid_stock['p_title'] == str(target._title)
-        assert '' == view_infoid._view_title.get_text()
+        assert patch_text.called
 
     def test_is_fresh(self, args_infoid_stock):
         """Confirm return is accurate.

@@ -101,6 +101,7 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
+    @pytest.mark.skip(reason='Implementation in progress.')
     def test_delete(self, monkeypatch, factory_page_sheet):
         """Confirm notifications and removals."""
         # Setup
@@ -129,14 +130,22 @@ class TestSheet:
             assert TITLE_DETACHED == page.get_infoid().title
         assert N_PAGES == patch_detach.n_calls
 
-    def test_detach_page(self, factory_page_sheet):
+    def test_detach_page(self, monkeypatch, factory_page_sheet):
         """Confirm page removal.
         Case: page attached initially
         """
         # Setup
+        class PatchInfoIdModel:
+            def __init__(self): self.called = False
+
+            def detach_view(self, _v): self.called = True
+
+        patch_infoid = PatchInfoIdModel()
+        monkeypatch.setattr(
+            MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
+
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        TITLE_DETACHED = ''
 
         N_PAGES = 3
         pages = [factory_page_sheet() for _ in range(N_PAGES)]
@@ -147,16 +156,23 @@ class TestSheet:
         page_rem = pages.pop(I_REMOVE)
         # Test
         target.detach_page(page_rem)
-        assert TITLE_MODEL == target._infoid.title
-        assert TITLE_DETACHED == page_rem.get_infoid().title
+        assert patch_infoid.called
         assert len(pages) == len(target._pages)
         for page in pages:
             assert target._pages[id(page)] is page
 
-    def test_detach_page_views(self, factory_page_sheet):
+    def test_detach_page_views(self, monkeypatch, factory_page_sheet):
         """Confirm removal of views."""
         # Setup
-        TITLE_DETACHED = ''
+        class PatchInfoIdModel:
+            def __init__(self): self.called = False
+
+            def detach_view(self, _v): self.called = True
+
+        patch_infoid = PatchInfoIdModel()
+        monkeypatch.setattr(
+            MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
+
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
@@ -164,8 +180,7 @@ class TestSheet:
         target.attach_page(page)
         # Test
         target._detach_page_views(page)
-        assert TITLE_MODEL == target._infoid.title
-        assert TITLE_DETACHED == page.get_infoid().title
+        assert patch_infoid.called
 
     def test_detach_page_warn(
             self, factory_page_sheet, PatchLogger, monkeypatch):
