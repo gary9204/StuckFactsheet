@@ -26,8 +26,8 @@ class InterfacePageSheet(abc.ABC):
     """
 
     @abc.abstractmethod
-    def detach(self) -> None:
-        """Respond to notice to detach view from model."""
+    def close_page(self) -> None:
+        """Respond to notice to close_page view from model."""
         raise NotImplementedError
 
     @abc.abstractmethod

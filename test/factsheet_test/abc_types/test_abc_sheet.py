@@ -17,7 +17,7 @@ class TestFactoryInfoId:
             _ = ABC_SHEET.InterfacePageSheet()
 
     @pytest.mark.parametrize('name_method', [
-        'detach',
+        'close_page',
         'get_infoid',
         'update_name',
         ])
@@ -25,7 +25,7 @@ class TestFactoryInfoId:
         """Confirm each method must be overridden."""
         # Setup
         class PatchFactory(ABC_SHEET.InterfacePageSheet):
-            def detach(self): super().detach()
+            def close_page(self): super().close_page()
 
             def get_infoid(self): super().get_infoid()
 

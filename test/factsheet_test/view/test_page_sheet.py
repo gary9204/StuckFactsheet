@@ -29,11 +29,11 @@ def patch_control_safe():
             self.n_detach_safe = 0
             self.effect = p_effect
 
-        def delete_force(self, _view):
+        def delete_force(self):
             self.n_delete_force += 1
             return self.effect
 
-        def delete_safe(self, _view):
+        def delete_safe(self):
             self.n_delete_safe += 1
             return self.effect
 
@@ -46,6 +46,20 @@ def patch_control_safe():
             return self.effect
 
     return PatchSafe
+
+
+@pytest.fixture
+def patch_dialog_warn():
+    class PatchDialog:
+        def __init__(self, p_response):
+            self.called = False
+            self.response = p_response
+
+        def run(self):
+            self.called = True
+            return self.response
+
+    return PatchDialog
 
 
 class TestSheet:
@@ -74,22 +88,36 @@ class TestSheet:
         assert target._control is None
         assert isinstance(target._window, Gtk.ApplicationWindow)
         assert target._window.get_application() is factsheet
+        assert isinstance(target._dialog_data_loss, Gtk.Dialog)
+        assert isinstance(target._warning_data_loss, Gtk.Label)
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
         assert TEST_TITLE_UI == target._infoid.title
 
-        assert target._window.lookup_action('close_page_sheet') is not None
-        assert target._window.lookup_action('new_sheet') is not None
-        assert target._window.lookup_action('open_page_sheet') is not None
-
-        assert target._window.lookup_action('show_about_app') is not None
-        assert target._window.lookup_action('show_help_app') is not None
+        # Application Menu
         assert target._window.lookup_action('show_intro_app') is not None
+        assert target._window.lookup_action('show_help_app') is not None
+        assert target._window.lookup_action('show_about_app') is not None
 
+        # Factsheet Menu
         assert target._window.lookup_action('show_help_sheet') is not None
+
+        # Factsheet Display Menu
+        assert target._window.lookup_action('open_page_sheet') is not None
+        assert target._window.lookup_action('close_page_sheet') is not None
+
+        # Factsheet File Menu
+        assert target._window.lookup_action('new_sheet') is not None
+        assert target._window.lookup_action('delete_sheet') is not None
+
         assert target._window.lookup_action(
             'show_help_sheet_display') is not None
 
+        assert not target._close_window
         assert target._window.is_visible()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_init_signals(self, patch_factsheet, capfd):
         """Confirm initialization.
@@ -111,12 +139,39 @@ class TestSheet:
             target._window, GO.SignalMatchType.ID, delete_signal,
             0, None, None, None)
         assert 0 != delete_id
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_detach(self, patch_factsheet, capfd):
+    def test_close_page(self, monkeypatch, patch_factsheet, capfd):
         """Confirm view detaches from control and closes."""
         # Setup
+        class PatchWindow:
+            def __init__(self): self.called = False
+
+            def close(self): self.called = True
+
+        patch_window = PatchWindow()
+        monkeypatch.setattr(
+            Gtk.ApplicationWindow, 'close', patch_window.close)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_visible(True)
         # Test
+        target.close_page()
+        assert not target._window.get_visible()
+        assert target._close_window
+        assert patch_window.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_get_infoid(self, patch_factsheet, capfd):
         """Confirm returns InfoId attribute."""
@@ -129,6 +184,37 @@ class TestSheet:
         assert 'GApplication::startup signal' in snapshot.err
         # Test
         assert target._infoid is target.get_infoid()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_close_page_force(
+            self, patch_factsheet, capfd, patch_control_safe):
+        """Confirm response to request to close page.
+        Case: unconditional close
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
+        target._control = control
+        target._close_window = True
+        N_CALLS_SAFE = 0
+        N_CALLS_FORCE = 0
+        # Test
+        assert target.on_close_page(None, None) is UI.CLOSE_GTK
+        assert N_CALLS_SAFE == control.n_detach_safe
+        assert N_CALLS_FORCE == control.n_detach_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_close_page_safe(
             self, patch_factsheet, capfd, patch_control_safe):
@@ -150,7 +236,11 @@ class TestSheet:
         # Test
         assert target.on_close_page(None, None) is UI.CLOSE_GTK
         assert N_CALLS_SAFE == control.n_detach_safe
-        assert N_CALLS_FORCE == control.n_delete_force
+        assert N_CALLS_FORCE == control.n_detach_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_close_page_cancel(
             self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
@@ -167,15 +257,23 @@ class TestSheet:
 
         monkeypatch.setattr(
             Gtk.Dialog, 'run', lambda _self: Gtk.ResponseType.CANCEL)
+        target._dialog_data_loss.set_visible(True)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
         control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
-        # Test -- stub
+        # Test
         assert target.on_close_page(None, None) is UI.CANCEL_GTK
+        assert not target._dialog_data_loss.get_visible()
         assert N_CALLS_SAFE == control.n_detach_safe
         assert N_CALLS_FORCE == control.n_detach_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_close_page_discard(
             self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
@@ -192,26 +290,124 @@ class TestSheet:
 
         monkeypatch.setattr(
             Gtk.Dialog, 'run', lambda _self: Gtk.ResponseType.APPLY)
+        target._dialog_data_loss.set_visible(True)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
         control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 1
-        # Test -- stub
+        # Test
         assert target.on_close_page(None, None) is UI.CLOSE_GTK
+        assert not target._dialog_data_loss.get_visible()
         assert N_CALLS_SAFE == control.n_detach_safe
         assert N_CALLS_FORCE == control.n_detach_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_on_delete_sheet(self):
+    def test_on_delete_sheet_safe(
+            self, patch_factsheet, capfd, patch_dialog_warn,
+            monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
-        Case: deletion allowed
-        Case: deletion disallowed, user approves delete
-        Case: deletion disallowed, user cancels delete
+        Case: no unsaved changes
         """
         # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        patch_dialog = patch_dialog_warn(Gtk.ResponseType.CANCEL)
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
+
+        control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
+        target._control = control
+        N_CALLS_SAFE = 1
+        N_CALLS_FORCE = 0
         # Test
-        pass
+        target.on_delete_sheet(None, None)
+        assert not patch_dialog.called
+        assert N_CALLS_SAFE == control.n_delete_safe
+        assert N_CALLS_FORCE == control.n_delete_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_delete_sheet_cancel(
+            self, patch_factsheet, capfd, patch_dialog_warn,
+            monkeypatch, patch_control_safe):
+        """Confirm response to request to delete factsheet.
+        Case: unsaved chagnes, user cancels delete
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        patch_dialog = patch_dialog_warn(Gtk.ResponseType.CANCEL)
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
+        target._dialog_data_loss.set_visible(True)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
+
+        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        target._control = control
+        N_CALLS_SAFE = 1
+        N_CALLS_FORCE = 0
+        # Test
+        target.on_delete_sheet(None, None)
+        assert patch_dialog.called
+        assert not target._dialog_data_loss.get_visible()
+        assert N_CALLS_SAFE == control.n_delete_safe
+        assert N_CALLS_FORCE == control.n_delete_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_delete_sheet_discard(
+            self, patch_factsheet, capfd, patch_dialog_warn,
+            monkeypatch, patch_control_safe):
+        """Confirm response to request to delete factsheet.
+        Case: unsaved changes, user approves delete
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        patch_dialog = patch_dialog_warn(Gtk.ResponseType.APPLY)
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
+        target._dialog_data_loss.set_visible(True)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
+
+        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        target._control = control
+        N_CALLS_SAFE = 1
+        N_CALLS_FORCE = 1
+        # Test
+        target.on_delete_sheet(None, None)
+        assert patch_dialog.called
+        assert not target._dialog_data_loss.get_visible()
+        assert N_CALLS_SAFE == control.n_delete_safe
+        assert N_CALLS_FORCE == control.n_delete_force
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_on_load_sheet(self):
@@ -222,7 +418,10 @@ class TestSheet:
         """
         # Setup
         # Test
-        pass
+        # Teardown
+#         target._window.destroy()
+#         del target._window
+#         del factsheet
 
     def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm response to request to create default factsheet."""
@@ -247,6 +446,10 @@ class TestSheet:
         # Test
         target.on_new_sheet(None, None)
         assert patch_new.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_open_page(self, patch_factsheet, capfd):
         """Confirm response to request to open new view."""
@@ -262,6 +465,10 @@ class TestSheet:
         # Test
         target.on_open_page(None, None)
         assert 1 == control._model.n_pages()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_show_dialog(self, patch_factsheet, capfd, monkeypatch):
         """Confirm handler runs dialog.
@@ -293,13 +500,20 @@ class TestSheet:
         target.on_show_dialog(None, None, dialog)
         assert patch.called
         assert not dialog.is_visible()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_open_factsheet(self):
         """Confirm factsheet creation from file."""
         # Setup
         # Test
-        pass
+        # Teardown
+#         target._window.destroy()
+#         del target._window
+#         del factsheet
 
     def test_new_factsheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm factsheet creation with default contents."""
@@ -326,6 +540,10 @@ class TestSheet:
         assert isinstance(control.view, VSHEET.PageSheet)
         assert control.view._window.get_application() is factsheet
         assert control.view._control is control
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
 #     @pytest.mark.parametrize('name_attr, name_prop', [
 #         ['_infoid', 'infoid'],
@@ -359,4 +577,9 @@ class TestSheet:
     @pytest.mark.skip(reason='Pending implementation')
     def test_update_name(self):
         """Confirm window title update."""
-        pass
+        # Setup
+        # Test
+        # Teardown
+#         target._window.destroy()
+#         del target._window
+#         del factsheet

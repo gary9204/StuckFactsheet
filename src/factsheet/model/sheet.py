@@ -49,12 +49,12 @@ class Sheet(ABC_INFOID.InterfaceStaleFile):
         self._infoid.attach_view(pm_page.get_infoid())
         self._pages[id(pm_page)] = pm_page
 
-    def delete(self) -> None:
-        """Detach and delete all pages from sheet."""
+    def detach_all(self) -> None:
+        """Detach all pages from sheet."""
         while self._pages:
             _id_page, page = self._pages.popitem()
             self._detach_page_views(page)
-            page.detach()
+            page.close_page()
 
     def detach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Remove one page from sheet.

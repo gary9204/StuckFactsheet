@@ -101,22 +101,29 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_delete(self, monkeypatch, factory_page_sheet):
+    def test_detach_all(self, monkeypatch, factory_page_sheet):
         """Confirm notifications and removals."""
         # Setup
-        class PatchDetach:
+        class PatchInfoIdModel:
             def __init__(self): self.n_calls = 0
 
-            def detach(self): self.n_calls += 1
+            def detach_view(self, _v): self.n_calls += 1
 
-        patch_detach = PatchDetach()
+        patch_detach = PatchInfoIdModel()
         monkeypatch.setattr(
-            VSHEET.PageSheet, 'detach', patch_detach.detach)
+            MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
+
+        class PatchPage:
+            def __init__(self): self.n_calls = 0
+
+            def close_page(self): self.n_calls += 1
+
+        patch_close = PatchPage()
+        monkeypatch.setattr(
+            VSHEET.PageSheet, 'close_page', patch_close.close_page)
 
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        TITLE_DETACHED = ''
 
         N_PAGES = 3
         pages = [factory_page_sheet() for _ in range(N_PAGES)]
@@ -124,11 +131,10 @@ class TestSheet:
             target.attach_page(page)
         assert N_PAGES == len(target._pages)
         # Test
-        target.delete()
+        target.detach_all()
         assert not target._pages
-        for page in pages:
-            assert TITLE_DETACHED == page.get_infoid().title
         assert N_PAGES == patch_detach.n_calls
+        assert N_PAGES == patch_close.n_calls
 
     def test_detach_page(self, monkeypatch, factory_page_sheet):
         """Confirm page removal.
@@ -136,9 +142,9 @@ class TestSheet:
         """
         # Setup
         class PatchInfoIdModel:
-            def __init__(self): self.called = False
+            def __init__(self): self.n_calls = 0
 
-            def detach_view(self, _v): self.called = True
+            def detach_view(self, _v): self.n_calls += 1
 
         patch_infoid = PatchInfoIdModel()
         monkeypatch.setattr(
@@ -152,11 +158,12 @@ class TestSheet:
         assert pages[0].get_infoid().title != target._infoid.title
         for page in pages:
             target.attach_page(page)
+        N_REMOVE = 1
         I_REMOVE = 1
         page_rem = pages.pop(I_REMOVE)
         # Test
         target.detach_page(page_rem)
-        assert patch_infoid.called
+        assert N_REMOVE == patch_infoid.n_calls
         assert len(pages) == len(target._pages)
         for page in pages:
             assert target._pages[id(page)] is page

@@ -94,7 +94,8 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         id_view = id(pm_view)
         try:
             _view = self._views.pop(id_view)
-#             pm_view.set_buffer(Gtk.EntryBuffer())
+            # See Factsheet Project Issue #29 on GitHub
+            pm_view.hide()
         except KeyError:
             logger.warning(
                 'Missing view: {} ({}.{})'.format(

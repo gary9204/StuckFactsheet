@@ -107,21 +107,12 @@ class TestInfoId:
         target.attach_view(view_infoid)
         assert view_infoid.title == str(target._title)
 
-    def test_detach_view(self, monkeypatch, factory_view_infoid,
-                         args_infoid_stock):
+    def test_detach_view(self, factory_view_infoid, args_infoid_stock):
         """Confirm view removal."""
         # Setup
-        class PatchTextModel:
-            def __init__(self): self.called = False
-
-            def detach_view(self, _v): self.called = True
-
-        patch_text = PatchTextModel()
-        monkeypatch.setattr(ATEXT.AdaptEntryBuffer, 'detach_view',
-                            patch_text.detach_view)
-
         TEXT_TITLE_UI = 'Page title'
         view_infoid = factory_view_infoid()
+        view_infoid._view_title.set_visible = True
         assert TEXT_TITLE_UI == view_infoid._view_title.get_text()
 
         target = MINFOID.InfoId(**args_infoid_stock)
@@ -129,7 +120,7 @@ class TestInfoId:
         assert view_infoid._view_title.get_text() == str(target._title)
         # Test
         target.detach_view(view_infoid)
-        assert patch_text.called
+        assert not view_infoid._view_title.get_visible()
 
     def test_is_fresh(self, args_infoid_stock):
         """Confirm return is accurate.

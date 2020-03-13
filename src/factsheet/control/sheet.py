@@ -27,11 +27,16 @@ class Sheet(object):
     def delete_force(self) -> None:
         """Delete factsheet unconditionally."""
         assert self._model is not None
-        self._model.delete()
+        self._model.detach_all()
 
-    def delete_safe(self):
+    def delete_safe(self) -> ABC_SHEET.EffectSafe:
         """Delete factsheet provided no changes will be lost."""
-        return not ABC_SHEET.EffectSafe.NO_EFFECT   # Stub - force check
+        assert self._model is not None
+        if self._model.is_stale():
+            return ABC_SHEET.EffectSafe.NO_EFFECT
+
+        self._model.detach_all()
+        return ABC_SHEET.EffectSafe.COMPLETED
 
     def detach_page_force(self, pm_page) -> None:
         """Remove page unconditionally."""

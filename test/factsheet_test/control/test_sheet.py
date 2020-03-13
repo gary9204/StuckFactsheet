@@ -16,14 +16,14 @@ def patch_model_safe():
             super().__init__()
             self._stale = p_stale
             self._n_pages = p_n_pages
-            self.n_delete = 0
+#             self.n_delete = 0
             self.n_detach = 0
 
         def n_pages(self) -> int:
             return self._n_pages
 
-        def delete(self):
-            self.n_delete += 1
+#         def delete(self):
+#             self.n_delete += 1
 
         def detach_page(self, _view):
             self.n_detach += 1
@@ -64,39 +64,60 @@ class TestControlSheet:
         class PatchModel:
             def __init__(self): self.called = False
 
-            def delete(self): self.called = True
+            def detach_all(self): self.called = True
 
         patch_model = PatchModel()
         monkeypatch.setattr(
-            MSHEET.Sheet, 'delete', patch_model.delete)
+            MSHEET.Sheet, 'detach_all', patch_model.detach_all)
 
         target = CSHEET.Sheet.new()
         # Test
         target.delete_force()
         assert patch_model.called
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_delete_safe(self, monkeypatch):
+    def test_delete_safe_fresh(self, monkeypatch):
         """Confirm deletion with guard for unsaved changes.
         Case: no unsaved changes
+        """
+        # Setup
+        class PatchModel:
+            def __init__(self): self.called = False
+
+            def detach_all(self): self.called = True
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'detach_all', patch_model.detach_all)
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'is_stale', lambda _s: False)
+
+        target = CSHEET.Sheet.new()
+        # Test
+        response = target.delete_safe()
+        assert patch_model.called
+        assert response is ABC_SHEET.EffectSafe.COMPLETED
+
+    def test_delete_safe_stale(self, monkeypatch):
+        """Confirm deletion with guard for unsaved changes.
         Case: unsaved changes
         """
         # Setup
         class PatchModel:
             def __init__(self): self.called = False
 
-            def delete(self): self.called = True
+            def detach_all(self): self.called = True
 
         patch_model = PatchModel()
         monkeypatch.setattr(
-            MSHEET.Sheet, 'delete', patch_model.delete)
+            MSHEET.Sheet, 'detach_all', patch_model.detach_all)
         monkeypatch.setattr(
-            MSHEET.Sheet, 'is_stale', lambda: False)
+            MSHEET.Sheet, 'is_stale', lambda _s: True)
 
-        # target = CSHEET.Sheet.new()
-        # update in progress
-        # response = target.delete_safe()
-        assert patch_model.called
+        target = CSHEET.Sheet.new()
+        # Test
+        response = target.delete_safe()
+        assert not patch_model.called
+        assert response is ABC_SHEET.EffectSafe.NO_EFFECT
 
     def test_detach_page_force(self, patch_model_safe):
         """Confirm page removed unconditionally."""
@@ -110,9 +131,8 @@ class TestControlSheet:
         assert N_DETACH == patch_model.n_detach
 
     def test_detach_page_safe_fresh(self, patch_model_safe):
-        """Confirm page removed with guard for unsaved changes.
-        Case: unsaved changes, multiple pages
-        Case: unsaved changes, single page
+        """Confirm page removal with guard for unsaved changes.
+        Case: no unsaved changes
         """
         # Setup
         patch_model = patch_model_safe(p_stale=False, p_n_pages=1)
@@ -125,7 +145,7 @@ class TestControlSheet:
         assert N_DETACH == patch_model.n_detach
 
     def test_detach_page_safe_stale_multiple(self, patch_model_safe):
-        """Confirm page removed with guard for unsaved changes.
+        """Confirm page removal with guard for unsaved changes.
         Case: unsaved changes, multiple pages
         """
         # Setup
@@ -139,7 +159,7 @@ class TestControlSheet:
         assert N_DETACH == patch_model.n_detach
 
     def test_detach_page_safe_stale_single(self, patch_model_safe):
-        """Confirm page removed with guard for unsaved changes.
+        """Confirm page removal with guard for unsaved changes.
         Case: unsaved changes, single page
         """
         # Setup
