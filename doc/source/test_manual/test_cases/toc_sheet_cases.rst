@@ -8,4 +8,5 @@ Factsheet-level Cases
    case_sheet_new
    case_sheet_open_page
    case_sheet_close_page
+   case_sheet_delete
 
