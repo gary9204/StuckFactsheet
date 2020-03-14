@@ -66,6 +66,7 @@ INTRO_APP = get_object_guide_sheet('ui_intro_app')
 
 HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
 HELP_SHEET_DISPLAY = get_object_guide_sheet('ui_help_sheet_display')
+HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
 
 del builder_guide_sheet
 del get_object_guide_sheet

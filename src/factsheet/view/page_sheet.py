@@ -77,6 +77,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             self._window, 'new_sheet', self.on_new_sheet)
         UI.new_action_active(
             self._window, 'delete_sheet', self.on_delete_sheet)
+        UI.new_action_active_dialog(
+            self._window, 'show_help_sheet_file',
+            self.on_show_dialog, UI.HELP_SHEET_FILE)
 
     def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
         """Construct Data Loss Warning dialog.

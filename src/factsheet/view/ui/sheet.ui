@@ -194,7 +194,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">win.new_sheet</property>
-            <property name="text" translatable="yes">New sheet</property>
+            <property name="text" translatable="yes">New factsheet</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -208,7 +208,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">win.delete_sheet</property>
-            <property name="text" translatable="yes">Delete sheet</property>
+            <property name="text" translatable="yes">Delete factsheet</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -221,7 +221,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.show_help_sheet_display</property>
+            <property name="action_name">win.show_help_sheet_file</property>
             <property name="text" translatable="yes">Help</property>
           </object>
           <packing>

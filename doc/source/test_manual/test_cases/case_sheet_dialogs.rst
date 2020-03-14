@@ -26,12 +26,21 @@ Steps -- Help
 
 Steps -- Display Help
 ---------------------
-1. a. **Step:** Click factsheet menu 
-   #. *Expect:* Factsheet Menu appears.
-
-#. a. **Step:** Click factsheet **menu > Display ... > Help** (right of
+1. a. **Step:** Click factsheet **menu > Display ... > Help** (right of
       **Factsheet** field)
    #. *Expect:* Factsheet Display Help dialog appears.
+
+#. a. **Step:** Review dialog contents (title, text, references, etc.).
+   #. *Expect:* Content is current and correct.
+
+#. a. **Step:** Click dialog **close icon** (dialog title far right).
+   #. *Expect:* Dialog disappears.
+
+Steps -- File Help
+------------------
+1. a. **Step:** Click factsheet **menu > File ... > Help** (right of
+      **Factsheet** field)
+   #. *Expect:* Factsheet File Help dialog appears.
 
 #. a. **Step:** Review dialog contents (title, text, references, etc.).
    #. *Expect:* Content is current and correct.
