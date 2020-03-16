@@ -39,16 +39,11 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         del state['_views']
         return state
 
-    def __init__(self, p_text: str = ''):
+    def __init__(self, p_text: str = '') -> None:
         self._buffer = Gtk.EntryBuffer(text=p_text)
-        _ = self._buffer.connect(
-            'deleted-text', lambda *_a: self.set_stale())
-        _ = self._buffer.connect(
-            'inserted-text', lambda *_a: self.set_stale())
-        self._stale = False
-        self._views: typing.Dict[int, Gtk.Entry] = dict()
+        self._state_common()
 
-    def __setstate__(self, px_state: typing.Dict):
+    def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct model text attribute from state pickle loads.
 
         Reconstructed attribute is marked fresh and has no no views.
@@ -59,18 +54,23 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         self._buffer = Gtk.EntryBuffer(
             text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
+        self._state_common()
+
+    def _state_common(self) -> None:
+        """Helper ensures __init__ and __setstate__ are consistent."""
+        assert hasattr(self, '_buffer')
         _ = self._buffer.connect(
             'deleted-text', lambda *_a: self.set_stale())
         _ = self._buffer.connect(
             'inserted-text', lambda *_a: self.set_stale())
         self._stale = False
-        self._views = dict()
+        self._views: typing.Dict[int, Gtk.Entry] = dict()
 
     def __str__(self) -> str:
         """Return buffer contents as text."""
         return str(self._buffer.get_text())
 
-    def attach_view(self, pm_view: AVIEW.AdaptEntry):
+    def attach_view(self, pm_view: AVIEW.AdaptEntry) -> None:
         """Add view to update display when text changes.
 
         :param pm_view: view to add
@@ -86,7 +86,7 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         pm_view.set_buffer(self._buffer)
         self._views[id_view] = pm_view
 
-    def detach_view(self, pm_view: AVIEW.AdaptEntry):
+    def detach_view(self, pm_view: AVIEW.AdaptEntry) -> None:
         """Remove view of changes to text.
 
         :param pm_view: view to remove
@@ -110,10 +110,10 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         """Return True when there is at least one unsaved change to buffer."""
         return self._stale
 
-    def set_fresh(self):
+    def set_fresh(self) -> None:
         """Mark buffer in memory consistent with file contents."""
         self._stale = False
 
-    def set_stale(self):
+    def set_stale(self) -> None:
         """Mark buffer in memory changed from file contents."""
         self._stale = True
