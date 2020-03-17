@@ -40,6 +40,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
         self._window.set_application(px_app)
+
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
 
@@ -49,6 +50,12 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._window.show_all()
 
         _id = self._window.connect('delete-event', self.on_close_page)
+
+        # Application Title
+        UI.new_action_active(
+            self._window, 'open_sheet', self.on_open_sheet)
+        UI.new_action_active(
+            self._window, 'save_sheet', self.on_save_sheet)
 
         # Application Menu
         UI.new_action_active_dialog(self._window, 'show_intro_app',
@@ -128,6 +135,41 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """Return view of factsheet identification information."""
         return self._infoid
 
+    def _make_dialog_file(self, p_action: Gtk.FileChooserAction
+                          ) -> Gtk.FileChooserDialog:
+        """Construct dialog to choose file for open or save.
+
+        This helper method works around limitations in Glade.
+
+        :param p_action: dialog box action (Open or Save).
+        """
+        dialog = Gtk.FileChooserDialog(action=p_action)
+        dialog.set_transient_for(self._window)
+        dialog.set_destroy_with_parent(True)
+        dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
+
+        label = 'Open'
+        if p_action == Gtk.FileChooserAction.SAVE:
+            label = 'Save'
+            dialog.set_do_overwrite_confirmation(True)
+        dialog.add_button(label, Gtk.ResponseType.APPLY)
+        button_d = dialog.get_widget_for_response(
+            Gtk.ResponseType.APPLY)
+        style_d = button_d.get_style_context()
+        style_d.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+
+        filter_alpha = Gtk.FileFilter()
+        filter_alpha.add_pattern('*.fsg')
+        filter_alpha.set_name('Factsheet')
+        dialog.add_filter(filter_alpha)
+
+        filter_any = Gtk.FileFilter()
+        filter_any.add_pattern('*')
+        filter_any.set_name('Any')
+        dialog.add_filter(filter_any)
+
+        return dialog
+
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
         """Close page guarding against data loss.
@@ -189,6 +231,17 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
         """Create a factsheet with contents from file."""
+        dialog = self._make_dialog_file(Gtk.FileChooserAction.OPEN)
+        dialog.run()
+        dialog.hide()
+        raise NotImplementedError
+
+    def on_save_sheet(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
+        """Persist factsheet contents to file."""
+        dialog = self._make_dialog_file(Gtk.FileChooserAction.OPEN)
+        dialog.run()
+        dialog.hide()
         raise NotImplementedError
 
     def on_new_sheet(self, _action: Gio.SimpleAction,

@@ -189,6 +189,44 @@ class TestSheet:
         del target._window
         del factsheet
 
+    @pytest.mark.parametrize('action, label', [
+        (Gtk.FileChooserAction.SAVE, 'Save'),
+        (Gtk.FileChooserAction.OPEN, 'Open'),
+        ])
+    def test_make_dialog_file_save(
+            self, patch_factsheet, capfd, action, label):
+        """Confirm construction of dialog for file save."""
+        # Setup
+        factsheet = patch_factsheet()
+        source = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        FILTERS = set(['Factsheet', 'Any'])
+        # Test
+        target = source._make_dialog_file(action)
+        assert isinstance(target, Gtk.FileChooserDialog)
+        assert target.get_action() is action
+        assert target.get_transient_for() is source._window
+        assert target.get_destroy_with_parent()
+        if action is Gtk.FileChooserAction.SAVE:
+            assert target.get_do_overwrite_confirmation()
+
+        button = target.get_widget_for_response(Gtk.ResponseType.CANCEL)
+        assert 'Cancel' == button.get_label()
+
+        button = target.get_widget_for_response(Gtk.ResponseType.APPLY)
+        assert label == button.get_label()
+        style = button.get_style_context()
+        assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+
+        assert FILTERS == {f.get_name() for f in target.list_filters()}
+        # Teardown
+        source._window.destroy()
+        del source._window
+        del factsheet
+
     def test_on_close_page_force(
             self, patch_factsheet, capfd, patch_control_safe):
         """Confirm response to request to close page.
