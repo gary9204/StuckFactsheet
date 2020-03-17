@@ -52,6 +52,27 @@ class TestSheet:
         target = MSHEET.Sheet()
         assert TEXT_TITLE_DEFAULT == target._infoid.title
 
+    def test_eq(self):
+        """Confirm equivalence operator
+
+        #. Case: type difference
+        #. Case: InfoId difference
+        #. Case: Equivalence
+        """
+        # Setup
+        TITLE_SOURCE = 'Parrot Sketch.'
+        source = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        # Test: type difference
+        assert not source.__eq__(TITLE_SOURCE)
+        # Test: InfoId difference
+        TITLE_TARGET = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_TARGET)
+        assert not source.__eq__(target)
+        # Test: Equivalence
+        target = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
+
     def test_attach_page(self, factory_page_sheet):
         """Confirm page addition.
         Case: page not attached initially
@@ -69,6 +90,12 @@ class TestSheet:
             assert target._infoid.title == page.get_infoid().title
             assert target._pages[id(page)] is page
         assert len(pages) == len(target._pages)
+        # Teardown
+        for page in pages:
+            app = page._window.get_application()
+            page._window.destroy()
+            del page._window
+            del app
 
     def test_attach_page_warn(
             self, factory_page_sheet, PatchLogger, monkeypatch):
@@ -100,6 +127,12 @@ class TestSheet:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+        # Teardown
+        for page in pages:
+            app = page._window.get_application()
+            page._window.destroy()
+            del page._window
+            del app
 
     def test_detach_all(self, monkeypatch, factory_page_sheet):
         """Confirm notifications and removals."""
@@ -135,6 +168,12 @@ class TestSheet:
         assert not target._pages
         assert N_PAGES == patch_detach.n_calls
         assert N_PAGES == patch_close.n_calls
+        # Teardown
+        for page in pages:
+            app = page._window.get_application()
+            page._window.destroy()
+            del page._window
+            del app
 
     def test_detach_page(self, monkeypatch, factory_page_sheet):
         """Confirm page removal.
@@ -167,6 +206,16 @@ class TestSheet:
         assert len(pages) == len(target._pages)
         for page in pages:
             assert target._pages[id(page)] is page
+        # Teardown
+        app = page_rem._window.get_application()
+        page_rem._window.destroy()
+        del page_rem._window
+        del app
+        for page in pages:
+            app = page._window.get_application()
+            page._window.destroy()
+            del page._window
+            del app
 
     def test_detach_page_views(self, monkeypatch, factory_page_sheet):
         """Confirm removal of views."""
@@ -188,6 +237,11 @@ class TestSheet:
         # Test
         target._detach_page_views(page)
         assert patch_infoid.called
+        # Teardown
+        app = page._window.get_application()
+        page._window.destroy()
+        del page._window
+        del app
 
     def test_detach_page_warn(
             self, factory_page_sheet, PatchLogger, monkeypatch):
@@ -220,6 +274,16 @@ class TestSheet:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+        # Teardown
+        app = page_dup._window.get_application()
+        page_dup._window.destroy()
+        del page_dup._window
+        del app
+        for page in pages:
+            app = page._window.get_application()
+            page._window.destroy()
+            del page._window
+            del app
 
     def test_is_fresh(self):
         """Confirm return is accurate.

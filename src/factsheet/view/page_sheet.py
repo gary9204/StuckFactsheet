@@ -35,7 +35,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
     def __init__(self, *, px_app: Gtk.Application) -> None:
-        self._control = None
+        self._control: typing.Optional[CSHEET.Sheet] = None
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
@@ -186,14 +186,14 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         if response == Gtk.ResponseType.APPLY:
             self._control.delete_force()
 
-    def on_load_sheet(self, _action: Gio.SimpleAction,
+    def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
-        """Act on request to load a factsheet from file."""
+        """Create a factsheet with contents from file."""
         raise NotImplementedError
 
     def on_new_sheet(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
-        """Act on request to create a new factsheet with default contents."""
+        """Create a new factsheet with default contents."""
         app = self._window.get_application()
         _control = PageSheet.new_factsheet(px_app=app)
 
@@ -228,8 +228,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         :param px_app: application to which the factsheet belongs.
         """
-        page = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.new()
+        page = PageSheet(px_app=px_app)
         control.attach_page(page)
         page._control = control
         return control

@@ -2,6 +2,8 @@
 Unit tests for class that mediates from :mod:`~factsheet.view` to
 :mod:`~factsheet.model` of a factsheet
 """
+from pathlib import Path
+import pickle
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
@@ -40,6 +42,7 @@ class TestControlSheet:
         # Test
         target = CSHEET.Sheet()
         assert target._model is None
+        assert target._path is None
 
     def test_attach_page(self, monkeypatch):
         """Confirm page addition."""
@@ -172,11 +175,136 @@ class TestControlSheet:
             ABC_SHEET.EffectSafe.NO_EFFECT)
         assert N_DETACH == patch_model.n_detach
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_load(self):
-        """Confirm control creation from file."""
+    def test_save(self, tmp_path):
+        """Confirm write to file.
+        Case: file does not exist.
+        """
         # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        source._path = PATH
+        assert not PATH.exists()
         # Test
+        source.save()
+        assert PATH.exists()
+        assert source._model.is_fresh()
+
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert target is not None
+        assert TITLE == target._infoid.title
+
+    def test_save_no_path(self, monkeypatch, tmp_path):
+        """Confirm write to file.
+        Case: no file path.
+        """
+        # Setup
+        class PatchPath:
+            def __init__(self, *_ps): self.called = False
+
+            def open(self, **_kwa): self.called = True
+
+        patch_path = PatchPath()
+        monkeypatch.setattr(Path, 'open', patch_path.open)
+
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        assert not PATH.exists()
+        # Test
+        source.save()
+        assert not patch_path.called
+
+    def test_save_exists(self, tmp_path):
+        """Confirm write to file.
+        Case: file exists.
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TEXT = 'Existing content'
+        with PATH.open(mode='w') as io_out:
+            io_out.write(TEXT)
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        source._path = PATH
+        assert PATH.exists()
+        BACKUP = PATH.with_name(PATH.name + '~')
+        assert not BACKUP.exists()
+        # Test
+        source.save()
+        assert PATH.exists()
+        assert source._model.is_fresh()
+
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert target is not None
+
+        assert BACKUP.exists()
+        with BACKUP.open(mode='r') as io_in:
+            backup_text = io_in.read()
+        assert TEXT == backup_text
+
+    def test_open(self, tmp_path):
+        """Confirm control creation from file.
+        Case: path to file with model contents
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        source._path = PATH
+        assert not PATH.exists()
+        source.save()
+        # Test
+        target = CSHEET.Sheet.open(PATH)
+        assert source._model == target._model
+        assert target._model.is_fresh()
+
+    def test_open_empty(self, tmp_path):
+        """Confirm control creation from file.
+        Case: path not to a file
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TITLE = 'Error opening file \'{}\''.format(PATH)
+        MODEL = MSHEET.Sheet(p_title=TITLE)
+        assert not PATH.exists()
+        # Test
+        target = CSHEET.Sheet.open(PATH)
+        assert target._model is not None
+        assert MODEL == target._model
+        assert target._path is None
+
+    def test_open_except(self, tmp_path):
+        """Confirm control creation from file.
+        Case: path to file with unloadable contents
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        BYTES = b'Something completely different'
+        with PATH.open(mode='wb') as io_out:
+            io_out.write(BYTES)
+        assert PATH.exists()
+        TITLE = 'Error opening file \'{}\''.format(PATH)
+        MODEL = MSHEET.Sheet(p_title=TITLE)
+        # Test
+        target = CSHEET.Sheet.open(PATH)
+        assert target._model is not None
+        assert MODEL == target._model
+        assert target._path is None
 
     def test_new(self):
         """Confirm control creation with default model."""

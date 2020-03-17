@@ -31,6 +31,19 @@ class Sheet(ABC_INFOID.InterfaceStaleFile):
         self._infoid = MINFOID.InfoId(
             p_aspect=self.ASPECT, p_title=p_title)
 
+    def __eq__(self, px_other: typing.Any) -> bool:
+        """Return True when px_other has same identification information.
+
+        :param px_other: object to compare with self.
+        """
+        if not isinstance(px_other, Sheet):
+            return False
+
+        if self._infoid != px_other._infoid:
+            return False
+
+        return True
+
     def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Add page to update display when sheet changes.
 
