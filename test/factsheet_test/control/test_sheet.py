@@ -2,6 +2,7 @@
 Unit tests for class that mediates from :mod:`~factsheet.view` to
 :mod:`~factsheet.model` of a factsheet
 """
+import logging
 from pathlib import Path
 import pickle
 import pytest   # type: ignore[import]
@@ -175,85 +176,6 @@ class TestControlSheet:
             ABC_SHEET.EffectSafe.NO_EFFECT)
         assert N_DETACH == patch_model.n_detach
 
-    def test_save(self, tmp_path):
-        """Confirm write to file.
-        Case: file does not exist.
-        """
-        # Setup
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        TITLE = 'Parrot Sketch'
-        model = MSHEET.Sheet(p_title=TITLE)
-        model.set_stale()
-        source = CSHEET.Sheet()
-        source._model = model
-        source._path = PATH
-        assert not PATH.exists()
-        # Test
-        source.save()
-        assert PATH.exists()
-        assert source._model.is_fresh()
-
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-        assert target is not None
-        assert TITLE == target._infoid.title
-
-    def test_save_no_path(self, monkeypatch, tmp_path):
-        """Confirm write to file.
-        Case: no file path.
-        """
-        # Setup
-        class PatchPath:
-            def __init__(self, *_ps): self.called = False
-
-            def open(self, **_kwa): self.called = True
-
-        patch_path = PatchPath()
-        monkeypatch.setattr(Path, 'open', patch_path.open)
-
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        TITLE = 'Parrot Sketch'
-        model = MSHEET.Sheet(p_title=TITLE)
-        model.set_stale()
-        source = CSHEET.Sheet()
-        source._model = model
-        assert not PATH.exists()
-        # Test
-        source.save()
-        assert not patch_path.called
-
-    def test_save_exists(self, tmp_path):
-        """Confirm write to file.
-        Case: file exists.
-        """
-        # Setup
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        TEXT = 'Existing content'
-        with PATH.open(mode='w') as io_out:
-            io_out.write(TEXT)
-        TITLE = 'Parrot Sketch'
-        model = MSHEET.Sheet(p_title=TITLE)
-        model.set_stale()
-        source = CSHEET.Sheet()
-        source._model = model
-        source._path = PATH
-        assert PATH.exists()
-        BACKUP = PATH.with_name(PATH.name + '~')
-        assert not BACKUP.exists()
-        # Test
-        source.save()
-        assert PATH.exists()
-        assert source._model.is_fresh()
-
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-        assert target is not None
-
-        assert BACKUP.exists()
-        with BACKUP.open(mode='r') as io_in:
-            backup_text = io_in.read()
-        assert TEXT == backup_text
-
     def test_open(self, tmp_path):
         """Confirm control creation from file.
         Case: path to file with model contents
@@ -313,3 +235,118 @@ class TestControlSheet:
         target = CSHEET.Sheet.new()
         assert isinstance(target, CSHEET.Sheet)
         assert isinstance(target._model, MSHEET.Sheet)
+
+    def test_path(self, tmp_path):
+        """Confirm path property is get-only.
+
+        #. Case: read
+        #. Case: no replace
+        #. Case: no delete
+        """
+        # Setup
+        PATH = Path(tmp_path / 'path_factsheet.fsg')
+        target = CSHEET.Sheet.path
+        instance = CSHEET.Sheet.new()
+        instance._path = PATH
+        # Test: read
+        assert target.fget is not None
+        assert str(instance._path) == str(instance.path)
+        # Test: no replace
+        assert target.fset is None
+        # Test: no delete
+        assert target.fdel is None
+
+    def test_save(self, tmp_path):
+        """Confirm write to file.
+        Case: file does not exist.
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        source._path = PATH
+        assert not PATH.exists()
+        # Test
+        source.save()
+        assert PATH.exists()
+        assert source._model.is_fresh()
+
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert target is not None
+        assert TITLE == target._infoid.title
+
+    def test_save_as(self, tmp_path):
+        """Confirm write to file at new path."""
+        # Setup
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        assert not PATH.exists()
+        # Test
+        source.save_as(PATH)
+        assert PATH == source._path
+        assert PATH.exists()
+        assert source._model.is_fresh()
+
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert target is not None
+        assert TITLE == target._infoid.title
+
+    def test_save_no_path(self, PatchLogger, monkeypatch):
+        """Confirm write to file.
+        Case: no file path.
+        """
+        # Setup
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = ('No file path (Sheet.save)')
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        source = CSHEET.Sheet()
+        source._model = model
+        source._path = None
+        # Test
+        source.save()
+        assert patch_logger.called
+        assert log_message == patch_logger.message
+
+    def test_save_exists(self, tmp_path):
+        """Confirm write to file.
+        Case: file exists.
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TEXT = 'Existing content'
+        with PATH.open(mode='w') as io_out:
+            io_out.write(TEXT)
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        source = CSHEET.Sheet()
+        source._model = model
+        source._path = PATH
+        assert PATH.exists()
+        BACKUP = PATH.with_name(PATH.name + '~')
+        assert not BACKUP.exists()
+        # Test
+        source.save()
+        assert PATH.exists()
+        assert source._model.is_fresh()
+
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert target is not None
+
+        assert BACKUP.exists()
+        with BACKUP.open(mode='r') as io_in:
+            backup_text = io_in.read()
+        assert TEXT == backup_text

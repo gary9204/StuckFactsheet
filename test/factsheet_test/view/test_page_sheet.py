@@ -49,7 +49,39 @@ def patch_control_safe():
 
 
 @pytest.fixture
-def patch_dialog_warn():
+def patch_dialog_choose():
+    class PatchDialog:
+        def __init__(self, p_response, p_filename):
+            self.called_hide = False
+            self.called_get_filename = False
+            self.called_run = False
+            self.called_set_current_name = False
+            self.called_set_filename = False
+            self.response = p_response
+            self.filename = p_filename
+
+        def hide(self):
+            self.called_hide = True
+
+        def get_filename(self):
+            self.called_get_filename = True
+            return self.filename
+
+        def run(self):
+            self.called_run = True
+            return self.response
+
+        def set_current_name(self, _n):
+            self.called_set_current_name = True
+
+        def set_filename(self, _fn):
+            self.called_set_filename = True
+
+    return PatchDialog
+
+
+@pytest.fixture
+def patch_dialog_run():
     class PatchDialog:
         def __init__(self, p_response):
             self.called = False
@@ -227,6 +259,36 @@ class TestSheet:
         del source._window
         del factsheet
 
+    def test_new_factsheet(self, monkeypatch, patch_factsheet, capfd):
+        """Confirm factsheet creation with default contents."""
+        # Setup
+        def patch_attach_page(self, pm_view):
+            self.view = pm_view
+
+        monkeypatch.setattr(
+            CSHEET.Sheet, 'attach_page', patch_attach_page)
+        factsheet = patch_factsheet()
+
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        control = target.new_factsheet(target._window.get_application())
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        assert isinstance(control, CSHEET.Sheet)
+        assert isinstance(control.view, VSHEET.PageSheet)
+        assert control.view._window.get_application() is factsheet
+        assert control.view._control is control
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
     def test_on_close_page_force(
             self, patch_factsheet, capfd, patch_control_safe):
         """Confirm response to request to close page.
@@ -347,7 +409,7 @@ class TestSheet:
         del factsheet
 
     def test_on_delete_sheet_safe(
-            self, patch_factsheet, capfd, patch_dialog_warn,
+            self, patch_factsheet, capfd, patch_dialog_run,
             monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
         Case: no unsaved changes
@@ -360,7 +422,7 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        patch_dialog = patch_dialog_warn(Gtk.ResponseType.CANCEL)
+        patch_dialog = patch_dialog_run(Gtk.ResponseType.CANCEL)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
 
         control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
@@ -378,7 +440,7 @@ class TestSheet:
         del factsheet
 
     def test_on_delete_sheet_cancel(
-            self, patch_factsheet, capfd, patch_dialog_warn,
+            self, patch_factsheet, capfd, patch_dialog_run,
             monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
         Case: unsaved chagnes, user cancels delete
@@ -391,7 +453,7 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        patch_dialog = patch_dialog_warn(Gtk.ResponseType.CANCEL)
+        patch_dialog = patch_dialog_run(Gtk.ResponseType.CANCEL)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
         target._dialog_data_loss.set_visible(True)
         monkeypatch.setattr(
@@ -413,7 +475,7 @@ class TestSheet:
         del factsheet
 
     def test_on_delete_sheet_discard(
-            self, patch_factsheet, capfd, patch_dialog_warn,
+            self, patch_factsheet, capfd, patch_dialog_run,
             monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
         Case: unsaved changes, user approves delete
@@ -426,7 +488,7 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        patch_dialog = patch_dialog_warn(Gtk.ResponseType.APPLY)
+        patch_dialog = patch_dialog_run(Gtk.ResponseType.APPLY)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
         target._dialog_data_loss.set_visible(True)
         monkeypatch.setattr(
@@ -446,20 +508,6 @@ class TestSheet:
         target._window.destroy()
         del target._window
         del factsheet
-
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_on_load_sheet(self):
-        """Confirm response to request to load factsheet.
-        Case: user cancels
-        Case: user selects factsheet file
-        Case: user selects file that is not a factsheet
-        """
-        # Setup
-        # Test
-        # Teardown
-#         target._window.destroy()
-#         del target._window
-#         del factsheet
 
     def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm response to request to create default factsheet."""
@@ -508,6 +556,249 @@ class TestSheet:
         del target._window
         del factsheet
 
+    def test_on_open_sheet_apply(self, tmp_path, patch_dialog_choose,
+                                 monkeypatch, patch_factsheet, capfd):
+        """Confirm open from file.
+        Case: apply open
+        """
+        # Setup
+        PATH = Path(tmp_path / 'factsheet.fsg')
+        patch_dialog = patch_dialog_choose(
+            Gtk.ResponseType.APPLY, str(PATH))
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'get_filename', patch_dialog.get_filename)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'run', patch_dialog.run)
+
+        class PatchPageSheet:
+            def __init__(self):
+                self.called = False
+                self.app = None
+                self.path = None
+
+            def open_factsheet(self, p_app, p_path):
+                self.called = True
+                self.app = p_app
+                self.path = p_path
+                return CSHEET.Sheet()
+
+        patch_page = PatchPageSheet()
+        monkeypatch.setattr(
+            VSHEET.PageSheet, 'open_factsheet', patch_page.open_factsheet)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        target.on_open_sheet(None, None)
+        assert patch_dialog.called_run
+        assert patch_dialog.called_hide
+        assert patch_page.called
+        assert factsheet == patch_page.app
+        assert PATH == patch_page.path
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_open_sheet_cancel(self, tmp_path, patch_dialog_choose,
+                                  monkeypatch, patch_factsheet, capfd):
+        """Confirm open from file.
+        Case: cancel open
+        """
+        # Setup
+        PATH = Path(tmp_path / 'factsheet.fsg')
+        patch_dialog = patch_dialog_choose(
+            Gtk.ResponseType.CANCEL, str(PATH))
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'run', patch_dialog.run)
+
+        class PatchPageSheet:
+            def __init__(self):
+                self.called = False
+                self.app = None
+                self.path = None
+
+            def open_factsheet(self, p_app, p_path):
+                self.called = True
+                self.app = p_app
+                self.path = p_path
+                return CSHEET.Sheet()
+
+        patch_page = PatchPageSheet()
+        monkeypatch.setattr(
+            VSHEET.PageSheet, 'open_factsheet', patch_page.open_factsheet)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        target.on_open_sheet(None, None)
+        assert patch_dialog.called_run
+        assert patch_dialog.called_hide
+        assert not patch_page.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_save_sheet(self, patch_factsheet, capfd, tmp_path):
+        """Confirm save to file.
+        Case: file path defined
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        control = CSHEET.Sheet.new()
+        control._path = PATH
+        assert not control._path.exists()
+        target._control = control
+        # Test
+        target.on_save_sheet(None, None)
+        assert control._path.exists()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_save_sheet_none(self, monkeypatch, patch_factsheet, capfd):
+        """Confirm save to file.
+        Case: file path undefined
+        """
+        # Setup
+        class PatchSaveAs:
+            def __init__(self): self.called = False
+
+            def on_save_as_sheet(self, *_a): self.called = True
+
+        patch_save_as = PatchSaveAs()
+        monkeypatch.setattr(VSHEET.PageSheet, 'on_save_as_sheet',
+                            patch_save_as.on_save_as_sheet)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        control = CSHEET.Sheet.new()
+        control._path = None
+        target._control = control
+        # Test
+        target.on_save_sheet(None, None)
+        assert patch_save_as.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_save_as_sheet_apply(self, tmp_path, patch_dialog_choose,
+                                    monkeypatch, patch_factsheet, capfd):
+        """Confirm save to file with path set.
+        Case: apply save
+        """
+        # Setup
+        PATH_NEW = Path(tmp_path / 'new_factsheet.fsg')
+        patch_dialog = patch_dialog_choose(
+            Gtk.ResponseType.APPLY, str(PATH_NEW))
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'get_filename', patch_dialog.get_filename)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'run', patch_dialog.run)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'set_current_name',
+            patch_dialog.set_current_name)
+        monkeypatch.setattr(Gtk.FileChooserDialog, 'set_filename',
+                            patch_dialog.set_filename)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        PATH_OLD = Path(tmp_path / 'old_factsheet.fsg')
+        control = CSHEET.Sheet.new()
+        control._path = PATH_OLD
+        target._control = control
+        # Test
+        target.on_save_as_sheet(None, None)
+        assert patch_dialog.called_set_filename
+        assert not patch_dialog.called_set_current_name
+        assert patch_dialog.called_run
+        assert patch_dialog.called_hide
+        assert patch_dialog.called_get_filename
+        assert PATH_NEW == target._control.path
+        assert control._path.exists()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_save_as_sheet_cancel(self, tmp_path, patch_dialog_choose,
+                                     monkeypatch, patch_factsheet, capfd):
+        """Confirm save to file with path set.
+        Case: cancel save
+        """
+        # Setup
+        PATH = Path(tmp_path / 'save_as_factsheet.fsg')
+        patch_dialog = patch_dialog_choose(
+            Gtk.ResponseType.CANCEL, str(PATH))
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'get_filename', patch_dialog.get_filename)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'run', patch_dialog.run)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'set_current_name',
+            patch_dialog.set_current_name)
+        monkeypatch.setattr(Gtk.FileChooserDialog, 'set_filename',
+                            patch_dialog.set_filename)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        control = CSHEET.Sheet.new()
+        control._path = None
+        target._control = control
+        # Test
+        target.on_save_as_sheet(None, None)
+        assert not patch_dialog.called_set_filename
+        assert patch_dialog.called_set_current_name
+        assert patch_dialog.called_run
+        assert patch_dialog.called_hide
+        assert not patch_dialog.called_get_filename
+        assert target._control.path is None
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
     def test_on_show_dialog(self, patch_factsheet, capfd, monkeypatch):
         """Confirm handler runs dialog.
 
@@ -543,24 +834,20 @@ class TestSheet:
         del target._window
         del factsheet
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_open_factsheet(self):
+    def test_open_factsheet(
+            self, monkeypatch, patch_factsheet, capfd, tmp_path):
         """Confirm factsheet creation from file."""
         # Setup
-        # Test
-        # Teardown
-#         target._window.destroy()
-#         del target._window
-#         del factsheet
+        def patch_open(p_path):
+            control = CSHEET.Sheet()
+            control._path = p_path
+            return control
 
-    def test_new_factsheet(self, monkeypatch, patch_factsheet, capfd):
-        """Confirm factsheet creation with default contents."""
-        # Setup
         def patch_attach_page(self, pm_view):
-            self.view = pm_view
+            self.test_view = pm_view
 
-        monkeypatch.setattr(
-            CSHEET.Sheet, 'attach_page', patch_attach_page)
+        monkeypatch.setattr(CSHEET.Sheet, 'open', patch_open)
+        monkeypatch.setattr(CSHEET.Sheet, 'attach_page', patch_attach_page)
         factsheet = patch_factsheet()
 
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -568,16 +855,18 @@ class TestSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        PATH = Path(tmp_path / 'factsheet.fsg')
         # Test
-        control = target.new_factsheet(target._window.get_application())
+        control = target.open_factsheet(
+            target._window.get_application(), PATH)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        assert isinstance(control, CSHEET.Sheet)
-        assert isinstance(control.view, VSHEET.PageSheet)
-        assert control.view._window.get_application() is factsheet
-        assert control.view._control is control
+
+        assert isinstance(control.test_view, VSHEET.PageSheet)
+        assert control.test_view._window.get_application() is factsheet
+        assert control.test_view._control is control
         # Teardown
         target._window.destroy()
         del target._window

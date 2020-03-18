@@ -2,7 +2,7 @@
 Defines class to display Factsheet document in a window.
 """
 import gi   # type: ignore[import]
-import logging
+from pathlib import Path
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
@@ -15,9 +15,6 @@ from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-
-logger = logging.getLogger('Main.VSHEET')
-logger.debug('Imported View Sheet module.')
 
 
 class PageSheet(ABC_SHEET.InterfacePageSheet):
@@ -170,6 +167,18 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         return dialog
 
+    @classmethod
+    def new_factsheet(cls, px_app: Gtk.Application) -> CSHEET.Sheet:
+        """Create factsheet with default contents.
+
+        :param px_app: application to which the factsheet belongs.
+        """
+        control = CSHEET.Sheet.new()
+        page = PageSheet(px_app=px_app)
+        control.attach_page(page)
+        page._control = control
+        return control
+
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
         """Close page guarding against data loss.
@@ -228,22 +237,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         if response == Gtk.ResponseType.APPLY:
             self._control.delete_force()
 
-    def on_open_sheet(self, _action: Gio.SimpleAction,
-                      _target: GLib.Variant) -> None:
-        """Create a factsheet with contents from file."""
-        dialog = self._make_dialog_file(Gtk.FileChooserAction.OPEN)
-        dialog.run()
-        dialog.hide()
-        raise NotImplementedError
-
-    def on_save_sheet(self, _action: Gio.SimpleAction,
-                      _target: GLib.Variant) -> None:
-        """Persist factsheet contents to file."""
-        dialog = self._make_dialog_file(Gtk.FileChooserAction.OPEN)
-        dialog.run()
-        dialog.hide()
-        raise NotImplementedError
-
     def on_new_sheet(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
         """Create a new factsheet with default contents."""
@@ -259,6 +252,44 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._control.attach_page(page)
         page._control = self._control
 
+    def on_open_sheet(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
+        """Create a factsheet with contents from file."""
+        dialog = self._make_dialog_file(Gtk.FileChooserAction.OPEN)
+        response = dialog.run()
+        dialog.hide()
+        if response == Gtk.ResponseType.APPLY:
+            path_new = Path(dialog.get_filename())
+            app = self._window.get_application()
+            _control = PageSheet.open_factsheet(app, path_new)
+        del dialog
+
+    def on_save_sheet(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
+        """Persist factsheet contents to file."""
+        assert self._control is not None
+        if self._control.path is None:
+            self.on_save_as_sheet(None, None)
+        else:
+            self._control.save()
+
+    def on_save_as_sheet(self, _action: Gio.SimpleAction,
+                         _target: GLib.Variant) -> None:
+        """Persist factsheet contents to file at new path."""
+        assert self._control is not None
+        path_old = self._control.path
+        dialog = self._make_dialog_file(Gtk.FileChooserAction.SAVE)
+        if path_old:
+            _ = dialog.set_filename(str(path_old))
+        else:
+            dialog.set_current_name('Untitled.fsg')
+        response = dialog.run()
+        dialog.hide()
+        if response == Gtk.ResponseType.APPLY:
+            path_new = Path(dialog.get_filename())
+            self._control.save_as(path_new)
+        del dialog
+
     def on_show_dialog(self, _action: Gio.SimpleAction,
                        _target: GLib.Variant, px_dialog: Gtk.Dialog
                        ) -> None:
@@ -271,17 +302,14 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         px_dialog.hide()
 
     @classmethod
-    def open_factsheet(cls, px_app, px_path):
-        """Create factsheet with model from file."""
-        raise NotImplementedError
-
-    @classmethod
-    def new_factsheet(cls, px_app: Gtk.Application) -> CSHEET.Sheet:
-        """Create factsheet with default contents.
+    def open_factsheet(cls, px_app: Gtk.Application, p_path: Path
+                       ) -> CSHEET.Sheet:
+        """Create factsheet with contents from file.
 
         :param px_app: application to which the factsheet belongs.
+        :param p_path: path to file containing factsheet contents.
         """
-        control = CSHEET.Sheet.new()
+        control = CSHEET.Sheet.open(p_path)
         page = PageSheet(px_app=px_app)
         control.attach_page(page)
         page._control = control

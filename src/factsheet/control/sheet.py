@@ -3,12 +3,15 @@ Defines class to mediates from :mod:`~factsheet.view` to
 :mod:`~factsheet.model` of a factsheet.
 """
 import errno
+import logging
 from pathlib import Path
 import pickle
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.model import sheet as MSHEET
+
+logger = logging.getLogger('Main.CSHEET')
 
 
 class Sheet(object):
@@ -63,11 +66,12 @@ class Sheet(object):
     def save(self) -> None:
         """Save factsheet contents to file.
 
-        .. note:: If the factsheet file path is not set, then the method
-           does not save factsheet contents.
+        Log a warning when control has no file path.
         """
         assert self._model is not None
         if self._path is None:
+            logger.warning('No file path ({}.{})'.format(
+                self.__class__.__name__, self.save.__name__))
             return
 
         self._model.set_fresh()
@@ -90,6 +94,14 @@ class Sheet(object):
             else:
                 raise
         return io_out
+
+    def save_as(self, p_path: Path) -> None:
+        """Save factsheet contents to file at given path.
+
+        :param path: file system path to file.
+        """
+        self._path = p_path
+        self.save()
 
     @classmethod
     def open(cls, p_path: Path) -> 'Sheet':
@@ -115,3 +127,8 @@ class Sheet(object):
         control = Sheet()
         control._model = MSHEET.Sheet()
         return control
+
+    @property
+    def path(self) -> typing.Optional[Path]:
+        """Return path to file containing factsheet contents."""
+        return self._path
