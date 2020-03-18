@@ -1354,7 +1354,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">The File Menu for a Sheet provides options to create, save, and close fact sheets.</property>
+                <property name="label" translatable="yes">The File menu for a factheet provides options to create, open, save, and close factsheets. In addition, you may create, open, and save a factsheet using buttons on a factsheet window title.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -1378,7 +1378,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;New factsheet&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;New&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1410,7 +1410,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Open factsheet&lt;/b&gt;&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Open&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1425,7 +1425,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Load a fact sheet from a file into a new window.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Load a factsheet from a file into a new window.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -1442,7 +1442,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Save ...&lt;/b&gt;&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Save&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -1458,7 +1458,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Save As ...&lt;/b&gt;&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Save As ...&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1473,7 +1473,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Delete factsheet&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Close&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1503,7 +1503,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Save fact sheet to a file you choose.  The application saves only fact sheet contents.  The application does not save the number and arrangement of the sheet's windows.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Save factsheet to a file you choose.  The application saves only factsheet contents.  The application does not save the number and arrangement of the factsheet's windows.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -1520,7 +1520,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Save fact sheet to a file you choose, which may be different from a file selected in a prior Save.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Save factsheet to a file you choose. The file may be different from a file selected when the factsheet was loaded or in prior Save.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -1537,7 +1537,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Close all windows for the factsheet and delete the factsheet itself.  If the factsheet contains unsaved changes, the application will ask you to approve deletion.</property>
+                    <property name="label" translatable="yes">Close all windows for the factsheet.  If the factsheet contains unsaved changes, the application will give you the choice of approving loss of the changes or canceling the close.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
