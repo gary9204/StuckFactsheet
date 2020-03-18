@@ -28,7 +28,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.show_intro_app</property>
+            <property name="action_name">win.show-intro-app</property>
             <property name="text" translatable="yes">Introduction</property>
           </object>
           <packing>
@@ -42,7 +42,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.show_help_app</property>
+            <property name="action_name">win.show-help-app</property>
             <property name="text" translatable="yes">Help</property>
           </object>
           <packing>
@@ -56,7 +56,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.show_about_app</property>
+            <property name="action_name">win.show-about-app</property>
             <property name="text" translatable="yes">About</property>
           </object>
           <packing>
@@ -112,7 +112,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.open_page_sheet</property>
+            <property name="action_name">win.open-page-sheet</property>
             <property name="text" translatable="yes">Open window</property>
           </object>
           <packing>
@@ -126,7 +126,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.close_page_sheet</property>
+            <property name="action_name">win.close-page-sheet</property>
             <property name="text" translatable="yes">Close window</property>
           </object>
           <packing>
@@ -136,17 +136,28 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="display_help">
+          <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">win.show_help_sheet_display</property>
-            <property name="text" translatable="yes">Help</property>
+            <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="display_help">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.show-help-sheet-display</property>
+            <property name="text" translatable="yes">Help</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>
@@ -193,8 +204,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.new_sheet</property>
-            <property name="text" translatable="yes">New factsheet</property>
+            <property name="action_name">win.new-sheet</property>
+            <property name="text" translatable="yes">New</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -203,12 +214,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="file_delete_sheet">
+          <object class="GtkModelButton" id="file_open">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.delete_sheet</property>
-            <property name="text" translatable="yes">Delete factsheet</property>
+            <property name="action_name">win.open-sheet</property>
+            <property name="text" translatable="yes">Open ...</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -217,17 +228,92 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="file_help">
+          <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">win.show_help_sheet_file</property>
-            <property name="text" translatable="yes">Help</property>
+            <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="file_save">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.save-sheet</property>
+            <property name="text" translatable="yes">Save</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="file_save_as">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.save-as-sheet</property>
+            <property name="text" translatable="yes">Save as ...</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">6</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">7</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="file_delete_sheet">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.delete-sheet</property>
+            <property name="text" translatable="yes">Close</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">8</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">9</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="file_help">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.show-help-sheet-file</property>
+            <property name="text" translatable="yes">Help</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">10</property>
           </packing>
         </child>
       </object>
@@ -255,9 +341,6 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
-        </child>
-        <child>
           <object class="GtkModelButton" id="show_submenu_display">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -268,7 +351,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -282,24 +365,32 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="show_help_sheet">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.show_help_sheet</property>
+            <property name="action_name">win.show-help-sheet</property>
             <property name="text" translatable="yes">Help</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">5</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
@@ -344,7 +435,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="action_name">win.open_sheet</property>
+                <property name="action_name">win.open-sheet</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -379,7 +470,7 @@
             <property name="receives_default">True</property>
             <property name="halign">center</property>
             <property name="valign">center</property>
-            <property name="action_name">win.new_sheet</property>
+            <property name="action_name">win.new-sheet</property>
             <property name="image">image_new</property>
             <property name="always_show_image">True</property>
           </object>
@@ -418,7 +509,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="action_name">win.save_sheet</property>
+                <property name="action_name">win.save-sheet</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -432,7 +523,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="halign">start</property>
-                <property name="action_name">win.save_as_sheet</property>
+                <property name="action_name">win.save-as-sheet</property>
                 <property name="image">image_save_as</property>
                 <property name="always_show_image">True</property>
               </object>
