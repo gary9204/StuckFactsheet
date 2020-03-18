@@ -125,24 +125,30 @@ class TestSheet:
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
         assert TEST_TITLE_UI == target._infoid.title
 
+        # Application Title
+        assert target._window.lookup_action('open-sheet') is not None
+        assert target._window.lookup_action('new-sheet') is not None
+        assert target._window.lookup_action('save-sheet') is not None
+        assert target._window.lookup_action('save-as-sheet') is not None
+
         # Application Menu
-        assert target._window.lookup_action('show_intro_app') is not None
-        assert target._window.lookup_action('show_help_app') is not None
-        assert target._window.lookup_action('show_about_app') is not None
+        assert target._window.lookup_action('show-intro-app') is not None
+        assert target._window.lookup_action('show-help-app') is not None
+        assert target._window.lookup_action('show-about-app') is not None
 
         # Factsheet Menu
-        assert target._window.lookup_action('show_help_sheet') is not None
+        assert target._window.lookup_action('show-help-sheet') is not None
 
         # Factsheet Display Menu
-        assert target._window.lookup_action('open_page_sheet') is not None
-        assert target._window.lookup_action('close_page_sheet') is not None
+        assert target._window.lookup_action('open-page-sheet') is not None
+        assert target._window.lookup_action('close-page-sheet') is not None
+        assert target._window.lookup_action(
+            'show-help-sheet-display') is not None
 
         # Factsheet File Menu
-        assert target._window.lookup_action('new_sheet') is not None
-        assert target._window.lookup_action('delete_sheet') is not None
-
+        assert target._window.lookup_action('delete-sheet') is not None
         assert target._window.lookup_action(
-            'show_help_sheet_display') is not None
+            'show-help-sheet-file') is not None
 
         assert not target._close_window
         assert target._window.is_visible()

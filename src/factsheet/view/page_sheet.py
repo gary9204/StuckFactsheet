@@ -50,39 +50,41 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         # Application Title
         UI.new_action_active(
-            self._window, 'open_sheet', self.on_open_sheet)
+            self._window, 'open-sheet', self.on_open_sheet)
         UI.new_action_active(
-            self._window, 'save_sheet', self.on_save_sheet)
+            self._window, 'new-sheet', self.on_new_sheet)
+        UI.new_action_active(
+            self._window, 'save-sheet', self.on_save_sheet)
+        UI.new_action_active(
+            self._window, 'save-as-sheet', self.on_save_as_sheet)
 
         # Application Menu
-        UI.new_action_active_dialog(self._window, 'show_intro_app',
+        UI.new_action_active_dialog(self._window, 'show-intro-app',
                                     self.on_show_dialog, UI.INTRO_APP)
-        UI.new_action_active_dialog(self._window, 'show_help_app',
+        UI.new_action_active_dialog(self._window, 'show-help-app',
                                     self.on_show_dialog, UI.HELP_APP)
-        UI.new_action_active_dialog(self._window, 'show_about_app',
+        UI.new_action_active_dialog(self._window, 'show-about-app',
                                     self.on_show_dialog, UI.ABOUT_APP)
 
         # Factsheet Menu
         UI.new_action_active_dialog(
-            self._window, 'show_help_sheet',
+            self._window, 'show-help-sheet',
             self.on_show_dialog, UI.HELP_SHEET)
 
         # Factsheet Display Menu
         UI.new_action_active(
-            self._window, 'open_page_sheet', self.on_open_page)
-        UI.new_action_active(self._window, 'close_page_sheet',
+            self._window, 'open-page-sheet', self.on_open_page)
+        UI.new_action_active(self._window, 'close-page-sheet',
                              lambda _w, _e: self._window.close())
         UI.new_action_active_dialog(
-            self._window, 'show_help_sheet_display',
+            self._window, 'show-help-sheet-display',
             self.on_show_dialog, UI.HELP_SHEET_DISPLAY)
 
         # Factsheet File Menu
         UI.new_action_active(
-            self._window, 'new_sheet', self.on_new_sheet)
-        UI.new_action_active(
-            self._window, 'delete_sheet', self.on_delete_sheet)
+            self._window, 'delete-sheet', self.on_delete_sheet)
         UI.new_action_active_dialog(
-            self._window, 'show_help_sheet_file',
+            self._window, 'show-help-sheet-file',
             self.on_show_dialog, UI.HELP_SHEET_FILE)
 
     def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
