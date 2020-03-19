@@ -26,9 +26,17 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     its presentation.
 
     :param px_app: application to which factsheet belongs
-    :param kwargs: superclass keyword parameters
+
+    .. attribute:: NAME_FILE_DIALOG_DATA_LOSS_UI
+
+       Path to user interface definition of data loss warning dialog.
+
+    .. attribute:: NAME_FILE_SHEET_UI
+
+       Path to user interface defintion of factsheet page.
     """
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
+
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
     def __init__(self, *, px_app: Gtk.Application) -> None:
@@ -170,7 +178,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         return dialog
 
     @classmethod
-    def new_factsheet(cls, px_app: Gtk.Application) -> CSHEET.Sheet:
+    def new_factsheet(cls, px_app: Gtk.Application) -> 'PageSheet':
         """Create factsheet with default contents.
 
         :param px_app: application to which the factsheet belongs.
@@ -179,7 +187,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         page = PageSheet(px_app=px_app)
         control.attach_page(page)
         page._control = control
-        return control
+        return page
 
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
@@ -305,7 +313,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     @classmethod
     def open_factsheet(cls, px_app: Gtk.Application, p_path: Path
-                       ) -> CSHEET.Sheet:
+                       ) -> 'PageSheet':
         """Create factsheet with contents from file.
 
         :param px_app: application to which the factsheet belongs.
@@ -315,7 +323,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         page = PageSheet(px_app=px_app)
         control.attach_page(page)
         page._control = control
-        return control
+        return page
 
     def update_name(self):
         """Update window title when sheet name changes."""

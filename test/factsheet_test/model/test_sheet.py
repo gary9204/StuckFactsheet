@@ -3,6 +3,7 @@ Unit tests for :mod:`~factsheet.model` for Factsheet document.
 """
 import logging
 from pathlib import Path
+import pickle
 import pytest   # type: ignore[import]
 
 from factsheet.model import infoid as MINFOID
@@ -30,6 +31,58 @@ def factory_page_sheet(patch_factsheet, capfd):
 class TestSheet:
     """Unit tests for :mod:`~factsheet.model` class :class:`Sheet`."""
 
+    def test_eq(self):
+        """Confirm equivalence operator
+
+        #. Case: type difference
+        #. Case: InfoId difference
+        #. Case: Equivalence
+        """
+        # Setup
+        TITLE_SOURCE = 'Parrot Sketch.'
+        source = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        # Test: type difference
+        assert not source.__eq__(TITLE_SOURCE)
+        # Test: InfoId difference
+        TITLE_TARGET = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_TARGET)
+        assert not source.__eq__(target)
+        # Test: Equivalence
+        target = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
+
+    def test_get_set_state(self, tmp_path, factory_page_sheet):
+        """Confirm conversion to and from pickle format."""
+        # Setup
+        path = Path(str(tmp_path / 'get_set.fsg'))
+
+        TITLE_MODEL = 'Something completely different.'
+        source = MSHEET.Sheet(p_title=TITLE_MODEL)
+        source._stale = True
+
+        N_PAGES = 3
+        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            source.attach_page(page)
+        # Test
+        with path.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+
+        with path.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+
+        assert source._infoid == target._infoid
+        assert not target._stale
+        assert isinstance(target._pages, dict)
+        assert not target._pages
+        # Teardown
+        for page in pages:
+            app = page._window.get_application()
+            page._window.destroy()
+            del page._window
+            del app
+
     def test_init(self):
         """Confirm initialization."""
         # Setup
@@ -51,27 +104,6 @@ class TestSheet:
         # Test
         target = MSHEET.Sheet()
         assert TEXT_TITLE_DEFAULT == target._infoid.title
-
-    def test_eq(self):
-        """Confirm equivalence operator
-
-        #. Case: type difference
-        #. Case: InfoId difference
-        #. Case: Equivalence
-        """
-        # Setup
-        TITLE_SOURCE = 'Parrot Sketch.'
-        source = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        # Test: type difference
-        assert not source.__eq__(TITLE_SOURCE)
-        # Test: InfoId difference
-        TITLE_TARGET = 'Something completely different.'
-        target = MSHEET.Sheet(p_title=TITLE_TARGET)
-        assert not source.__eq__(target)
-        # Test: Equivalence
-        target = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        assert source.__eq__(target)
-        assert not source.__ne__(target)
 
     def test_attach_page(self, factory_page_sheet):
         """Confirm page addition.

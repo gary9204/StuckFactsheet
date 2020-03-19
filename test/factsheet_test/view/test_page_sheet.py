@@ -281,15 +281,15 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         # Test
-        control = target.new_factsheet(target._window.get_application())
+        page = target.new_factsheet(target._window.get_application())
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        assert isinstance(control, CSHEET.Sheet)
-        assert isinstance(control.view, VSHEET.PageSheet)
-        assert control.view._window.get_application() is factsheet
-        assert control.view._control is control
+        assert isinstance(page, VSHEET.PageSheet)
+        assert page._window.get_application() is factsheet
+        assert isinstance(page._control, CSHEET.Sheet)
+        assert page._control.view is page
         # Teardown
         target._window.destroy()
         del target._window
@@ -856,23 +856,22 @@ class TestSheet:
         monkeypatch.setattr(CSHEET.Sheet, 'attach_page', patch_attach_page)
         factsheet = patch_factsheet()
 
-        target = VSHEET.PageSheet(px_app=factsheet)
+        source = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         PATH = Path(tmp_path / 'factsheet.fsg')
         # Test
-        control = target.open_factsheet(
-            target._window.get_application(), PATH)
+        target = source.open_factsheet(factsheet, PATH)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        assert isinstance(control.test_view, VSHEET.PageSheet)
-        assert control.test_view._window.get_application() is factsheet
-        assert control.test_view._control is control
+        assert isinstance(target, VSHEET.PageSheet)
+        assert target._window.get_application() is factsheet
+        assert target._control.test_view is target
         # Teardown
         target._window.destroy()
         del target._window

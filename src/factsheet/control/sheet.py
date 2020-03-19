@@ -17,7 +17,7 @@ logger = logging.getLogger('Main.CSHEET')
 class Sheet(object):
     """Mediates user actions at view to model updates for a factsheet.
 
-    Class 'Sheet` translates user requests in a factsheet page
+    Class `Sheet` translates user requests in a factsheet page
     into changes in the factsheet model (such as save or delete) or in
     the collection of factsheet views (such as add or close a view).
     """

@@ -41,12 +41,12 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
 
     def __init__(self, p_text: str = '') -> None:
         self._buffer = Gtk.EntryBuffer(text=p_text)
-        self._state_common()
+        self._state_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct model text attribute from state pickle loads.
 
-        Reconstructed attribute is marked fresh and has no no views.
+        Reconstructed attribute is marked fresh and has no views.
 
         :param px_state: unpickled state of stored text attribute.
         """
@@ -54,9 +54,9 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         self._buffer = Gtk.EntryBuffer(
             text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
-        self._state_common()
+        self._state_transient()
 
-    def _state_common(self) -> None:
+    def _state_transient(self) -> None:
         """Helper ensures __init__ and __setstate__ are consistent."""
         assert hasattr(self, '_buffer')
         _ = self._buffer.connect(
