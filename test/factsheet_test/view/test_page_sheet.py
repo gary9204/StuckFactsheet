@@ -23,8 +23,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 @pytest.fixture
 def patch_control_safe():
     class PatchSafe(CSHEET.Sheet):
-        def __init__(self, p_effect):
-            super().__init__()
+        def __init__(self, p_effect, pm_sheets_active):
+            super().__init__(pm_sheets_active)
             self.n_delete_force = 0
             self.n_delete_safe = 0
             self.n_detach_force = 0
@@ -112,10 +112,10 @@ class TestSheet:
         TEST_TITLE_UI = 'Sheet title'
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
+#         sheets_active = CPOOL.PoolSheets()
         # Test
-        target = PatchPageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = PatchPageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -167,12 +167,12 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
+#         sheets_active = CPOOL.PoolSheets()
         window_gtype = GO.type_from_name(GO.type_name(Gtk.ApplicationWindow))
         delete_signal = GO.signal_lookup('delete-event', window_gtype)
         # Test
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -201,9 +201,9 @@ class TestSheet:
             Gtk.ApplicationWindow, 'close', patch_window.close)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+#         sheets_active = CPOOL.PoolSheets()
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -223,9 +223,9 @@ class TestSheet:
         """Confirm returns InfoId attribute."""
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+#         sheets_active = CPOOL.PoolSheets()
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -247,10 +247,9 @@ class TestSheet:
             CSHEET.Sheet, 'attach_page', patch_attach_page)
         factsheet = patch_factsheet()
         sheets_active = CPOOL.PoolSheets()
-
-        control = CSHEET.Sheet()
-        page = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        control = CSHEET.Sheet(sheets_active)
+        page = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -259,7 +258,7 @@ class TestSheet:
         VSHEET.PageSheet.link_factsheet(page, control)
         assert control.test_view is page
         assert page._control is control
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         # Teardown
         page._window.destroy()
         del page._window
@@ -274,9 +273,9 @@ class TestSheet:
         """Confirm construction of dialog for file save."""
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        source = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+#         sheets_active = CPOOL.PoolSheets()
+        source = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -320,7 +319,7 @@ class TestSheet:
         assert target._window.get_application() is factsheet
         control = target._control
         assert isinstance(control, CSHEET.Sheet)
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         # Teardown
         target._window.destroy()
         del target._window
@@ -333,15 +332,16 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
         target._control = control
         target._close_window = True
         N_CALLS_SAFE = 0
@@ -362,15 +362,16 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
@@ -390,9 +391,8 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -404,7 +404,9 @@ class TestSheet:
         monkeypatch.setattr(
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
@@ -425,9 +427,8 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -439,7 +440,9 @@ class TestSheet:
         monkeypatch.setattr(
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 1
@@ -461,9 +464,8 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -472,15 +474,17 @@ class TestSheet:
         patch_dialog = patch_dialog_run(Gtk.ResponseType.CANCEL)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.COMPLETED)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
         control._model = MSHEET.Sheet()
         VSHEET.PageSheet.link_factsheet(target, control)
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
         # Test
         target.on_delete_sheet(None, None)
-        assert id(control) not in sheets_active._controls.keys()
+#         assert id(control) not in sheets_active._controls.keys()
         assert not patch_dialog.called
         assert N_CALLS_SAFE == control.n_delete_safe
         assert N_CALLS_FORCE == control.n_delete_force
@@ -497,9 +501,8 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -511,15 +514,17 @@ class TestSheet:
         monkeypatch.setattr(
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         control._model = MSHEET.Sheet()
         VSHEET.PageSheet.link_factsheet(target, control)
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
         # Test
         target.on_delete_sheet(None, None)
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         assert patch_dialog.called
         assert not target._dialog_data_loss.get_visible()
         assert N_CALLS_SAFE == control.n_delete_safe
@@ -537,9 +542,8 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -551,15 +555,17 @@ class TestSheet:
         monkeypatch.setattr(
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
-        control = patch_control_safe(ABC_SHEET.EffectSafe.NO_EFFECT)
+        sheets_active = CPOOL.PoolSheets()
+        control = patch_control_safe(
+            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         control._model = MSHEET.Sheet()
         VSHEET.PageSheet.link_factsheet(target, control)
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 1
         # Test
         target.on_delete_sheet(None, None)
-        assert id(control) not in sheets_active._controls.keys()
+#         assert id(control) not in sheets_active._controls.keys()
         assert patch_dialog.called
         assert not target._dialog_data_loss.get_visible()
         assert N_CALLS_SAFE == control.n_delete_safe
@@ -585,13 +591,15 @@ class TestSheet:
             VSHEET.PageSheet, 'new_factsheet', patch_new.new_factsheet)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet(sheets_active)
+        target._control = control
         # Test
         target.on_new_sheet(None, None)
         assert patch_new.called
@@ -604,14 +612,14 @@ class TestSheet:
         """Confirm response to request to open new view."""
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        control = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
         target._control = control
         # Test
         target.on_open_page(None, None)
@@ -647,20 +655,22 @@ class TestSheet:
                 self.called = True
                 self.app = p_app
                 self.path = p_path
-                return CSHEET.Sheet()
+                return CSHEET.Sheet(p_pool)
 
         patch_page = PatchPageSheet()
         monkeypatch.setattr(
             VSHEET.PageSheet, 'open_factsheet', patch_page.open_factsheet)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet(sheets_active)
+        target._control = control
         # Test
         target.on_open_sheet(None, None)
         assert patch_dialog.called_run
@@ -704,9 +714,9 @@ class TestSheet:
             VSHEET.PageSheet, 'open_factsheet', patch_page.open_factsheet)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+#         sheets_active = CPOOL.PoolSheets()
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -727,16 +737,16 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        control = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
         control._path = PATH
         assert not control._path.exists()
         target._control = control
@@ -763,15 +773,15 @@ class TestSheet:
                             patch_save_as.on_save_as_sheet)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        control = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
         control._path = None
         target._control = control
         # Test
@@ -804,16 +814,16 @@ class TestSheet:
                             patch_dialog.set_filename)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
         PATH_OLD = Path(tmp_path / 'old_factsheet.fsg')
-        control = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
         control._path = PATH_OLD
         target._control = control
         # Test
@@ -852,15 +862,15 @@ class TestSheet:
                             patch_dialog.set_filename)
 
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        control = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
         control._path = None
         target._control = control
         # Test
@@ -883,9 +893,9 @@ class TestSheet:
         """
         # Setup
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
-        target = VSHEET.PageSheet(
-            px_app=factsheet, pm_sheets_active=sheets_active)
+#         sheets_active = CPOOL.PoolSheets()
+        target = VSHEET.PageSheet(px_app=factsheet)
+#             px_app=factsheet, pm_sheets_active=sheets_active)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -917,10 +927,12 @@ class TestSheet:
             self, monkeypatch, patch_factsheet, capfd, tmp_path):
         """Confirm factsheet creation from file."""
         # Setup
-        def patch_open(p_path):
-            control = CSHEET.Sheet()
+        def patch_open(p_pool, p_path):
+            sheets_active = CPOOL.PoolSheets()
+            control = CSHEET.Sheet(sheets_active)
             control._model = MSHEET.Sheet()
             control._path = p_path
+            control._sheets_active = p_pool
             return control
 
 #         def patch_attach_page(self, pm_view):
@@ -929,7 +941,6 @@ class TestSheet:
         monkeypatch.setattr(CSHEET.Sheet, 'open', patch_open)
 #         monkeypatch.setattr(CSHEET.Sheet, 'attach_page', patch_attach_page)
         factsheet = patch_factsheet()
-        sheets_active = CPOOL.PoolSheets()
 
 #         source = VSHEET.PageSheet(
 #             px_app=factsheet, pm_sheets_active=sheets_active)
@@ -938,9 +949,11 @@ class TestSheet:
 #         assert 'Gtk-CRITICAL' in snapshot.err
 #         assert 'GApplication::startup signal' in snapshot.err
         PATH = Path(tmp_path / 'factsheet.fsg')
+        sheets_active = CPOOL.PoolSheets()
         # Test
         target = VSHEET.PageSheet.open_factsheet(
             factsheet, sheets_active, PATH)
+#             factsheet, sheets_active, PATH)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -950,41 +963,11 @@ class TestSheet:
         assert target._window.get_application() is factsheet
         control = target._control
         assert isinstance(control, CSHEET.Sheet)
-        assert sheets_active._controls[id(control)] is control
+#         assert sheets_active._controls[id(control)] is control
         # Teardown
         target._window.destroy()
         del target._window
         del factsheet
-
-#     @pytest.mark.parametrize('name_attr, name_prop', [
-#         ['_infoid', 'infoid'],
-#         ])
-#     def test_property(self, patch_factsheet, name_attr, name_prop, capfd):
-#         """Confirm properties are get-only.
-#
-#         #. Case: read
-#         #. Case: no replace
-#         #. Case: no delete
-#         """
-#         # Setup
-#         factsheet = patch_factsheet()
-#         target = VSHEET.PageSheet(
-#             px_app=factsheet, pm_sheets_active=sheets_active)
-#         value_attr = getattr(target, name_attr)
-#         target_prop = getattr(VSHEET.PageSheet, name_prop)
-#         value_prop = getattr(target, name_prop)
-#
-#         snapshot = capfd.readouterr()   # Resets the internal buffer
-#         assert not snapshot.out
-#         assert 'Gtk-CRITICAL' in snapshot.err
-#         assert 'GApplication::startup signal' in snapshot.err
-#         # Test: read
-#         assert target_prop.fget is not None
-#         assert str(value_attr) == str(value_prop)
-#         # Test: no replace
-#         assert target_prop.fset is None
-#         # Test: no delete
-#         assert target_prop.fdel is None
 
     @pytest.mark.skip(reason='Pending implementation')
     def test_update_name(self):

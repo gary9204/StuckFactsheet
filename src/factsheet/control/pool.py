@@ -5,7 +5,8 @@ import logging
 from pathlib import Path
 import typing   # noqa
 
-from factsheet.control import sheet as CSHEET   # noqa
+if typing.TYPE_CHECKING:
+    from factsheet.control import sheet as CSHEET   # noqa
 
 logger = logging.getLogger('Main.CPOOL')
 
@@ -15,9 +16,9 @@ class PoolSheets:
     :mod:`~factsheet.control` :class:`~.control.sheet.Sheet`.
     """
     def __init__(self) -> None:
-        self._controls: typing.Dict[int, CSHEET.Sheet] = dict()
+        self._controls: typing.Dict[int, 'CSHEET.Sheet'] = dict()
 
-    def add(self, px_control: CSHEET.Sheet) -> None:
+    def add(self, px_control: 'CSHEET.Sheet') -> None:
         """Add control to collection.
 
         Log a warning when the control is in the collection already.
@@ -30,7 +31,7 @@ class PoolSheets:
             return
         self._controls[id_control] = px_control
 
-    def owner_file(self, p_path: Path) -> typing.Optional[CSHEET.Sheet]:
+    def owner_file(self, p_path: Path) -> typing.Optional['CSHEET.Sheet']:
         """Return control with given path or None."""
         for control in self._controls.values():
             assert control.path is not None
@@ -38,7 +39,7 @@ class PoolSheets:
                 return control
         return None
 
-    def remove(self, px_control: CSHEET.Sheet) -> None:
+    def remove(self, px_control: 'CSHEET.Sheet') -> None:
         """Remove control from collection.
 
         Log a warning when the control is not in the collection.

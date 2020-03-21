@@ -9,6 +9,7 @@ import pickle
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.control import pool as CPOOL
 from factsheet.model import sheet as MSHEET
 
 logger = logging.getLogger('Main.CSHEET')
@@ -22,9 +23,11 @@ class Sheet(object):
     the collection of factsheet views (such as add or close a view).
     """
 
-    def __init__(self) -> None:
+    def __init__(self, pm_sheets_active: CPOOL.PoolSheets) -> None:
         self._model: typing.Optional[MSHEET.Sheet] = None
         self._path: typing.Optional[Path] = None
+        self._sheets_active = pm_sheets_active
+        self._sheets_active.add(self)
 
     def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Add page to model."""
@@ -35,6 +38,7 @@ class Sheet(object):
         """Delete factsheet unconditionally."""
         assert self._model is not None
         self._model.detach_all()
+        self._sheets_active.remove(self)
 
     def delete_safe(self) -> ABC_SHEET.EffectSafe:
         """Delete factsheet provided no changes will be lost."""
@@ -42,13 +46,15 @@ class Sheet(object):
         if self._model.is_stale():
             return ABC_SHEET.EffectSafe.NO_EFFECT
 
-        self._model.detach_all()
+        self.delete_force()
         return ABC_SHEET.EffectSafe.COMPLETED
 
     def detach_page_force(self, pm_page) -> None:
         """Remove page unconditionally."""
         assert self._model is not None
         self._model.detach_page(pm_page)
+        if 0 == self._model.n_pages():
+            self._sheets_active.remove(self)
 
     def detach_page_safe(self, pm_page) -> ABC_SHEET.EffectSafe:
         """Remove page provided no changes will be lost."""
@@ -63,20 +69,24 @@ class Sheet(object):
 
         return ABC_SHEET.EffectSafe.NO_EFFECT
 
-    def save(self) -> None:
-        """Save factsheet contents to file.
+    @classmethod
+    def open(cls, pm_sheet_active: CPOOL.PoolSheets, p_path: Path
+             ) -> 'Sheet':
+        """Create control with model from file."""
+        control = Sheet(pm_sheet_active)
+        try:
+            with p_path.open(mode='rb') as io_in:
+                model = pickle.load(io_in)
+        except Exception:
+            # err = TB.format_exc()
+            title = 'Error opening file \'{}\''.format(p_path)
+            # Reminder: deecopy default factsheet and set attributes
+            control._model = MSHEET.Sheet(p_title=title)
+        else:
+            control._model = model
+            control._path = p_path
 
-        Log a warning when control has no file path.
-        """
-        assert self._model is not None
-        if self._path is None:
-            logger.warning('No file path ({}.{})'.format(
-                self.__class__.__name__, self.save.__name__))
-            return
-
-        self._model.set_fresh()
-        with self._open_guard() as io_out:
-            pickle.dump(self._model, io_out)
+        return control
 
     def _open_guard(self) -> typing.BinaryIO:
         """Backup existing file when opening for save.
@@ -95,6 +105,33 @@ class Sheet(object):
                 raise
         return io_out
 
+    @classmethod
+    def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'Sheet':
+        """Create control with default model."""
+        control = Sheet(pm_sheets_active)
+        control._model = MSHEET.Sheet()
+        return control
+
+    @property
+    def path(self) -> typing.Optional[Path]:
+        """Return path to file containing factsheet contents."""
+        return self._path
+
+    def save(self) -> None:
+        """Save factsheet contents to file.
+
+        Log a warning when control has no file path.
+        """
+        assert self._model is not None
+        if self._path is None:
+            logger.warning('No file path ({}.{})'.format(
+                self.__class__.__name__, self.save.__name__))
+            return
+
+        self._model.set_fresh()
+        with self._open_guard() as io_out:
+            pickle.dump(self._model, io_out)
+
     def save_as(self, p_path: Path) -> None:
         """Save factsheet contents to file at given path.
 
@@ -103,32 +140,7 @@ class Sheet(object):
         self._path = p_path
         self.save()
 
-    @classmethod
-    def open(cls, p_path: Path) -> 'Sheet':
-        """Create control with model from file."""
-        control = Sheet()
-        try:
-            with p_path.open(mode='rb') as io_in:
-                model = pickle.load(io_in)
-        except Exception:
-            # err = TB.format_exc()
-            title = 'Error opening file \'{}\''.format(p_path)
-            # Reminder: deecopy default factsheet and set attributes
-            control._model = MSHEET.Sheet(p_title=title)
-        else:
-            control._model = model
-            control._path = p_path
-
-        return control
-
-    @classmethod
-    def new(cls) -> 'Sheet':
-        """Create control with default model."""
-        control = Sheet()
-        control._model = MSHEET.Sheet()
-        return control
-
     @property
-    def path(self) -> typing.Optional[Path]:
-        """Return path to file containing factsheet contents."""
-        return self._path
+    def sheets_active(self) -> CPOOL.PoolSheets:
+        """Return collection of active factsheets."""
+        return self._sheets_active

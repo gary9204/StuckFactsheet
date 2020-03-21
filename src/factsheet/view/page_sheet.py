@@ -40,10 +40,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
-    def __init__(self, *, px_app: Gtk.Application,
-                 pm_sheets_active: CPOOL.PoolSheets) -> None:
+    def __init__(self, *, px_app: Gtk.Application) -> None:
+#                  pm_sheets_active: CPOOL.PoolSheets) -> None:
         self._control: typing.Optional[CSHEET.Sheet] = None
-        self._sheets_active = pm_sheets_active
+#         self._sheets_active = pm_sheets_active
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
@@ -152,7 +152,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """
         pm_control.attach_page(pm_page)
         pm_page._control = pm_control
-        pm_page._sheets_active.add(pm_control)
+#         pm_page._sheets_active.add(pm_control)
 
     def _make_dialog_file(self, p_action: Gtk.FileChooserAction
                           ) -> Gtk.FileChooserDialog:
@@ -197,12 +197,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :param px_app: application to which the factsheet belongs.
         :param pm_sheets_active: collection of active factsheets.
         """
-        page = PageSheet(px_app=px_app, pm_sheets_active=pm_sheets_active)
-        control = CSHEET.Sheet.new()
+        page = PageSheet(px_app=px_app)
+        control = CSHEET.Sheet.new(pm_sheets_active)
         PageSheet.link_factsheet(page, control)
-#         control.attach_page(page)
-#         page._control = control
-#         page._sheets_active.add(control)
         return page
 
     def on_close_page(
@@ -251,7 +248,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         assert self._control is not None
         effect = self._control.delete_safe()
         if effect is ABC_SHEET.EffectSafe.COMPLETED:
-            self._sheets_active.remove(self._control)
+#             self._sheets_active.remove(self._control)
             return
 
         self._warning_data_loss.set_markup(
@@ -262,24 +259,23 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         response = self._dialog_data_loss.run()
         self._dialog_data_loss.hide()
         if response == Gtk.ResponseType.APPLY:
-            self._sheets_active.remove(self._control)
+#             self._sheets_active.remove(self._control)
             self._control.delete_force()
 
     def on_new_sheet(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
         """Create a new factsheet with default contents."""
+        assert self._control is not None
         app = self._window.get_application()
-        sheets_active = self._sheets_active
-        _page = PageSheet.new_factsheet(
-            px_app=app, pm_sheets_active=sheets_active)
+        sheets_active = self._control.sheets_active
+        _page = PageSheet.new_factsheet(app, sheets_active)
 
     def on_open_page(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
         """Open another view of factsheet."""
         assert self._control is not None
         app = self._window.get_application()
-        sheets_active = self._sheets_active
-        page = PageSheet(px_app=app, pm_sheets_active=sheets_active)
+        page = PageSheet(px_app=app)
         page._control = self._control
         page._control.attach_page(page)
 
@@ -292,9 +288,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         if response == Gtk.ResponseType.APPLY:
             path_new = Path(dialog.get_filename())
             app = self._window.get_application()
-            sheets_active = self._sheets_active
-            _page = PageSheet.open_factsheet(
-                app, sheets_active, path_new)
+            assert self._control is not None
+            sheets_active = self._control.sheets_active
+            _page = PageSheet.open_factsheet(app, sheets_active, path_new)
         del dialog
 
     def on_save_sheet(self, _action: Gio.SimpleAction,
@@ -343,8 +339,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :param px_app: application to which the factsheet belongs.
         :param p_path: path to file containing factsheet contents.
         """
-        page = PageSheet(px_app=px_app, pm_sheets_active=pm_sheets_active)
-        control = CSHEET.Sheet.open(p_path)
+        page = PageSheet(px_app=px_app)
+        control = CSHEET.Sheet.open(pm_sheets_active, p_path)
         PageSheet.link_factsheet(page, control)
         return page
 

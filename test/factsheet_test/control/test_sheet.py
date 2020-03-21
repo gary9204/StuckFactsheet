@@ -9,6 +9,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import sheet as CSHEET
+from factsheet.control import pool as CPOOL
 from factsheet.model import sheet as MSHEET
 
 
@@ -40,10 +41,13 @@ class TestControlSheet:
     def test_init(self):
         """Confirm initialization."""
         # Setup
+        sheets_active = CPOOL.PoolSheets()
         # Test
-        target = CSHEET.Sheet()
+        target = CSHEET.Sheet(sheets_active)
         assert target._model is None
         assert target._path is None
+        assert target._sheets_active is sheets_active
+        assert sheets_active._controls[id(target)] is target
 
     def test_attach_page(self, monkeypatch):
         """Confirm page addition."""
@@ -57,7 +61,8 @@ class TestControlSheet:
         monkeypatch.setattr(
             MSHEET.Sheet, 'attach_page', patch_model.attach_page)
 
-        target = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
         # Test
         target.attach_page(None)
         assert patch_model.called
@@ -74,10 +79,13 @@ class TestControlSheet:
         monkeypatch.setattr(
             MSHEET.Sheet, 'detach_all', patch_model.detach_all)
 
-        target = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
+        assert sheets_active._controls[id(target)] is target
         # Test
         target.delete_force()
         assert patch_model.called
+        assert id(target) not in sheets_active._controls.keys()
 
     def test_delete_safe_fresh(self, monkeypatch):
         """Confirm deletion with guard for unsaved changes.
@@ -95,7 +103,8 @@ class TestControlSheet:
         monkeypatch.setattr(
             MSHEET.Sheet, 'is_stale', lambda _s: False)
 
-        target = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
         # Test
         response = target.delete_safe()
         assert patch_model.called
@@ -117,7 +126,8 @@ class TestControlSheet:
         monkeypatch.setattr(
             MSHEET.Sheet, 'is_stale', lambda _s: True)
 
-        target = CSHEET.Sheet.new()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
         # Test
         response = target.delete_safe()
         assert not patch_model.called
@@ -127,12 +137,29 @@ class TestControlSheet:
         """Confirm page removed unconditionally."""
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
-        target = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
         target._model = patch_model
+        assert sheets_active._controls[id(target)] is target
         N_DETACH = 1
         # Test
         target.detach_page_force(None)
         assert N_DETACH == patch_model.n_detach
+        assert id(target) in sheets_active._controls.keys()
+
+    def test_detach_page_force_last(self, patch_model_safe):
+        """Confirm page removed unconditionally."""
+        # Setup
+        patch_model = patch_model_safe(p_stale=True, p_n_pages=0)
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
+        target._model = patch_model
+        assert sheets_active._controls[id(target)] is target
+        N_DETACH = 1
+        # Test
+        target.detach_page_force(None)
+        assert N_DETACH == patch_model.n_detach
+        assert id(target) not in sheets_active._controls.keys()
 
     def test_detach_page_safe_fresh(self, patch_model_safe):
         """Confirm page removal with guard for unsaved changes.
@@ -140,7 +167,8 @@ class TestControlSheet:
         """
         # Setup
         patch_model = patch_model_safe(p_stale=False, p_n_pages=1)
-        target = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
         target._model = patch_model
         N_DETACH = 1
         # Test
@@ -154,7 +182,8 @@ class TestControlSheet:
         """
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=2)
-        target = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
         target._model = patch_model
         N_DETACH = 1
         # Test
@@ -168,7 +197,8 @@ class TestControlSheet:
         """
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
-        target = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
         target._model = patch_model
         N_DETACH = 0
         # Test
@@ -185,13 +215,14 @@ class TestControlSheet:
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
         model.set_stale()
-        source = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        source = CSHEET.Sheet(sheets_active)
         source._model = model
         source._path = PATH
         assert not PATH.exists()
         source.save()
         # Test
-        target = CSHEET.Sheet.open(PATH)
+        target = CSHEET.Sheet.open(sheets_active, PATH)
         assert source._model == target._model
         assert target._model.is_fresh()
 
@@ -204,8 +235,9 @@ class TestControlSheet:
         TITLE = 'Error opening file \'{}\''.format(PATH)
         MODEL = MSHEET.Sheet(p_title=TITLE)
         assert not PATH.exists()
+        sheets_active = CPOOL.PoolSheets()
         # Test
-        target = CSHEET.Sheet.open(PATH)
+        target = CSHEET.Sheet.open(sheets_active, PATH)
         assert target._model is not None
         assert MODEL == target._model
         assert target._path is None
@@ -222,8 +254,9 @@ class TestControlSheet:
         assert PATH.exists()
         TITLE = 'Error opening file \'{}\''.format(PATH)
         MODEL = MSHEET.Sheet(p_title=TITLE)
+        sheets_active = CPOOL.PoolSheets()
         # Test
-        target = CSHEET.Sheet.open(PATH)
+        target = CSHEET.Sheet.open(sheets_active, PATH)
         assert target._model is not None
         assert MODEL == target._model
         assert target._path is None
@@ -231,30 +264,59 @@ class TestControlSheet:
     def test_new(self):
         """Confirm control creation with default model."""
         # Setup
+        sheets_active = CPOOL.PoolSheets()
         # Test
-        target = CSHEET.Sheet.new()
+        target = CSHEET.Sheet.new(sheets_active)
         assert isinstance(target, CSHEET.Sheet)
         assert isinstance(target._model, MSHEET.Sheet)
 
-    def test_path(self, tmp_path):
-        """Confirm path property is get-only.
+#     def test_path(self, tmp_path):
+#         """Confirm path property is get-only.
+# 
+#         #. Case: read
+#         #. Case: no replace
+#         #. Case: no delete
+#         """
+#         # Setup
+#         PATH = Path(tmp_path / 'path_factsheet.fsg')
+#         target = CSHEET.Sheet.path
+#         sheets_active = CPOOL.PoolSheets()
+#         instance = CSHEET.Sheet.new(sheets_active)
+#         instance._path = PATH
+#         # Test: read
+#         assert target.fget is not None
+#         assert str(instance._path) == str(instance.path)
+#         # Test: no replace
+#         assert target.fset is None
+#         # Test: no delete
+#         assert target.fdel is None
+
+    @pytest.mark.parametrize('name_attr, name_prop', [
+        ['_path', 'path'],
+        ['_sheets_active', 'sheets_active'],
+        ])
+    def test_property(self, tmp_path, name_attr, name_prop):
+        """Confirm properties are get-only.
 
         #. Case: read
         #. Case: no replace
         #. Case: no delete
         """
         # Setup
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
         PATH = Path(tmp_path / 'path_factsheet.fsg')
-        target = CSHEET.Sheet.path
-        instance = CSHEET.Sheet.new()
-        instance._path = PATH
+        target._path = PATH
+        value_attr = getattr(target, name_attr)
+        target_prop = getattr(CSHEET.Sheet, name_prop)
+        value_prop = getattr(target, name_prop)
         # Test: read
-        assert target.fget is not None
-        assert str(instance._path) == str(instance.path)
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
         # Test: no replace
-        assert target.fset is None
+        assert target_prop.fset is None
         # Test: no delete
-        assert target.fdel is None
+        assert target_prop.fdel is None
 
     def test_save(self, tmp_path):
         """Confirm write to file.
@@ -265,7 +327,8 @@ class TestControlSheet:
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
         model.set_stale()
-        source = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        source = CSHEET.Sheet(sheets_active)
         source._model = model
         source._path = PATH
         assert not PATH.exists()
@@ -285,7 +348,8 @@ class TestControlSheet:
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
         model.set_stale()
-        source = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        source = CSHEET.Sheet(sheets_active)
         source._model = model
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
         assert not PATH.exists()
@@ -311,7 +375,8 @@ class TestControlSheet:
         log_message = ('No file path (Sheet.save)')
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
-        source = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        source = CSHEET.Sheet(sheets_active)
         source._model = model
         source._path = None
         # Test
@@ -331,7 +396,8 @@ class TestControlSheet:
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
         model.set_stale()
-        source = CSHEET.Sheet()
+        sheets_active = CPOOL.PoolSheets()
+        source = CSHEET.Sheet(sheets_active)
         source._model = model
         source._path = PATH
         assert PATH.exists()

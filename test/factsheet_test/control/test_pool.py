@@ -6,10 +6,17 @@ See :mod:`~factsheet.control` class :class:`~control.pool`.
 """
 import logging
 from pathlib import Path
-# import pytest   # type: ignore[import]
+import pytest   # type: ignore[import]
 
 from factsheet.control import pool as CPOOL
-from factsheet.control import sheet as CSHEET
+
+
+@pytest.fixture
+def patch_sheet():
+    class Sheet:
+        def __init__(self): pass
+
+    return Sheet
 
 
 class TestPoolSheets:
@@ -23,13 +30,13 @@ class TestPoolSheets:
         assert isinstance(target._controls, dict)
         assert not target._controls
 
-    def test_add(self):
+    def test_add(self, patch_sheet):
         """Confirm addition of control.
         Case: control not in collection initially
         """
         # Setup
         N_CONTROLS = 3
-        controls = [CSHEET.Sheet() for _ in range(N_CONTROLS)]
+        controls = [patch_sheet() for _ in range(N_CONTROLS)]
         target = CPOOL.PoolSheets()
         # Test
         for control in controls:
@@ -38,13 +45,13 @@ class TestPoolSheets:
         for control in controls:
             assert target._controls[id(control)] is control
 
-    def test_add_warn(self, PatchLogger, monkeypatch):
+    def test_add_warn(self, patch_sheet, PatchLogger, monkeypatch):
         """Confirm addition of control.
         Case: control in collection initially
         """
         # Setup
         N_CONTROLS = 3
-        controls = [CSHEET.Sheet() for _ in range(N_CONTROLS)]
+        controls = [patch_sheet() for _ in range(N_CONTROLS)]
         target = CPOOL.PoolSheets()
         for control in controls:
             target.add(control)
@@ -68,7 +75,7 @@ class TestPoolSheets:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_owner_file(self, tmp_path):
+    def test_owner_file(self, patch_sheet, tmp_path):
         """Confirm result of owner search.
         Case: owner not found
         """
@@ -77,8 +84,8 @@ class TestPoolSheets:
         N_CONTROLS = 3
         controls = list()
         for i in range(N_CONTROLS):
-            control = CSHEET.Sheet()
-            control._path = Path(tmp_path / ('file ' + str(i)))
+            control = patch_sheet()
+            control.path = Path(tmp_path / ('file ' + str(i)))
             controls.append(control)
             target.add(control)
         assert len(controls) == len(target._controls)
@@ -87,7 +94,7 @@ class TestPoolSheets:
         # Test
         assert target.owner_file(path_missing) is None
 
-    def test_owner_file_found(self, tmp_path):
+    def test_owner_file_found(self, patch_sheet, tmp_path):
         """Confirm result of owner search.
         Case: owner found
         """
@@ -96,25 +103,25 @@ class TestPoolSheets:
         N_CONTROLS = 3
         controls = list()
         for i in range(N_CONTROLS):
-            control = CSHEET.Sheet()
-            control._path = Path(tmp_path / ('file ' + str(i)))
+            control = patch_sheet()
+            control.path = Path(tmp_path / ('file ' + str(i)))
             controls.append(control)
             target.add(control)
         assert len(controls) == len(target._controls)
 
         I_OWNER = 1
         owner = controls[I_OWNER]
-        path_owner = owner._path
+        path_owner = owner.path
         # Test
         assert target.owner_file(path_owner) is owner
 
-    def test_remove(self):
+    def test_remove(self, patch_sheet):
         """Confirm removal of control.
-        Case: control in collection with multiple pages
+        Case: control in collection
         """
         # Setup
         N_CONTROLS = 3
-        controls = [CSHEET.Sheet() for _ in range(N_CONTROLS)]
+        controls = [patch_sheet() for _ in range(N_CONTROLS)]
         target = CPOOL.PoolSheets()
         for control in controls:
             target.add(control)
@@ -129,28 +136,13 @@ class TestPoolSheets:
         for control in controls:
             assert target._controls[id(control)] is control
 
-    def test_remove_last(self):
-        """Confirm removal of control.
-        Case: control in collection with no pages
-        """
-        # Setup
-        N_CONTROLS = 1
-        control = CSHEET.Sheet()
-        target = CPOOL.PoolSheets()
-        target.add(control)
-        assert N_CONTROLS == len(target._controls)
-        # Test
-        target.remove(control)
-        assert id(control) not in target._controls.keys()
-        assert not target._controls
-
-    def test_remove_warn(self, PatchLogger, monkeypatch):
+    def test_remove_warn(self, patch_sheet, PatchLogger, monkeypatch):
         """Confirm removal of control.
         Case: control not in collection
         """
         # Setup
         N_CONTROLS = 3
-        controls = [CSHEET.Sheet() for _ in range(N_CONTROLS)]
+        controls = [patch_sheet() for _ in range(N_CONTROLS)]
         target = CPOOL.PoolSheets()
         for control in controls:
             target.add(control)
