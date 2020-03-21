@@ -33,6 +33,7 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
+from factsheet.control import pool as CPOOL  # noqa: #402
 from factsheet.view import page_sheet as VSHEET  # noqa: #402
 
 
@@ -51,7 +52,8 @@ class Factsheet(Gtk.Application):
 
     def do_activate(self):
         """Create and display an initial factsheet with default content."""
-        _ = VSHEET.PageSheet.new_factsheet(self)
+        sheets_active = CPOOL.PoolSheets()
+        _ = VSHEET.PageSheet.new_factsheet(self, sheets_active)
 
     def do_shutdown(self):
         """Application teardown. """

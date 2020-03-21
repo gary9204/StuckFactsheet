@@ -110,7 +110,7 @@ class TestPoolSheets:
 
     def test_remove(self):
         """Confirm removal of control.
-        Case: control in collection initially
+        Case: control in collection with multiple pages
         """
         # Setup
         N_CONTROLS = 3
@@ -129,9 +129,24 @@ class TestPoolSheets:
         for control in controls:
             assert target._controls[id(control)] is control
 
+    def test_remove_last(self):
+        """Confirm removal of control.
+        Case: control in collection with no pages
+        """
+        # Setup
+        N_CONTROLS = 1
+        control = CSHEET.Sheet()
+        target = CPOOL.PoolSheets()
+        target.add(control)
+        assert N_CONTROLS == len(target._controls)
+        # Test
+        target.remove(control)
+        assert id(control) not in target._controls.keys()
+        assert not target._controls
+
     def test_remove_warn(self, PatchLogger, monkeypatch):
         """Confirm removal of control.
-        Case: control not in collection initially
+        Case: control not in collection
         """
         # Setup
         N_CONTROLS = 3
