@@ -5,13 +5,13 @@ components.
 
 import typing
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.view import view_infoid as VINFOID
 
 from factsheet.view import ui as UI
 
 
-class InfoId(ABC_INFOID.InterfaceStaleFile):
+class InfoId(ABC_STALE.InterfaceStaleFile):
     """Defines identification information common to Factsheetcomponents.
 
     The Factsheet model includes components for factsheets, topics, and

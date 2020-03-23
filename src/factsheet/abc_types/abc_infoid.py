@@ -6,34 +6,11 @@ See :class:`.model.InfoId` and derived classes.
 import abc
 import typing
 
+from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.abc_types import abc_view as AVIEW
 
 
-class InterfaceStaleFile(abc.ABC):
-    """Defines interfaces to detect when a stored model is out of date."""
-
-    @abc.abstractmethod
-    def is_fresh(self) -> bool:
-        """Return True when there are no unsaved changes to model."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def is_stale(self) -> bool:
-        """Return True when there is at least one unsaved change to model."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def set_fresh(self):
-        """Mark model in memory consistent with file contents."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def set_stale(self):
-        """Mark model in memory changed from file contents."""
-        raise NotImplementedError
-
-
-class AbstractTextModel(InterfaceStaleFile):
+class AbstractTextModel(ABC_STALE.InterfaceStaleFile):
     """Defines interfaces common to model text attributes.
 
     .. tip:: Two text attributes are equivalent when their string

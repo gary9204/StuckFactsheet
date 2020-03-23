@@ -385,6 +385,36 @@ class TestSheet:
             target.attach_page(page)
         assert N_PAGES == target.n_pages()
 
+#     def test_present_pages(self, monkeypatch, factory_page_sheet):
+#         """Confirm presentation of all pages of a factsheet."""
+#         # Setup
+#         def patch_present(self):
+#             self._window.set_visible(True)
+# 
+#         monkeypatch.setattr(
+#             VSHEET.PageSheet, 'present', patch_present, False)
+# 
+#         TITLE_MODEL = 'Something completely different.'
+#         target = MSHEET.Sheet(p_title=TITLE_MODEL)
+# 
+#         N_PAGES = 3
+#         pages = [factory_page_sheet() for _ in range(N_PAGES)]
+#         assert pages[0].get_infoid().title != target._infoid.title
+#         for page in pages:
+#             target.attach_page(page)
+#             page.hide()
+#             assert not page._window.get_visible()
+#         # Test
+#         target.present_pages()
+#         for page in pages:
+#             assert page._window.get_visible()
+#         # Teardown
+#         for page in pages:
+#             app = page._window.get_application()
+#             page._window.destroy()
+#             del page._window
+#             del app
+
     def test_set_fresh(self):
         """Confirm all attributes set.
 

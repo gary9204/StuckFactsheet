@@ -20,6 +20,7 @@ class TestFactoryInfoId:
         'close_page',
         'get_infoid',
         'update_name',
+#         'present',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -28,6 +29,8 @@ class TestFactoryInfoId:
             def close_page(self): super().close_page()
 
             def get_infoid(self): super().get_infoid()
+
+            def present(self): super().present()
 
             def update_name(self): super().update_name()
 

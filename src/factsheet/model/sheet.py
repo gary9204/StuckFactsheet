@@ -4,7 +4,7 @@ Defines :mod:`~factsheet.model` for a Factsheet document.
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.model import infoid as MINFOID
 # from factsheet.view import page_sheet as VSHEET
 from factsheet.abc_types import abc_sheet as ABC_SHEET
@@ -12,7 +12,7 @@ from factsheet.abc_types import abc_sheet as ABC_SHEET
 logger = logging.getLogger('Main.model.sheet')
 
 
-class Sheet(ABC_INFOID.InterfaceStaleFile):
+class Sheet(ABC_STALE.InterfaceStaleFile):
     """Factsheet document :mod:`~factsheet.model`.
 
     `Sheet` represents an entire Factsheet document.  A model factsheet

@@ -27,13 +27,22 @@ class InterfacePageSheet(abc.ABC):
 
     @abc.abstractmethod
     def close_page(self) -> None:
-        """Respond to notice to close_page view from model."""
+        """Close page in response to notice from model."""
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_infoid(self) -> VINFOID.ViewInfoId:
         """Return view of factsheet identification information."""
         raise NotImplementedError
+
+#     @abc.abstractmethod
+#     def present(self) -> None:
+#         """Make the page visible to user.
+# 
+#         Presents page to user even when page is an icon or covered by
+#         other windows.
+#         """
+#         raise NotImplementedError
 
     @abc.abstractmethod
     def update_name(self) -> None:
