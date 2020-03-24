@@ -33,9 +33,11 @@ class PoolSheets:
 
     def owner_file(self, p_path: Path) -> typing.Optional['CSHEET.Sheet']:
         """Return control with given path or None."""
+        path_absolute = p_path.resolve()
         for control in self._controls.values():
-            assert control.path is not None
-            if p_path.resolve() == control.path.resolve():
+            if control.path is None:
+                continue
+            if path_absolute == control.path.resolve():
                 return control
         return None
 

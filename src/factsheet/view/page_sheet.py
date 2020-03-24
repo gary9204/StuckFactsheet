@@ -41,9 +41,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
     def __init__(self, *, px_app: Gtk.Application) -> None:
-#                  pm_sheets_active: CPOOL.PoolSheets) -> None:
         self._control: typing.Optional[CSHEET.Sheet] = None
-#         self._sheets_active = pm_sheets_active
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
@@ -152,7 +150,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """
         pm_control.attach_page(pm_page)
         pm_page._control = pm_control
-#         pm_page._sheets_active.add(pm_control)
 
     def _make_dialog_file(self, p_action: Gtk.FileChooserAction
                           ) -> Gtk.FileChooserDialog:
@@ -248,7 +245,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         assert self._control is not None
         effect = self._control.delete_safe()
         if effect is ABC_SHEET.EffectSafe.COMPLETED:
-#             self._sheets_active.remove(self._control)
             return
 
         self._warning_data_loss.set_markup(
@@ -259,7 +255,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         response = self._dialog_data_loss.run()
         self._dialog_data_loss.hide()
         if response == Gtk.ResponseType.APPLY:
-#             self._sheets_active.remove(self._control)
             self._control.delete_force()
 
     def on_new_sheet(self, _action: Gio.SimpleAction,
@@ -333,16 +328,39 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     @classmethod
     def open_factsheet(cls, px_app: Gtk.Application,
                        pm_sheets_active: CPOOL.PoolSheets, p_path: Path
-                       ) -> 'PageSheet':
-        """Create factsheet with contents from file.
+                       ) -> typing.Optional['PageSheet']:
+        """Create factsheet with contents from file and return the new
+        factsheet page.
+
+        If a factsheet the file is active already, show all the pages
+        corresponding to that factsheet the file.  Return none in this
+        case.
 
         :param px_app: application to which the factsheet belongs.
+        :param pm_sheets_active: collection of factsheets.
         :param p_path: path to file containing factsheet contents.
+        :returns: new page if one is created or None otherwise.
         """
+        open_time = Gtk.get_current_event_time()
+        control_file = pm_sheets_active.owner_file(p_path)
+        if control_file is not None:
+            control_file.present_factsheet(open_time)
+            return None
+
         page = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.open(pm_sheets_active, p_path)
         PageSheet.link_factsheet(page, control)
         return page
+
+    def present(self, p_time: int) -> None:
+        """Make the page visible to user.
+
+        Presents page to user even when page is an icon or covered by
+        other windows.
+
+        :param p_time: timestamp of event requesting presentation.
+        """
+        self._window.present_with_time(p_time)
 
     def update_name(self):
         """Update window title when sheet name changes."""

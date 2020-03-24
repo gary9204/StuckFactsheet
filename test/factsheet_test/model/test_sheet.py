@@ -155,12 +155,6 @@ class TestSheet:
         assert N_PAGES == patch_detach.n_calls
         for page in pages:
             assert page.called_close
-        # Teardown
-#         for page in pages:
-#             app = page._window.get_application()
-#             page._window.destroy()
-#             del page._window
-#             del app
 
     def test_detach_page(self, monkeypatch, patch_class_page_sheet):
         """Confirm page removal.
@@ -313,6 +307,22 @@ class TestSheet:
             assert i == target.n_pages()
             target.attach_page(page)
         assert N_PAGES == target.n_pages()
+
+    def test_present_pages(self, patch_class_page_sheet):
+        """Confirm page present notice."""
+        # Setup
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+
+        N_PAGES = 3
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            target.attach_page(page)
+        NO_TIME = 0
+        # Test
+        target.present_pages(NO_TIME)
+        for page in pages:
+            assert page.called_present
 
     def test_set_fresh(self):
         """Confirm all attributes set.

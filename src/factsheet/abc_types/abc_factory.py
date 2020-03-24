@@ -6,7 +6,6 @@ Defines abstract factory classes.
 import abc
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.abc_types import abc_view as ABC_VIEW
 
 
 class FactoryInfoId(abc.ABC):
@@ -22,7 +21,7 @@ class FactoryInfoId(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_view_title(self) -> ABC_VIEW.AbstractTextView:
+    def new_view_title(self) -> ABC_INFOID.AbstractTextView:
         """Return new instance of title for :class:`.view.ViewInfoId`.
         """
         raise NotImplementedError

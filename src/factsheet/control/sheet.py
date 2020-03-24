@@ -70,6 +70,13 @@ class Sheet(object):
         return ABC_SHEET.EffectSafe.NO_EFFECT
 
     @classmethod
+    def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'Sheet':
+        """Create control with default model."""
+        control = Sheet(pm_sheets_active)
+        control._model = MSHEET.Sheet()
+        return control
+
+    @classmethod
     def open(cls, pm_sheet_active: CPOOL.PoolSheets, p_path: Path
              ) -> 'Sheet':
         """Create control with model from file."""
@@ -105,17 +112,18 @@ class Sheet(object):
                 raise
         return io_out
 
-    @classmethod
-    def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'Sheet':
-        """Create control with default model."""
-        control = Sheet(pm_sheets_active)
-        control._model = MSHEET.Sheet()
-        return control
-
     @property
     def path(self) -> typing.Optional[Path]:
         """Return path to file containing factsheet contents."""
         return self._path
+
+    def present_factsheet(self, p_time: int) -> None:
+        """Make all factsheet pages visible to user.
+
+        :param p_time: timestamp of event requesting presentation.
+        """
+        assert self._model is not None
+        self._model.present_pages(p_time)
 
     def save(self) -> None:
         """Save factsheet contents to file.

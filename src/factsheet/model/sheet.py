@@ -149,6 +149,14 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """Return number of pages attached to factsheet."""
         return len(self._pages)
 
+    def present_pages(self, p_time: int) -> None:
+        """Notify all pages to make them visible to user.
+
+        :param p_time: timestamp of event requesting presentation.
+        """
+        for page in self._pages.values():
+            page.present(p_time)
+
     def set_fresh(self) -> None:
         """Mark factsheet in memory consistent with file contents."""
         self._stale = False

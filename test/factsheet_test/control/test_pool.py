@@ -100,7 +100,7 @@ class TestPoolSheets:
         """
         # Setup
         target = CPOOL.PoolSheets()
-        N_CONTROLS = 3
+        N_CONTROLS = 4
         controls = list()
         for i in range(N_CONTROLS):
             control = patch_sheet()
@@ -109,7 +109,10 @@ class TestPoolSheets:
             target.add(control)
         assert len(controls) == len(target._controls)
 
-        I_OWNER = 1
+        I_NO_PATH = 1
+        controls[I_NO_PATH].path = None
+
+        I_OWNER = 2
         owner = controls[I_OWNER]
         path_owner = owner.path
         # Test

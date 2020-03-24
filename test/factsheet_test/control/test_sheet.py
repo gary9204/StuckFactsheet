@@ -20,14 +20,10 @@ def patch_model_safe():
             super().__init__()
             self._stale = p_stale
             self._n_pages = p_n_pages
-#             self.n_delete = 0
             self.n_detach = 0
 
         def n_pages(self) -> int:
             return self._n_pages
-
-#         def delete(self):
-#             self.n_delete += 1
 
         def detach_page(self, _view):
             self.n_detach += 1
@@ -206,6 +202,15 @@ class TestControlSheet:
             ABC_SHEET.EffectSafe.NO_EFFECT)
         assert N_DETACH == patch_model.n_detach
 
+    def test_new(self):
+        """Confirm control creation with default model."""
+        # Setup
+        sheets_active = CPOOL.PoolSheets()
+        # Test
+        target = CSHEET.Sheet.new(sheets_active)
+        assert isinstance(target, CSHEET.Sheet)
+        assert isinstance(target._model, MSHEET.Sheet)
+
     def test_open(self, tmp_path):
         """Confirm control creation from file.
         Case: path to file with model contents
@@ -261,36 +266,6 @@ class TestControlSheet:
         assert MODEL == target._model
         assert target._path is None
 
-    def test_new(self):
-        """Confirm control creation with default model."""
-        # Setup
-        sheets_active = CPOOL.PoolSheets()
-        # Test
-        target = CSHEET.Sheet.new(sheets_active)
-        assert isinstance(target, CSHEET.Sheet)
-        assert isinstance(target._model, MSHEET.Sheet)
-
-#     def test_path(self, tmp_path):
-#         """Confirm path property is get-only.
-# 
-#         #. Case: read
-#         #. Case: no replace
-#         #. Case: no delete
-#         """
-#         # Setup
-#         PATH = Path(tmp_path / 'path_factsheet.fsg')
-#         target = CSHEET.Sheet.path
-#         sheets_active = CPOOL.PoolSheets()
-#         instance = CSHEET.Sheet.new(sheets_active)
-#         instance._path = PATH
-#         # Test: read
-#         assert target.fget is not None
-#         assert str(instance._path) == str(instance.path)
-#         # Test: no replace
-#         assert target.fset is None
-#         # Test: no delete
-#         assert target.fdel is None
-
     @pytest.mark.parametrize('name_attr, name_prop', [
         ['_path', 'path'],
         ['_sheets_active', 'sheets_active'],
@@ -317,6 +292,28 @@ class TestControlSheet:
         assert target_prop.fset is None
         # Test: no delete
         assert target_prop.fdel is None
+
+    def test_present_factsheet(self, monkeypatch):
+        """Confirm factsheet presentation."""
+        # Setup
+        class PatchPresentPages:
+            def __init__(self): self.called = False
+
+            def present_pages(self, _time): self.called = True
+
+        patch_present = PatchPresentPages()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'present_pages', patch_present.present_pages)
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
+        target._model = model
+        NO_TIME = 0
+        # Test
+        target.present_factsheet(NO_TIME)
+        assert patch_present.called
 
     def test_save(self, tmp_path):
         """Confirm write to file.

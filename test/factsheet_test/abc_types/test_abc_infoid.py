@@ -6,7 +6,6 @@ See :mod:`.abc_infoid`.
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.adapt_gtk import adapt_view as AVIEW
 
 
 class TestAbstractTextModel:
@@ -90,20 +89,6 @@ class TestAbstractTextModel:
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)
             method()
-
-
-# class TestAbstractTextView:
-#     """Unit tests for type :data:`.AbstractTextView`."""
-#
-#     def test_constraints(self):
-#         """Confirm definition of :data:`.AbstractTextView`."""
-#         # Setup
-#         constraints = [AVIEW.AdaptEntry, AVIEW.AdaptTextView]
-#         # Test
-#         target = ABC_INFOID.AbstractTextView.__constraints__
-#         for c in constraints:
-#             assert c in target
-#         assert len(constraints) == len(target)
 
 
 class TestInterfaceViewInfoId:

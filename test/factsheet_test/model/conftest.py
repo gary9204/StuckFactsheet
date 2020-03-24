@@ -39,13 +39,14 @@ def patch_class_page_sheet(patch_class_view_infoid):
         def __init__(self):
             self._infoid = patch_class_view_infoid()
             self.called_close = False
+            self.called_present = False
             self.called_update_name = False
 
         def close_page(self): self.called_close = True
 
         def get_infoid(self): return self._infoid
 
-    #     def present(self): pass
+        def present(self, _time): self.called_present = True
 
         def update_name(self): self.called_update_name = True
 

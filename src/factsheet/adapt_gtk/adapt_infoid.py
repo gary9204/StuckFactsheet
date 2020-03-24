@@ -26,8 +26,6 @@ import typing   # noqa
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 
-# from factsheet.adapt_gtk import adapt_view as AVIEW
-
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 

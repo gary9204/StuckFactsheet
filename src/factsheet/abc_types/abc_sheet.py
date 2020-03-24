@@ -35,14 +35,16 @@ class InterfacePageSheet(abc.ABC):
         """Return view of factsheet identification information."""
         raise NotImplementedError
 
-#     @abc.abstractmethod
-#     def present(self) -> None:
-#         """Make the page visible to user.
-# 
-#         Presents page to user even when page is an icon or covered by
-#         other windows.
-#         """
-#         raise NotImplementedError
+    @abc.abstractmethod
+    def present(self, p_time: int) -> None:
+        """Make the page visible to user.
+
+        Presents page to user even when page is an icon or covered by
+        other windows.
+
+        :param p_time: timestamp of event requesting presentation.
+        """
+        raise NotImplementedError
 
     @abc.abstractmethod
     def update_name(self) -> None:
