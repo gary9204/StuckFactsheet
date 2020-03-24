@@ -5,33 +5,11 @@ identification information.
 See :mod:`.infoid`.
 """
 import copy
-import gi   # type: ignore[import]
-from pathlib import Path
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.adapt_gtk import adapt_text as ATEXT
 from factsheet.model import infoid as MINFOID
-from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
-
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-
-
-@pytest.fixture
-def factory_view_infoid():
-    """Test fixture based on `test_view_infoid.ui`."""
-    def new_view_info():
-        PATH_DIR_UI = Path(__file__).parent.parent / 'view'
-        NAME_FILE_UI = str(PATH_DIR_UI / 'test_view_infoid.ui')
-
-        builder = Gtk.Builder.new_from_file(NAME_FILE_UI)
-        get_object = builder.get_object
-        view_infoid = VINFOID.ViewInfoId(get_object)
-        return view_infoid
-
-    return new_view_info
 
 
 @pytest.fixture
@@ -95,32 +73,27 @@ class TestInfoId:
         target = MINFOID.InfoId(p_aspect=args_infoid_stock['p_aspect'])
         assert '' == str(target._title)
 
-    def test_attach_view(self, factory_view_infoid, args_infoid_stock):
+    def test_attach_view(self, patch_class_view_infoid, args_infoid_stock):
         """Confirm view addition."""
         # Setup
-        TEXT_TITLE_UI = 'Page title'
-        view_infoid = factory_view_infoid()
-        assert TEXT_TITLE_UI == view_infoid._view_title.get_text()
+        patch_view = patch_class_view_infoid()
 
         target = MINFOID.InfoId(**args_infoid_stock)
         # Test
-        target.attach_view(view_infoid)
-        assert view_infoid.title == str(target._title)
+        target.attach_view(patch_view)
+        assert patch_view.title == str(target._title)
 
-    def test_detach_view(self, factory_view_infoid, args_infoid_stock):
+    def test_detach_view(self, patch_class_view_infoid, args_infoid_stock):
         """Confirm view removal."""
         # Setup
-        TEXT_TITLE_UI = 'Page title'
-        view_infoid = factory_view_infoid()
-        view_infoid._view_title.set_visible = True
-        assert TEXT_TITLE_UI == view_infoid._view_title.get_text()
+        patch_view = patch_class_view_infoid()
+        patch_view._title.set_visible = True
 
         target = MINFOID.InfoId(**args_infoid_stock)
-        target.attach_view(view_infoid)
-        assert view_infoid._view_title.get_text() == str(target._title)
+        target.attach_view(patch_view)
         # Test
-        target.detach_view(view_infoid)
-        assert not view_infoid._view_title.get_visible()
+        target.detach_view(patch_view)
+        assert not patch_view._title.get_visible()
 
     def test_is_fresh(self, args_infoid_stock):
         """Confirm return is accurate.

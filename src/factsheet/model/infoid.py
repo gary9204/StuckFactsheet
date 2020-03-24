@@ -6,6 +6,7 @@ components.
 import typing
 
 from factsheet.abc_types import abc_stalefile as ABC_STALE
+from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.view import view_infoid as VINFOID
 
 from factsheet.view import ui as UI
@@ -58,7 +59,7 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         """Return component contribution to :mod:`~factsheet.model`."""
         return self._aspect
 
-    def attach_view(self, pm_view: VINFOID.ViewInfoId) -> None:
+    def attach_view(self, pm_view: ABC_INFOID.InterfaceViewInfoId) -> None:
         """Add view to update display when identification information
         changes.
 
@@ -66,7 +67,7 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         """
         self._title.attach_view(pm_view.get_view_title())
 
-    def detach_view(self, pm_view: VINFOID.ViewInfoId) -> None:
+    def detach_view(self, pm_view: ABC_INFOID.InterfaceViewInfoId) -> None:
         """Remove view of identification information.
 
         :param pm_view: view to remove

@@ -4,7 +4,7 @@ Defines abstract data types classes for factsheet documents.
 import abc
 import enum
 
-from factsheet.view import view_infoid as VINFOID
+from factsheet.abc_types import abc_infoid as ABC_INFOID
 
 ALLOWED = True
 
@@ -31,7 +31,7 @@ class InterfacePageSheet(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_infoid(self) -> VINFOID.ViewInfoId:
+    def get_infoid(self) -> ABC_INFOID.InterfaceViewInfoId:
         """Return view of factsheet identification information."""
         raise NotImplementedError
 

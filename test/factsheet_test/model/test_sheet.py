@@ -4,28 +4,9 @@ Unit tests for :mod:`~factsheet.model` for Factsheet document.
 import logging
 from pathlib import Path
 import pickle
-import pytest   # type: ignore[import]
 
 from factsheet.model import infoid as MINFOID
 from factsheet.model import sheet as MSHEET
-from factsheet.view import page_sheet as VSHEET
-
-
-@pytest.fixture
-def factory_page_sheet(patch_factsheet, capfd):
-    """Test fixture based on `test_page_sheet.ui` definition."""
-    def new_page_sheet():
-        PATH_DIR_UI_TEST = Path(__file__).parent.parent / 'view'
-        NAME_FILE_UI_TEST = str(PATH_DIR_UI_TEST / 'test_page_sheet.ui')
-        PatchPageSheet = VSHEET.PageSheet
-        PatchPageSheet.NAME_FILE_SHEET_UI = NAME_FILE_UI_TEST
-
-        factsheet = patch_factsheet()
-        page_sheet = PatchPageSheet(px_app=factsheet)
-        _snapshot = capfd.readouterr()   # Resets the internal buffer
-        return page_sheet
-
-    return new_page_sheet
 
 
 class TestSheet:
@@ -52,7 +33,7 @@ class TestSheet:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_get_set_state(self, tmp_path, factory_page_sheet):
+    def test_get_set_state(self, tmp_path, patch_class_page_sheet):
         """Confirm conversion to and from pickle format."""
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
@@ -62,7 +43,7 @@ class TestSheet:
         source._stale = True
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             source.attach_page(page)
         # Test
@@ -76,12 +57,6 @@ class TestSheet:
         assert not target._stale
         assert isinstance(target._pages, dict)
         assert not target._pages
-        # Teardown
-        for page in pages:
-            app = page._window.get_application()
-            page._window.destroy()
-            del page._window
-            del app
 
     def test_init(self):
         """Confirm initialization."""
@@ -105,7 +80,7 @@ class TestSheet:
         target = MSHEET.Sheet()
         assert TEXT_TITLE_DEFAULT == target._infoid.title
 
-    def test_attach_page(self, factory_page_sheet):
+    def test_attach_page(self, patch_class_page_sheet):
         """Confirm page addition.
         Case: page not attached initially
         """
@@ -114,7 +89,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         # Test
         for page in pages:
@@ -122,15 +97,9 @@ class TestSheet:
             assert target._infoid.title == page.get_infoid().title
             assert target._pages[id(page)] is page
         assert len(pages) == len(target._pages)
-        # Teardown
-        for page in pages:
-            app = page._window.get_application()
-            page._window.destroy()
-            del page._window
-            del app
 
     def test_attach_page_warn(
-            self, factory_page_sheet, PatchLogger, monkeypatch):
+            self, patch_class_page_sheet, PatchLogger, monkeypatch):
         """Confirm page addition.
         Case: page attached initially
         """
@@ -139,7 +108,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         for page in pages:
             target.attach_page(page)
@@ -159,14 +128,8 @@ class TestSheet:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
-        # Teardown
-        for page in pages:
-            app = page._window.get_application()
-            page._window.destroy()
-            del page._window
-            del app
 
-    def test_detach_all(self, monkeypatch, factory_page_sheet):
+    def test_detach_all(self, monkeypatch, patch_class_page_sheet):
         """Confirm notifications and removals."""
         # Setup
         class PatchInfoIdModel:
@@ -178,20 +141,11 @@ class TestSheet:
         monkeypatch.setattr(
             MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
 
-        class PatchPage:
-            def __init__(self): self.n_calls = 0
-
-            def close_page(self): self.n_calls += 1
-
-        patch_close = PatchPage()
-        monkeypatch.setattr(
-            VSHEET.PageSheet, 'close_page', patch_close.close_page)
-
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             target.attach_page(page)
         assert N_PAGES == len(target._pages)
@@ -199,15 +153,16 @@ class TestSheet:
         target.detach_all()
         assert not target._pages
         assert N_PAGES == patch_detach.n_calls
-        assert N_PAGES == patch_close.n_calls
-        # Teardown
         for page in pages:
-            app = page._window.get_application()
-            page._window.destroy()
-            del page._window
-            del app
+            assert page.called_close
+        # Teardown
+#         for page in pages:
+#             app = page._window.get_application()
+#             page._window.destroy()
+#             del page._window
+#             del app
 
-    def test_detach_page(self, monkeypatch, factory_page_sheet):
+    def test_detach_page(self, monkeypatch, patch_class_page_sheet):
         """Confirm page removal.
         Case: page attached initially
         """
@@ -225,8 +180,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
-        assert pages[0].get_infoid().title != target._infoid.title
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             target.attach_page(page)
         N_REMOVE = 1
@@ -238,18 +192,8 @@ class TestSheet:
         assert len(pages) == len(target._pages)
         for page in pages:
             assert target._pages[id(page)] is page
-        # Teardown
-        app = page_rem._window.get_application()
-        page_rem._window.destroy()
-        del page_rem._window
-        del app
-        for page in pages:
-            app = page._window.get_application()
-            page._window.destroy()
-            del page._window
-            del app
 
-    def test_detach_page_views(self, monkeypatch, factory_page_sheet):
+    def test_detach_page_views(self, monkeypatch, patch_class_page_sheet):
         """Confirm removal of views."""
         # Setup
         class PatchInfoIdModel:
@@ -264,19 +208,14 @@ class TestSheet:
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
-        page = factory_page_sheet()
+        page = patch_class_page_sheet()
         target.attach_page(page)
         # Test
         target._detach_page_views(page)
         assert patch_infoid.called
-        # Teardown
-        app = page._window.get_application()
-        page._window.destroy()
-        del page._window
-        del app
 
     def test_detach_page_warn(
-            self, factory_page_sheet, PatchLogger, monkeypatch):
+            self, patch_class_page_sheet, PatchLogger, monkeypatch):
         """Confirm page removal.
         Case: page not attached initially
         """
@@ -285,7 +224,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         for page in pages:
             target.attach_page(page)
@@ -306,16 +245,6 @@ class TestSheet:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
-        # Teardown
-        app = page_dup._window.get_application()
-        page_dup._window.destroy()
-        del page_dup._window
-        del app
-        for page in pages:
-            app = page._window.get_application()
-            page._window.destroy()
-            del page._window
-            del app
 
     def test_is_fresh(self):
         """Confirm return is accurate.
@@ -370,50 +299,20 @@ class TestSheet:
         assert not target.is_stale()
         assert not target._stale
 
-    def test_n_pages(self, factory_page_sheet):
+    def test_n_pages(self, patch_class_page_sheet):
         """Confrim reported number of pages."""
         # Setup
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [factory_page_sheet() for _ in range(N_PAGES)]
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         # Test
         for i, page in enumerate(pages):
             assert i == target.n_pages()
             target.attach_page(page)
         assert N_PAGES == target.n_pages()
-
-#     def test_present_pages(self, monkeypatch, factory_page_sheet):
-#         """Confirm presentation of all pages of a factsheet."""
-#         # Setup
-#         def patch_present(self):
-#             self._window.set_visible(True)
-# 
-#         monkeypatch.setattr(
-#             VSHEET.PageSheet, 'present', patch_present, False)
-# 
-#         TITLE_MODEL = 'Something completely different.'
-#         target = MSHEET.Sheet(p_title=TITLE_MODEL)
-# 
-#         N_PAGES = 3
-#         pages = [factory_page_sheet() for _ in range(N_PAGES)]
-#         assert pages[0].get_infoid().title != target._infoid.title
-#         for page in pages:
-#             target.attach_page(page)
-#             page.hide()
-#             assert not page._window.get_visible()
-#         # Test
-#         target.present_pages()
-#         for page in pages:
-#             assert page._window.get_visible()
-#         # Teardown
-#         for page in pages:
-#             app = page._window.get_application()
-#             page._window.destroy()
-#             del page._window
-#             del app
 
     def test_set_fresh(self):
         """Confirm all attributes set.

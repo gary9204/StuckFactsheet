@@ -2,12 +2,18 @@
 Defines abstract data type classes for identification information.
 
 See :class:`.model.InfoId` and derived classes.
+
+.. data:: AbstractTextView
+
+    Abstract type that represents display of a text attribute such as a
+    factsheet name or summary.
 """
 import abc
 import typing
 
 from factsheet.abc_types import abc_stalefile as ABC_STALE
-from factsheet.abc_types import abc_view as AVIEW
+
+AbstractTextView = typing.TypeVar('AbstractTextView')
 
 
 class AbstractTextModel(ABC_STALE.InterfaceStaleFile):
@@ -32,11 +38,28 @@ class AbstractTextModel(ABC_STALE.InterfaceStaleFile):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def attach_view(self, pm_view: AVIEW.AbstractTextView):
+    def attach_view(self, pm_view: AbstractTextView):
         """Add view to update display when text changes."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def detach_view(self, pm_view: AVIEW.AbstractTextView):
+    def detach_view(self, pm_view: AbstractTextView):
         """Remove view of changes to text."""
+        raise NotImplementedError
+
+
+class InterfaceViewInfoId(abc.ABC):
+    """Defines interface for :class:`.model.Sheet` to attach
+    :class:`.ViewInfoId` to the model.
+    """
+
+    @abc.abstractmethod
+    def get_view_title(self) -> AbstractTextView:
+        """Return view's title display element."""
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def title(self) -> str:
+        """Return text of title."""
         raise NotImplementedError

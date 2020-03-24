@@ -3,10 +3,11 @@ Defines class to display identification information for Factsheet pages.
 """
 import typing
 
-from factsheet.adapt_gtk import adapt_view as AVIEW
+from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.adapt_gtk import adapt_infoid as AINFOID
 
 
-class ViewInfoId:
+class ViewInfoId(ABC_INFOID.InterfaceViewInfoId):
     """Provides display elements for page identification information.
 
     The identification information is common to `factesheet`, `topic`,
@@ -26,7 +27,7 @@ class ViewInfoId:
     def __init__(self, px_get_object: typing.Callable, **_kwargs) -> None:
         self._view_title = px_get_object(self.UI_ID_TITLE)
 
-    def get_view_title(self) -> AVIEW.AdaptEntry:
+    def get_view_title(self) -> AINFOID.AdaptEntry:
         """Return view's title display element."""
         return self._view_title
 

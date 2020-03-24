@@ -7,7 +7,7 @@ import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_view as AVIEW
+from factsheet.adapt_gtk import adapt_infoid as AINOFID
 from factsheet.view import view_infoid as VINFOID
 
 gi.require_version('Gtk', '3.0')
@@ -28,7 +28,7 @@ class TestInfoId:
         get_object = builder.get_object
         # Test
         target = VINFOID.ViewInfoId(get_object)
-        assert isinstance(target._view_title, AVIEW.AdaptEntry)
+        assert isinstance(target._view_title, AINOFID.AdaptEntry)
         assert TEXT_TITLE_UI == target._view_title.get_text()
 
     def test_get_title(self):
