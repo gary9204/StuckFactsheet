@@ -114,8 +114,90 @@ Steps -- Save and Open
 #. a. **Step:** In original window, click window **close icon**.
    #. *Expect:* Window disappears. Application closes.
 
-Steps -- Safety Checks
+Steps -- Duplicate Open
 -----------------------
+1. a. **Step:** Start application with
+      :doc:`../test_helpers/help_start_application`
+   #. *Expect:* Application displays default factsheet.
+
+#. a. **Step:** Type factsheet title "Sample 1" in **Factsheet** field.
+   #. *Expect:* Title appears in field.
+
+#. a. **Step:** Click Factsheet **Save button** (window title on right
+      near center).
+   #. *Expect:* Save dialog appears. Dialog file Name field contains
+      "Untitled.fsg".
+
+#. a. **Step:** Change to test data directory.
+   #. *Expect:* Save dialog shows directory contents.
+
+#. a. **Step:** Edit file Name field to "sample 1.fsg"
+   #. *Expect:* Field contains new file name.
+
+#. a. **Step:** Click **Save button** (dialog title on right).
+   #. *Expect:* Dialog disappears.
+
+#. a. **Step:** Edit factsheet title to "Sample 2" in **Factsheet** field.
+   #. *Expect:* Title changes in field.
+
+#. a. **Step:** Click Factsheet **Save as button** (window title on right
+      near Save button).
+   #. *Expect:* Save dialog appears. Dialog file Name field contains
+      "sample 1.fsg".
+
+#. a. **Step:** Change to test data directory.
+   #. *Expect:* Save dialog shows directory contents.
+
+#. a. **Step:** Edit file Name field to "sample 2.fsg"
+   #. *Expect:* Field contains new file name.
+
+#. a. **Step:** Click **Save button**.
+   #. *Expect:* Dialog disappears.
+
+#. a. **Step:** Click Factsheet **Open button** (window title on far
+      left).
+   #. *Expect:* Open dialog appears.
+
+#. a. **Step:** Change to test data directory.
+   #. *Expect:* Open dialog shows directory contents.
+
+#. a. **Step:** Select ``sample 1.fsg`` and click **Open button**
+      (dialog title on right).
+   #. *Expect:* Open dialog disappears. Second window appears with
+      "Sample 1" in **Factsheet** field. New window may cover first
+      window.
+
+#. a. **Step:** Select Factsheet **menu > Display ... > Open window**
+      (right of **Factsheet** field).
+   #. *Expect:* New window appears with factsheet title "Sample 1".
+      New window may cover existing windows.
+
+#. a. **Step:** Position windows so that "Sample 2" window covers parts
+      of both "Sample 1" windows.
+   #. *Expect:* "Sample 2" window is on top.
+
+#. a. **Step:** Click Factsheet **Open button**.
+   #. *Expect:* Open dialog appears.
+
+#. a. **Step:** Change to test data directory.
+   #. *Expect:* Open dialog shows directory contents.
+
+#. a. **Step:** Select ``sample 1.fsg`` and click Open button.
+   #. *Expect:* Open dialog disappears.  Both "Sample 1" windows cover
+      parts of "Sample 2" window.  No new windows appear.
+
+#. a. **Step:** Click "Sample 1" window **close icon** (window title far
+      right).
+   #. *Expect:* "Sample 1" indow disappears.
+
+#. a. **Step:** Click "Sample 1" window **close icon**.
+   #. *Expect:* Remaining "Sample 1" window disappears.
+
+#. a. **Step:** Click "Sample 2" window **close icon**.
+   #. *Expect:* "Sample 2" indow disappears. Application closes.
+
+Steps -- Data Loss and Overwrite Warnings
+-----------------------------------------
 1. a. **Step:** Start application with
       :doc:`../test_helpers/help_start_application`
    #. *Expect:* Application displays default factsheet.
@@ -183,8 +265,8 @@ Steps -- Safety Checks
 #. a. **Step:** Delete file ``target.fsg``.
    #. *Expect:* Test data directory does not contain the file.
 
-Steps -- File not Factsheet
----------------------------
+Steps -- File Contents not Factsheet
+------------------------------------
 1. a. **Step:** Start application with
       :doc:`../test_helpers/help_start_application`
    #. *Expect:* Application displays default factsheet.
