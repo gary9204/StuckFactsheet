@@ -13,33 +13,38 @@ from factsheet.view import ui as UI
 
 
 @pytest.fixture
-def args_infoid_stock():
+def args_infoid_target():
     return dict(
         p_aspect='section',
-        # p_name='Stock InfoId Name',
-        p_title='Stock InfoId Title',
-        # p_summary='This summarizes a stock identification.',
+        p_name='Target InfoId Name',
+        p_title='Target InfoId Title',
+        # p_summary='This summarizes target identification.',
         )
 
 
 class TestInfoId:
     """Unit tests for :class:`.InfoId`."""
 
-    def test_eq(self, args_infoid_stock):
+    def test_eq(self, args_infoid_target):
         """Confirm equivalence operator.
 
         #. Case: type difference.
-        #. Case: title difference.
         #. Case: aspect difference.
+        #. Case: name difference.
+        #. Case: title difference.
         #. Case: equivalent
         """
         # Setup
-        source = MINFOID.InfoId(**args_infoid_stock)
+        source = MINFOID.InfoId(**args_infoid_target)
         # Test: type difference.
         assert not source.__eq__('Something completely different')
         # Test: aspect difference.
         target = copy.deepcopy(source)
         target._aspect = 'Something completely different'
+        assert not source.__eq__(target)
+        # Test: name difference.
+        target = copy.deepcopy(source)
+        target._name._buffer.set_text('Something completely different', -1)
         assert not source.__eq__(target)
         # Test: title difference.
         target = copy.deepcopy(source)
@@ -63,6 +68,9 @@ class TestInfoId:
         assert id(target) == target._id_model
         assert not target._stale
 
+        assert isinstance(target._name, ABC_INFOID.AbstractTextModel)
+        assert args_infoid_stock['p_name'] == str(target._name)
+
         assert isinstance(target._title, ABC_INFOID.AbstractTextModel)
         assert args_infoid_stock['p_title'] == str(target._title)
 
@@ -71,51 +79,65 @@ class TestInfoId:
         # Setup
         # Test
         target = MINFOID.InfoId(p_aspect=args_infoid_stock['p_aspect'])
+        assert '' == str(target._name)
         assert '' == str(target._title)
 
-    def test_attach_view(self, patch_class_view_infoid, args_infoid_stock):
+    def test_attach_view(self, patch_class_view_infoid, args_infoid_target):
         """Confirm view addition."""
         # Setup
         patch_view = patch_class_view_infoid()
 
-        target = MINFOID.InfoId(**args_infoid_stock)
+        target = MINFOID.InfoId(**args_infoid_target)
         # Test
         target.attach_view(patch_view)
+        assert patch_view.name == str(target._name)
         assert patch_view.title == str(target._title)
 
-    def test_detach_view(self, patch_class_view_infoid, args_infoid_stock):
+    def test_detach_view(self, patch_class_view_infoid, args_infoid_target):
         """Confirm view removal."""
         # Setup
         patch_view = patch_class_view_infoid()
-        patch_view._title.set_visible = True
 
-        target = MINFOID.InfoId(**args_infoid_stock)
+        target = MINFOID.InfoId(**args_infoid_target)
         target.attach_view(patch_view)
+        patch_view._name.set_visible(True)
+        patch_view._title.set_visible(True)
         # Test
         target.detach_view(patch_view)
+        assert not patch_view._name.get_visible()
         assert not patch_view._title.get_visible()
 
     def test_is_fresh(self, args_infoid_stock):
         """Confirm return is accurate.
 
-        #. Case: InfoId stale, title fresh
-        #. Case: InfoId fresh, title stale
-        #. Case: InfoId fresh, title fresh
+        #. Case: InfoId stale, name and title fresh
+        #. Case: InfoId fresh, name stale, title fresh
+        #. Case: InfoId fresh, name fresh, title stale
+        #. Case: InfoId fresh, name and title fresh
         """
         # Setup
         target = MINFOID.InfoId(**args_infoid_stock)
-        # Test: InfoId stale, title fresh
+        # Test: InfoId stale, name and title fresh
         target._stale = True
+        target._name.set_fresh()
         target._title.set_fresh()
         assert not target.is_fresh()
         assert target._stale
-        # Test: InfoId fresh, title stale
+        # Test: InfoId fresh, name stale, title fresh
         target._stale = False
+        target._name.set_stale()
+        target._title.set_fresh()
+        assert not target.is_fresh()
+        assert target._stale
+        # Test: InfoId fresh, name fresh, title stale
+        target._stale = False
+        target._name.set_fresh()
         target._title.set_stale()
         assert not target.is_fresh()
         assert target._stale
-        # Test: InfoId fresh, title fresh
+        # Test: InfoId fresh, name and title fresh
         target._stale = False
+        target._name.set_fresh()
         target._title.set_fresh()
         assert target.is_fresh()
         assert not target._stale
@@ -123,24 +145,34 @@ class TestInfoId:
     def test_is_stale(self, args_infoid_stock):
         """Confirm return is accurate.
 
-        #. Case: InfoId stale, title fresh
-        #. Case: InfoId fresh, title stale
-        #. Case: InfoId fresh, title fresh
+        #. Case: InfoId stale, name and title fresh
+        #. Case: InfoId fresh, name stale, title fresh
+        #. Case: InfoId fresh, name fresh, title stale
+        #. Case: InfoId fresh, name and title fresh
         """
         # Setup
         target = MINFOID.InfoId(**args_infoid_stock)
-        # Test: InfoId stale, title fresh
+        # Test: InfoId stale, name and title fresh
         target._stale = True
+        target._name.set_fresh()
         target._title.set_fresh()
         assert target.is_stale()
         assert target._stale
-        # Test: InfoId fresh, title stale
+        # Test: InfoId fresh, name stale, title fresh
         target._stale = False
+        target._name.set_stale()
+        target._title.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        # Test: InfoId fresh, name fresh, title stale
+        target._stale = False
+        target._name.set_fresh()
         target._title.set_stale()
         assert target.is_stale()
         assert target._stale
-        # Test: InfoId fresh, title fresh
+        # Test: InfoId fresh, name and title fresh
         target._stale = False
+        target._name.set_fresh()
         target._title.set_fresh()
         assert not target.is_stale()
         assert not target._stale
@@ -148,6 +180,7 @@ class TestInfoId:
     @pytest.mark.parametrize('name_attr, name_prop', [
         ['_aspect', 'aspect'],
         ['_id_model', 'id_model'],
+        ['_name', 'name'],
         ['_title', 'title'],
         ])
     def test_property(self, args_infoid_stock, name_attr, name_prop):
@@ -173,69 +206,67 @@ class TestInfoId:
     def test_set_fresh(self, args_infoid_stock):
         """Confirm all attributes set.
 
-        #. Case: InfoId fresh, title fresh
-        #. Case: InfoId stale, title fresh
-        #. Case: InfoId fresh, title stale
-        #. Case: InfoId stale, title stale
+        #. Case: InfoId fresh, name and title stale
+        #. Case: InfoId stale, name and title stale
          """
         # Setup
         target = MINFOID.InfoId(**args_infoid_stock)
-        # Test: InfoId fresh, title fresh
+        # Test: InfoId fresh, name and title stale
         target._stale = False
-        target._title.set_fresh()
-        target.set_fresh()
-        assert not target._stale
-        assert target._title.is_fresh()
-        # Test: InfoId stale, title fresh
-        target._stale = True
-        target._title.set_fresh()
-        target.set_fresh()
-        assert not target._stale
-        assert target._title.is_fresh()
-        # Test: InfoId fresh, title stale
-        target._stale = False
+        target._name.set_stale()
         target._title.set_stale()
         target.set_fresh()
         assert not target._stale
+        assert target._name.is_fresh()
         assert target._title.is_fresh()
-        # Test: InfoId stale, title stale
+        # Test: InfoId stale, name and title stale
         target._stale = True
+        target._name.set_stale()
         target._title.set_stale()
         target.set_fresh()
         assert not target._stale
+        assert target._name.is_fresh()
         assert target._title.is_fresh()
 
     def test_set_stale(self, args_infoid_stock):
         """Confirm all attributes set.
 
-        #. Case: InfoId fresh, title fresh
-        #. Case: InfoId stale, title fresh
-        #. Case: InfoId fresh, title stale
-        #. Case: InfoId stale, title stale
+        #. Case: InfoId fresh, name and title fresh
+        #. Case: InfoId stale, name and title fresh
+        #. Case: InfoId fresh, name and title stale
+        #. Case: InfoId stale, name and title stale
          """
         # Setup
         target = MINFOID.InfoId(**args_infoid_stock)
-        # Test: InfoId fresh, title fresh
+        # Test: InfoId fresh, name and title fresh
         target._stale = False
+        target._name.set_fresh()
         target._title.set_fresh()
         target.set_stale()
         assert target._stale
+        assert target._name.is_fresh()
         assert target._title.is_fresh()
-        # Test: InfoId stale, title fresh
+        # Test: InfoId stale, name and title fresh
         target._stale = True
+        target._name.set_fresh()
         target._title.set_fresh()
         target.set_stale()
         assert target._stale
+        assert target._name.is_fresh()
         assert target._title.is_fresh()
-        # Test: InfoId fresh, title stale
+        # Test: InfoId fresh, name and title stale
         target._stale = False
+        target._name.set_stale()
         target._title.set_stale()
         target.set_stale()
         assert target._stale
+        assert target._name.is_stale()
         assert target._title.is_stale()
-        # Test: InfoId stale, title stale
+        # Test: InfoId stale, name and title stale
         target._stale = True
+        target._name.set_stale()
         target._title.set_stale()
         target.set_stale()
         assert target._stale
+        assert target._name.is_stale()
         assert target._title.is_stale()

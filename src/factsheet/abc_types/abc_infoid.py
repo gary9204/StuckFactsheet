@@ -1,7 +1,7 @@
 """
 Defines abstract data type classes for identification information.
 
-See :class:`.model.InfoId` and derived classes.
+See :class:`.InfoId` and derived classes.
 
 .. data:: AbstractTextView
 
@@ -54,8 +54,19 @@ class InterfaceViewInfoId(abc.ABC):
     """
 
     @abc.abstractmethod
+    def get_view_name(self) -> AbstractTextView:
+        """Return view's name display element."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_view_title(self) -> AbstractTextView:
         """Return view's title display element."""
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """Return text of name."""
         raise NotImplementedError
 
     @property

@@ -102,16 +102,22 @@ class TestInterfaceViewInfoId:
             _target = ABC_INFOID.InterfaceViewInfoId()
 
     @pytest.mark.parametrize('name_method', [
+        'get_view_name',
         'get_view_title',
+        'name',
         'title',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchInterface(ABC_INFOID.InterfaceViewInfoId):
+            def get_view_name(self): super().get_view_name()
+
             def get_view_title(self): super().get_view_title()
 
-            def title(self): super().title()
+            def name(self): super().name
+
+            def title(self): super().title
 
         target = PatchInterface()
         # Test

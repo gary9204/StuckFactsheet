@@ -31,10 +31,12 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
        names, titles, and summaries are the same.
     """
 
-    def __init__(self, *, p_aspect: str, p_title: str = '') -> None:
+    def __init__(self, *, p_aspect: str, p_name: str = '',
+                 p_title: str = '') -> None:
         self._aspect = p_aspect
         self._id_model = id(self)
         self._stale = False
+        self._name = UI.FACTORY_INFOID.new_model_name(p_name)
         self._title = UI.FACTORY_INFOID.new_model_title(p_title)
 
     def __eq__(self, px_other: typing.Any) -> bool:
@@ -47,6 +49,9 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
             return False
 
         if not self._aspect == px_other._aspect:
+            return False
+
+        if str(self._name) != str(px_other._name):
             return False
 
         if str(self._title) != str(px_other._title):
@@ -65,6 +70,7 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
 
         :param pm_view: view to add
         """
+        self._name.attach_view(pm_view.get_view_name())
         self._title.attach_view(pm_view.get_view_title())
 
     def detach_view(self, pm_view: ABC_INFOID.InterfaceViewInfoId) -> None:
@@ -72,6 +78,7 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
 
         :param pm_view: view to remove
         """
+        self._name.detach_view(pm_view.get_view_name())
         self._title.detach_view(pm_view.get_view_title())
 
     @property
@@ -84,6 +91,10 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         identification information.
         """
         if self._stale:
+            return False
+
+        if self._name.is_stale():
+            self._stale = True
             return False
 
         if self._title.is_stale():
@@ -99,6 +110,10 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         if self._stale:
             return True
 
+        if self._name.is_stale():
+            self._stale = True
+            return True
+
         if self._title.is_stale():
             self._stale = True
             return True
@@ -110,6 +125,7 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         file contents.
         """
         self._stale = False
+        self._name.set_fresh()
         self._title.set_fresh()
 
     def set_stale(self):
@@ -117,6 +133,11 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         contents.
         """
         self._stale = True
+
+    @property
+    def name(self) -> str:
+        """Return text of component name."""
+        return str(self._name)
 
     @property
     def title(self) -> str:

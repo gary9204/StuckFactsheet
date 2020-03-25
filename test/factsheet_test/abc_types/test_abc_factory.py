@@ -20,14 +20,20 @@ class TestFactoryInfoId:
             _ = ABC_FACTORY.FactoryInfoId()
 
     @pytest.mark.parametrize('name_method', [
+        'new_model_name',
         'new_model_title',
+        'new_view_name',
         'new_view_title',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchFactory(ABC_FACTORY.FactoryInfoId):
+            def new_model_name(self): super().new_model_name()
+
             def new_model_title(self): super().new_model_title()
+
+            def new_view_name(self): super().new_view_name()
 
             def new_view_title(self): super().new_view_title()
 

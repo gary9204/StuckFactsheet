@@ -12,7 +12,7 @@ from factsheet.view import ui as UI
 def args_infoid_stock():
     return dict(
         p_aspect='section',
-        # p_name='Stock InfoId Name',
+        p_name='Stock InfoId Name',
         p_title='Stock InfoId Title',
         # p_summary='This summarizes a stock identification.',
         )
@@ -22,10 +22,17 @@ def args_infoid_stock():
 def patch_class_view_infoid(args_infoid_stock):
     class PatchViewInfoId(ABC_INFOID.InterfaceViewInfoId):
         def __init__(self):
+            self._name = UI.FACTORY_INFOID.new_view_name()
+            self._name.set_text(args_infoid_stock['p_name'])
             self._title = UI.FACTORY_INFOID.new_view_title()
             self._title.set_text(args_infoid_stock['p_title'])
 
+        def get_view_name(self): return self._name
+
         def get_view_title(self): return self._title
+
+        @property
+        def name(self): return self._name.get_text()
 
         @property
         def title(self): return self._title.get_text()
