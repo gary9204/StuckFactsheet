@@ -56,6 +56,11 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._close_window = False
         self._window.show_all()
 
+        # Signals
+        _id = self._context_name.connect('closed', self.on_popdown_name)
+        view_name = self._infoid.get_view_name()
+        _id = view_name.connect('activate', lambda _entry: (
+            self.on_popdown_name(self._context_name)))
         _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
@@ -82,6 +87,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             self.on_show_dialog, UI.HELP_SHEET)
 
         # Factsheet Display Menu
+        UI.new_action_active(
+            self._window, 'popdown-name', self.on_popdown_name)
+        UI.new_action_active(
+            self._window, 'popup-name', self.on_popup_name)
         UI.new_action_active(
             self._window, 'open-page-sheet', self.on_open_page)
         UI.new_action_active(self._window, 'close-page-sheet',
@@ -200,14 +209,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         PageSheet.link_factsheet(page, control)
         return page
 
-    def on_close_name(self):
-        """ """
-        raise NotImplementedError
-
-    def on_open_name(self):
-        """ """
-        raise NotImplementedError
-
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
         """Close page guarding against data loss.
@@ -296,6 +297,15 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             sheets_active = self._control.sheets_active
             _page = PageSheet.open_factsheet(app, sheets_active, path_new)
         del dialog
+
+    def on_popdown_name(self, _popover: Gtk.Popover) -> None:
+        """Signal possible name change and hide factsheet name popover."""
+        self._context_name.popdown()
+
+    def on_popup_name(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
+        """Show factsheet name popover."""
+        self._context_name.popup()
 
     def on_save_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:

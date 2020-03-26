@@ -134,7 +134,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.show-name</property>
+            <property name="action_name">win.popup-name</property>
             <property name="text" translatable="yes">Show name</property>
           </object>
           <packing>
@@ -626,7 +626,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="action_name">win.show-name</property>
+                <property name="action_name">win.popup-name</property>
                 <property name="use_popover">False</property>
                 <child>
                   <object class="GtkImage" id="image_show_name">

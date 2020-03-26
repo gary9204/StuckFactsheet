@@ -144,6 +144,8 @@ class TestSheet:
         assert target._window.lookup_action('show-help-sheet') is not None
 
         # Factsheet Display Menu
+        assert target._window.lookup_action('popdown-name') is not None
+        assert target._window.lookup_action('popup-name') is not None
         assert target._window.lookup_action('open-page-sheet') is not None
         assert target._window.lookup_action('close-page-sheet') is not None
         assert target._window.lookup_action(
@@ -161,30 +163,90 @@ class TestSheet:
         del target._window
         del factsheet
 
-    def test_init_signals(self, patch_factsheet, capfd):
-        """Confirm initialization.
-        Case: signals
-        """
+    @pytest.mark.parametrize(
+        'name_signal, name_attribute, origin, n_default', [
+            ('delete-event', '_window', Gtk.ApplicationWindow, 0),
+            ('closed', '_context_name', Gtk.Popover, 0),
+            ])
+    def test_init_signals(self, name_signal, name_attribute, origin,
+                          n_default, patch_factsheet, capfd):
+        """Confirm initialization of signal connections."""
         # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(origin))
+        signal = GO.signal_lookup(name_signal, origin_gtype)
         factsheet = patch_factsheet()
-        window_gtype = GO.type_from_name(GO.type_name(Gtk.ApplicationWindow))
-        delete_signal = GO.signal_lookup('delete-event', window_gtype)
         # Test
         target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        assert target._window.get_application() is factsheet
 
-        delete_id = GO.signal_handler_find(
-            target._window, GO.SignalMatchType.ID, delete_signal,
+        attribute = getattr(target, name_attribute)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                attribute, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(attribute, id_signal)
+
+        assert n_default + 1 == n_handlers
+        # Cleanup
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_init_activate(self, patch_factsheet, capfd):
+        """Confirm initialization of name view activation signal."""
+        # Setup
+        factsheet = patch_factsheet()
+        entry_gtype = GO.type_from_name(GO.type_name(Gtk.Entry))
+        delete_signal = GO.signal_lookup('activate', entry_gtype)
+        # Test
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        entry = target._infoid.get_view_name()
+        activate_id = GO.signal_handler_find(
+            entry, GO.SignalMatchType.ID, delete_signal,
             0, None, None, None)
-        assert 0 != delete_id
+        assert 0 != activate_id
         # Teardown
         target._window.destroy()
         del target._window
         del factsheet
+
+#     def test_init_signals(self, patch_factsheet, capfd):
+#         """Confirm initialization.
+#         Case: signals
+#         """
+#         # Setup
+#         factsheet = patch_factsheet()
+#         window_gtype = GO.type_from_name(GO.type_name(Gtk.ApplicationWindow))
+#         delete_signal = GO.signal_lookup('delete-event', window_gtype)
+#         # Test
+#         target = VSHEET.PageSheet(px_app=factsheet)
+#         snapshot = capfd.readouterr()   # Resets the internal buffer
+#         assert not snapshot.out
+#         assert 'Gtk-CRITICAL' in snapshot.err
+#         assert 'GApplication::startup signal' in snapshot.err
+#         assert target._window.get_application() is factsheet
+# 
+#         delete_id = GO.signal_handler_find(
+#             target._window, GO.SignalMatchType.ID, delete_signal,
+#             0, None, None, None)
+#         assert 0 != delete_id
+#         # Teardown
+#         target._window.destroy()
+#         del target._window
+#         del factsheet
 
     def test_close_page(self, monkeypatch, patch_factsheet, capfd):
         """Confirm view detaches from control and closes."""
@@ -697,6 +759,44 @@ class TestSheet:
         assert patch_dialog.called_run
         assert patch_dialog.called_hide
         assert not patch_page.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_popdown_name(self, patch_factsheet, capfd):
+        """Confirm name popover becomes invisible."""
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        target._context_name.set_visible(True)
+        # Test
+        target.on_popdown_name(None)
+        assert not target._context_name.get_visible()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_popup_name(self, patch_factsheet, capfd):
+        """Confirm name popover becomes visible."""
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        target._context_name.set_visible(False)
+        # Test
+        target.on_popup_name(None, None)
+        assert target._context_name.get_visible()
         # Teardown
         target._window.destroy()
         del target._window
