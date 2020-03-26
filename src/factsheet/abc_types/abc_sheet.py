@@ -6,8 +6,6 @@ import enum
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 
-ALLOWED = True
-
 
 class EffectSafe(enum.Enum):
     """Constants to identify the effect of a call to a safe method (such

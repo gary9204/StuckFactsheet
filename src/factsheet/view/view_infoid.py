@@ -22,14 +22,25 @@ class ViewInfoId(ABC_INFOID.InterfaceViewInfoId):
         ID in user interface file for element to display page title.
     """
 
+    UI_ID_NAME: typing.ClassVar[str] = 'ui_name_infoid'
     UI_ID_TITLE: typing.ClassVar[str] = 'ui_title_infoid'
 
     def __init__(self, px_get_object: typing.Callable, **_kwargs) -> None:
+        self._view_name = px_get_object(self.UI_ID_NAME)
         self._view_title = px_get_object(self.UI_ID_TITLE)
+
+    def get_view_name(self) -> AINFOID.AdaptEntry:
+        """Return view's name display element."""
+        return self._view_name
 
     def get_view_title(self) -> AINFOID.AdaptEntry:
         """Return view's title display element."""
         return self._view_title
+
+    @property
+    def name(self) -> str:
+        """Return text of name."""
+        return self._view_name.get_text()
 
     @property
     def title(self) -> str:

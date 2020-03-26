@@ -3,47 +3,44 @@ Unit tests for class to display page identification information.
 
 See :mod:`.view_infoid`.
 """
-import gi   # type: ignore[import]
-from pathlib import Path
 import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_infoid as AINOFID
 from factsheet.view import view_infoid as VINFOID
 
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-
 
 class TestInfoId:
     """Unit tests for :class:`.ViewInfoId`."""
 
-    PATH_TEST_DIR_UI = Path(__file__).parent
-    NAME_TEST_FILE_UI = str(PATH_TEST_DIR_UI / 'test_view_infoid.ui')
-
-    def test_init(self):
+    def test_init(self, patch_ui_infoid, text_ui_infoid):
         """Confirm initialization."""
         # Setup
-        TEXT_TITLE_UI = 'Page title'
-        builder = Gtk.Builder.new_from_file(self.NAME_TEST_FILE_UI)
-        get_object = builder.get_object
+        get_object = patch_ui_infoid
         # Test
         target = VINFOID.ViewInfoId(get_object)
         assert isinstance(target._view_title, AINOFID.AdaptEntry)
-        assert TEXT_TITLE_UI == target._view_title.get_text()
+        assert text_ui_infoid['name'] == target._view_name.get_text()
+        assert text_ui_infoid['title'] == target._view_title.get_text()
 
-    def test_get_title(self):
+    @pytest.mark.parametrize('name_method, name_attr', [
+        ['get_view_name', '_view_name'],
+        ['get_view_title', '_view_title'],
+        ])
+    def test_get_title(self, patch_ui_infoid, name_method, name_attr):
         """Confirm return is title display element."""
         # Setup
-        builder = Gtk.Builder.new_from_file(self.NAME_TEST_FILE_UI)
-        get_object = builder.get_object
+        get_object = patch_ui_infoid
         target = VINFOID.ViewInfoId(get_object)
+        method = getattr(target, name_method)
+        attr = getattr(target, name_attr)
         # Test
-        assert target.get_view_title() is target._view_title
+        assert method() is attr
 
     @pytest.mark.parametrize('name_attr, name_prop', [
+        ['_view_name', 'name'],
         ['_view_title', 'title'],
         ])
-    def test_property_text(self, name_attr, name_prop):
+    def test_property_text(self, patch_ui_infoid, name_attr, name_prop):
         """Confirm properties are get-only.
 
         #. Case: read
@@ -51,8 +48,7 @@ class TestInfoId:
         #. Case: no delete
         """
         # Setup
-        builder = Gtk.Builder.new_from_file(self.NAME_TEST_FILE_UI)
-        get_object = builder.get_object
+        get_object = patch_ui_infoid
         target = VINFOID.ViewInfoId(get_object)
         value_attr = getattr(target, name_attr)
         target_prop = getattr(VINFOID.ViewInfoId, name_prop)
@@ -64,4 +60,3 @@ class TestInfoId:
         assert target_prop.fset is None
         # Test: no delete
         assert target_prop.fdel is None
-

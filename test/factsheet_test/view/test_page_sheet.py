@@ -100,21 +100,16 @@ def patch_dialog_run():
 class TestSheet:
     """Unit tests for View class Sheet."""
 
-    PATH_DIR_UI_TEST = Path(__file__).parent
-    NAME_FILE_UI_TEST = str(PATH_DIR_UI_TEST / 'test_page_sheet.ui')
-
     def test_init(self, patch_factsheet, capfd):
         """Confirm initialization.
         Case: visual elements
         """
         # Setup
-        PatchPageSheet = VSHEET.PageSheet
-        PatchPageSheet.NAME_FILE_SHEET_UI = self.NAME_FILE_UI_TEST
         TEST_TITLE_UI = 'Sheet title'
 
         factsheet = patch_factsheet()
         # Test
-        target = PatchPageSheet(px_app=factsheet)
+        target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
@@ -123,10 +118,16 @@ class TestSheet:
         assert target._control is None
         assert isinstance(target._window, Gtk.ApplicationWindow)
         assert target._window.get_application() is factsheet
+
+        # Components
+        assert isinstance(target._context_name, Gtk.Popover)
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
         assert isinstance(target._warning_data_loss, Gtk.Label)
+
+        # Identification Information
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
-        assert TEST_TITLE_UI == target._infoid.title
+        assert target._infoid.name is not None
+        assert target._infoid.title is not None
 
         # Application Title
         assert target._window.lookup_action('open-sheet') is not None

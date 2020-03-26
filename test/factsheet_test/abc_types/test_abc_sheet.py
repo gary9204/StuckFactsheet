@@ -19,8 +19,8 @@ class TestFactoryInfoId:
     @pytest.mark.parametrize('name_method', [
         'close_page',
         'get_infoid',
-        'update_name',
         'present',
+        'update_name',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""

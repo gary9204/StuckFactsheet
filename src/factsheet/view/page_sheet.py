@@ -47,9 +47,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._window = get_object('ui_sheet')
         self._window.set_application(px_app)
 
+        # Components
+        self._context_name = get_object('ui_context_name')
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
-
         self._infoid = VINFOID.ViewInfoId(get_object)
 
         self._close_window = False
@@ -198,6 +199,14 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         control = CSHEET.Sheet.new(pm_sheets_active)
         PageSheet.link_factsheet(page, control)
         return page
+
+    def on_close_name(self):
+        """ """
+        raise NotImplementedError
+
+    def on_open_name(self):
+        """ """
+        raise NotImplementedError
 
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
