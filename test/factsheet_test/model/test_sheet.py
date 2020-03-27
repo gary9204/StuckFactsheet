@@ -1,6 +1,7 @@
 """
 Unit tests for :mod:`~factsheet.model` for Factsheet document.
 """
+import re
 import logging
 from pathlib import Path
 import pickle
@@ -20,7 +21,7 @@ class TestSheet:
         #. Case: Equivalence
         """
         # Setup
-        TITLE_SOURCE = 'Parrot Sketch.'
+        TITLE_SOURCE = 'The Parrot Sketch'
         source = MSHEET.Sheet(p_title=TITLE_SOURCE)
         # Test: type difference
         assert not source.__eq__(TITLE_SOURCE)
@@ -58,27 +59,31 @@ class TestSheet:
         assert isinstance(target._pages, dict)
         assert not target._pages
 
-    def test_init(self):
+    def test_init(self, args_infoid_stock):
         """Confirm initialization."""
         # Setup
         ASPECT = MSHEET.Sheet.ASPECT
-        TEXT_TITLE = 'Something completely different'
+        TEXT_NAME = args_infoid_stock['p_name']
+        TEXT_TITLE = args_infoid_stock['p_title']
         # Test
-        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        target = MSHEET.Sheet(p_name=TEXT_NAME, p_title=TEXT_TITLE)
         assert not target._stale
         assert isinstance(target._pages, dict)
         assert not target._pages
         assert isinstance(target._infoid, MINFOID.InfoId)
         assert ASPECT == target._infoid.aspect
+        assert TEXT_NAME == target._infoid.name
         assert TEXT_TITLE == target._infoid.title
 
     def test_init_default(self):
         """Confirm initialization with default arguments."""
         # Setup
-        TEXT_TITLE_DEFAULT = ''
+        NAME_DEFAULT = 'Unnamed'
+        TITLE_DEFAULT = ''
         # Test
         target = MSHEET.Sheet()
-        assert TEXT_TITLE_DEFAULT == target._infoid.title
+        assert NAME_DEFAULT == target._infoid.name
+        assert TITLE_DEFAULT == target._infoid.title
 
     def test_attach_page(self, patch_class_page_sheet):
         """Confirm page addition.
@@ -309,7 +314,7 @@ class TestSheet:
         assert N_PAGES == target.n_pages()
 
     def test_present_pages(self, patch_class_page_sheet):
-        """Confirm page present notice."""
+        """Confirm all pages get present notice."""
         # Setup
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
@@ -395,3 +400,23 @@ class TestSheet:
         target.set_stale()
         assert target._stale
         assert target._infoid.is_stale()
+
+    def test_update_titles(self, patch_class_page_sheet):
+        """Confirm all pages get update notice."""
+        # Setup
+        NAME_MODEL = 'The Larch'
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_name=NAME_MODEL, p_title=TITLE_MODEL)
+        SUBTITLE_BASE = '/home/larch.fsg'
+        SUBTITLE_TARGET = (
+            r'/home/larch\.fsg \([0-9A-Fa-f]{3}:[0-9A-Fa-f]{3}\)')
+
+        N_PAGES = 3
+        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            target.attach_page(page)
+        # Test
+        target.update_titles(SUBTITLE_BASE)
+        for page in pages:
+            assert page.called_set_titles
+            assert re.match(SUBTITLE_TARGET, page.subtitle)

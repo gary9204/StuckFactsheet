@@ -20,7 +20,7 @@ class TestFactoryInfoId:
         'close_page',
         'get_infoid',
         'present',
-        'update_name',
+        'set_titles',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -32,7 +32,7 @@ class TestFactoryInfoId:
 
             def present(self): super().present(None)
 
-            def update_name(self): super().update_name()
+            def set_titles(self): super().set_titles(None)
 
         target = PatchFactory()
         # Test

@@ -45,6 +45,11 @@ class InterfacePageSheet(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def update_name(self) -> None:
-        """Respond to notice of factsheet name change."""
+    def set_titles(self, p_subtitle: str) -> None:
+        """Set title and subtitle of page's window.
+
+        The page's title is the factsheet name.
+
+        :param p_subtitle: subtitle for window.
+        """
         raise NotImplementedError

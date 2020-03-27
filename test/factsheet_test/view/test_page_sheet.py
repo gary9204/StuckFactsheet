@@ -105,8 +105,6 @@ class TestSheet:
         Case: visual elements
         """
         # Setup
-        TEST_TITLE_UI = 'Sheet title'
-
         factsheet = patch_factsheet()
         # Test
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -122,6 +120,7 @@ class TestSheet:
         # Components
         assert isinstance(target._context_name, Gtk.Popover)
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
+        assert target._name_former is None
         assert isinstance(target._warning_data_loss, Gtk.Label)
 
         # Identification Information
@@ -144,8 +143,8 @@ class TestSheet:
         assert target._window.lookup_action('show-help-sheet') is not None
 
         # Factsheet Display Menu
-        assert target._window.lookup_action('popdown-name') is not None
         assert target._window.lookup_action('popup-name') is not None
+        assert target._window.lookup_action('reset-name') is not None
         assert target._window.lookup_action('open-page-sheet') is not None
         assert target._window.lookup_action('close-page-sheet') is not None
         assert target._window.lookup_action(
@@ -222,31 +221,6 @@ class TestSheet:
         target._window.destroy()
         del target._window
         del factsheet
-
-#     def test_init_signals(self, patch_factsheet, capfd):
-#         """Confirm initialization.
-#         Case: signals
-#         """
-#         # Setup
-#         factsheet = patch_factsheet()
-#         window_gtype = GO.type_from_name(GO.type_name(Gtk.ApplicationWindow))
-#         delete_signal = GO.signal_lookup('delete-event', window_gtype)
-#         # Test
-#         target = VSHEET.PageSheet(px_app=factsheet)
-#         snapshot = capfd.readouterr()   # Resets the internal buffer
-#         assert not snapshot.out
-#         assert 'Gtk-CRITICAL' in snapshot.err
-#         assert 'GApplication::startup signal' in snapshot.err
-#         assert target._window.get_application() is factsheet
-# 
-#         delete_id = GO.signal_handler_find(
-#             target._window, GO.SignalMatchType.ID, delete_signal,
-#             0, None, None, None)
-#         assert 0 != delete_id
-#         # Teardown
-#         target._window.destroy()
-#         del target._window
-#         del factsheet
 
     def test_close_page(self, monkeypatch, patch_factsheet, capfd):
         """Confirm view detaches from control and closes."""
@@ -764,9 +738,20 @@ class TestSheet:
         del target._window
         del factsheet
 
-    def test_on_popdown_name(self, patch_factsheet, capfd):
-        """Confirm name popover becomes invisible."""
+    def test_on_popdown_name(self, monkeypatch, patch_factsheet, capfd):
+        """Confirm name popover becomes invisible.
+        Case: name changed
+        """
         # Setup
+        class PatchNewName:
+            def __init__(self): self.called = False
+
+            def new_name(self): self.called = True
+
+        patch_new_name = PatchNewName()
+        monkeypatch.setattr(
+            CSHEET.Sheet, 'new_name', patch_new_name.new_name)
+
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
@@ -774,10 +759,50 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        target._context_name.set_visible(True)
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target._control = control
+        target._infoid.get_view_name().set_text('The Confy Chair!')
+        target._name_former = target._infoid.name + ' Oh no!'
         # Test
         target.on_popdown_name(None)
-        assert not target._context_name.get_visible()
+        assert target._name_former is None
+        assert patch_new_name.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_popdown_name_static(self, monkeypatch, patch_factsheet, capfd):
+        """Confirm name popover becomes invisible.
+        Case: name did not change
+        """
+        # Setup
+        class PatchNewName:
+            def __init__(self): self.called = False
+
+            def new_name(self): self.called = True
+
+        patch_new_name = PatchNewName()
+        monkeypatch.setattr(
+            CSHEET.Sheet, 'new_name', patch_new_name.new_name)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target._control = control
+        target._infoid.get_view_name().set_text('The Confy Chair!')
+        target._name_former = target._infoid.name
+        # Test
+        target.on_popdown_name(None)
+        assert target._name_former is None
+        assert not patch_new_name.called
         # Teardown
         target._window.destroy()
         del target._window
@@ -794,10 +819,33 @@ class TestSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         target._context_name.set_visible(False)
+        target._infoid.get_view_name().set_text('The Confy Chair!')
         # Test
         target.on_popup_name(None, None)
         assert target._context_name.get_visible()
+        assert target._infoid.name == target._name_former
         # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_reset_name(self, patch_factsheet, capfd):
+        """Confirm name reset."""
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        name = target._infoid.get_view_name()
+        name.set_text('The Spanish Inquisition!')
+        target._name_former = 'Oh no!'
+        # Test
+        target.on_reset_name(None, None)
+        assert target._name_former == name.get_text()
+        # Target
         target._window.destroy()
         del target._window
         del factsheet
@@ -935,6 +983,7 @@ class TestSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.hide()
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
@@ -1060,6 +1109,7 @@ class TestSheet:
         assert patch_present.called
 
     def test_present(self, patch_factsheet, capfd):
+        """Confirm page becomes visible."""
         # Setup
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -1080,12 +1130,26 @@ class TestSheet:
         del target._window
         del factsheet
 
-    @pytest.mark.skip(reason='Pending implementation')
-    def test_update_name(self):
+    def test_set_title(self, patch_factsheet, capfd):
         """Confirm window title update."""
         # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        TITLE = 'The Larch'
+        entry_name = target._infoid.get_view_name()
+        entry_name.set_text(TITLE)
+        SUBTITLE = 'larch.fsg (ABE:123)'
         # Test
+        target.set_titles(SUBTITLE)
+        headerbar = target._window.get_titlebar()
+        assert TITLE == headerbar.get_title()
+        assert SUBTITLE == headerbar.get_subtitle()
         # Teardown
-#         target._window.destroy()
-#         del target._window
-#         del factsheet
+        target._window.destroy()
+        del target._window
+        del factsheet

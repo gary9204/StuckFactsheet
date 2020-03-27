@@ -47,7 +47,8 @@ def patch_class_page_sheet(patch_class_view_infoid):
             self._infoid = patch_class_view_infoid()
             self.called_close = False
             self.called_present = False
-            self.called_update_name = False
+            self.called_set_titles = False
+            self.subtitle = None
 
         def close_page(self): self.called_close = True
 
@@ -55,6 +56,8 @@ def patch_class_page_sheet(patch_class_view_infoid):
 
         def present(self, _time): self.called_present = True
 
-        def update_name(self): self.called_update_name = True
+        def set_titles(self, p_subtitle):
+            self.called_set_titles = True
+            self.subtitle = p_subtitle
 
     return PatchPageSheet

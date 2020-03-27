@@ -33,6 +33,7 @@ class Sheet(object):
         """Add page to model."""
         assert self._model is not None
         self._model.attach_page(pm_page)
+        self.new_name()
 
     def delete_force(self) -> None:
         """Delete factsheet unconditionally."""
@@ -75,6 +76,15 @@ class Sheet(object):
         control = Sheet(pm_sheets_active)
         control._model = MSHEET.Sheet()
         return control
+
+    def new_name(self) -> None:
+        """Notify model a page changed factsheet."""
+        if self._path is None:
+            subtitle_base = 'Unsaved'
+        else:
+            subtitle_base = self._path.name
+        assert self._model is not None
+        self._model.update_titles(subtitle_base)
 
     @classmethod
     def open(cls, pm_sheet_active: CPOOL.PoolSheets, p_path: Path
@@ -146,6 +156,9 @@ class Sheet(object):
         :param path: file system path to file.
         """
         self._path = p_path
+        subtitle_base = self._path.name
+        assert self._model is not None
+        self._model.update_titles(subtitle_base)
         self.save()
 
     @property

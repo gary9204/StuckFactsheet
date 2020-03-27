@@ -49,19 +49,30 @@ class TestControlSheet:
         """Confirm page addition."""
         # Setup
         class PatchModel:
-            def __init__(self): self.called = False
+            def __init__(self):
+                self.called_attach_page = False
+                self.called_update_titles = False
+                self.base = ''
 
-            def attach_page(self, _page): self.called = True
+            def attach_page(self, _page):
+                self.called_attach_page = True
+
+            def update_titles(self, p_base):
+                self.called_update_titles = True
+                self.base = p_base
 
         patch_model = PatchModel()
         monkeypatch.setattr(
             MSHEET.Sheet, 'attach_page', patch_model.attach_page)
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'update_titles', patch_model.update_titles)
 
         sheets_active = CPOOL.PoolSheets()
         target = CSHEET.Sheet.new(sheets_active)
         # Test
         target.attach_page(None)
-        assert patch_model.called
+        assert patch_model.called_attach_page
+        assert patch_model.called_update_titles
 
     def test_delete_force(self, monkeypatch):
         """Confirm unconditional deletion."""
@@ -211,6 +222,56 @@ class TestControlSheet:
         assert isinstance(target, CSHEET.Sheet)
         assert isinstance(target._model, MSHEET.Sheet)
 
+    def test_new_name(self, monkeypatch):
+        """Confirm model gets new name notice."""
+        # Setup
+        class PatchModel:
+            def __init__(self):
+                self.called = False
+                self.base = ''
+
+            def update_titles(self, p_base):
+                self.called = True
+                self.base = p_base
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'update_titles', patch_model.update_titles)
+
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
+        PARENT = '/home/scratch'
+        FILE = 'larch.fsg'
+        target._path = Path(PARENT) / FILE
+        # Test
+        target.new_name()
+        assert patch_model.called
+        assert FILE == patch_model.base
+
+    def test_new_name_unsaved(self, monkeypatch):
+        """Confirm model gets new name notice."""
+        # Setup
+        class PatchModel:
+            def __init__(self):
+                self.called = False
+                self.base = ''
+
+            def update_titles(self, p_base):
+                self.called = True
+                self.base = p_base
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'update_titles', patch_model.update_titles)
+
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
+        DEFAULT = 'Unsaved'
+        # Test
+        target.new_name()
+        assert patch_model.called
+        assert DEFAULT == patch_model.base
+
     def test_open(self, tmp_path):
         """Confirm control creation from file.
         Case: path to file with model contents
@@ -339,9 +400,22 @@ class TestControlSheet:
         assert target is not None
         assert TITLE == target._infoid.title
 
-    def test_save_as(self, tmp_path):
+    def test_save_as(self, monkeypatch, tmp_path):
         """Confirm write to file at new path."""
         # Setup
+        class PatchModel:
+            def __init__(self):
+                self.called = False
+                self.base = ''
+
+            def update_titles(self, p_base):
+                self.called = True
+                self.base = p_base
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'update_titles', patch_model.update_titles)
+
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
         model.set_stale()
@@ -360,6 +434,8 @@ class TestControlSheet:
             target = pickle.load(io_in)
         assert target is not None
         assert TITLE == target._infoid.title
+        assert patch_model.called
+        assert PATH.name == patch_model.base
 
     def test_save_no_path(self, PatchLogger, monkeypatch):
         """Confirm write to file.

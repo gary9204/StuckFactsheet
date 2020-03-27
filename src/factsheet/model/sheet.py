@@ -6,7 +6,6 @@ import typing   # noqa
 
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.model import infoid as MINFOID
-# from factsheet.view import page_sheet as VSHEET
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 
 logger = logging.getLogger('Main.model.sheet')
@@ -49,9 +48,10 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         del state['_stale']
         return state
 
-    def __init__(self, *, p_title: str = '') -> None:
+    def __init__(self, *, p_name: str = 'Unnamed', p_title: str = ''
+                 ) -> None:
         self._infoid = MINFOID.InfoId(
-            p_aspect=self.ASPECT, p_title=p_title)
+            p_aspect=self.ASPECT, p_name=p_name, p_title=p_title)
         self._state_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
@@ -165,3 +165,19 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
     def set_stale(self) -> None:
         """Mark factsheet in memory changed from file contents."""
         self._stale = True
+
+    def update_titles(self, p_subtitle_base: str) -> None:
+        """Notify each page to update titles in page's window.
+
+        Each page receives a subtitle that identifies both the factsheet
+        and page.
+
+        :param p_subtitle_base: common part of all subtitles.
+        """
+        id_model = self._infoid.id_model
+        text_model = hex(id_model)[-3:].upper()
+        for id_page, page in self._pages.items():
+            text_page = hex(id_page)[-3:].upper()
+            subtitle = '{} ({}:{})'.format(
+                p_subtitle_base, text_model, text_page)
+            page.set_titles(subtitle)

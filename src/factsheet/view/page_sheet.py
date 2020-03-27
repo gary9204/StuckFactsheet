@@ -51,6 +51,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._context_name = get_object('ui_context_name')
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
+        self._name_former: typing.Optional[str] = None
         self._infoid = VINFOID.ViewInfoId(get_object)
 
         self._close_window = False
@@ -59,8 +60,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         # Signals
         _id = self._context_name.connect('closed', self.on_popdown_name)
         view_name = self._infoid.get_view_name()
-        _id = view_name.connect('activate', lambda _entry: (
-            self.on_popdown_name(self._context_name)))
+        _id = view_name.connect(
+            'activate', lambda _entry: self._context_name.popdown())
         _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
@@ -88,9 +89,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         # Factsheet Display Menu
         UI.new_action_active(
-            self._window, 'popdown-name', self.on_popdown_name)
-        UI.new_action_active(
             self._window, 'popup-name', self.on_popup_name)
+        UI.new_action_active(
+            self._window, 'reset-name', self.on_reset_name)
         UI.new_action_active(
             self._window, 'open-page-sheet', self.on_open_page)
         UI.new_action_active(self._window, 'close-page-sheet',
@@ -299,13 +300,23 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         del dialog
 
     def on_popdown_name(self, _popover: Gtk.Popover) -> None:
-        """Signal possible name change and hide factsheet name popover."""
-        self._context_name.popdown()
+        """Hide factsheet name popover and signal when name changes."""
+        assert self._control is not None
+        if self._name_former != self._infoid.name:
+            self._control.new_name()
+        self._name_former = None
 
     def on_popup_name(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
-        """Show factsheet name popover."""
+        """Show factsheet name popover and save former name."""
         self._context_name.popup()
+        self._name_former = self._infoid.name
+
+    def on_reset_name(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
+        """Reset name to value at start of name change."""
+        view_name = self._infoid.get_view_name()
+        view_name.set_text(self._name_former)
 
     def on_save_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
@@ -381,6 +392,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """
         self._window.present_with_time(p_time)
 
-    def update_name(self):
-        """Update window title when sheet name changes."""
-        raise NotImplementedError
+    def set_titles(self, p_subtitle: str):
+        """Set title and subtitle of page's window.
+
+        The page's title is the factsheet name.
+
+        :param p_subtitle: subtitle for window.
+        """
+        headerbar = self._window.get_titlebar()
+        headerbar.set_title(self._infoid.name)
+        headerbar.set_subtitle(p_subtitle)
