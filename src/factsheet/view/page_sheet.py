@@ -336,7 +336,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         if path_old:
             _ = dialog.set_filename(str(path_old))
         else:
-            dialog.set_current_name('Untitled.fsg')
+            dialog.set_current_name('factsheet.fsg')
         response = dialog.run()
         dialog.hide()
         if response == Gtk.ResponseType.APPLY:

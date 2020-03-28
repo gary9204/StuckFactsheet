@@ -26,7 +26,7 @@ Steps -- Save and Open
 #. a. **Step:** Click Factsheet **Save button** (window title on right
       near center).
    #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "Untitled.fsg".
+      "factsheet.fsg".
 
 #. a. **Step:** Change to test data directory.
    #. *Expect:* Save dialog shows directory contents.
@@ -126,7 +126,7 @@ Steps -- Duplicate Open
 #. a. **Step:** Click Factsheet **Save button** (window title on right
       near center).
    #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "Untitled.fsg".
+      "factsheet.fsg".
 
 #. a. **Step:** Change to test data directory.
    #. *Expect:* Save dialog shows directory contents.
@@ -207,7 +207,8 @@ Steps -- Data Loss and Overwrite Warnings
 
 #. a. **Step:** Click Factsheet **Save button** (window title on right
       near center).
-   #. *Expect:* Save dialog appears. Dialog Name field contains "Untitled.fsg".
+   #. *Expect:* Save dialog appears. Dialog Name field contains
+      "factsheet.fsg".
 
 #. a. **Step:** Change to test data directory.
    #. *Expect:* Save dialog shows directory contents.

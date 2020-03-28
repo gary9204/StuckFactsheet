@@ -1,5 +1,5 @@
-Case Factsheet Close Page
-=========================
+Case Factsheet Close Window
+===========================
 
 **Purpose:** demonstrate closing Factsheet windows with and without
 changes to the factsheet.
