@@ -5,8 +5,9 @@ import logging
 from pathlib import Path
 import typing   # noqa
 
-if typing.TYPE_CHECKING:
-    from factsheet.control import sheet as CSHEET   # noqa
+from factsheet.abc_types import abc_sheet as ABC_SHEET
+# if typing.TYPE_CHECKING:
+#     from factsheet.control import sheet as CSHEET   # noqa
 
 logger = logging.getLogger('Main.CPOOL')
 
@@ -16,9 +17,10 @@ class PoolSheets:
     :mod:`~factsheet.control` :class:`~.control.sheet.Sheet`.
     """
     def __init__(self) -> None:
-        self._controls: typing.Dict[int, 'CSHEET.Sheet'] = dict()
+        self._controls: typing.Dict[int, ABC_SHEET.InterfaceControlSheet] = (
+            dict())
 
-    def add(self, px_control: 'CSHEET.Sheet') -> None:
+    def add(self, px_control: ABC_SHEET.InterfaceControlSheet) -> None:
         """Add control to collection.
 
         Log a warning when the control is in the collection already.
@@ -31,7 +33,8 @@ class PoolSheets:
             return
         self._controls[id_control] = px_control
 
-    def owner_file(self, p_path: Path) -> typing.Optional['CSHEET.Sheet']:
+    def owner_file(self, p_path: Path
+                   ) -> typing.Optional[ABC_SHEET.InterfaceControlSheet]:
         """Return control with given path or None."""
         path_absolute = p_path.resolve()
         for control in self._controls.values():
@@ -41,7 +44,7 @@ class PoolSheets:
                 return control
         return None
 
-    def remove(self, px_control: 'CSHEET.Sheet') -> None:
+    def remove(self, px_control: ABC_SHEET.InterfaceControlSheet) -> None:
         """Remove control from collection.
 
         Log a warning when the control is not in the collection.

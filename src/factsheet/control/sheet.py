@@ -15,7 +15,7 @@ from factsheet.model import sheet as MSHEET
 logger = logging.getLogger('Main.CSHEET')
 
 
-class Sheet(object):
+class Sheet(ABC_SHEET.InterfaceControlSheet):
     """Mediates user actions at view to model updates for a factsheet.
 
     Class `Sheet` translates user requests in a factsheet page

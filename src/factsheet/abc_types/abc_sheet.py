@@ -3,6 +3,8 @@ Defines abstract data types classes for factsheet documents.
 """
 import abc
 import enum
+from pathlib import Path
+import typing
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 
@@ -16,6 +18,17 @@ class EffectSafe(enum.Enum):
     COMPLETED = enum.auto()
     #: Method call had no effect.
     NO_EFFECT = enum.auto()
+
+
+class InterfaceControlSheet(abc.ABC):
+    """Defines interface class to break import cycle between
+    :class:`~.control.sheet.Sheet` and :class:`.PoolSheets`.
+    """
+    @property
+    @abc.abstractmethod
+    def path(self) -> typing.Optional[Path]:
+        """Return path to file containing factsheet contents."""
+        raise NotImplementedError
 
 
 class InterfacePageSheet(abc.ABC):

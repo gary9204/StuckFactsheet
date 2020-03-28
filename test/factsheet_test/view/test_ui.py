@@ -14,7 +14,7 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class TestUiActions(object):
+class TestUiActions:
     """Unit tests for module functions defined in :mod:`.view.ui`.
     """
 
