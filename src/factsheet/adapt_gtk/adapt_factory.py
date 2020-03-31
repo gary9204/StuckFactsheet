@@ -15,13 +15,25 @@ class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
         """Return new instance of Gtk-based :mod:`~factsheet.model` name."""
         return AINFOID.AdaptEntryBuffer(p_text=p_text)
 
+    def new_model_summary(self, p_text: str = '') -> AINFOID.AdaptTextBuffer:
+        """Return new instance of Gtk-based :mod:`~factsheet.model`
+        summary.
+        """
+        return AINFOID.AdaptTextBuffer(p_text=p_text)
+
     def new_model_title(self, p_text: str = '') -> AINFOID.AdaptEntryBuffer:
         """Return new instance of Gtk-based :mod:`~factsheet.model` title."""
         return AINFOID.AdaptEntryBuffer(p_text=p_text)
 
     def new_view_name(self) -> AINFOID.AdaptEntry:
-        """Return new instance of GTK-based :mod:`~factsheet.view` name.."""
+        """Return new instance of GTK-based :mod:`~factsheet.view` name."""
         return AINFOID.AdaptEntry()
+
+    def new_view_summary(self) -> AINFOID.AdaptTextView:
+        """Return new instance of GTK-based :mod:`~factsheet.view`
+        summary.
+        """
+        return AINFOID.AdaptTextView()
 
     def new_view_title(self) -> AINFOID.AdaptEntry:
         """Return new instance of GTK-based :mod:`~factsheet.view` title.."""

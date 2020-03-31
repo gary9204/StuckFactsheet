@@ -14,6 +14,7 @@ class TestFactoryInfoId:
 
     @pytest.mark.parametrize('name_method, class_attr', [
         ('new_model_name', AINFOID.AdaptEntryBuffer),
+        ('new_model_summary', AINFOID.AdaptTextBuffer),
         ('new_model_title', AINFOID.AdaptEntryBuffer),
         ])
     def test_new_attr_model(self, name_method, class_attr):
@@ -22,15 +23,16 @@ class TestFactoryInfoId:
         """
         # Setup
         factory = AFACTORY.FactoryInfoId()
-        text = 'Something completely different'
+        TEXT = 'Something completely different'
         target = getattr(factory, name_method)
         # Test
-        attr_model = target(p_text=text)
+        attr_model = target(p_text=TEXT)
         assert isinstance(attr_model, class_attr)
-        assert text == str(attr_model)
+        assert TEXT == str(attr_model)
 
     @pytest.mark.parametrize('name_method, class_attr', [
         ('new_view_name', AINFOID.AdaptEntry),
+        ('new_view_summary', AINFOID.AdaptTextView),
         ('new_view_title', AINFOID.AdaptEntry),
         ])
     def test_new_attr_view(self, name_method, class_attr):

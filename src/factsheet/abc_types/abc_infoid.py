@@ -59,6 +59,11 @@ class InterfaceViewInfoId(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_view_summary(self) -> AbstractTextView:
+        """Return view's summary display element."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_view_title(self) -> AbstractTextView:
         """Return view's title display element."""
         raise NotImplementedError
@@ -67,6 +72,12 @@ class InterfaceViewInfoId(abc.ABC):
     @abc.abstractmethod
     def name(self) -> str:
         """Return text of name."""
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def summary(self) -> str:
+        """Return text of summary."""
         raise NotImplementedError
 
     @property

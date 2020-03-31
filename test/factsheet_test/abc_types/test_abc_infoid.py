@@ -103,8 +103,10 @@ class TestInterfaceViewInfoId:
 
     @pytest.mark.parametrize('name_method', [
         'get_view_name',
+        'get_view_summary',
         'get_view_title',
         'name',
+        'summary',
         'title',
         ])
     def test_must_override(self, name_method):
@@ -113,9 +115,13 @@ class TestInterfaceViewInfoId:
         class PatchInterface(ABC_INFOID.InterfaceViewInfoId):
             def get_view_name(self): super().get_view_name()
 
+            def get_view_summary(self): super().get_view_summary()
+
             def get_view_title(self): super().get_view_title()
 
             def name(self): super().name
+
+            def summary(self): super().summary
 
             def title(self): super().title
 

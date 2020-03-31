@@ -21,6 +21,13 @@ class FactoryInfoId(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def new_model_summary(
+            self, p_text: str = '') -> ABC_INFOID.AbstractTextModel:
+        """Return new instance of summary for :class:`.InfoId`.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def new_model_title(
             self, p_text: str = '') -> ABC_INFOID.AbstractTextModel:
         """Return new instance of title for :class:`.InfoId`.
@@ -30,6 +37,12 @@ class FactoryInfoId(abc.ABC):
     @abc.abstractmethod
     def new_view_name(self) -> ABC_INFOID.AbstractTextView:
         """Return new instance of name for :class:`.ViewInfoId`.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def new_view_summary(self) -> ABC_INFOID.AbstractTextView:
+        """Return new instance of summary for :class:`.ViewInfoId`.
         """
         raise NotImplementedError
 
