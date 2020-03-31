@@ -49,6 +49,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         # Components
         self._context_name = get_object('ui_context_name')
+        self._context_summary = get_object('ui_context_summary')
+        self._flip_summary = get_object('ui_flip_summary')
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
         self._name_former: typing.Optional[str] = None
@@ -92,6 +94,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             self._window, 'popup-name', self.on_popup_name)
         UI.new_action_active(
             self._window, 'reset-name', self.on_reset_name)
+        UI.new_action_active(
+            self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(
             self._window, 'open-page-sheet', self.on_open_page)
         UI.new_action_active(self._window, 'close-page-sheet',
@@ -267,6 +271,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._dialog_data_loss.hide()
         if response == Gtk.ResponseType.APPLY:
             self._control.delete_force()
+
+    def on_flip_summary(self, _action: Gio.SimpleAction,
+                        _target: GLib.Variant) -> None:
+        """Flip visibility of summary pane."""
+        new_state = not self._context_summary.get_visible()
+        self._context_summary.set_visible(new_state)
+        self._flip_summary.set_active(new_state)
 
     def on_new_sheet(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

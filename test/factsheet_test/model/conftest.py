@@ -5,6 +5,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.view import ui as UI
 
 
@@ -45,9 +46,8 @@ def patch_class_view_infoid(args_infoid_stock):
 
         @property
         def summary(self):
-            buffer_summary = self._summary.get_buffer()
-            start, end = buffer_summary.get_bounds()
-            return buffer_summary.get_text(start, end, self.INCLUDE_HIDDEN)
+            text = AINFOID.str_adapt_textview(self.get_view_summary())
+            return text
 
         @property
         def title(self): return self._title.get_text()

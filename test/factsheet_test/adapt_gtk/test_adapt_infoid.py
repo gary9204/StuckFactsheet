@@ -18,18 +18,6 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class TestAdaptEntry:
-    """Unit tests for :data:`.AdaptEntry` implementation of
-    :class:`.AbstractTextModel`.
-    """
-
-    def test_adapt_entry(self):
-        """Confirm definition of :data:`.AdaptEntry`."""
-        # Setup
-        # Test
-        assert AINFOID.AdaptEntry is Gtk.Entry
-
-
 @pytest.fixture
 def PatchConnect():
     """PyTest fixture."""
@@ -43,6 +31,18 @@ def PatchConnect():
             return self.ID_STUB
 
     return Connect
+
+
+class TestAdaptEntry:
+    """Unit tests for :data:`.AdaptEntry` implementation of
+    :class:`.AbstractTextModel`.
+    """
+
+    def test_adapt_entry(self):
+        """Confirm definition of :data:`.AdaptEntry`."""
+        # Setup
+        # Test
+        assert AINFOID.AdaptEntry is Gtk.Entry
 
 
 class TestAdaptEntryBuffer:
@@ -378,8 +378,9 @@ class TestAdaptTextBuffer:
         assert isinstance(target._buffer, Gtk.TextBuffer)
         buffer = target._buffer
         start, end = buffer.get_bounds()
-        assert TEXT == str(
+        text_target = str(
             target._buffer.get_text(start, end, target.INCLUDE_HIDDEN))
+        assert TEXT == text_target
         assert not target._stale
         assert isinstance(target._views, dict)
         assert not target._views
@@ -393,8 +394,9 @@ class TestAdaptTextBuffer:
         assert isinstance(target._buffer, Gtk.TextBuffer)
         buffer = target._buffer
         start, end = buffer.get_bounds()
-        assert TEXT == str(
+        text_target = str(
             target._buffer.get_text(start, end, target.INCLUDE_HIDDEN))
+        assert TEXT == text_target
 
     @pytest.mark.parametrize('name_signal, n_default', [
         ('changed', 0),
@@ -502,7 +504,6 @@ class TestAdaptTextBuffer:
         target.detach_view(view_remove)
         assert len(views) == len(target._views)
         assert view_remove.get_buffer() is not target._buffer
-#         assert not view_remove.get_visible()
         for view in views:
             assert target._buffer is view.get_buffer()
             assert target._views[id(view)] is view
@@ -578,3 +579,26 @@ class TestAdaptTextBuffer:
         # Test
         target.set_stale()
         assert target._stale
+
+
+class TestAdaptTextView:
+    """Unit tests for :data:`.AdaptTextView` implementation of
+    :class:`.AbstractTextModel`.
+    """
+
+    def test_adapt_textview(self):
+        """Confirm definition of :data:`.AdaptTextView`."""
+        # Setup
+        # Test
+        assert AINFOID.AdaptTextView is Gtk.TextView
+
+    def test_str_adapt_textview(self):
+        """Confirm conversion of :data:`.AdaptTextView` to text."""
+        # Setup
+        TEXT = 'Something completely different.'
+        model = AINFOID.AdaptTextBuffer(TEXT)
+        buffer = model._buffer
+        target = AINFOID.AdaptTextView()
+        target.set_buffer(buffer)
+        # Test
+        assert TEXT == AINFOID.str_adapt_textview(target)

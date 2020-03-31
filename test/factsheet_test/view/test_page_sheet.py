@@ -119,6 +119,8 @@ class TestSheet:
 
         # Components
         assert isinstance(target._context_name, Gtk.Popover)
+        assert isinstance(target._context_summary, Gtk.Frame)
+        assert isinstance(target._flip_summary, Gtk.CheckButton)
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
         assert target._name_former is None
         assert isinstance(target._warning_data_loss, Gtk.Label)
@@ -145,6 +147,7 @@ class TestSheet:
         # Factsheet Display Menu
         assert target._window.lookup_action('popup-name') is not None
         assert target._window.lookup_action('reset-name') is not None
+        assert target._window.lookup_action('flip-summary') is not None
         assert target._window.lookup_action('open-page-sheet') is not None
         assert target._window.lookup_action('close-page-sheet') is not None
         assert target._window.lookup_action(
@@ -586,6 +589,31 @@ class TestSheet:
         target._window.destroy()
         del target._window
         del factsheet
+
+    def test_on_flip_summary(self, patch_factsheet, capfd):
+        """Confirm flip of facthseet summary visibility.
+        Case: hide
+        Case: show
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        target._flip_summary.set_active(True)
+        target._context_summary.set_visible(True)
+        assert target._context_summary.get_visible()
+        # Test: hide
+        target.on_flip_summary(None, None)
+        assert not target._context_summary.get_visible()
+        assert not target._flip_summary.get_active()
+        # Test: show
+        target.on_flip_summary(None, None)
+        assert target._context_summary.get_visible()
+        assert target._flip_summary.get_active()
 
     def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm response to request to create default factsheet."""

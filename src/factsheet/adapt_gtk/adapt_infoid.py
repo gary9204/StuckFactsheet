@@ -35,6 +35,17 @@ AdaptTextView = typing.Union[Gtk.TextView]
 logger = logging.getLogger('Main.adapt_text')
 
 
+def str_adapt_textview(px_view: AdaptTextView) -> str:
+    """Return AdaptTextView contents as a text.
+
+    :param px_view: target view.
+    """
+    buffer = px_view.get_buffer()
+    start, end = buffer.get_bounds()
+    text = buffer.get_text(start, end, AdaptTextBuffer.INCLUDE_HIDDEN)
+    return text
+
+
 class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
     """Implements model text attribute :class:`.AbstractTextModel`
     using `Gtk.EntryBuffer`_.
@@ -156,9 +167,7 @@ class AdaptTextBuffer(ABC_INFOID.AbstractTextModel):
         Persistent form of text attribute consists of text only.
         """
         state = self.__dict__.copy()
-        start, end = self._buffer.get_bounds()
-        state['ex_text'] = str(
-            self._buffer.get_text(start, end, self.INCLUDE_HIDDEN))
+        state['ex_text'] = str(self)
         del state['_buffer']
         del state['_stale']
         del state['_views']
@@ -191,8 +200,8 @@ class AdaptTextBuffer(ABC_INFOID.AbstractTextModel):
     def __str__(self) -> str:
         """Return buffer contents as text."""
         start, end = self._buffer.get_bounds()
-        INCLUDE_HIDDEN = True
-        return str(self._buffer.get_text(start, end, INCLUDE_HIDDEN))
+        text = str(self._buffer.get_text(start, end, self.INCLUDE_HIDDEN))
+        return text
 
     def attach_view(self, pm_view: AdaptEntry) -> None:
         """Add view to update display when text changes.

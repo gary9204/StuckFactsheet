@@ -13,7 +13,7 @@ def text_ui_infoid():
     return dict(
         name='UI InfoId Name',
         title='UI InfoId Title',
-        # summary='This summarizes UI identification.',
+        summary='This summarizes UI identification.',
         )
 
 
@@ -28,6 +28,14 @@ def patch_ui_infoid(text_ui_infoid):
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="text" translatable="yes">{name}</property>
+          </object>
+          <object class="GtkTextBuffer" id="buffer_summary">
+            <property name="text" translatable="yes">{summary}</property>
+          </object>
+          <object class="GtkTextView" id="ui_summary_infoid">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="buffer">buffer_summary</property>
           </object>
           <object class="GtkEntry" id="ui_title_infoid">
             <property name="visible">True</property>

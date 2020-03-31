@@ -23,15 +23,21 @@ class ViewInfoId(ABC_INFOID.InterfaceViewInfoId):
     """
 
     UI_ID_NAME: typing.ClassVar[str] = 'ui_name_infoid'
+    UI_ID_SUMMARY: typing.ClassVar[str] = 'ui_summary_infoid'
     UI_ID_TITLE: typing.ClassVar[str] = 'ui_title_infoid'
 
     def __init__(self, px_get_object: typing.Callable, **_kwargs) -> None:
         self._view_name = px_get_object(self.UI_ID_NAME)
+        self._view_summary = px_get_object(self.UI_ID_SUMMARY)
         self._view_title = px_get_object(self.UI_ID_TITLE)
 
     def get_view_name(self) -> AINFOID.AdaptEntry:
         """Return view's name display element."""
         return self._view_name
+
+    def get_view_summary(self) -> AINFOID.AdaptTextView:
+        """Return view's summary display element."""
+        return self._view_summary
 
     def get_view_title(self) -> AINFOID.AdaptEntry:
         """Return view's title display element."""
@@ -41,6 +47,12 @@ class ViewInfoId(ABC_INFOID.InterfaceViewInfoId):
     def name(self) -> str:
         """Return text of name."""
         return self._view_name.get_text()
+
+    @property
+    def summary(self) -> str:
+        """Return text of summary."""
+        text = AINFOID.str_adapt_textview(self._view_summary)
+        return text
 
     @property
     def title(self) -> str:
