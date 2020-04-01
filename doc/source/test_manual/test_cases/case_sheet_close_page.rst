@@ -98,5 +98,6 @@ Steps -- Multiple Sheets
 
 Teardown
 --------
-Nond
+1. Check console for exceptions, GTK errors, and warning messages. There
+   should be none.
 

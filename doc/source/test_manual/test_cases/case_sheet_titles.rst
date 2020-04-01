@@ -227,3 +227,5 @@ Teardown
 1. In each window, click **close icon**. Each window disappears. The
    application closes when the last window disappears.
 
+#. Check console for exceptions, GTK errors, and warning messages. There
+   should be none.

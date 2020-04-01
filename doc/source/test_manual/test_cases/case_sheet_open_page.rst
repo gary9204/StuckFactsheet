@@ -45,6 +45,9 @@ Steps
 
 Teardown
 --------
+1. Check console for exceptions, GTK errors, and warning messages. There
+   should be none.
+
 Close each window as follows.
 
 1. a. **Step:** In window, click window **close icon** (window title far

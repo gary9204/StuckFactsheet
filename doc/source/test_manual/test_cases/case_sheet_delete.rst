@@ -13,7 +13,7 @@ Steps -- Single Sheet and Single Window
       :doc:`../test_helpers/help_start_application`
    #. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Delete sheet.**
+#. a. **Step:** Select Factsheet **menu > File ... > Close.**
       (right of **Factsheet** field).
    #. *Expect:* Window disappears. Application closes.
 
@@ -25,13 +25,13 @@ Steps -- Single Sheet and Single Window
       Sheet).
    #. *Expect:* Title appears in field.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Delete sheet.**
+#. a. **Step:** Select Factsheet **menu > File ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Cancel button** (dialog title far left).
    #. *Expect:* Dialog disappears. Window remains.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Delete sheet.**
+#. a. **Step:** Select Factsheet **menu > File ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Discard button** (dialog title far right).
@@ -48,7 +48,7 @@ Steps -- Single Sheet and Multiple Windows
    #. *Expect:* Second window appears with blank Factsheet field. New
       window may cover first window.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Delete sheet.**
+#. a. **Step:** Select Factsheet **menu > File ... > Close.**
    #. *Expect:* Both windows disappear. Application closes.
 
 #. a. **Step:** Start application with
@@ -63,13 +63,13 @@ Steps -- Single Sheet and Multiple Windows
    #. *Expect:* Second window appears with same factsheet title as first
       window. New window may cover first window.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Delete sheet.**
+#. a. **Step:** Select Factsheet **menu > File ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Cancel button** (dialog title far left).
    #. *Expect:* Dialog disappears. Both windows remain.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Delete sheet.**
+#. a. **Step:** Select Factsheet **menu > File ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Discard button** (dialog title far right).
@@ -97,12 +97,12 @@ Steps -- Multiple Sheets and Multiple Windows
       window may cover first window.
 
 #. a. **Step:** In first window, select Factsheet **menu > File ... >
-      Delete sheet.**
+      Close.**
    #. *Expect:* First and second windows disappear. Third and fourth
       windows remain.
 
 #. a. **Step:** In (formerly) third window, select Factsheet **menu >
-      File ... > Delete sheet.**
+      File ... > Close.**
    #. *Expect:* Both remaining windows disappear. Application closes.
 
 #. a. **Step:** Start application with
@@ -131,14 +131,14 @@ Steps -- Multiple Sheets and Multiple Windows
       third window. New window may cover other windows.
 
 #. a. **Step:** In First Sheet window, select Factsheet **menu > File
-      ... > Delete sheet.**
+      ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Cancel button** (dialog title far left).
    #. *Expect:* Dialog disappears. All windows remain.
 
 #. a. **Step:** In First Sheet window, select Factsheet **menu > File
-      ... > Delete sheet.**
+      ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Discard button** (dialog title far right).
@@ -146,14 +146,14 @@ Steps -- Multiple Sheets and Multiple Windows
       Second Sheet windows remain.
 
 #. a. **Step:** In Second Sheet window, select Factsheet **menu > File
-      ... > Delete sheet.**
+      ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Cancel button**.
    #. *Expect:* Dialog disappears. Both Second Sheet windows remain.
 
 #. a. **Step:** In First Sheet window, select Factsheet **menu > File
-      ... > Delete sheet.**
+      ... > Close.**
    #. *Expect:* Data Loss Warning dialog appears.
 
 #. a. **Step:** Click **Discard button**.
@@ -162,5 +162,6 @@ Steps -- Multiple Sheets and Multiple Windows
 
 Teardown
 --------
-None
+1. Check console for exceptions, GTK errors, and warning messages. There
+   should be none.
 

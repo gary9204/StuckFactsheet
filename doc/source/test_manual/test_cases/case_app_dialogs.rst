@@ -51,5 +51,6 @@ Steps -- Introduction
 
 Teardown
 --------
-None
+1. Check console for exceptions, GTK errors, and warning messages. There
+   should be none.
 

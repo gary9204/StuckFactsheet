@@ -300,4 +300,6 @@ Steps -- File Contents not Factsheet
 Teardown
 --------
 1. Delete test data directory along with its contents.
+#. Check console for exceptions, GTK errors, and warning messages. There
+   should be none.
 

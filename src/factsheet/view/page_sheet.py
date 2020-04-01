@@ -277,7 +277,6 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """Flip visibility of summary pane."""
         new_state = not self._context_summary.get_visible()
         self._context_summary.set_visible(new_state)
-        self._flip_summary.set_active(new_state)
 
     def on_new_sheet(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

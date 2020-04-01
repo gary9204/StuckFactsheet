@@ -11,9 +11,15 @@ This helper provides a checklist to construct a sample factsheet
 
    #. Type factsheet name in field (e.g. "Parrot") and press Enter key.
 
+#. *Add Factsheet summary.*
+
+   a. Type factsheet summary (e.g. "This parrot is no more. If you
+      hadn't nailed it to the perch, it would be pushin' up the
+      daisies." in *Factsheet Summary* pane.
+
 #. *Add Factsheet title.*
 
-   a. Type factsheet title (e.g. "The Parrot Sketch") in field
+   a. Type factsheet title (e.g. "The Parrot Sketch") in
       **Factsheet** field.
 
 #. *Save sample to file.*

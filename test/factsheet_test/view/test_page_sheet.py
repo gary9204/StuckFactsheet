@@ -603,15 +603,18 @@ class TestSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        target._flip_summary.set_active(True)
         target._context_summary.set_visible(True)
         assert target._context_summary.get_visible()
+        assert target._flip_summary.get_active()
         # Test: hide
-        target.on_flip_summary(None, None)
+        # Call clicked to invoke target.on_flip_summary.  Method clicked
+        # has the side effect of setting active state of _flip_summary.
+        target._flip_summary.clicked()
         assert not target._context_summary.get_visible()
         assert not target._flip_summary.get_active()
         # Test: show
-        target.on_flip_summary(None, None)
+        # As in case hide.
+        target._flip_summary.clicked()
         assert target._context_summary.get_visible()
         assert target._flip_summary.get_active()
 
