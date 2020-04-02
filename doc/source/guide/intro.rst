@@ -15,3 +15,4 @@ about the structure. Initially facts are undetermined. A topic
 includes a check for each fact to produce the value of the fact. For
 example, each set topic has a size fact with a corresponding check to
 calculate the set size.
+

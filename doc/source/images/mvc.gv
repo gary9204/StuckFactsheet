@@ -1,0 +1,17 @@
+digraph module {
+    rankdir=TB
+
+    node [shape=rect fontname="Sans serif" fontsize="12"];
+
+    view [ label=<<B>\N</B>> ];
+
+    controller [ label=<<B>\N</B>> ];
+
+    model [ label=<<B>\N</B>> ];
+
+    { rank=same model controller }
+    controller -> model
+    model -> view;
+    view -> controller;
+}
+

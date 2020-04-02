@@ -1,0 +1,233 @@
+digraph imports {
+    rankdir=BT
+
+    node [shape=box fontname="Sans serif" fontsize="12"]
+
+    factsheet [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_version" CELLPADDING="4" ALIGN="LEFT"><FONT FACE="Mono">__version__</FONT></TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    abc_factory [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_abc_FactoryInfoId" CELLPADDING="4" ALIGN="LEFT">FactoryInfoId</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    abc_infoid [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_AbstractTextView" CELLPADDING="4" ALIGN="LEFT">AbstractTextView</TD>
+          </TR><TR>
+            <TD PORT="p_AbstractTextModel" CELLPADDING="4" ALIGN="LEFT">AbstractTextModel</TD>
+          </TR><TR>
+            <TD PORT="p_InterfaceViewInfoId" CELLPADDING="4" ALIGN="LEFT">InterfaceViewInfoId</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    abc_sheet [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_EffectSafe" CELLPADDING="4" ALIGN="LEFT">EffectSafe</TD>
+          </TR> <TR>
+            <TD PORT="p_InterfaceControlSheet" CELLPADDING="4" ALIGN="LEFT">InterfaceControlSheet</TD>
+          </TR> <TR>
+            <TD PORT="p_InterfacePageSheet" CELLPADDING="4" ALIGN="LEFT">InterfacePageSheet</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    abc_stalefile [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_InterfaceStaleFile" CELLPADDING="4" ALIGN="LEFT">InterfaceStaleFile</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    adapt_factory [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_adapt_FactoryInfoID" CELLPADDING="4" ALIGN="LEFT">FactoryInfoId</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    adapt_infoid [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_AdaptEntry" CELLPADDING="4" ALIGN="LEFT">AdaptEntry</TD>
+          </TR> <TR>
+            <TD PORT="p_AdaptTextView" CELLPADDING="4" ALIGN="LEFT">AdaptTextView</TD>
+          </TR> <TR>
+            <TD PORT="p_str_adapt_textview" CELLPADDING="4" ALIGN="LEFT">str_adapt_textview</TD>
+          </TR> <TR>
+            <TD PORT="p_AdaptEntryBuffer" CELLPADDING="4" ALIGN="LEFT">AdaptEntryBuffer</TD>
+          </TR> <TR>
+            <TD PORT="p_AdaptTextBuffer" CELLPADDING="4" ALIGN="LEFT">AdaptTextBuffer</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    pool [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_PoolSheets" CELLPADDING="4" ALIGN="LEFT">PoolSheets</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    control_sheet [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>sheet (Control)</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_Sheet_Control" CELLPADDING="4" ALIGN="LEFT">Sheet</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    infoid [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_InfoId" CELLPADDING="4" ALIGN="LEFT">InfoId</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    model_sheet [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>sheet (Model)</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_Sheet_Model" CELLPADDING="4" ALIGN="LEFT">Sheet</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    page_sheet [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_PageSheet" CELLPADDING="4" ALIGN="LEFT">PageSheet</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    ui [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_ui" CELLPADDING="4" ALIGN="LEFT">(constants)</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    view_infoid [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_ViewInfoId" CELLPADDING="4" ALIGN="LEFT">ViewInfoId</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    app [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+          <HR/>
+          <TR>
+            <TD PORT="p_app" CELLPADDING="4" ALIGN="LEFT">Factsheet</TD>
+          </TR>
+        </TABLE>
+      >
+    ]
+
+    { rank=same abc_factory abc_sheet factsheet }
+    { rank=same view_infoid adapt_factory}
+    { rank=same infoid ui }
+
+    abc_factory -> abc_infoid
+    abc_infoid -> abc_stalefile
+    abc_sheet -> abc_infoid
+    adapt_infoid -> abc_infoid
+    adapt_factory -> abc_factory
+    adapt_factory -> adapt_infoid
+    pool -> abc_sheet
+    control_sheet -> abc_sheet
+    control_sheet -> pool
+    control_sheet -> model_sheet
+    infoid -> abc_infoid
+    infoid -> abc_stalefile
+    infoid -> ui
+    model_sheet -> abc_stalefile
+    model_sheet -> abc_sheet
+    model_sheet -> infoid
+    view_infoid -> abc_infoid
+    view_infoid -> adapt_infoid
+    page_sheet -> abc_sheet
+    page_sheet -> control_sheet
+    page_sheet -> pool
+    page_sheet -> view_infoid
+    page_sheet -> ui
+    ui -> adapt_factory
+    ui -> factsheet
+    app -> page_sheet
+    app -> pool
+}

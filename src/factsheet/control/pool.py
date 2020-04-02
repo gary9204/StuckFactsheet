@@ -6,8 +6,6 @@ from pathlib import Path
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-# if typing.TYPE_CHECKING:
-#     from factsheet.control import sheet as CSHEET   # noqa
 
 logger = logging.getLogger('Main.CPOOL')
 

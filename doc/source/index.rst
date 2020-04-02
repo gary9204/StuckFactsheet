@@ -12,7 +12,7 @@ Factsheet is an application to explore facts about algebraic structures.
    :maxdepth: 2
    :caption: Contents:
 
-   guide/intro
+   guide/toc_guide
    src/toc_src
    test/toc_test
    test_manual/toc_test_manual  

@@ -1,0 +1,50 @@
+digraph module {
+    rankdir=TB
+
+    node [shape=box fontname="Sans serif" fontsize="12"];
+
+    app [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+        </TABLE>
+      >;
+    ];
+
+    view [
+      shape=plain;
+      label=<
+        <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="6">
+          <TR><TD colspan="2"><B>\N</B></TD></TR>
+          <TR>
+            <TD PORT="p_imp"><I>Implementation</I></TD>
+            <TD PORT="p_int"><I>Interface</I></TD>
+          </TR>
+        </TABLE>
+      >;
+    ];
+
+    controller [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+        </TABLE>
+      >;
+    ];
+
+    model [
+      label=<
+        <TABLE BORDER="0" CELLBORDER="0">
+          <TR><TD><B>\N</B></TD></TR>
+        </TABLE>
+      >;
+    ];
+
+    { rank=same model controller }
+    app -> view
+    controller -> model
+    model -> view:p_int;
+    view:p_imp -> controller;
+
+}
+

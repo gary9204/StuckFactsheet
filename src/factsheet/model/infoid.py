@@ -7,7 +7,6 @@ import typing
 
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.abc_types import abc_infoid as ABC_INFOID
-
 from factsheet.view import ui as UI
 
 
