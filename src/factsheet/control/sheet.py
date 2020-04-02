@@ -6,6 +6,7 @@ import errno
 import logging
 from pathlib import Path
 import pickle
+import traceback as TB
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
@@ -95,10 +96,11 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
             with p_path.open(mode='rb') as io_in:
                 model = pickle.load(io_in)
         except Exception:
-            # err = TB.format_exc()
+            name = 'OPEN ERROR'
+            summary = TB.format_exc()
             title = 'Error opening file \'{}\''.format(p_path)
-            # Reminder: deecopy default factsheet and set attributes
-            control._model = MSHEET.Sheet(p_title=title)
+            control._model = MSHEET.Sheet(
+                p_name=name, p_summary=summary, p_title=title)
         else:
             control._model = model
             control._path = p_path

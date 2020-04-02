@@ -29,12 +29,15 @@ class TestInterfaceControlSheet:
 
     @pytest.mark.parametrize('name_method', [
         'path',
+        'present_factsheet',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchControlSheet(ABC_SHEET.InterfaceControlSheet):
             def path(self): super().path
+
+            def present_factsheet(self): super().present_factsheet(None)
 
         target = PatchControlSheet()
         # Test

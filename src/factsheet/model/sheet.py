@@ -48,10 +48,10 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         del state['_stale']
         return state
 
-    def __init__(self, *, p_name: str = 'Unnamed', p_title: str = ''
-                 ) -> None:
-        self._infoid = MINFOID.InfoId(
-            p_aspect=self.ASPECT, p_name=p_name, p_title=p_title)
+    def __init__(self, *, p_name: str = 'Unnamed', p_summary: str = '',
+                 p_title: str = '') -> None:
+        self._infoid = MINFOID.InfoId(p_aspect=self.ASPECT, p_name=p_name,
+                                      p_summary=p_summary, p_title=p_title)
         self._state_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:

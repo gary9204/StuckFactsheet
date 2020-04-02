@@ -63,26 +63,31 @@ class TestSheet:
         """Confirm initialization."""
         # Setup
         ASPECT = MSHEET.Sheet.ASPECT
-        TEXT_NAME = args_infoid_stock['p_name']
-        TEXT_TITLE = args_infoid_stock['p_title']
+        NAME = args_infoid_stock['p_name']
+        SUMMARY = args_infoid_stock['p_summary']
+        TITLE = args_infoid_stock['p_title']
         # Test
-        target = MSHEET.Sheet(p_name=TEXT_NAME, p_title=TEXT_TITLE)
+        target = MSHEET.Sheet(
+            p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         assert not target._stale
         assert isinstance(target._pages, dict)
         assert not target._pages
         assert isinstance(target._infoid, MINFOID.InfoId)
         assert ASPECT == target._infoid.aspect
-        assert TEXT_NAME == target._infoid.name
-        assert TEXT_TITLE == target._infoid.title
+        assert NAME == target._infoid.name
+        assert SUMMARY == target._infoid.summary
+        assert TITLE == target._infoid.title
 
     def test_init_default(self):
         """Confirm initialization with default arguments."""
         # Setup
         NAME_DEFAULT = 'Unnamed'
+        SUMMARY_DEFAULT = ''
         TITLE_DEFAULT = ''
         # Test
         target = MSHEET.Sheet()
         assert NAME_DEFAULT == target._infoid.name
+        assert SUMMARY_DEFAULT == target._infoid.summary
         assert TITLE_DEFAULT == target._infoid.title
 
     def test_attach_page(self, patch_class_page_sheet):

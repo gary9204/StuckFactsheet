@@ -298,14 +298,18 @@ class TestControlSheet:
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        NAME = 'OPEN ERROR'
         TITLE = 'Error opening file \'{}\''.format(PATH)
-        MODEL = MSHEET.Sheet(p_title=TITLE)
         assert not PATH.exists()
         sheets_active = CPOOL.PoolSheets()
         # Test
         target = CSHEET.Sheet.open(sheets_active, PATH)
-        assert target._model is not None
-        assert MODEL == target._model
+        model = target._model
+        assert model is not None
+        assert NAME == model._infoid.name
+        assert model._infoid.summary is not None
+        assert model._infoid.summary
+        assert TITLE == model._infoid.title
         assert target._path is None
 
     def test_open_except(self, tmp_path):
@@ -318,13 +322,16 @@ class TestControlSheet:
         with PATH.open(mode='wb') as io_out:
             io_out.write(BYTES)
         assert PATH.exists()
+        NAME = 'OPEN ERROR'
         TITLE = 'Error opening file \'{}\''.format(PATH)
-        MODEL = MSHEET.Sheet(p_title=TITLE)
         sheets_active = CPOOL.PoolSheets()
         # Test
         target = CSHEET.Sheet.open(sheets_active, PATH)
-        assert target._model is not None
-        assert MODEL == target._model
+        model = target._model
+        assert model is not None
+        assert NAME == model._infoid.name
+        assert model._infoid.summary
+        assert TITLE == model._infoid.title
         assert target._path is None
 
     @pytest.mark.parametrize('name_attr, name_prop', [
@@ -437,25 +444,25 @@ class TestControlSheet:
         assert patch_model.called
         assert PATH.name == patch_model.base
 
-    def test_save_no_path(self, PatchLogger, monkeypatch):
+    def test_save_oserror(self, monkeypatch, tmp_path):
         """Confirm write to file.
-        Case: no file path.
+        Case: unexpected operating system exception.
         """
         # Setup
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = ('No file path (Sheet.save)')
+        def open_oserror(_s, **_kwa): raise OSError
+
+        monkeypatch.setattr(Path, 'open', open_oserror)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
         TITLE = 'Parrot Sketch'
         model = MSHEET.Sheet(p_title=TITLE)
+        model.set_stale()
         sheets_active = CPOOL.PoolSheets()
         source = CSHEET.Sheet(sheets_active)
         source._model = model
-        source._path = None
+        source._path = PATH
         # Test
-        source.save()
-        assert patch_logger.called
-        assert log_message == patch_logger.message
+        with pytest.raises(OSError):
+            source.save()
 
     def test_save_exists(self, tmp_path):
         """Confirm write to file.
@@ -489,3 +496,23 @@ class TestControlSheet:
         with BACKUP.open(mode='r') as io_in:
             backup_text = io_in.read()
         assert TEXT == backup_text
+
+    def test_save_no_path(self, PatchLogger, monkeypatch):
+        """Confirm write to file.
+        Case: no file path.
+        """
+        # Setup
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = ('No file path (Sheet.save)')
+        TITLE = 'Parrot Sketch'
+        model = MSHEET.Sheet(p_title=TITLE)
+        sheets_active = CPOOL.PoolSheets()
+        source = CSHEET.Sheet(sheets_active)
+        source._model = model
+        source._path = None
+        # Test
+        source.save()
+        assert patch_logger.called
+        assert log_message == patch_logger.message

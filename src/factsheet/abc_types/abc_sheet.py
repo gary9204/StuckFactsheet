@@ -30,6 +30,14 @@ class InterfaceControlSheet(abc.ABC):
         """Return path to file containing factsheet contents."""
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def present_factsheet(self, p_time: int) -> None:
+        """Make all factsheet pages visible to user.
+
+        :param p_time: timestamp of event requesting presentation.
+        """
+        raise NotImplementedError
+
 
 class InterfacePageSheet(abc.ABC):
     """Defines interface for :class:`.model.Sheet` to signal

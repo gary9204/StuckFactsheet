@@ -128,6 +128,7 @@ class TestSheet:
         # Identification Information
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
         assert target._infoid.name is not None
+        assert target._infoid.summary is not None
         assert target._infoid.title is not None
 
         # Application Title
@@ -167,8 +168,8 @@ class TestSheet:
 
     @pytest.mark.parametrize(
         'name_signal, name_attribute, origin, n_default', [
-            ('delete-event', '_window', Gtk.ApplicationWindow, 0),
             ('closed', '_context_name', Gtk.Popover, 0),
+            ('delete-event', '_window', Gtk.ApplicationWindow, 0),
             ])
     def test_init_signals(self, name_signal, name_attribute, origin,
                           n_default, patch_factsheet, capfd):
@@ -270,7 +271,7 @@ class TestSheet:
         del target._window
         del factsheet
 
-    def test_init_factsheet(self, monkeypatch, patch_factsheet, capfd):
+    def test_link_factsheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm creation of factsheet links."""
         # Setup
         def patch_attach_page(self, pm_view):
@@ -804,7 +805,8 @@ class TestSheet:
         del target._window
         del factsheet
 
-    def test_on_popdown_name_static(self, monkeypatch, patch_factsheet, capfd):
+    def test_on_popdown_name_static(
+            self, monkeypatch, patch_factsheet, capfd):
         """Confirm name popover becomes invisible.
         Case: name did not change
         """
