@@ -10,57 +10,71 @@ None
 
 Steps -- Help
 --------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`.
 
-#. a. **Step:** Click Factsheet **menu > Help** (right of **Factsheet**
-      field).
-   #. *Expect:* Factsheet Help dialog appears.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Review dialog contents (title, text, references, etc.).
-   #. *Expect:* Content is current and correct.
+#. **Step:** Click Factsheet **menu > Help** (right of **Factsheet**
+   field).
 
-#. a. **Step:** Click dialog **close icon** (dialog title far right).
-   #. *Expect:* Dialog disappears.
+   a. *Expect:* Factsheet Help dialog appears.
+
+#. **Step:** Review dialog contents (title, text, references, etc.).
+
+   a. *Expect:* Content is current and correct.
+
+#. **Step:** Click dialog **close icon** (dialog title far right).
+
+   a. *Expect:* Dialog disappears.
 
 Steps -- Display Help
 ---------------------
-1. a. **Step:** Click factsheet **menu > Display ... > Help** (right of
-      **Factsheet** field)
-   #. *Expect:* Factsheet Display Help dialog appears.
+1. **Step:** Click factsheet **menu > Display ... > Help** (right of
+   **Factsheet** field)
 
-#. a. **Step:** Review dialog contents (title, text, references, etc.).
-   #. *Expect:* Content is current and correct.
+   a. *Expect:* Factsheet Display Help dialog appears.
 
-#. a. **Step:** Click dialog **close icon** (dialog title far right).
-   #. *Expect:* Dialog disappears.
+#. **Step:** Review dialog contents (title, text, references, etc.).
+
+   a. *Expect:* Content is current and correct.
+
+#. **Step:** Click dialog **close icon** (dialog title far right).
+
+   a. *Expect:* Dialog disappears.
 
 Steps -- File Help
 ------------------
-1. a. **Step:** Click factsheet **menu > File ... > Help** (right of
-      **Factsheet** field)
-   #. *Expect:* Factsheet File Help dialog appears.
+1. **Step:** Click factsheet **menu > File ... > Help** (right of
+   **Factsheet** field)
 
-#. a. **Step:** Review dialog contents (title, text, references, etc.).
-   #. *Expect:* Content is current and correct.
+   a. *Expect:* Factsheet File Help dialog appears.
 
-#. a. **Step:** Click dialog **close icon** (dialog title far right).
-   #. *Expect:* Dialog disappears.
+#. **Step:** Review dialog contents (title, text, references, etc.).
+
+   a. *Expect:* Content is current and correct.
+
+#. **Step:** Click dialog **close icon** (dialog title far right).
+
+   a. *Expect:* Dialog disappears.
 
 Steps -- Data Loss Warning
 --------------------------
-1. a. **Step:** Type text in the **Factsheet** field (e.g. 'Sample').
-   #. *Expect:* Text appears in field.
+1. **Step:** Type text in the **Factsheet** field (e.g. 'Sample').
 
-1. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Text appears in field.
 
-#. a. **Step:** Review dialog contents (title, text, buttons, etc.).
-   #. *Expect:* Content is current and correct.
+1. **Step:** Click window **close icon** (window title far right).
 
-#. a. **Step:** Click **Discard** button (dialog title far right).
-   #. *Expect:* Dialog disappears and application closes.
+   a. *Expect:* Data Loss Warning dialog appears.
+
+#. **Step:** Review dialog contents (title, text, buttons, etc.).
+
+   a. *Expect:* Content is current and correct.
+
+#. **Step:** Click **Discard** button (dialog title far right).
+
+   a. *Expect:* Dialog disappears and application closes.
 
 Teardown
 --------

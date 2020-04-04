@@ -166,7 +166,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. Factsheet provides templates for constructing small sets, operations, and groups. The templates include checks to produce facts about the objects you construct.</property>
+                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. Factsheet provides templates for constructing small sets, operations, and groups. The templates include forms to produce facts about the objects you construct.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -448,7 +448,7 @@ investigating algebraic structures.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Display the application's purpose and general features</property>
+                    <property name="label" translatable="yes">Display the application's purpose and general features.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -612,7 +612,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">A factsheet notebook starts with a Contents page.  The Contents page shows thefact sheet summary and topic hierarchy.  Initially, the topic hierarchy consists of template topics grouped under headings. Click the arrow to the left of a heading to expand and collapse the topics under the heading.  Click on a topic to make it the current topic, which is highlighted. </property>
+                    <property name="label" translatable="yes">A factsheet notebook starts with a Contents page.  The Contents page shows the factsheet summary and topic hierarchy.  Initially, the topic hierarchy consists of template topics grouped under headings. Click the arrow to the left of a heading to expand and collapse the topics under the heading.  Click on a topic to make it the current topic, which is highlighted. </property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -1410,7 +1410,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Open&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Open ...&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1665,7 +1665,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">Factsheet is an application to explore facts about algebraic structures.  Factsheet provides templates for constructing small sets, binary operations, and groups. The templates include checks to produce facts about the objects you construct.</property>
+                <property name="label" translatable="yes">Factsheet is an application to explore facts about algebraic structures.  Factsheet provides templates for constructing small sets, binary operations, and groups. The templates include forms to determine facts about the objects you construct.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>

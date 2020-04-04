@@ -10,217 +10,307 @@ Setup
 
 Steps -- Window Title
 ---------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet. Window title is
-      "**Unnamed**". Window subtitle is "Unsaved (XXX-YYY)", where XXX
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
+
+   a. *Expect:* Application displays default factsheet.
+   #. *Expect:* Window title is "**Unnamed**".
+   #. *Expect:* Window subtitle is "Unsaved (XXX-YYY)", where XXX
       is three hexadecimal digits identifying the factsheet and YYY is
       three hexadecimal digits identifying the window.
 
-#. a. **Step:** Click Factsheet **edit Name icon** (left of
-      **Factsheet** field).
-   #. *Expect:* Edit Name popover appears with "Unnamed" in the edit
+#. **Step:** Click Factsheet **edit Name icon** (left of
+   **Factsheet** field).
+
+   a. *Expect:* Edit Name popover appears with "Unnamed" in the edit
       field.
 
-#. #. **Step:** Type name "Arthur". Do not press Enter key.
-   #. *Expect:* Name appears in field. Window title and subtitle do not
-      change.
+#. **Step:** Type name "Arthur". Do not press Enter key.
 
-#. #. **Step:** Press Enter key.
-   #. *Expect:* Edit Name popover disappears. Window title changes to
-      "**Arthur**". Window subtitle does not change.
+   a. *Expect:* Name appears in field.
+   #. *Expect:* Window title and subtitle do not change.
 
-#. a. **Step:** Select Factsheet **menu > Display ... > Show Name**
-      (right of **Factsheet** field).
-   #. *Expect:* Edit Name popover appears with "Arthur" in the edit
+#. **Step:** Press Enter key.
+
+   a. *Expect:* Edit Name popover disappears.
+   #. *Expect:* Window title changes to "**Arthur**".
+   #. *Expect:* Window subtitle does not change.
+
+#. **Step:** Select Factsheet **menu > Display ... > Show Name**
+   (right of **Factsheet** field).
+
+   a. *Expect:* Edit Name popover appears with "Arthur" in the edit
       field.
 
-#. #. **Step:** Type name "Lancelot". Do not press Enter key.
-   #. *Expect:* Name appears in field. Window title and subtitle do not
-      change.
+#. **Step:** Type name "Lancelot". Do not press Enter key.
 
-#. #. **Step:** Click **Reset button** in Edit Name popover.
-   #. *Expect:* Field changes back to "Arthur". Window title and
-      subtitle do not change.
+   a. *Expect:* Name appears in field.
+   #. *Expect:* Window title and subtitle do not change.
 
-#. #. **Step:** Click window title outside of any control.
-   #. *Expect:* Edit Name popover disappears. Window title and subtitle
-      do not change.
+#. **Step:** Click **Reset button** in Edit Name popover.
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Field changes back to "Arthur".
+   #. *Expect:* Window title and subtitle do not change.
 
-#. a. **Step:** Click **Discard button** (dialog title far right).
-   #. *Expect:* Dialog and window disappear. Application closes.
+#. **Step:** Click window title outside of any control.
+
+   a. *Expect:* Edit Name popover disappears.
+   #. *Expect:* Window title and subtitle do not change.
+
+#. **Step:** Click window **close icon** (window title far right).
+
+   a. *Expect:* Data Loss Warning dialog appears.
+
+#. **Step:** Click **Discard button** (dialog title far right).
+
+   a. *Expect:* Dialog and window disappear.
+   #. *Expect:* Application closes.
 
 Steps -- Window Subtitle
 ------------------------
-1. a. **Step** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet. Window title is
-      "**Unnamed**". Window subtitle is "Unsaved (UUU-VVV)", where UUU
+1. **Step** Start application with
+   :doc:`../test_helpers/help_start_application`
+
+   a. *Expect:* Application displays default factsheet.
+   #. *Expect:* Window title is "**Unnamed**".
+   #. *Expect:* Window subtitle is "Unsaved (UUU-VVV)", where UUU
       is three hexadecimal digits identifying the factsheet and VVV is
       three hexadecimal digits identifying the window.
 
-#. a. **Step:** Type factsheet title "Sample - Title Test" in
-      **Factsheet** field.
-   #. *Expect:* Title appears in field.
+      *Take note of UUU and VVV.*
 
-#. a. **Step:** Click Factsheet **Save button** (window title on right
-      near center).
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "factsheet.fsg".
+#. **Step:** Type factsheet title "Sample - Title Test" in
+   **Factsheet** field.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Title appears in field.
 
-#. a. **Step:** Edit file Name field to "TitleTest.fsg".
-   #. *Expect:* Field contains new file name.
+#. **Step:** Click Factsheet **Save button** (window title on right
+   near center).
 
-#. a. **Step:** Click **Save button** (dialog title on right).
-   #. *Expect:* Dialog disappears. Subtitle changes to "TitleTest.fsg
-      (UUU-VVV)". Facthseet identifier (UUU) and window identifier (VVV)
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog file Name field contains "factsheet.fsg".
+
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Save dialog shows directory contents.
+
+#. **Step:** Edit file Name field to "TitleTest.fsg".
+
+   a. *Expect:* Field contains new file name.
+
+#. **Step:** Click **Save button** (dialog title on right).
+
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* Subtitle changes to "TitleTest.fsg (UUU-VVV)".
+   #. *Expect:* Facthseet identifier (UUU) and window identifier (VVV)
       are unchanged.
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Window disappears. Application closes.
+#. **Step:** Click window **close icon** (window title far right).
 
-#. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet. Window title is
-      "**Unnamed**". Window subtitle is "Unsaved (WWW-XXX)", where WWW
+   a. *Expect:* Window disappears.
+   #. *Expect:* Application closes.
+
+#. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
+
+   a. *Expect:* Application displays default factsheet.
+   #. *Expect:* Window title is "**Unnamed**".
+   #. *Expect:* Window subtitle is "Unsaved (WWW-XXX)", where WWW
       is three hexadecimal digits identifying the factsheet and XXX is
       three hexadecimal digits identifying the window.
 
-#. a. **Step:** Click Factsheet **Open button** (window title on far
-      left).
-   #. *Expect:* Open dialog appears.
+      *Take note of WWW and XXX.*
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Open dialog shows directory contents.
+#. **Step:** Click Factsheet **Open button** (window title on far
+   left).
 
-#. a. **Step:** Select ``TitleTest.fsg`` and click **Open button**
-      (dialog title on right)
-   #. *Expect:* Open dialog disappears. Second window appears with
-      "Sample - Title Test" in **Factsheet** field. Window subtitle is
-      "TitleTest.fsg (YYY-ZZZ)". Factsheet identifier (YYY) and window
-      identifier (ZZZ) are distinct from those of the first window (WWW,
-      XXX).
+   a. *Expect:* Open dialog appears.
 
-#. a. **Step:** Click Factsheet **Save as icon** (window title to right
-      of Save button).
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "TitleTest.fsg".
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Open dialog shows directory contents.
 
-#. a. **Step:** Edit file Name field to "TitleTestTwo.fsg".
-   #. *Expect:* Field contains new file name.
+#. **Step:** Select ``TitleTest.fsg`` and click **Open button**
+   (dialog title on right)
 
-#. a. **Step:** Click **Save button**.
-   #. *Expect:* Dialog disappears. Subtitle changes to "TitleTestTwo.fsg
-      (YYY-ZZZ)". Factsheet identifier (YYY) and window identifier (ZZZ)
+   a. *Expect:* Open dialog disappears.
+   #. *Expect:* Second window appears with "Sample - Title Test" in
+      **Factsheet** field.
+   #. *Expect:*  Window subtitle is "TitleTest.fsg (YYY-ZZZ)".
+   #. *Expect:*  Factsheet identifier (YYY) and window identifier (ZZZ)
+      are distinct from those of the first window (WWW, XXX).
+
+      *Take note of YYY and ZZZ.*
+
+#. **Step:** Click Factsheet **Save as icon** (window title to right
+   of Save button).
+
+   a. *Expect:* Save dialog appears.
+   #. *Expect:*  Dialog file Name field contains "TitleTest.fsg".
+
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Save dialog shows directory contents.
+
+#. **Step:** Edit file Name field to "TitleTestTwo.fsg".
+
+   a. *Expect:* Field contains new file name.
+
+#. **Step:** Click **Save button**.
+
+   a. *Expect:* Dialog disappears.
+   #. *Expect:*  Subtitle changes to "TitleTestTwo.fsg (YYY-ZZZ)".
+   #. *Expect:*  Factsheet identifier (YYY) and window identifier (ZZZ)
       are unchanged.
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* TitleTestTwo window disappears.
+#. **Step:** Click window **close icon**.
 
-#. a. **Step:** Click first window **close icon**.
-   #. *Expect:* Window disappears. Application closes.
+   a. *Expect:* TitleTestTwo window disappears.
+
+#. **Step:** Click first window **close icon**.
+
+   a. *Expect:* Window disappears.
+   #. *Expect:*  Application closes.
 
 Steps -- Multiple Windows and Sheets
 ------------------------------------
-1. a. **Step** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet. Window title is
-      "**Unnamed**". Window subtitle is "Unsaved (UUU-VVV)", where UUU
+1. **Step** Start application with
+   :doc:`../test_helpers/help_start_application`
+
+   a. *Expect:* Application displays default factsheet.
+   #. *Expect:*  Window title is "**Unnamed**".
+   #. *Expect:* Window subtitle is "Unsaved (UUU-VVV)", where UUU
       is three hexadecimal digits identifying the factsheet and VVV is
       three hexadecimal digits identifying the window.
+   
+      *Take note of UUU and VVV.*
 
-#. a. **Step:** Select Factsheet **menu > Display ... > Open window**
-      (right of **Factsheet** field).
-   #. *Expect:* New window appears with window title "**Unnamed**".
-      Window subtitle is "Unsaved (UUU-WWW). The factsheet identifier is
-      the same as in the first window (UUU). The window identifiers are
-      different (VVV and WWW).  New window may cover existing windows.
+#. **Step:** Select Factsheet **menu > Display ... > Open window**
+   (right of **Factsheet** field).
 
-#. a. **Step:** Click Factsheet **edit Name icon** (left of
-      **Factsheet** field).
-   #. *Expect:* Edit Name popover appears with "Unnamed" in the edit
+   a. *Expect:* New window appears New window may cover existing windows.
+   #. *Expect:* Window title is "**Unnamed**". 
+   #. *Expect:* Window subtitle is "Unsaved (UUU-WWW).
+   #. *Expect:* The factsheet identifier is the same as in the first
+      window (UUU).
+   #. *Expect:* The window identifiers are different (VVV and WWW).
+
+      *Take note of WWW.*
+
+#. **Step:** Click Factsheet **edit Name icon** (left of
+   **Factsheet** field).
+
+   a. *Expect:* Edit Name popover appears with "Unnamed" in the edit
       field.
 
-#. #. **Step:** Type name "Arthur". Do not press Enter key.
-   #. *Expect:* Name appears in field. Window title and subtitle do not
-      change in either window.
+#. **Step:** Type name "Arthur". Do not press Enter key.
 
-#. #. **Step:** Press Enter key.
-   #. *Expect:* Edit Name popover disappears. Window title changes to
-      "**Arthur**" in both windows. Window subtitles do not change.
+   a. *Expect:* Name appears in field.
+   #. *Expect:* Window title and subtitle do not change in either
+      window.
 
-#. a. **Step:** Click Factsheet **Save button** (window title on right
-      near center).
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "factsheet.fsg".
+#. **Step:** Press Enter key.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Edit Name popover disappears.
+   #. *Expect:* Window title changes to "**Arthur**" in both windows.
+   #. *Expect:* Window subtitles do not change.
 
-#. a. **Step:** Edit file Name field to "MultiTest.fsg".
-   #. *Expect:* Field contains new file name.
+#. **Step:** Click Factsheet **Save button** (window title on right
+   near center).
 
-#. a. **Step:** Click **Save button** (dialog title on right).
-   #. *Expect:* Dialog disappears. Subtitle changes to "MultiTest.fsg
-      (UUU-VVV)" in first window and "MultiTest.fsg (UUU-WWW) in second.
-      That is, facthseet identifier (UUU) and window identifiers (VVV
-      and WWW) are unchanged.
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog file Name field contains "factsheet.fsg".
 
-#. a. **Step:** Select Factsheet **menu > File ... > New**.
-      (right of **Factsheet** field).
-   #. *Expect:* Third window appears with title "**Unnamed**".
-      Window subtitle is "Unsaved (XXX-YYY). The factsheet identifier
-      (XXX) is distinct from the factsheet identifier in the Arthur
-      windows (UUU). The window identifier (YYY) is different from the 
-      Arthur windows identifiers (VVV and WWW).  New window may cover
-      existing windows.
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Click Factsheet **edit Name icon**.
-   #. *Expect:* Edit Name popover appears with "Unnamed" in the edit
+   a. *Expect:* Save dialog shows directory contents.
+
+#. **Step:** Edit file Name field to "MultiTest.fsg".
+
+   a. *Expect:* Field contains new file name.
+
+#. **Step:** Click **Save button** (dialog title on right).
+
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* Subtitle changes to "MultiTest.fsg (UUU-VVV)" in first
+      window.
+   #. *Expect:* Subtitle changes to "MultiTest.fsg (UUU-WWW) in second
+      window.
+
+      *That is, facthseet identifier (UUU) and window identifiers (VVV
+      and WWW) are unchanged.*
+
+#. **Step:** Select Factsheet **menu > File ... > New**.
+   (right of **Factsheet** field).
+
+   a. *Expect:* Third window appears. *New window may cover existing
+      windows.*
+   #. *Expect:* Window title is "**Unnamed**".
+   #. *Expect:* Window subtitle is "Unsaved (XXX-YYY).
+   #. *Expect:* The factsheet identifier (XXX) is distinct from the
+      factsheet identifier in the Arthur windows (UUU).
+   #. *Expect:* The window identifier (YYY) is different from the 
+      Arthur windows identifiers (VVV and WWW).
+
+      *Take note of XXX and YYY.*
+
+#. **Step:** Click Factsheet **edit Name icon**.
+
+   a. *Expect:* Edit Name popover appears with "Unnamed" in the edit
       field.
 
-#. #. **Step:** Type name "Lancelot". Do not press Enter key.
-   #. *Expect:* Name appears in field. Window title and subtitle do not
-      change in either window.
+#. **Step:** Type name "Lancelot". Do not press Enter key.
 
-#. #. **Step:** Press Enter key.
-   #. *Expect:* Edit Name popover disappears. Window title changes to
-      "**Lancelot**" in the third windows. Window titles in the first
-      two windows do not change. Window subtitles do not change.
+   a. *Expect:* Name appears in field.
+   #. *Expect:* Window title and subtitle do not change in either window.
 
-#. a. **Step:** In the Lancelot window, click Factsheet **Save button**.
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "factsheet.fsg".
+#. **Step:** Press Enter key.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Edit Name popover disappears.
+   #. *Expect:* Window title changes to "**Lancelot**" in the third
+      windows.
+   #. *Expect:* Window subtitle does not change.
+   #. *Expect:* Window titles in the first two windows do not change.
+   #. *Expect:* Window subtitles in the first two windows do not change.
 
-#. a. **Step:** Edit file Name field to "MultiTestTwo.fsg".
-   #. *Expect:* Field contains new file name.
+#. **Step:** In the Lancelot window, click Factsheet **Save button**.
 
-#. a. **Step:** Click **Save button**.
-   #. *Expect:* Dialog disappears. The titles and subtitles in the
-      Arthur windows are unchanged. In the Lancelot window, the title is
-      unchanged and the subtitle changes to "MultiTestTwo.fsg
-      (XXX-YYY)". That is, in the Lancelot window the facthseet
-      identifier (XXX) and window identifier (YYY) are unchanged.
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog file Name field contains "factsheet.fsg".
 
-#. a. **Step:** In the Lancelot window, select Factsheet **menu >
-      Display ... > Open window**.
-   #. *Expect:* New window appears with window title "**Lancelot**".
-      Window subtitle is "MultiTestTwo (XXX-ZZZ). The factsheet
-      identifier is the same as in the first Lancelot window (XXX). The
-      window identifier is different from all other window identifiers
-      (VVV, WWW, and YYY).  New window may cover existing windows.
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Save dialog shows directory contents.
+
+#. **Step:** Edit file Name field to "MultiTestTwo.fsg".
+
+   a. *Expect:* Field contains new file name.
+
+#. **Step:** Click **Save button**.
+
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* The titles and subtitles in the Arthur windows are
+      unchanged.
+   #. *Expect:* In the Lancelot window, the title is unchanged.
+   #. *Expect:* In the Lancelot window, the subtitle changes to
+      "MultiTestTwo.fsg (XXX-YYY)".
+
+      *That is, in the Lancelot window the facthseet identifier (XXX)
+      and window identifier (YYY) are unchanged.*
+
+#. **Step:** In the Lancelot window, select Factsheet **menu >
+   Display ... > Open window**.
+
+   a. *Expect:* New window appears. *New window may cover existing
+      windows.*
+   #. *Expect:* New window title is "**Lancelot**".
+   #. *Expect:* New window subtitle is "MultiTestTwo (XXX-ZZZ).
+   #. *Expect:* The factsheet identifier is the same as in the first
+      Lancelot window (XXX).
+   #. *Expect:* The window identifier is different from all other window
+      identifiers (VVV, WWW, and YYY).
+
+      *Take note of ZZZ.*
 
 Teardown
 --------

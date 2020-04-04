@@ -1,5 +1,5 @@
-Case Factsheet File
-====================
+Case Factsheet Save and Open
+============================
 
 **Purpose:** demonstrate Factsheet save to file and open from file.
 
@@ -16,286 +16,372 @@ Setup
 
 Steps -- Save and Open
 ----------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Type factsheet title "Sample" in **Factsheet** field.
-   #. *Expect:* Title appears in field.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Click Factsheet **Save button** (window title on right
-      near center).
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "factsheet.fsg".
+#. **Step:** Type factsheet title "sample" in **Factsheet** field.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Title appears in field.
 
-#. a. **Step:** Edit file Name field to "Sample.fsg"
-   #. *Expect:* Field contains new file name.
+#. **Step:** Click Factsheet **Save button** (window title on right
+   near center).
 
-#. a. **Step:** Click Save button (dialog title on right).
-   #. *Expect:* Dialog disappears.
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog file **Name** field contains "factsheet.fsg".
 
-#. a. **Step:** List test data directory contents (in shell or file
-      browser).
-   #. *Expect:* File ``Sample.fsg`` appears with current timestamp. Take
-      note of file time and size.
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Window disappears. Application closes.
+   a. *Expect:* Save dialog shows directory contents.
 
-#. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+#. **Step:** Edit file **Name** field to "sample.fsg"
 
-#. a. **Step:** Click Factsheet **Open button** (window title on far
-      left).
-   #. *Expect:* Open dialog appears.
+   a. *Expect:* Field contains new file name.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Open dialog shows directory contents.
+#. **Step:** Click Save button (dialog title on right).
 
-#. a. **Step:** Select ``Sample.fsg`` and click Open button (dialog title
-      on right)
-   #. *Expect:* Open dialog disappears. Second window appears with
-      "Sample" in **Factsheet** field. New window may cover first window.
+   a. *Expect:* Dialog disappears.
 
-#. a. **Step:** Edit factsheet title to "Sample Factsheet" in
-      **Factsheet** field.
-   #. *Expect:* Updated title appears in field.
+#. **Step:** List test data directory contents (in shell or file
+   browser).
 
-#. a. **Step:** Select Factsheet **menu > File ... > Save**.
-      (right of **Factsheet** field).
-   #. *Expect:* Menu disappears.
+   a. *Expect:* File ``sample.fsg`` appears with current timestamp. *Take
+      note of file time and size.*
 
-#. a. **Step:** List test data directory contents.
-   #. *Expect:* File ``Sample.fsg`` appears with updated timestamp.
+#. **Step:** Click window **close icon** (window title far right).
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* Window disappears.
+   a. *Expect:* Window disappears.
+   #. *Expect:* Application closes.
 
-#. a. **Step:** In original window, click window **close icon**.
-   #. *Expect:* Window disappears. Application closes.
+#. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Select Factsheet **menu > File ... > Open ...**.
-   #. *Expect:* Open dialog appears. File **filter button** in lower
-      right corner is labeled "Factsheet".
+#. **Step:** Click Factsheet **Open button** (window title on far
+   left).
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Open dialog shows directory contents.
+   a. *Expect:* Open dialog appears.
 
-#. a. **Step:** Click **filter button**.
-   #. *Expect:* List of file filters pops up: "Factsheet" and "Any".
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Click "Any" filter.
-   #. *Expect:* Pop up collapses to "Any" on **filter button**. File
-      list includes ``test.txt``.
+   a. *Expect:* Open dialog shows directory contents.
 
-#. a. **Step:** Click **filter button**.
-   #. *Expect:* List of file filters pops up: "Factsheet" and "Any".
+#. **Step:** Select ``sample.fsg`` and click **Open button** (dialog
+   title on right)
 
-#. a. **Step:** Click "Factsheet" filter.
-   #. *Expect:* Pop up collapses to "Factsheet" on **filter button**. File
-      list only includes files with ``fsg`` extension.
+   a. *Expect:* Open dialog disappears.
+   #. *Expect:* Second window appears with "sample" in **Factsheet**
+      field. New window may cover first window.
 
-#. a. **Step:** Select ``Sample.fsg`` and click Open button.
-   #. *Expect:* Open dialog disappears. Second window appears with
-      "Sample Factsheet" in **Factsheet** field. New window may cover
-      first window.
+#. **Step:** Edit factsheet title to "Sample Factsheet" in
+   **Factsheet** field.
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* Window disappears.
+   a. *Expect:* Updated title appears in field.
 
-#. a. **Step:** In original window, click window **close icon**.
-   #. *Expect:* Window disappears. Application closes.
+#. **Step:** Select Factsheet **menu > File ... > Save**.
+   (right of **Factsheet** field).
+
+   a. *Expect:* Menu disappears.
+
+#. **Step:** List test data directory contents.
+
+   a. *Expect:* File ``sample.fsg`` appears with updated timestamp.
+
+#. **Step:** Click window **close icon**.
+
+   a. *Expect:* Window disappears.
+
+#. **Step:** In original window, click window **close icon**.
+
+   a. *Expect:* Window disappears.
+   #. *Expect:* Application closes.
+
+#. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
+
+   a. *Expect:* Application displays default factsheet.
+
+#. **Step:** Select Factsheet **menu > File ... > Open ...**.
+
+   a. *Expect:* Open dialog appears.
+   #. *Expect:* File **filter button** in lower right corner is labeled
+      "Factsheet".
+
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Open dialog shows directory contents.
+
+#. **Step:** Click **filter button**.
+
+   a. *Expect:* List of file filters pops up: "Factsheet" and "Any".
+
+#. **Step:** Click "Any" filter.
+
+   a. *Expect:* Pop up collapses to "Any" on **filter button**.
+   #. *Expect:* File list includes ``test.txt``.
+
+#. **Step:** Click **filter button**.
+
+   a. *Expect:* List of file filters pops up: "Factsheet" and "Any".
+
+#. **Step:** Click "Factsheet" filter.
+
+   a. *Expect:* Pop up collapses to "Factsheet" on **filter button**.
+   #. *Expect:* File list only includes files with ``fsg`` extension.
+
+#. **Step:** Select ``sample.fsg`` and click **Open button**.
+
+   a. *Expect:* Open dialog disappears.
+   #. *Expect:* Second window appears with "Sample Factsheet" in
+      **Factsheet** field. New window may cover first window.
+
+#. **Step:** Click window **close icon**.
+
+   a. *Expect:* Window disappears.
+
+#. **Step:** In original window, click window **close icon**.
+
+   a. *Expect:* Window disappears.
+   #. *Expect:* Application closes.
 
 Steps -- Duplicate Open
 -----------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Type factsheet title "Sample 1" in **Factsheet** field.
-   #. *Expect:* Title appears in field.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Click Factsheet **Save button** (window title on right
-      near center).
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "factsheet.fsg".
+#. **Step:** Type factsheet title "Sample 1" in **Factsheet** field.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Title appears in field.
 
-#. a. **Step:** Edit file Name field to "sample 1.fsg"
-   #. *Expect:* Field contains new file name.
+#. **Step:** Click Factsheet **Save button** (window title on right
+   near center).
 
-#. a. **Step:** Click **Save button** (dialog title on right).
-   #. *Expect:* Dialog disappears.
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog file **Name** field contains "factsheet.fsg".
 
-#. a. **Step:** Edit factsheet title to "Sample 2" in **Factsheet** field.
-   #. *Expect:* Title changes in field.
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Click Factsheet **Save as button** (window title on right
-      near Save button).
-   #. *Expect:* Save dialog appears. Dialog file Name field contains
-      "sample 1.fsg".
+   a. *Expect:* Save dialog shows directory contents.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+#. **Step:** Edit file **Name** field to "sample 1.fsg"
 
-#. a. **Step:** Edit file Name field to "sample 2.fsg"
-   #. *Expect:* Field contains new file name.
+   a. *Expect:* Field contains new file name.
 
-#. a. **Step:** Click **Save button**.
-   #. *Expect:* Dialog disappears.
+#. **Step:** Click **Save button** (dialog title on right).
 
-#. a. **Step:** Click Factsheet **Open button** (window title on far
-      left).
-   #. *Expect:* Open dialog appears.
+   a. *Expect:* Dialog disappears.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Open dialog shows directory contents.
+#. **Step:** Edit factsheet title to "Sample 2" in **Factsheet** field.
 
-#. a. **Step:** Select ``sample 1.fsg`` and click **Open button**
-      (dialog title on right).
-   #. *Expect:* Open dialog disappears. Second window appears with
-      "Sample 1" in **Factsheet** field. New window may cover first
-      window.
+   a. *Expect:* Title changes in field.
 
-#. a. **Step:** Select Factsheet **menu > Display ... > Open window**
-      (right of **Factsheet** field).
-   #. *Expect:* New window appears with factsheet title "Sample 1".
+#. **Step:** Click Factsheet **Save as button** (window title on right
+   near Save button).
+
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog file **Name** field contains "sample 1.fsg".
+
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Save dialog shows directory contents.
+
+#. **Step:** Edit file **Name** field to "sample 2.fsg"
+
+   a. *Expect:* Field contains new file name.
+
+#. **Step:** Click **Save button**.
+
+   a. *Expect:* Dialog disappears.
+
+#. **Step:** Click Factsheet **Open button** (window title on far
+   left).
+   a. *Expect:* Open dialog appears.
+
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Open dialog shows directory contents.
+
+#. **Step:** Select ``sample 1.fsg`` and click **Open button**
+   (dialog title on right).
+
+   a. *Expect:* Open dialog disappears.
+   #. *Expect:* Second window appears with "Sample 1" in **Factsheet**
+      field. New window may cover first window.
+
+#. **Step:** Select Factsheet **menu > Display ... > Open window**
+   (right of **Factsheet** field).
+
+   a. *Expect:* New window appears with factsheet title "Sample 1".
       New window may cover existing windows.
 
-#. a. **Step:** Position windows so that "Sample 2" window covers parts
-      of both "Sample 1" windows.
-   #. *Expect:* "Sample 2" window is on top.
+#. **Step:** Position windows so that "Sample 2" window covers parts
+   of both "Sample 1" windows.
 
-#. a. **Step:** Click Factsheet **Open button**.
-   #. *Expect:* Open dialog appears.
+   a. *Expect:* "Sample 2" window is on top.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Open dialog shows directory contents.
+#. **Step:** Click Factsheet **Open button**.
 
-#. a. **Step:** Select ``sample 1.fsg`` and click Open button.
-   #. *Expect:* Open dialog disappears.  Both "Sample 1" windows cover
-      parts of "Sample 2" window.  No new windows appear.
+   a. *Expect:* Open dialog appears.
 
-#. a. **Step:** Click "Sample 1" window **close icon** (window title far
-      right).
-   #. *Expect:* "Sample 1" indow disappears.
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Click "Sample 1" window **close icon**.
-   #. *Expect:* Remaining "Sample 1" window disappears.
+   a. *Expect:* Open dialog shows directory contents.
 
-#. a. **Step:** Click "Sample 2" window **close icon**.
-   #. *Expect:* "Sample 2" indow disappears. Application closes.
+#. **Step:** Select ``sample 1.fsg`` and click **Open button**.
+
+   a. *Expect:* Open dialog disappears.
+   #. *Expect:* Both Sample 1 windows cover parts of Sample 2 window.
+   #. *Expect:* No new windows appear.
+
+#. **Step:** Click Sample 1 window **close icon** (window title far
+   right).
+
+   a. *Expect:* Sample 1 window disappears.
+
+#. **Step:** Click Sample 1 window **close icon**.
+
+   a. *Expect:* Remaining Sample 1 window disappears.
+
+#. **Step:** Click Sample 2 window **close icon**.
+
+   a. *Expect:* Sample 2 indow disappears.
+   #. *Expect:* Application closes.
 
 Steps -- Data Loss and Overwrite Warnings
 -----------------------------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Type factsheet title "Guards" in **Factsheet** field.
-   #. *Expect:* Title appears in field.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Click Factsheet **Save button** (window title on right
-      near center).
-   #. *Expect:* Save dialog appears. Dialog Name field contains
-      "factsheet.fsg".
+#. **Step:** Type factsheet title "Guards" in **Factsheet** field.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Save dialog shows directory contents.
+   a. *Expect:* Title appears in field.
 
-#. a. **Step:** Edit Name file to "Guard.fsg".
-   #. *Expect:* Field contains new file name.
+#. **Step:** Click Factsheet **Save button** (window title on right
+   near center).
 
-#. a. **Step:** Click Save button (dialog title on right).
-   #. *Expect:* Dialog disappears.
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog **Name** field contains "factsheet.fsg".
 
-#. a. **Step:** List test data directory contents (in shell or file
-      browser).
-   #. *Expect:* Guard.sfg appears with current timestamp.
+#. **Step:** Change to test data directory.
 
-#. a. **Step:** Edit factsheet title to "Factsheet Safeguards" in
-      **Factsheet** field.
-   #. *Expect:* Updated title appears in field.
+   a. *Expect:* Save dialog shows directory contents.
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Data Loss Warning dialog appears.
+#. **Step:** Edit **Name** file to "guards.fsg".
 
-#. a. **Step:** Click **Cancel button**
-   #. *Expect:* Dialog disappears.
+   a. *Expect:* Field contains new file name.
 
-#. a. **Step:** In the test data directory create a file ``target.fsg``
-      containing a short test string (e.g., "And now the Comfy chair!"
-   #. *Expect:* Test data directory contains file ``target.fsg``.
+#. **Step:** Click Save button (dialog title on right).
 
-#. a. **Step:** Click window **save as icon** (window title to right of
-      **Save button**).
-   #. *Expect:* Save dialog appears. Dialog Name field contains "Guard.fsg".
+   a. *Expect:* Dialog disappears.
 
-#. a. **Step:** Select ``target.fsg`` and click **Save button** (dialog
-      title on right)
-   #. *Expect:* Dialog appears warning file already exists.
+#. **Step:** List test data directory contents (in shell or file
+   browser).
 
-#. a. **Step:** Click **Cancel button**.
-   #. *Expect:* Warning dialog disappears. Save dialog remains visible.
+   a. *Expect:* File guards.sfg appears with current timestamp.
 
-#. a. **Step:** List contents of ``target.fsg``
-   #. *Expect:* Contents unchanged.
+#. **Step:** Edit factsheet title to "Factsheet Safeguards" in
+   **Factsheet** field.
 
-#. a. **Step:** Select ``target.fsg`` and click **Save button**.
-   #. *Expect:* Dialog appears warning file already exists.
+   a. *Expect:* Updated title appears in field.
 
-#. a. **Step:** Click **Replace button**.
-   #. *Expect:* Warning dialog and Save dialog disappear.
+#. **Step:** Click window **close icon** (window title far right).
 
-#. a. **Step:** Open file ``target.fsg`` in hex editor.
-   #. *Expect:* File contains binary Pickle data.
+   a. *Expect:* Data Loss Warning dialog appears.
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* Window disappears. Application closes.
+#. **Step:** Click **Cancel button**
 
-#. a. **Step:** Delete file ``target.fsg``.
-   #. *Expect:* Test data directory does not contain the file.
+   a. *Expect:* Dialog disappears.
+
+#. **Step:** In the test data directory create a file ``target.fsg``
+   containing a short test string (e.g., "And now the Comfy chair!"
+
+   a. *Expect:* Test data directory contains file ``target.fsg``.
+
+#. **Step:** Click window **save as icon** (window title to right of
+   **Save button**).
+
+   a. *Expect:* Save dialog appears.
+   #. *Expect:* Dialog **Name** field contains "guards.fsg".
+
+#. **Step:** Select ``target.fsg`` and click **Save button** (dialog
+   title on right)
+
+   a. *Expect:* Dialog appears warning file already exists.
+
+#. **Step:** Click **Cancel button**.
+
+   a. *Expect:* Warning dialog disappears. Save dialog remains visible.
+
+#. **Step:** List contents of ``target.fsg``
+
+   a. *Expect:* Contents unchanged.
+
+#. **Step:** Select ``target.fsg`` and click **Save button**.
+
+   a. *Expect:* Dialog appears warning file already exists.
+
+#. **Step:** Click **Replace button**.
+
+   a. *Expect:* Warning dialog and Save dialog disappear.
+
+#. **Step:** From console, open file ``target.fsg`` in hex editor
+   (e.g. ``ghex``).
+
+   a. *Expect:* File contains binary Pickle data.
+
+#. **Step:** From console, display contents with ``python3 -m
+   pickletools target.fsg``.
+
+   a. *Expect:* Output includes Factsheet class names.
+   #. *Expect:* Output includes Factsheet name and title text.
+
+#. **Step:** Click window **close icon**.
+
+   a. *Expect:* Window disappears.
+   #. *Expect:* Application closes.
+
+#. **Step:** Delete file ``target.fsg``.
+
+   a. *Expect:* Test data directory does not contain the file.
 
 Steps -- File Contents not Factsheet
 ------------------------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Select Factsheet **menu > File ... > Open ...**.
-   #. *Expect:* Open dialog appears.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Change to test data directory.
-   #. *Expect:* Open dialog shows directory contents.
+#. **Step:** Select Factsheet **menu > File ... > Open ...**.
 
-#. a. **Step:** Select ``invalid.fsg`` and click Open button.
-   #. *Expect:* Open dialog disappears. Second window appears with
-      error message "Error opening file
-      '/test/data/directory/invalid.fsg'" in **Factsheet** field. New
+   a. *Expect:* Open dialog appears.
+
+#. **Step:** Change to test data directory.
+
+   a. *Expect:* Open dialog shows directory contents.
+
+#. **Step:** Select ``invalid.fsg`` and click **Open button**.
+
+   a. *Expect:* Open dialog disappears. Second window appears. New
       window may cover first window.
+   #. *Expect:* Window title is "OPEN ERROR".
+   #. *Expect:* **Factsheet** field contains error message
+      "Error opening file '/test/data/directory/invalid.fsg'".
+   #. *Expect:* *Factsheet Summary* pane contains traceback data.
 
-#. a. **Step:** Select ``target.fsg`` and click **Save button** (dialog
-      title on right)
-   #. *Expect:* Save dialog appears.
+#. **Step:** Click window **close icon**.
 
-#. a. **Step:** Click **Cancel button**.
-   #. *Expect:* Warning dialog disappears. Save dialog remains visible.
+   a. *Expect:* Window disappears.
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* Window disappears.
+#. **Step:** In original window, click window **close icon**.
 
-#. a. **Step:** In original window, click window **close icon**.
-   #. *Expect:* Window disappears. Application closes.
+   a. *Expect:* Window disappears.
+   #. *Expect:* Application closes.
 
 Teardown
 --------

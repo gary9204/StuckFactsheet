@@ -12,4 +12,3 @@ Factsheet-level Cases
    case_sheet_titles
    case_sheet_summary
    case_sheet_delete
-

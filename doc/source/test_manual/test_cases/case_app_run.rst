@@ -9,11 +9,13 @@ In Factsheet project, change to directory ``src``.
 
 Steps
 -----
-1. a. **Step:** ``python3 -m factsheet.app``
-   #. *Expect:* Desktop displays a Factsheet window.
+1. **Step:** ``python3 -m factsheet.app``
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Factsheet window closes.
+   a. *Expect:* Desktop displays a Factsheet window.
+
+#. **Step:** Click window **close icon** (window title far right).
+
+   a. *Expect:* Factsheet window closes.
 
 
 Teardown

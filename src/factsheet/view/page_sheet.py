@@ -236,7 +236,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             return UI.CLOSE_GTK
 
         self._warning_data_loss.set_markup(
-            'Factsheet "<b>{}</b>" contains unsaved changes.  All'
+            'Factsheet "<b>{}</b>" contains unsaved changes.  All '
             'unsaved changes will be discarded if you close.'
             ''.format('Unnamed'))
 

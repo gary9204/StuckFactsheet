@@ -10,91 +10,119 @@ None
 
 Steps -- No Changes
 -------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Select Factsheet **menu > Display ... > Open window**
-      (right of **Factsheet** field).
-   #. *Expect:* Second window appears with same blank factsheet title as
+   a. *Expect:* Application displays default factsheet.
+
+#. **Step:** Select Factsheet **menu > Display ... > Open window**
+   (right of **Factsheet** field).
+
+   a. *Expect:* Second window appears with same blank factsheet title as
       first window.  New window may cover first window.
 
-#. a. **Step:** In second window, select Factsheet **menu > Display ...
-      > Close window**.
-   #. *Expect:* Second window disappears. First window is unchanged.
+#. **Step:** In second window, select Factsheet **menu > Display ...
+   > Close window**.
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Window disappears and application closes.
+   a. *Expect:* Second window disappears.
+   #. *Expect:* First window is unchanged.
+
+#. **Step:** Click window **close icon** (window title far right).
+
+   a. *Expect:* Window disappears and application closes.
 
 Steps -- Unsaved Changes
 ------------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
 
-#. a. **Step:** Type factsheet title in **Factsheet** field (e.g. First
-      Sheet).
-   #. *Expect:* Title appears in field.
+   a. *Expect:* Application displays default factsheet.
 
-#. a. **Step:** Select Factsheet **menu > Display ... > Open window**
-      (right of **Factsheet** field).
-   #. *Expect:* Second window appears with same factsheet title as first
+#. **Step:** Type factsheet title in **Factsheet** field (e.g. First
+   Factsheet).
+
+   a. *Expect:* Title appears in field.
+
+#. **Step:** Select Factsheet **menu > Display ... > Open window**
+   (right of **Factsheet** field).
+
+   a. *Expect:* Second window appears with same factsheet title as first
       window.  New window may cover first window.
 
-#. a. **Step:** In second window, select Factsheet **menu > Display ...
-      > Close window**.
-   #. *Expect:* Second window disappears. First window is unchanged.
+#. **Step:** In second window, select Factsheet **menu > Display ...
+   > Close window**.
 
-#. a. **Step:** Click window **close icon** (window title far right).
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Second window disappears.
+   #. *Expect:* First window is unchanged.
 
-#. a. **Step:** Click **Cancel button** (dialog title far left).
-   #. *Expect:* Dialog disappears and window remains unchanged.
+#. **Step:** Click window **close icon** (window title far right).
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Data Loss Warning dialog appears.
 
-#. a. **Step:** Click **Discard button** (dialog title far right).
-   #. *Expect:* Dialog and window disappear. Application closes.
+#. **Step:** Click **Cancel button** (dialog title far left).
 
-Steps -- Multiple Sheets
-------------------------
-1. a. **Step:** Start application with
-      :doc:`../test_helpers/help_start_application`
-   #. *Expect:* Application displays default factsheet.
+   a. *Expect:* Dialog disappears
+   #. *Expect:* Window remains unchanged.
 
-#. a. **Step:** Type factsheet title in **Factsheet** field (e.g. First
-      Sheet).
-   #. *Expect:* Title appears in field.
+#. **Step:** Click window **close icon**.
 
-#. a. **Step:** Click Factsheet **new Factsheet icon** (window title on
-      left next to open buttons).
-   #. *Expect:* Second window appears with blank factsheet window.  New
+   a. *Expect:* Data Loss Warning dialog appears.
+
+#. **Step:** Click **Discard button** (dialog title far right).
+
+   a. *Expect:* Dialog and window disappear.
+   #. *Expect:* Application closes.
+
+Steps -- Multiple Factsheet
+---------------------------
+1. **Step:** Start application with
+   :doc:`../test_helpers/help_start_application`
+
+   a. *Expect:* Application displays default factsheet.
+
+#. **Step:** Type factsheet title in **Factsheet** field (e.g. First
+   Factsheet).
+
+   a. *Expect:* Title appears in field.
+
+#. **Step:** Click Factsheet **new Factsheet icon** (window title on
+   left next to open buttons).
+
+   a. *Expect:* Second window appears with blank factsheet window.  New
       window may cover first window.
 
-#. a. **Step:** In second window, type factsheet title in **Factsheet**
-      field (e.g. Second Sheet).
-   #. *Expect:* Title appears in field.
+#. **Step:** In second window, type factsheet title in **Factsheet**
+   field (e.g. Second Factsheet).
 
-#. a. **Step:** In second window, select Factsheet **menu > Display ...
-      > Close window**.
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Title appears in field.
 
-#. a. **Step:** Click **Cancel button** (dialog title far left).
-   #. *Expect:* Dialog disappears and window remains unchanged.
+#. **Step:** In second window, select Factsheet **menu > Display ...
+   > Close window**.
 
-#. a. **Step:** In second window, click window **close icon**.
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Data Loss Warning dialog appears.
 
-#. a. **Step:** Click **Discard button** (dialog title far right).
-   #. *Expect:* Dialog and second window disappear. First window remains
-      unchanged.
+#. **Step:** Click **Cancel button** (dialog title far left).
 
-#. a. **Step:** Click window **close icon**.
-   #. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* Window remains unchanged.
 
-#. a. **Step:** Click **Discard button**
-   #. *Expect:* Dialog and window disappear. Application closes
+#. **Step:** In second window, click window **close icon**.
+
+   a. *Expect:* Data Loss Warning dialog appears.
+
+#. **Step:** Click **Discard button** (dialog title far right).
+
+   a. *Expect:* Dialog and second window disappear.
+   #. *Expect:* First window remains unchanged.
+
+#. **Step:** Click window **close icon**.
+
+   a. *Expect:* Data Loss Warning dialog appears.
+
+#. **Step:** Click **Discard button**.
+
+   a. *Expect:* Dialog and window disappear.
+   #. *Expect:* Application closes.
 
 Teardown
 --------
