@@ -1,3 +1,5 @@
 """
-factsheet_test.view - unit tests for Factsheet View classes.
+Unit tests for Factsheet view classes.
+
+See :mod:`~.factsheet.view`.
 """

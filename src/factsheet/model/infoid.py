@@ -11,22 +11,22 @@ from factsheet.view import ui as UI
 
 
 class InfoId(ABC_STALE.InterfaceStaleFile):
-    """Defines identification information common to Factsheetcomponents.
+    """Defines identification information common to Factsheet components.
 
     The Factsheet model includes components for factsheets, topics, and
     facts.  These components have identification information in common.
-    The information represented by `InfoId` is as follows.
+    The information represented by ``InfoId`` is as follows.
 
-     * ID: identifier that is unique for lifetime of the component.
-     * Aspect: identifies contribution of component (for example, set).
-     * Name: short, editable identifier (suitable, for example, as
+     * *ID:* identifier that is unique for lifetime of the component.
+     * *Aspect:* identifies contribution of component (for example, set).
+     * *Name:* short, editable identifier (suitable, for example, as
        label).
-     * Title: one-line, editable description of component contents.
-     * Summary: editable description of component, which adds detail to
-       title.
+     * *Summary:* editable description of component, which adds detail
+       to title.
+     * *Title:* one-line, editable description of component contents.
 
     .. tip:: Two `InfoId` instances are equivalent when their aspects,
-       names, titles, and summaries are the same.
+       names, titles, and summaries are the equal.
     """
 
     def __init__(self, *, p_aspect: str, p_name: str = '',

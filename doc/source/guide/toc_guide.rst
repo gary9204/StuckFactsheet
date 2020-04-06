@@ -5,4 +5,4 @@ Documentation
    :maxdepth: 2
 
    intro
-   design_notes
+   devel_notes

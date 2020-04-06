@@ -2,17 +2,22 @@ Introduction
 ============
 
 Factsheet is an application to investigate algebraic structures.
-Factsheet provides templates for constructing small sets, operations,
-and groups. The templates include checks to produce facts about the
-objects you construct.
+With Factsheet you can construct and explore small sets, operations,
+and groups.  You can view the structures you construct in a variety of
+formats and check their properties.
 
-A Factsheet application document is called a *factsheet.* A
-factsheet contains a hierarchy of *topics.* Each topic is either a
-template to constuct structures (such as sets of integers modulo
-*n*) or a specified structure (such as the set of integers modulo
-6). A topic for a specific structure contains a collection *facts*
-about the structure. Initially facts are undetermined. A topic
-includes a check for each fact to produce the value of the fact. For
-example, each set topic has a size fact with a corresponding check to
-calculate the set size.
+A Factsheet application document is called a *factsheet.*  A factsheet
+consists of a hierarchy of *topics.*  Each topic includes a collection of
+*facts* about the specific subject.  The set of integers module 6 is an
+exmple of a topic.  The subset of divisors of zero is an example of a
+fact.
+
+Factsheet includes a collection of templates, which you can use to
+construct topics and facts.  For example, Factsheet has a template for
+contructing a group of integers module *n*.  You choose the value of *n,*
+say 6, to construct the topic the group of intergers modulo 6.
+
+When you create a topic, all the topic's facts are undetermined.  You
+select which facts you wish to check.  You also select how you want
+Factshet to present results of each check.
 

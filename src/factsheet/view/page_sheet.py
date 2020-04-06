@@ -21,12 +21,12 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class PageSheet(ABC_SHEET.InterfacePageSheet):
     """Displays Factsheet document and translates user actions.
 
-    Class `PageSheet` maintains presentation of a Factsheet.  The class
-    displays the content of a factsheet model.  It translates a user's
-    actions at the user interface into requests to update the model and
-    its presentation.
+    Class ``PageSheet`` maintains presentation of a Factsheet.  The
+    class displays the content of a factsheet model.  It translates a
+    user's actions at the user interface into requests to update the
+    model and its presentation.
 
-    :param px_app: application to which factsheet belongs
+    :param px_app: application to which factsheet belongs.
 
     .. attribute:: NAME_FILE_DIALOG_DATA_LOSS_UI
 
@@ -224,8 +224,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         unconditionally if no changes would be lost.  See also
         :meth:`close_page`.
 
-        :returns: :data:`CANCEL_GTK` when user cancels page close.
-        :returns: :data:`CLOSE_GTK` when user approves page close.
+        :returns: :data:`.CANCEL_GTK` or :data:`.CLOSE_GTK` to,
+           respectively, cancel or continue page close.
         """
         assert self._control is not None
         if self._close_window:
@@ -310,7 +310,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         del dialog
 
     def on_popdown_name(self, _popover: Gtk.Popover) -> None:
-        """Hide factsheet name popover and signal when name changes."""
+        """Hide factsheet name popover and notify control
+        :class:`~.control.sheet.Sheet` when name changes."""
         assert self._control is not None
         if self._name_former != self._infoid.name:
             self._control.new_name()
@@ -372,14 +373,14 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """Create factsheet with contents from file and return the new
         factsheet page.
 
-        If a factsheet the file is active already, show all the pages
-        corresponding to that factsheet the file.  Return none in this
-        case.
+        If a factsheet with the given file is active already, show all
+        the pages corresponding to that factsheet file.  Return None in
+        this case.
 
         :param px_app: application to which the factsheet belongs.
         :param pm_sheets_active: collection of factsheets.
         :param p_path: path to file containing factsheet contents.
-        :returns: new page if one is created or None otherwise.
+        :returns: New page if one is created or None otherwise.
         """
         open_time = Gtk.get_current_event_time()
         control_file = pm_sheets_active.owner_file(p_path)

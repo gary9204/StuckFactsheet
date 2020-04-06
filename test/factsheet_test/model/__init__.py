@@ -1,3 +1,5 @@
 """
-factsheet_test.model - unit tests for Factsheet Model classes.
+Unit tests for Factsheet model classes.
+
+See :mod:`~.factsheet.model`.
 """

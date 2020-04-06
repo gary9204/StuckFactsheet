@@ -1,3 +1,5 @@
 """
-factsheet_test.control - unit tests for Factsheet Control classes.
+Unit tests for Factsheet control classes.
+
+See :mod:`~.factsheet.control`.
 """

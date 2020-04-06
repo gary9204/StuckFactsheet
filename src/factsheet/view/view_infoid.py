@@ -10,16 +10,24 @@ from factsheet.adapt_gtk import adapt_infoid as AINFOID
 class ViewInfoId(ABC_INFOID.InterfaceViewInfoId):
     """Provides display elements for page identification information.
 
-    The identification information is common to `factesheet`, `topic`,
-    and `fact` pages.  The class provides display element for a page's
-    name, title, and summary.
+    The identification information is common to ``factesheet``, ``topic``,
+    and ``fact`` pages.  The class provides display element for a page's
+    name, summary, and title.
 
     :param px_get_object: returns named object from user interface
         object definition.
 
+    .. data:: UI_ID_NAME
+
+        Builder ID for user interface element to display page name.
+
+    .. data:: UI_ID_SUMMARY
+
+        Builder ID for user interface element to display page summary.
+
     .. data:: UI_ID_TITLE
 
-        ID in user interface file for element to display page title.
+        Builder ID for user interface element to display page title.
     """
 
     UI_ID_NAME: typing.ClassVar[str] = 'ui_name_infoid'

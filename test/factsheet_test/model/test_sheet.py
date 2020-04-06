@@ -1,5 +1,7 @@
 """
-Unit tests for :mod:`~factsheet.model` for Factsheet document.
+Unit tests for factsheet-level model.
+
+See :mod:`~factsheet.model`.
 """
 import re
 import logging
@@ -11,7 +13,7 @@ from factsheet.model import sheet as MSHEET
 
 
 class TestSheet:
-    """Unit tests for :mod:`~factsheet.model` class :class:`Sheet`."""
+    """Unit tests for :class:`~.model.sheet.Sheet`."""
 
     def test_eq(self):
         """Confirm equivalence operator

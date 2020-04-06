@@ -30,7 +30,7 @@ class TestInfoId:
         ['get_view_title', '_view_title'],
         ])
     def test_get_view(self, patch_ui_infoid, name_method, name_attr):
-        """Confirm return is title display element."""
+        """Confirm return is view display element for each attribute."""
         # Setup
         get_object = patch_ui_infoid
         target = VINFOID.ViewInfoId(get_object)
@@ -44,10 +44,10 @@ class TestInfoId:
         ['_view_title', 'title'],
         ])
     def test_property_entry(self, patch_ui_infoid, name_attr, name_prop):
-        """Confirm properties are get-only.
+        """Confirm name and title properties are get-only.
 
-        #. Case: read
-        #. Case: no replace
+        #. Case: get
+        #. Case: no set
         #. Case: no delete
         """
         # Setup
@@ -65,10 +65,10 @@ class TestInfoId:
         assert target_prop.fdel is None
 
     def test_property_summary(self, patch_ui_infoid, text_ui_infoid):
-        """Confirm properties are get-only.
+        """Confirm summary property is get-only.
 
-        #. Case: read
-        #. Case: no replace
+        #. Case: get
+        #. Case: no set
         #. Case: no delete
         """
         # Setup

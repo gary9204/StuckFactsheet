@@ -1,5 +1,5 @@
 """
-test fixtures for Model classes.
+Test fixtures for :mod:`~.factsheet_test.model` unit tests.
 """
 import pytest   # type: ignore[import]
 
@@ -11,6 +11,9 @@ from factsheet.view import ui as UI
 
 @pytest.fixture
 def args_infoid_stock():
+    """Pytest fixture returns set of argument values to construct a
+    stock InfoId object.
+    """
     return dict(
         p_aspect='section',
         p_name='Stock InfoId Name',
@@ -20,7 +23,36 @@ def args_infoid_stock():
 
 
 @pytest.fixture
+def patch_class_page_sheet(patch_class_view_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfacePageSheet`.
+    """
+    class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
+        def __init__(self):
+            self._infoid = patch_class_view_infoid()
+            self.called_close = False
+            self.called_present = False
+            self.called_set_titles = False
+            self.subtitle = None
+
+        def close_page(self): self.called_close = True
+
+        def get_infoid(self): return self._infoid
+
+        def present(self, _time): self.called_present = True
+
+        def set_titles(self, p_subtitle):
+            self.called_set_titles = True
+            self.subtitle = p_subtitle
+
+    return PatchPageSheet
+
+
+@pytest.fixture
 def patch_class_view_infoid(args_infoid_stock):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfaceViewInfoId`.
+     """
     class PatchViewInfoId(ABC_INFOID.InterfaceViewInfoId):
         ALL_TEXT = -1
         INCLUDE_HIDDEN = True
@@ -53,26 +85,3 @@ def patch_class_view_infoid(args_infoid_stock):
         def title(self): return self._title.get_text()
 
     return PatchViewInfoId
-
-
-@pytest.fixture
-def patch_class_page_sheet(patch_class_view_infoid):
-    class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
-        def __init__(self):
-            self._infoid = patch_class_view_infoid()
-            self.called_close = False
-            self.called_present = False
-            self.called_set_titles = False
-            self.subtitle = None
-
-        def close_page(self): self.called_close = True
-
-        def get_infoid(self): return self._infoid
-
-        def present(self, _time): self.called_present = True
-
-        def set_titles(self, p_subtitle):
-            self.called_set_titles = True
-            self.subtitle = p_subtitle
-
-    return PatchPageSheet

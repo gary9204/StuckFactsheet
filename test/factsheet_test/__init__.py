@@ -1,3 +1,3 @@
 """
-factsheet_test - Factsheet unit test package.
+Unit test package for Factsheet application.  See :mod:`factsheet`.
 """

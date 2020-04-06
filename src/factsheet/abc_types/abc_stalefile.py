@@ -1,5 +1,6 @@
 """
-Defines abstract base class to track file against in-memory model.
+Defines Interface to track factsheet file contents against in-memory
+model.
 """
 import abc
 

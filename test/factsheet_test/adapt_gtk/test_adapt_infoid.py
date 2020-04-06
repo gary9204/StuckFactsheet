@@ -18,24 +18,9 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-@pytest.fixture
-def PatchConnect():
-    """PyTest fixture."""
-    class Connect:
-        ID_STUB = 42
-
-        def __init__(self): self.called_names = list()
-
-        def connect(self, name, _function):
-            self.called_names.append(name)
-            return self.ID_STUB
-
-    return Connect
-
-
 class TestAdaptEntry:
     """Unit tests for :data:`.AdaptEntry` implementation of
-    :class:`.AbstractTextModel`.
+    :data:`.AbstractTextView`.
     """
 
     def test_adapt_entry(self):
@@ -583,7 +568,7 @@ class TestAdaptTextBuffer:
 
 class TestAdaptTextView:
     """Unit tests for :data:`.AdaptTextView` implementation of
-    :class:`.AbstractTextModel`.
+    :data:`.AbstractTextView`.
     """
 
     def test_adapt_textview(self):

@@ -1,5 +1,6 @@
 """
-Unit tests for identification information abstract data type classes.
+Unit tests for identification information abstract classes and
+interfaces.
 
 See :mod:`.abc_infoid`.
 """

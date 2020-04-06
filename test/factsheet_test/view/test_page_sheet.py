@@ -23,6 +23,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def patch_control_safe():
+    """Pytest fixture returns stub control :class:`~.control.sheet.Sheet`.
+    """
     class PatchSafe(CSHEET.Sheet):
         def __init__(self, p_effect, pm_sheets_active):
             super().__init__(pm_sheets_active)
@@ -53,6 +55,12 @@ def patch_control_safe():
 
 @pytest.fixture
 def patch_dialog_choose():
+    """Pytest fixture returns stub
+    `GtkFileChooserDialog <GtkFileChooserDialog_>`_.
+
+    .. _GtkFileChooserDialog: https://lazka.github.io/pgi-docs/
+       #Gtk-3.0/classes/FileChooserDialog.html
+    """
     class PatchDialog:
         def __init__(self, p_response, p_filename):
             self.called_hide = False
@@ -85,6 +93,11 @@ def patch_dialog_choose():
 
 @pytest.fixture
 def patch_dialog_run():
+    """Pytest fixture returns stub `GtkDialog <GtkDialog_>`_.
+
+    .. _GtkDialog: https://lazka.github.io/pgi-docs/
+       #Gtk-3.0/classes/Dialog.html
+    """
     class PatchDialog:
         def __init__(self, p_response):
             self.called = False
@@ -97,12 +110,12 @@ def patch_dialog_run():
     return PatchDialog
 
 
-class TestSheet:
-    """Unit tests for View class Sheet."""
+class TestPageSheet:
+    """Unit tests for :class:`.PageSheet`."""
 
     def test_init(self, patch_factsheet, capfd):
         """Confirm initialization.
-        Case: visual elements
+        Case: visual elements.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -357,7 +370,7 @@ class TestSheet:
     def test_on_close_page_force(
             self, patch_factsheet, capfd, patch_control_safe):
         """Confirm response to request to close page.
-        Case: unconditional close
+        Case: unconditional close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -386,7 +399,7 @@ class TestSheet:
     def test_on_close_page_safe(
             self, patch_factsheet, capfd, patch_control_safe):
         """Confirm response to request to close page.
-        Case: safe to close
+        Case: safe to close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -414,7 +427,7 @@ class TestSheet:
     def test_on_close_page_cancel(
             self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
         """Confirm response to request to close page.
-        Case: not safe to close, user cancels close
+        Case: not safe to close, user cancels close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -449,7 +462,7 @@ class TestSheet:
     def test_on_close_page_discard(
             self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
         """Confirm response to request to close page.
-        Case: not safe to close, user approves close
+        Case: not safe to close, user approves close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -485,7 +498,7 @@ class TestSheet:
             self, patch_factsheet, capfd, patch_dialog_run,
             monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
-        Case: no unsaved changes
+        Case: no unsaved changes.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -519,7 +532,7 @@ class TestSheet:
             self, patch_factsheet, capfd, patch_dialog_run,
             monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
-        Case: unsaved chagnes, user cancels delete
+        Case: unsaved chagnes, user cancels delete.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -557,7 +570,7 @@ class TestSheet:
             self, patch_factsheet, capfd, patch_dialog_run,
             monkeypatch, patch_control_safe):
         """Confirm response to request to delete factsheet.
-        Case: unsaved changes, user approves delete
+        Case: unsaved changes, user approves delete.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -674,7 +687,7 @@ class TestSheet:
     def test_on_open_sheet_apply(self, tmp_path, patch_dialog_choose,
                                  monkeypatch, patch_factsheet, capfd):
         """Confirm open from file.
-        Case: apply open
+        Case: apply open.
         """
         # Setup
         PATH = Path(tmp_path / 'factsheet.fsg')
@@ -727,7 +740,7 @@ class TestSheet:
     def test_on_open_sheet_cancel(self, tmp_path, patch_dialog_choose,
                                   monkeypatch, patch_factsheet, capfd):
         """Confirm open from file.
-        Case: cancel open
+        Case: cancel open.
         """
         # Setup
         PATH = Path(tmp_path / 'factsheet.fsg')
@@ -772,7 +785,7 @@ class TestSheet:
 
     def test_on_popdown_name(self, monkeypatch, patch_factsheet, capfd):
         """Confirm name popover becomes invisible.
-        Case: name changed
+        Case: name changed.
         """
         # Setup
         class PatchNewName:
@@ -808,7 +821,7 @@ class TestSheet:
     def test_on_popdown_name_static(
             self, monkeypatch, patch_factsheet, capfd):
         """Confirm name popover becomes invisible.
-        Case: name did not change
+        Case: name did not change.
         """
         # Setup
         class PatchNewName:
@@ -885,7 +898,7 @@ class TestSheet:
 
     def test_on_save_sheet(self, patch_factsheet, capfd, tmp_path):
         """Confirm save to file.
-        Case: file path defined
+        Case: file path defined.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -911,7 +924,7 @@ class TestSheet:
 
     def test_on_save_sheet_none(self, monkeypatch, patch_factsheet, capfd):
         """Confirm save to file.
-        Case: file path undefined
+        Case: file path undefined.
         """
         # Setup
         class PatchSaveAs:
@@ -945,7 +958,7 @@ class TestSheet:
     def test_on_save_as_sheet_apply(self, tmp_path, patch_dialog_choose,
                                     monkeypatch, patch_factsheet, capfd):
         """Confirm save to file with path set.
-        Case: apply save
+        Case: apply save.
         """
         # Setup
         PATH_NEW = Path(tmp_path / 'new_factsheet.fsg')
@@ -992,7 +1005,7 @@ class TestSheet:
     def test_on_save_as_sheet_cancel(self, tmp_path, patch_dialog_choose,
                                      monkeypatch, patch_factsheet, capfd):
         """Confirm save to file with path set.
-        Case: cancel save
+        Case: cancel save.
         """
         # Setup
         PATH = Path(tmp_path / 'save_as_factsheet.fsg')
@@ -1073,7 +1086,7 @@ class TestSheet:
     def test_open_factsheet(
             self, monkeypatch, patch_factsheet, capfd, tmp_path):
         """Confirm factsheet creation from file.
-        Case: factsheet is not open
+        Case: factsheet is not open.
         """
         # Setup
         def patch_open(p_pool, p_path):
@@ -1109,7 +1122,7 @@ class TestSheet:
     def test_open_factsheet_active(
             self, monkeypatch, patch_factsheet, capfd, tmp_path):
         """Confirm factsheet creation from file.
-        Case: factsheet is open
+        Case: factsheet is open.
         """
         # Setup
         class PatchPresentFactsheet:

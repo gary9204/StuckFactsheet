@@ -1,5 +1,5 @@
 """
-factsheet_test.view.conftest - test fixtures for View classes.
+Test fixtures for :mod:`~.factsheet.view` unit tests.
 """
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
@@ -10,6 +10,9 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def text_ui_infoid():
+    """Pytest fixture returns set of argument values to construct
+    a stock :class:`.ViewInfoId` object.
+    """
     return dict(
         name='UI InfoId Name',
         title='UI InfoId Title',
@@ -19,6 +22,9 @@ def text_ui_infoid():
 
 @pytest.fixture
 def patch_ui_infoid(text_ui_infoid):
+    """Pytest fixture returns stub builder defintion for
+    :class:`.ViewInfoId`.
+    """
     ui_infoid = '''
         <?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.22.1 -->

@@ -23,7 +23,7 @@ Defines constants, functions, and objects for user interface elements.
 
 .. data:: FACTORY_INFOID
 
-    Factory to produce :class:`.Head` components. See :mod:`.abc_factory`.
+    Factory to produce :class:`.InfoId` components. See :mod:`.abc_factory`.
 
 .. data:: HELP_APP
 
@@ -71,40 +71,20 @@ HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
 del builder_guide_sheet
 del get_object_guide_sheet
 
-# # Data Loss Warning dialog
-# # This section works aroung limitations in Glade and Python bindings for
-# # GTK.  Glade does not recognize use-header-bar property of GtkDialog.
-# # Gtk.Dialog() does not recognize flag Gtk.DialogFlags.USE_HEADER_BAR.
-# #
-# # Manually add the following to GtkDialog section of dialog_data_loss.ui:
-# #        <property name="use-header-bar">1</property>
-#
-# NAME_FILE_DIALOG_DATA_LOSS_UI = str(DIR_UI / 'dialog_data_loss.ui')
-# builder_dialog_data_loss = Gtk.Builder.new_from_file(
-#     NAME_FILE_DIALOG_DATA_LOSS_UI)
-# get_object_dialog_data_loss = builder_dialog_data_loss.get_object
-#
-# DIALOG_DATA_LOSS = get_object_dialog_data_loss('ui_dialog_data_loss')
-# DIALOG_DATA_LOSS.add_button('Cancel', Gtk.ResponseType.CANCEL)
-# button = DIALOG_DATA_LOSS.get_widget_for_response(Gtk.ResponseType.CANCEL)
-# button.get_style_context().add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
-# DIALOG_DATA_LOSS.add_button('Discard', Gtk.ResponseType.APPLY)
-# button = DIALOG_DATA_LOSS.get_widget_for_response(Gtk.ResponseType.APPLY)
-# button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
-# WARNING_DATA_LOSS = get_object_dialog_data_loss('ui_warning_data_loss')
-#
-# del builder_dialog_data_loss
-# del get_object_dialog_data_loss
-
 
 def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,
                       px_handler: typing.Callable) -> None:
-    """Construct action, add to group, and connect to 'activate' signal
-    handler.
+    """Construct action, add to group, and connect to
+    `activate <GioSimpleActionActivate_>`_ signal handler.
 
-    :param pm_group: action group to contain new action
-    :param p_name: name of new action
-    :param px_handler: 'activate' signal handler for new action
+    :param pm_group: action group to contain new action.
+    :param p_name: name of new action.
+    :param px_handler: `activate <GioSimpleActionActivate_>`_ signal
+       handler for new action.
+
+    .. _GioSimpleActionActivate: https://lazka.github.io/pgi-docs/
+       #Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals
+       .activate
     """
     action = Gio.SimpleAction.new(p_name, None)
     pm_group.add_action(action)
@@ -114,12 +94,14 @@ def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,
 def new_action_active_dialog(pm_group: Gio.SimpleActionGroup,
                              p_name: str, px_handler: typing.Callable,
                              px_dialog: Gtk.Dialog) -> None:
-    """Construct action, add to group, and connect to 'activate' signal
-    handler with dialog parameter.
+    """Construct action, add to group, and connect to
+    `activate <GioSimpleActionActivate_>`_ signal handler with dialog
+    parameter.
 
     :param pm_group: action group to contain new action.
     :param p_name: name of new action.
-    :param px_handler: 'activate' signal handler for new action.
+    :param px_handler: `activate <GioSimpleActionActivate_>`_ signal
+       handler for new action.
     :param px_dialog: dialog passed to handler.
     """
     action = Gio.SimpleAction.new(p_name, None)

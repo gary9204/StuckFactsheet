@@ -1,5 +1,9 @@
 """
-Defines :mod:`~factsheet.model` for a Factsheet document.
+Defines factsheet-level model.
+
+:doc:`../guide/devel_notes` explains how application Factsheet is based
+on a Model-View-Controller (MVC) design.  Module ``sheet`` defines
+classes representing model components for a factsheet as a whole.
 """
 import logging
 import typing   # noqa
@@ -14,15 +18,17 @@ logger = logging.getLogger('Main.model.sheet')
 class Sheet(ABC_STALE.InterfaceStaleFile):
     """Factsheet document :mod:`~factsheet.model`.
 
-    `Sheet` represents an entire Factsheet document.  A model factsheet
-    consists of a hierarchy of topics along with identification
-    information (see :mod:`~factsheet.model` class :class:`.InfoId`.)
-    Each topic represents a collection of facts about a specific
-    subject.
+    Class ``Sheet`` represents an entire Factsheet document.  A model
+    factsheet consists of a hierarchy of topics along with
+    identification information (see :class:`.InfoId`.) Each topic
+    represents a collection of facts about a specific subject.
 
     :param p_title: title of factsheet.
+
+    .. attribute:: ASPECT
+
+       Identifies role of model component.
     """
-    #: Identifies role of model component.
     ASPECT = 'factsheet'
 
     def __eq__(self, px_other: typing.Any) -> bool:

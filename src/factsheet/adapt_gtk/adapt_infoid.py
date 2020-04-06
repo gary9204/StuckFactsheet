@@ -151,7 +151,7 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
 
 class AdaptTextBuffer(ABC_INFOID.AbstractTextModel):
     """Implements model text attribute :class:`.AbstractTextModel`
-    using `Gtk.EntryBuffer`_.
+    using `Gtk.TextBuffer`_.
 
     .. _Gtk.TextBuffer:
        https://lazka.github.io/pgi-docs/#Gtk-3.0/

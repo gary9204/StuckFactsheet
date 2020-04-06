@@ -1,5 +1,5 @@
 """
-Unit tests for factsheet document abstract data type classes.
+Unit tests for factsheet document abstract interfaces.
 """
 import pytest   # type: ignore[import]
 
@@ -7,10 +7,10 @@ import factsheet.abc_types.abc_sheet as ABC_SHEET
 
 
 class TestEffectSafe:
-    """Unit tests for enumeration members."""
+    """Unit tests for members of enumeration :class:`EffectSafe`."""
 
     def test_effects(self):
-        """Confirm member definition."""
+        """Confirm member definitions."""
         # Setup
         # Test
         assert ABC_SHEET.EffectSafe.COMPLETED

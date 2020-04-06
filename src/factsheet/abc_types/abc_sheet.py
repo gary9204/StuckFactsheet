@@ -1,5 +1,17 @@
 """
-Defines abstract data types classes for factsheet documents.
+Defines abstract interfaces for factsheet documents.
+
+Module ``abc_infoid`` defines abstract text attribute
+classes for :class:`.InfoId` and :class:`.ViewInfoId`.
+
+:doc:`../guide/devel_notes` describes the use of abstract classes break
+``import`` cycles and to encapsulate dependencies of
+:mod:`~factsheet.model` on a user interface widget toolkit.  Module
+``abc_sheet`` defines an abstract interface for factsheet control
+(:class:`~.control.sheet.Sheet`) to break an ``import`` cycle. It
+defines an interface for factsheet view (:class:`.PageSheet`) for
+encapsulation. In addition, the module defines an enumeration for
+factsheet control method results.
 """
 import abc
 import enum
@@ -11,8 +23,7 @@ from factsheet.abc_types import abc_infoid as ABC_INFOID
 
 class EffectSafe(enum.Enum):
     """Constants to identify the effect of a call to a safe method (such
-    as :meth:`.control.Sheet.detach_page_safe` and
-    :meth:`.control.Sheet.delete_safe`).
+    as :meth:`.Sheet.detach_page_safe` and :meth:`.Sheet.delete_safe`).
     """
     #: Method call completed request.
     COMPLETED = enum.auto()
@@ -21,8 +32,8 @@ class EffectSafe(enum.Enum):
 
 
 class InterfaceControlSheet(abc.ABC):
-    """Defines interface class to break import cycle between
-    :class:`~.control.sheet.Sheet` and :class:`.PoolSheets`.
+    """Defines interface class to break import cycle between control
+    :class:`~.control.sheet.Sheet` and view :class:`.PoolSheets`.
     """
     @property
     @abc.abstractmethod

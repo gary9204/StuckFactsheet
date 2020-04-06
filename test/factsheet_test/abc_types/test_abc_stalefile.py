@@ -1,5 +1,5 @@
 """
-Unit tests for abstract base class to track file against model.
+Unit tests for interface to track file against model.
 
 See :mod:`.abc_stalefile`.
 """

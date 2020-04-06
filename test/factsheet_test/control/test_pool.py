@@ -2,7 +2,7 @@
 Unit tests for class that tracks and maintains pool of active
 factsheets.
 
-See :mod:`~factsheet.control` class :class:`~control.pool`.
+See :mod:`.pool`.
 """
 import logging
 from pathlib import Path
@@ -20,7 +20,7 @@ def patch_sheet():
 
 
 class TestPoolSheets:
-    """Unit tests for :class:`~control.pool`."""
+    """Unit tests for :class:`.PoolSheets`."""
 
     def test_init(self):
         """Confirm initialization."""

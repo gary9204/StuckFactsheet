@@ -1,6 +1,10 @@
 """
-Defines class to mediates from :mod:`~factsheet.view` to
-:mod:`~factsheet.model` of a factsheet.
+Defines class that mediates factsheet-level interaction from
+:mod:`~factsheet.view` to :mod:`~factsheet.model`.
+
+:doc:`../guide/devel_notes` explains how application Factsheet is based
+on a Model-View-Controller (MVC) design.  Module ``sheet`` defines
+classes representing control components for a factsheet as a whole.
 """
 import errno
 import logging
@@ -19,7 +23,7 @@ logger = logging.getLogger('Main.CSHEET')
 class Sheet(ABC_SHEET.InterfaceControlSheet):
     """Mediates user actions at view to model updates for a factsheet.
 
-    Class `Sheet` translates user requests in a factsheet page
+    Class ``Sheet`` translates user requests in a factsheet page
     into changes in the factsheet model (such as save or delete) or in
     the collection of factsheet views (such as add or close a view).
     """
@@ -79,7 +83,7 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         return control
 
     def new_name(self) -> None:
-        """Notify model a page changed factsheet."""
+        """Notify model a page changed factsheet name."""
         if self._path is None:
             subtitle_base = 'Unsaved'
         else:

@@ -1,6 +1,8 @@
 """
-Unit tests for class that mediates from :mod:`~factsheet.view` to
-:mod:`~factsheet.model` of a factsheet
+Unit tests for class that mediates factsheet-level interactions from
+:mod:`~factsheet.view` to :mod:`~factsheet.model`.
+
+See :mod:`~.control.sheet`.
 """
 import logging
 from pathlib import Path
@@ -32,7 +34,7 @@ def patch_model_safe():
 
 
 class TestControlSheet:
-    """Unit tests for control class Sheet."""
+    """Unit tests for :class:`~.control.sheet.Sheet`."""
 
     def test_init(self):
         """Confirm initialization."""
@@ -141,7 +143,8 @@ class TestControlSheet:
         assert response is ABC_SHEET.EffectSafe.NO_EFFECT
 
     def test_detach_page_force(self, patch_model_safe):
-        """Confirm page removed unconditionally."""
+        """Confirm page removed unconditionally.
+        Case: not last page."""
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
         sheets_active = CPOOL.PoolSheets()
@@ -155,7 +158,8 @@ class TestControlSheet:
         assert id(target) in sheets_active._controls.keys()
 
     def test_detach_page_force_last(self, patch_model_safe):
-        """Confirm page removed unconditionally."""
+        """Confirm page removed unconditionally.
+        Case: last page."""
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=0)
         sheets_active = CPOOL.PoolSheets()
@@ -223,7 +227,9 @@ class TestControlSheet:
         assert isinstance(target._model, MSHEET.Sheet)
 
     def test_new_name(self, monkeypatch):
-        """Confirm model gets new name notice."""
+        """Confirm model gets new name notice.
+        Case: factsheet path is defined.
+        """
         # Setup
         class PatchModel:
             def __init__(self):
@@ -249,7 +255,9 @@ class TestControlSheet:
         assert FILE == patch_model.base
 
     def test_new_name_unsaved(self, monkeypatch):
-        """Confirm model gets new name notice."""
+        """Confirm model gets new name notice.
+        Case: factsheet path is not defined.
+        """
         # Setup
         class PatchModel:
             def __init__(self):
@@ -334,35 +342,8 @@ class TestControlSheet:
         assert TITLE == model._infoid.title
         assert target._path is None
 
-    @pytest.mark.parametrize('name_attr, name_prop', [
-        ['_path', 'path'],
-        ['_sheets_active', 'sheets_active'],
-        ])
-    def test_property(self, tmp_path, name_attr, name_prop):
-        """Confirm properties are get-only.
-
-        #. Case: read
-        #. Case: no replace
-        #. Case: no delete
-        """
-        # Setup
-        sheets_active = CPOOL.PoolSheets()
-        target = CSHEET.Sheet(sheets_active)
-        PATH = Path(tmp_path / 'path_factsheet.fsg')
-        target._path = PATH
-        value_attr = getattr(target, name_attr)
-        target_prop = getattr(CSHEET.Sheet, name_prop)
-        value_prop = getattr(target, name_prop)
-        # Test: read
-        assert target_prop.fget is not None
-        assert str(value_attr) == str(value_prop)
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
     def test_present_factsheet(self, monkeypatch):
-        """Confirm factsheet presentation."""
+        """Confirm factsheet notifies model."""
         # Setup
         class PatchPresentPages:
             def __init__(self): self.called = False
@@ -382,6 +363,33 @@ class TestControlSheet:
         # Test
         target.present_factsheet(NO_TIME)
         assert patch_present.called
+
+    @pytest.mark.parametrize('name_attr, name_prop', [
+        ['_path', 'path'],
+        ['_sheets_active', 'sheets_active'],
+        ])
+    def test_property(self, tmp_path, name_attr, name_prop):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+        """
+        # Setup
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet(sheets_active)
+        PATH = Path(tmp_path / 'path_factsheet.fsg')
+        target._path = PATH
+        value_attr = getattr(target, name_attr)
+        target_prop = getattr(CSHEET.Sheet, name_prop)
+        value_prop = getattr(target, name_prop)
+        # Test: read
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     def test_save(self, tmp_path):
         """Confirm write to file.

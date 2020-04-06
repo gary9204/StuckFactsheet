@@ -1,5 +1,10 @@
 """
 Defines abstract factory classes.
+
+:doc:`../guide/devel_notes` describes the use of abstract classes to
+encapsulate dependencies of :mod:`~factsheet.model` on a user interface
+widget toolkit.  Module ``abc_factory`` defines abstract factories for
+component classes of :class:`.InfoId`.
 """
 
 
@@ -10,7 +15,7 @@ from factsheet.abc_types import abc_infoid as ABC_INFOID
 
 class FactoryInfoId(abc.ABC):
     """Defines abstract factory to produce identification information
-    components for :class:`~.InfoId`. and :class:`~.ViewInfoId`.
+    components for :class:`~.InfoId` and :class:`~.ViewInfoId`.
     """
 
     @abc.abstractmethod

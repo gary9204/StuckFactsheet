@@ -1,5 +1,5 @@
 """
-Unit tests for GTK-based factory classes.
+Unit tests for GTK-based factories.
 
 See :mod:`.adapt_factory`.
 """
@@ -18,8 +18,8 @@ class TestFactoryInfoId:
         ('new_model_title', AINFOID.AdaptEntryBuffer),
         ])
     def test_new_attr_model(self, name_method, class_attr):
-        """Confirm factory produces instance of :mod:`~factsheet.model`
-        attribute.
+        """Confirm factory produces instance of each
+        :mod:`~factsheet.model` attribute.
         """
         # Setup
         factory = AFACTORY.FactoryInfoId()
@@ -36,8 +36,8 @@ class TestFactoryInfoId:
         ('new_view_title', AINFOID.AdaptEntry),
         ])
     def test_new_attr_view(self, name_method, class_attr):
-        """Confirm factory produces instance of :mod:`~factsheet.view`
-        attribute.
+        """Confirm factory produces instance of each
+        :mod:`~factsheet.view` attribute.
         """
         # Setup
         factory = AFACTORY.FactoryInfoId()

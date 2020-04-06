@@ -14,6 +14,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def patch_factsheet():
+    """Pytest fixture returns stub :class:`.Factsheet`."""
     class Factsheet(Gtk.Application):
         def __init__(self, *args, **kwargs):
             super().__init__(application_id='com.novafolks.factsheet',
@@ -31,7 +32,11 @@ def patch_factsheet():
 
 @pytest.fixture
 def PatchLogger():
-    """Return stub class for logging."""
+    """Pytest fixture returns stub `logging.logger <LoggingLogger_>`_.
+
+    .. _LoggingLogger: https://docs.python.org/3.7/library/logging.html
+       #logger-objects
+    """
     class Logger:
         T_CRITICAL = 'critical'
         T_DEBUG = 'debug'

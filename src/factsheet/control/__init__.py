@@ -1,5 +1,7 @@
 """
-factsheet.control - defines Factsheet Control classes.
+Defines Factsheet control classes.
 
-Application Factsheet is based on a Model-View-Controller design.
+:doc:`../guide/devel_notes` explains how application Factsheet is based
+on a Model-View-Controller (MVC) design.  Package ``control`` defines
+classes for control components of the application.
 """

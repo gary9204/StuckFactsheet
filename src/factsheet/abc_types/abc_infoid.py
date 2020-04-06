@@ -1,7 +1,12 @@
 """
-Defines abstract data type classes for identification information.
+Defines abstract classes and interfaces for identification information.
 
-See :class:`.InfoId` and derived classes.
+:doc:`../guide/devel_notes` describes the use of abstract classes to
+encapsulate dependencies of :mod:`~factsheet.model` on a user interface
+widget toolkit.  Module ``abc_infoid`` defines abstract text attribute
+classes for :class:`.InfoId` and :class:`.ViewInfoId`.
+
+See :class:`.InfoId`, :class:`.ViewInfoId`, and derived classes.
 
 .. data:: AbstractTextView
 
@@ -39,18 +44,24 @@ class AbstractTextModel(ABC_STALE.InterfaceStaleFile):
 
     @abc.abstractmethod
     def attach_view(self, pm_view: AbstractTextView):
-        """Add view to update display when text changes."""
+        """Add view to update display when text changes.
+
+        :param pm_view: view to add.
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def detach_view(self, pm_view: AbstractTextView):
-        """Remove view of changes to text."""
+        """Remove view of changes to text.
+
+        :param pm_view: view to removes.
+        """
         raise NotImplementedError
 
 
 class InterfaceViewInfoId(abc.ABC):
-    """Defines interface for :class:`.model.Sheet` to attach
-    :class:`.ViewInfoId` to the model.
+    """Defines interface to attach identification information view
+    (:class:`.ViewInfoId`) to the model (:class:`.InfoId`).
     """
 
     @abc.abstractmethod

@@ -18,7 +18,6 @@ Factsheet is an application to explore facts about algebraic structures.
    test_manual/toc_test_manual  
 
 
-
 Indices and tables
 ==================
 

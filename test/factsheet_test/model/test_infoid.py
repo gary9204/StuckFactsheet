@@ -14,6 +14,9 @@ from factsheet.view import ui as UI
 
 @pytest.fixture
 def args_infoid_target():
+    """Pytest fixture returns set of argument values to construct InfoId
+    object as test target.
+    """
     return dict(
         p_aspect='section',
         p_name='Target InfoId Name',
@@ -224,8 +227,8 @@ class TestInfoId:
     def test_property(self, args_infoid_stock, name_attr, name_prop):
         """Confirm properties are get-only.
 
-        #. Case: read
-        #. Case: no replace
+        #. Case: get
+        #. Case: no set
         #. Case: no delete
         """
         # Setup

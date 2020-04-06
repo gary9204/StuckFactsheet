@@ -1,5 +1,5 @@
 """
-Unit tests for Application class Factsheet and application entry point.
+Unit tests for :class:`.Factsheet` and entry point.
 """
 import gi   # type: ignore[import]
 
@@ -10,7 +10,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class TestFactsheet:
-    """Unit tests for application class Factsheet."""
+    """Unit tests for :class:`.Factsheet`."""
 
     def test_init(self):
         """Confirm initialization."""
@@ -80,7 +80,7 @@ class TestApp:
     """Unit tests for Factsheet application entry point."""
 
     def test_run_app(self, monkeypatch):
-        """Confirm application starts."""
+        """Confirm application invoked."""
         # Setup
         class PatchRun:
             def __init__(self): self.called = False
