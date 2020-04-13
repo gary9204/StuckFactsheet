@@ -522,7 +522,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">win.specify-topic</property>
-            <property name="text" translatable="yes">Specify topic</property>
+            <property name="text" translatable="yes">Specify topic ...</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -572,6 +572,7 @@
       </object>
       <packing>
         <property name="submenu">main</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </object>
