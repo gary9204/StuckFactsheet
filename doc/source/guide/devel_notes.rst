@@ -119,4 +119,26 @@ application and factsheet level.
    module defines. An arrow points from module A to B when A imports B.
 
 
+Layering
+--------
 
+:doc:`../guide/intro` describes the orgnaization of a factsheet
+document.  A factsheet contains facts about one or more subjects.  Each
+fact is a statement about a specific subject.  A topic is a collection
+of facts related to the same subject.  A factsheet is a collection of
+topics.  The design partitions classes into factsheet, topic, and fact
+layers.
+
+The user interface follows the decomposition into factsheet, topics, and
+facts.  Each Factsheet window presents a factsheet document.  A window
+has a collection of views with one view for each topic in the factsheet.
+A window presents one topic view at a time.  A topic view has a
+collection of views with one view for each fact in the topic.  A topic
+view presents one fact view at a time.  A user may open more than one
+window for a factsheet to see multiple topics and facts simultaneously.
+
+Similarly, the model decomposes into factsheet, topic, and fact
+components.  A factsheet model contains a hierarchy of topics.  Each
+topic contains a hierarchy of facts.   Factsheet, topic, and fact
+controls mediate between each model component and the corresponding user
+interface component.

@@ -5,6 +5,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.view import ui as UI
 
@@ -85,3 +86,17 @@ def patch_class_view_infoid(args_infoid_stock):
         def title(self): return self._title.get_text()
 
     return PatchViewInfoId
+
+
+@pytest.fixture
+def patch_class_view_topic(patch_class_view_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfaceViewTopic`.
+    """
+    class PatchViewTopic(ABC_TOPIC.InterfaceViewTopic):
+        def __init__(self):
+            self._infoid = patch_class_view_infoid()
+
+        def get_infoid(self): return self._infoid
+
+    return PatchViewTopic

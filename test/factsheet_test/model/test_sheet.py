@@ -217,7 +217,7 @@ class TestSheet:
         page = patch_class_page_sheet()
         target.attach_page(page)
         # Test
-        target._detach_page_views(page)
+        target._detach_attribute_views(page)
         assert patch_infoid.called
 
     def test_detach_page_warn(

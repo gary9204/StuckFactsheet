@@ -2,8 +2,9 @@
 Defines factsheet-level model.
 
 :doc:`../guide/devel_notes` explains how application Factsheet is based
-on a Model-View-Controller (MVC) design.  Module ``sheet`` defines
-classes representing model components for a factsheet as a whole.
+on a Model-View-Controller (MVC) design.  The design is partitioned into
+factsheet, topic, and fact layers.  Module ``sheet`` defines
+class representing the model of a factsheet.
 """
 import logging
 import typing   # noqa
@@ -23,6 +24,8 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
     identification information (see :class:`.InfoId`.) Each topic
     represents a collection of facts about a specific subject.
 
+    :param p_name: name of factsheet.
+    :param p_summary: summary of factsheet.
     :param p_title: title of factsheet.
 
     .. attribute:: ASPECT
@@ -63,7 +66,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct factsheet model from state pickle loads.
 
-        Reconstructed attribute is marked fresh and has views.
+        Reconstructed attribute is marked fresh and has no views.
 
         :param px_state: unpickled state of stored factsheet model.
         """
@@ -97,7 +100,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """Detach all pages from sheet."""
         while self._pages:
             _id_page, page = self._pages.popitem()
-            self._detach_page_views(page)
+            self._detach_attribute_views(page)
             page.close_page()
 
     def detach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
@@ -105,7 +108,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
 
         Log warning when requested page is not attached.
 
-        :param px_observer: page to remove.
+        :param px_view: page to remove.
         """
         id_page = id(pm_page)
         try:
@@ -117,13 +120,14 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
                     self.__class__.__name__, self.detach_page.__name__))
             return
 
-        self._detach_page_views(pm_page)
+        self._detach_attribute_views(pm_page)
 
-    def _detach_page_views(
+    def _detach_attribute_views(
             self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-        """For each sheet component, remove the view for the component.
+        """For each sheet attribute with a distinct view, remove the
+        view for the attribute.
 
-        :param pm_page: page with views to remove.
+        :param pm_page: page for factsheet as a whole.
         """
         self._infoid.detach_view(pm_page.get_infoid())
 
