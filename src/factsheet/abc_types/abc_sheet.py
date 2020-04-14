@@ -1,9 +1,6 @@
 """
 Defines abstract interfaces for factsheet documents.
 
-Module ``abc_infoid`` defines abstract text attribute
-classes for :class:`.InfoId` and :class:`.ViewInfoId`.
-
 :doc:`../guide/devel_notes` describes the use of abstract classes break
 ``import`` cycles and to encapsulate dependencies of
 :mod:`~factsheet.model` on a user interface widget toolkit.  Module
@@ -51,8 +48,8 @@ class InterfaceControlSheet(abc.ABC):
 
 
 class InterfacePageSheet(abc.ABC):
-    """Defines interface for :class:`.model.Sheet` to signal
-    :class:`.view.PageSheet`.
+    """Defines interface for :class:`~.model.sheet.Sheet` model to
+    signal :class:`~.view.page_sheet.PageSheet`.
     """
 
     @abc.abstractmethod
