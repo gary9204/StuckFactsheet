@@ -83,8 +83,24 @@
       </packing>
     </child>
   </object>
+  <object class="GtkImage" id="image_new">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-new</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="image_save_as">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-save-as</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkTextBuffer" id="stub_buffer_summary">
+    <property name="text" translatable="yes">Oops! Summary is missing!</property>
+  </object>
   <object class="GtkPopoverMenu" id="context_menu_sheet">
     <property name="can_focus">False</property>
+    <property name="relative_to">open_menu_sheet</property>
     <child>
       <object class="GtkBox" id="submenu_display">
         <property name="visible">True</property>
@@ -487,6 +503,7 @@
   </object>
   <object class="GtkPopoverMenu" id="context_menu_topics">
     <property name="can_focus">False</property>
+    <property name="relative_to">open_menu_topics</property>
     <child>
       <object class="GtkBox" id="menu_topics">
         <property name="visible">True</property>
@@ -576,20 +593,55 @@
       </packing>
     </child>
   </object>
-  <object class="GtkImage" id="image_new">
-    <property name="visible">True</property>
+  <object class="GtkPopover" id="ui_context_name">
     <property name="can_focus">False</property>
-    <property name="icon_name">document-new</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkImage" id="image_save_as">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">document-save-as</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkTextBuffer" id="stub_buffer_summary">
-    <property name="text" translatable="yes">Oops! Summary is missing!</property>
+    <property name="relative_to">button_show_name</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">&lt;b&gt;Edit Name&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="ui_name_infoid">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="ui_name_reset">
+            <property name="label" translatable="yes">Reset</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="action_name">win.reset-name</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkApplicationWindow" id="ui_sheet">
     <property name="can_focus">False</property>
@@ -771,7 +823,7 @@
               <object class="GtkEntry" id="ui_title_infoid">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="placeholder_text" translatable="yes">Enter fact sheet title here</property>
+                <property name="placeholder_text" translatable="yes">Enter factsheet title here</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -780,7 +832,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkMenuButton" id="open_sheet_menu">
+              <object class="GtkMenuButton" id="open_menu_sheet">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -954,7 +1006,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkMenuButton">
+                              <object class="GtkMenuButton" id="open_menu_topics">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -1081,56 +1133,6 @@
             <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkPopover" id="ui_context_name">
-    <property name="can_focus">False</property>
-    <property name="relative_to">button_show_name</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">&lt;b&gt;Edit Name&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="ui_name_infoid">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="ui_name_reset">
-            <property name="label" translatable="yes">Reset</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="action_name">win.reset-name</property>
-            <property name="always_show_image">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
           </packing>
         </child>
       </object>
