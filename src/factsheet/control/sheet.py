@@ -26,6 +26,8 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
     Class ``Sheet`` translates user requests in a factsheet page
     into changes in the factsheet model (such as save or delete) or in
     the collection of factsheet views (such as add or close a view).
+
+    :param pm_sheets_active: collection of open factsheet documents.
     """
 
     def __init__(self, pm_sheets_active: CPOOL.PoolSheets) -> None:
@@ -35,7 +37,10 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         self._sheets_active.add(self)
 
     def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-        """Add page to model."""
+        """Add page to model.
+
+        :param pm_page: page to add.
+        """
         assert self._model is not None
         self._model.attach_page(pm_page)
         self.new_name()
@@ -47,7 +52,10 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         self._sheets_active.remove(self)
 
     def delete_safe(self) -> ABC_SHEET.EffectSafe:
-        """Delete factsheet provided no changes will be lost."""
+        """Delete factsheet provided no changes will be lost.
+
+        :returns: Whether delete request completed.
+        """
         assert self._model is not None
         if self._model.is_stale():
             return ABC_SHEET.EffectSafe.NO_EFFECT
@@ -56,14 +64,21 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         return ABC_SHEET.EffectSafe.COMPLETED
 
     def detach_page_force(self, pm_page) -> None:
-        """Remove page unconditionally."""
+        """Remove page unconditionally.
+
+        :param pm_page: page to remove.
+        """
         assert self._model is not None
         self._model.detach_page(pm_page)
         if 0 == self._model.n_pages():
             self._sheets_active.remove(self)
 
     def detach_page_safe(self, pm_page) -> ABC_SHEET.EffectSafe:
-        """Remove page provided no changes will be lost."""
+        """Remove page provided no changes will be lost.
+
+        :param pm_page: page to remove.
+        :returns: Whether remove request completed.
+        """
         assert self._model is not None
         if self._model.is_fresh():
             self.detach_page_force(pm_page)
@@ -77,7 +92,11 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
 
     @classmethod
     def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'Sheet':
-        """Create control with default model."""
+        """Create and return control with default model.
+
+        :param pm_sheets_active: collection of open factsheet documents.
+        :returns: Newly created control.
+        """
         control = Sheet(pm_sheets_active)
         control._model = MSHEET.Sheet()
         return control
@@ -94,7 +113,12 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
     @classmethod
     def open(cls, pm_sheet_active: CPOOL.PoolSheets, p_path: Path
              ) -> 'Sheet':
-        """Create control with model from file."""
+        """Create and return control with model from file.
+
+        :param pm_sheets_active: collection of open factsheet documents.
+        :param p_path: location of file containing factsheet model.
+        :returns: Newly created control.
+        """
         control = Sheet(pm_sheet_active)
         try:
             with p_path.open(mode='rb') as io_in:
@@ -116,6 +140,10 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
 
         Backup provides (minimal) guard against inadvertent overwrite.
         Backup and open are combined to minimize risk of race condition.
+
+        :raises OSError: When control cannot open file at control's
+           path.
+        :returns: Open file object at control's path.
         """
         assert self._path is not None
         try:
@@ -145,6 +173,8 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         """Save factsheet contents to file.
 
         Log a warning when control has no file path.
+
+        :raises OSError: when control cannot open file at path.
         """
         assert self._model is not None
         if self._path is None:
@@ -160,6 +190,7 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         """Save factsheet contents to file at given path.
 
         :param path: file system path to file.
+        :raises OSError: when control cannot open file at path.
         """
         self._path = p_path
         subtitle_base = self._path.name
