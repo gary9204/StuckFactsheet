@@ -159,9 +159,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         return self._infoid
 
     @classmethod
-    def link_factsheet(cls, pm_page, pm_control) -> None:
+    def link_factsheet(cls, pm_page: 'PageSheet',
+                       pm_control: CSHEET.Sheet) -> None:
         """Initialize links between new page and new control for a
         factsheet.
+
+        :param pm_page: new factsheet page.
+        :param pm_control: new factsheet control.
         """
         pm_control.attach_page(pm_page)
         pm_page._control = pm_control
@@ -173,6 +177,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         This helper method works around limitations in Glade.
 
         :param p_action: dialog box action (Open or Save).
+        :returns: File chooser dialog.
         """
         dialog = Gtk.FileChooserDialog(action=p_action)
         dialog.set_transient_for(self._window)
@@ -204,10 +209,11 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     @classmethod
     def new_factsheet(cls, px_app: Gtk.Application,
                       pm_sheets_active: CPOOL.PoolSheets) -> 'PageSheet':
-        """Create factsheet with default contents.
+        """Create factsheet with default contents and return window for it.
 
         :param px_app: application to which the factsheet belongs.
         :param pm_sheets_active: collection of active factsheets.
+        :returns: Window for new factsheet.
         """
         page = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.new(pm_sheets_active)

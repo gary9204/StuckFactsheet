@@ -35,7 +35,7 @@ class TestTopic:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_get_set_state(self, tmp_path, patch_class_view_topic):
+    def test_get_set_state(self, tmp_path, patch_class_pane_topic):
         """Confirm conversion to and from pickle format."""
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
@@ -45,7 +45,7 @@ class TestTopic:
         source._stale = True
 
         N_VIEWS = 3
-        views = [patch_class_view_topic() for _ in range(N_VIEWS)]
+        views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
         for view in views:
             source.attach_view(view)
         # Test
@@ -91,7 +91,7 @@ class TestTopic:
         assert SUMMARY_DEFAULT == target._infoid.summary
         assert TITLE_DEFAULT == target._infoid.title
 
-    def test_attach_view(self, patch_class_view_topic):
+    def test_attach_view(self, patch_class_pane_topic):
         """Confirm view addition.
         Case: view not attached initially
         """
@@ -100,7 +100,7 @@ class TestTopic:
         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
-        views = [patch_class_view_topic() for _ in range(N_VIEWS)]
+        views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
         assert views[0].get_infoid().title != target._infoid.title
         # Test
         for view in views:
@@ -110,7 +110,7 @@ class TestTopic:
         assert len(views) == len(target._views)
 
     def test_attach_view_warn(
-            self, patch_class_view_topic, PatchLogger, monkeypatch):
+            self, patch_class_pane_topic, PatchLogger, monkeypatch):
         """Confirm view addition.
         Case: view attached initially
         """
@@ -119,7 +119,7 @@ class TestTopic:
         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
-        views = [patch_class_view_topic() for _ in range(N_VIEWS)]
+        views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
         assert views[0].get_infoid().title != target._infoid.title
         for view in views:
             target.attach_view(view)
@@ -141,7 +141,7 @@ class TestTopic:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_detach_all(self, monkeypatch, patch_class_view_topic):
+    def test_detach_all(self, monkeypatch, patch_class_pane_topic):
         """Confirm removals."""
         # Setup
         class PatchInfoIdModel:
@@ -157,7 +157,7 @@ class TestTopic:
         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
-        views = [patch_class_view_topic() for _ in range(N_VIEWS)]
+        views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
         for view in views:
             target.attach_view(view)
         assert N_VIEWS == len(target._views)
@@ -166,7 +166,7 @@ class TestTopic:
         assert not target._views
         assert N_VIEWS == patch_detach.n_calls
 
-    def test_detach_view(self, monkeypatch, patch_class_view_topic):
+    def test_detach_view(self, monkeypatch, patch_class_pane_topic):
         """Confirm view removal.
         Case: view attached initially
         """
@@ -184,7 +184,7 @@ class TestTopic:
         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
-        views = [patch_class_view_topic() for _ in range(N_VIEWS)]
+        views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
         for view in views:
             target.attach_view(view)
         N_REMOVE = 1
@@ -198,7 +198,7 @@ class TestTopic:
             assert target._views[id(view)] is view
 
     def test_detach_attribute_views(
-            self, monkeypatch, patch_class_view_topic):
+            self, monkeypatch, patch_class_pane_topic):
         """Confirm removal of attribute views."""
         # Setup
         class PatchInfoIdModel:
@@ -213,14 +213,14 @@ class TestTopic:
         TITLE_MODEL = 'Something completely different.'
         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
-        view = patch_class_view_topic()
+        view = patch_class_pane_topic()
         target.attach_view(view)
         # Test
         target._detach_attribute_views(view)
         assert patch_infoid.called
 
     def test_detach_view_warn(
-            self, patch_class_view_topic, PatchLogger, monkeypatch):
+            self, patch_class_pane_topic, PatchLogger, monkeypatch):
         """Confirm view removal.
         Case: view not attached initially
         """
@@ -229,7 +229,7 @@ class TestTopic:
         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
-        views = [patch_class_view_topic() for _ in range(N_VIEWS)]
+        views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
         assert views[0].get_infoid().title != target._infoid.title
         for view in views:
             target.attach_view(view)

@@ -26,7 +26,7 @@ class Topic:
     def __init__(self) -> None:
         self._model: typing.Optional[MTOPIC.Topic] = None
 
-    def attach_view(self, pm_view: ABC_TOPIC.InterfaceViewTopic) -> None:
+    def attach_view(self, pm_view: ABC_TOPIC.InterfacePaneTopic) -> None:
         """Add view to model.
 
         :param pm_view: view to add.
@@ -34,7 +34,7 @@ class Topic:
         assert self._model is not None
         self._model.attach_view(pm_view)
 
-    def detach_view(self, px_view: ABC_TOPIC.InterfaceViewTopic) -> None:
+    def detach_view(self, px_view: ABC_TOPIC.InterfacePaneTopic) -> None:
         """Remove view from model.
 
         :param px_view: view to remove.

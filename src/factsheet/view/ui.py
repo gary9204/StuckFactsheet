@@ -72,6 +72,18 @@ del builder_guide_sheet
 del get_object_guide_sheet
 
 
+# Topic-level guidance dialogs
+NAME_FILE_GUIDE_TOPIC_UI = str(DIR_UI / 'guide_topic.ui')
+builder_guide_topic = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_TOPIC_UI)
+get_object_guide_topic = builder_guide_topic.get_object
+
+HELP_TOPIC = get_object_guide_topic('ui_help_topic')
+HELP_TOPIC_DISPLAY = get_object_guide_topic('ui_help_topic_display')
+
+del builder_guide_topic
+del get_object_guide_topic
+
+
 def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,
                       px_handler: typing.Callable) -> None:
     """Construct action, add to group, and connect to
