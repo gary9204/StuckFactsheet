@@ -13,4 +13,3 @@ Submodules
 
    factsheet.model.infoid
    factsheet.model.sheet
-   factsheet.model.topic

@@ -1,3 +1,3 @@
 """
-Defines topics and facts for Factsheet content.
+Defines topic templates and fact forms for Factsheet content.
 """

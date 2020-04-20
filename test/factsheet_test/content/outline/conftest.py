@@ -1,5 +1,5 @@
 """
-Test fixtures for :mod:`~.factsheet_test.content.outline` unit tests.
+Test fixtures for :mod:`~.factsheet_test.model` unit tests.
 """
 import pytest   # type: ignore[import]
 
@@ -23,30 +23,30 @@ def args_infoid_stock():
         )
 
 
-@pytest.fixture
-def patch_class_page_sheet(patch_class_view_infoid):
-    """Pytest fixture returns stub class implementing
-    :class:`.InterfacePageSheet`.
-    """
-    class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
-        def __init__(self):
-            self._infoid = patch_class_view_infoid()
-            self.called_close = False
-            self.called_present = False
-            self.called_set_titles = False
-            self.subtitle = None
-
-        def close_page(self): self.called_close = True
-
-        def get_infoid(self): return self._infoid
-
-        def present(self, _time): self.called_present = True
-
-        def set_titles(self, p_subtitle):
-            self.called_set_titles = True
-            self.subtitle = p_subtitle
-
-    return PatchPageSheet
+# @pytest.fixture
+# def patch_class_page_sheet(patch_class_view_infoid):
+#     """Pytest fixture returns stub class implementing
+#     :class:`.InterfacePageSheet`.
+#     """
+#     class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
+#         def __init__(self):
+#             self._infoid = patch_class_view_infoid()
+#             self.called_close = False
+#             self.called_present = False
+#             self.called_set_titles = False
+#             self.subtitle = None
+# 
+#         def close_page(self): self.called_close = True
+# 
+#         def get_infoid(self): return self._infoid
+# 
+#         def present(self, _time): self.called_present = True
+# 
+#         def set_titles(self, p_subtitle):
+#             self.called_set_titles = True
+#             self.subtitle = p_subtitle
+# 
+#     return PatchPageSheet
 
 
 @pytest.fixture
@@ -88,15 +88,15 @@ def patch_class_view_infoid(args_infoid_stock):
     return PatchViewInfoId
 
 
-# @pytest.fixture
-# def patch_class_pane_topic(patch_class_view_infoid):
-#     """Pytest fixture returns stub class implementing
-#     :class:`.InterfacePaneTopic`.
-#     """
-#     class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
-#         def __init__(self):
-#             self._infoid = patch_class_view_infoid()
-# 
-#         def get_infoid(self): return self._infoid
-# 
-#     return PatchPaneTopic
+@pytest.fixture
+def patch_class_pane_topic(patch_class_view_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfacePaneTopic`.
+    """
+    class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
+        def __init__(self):
+            self._infoid = patch_class_view_infoid()
+
+        def get_infoid(self): return self._infoid
+
+    return PatchPaneTopic

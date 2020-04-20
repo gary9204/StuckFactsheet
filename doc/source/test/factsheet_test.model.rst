@@ -14,4 +14,3 @@ Submodules
    factsheet_test.model.conftest
    factsheet_test.model.test_infoid
    factsheet_test.model.test_sheet
-   factsheet_test.model.test_topic

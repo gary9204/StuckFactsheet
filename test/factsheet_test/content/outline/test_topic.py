@@ -8,7 +8,7 @@ from pathlib import Path
 import pickle
 
 from factsheet.model import infoid as MINFOID
-from factsheet.model import topic as MTOPIC
+from factsheet.content.outline import topic as XTOPIC
 
 
 class TestTopic:
@@ -23,15 +23,15 @@ class TestTopic:
         """
         # Setup
         TITLE_SOURCE = 'The Parrot Sketch'
-        source = MTOPIC.Topic(p_title=TITLE_SOURCE)
+        source = XTOPIC.Topic(p_title=TITLE_SOURCE)
         # Test: type difference
         assert not source.__eq__(TITLE_SOURCE)
         # Test: InfoId difference
         TITLE_TARGET = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_TARGET)
+        target = XTOPIC.Topic(p_title=TITLE_TARGET)
         assert not source.__eq__(target)
         # Test: Equivalence
-        target = MTOPIC.Topic(p_title=TITLE_SOURCE)
+        target = XTOPIC.Topic(p_title=TITLE_SOURCE)
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
@@ -41,7 +41,7 @@ class TestTopic:
         path = Path(str(tmp_path / 'get_set.fsg'))
 
         TITLE_MODEL = 'Something completely different.'
-        source = MTOPIC.Topic(p_title=TITLE_MODEL)
+        source = XTOPIC.Topic(p_title=TITLE_MODEL)
         source._stale = True
 
         N_VIEWS = 3
@@ -63,12 +63,12 @@ class TestTopic:
     def test_init(self, args_infoid_stock):
         """Confirm initialization."""
         # Setup
-        ASPECT = MTOPIC.Topic.ASPECT
+        ASPECT = XTOPIC.Topic.ASPECT
         NAME = args_infoid_stock['p_name']
         SUMMARY = args_infoid_stock['p_summary']
         TITLE = args_infoid_stock['p_title']
         # Test
-        target = MTOPIC.Topic(
+        target = XTOPIC.Topic(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         assert not target._stale
         assert isinstance(target._views, dict)
@@ -86,7 +86,7 @@ class TestTopic:
         SUMMARY_DEFAULT = ''
         TITLE_DEFAULT = ''
         # Test
-        target = MTOPIC.Topic()
+        target = XTOPIC.Topic()
         assert NAME_DEFAULT == target._infoid.name
         assert SUMMARY_DEFAULT == target._infoid.summary
         assert TITLE_DEFAULT == target._infoid.title
@@ -97,7 +97,7 @@ class TestTopic:
         """
         # Setup
         TITLE_MODEL = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        target = XTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
@@ -116,7 +116,7 @@ class TestTopic:
         """
         # Setup
         TITLE_MODEL = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        target = XTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
@@ -154,7 +154,7 @@ class TestTopic:
             MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
 
         TITLE_MODEL = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        target = XTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
@@ -181,7 +181,7 @@ class TestTopic:
             MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
 
         TITLE_MODEL = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        target = XTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
@@ -211,7 +211,7 @@ class TestTopic:
             MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
 
         TITLE_MODEL = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        target = XTOPIC.Topic(p_title=TITLE_MODEL)
 
         view = patch_class_pane_topic()
         target.attach_view(view)
@@ -226,7 +226,7 @@ class TestTopic:
         """
         # Setup
         TITLE_MODEL = 'Something completely different.'
-        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        target = XTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [patch_class_pane_topic() for _ in range(N_VIEWS)]
@@ -260,7 +260,7 @@ class TestTopic:
         """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = MTOPIC.Topic(p_title=TEXT_TITLE)
+        target = XTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: InfoId stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -287,7 +287,7 @@ class TestTopic:
         """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = MTOPIC.Topic(p_title=TEXT_TITLE)
+        target = XTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: Topic stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -314,7 +314,7 @@ class TestTopic:
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = MTOPIC.Topic(p_title=TEXT_TITLE)
+        target = XTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: Topic fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
@@ -350,7 +350,7 @@ class TestTopic:
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = MTOPIC.Topic(p_title=TEXT_TITLE)
+        target = XTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: Topic fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()

@@ -2,12 +2,12 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkTextBuffer" id="gl_section_description">
+  <object class="GtkEntryBuffer" id="ui_name_section"/>
+  <object class="GtkTextBuffer" id="ui_summary_section">
     <property name="text" translatable="yes">This section is user-defined.</property>
   </object>
-  <object class="GtkEntryBuffer" id="gl_section_name"/>
-  <object class="GtkEntryBuffer" id="gl_section_title"/>
-  <object class="GtkAssistant" id="ui_assist_section">
+  <object class="GtkEntryBuffer" id="ui_title_section"/>
+  <object class="GtkAssistant" id="ui_assistant_section">
     <property name="can_focus">False</property>
     <property name="window_position">mouse</property>
     <property name="default_width">350</property>
@@ -327,7 +327,7 @@
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Enter short identifier, which will be used for labels, tabs, etc.</property>
                 <property name="halign">start</property>
-                <property name="buffer">gl_section_name</property>
+                <property name="buffer">ui_name_section</property>
                 <property name="width_chars">20</property>
                 <property name="placeholder_text" translatable="yes">Enter section name</property>
               </object>
@@ -341,7 +341,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Enter a brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">gl_section_title</property>
+                <property name="buffer">ui_title_section</property>
                 <property name="width_chars">50</property>
                 <property name="placeholder_text" translatable="yes">Enter section title</property>
               </object>
@@ -387,7 +387,7 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">gl_section_description</property>
+                <property name="buffer">ui_summary_section</property>
               </object>
             </child>
           </object>
@@ -470,7 +470,7 @@
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Short identifier, which will be used for labels, tabs, etc.</property>
                 <property name="halign">start</property>
-                <property name="buffer">gl_section_name</property>
+                <property name="buffer">ui_name_section</property>
                 <property name="editable">False</property>
                 <property name="has_frame">False</property>
                 <property name="width_chars">20</property>
@@ -486,7 +486,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">gl_section_title</property>
+                <property name="buffer">ui_title_section</property>
                 <property name="editable">False</property>
                 <property name="has_frame">False</property>
                 <property name="width_chars">50</property>
@@ -533,7 +533,7 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">gl_section_description</property>
+                <property name="buffer">ui_summary_section</property>
               </object>
             </child>
           </object>

@@ -6,7 +6,7 @@ See :mod:`.pane_topic`.
 import pytest   # type: ignore[import]
 
 from factsheet.control import topic as CTOPIC
-from factsheet.model import topic as MTOPIC
+from factsheet.content.outline import topic as MTOPIC
 from factsheet.view import pane_topic as VTOPIC
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID

@@ -11,7 +11,7 @@ import logging
 import typing   # noqa
 
 from factsheet.abc_types import abc_topic as ABC_TOPIC
-from factsheet.model import topic as MTOPIC
+from factsheet.content.outline import topic as MTOPIC
 
 logger = logging.getLogger('Main.CSHEET')
 

@@ -5,7 +5,7 @@ Unit tests for class that mediates topic-level interactions from
 See :mod:`~.control.topic`.
 """
 from factsheet.control import topic as CTOPIC
-from factsheet.model import topic as MTOPIC
+from factsheet.content.outline import topic as MTOPIC
 
 
 class TestTopic:
