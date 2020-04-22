@@ -6,11 +6,11 @@ encapsulate dependencies of :mod:`~factsheet.model` on a user interface
 widget toolkit.  Module ``abc_factory`` defines abstract factories for
 component classes of :class:`.InfoId`.
 """
-
-
 import abc
+import typing
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.abc_types import abc_outline as ABC_OUTLINE
 
 
 class FactoryInfoId(abc.ABC):
@@ -54,5 +54,28 @@ class FactoryInfoId(abc.ABC):
     @abc.abstractmethod
     def new_view_title(self) -> ABC_INFOID.AbstractTextView:
         """Return new instance of title for :class:`.ViewInfoId`.
+        """
+        raise NotImplementedError
+
+
+AbstractViewOutline = typing.TypeVar('AbstractViewOutline')
+
+
+class FactorySheet(abc.ABC, typing.Generic[AbstractViewOutline]):
+    """Defines abstract factory to produce factsheet components for
+    :class:`~.model.Sheet` and :class:`~.PageSheet`.
+    """
+
+    @abc.abstractmethod
+    def new_model_outline_templates(self) -> ABC_OUTLINE.AbstractOutline:
+        """TBD Return new instance of topic outline class for
+        :class:`~.model.Sheet`.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def new_view_outline_templates(self) -> AbstractViewOutline:
+        """TBD Return new instance of topic outline class for
+        :class:`~.model.Sheet`.
         """
         raise NotImplementedError

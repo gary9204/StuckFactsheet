@@ -48,3 +48,34 @@ class TestFactoryInfoId:
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)
             method()
+
+
+class TestFactorySheet:
+    """Unit tests for abstract factory :class:`~.abc_factory.FactorySheet`."""
+
+    def test_abstract_class(self):
+        """Confirm the factory class is abstract."""
+        # Setup
+        # Test
+        with pytest.raises(TypeError):
+            _ = ABC_FACTORY.FactorySheet()
+
+    @pytest.mark.parametrize('name_method', [
+        'new_model_outline_templates',
+        'new_view_outline_templates',
+        ])
+    def test_must_override(self, name_method):
+        """Confirm each method must be overridden."""
+        # Setup
+        class PatchFactory(ABC_FACTORY.FactorySheet):
+            def new_model_outline_templates(self):
+                super().new_model_outline_templates()
+
+            def new_view_outline_templates(self):
+                super().new_view_outline_templates()
+
+        target = PatchFactory()
+        # Test
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, name_method)
+            method()

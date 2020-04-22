@@ -7,6 +7,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
+from factsheet.adapt_gtk import adapt_sheet as ASHEET
 
 
 class TestFactoryInfoId:
@@ -45,3 +46,22 @@ class TestFactoryInfoId:
         # Test
         attr_view = target()
         assert isinstance(attr_view, class_attr)
+
+
+class TestFactorySheet:
+    """Unit tests for :class:`~.adapt_factory.FactoryInfoId`."""
+
+    @pytest.mark.parametrize('name_method, class_attr', [
+        ('new_model_outline_templates', ASHEET.AdaptTreeStoreTemplate),
+        ('new_view_outline_templates', ASHEET.AdaptTreeViewTemplate),
+        ])
+    def test_new_attr_model(self, name_method, class_attr):
+        """Confirm factory produces instance of each
+        :mod:`~factsheet.model` attribute.
+        """
+        # Setup
+        factory = AFACTORY.FactorySheet()
+        target = getattr(factory, name_method)
+        # Test
+        attr_model = target()
+        assert isinstance(attr_model, class_attr)

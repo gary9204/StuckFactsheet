@@ -18,6 +18,48 @@ import typing
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 
 
+AbstractTopic = typing.TypeVar('AbstractTopic')
+
+
+class AbstractTemplate(abc.ABC):
+    """Template to create a section in a factsheet topic outline.
+
+    .. warning:: **Update needed**
+
+        Class ``Section`` is a stub sufficient for a section topic of a
+        topic outline.  The class may serve as an example for template
+        classes as development proceeds.
+
+        The class provides a call interface that returns topic based on
+        user's input or None when user cancels. The call takes no arguments.
+        Instead, the call presents an assistant to query the user for values
+        that define the new topic.
+    """
+
+    @abc.abstractmethod
+    def __call__(self) -> typing.Optional[AbstractTopic]:
+        """Return topic based on user's input or None when user cancels."""
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """Return template name. """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def summary(self) -> str:
+        """Return template summary. """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def title(self) -> str:
+        """Return template title. """
+        raise NotImplementedError
+
+
 class EffectSafe(enum.Enum):
     """Constants to identify the effect of a call to a safe method (such
     as :meth:`.Sheet.detach_page_safe` and :meth:`.Sheet.delete_safe`).
@@ -32,6 +74,7 @@ class InterfaceControlSheet(abc.ABC):
     """Defines interface class to break import cycle between control
     :class:`~.control.sheet.Sheet` and view :class:`.PoolSheets`.
     """
+
     @property
     @abc.abstractmethod
     def path(self) -> typing.Optional[Path]:

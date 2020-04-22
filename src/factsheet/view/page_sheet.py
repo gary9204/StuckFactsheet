@@ -6,6 +6,8 @@ from pathlib import Path
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.content.outline import topic as XTOPIC
+from factsheet.content.outline import template as XSECTION
 from factsheet.control import sheet as CSHEET
 from factsheet.control import pool as CPOOL
 from factsheet.view import view_infoid as VINFOID
@@ -110,6 +112,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         UI.new_action_active_dialog(
             self._window, 'show-help-sheet-file',
             self.on_show_dialog, UI.HELP_SHEET_FILE)
+
+        # Topics Outline Toolbar
+        UI.new_action_active(
+            self._window, 'new-topic', self.on_new_topic)
 
     def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
         """Construct Data Loss Warning dialog.
@@ -291,6 +297,32 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         app = self._window.get_application()
         sheets_active = self._control.sheets_active
         _page = PageSheet.new_factsheet(app, sheets_active)
+
+    def on_new_topic(self, _action: Gio.SimpleAction,
+                     _target: GLib.Variant) -> None:
+        """TBD"""
+        print('New Topic')
+        model = UI.FACTORY_SHEET.new_model_outline_templates()
+        path_assist = str(Path(XSECTION.__file__).parent / 'assistant.ui')
+        N_ITEMS = 3
+        index = None
+        for i in range(N_ITEMS):
+            item = XSECTION.Section(
+                p_path_assist=path_assist,
+                p_name='Item {}'.format(i),
+                p_model=XTOPIC.Topic,
+                p_summary='No summary',
+                p_title='This is item {}.'.format(i))
+            index = model.insert_before(item, index)
+        view = UI.FACTORY_SHEET.new_view_outline_templates()
+        view.set_model(model)
+        view._view.show()
+        dialog = Gtk.Dialog(use_header_bar=True)
+        box = dialog.get_content_area()
+        box.pack_start(view._view, True, True, 0)
+        dialog.add_button('Close', Gtk.ResponseType.CLOSE)
+        _ = dialog.run()
+        dialog.destroy()
 
     def on_open_page(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

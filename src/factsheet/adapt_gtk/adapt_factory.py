@@ -4,6 +4,7 @@ Defines GTK-based classes that implement abstract factories in
 """
 from factsheet.abc_types import abc_factory as ABC_FACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
+from factsheet.adapt_gtk import adapt_sheet as ASHEET
 
 
 class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
@@ -37,3 +38,16 @@ class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
     def new_view_title(self) -> AINFOID.AdaptEntry:
         """Return new instance of GTK-based :mod:`~factsheet.view` title.."""
         return AINFOID.AdaptEntry()
+
+
+class FactorySheet(ABC_FACTORY.FactorySheet[ASHEET.AdaptTreeViewTemplate]):
+    """Implements GTK-based factory for abstract factory
+    :class:`.abc_factory.FactorySheet`."""
+
+    def new_model_outline_templates(self) -> ASHEET.AdaptTreeStoreTemplate:
+        """Return new instance of Gtk-based :mod:`TBD`."""
+        return ASHEET.AdaptTreeStoreTemplate()
+
+    def new_view_outline_templates(self) -> ASHEET.AdaptTreeViewTemplate:
+        """Return new instance of Gtk-based :mod:`TBD`."""
+        return ASHEET.AdaptTreeViewTemplate()

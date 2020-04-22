@@ -6,6 +6,41 @@ import pytest   # type: ignore[import]
 import factsheet.abc_types.abc_sheet as ABC_SHEET
 
 
+class TestAbstractTemplate:
+    """Unit tests for interface :class:`.AbstractTemplate`."""
+
+    def test_abstract_class(self):
+        """Confirm the interface class is abstract."""
+        # Setup
+        # Test
+        with pytest.raises(TypeError):
+            _ = ABC_SHEET.AbstractTemplate()
+
+    @pytest.mark.parametrize('name_method', [
+        '__call__',
+        'name',
+        'summary',
+        'title',
+        ])
+    def test_must_override(self, name_method):
+        """Confirm each method must be overridden."""
+        # Setup
+        class PatchPageSheet(ABC_SHEET.AbstractTemplate):
+            def __call__(self): return super().__call__()
+
+            def name(self): super().name
+
+            def summary(self): super().summary
+
+            def title(self): super().title
+
+        target = PatchPageSheet()
+        # Test
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, name_method)
+            method()
+
+
 class TestEffectSafe:
     """Unit tests for members of enumeration :class:`EffectSafe`."""
 
