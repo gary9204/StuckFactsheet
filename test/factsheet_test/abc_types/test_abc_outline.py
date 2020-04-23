@@ -1,5 +1,5 @@
 """
-Unit tests for abstract classes for content outlines. See
+Unit tests for abstract classes for outlines. See
 :mod:`.abc_outline`.
 """
 import pytest   # type: ignore[import]
@@ -8,21 +8,21 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 
 
 class TestAbstractTypes:
-    """Unit tests for supporting abstract types."""
+    """Unit tests for supporting, generic types."""
 
     def test_types(self):
         """Confirm supporting types defined."""
         # Setup
         # Test
-        assert ABC_OUTLINE.AbstractIndex is not None
-        assert ABC_OUTLINE.AbstractItem is not None
+        assert ABC_OUTLINE.GenericIndex is not None
+        assert ABC_OUTLINE.GenericItem is not None
 
 
 class TestAbstractOutline:
     """Unit tests for :class:`.AbstractOutline`."""
 
     def test_abstract_class(self):
-        """Confirm the class is abstract."""
+        """Confirm class is abstract."""
         # Setup
         class ClassOutline(ABC_OUTLINE.AbstractOutline[int, int]):
             pass
@@ -32,24 +32,37 @@ class TestAbstractOutline:
             _ = ClassOutline()
 
     @pytest.mark.parametrize('name_method', [
+        '__eq__',
+        '__ne__',
+        'copy_section',
+        'extract_section',
+        'find_next',
         'get_item',
+        'indices',
+        'insert_after',
         'insert_before',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchAbstractOutline(ABC_OUTLINE.AbstractOutline[int, int]):
-            # def attach_view(self, _v): pass
+            def __eq__(self): return super().__eq__(0)  # type: ignore[misc]
 
-            # def detach_view(self, _v): pass
+            def __ne__(self): return super().__ne__(0)  # type: ignore[misc]
 
-            # def extract(self): super().get_infoid()
+            def copy_section(self): super().copy_section(None, 0, 0)
 
-            # def insert_after(self): super().get_infoid()
+            def extract_section(self): super().extract_section(0)
 
-            def get_item(self): _ = super().get_item(0)
+            def find_next(self): return super().find_next(None)
 
-            def insert_before(self): _ = super().insert_before(0, 0)
+            def get_item(self): return super().get_item(0)
+
+            def indices(self): return super().indices(0)
+
+            def insert_after(self): return super().insert_after(0, 0)
+
+            def insert_before(self): return super().insert_before(0, 0)
 
         target = PatchAbstractOutline()
         # Test
@@ -62,7 +75,7 @@ class TestAbstractViewOutline:
     """Unit tests for :class:`.AbstractViewOutline`."""
 
     def test_abstract_class(self):
-        """Confirm the class is abstract."""
+        """Confirm class is abstract."""
         # Setup
         # Test
         with pytest.raises(TypeError):
