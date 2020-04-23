@@ -148,7 +148,29 @@ class AbstractOutline(abc.ABC, typing.Generic[GenericIndex, GenericItem]):
 
 
 class AbstractViewOutline(abc.ABC):
-    """Defines interfaces common to views of outlines."""
+    """Defines interfaces common to views of outlines.
+
+    A view of an outline may have one distinguished item.  The
+    distinguished item is called the selected item.  The view
+    presentation and the effects of user's actions may change depending
+    on which item is selected, or if no item is selected.
+    """
+
+    @abc.abstractmethod
+    def get_selected(self) -> typing.Optional[GenericIndex]:
+        """Return the index of the selected item or None when no item
+        selected.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def select(self, px_i: GenericIndex = None) -> None:
+        """Select the item at the given index.
+
+        :param px_i: index of new selection.  If None, then no item is
+            selected.
+        """
+        raise NotImplementedError
 
     @abc.abstractmethod
     def set_model(self, pm_model:

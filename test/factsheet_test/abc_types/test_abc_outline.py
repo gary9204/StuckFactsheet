@@ -82,13 +82,19 @@ class TestAbstractViewOutline:
             _ = ABC_OUTLINE.AbstractViewOutline()
 
     @pytest.mark.parametrize('name_method', [
+        'get_selected',
+        'select',
         'set_model',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchAbstractViewOutline(ABC_OUTLINE.AbstractViewOutline):
-            def set_model(self): _ = super().set_model(None)
+            def get_selected(self): return super().get_selected()
+
+            def select(self): return super().select(None)
+
+            def set_model(self): return super().set_model(None)
 
         target = PatchAbstractViewOutline()
         # Test
