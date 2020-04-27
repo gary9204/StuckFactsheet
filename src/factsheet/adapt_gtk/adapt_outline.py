@@ -282,9 +282,47 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
 class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[
         AdaptIndex, AdaptTreeStore]):
-    """TBD"""
+    """Implements abstract :class:`.AbstractViewOutline`.
 
-    def set_model(  # type: ignore[override]
-            self, pm_model: AdaptTreeStore) -> None:
-        """TBD"""
-        raise NotImplementedError
+    ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
+    for presentation, :class:`.AdaptTreeStore` for storage, and
+    `Gtk.TreeIter`_ for index.
+
+    .. _Gtk.TreeView:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
+        TreeView.html#Gtk.TreeView
+    """
+
+    def __init__(self):
+        self._view = Gtk.TreeView()
+        self._selection = self._view.get_selection()
+        self._selection.set_mode(Gtk.SelectionMode.BROWSE)
+
+    def get_selected(self) -> typing.Optional[AdaptIndex]:
+        """Return the index of the selected item or None when no item
+        selected.
+        """
+        _model, index = self._selection.get_selected()
+        return index
+
+    def select(self, px_i: AdaptIndex = None) -> None:
+        """Select the item at the given index.
+
+        :param px_i: index of new selection.  If None, then no item is
+            selected.
+        """
+        if px_i is None:
+            self._selection.unselect_all()
+        else:
+            self._selection.select_iter(px_i)
+
+    def set_model(self, pm_model: AdaptTreeStore) -> None:
+        """Associate given model with view.
+
+        :param pm_model: outline model for view.
+        """
+        self._view.set_model(pm_model.model)
+
+    def unselect_all(self) -> None:
+        """Clear selection so that no item is selected."""
+        self._selection.unselect_all()

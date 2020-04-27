@@ -197,3 +197,8 @@ class AbstractViewOutline(abc.ABC, typing.Generic[
         :param pm_model: new model for view.
         """
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def unselect_all(self) -> None:
+        """Clear selection so that no item is selected."""
+        raise NotImplementedError

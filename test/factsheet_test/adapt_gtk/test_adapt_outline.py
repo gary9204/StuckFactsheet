@@ -595,3 +595,109 @@ class TestAdaptTreeStore:
         assert target_prop.fset is None
         # Test: no delete
         assert target_prop.fdel is None
+
+
+class TestAdaptTreeView:
+    """Unit tests for :class:`.AdaptTreeView`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        # Test
+        target = AOUTLINE.AdaptTreeView()
+        assert isinstance(target._view, Gtk.TreeView)
+        assert isinstance(target._selection, Gtk.TreeSelection)
+        assert Gtk.SelectionMode.BROWSE == target._selection.get_mode()
+
+    def test_get_selected(self, new_outline_model):
+        """| Confirm returns selected item.
+        | Case: item selected
+        """
+        # Setup
+        outline = PatchOutline()
+        outline._model = new_outline_model('Model')
+        PATH_ITEM = '0:1'
+        i_item = outline.model.get_iter_from_string(PATH_ITEM)
+        target = AOUTLINE.AdaptTreeView()
+        target.set_model(outline)
+        target._view.expand_all()
+        target._selection.select_iter(i_item)
+        # Test
+        i_target = target.get_selected()
+        path_target = target._view.get_model().get_string_from_iter(i_target)
+        assert PATH_ITEM == path_target
+
+    def test_get_selected_none(self, new_outline_model):
+        """| Confirm returns selected item.
+        | Case: no item selected
+        """
+        # Setup
+        outline = PatchOutline()
+        outline._model = new_outline_model('Model')
+        target = AOUTLINE.AdaptTreeView()
+        target.set_model(outline)
+        target._view.expand_all()
+        target._selection.unselect_all()
+        # Test
+        assert target.get_selected() is None
+
+    def test_select(self, new_outline_model):
+        """| Confirm selection set.
+        | Case: set to item.
+        """
+        # Setup
+        outline = PatchOutline()
+        outline._model = new_outline_model('Model')
+        PATH_ITEM = '1:1'
+        i_item = outline.model.get_iter_from_string(PATH_ITEM)
+        target = AOUTLINE.AdaptTreeView()
+        target.set_model(outline)
+        target._view.expand_all()
+        target._selection.unselect_all()
+        # Test
+        target.select(i_item)
+        i_target = target.get_selected()
+        path_target = target._view.get_model().get_string_from_iter(i_target)
+        assert PATH_ITEM == path_target
+
+    def test_select_none(self, new_outline_model):
+        """| Confirm selection set.
+        | Case: set to None.
+        """
+        # Setup
+        outline = PatchOutline()
+        outline._model = new_outline_model('Model')
+        PATH_ITEM = '1:1'
+        i_item = outline.model.get_iter_from_string(PATH_ITEM)
+        target = AOUTLINE.AdaptTreeView()
+        target.set_model(outline)
+        target._view.expand_all()
+        target._selection.select_iter(i_item)
+        # Test
+        target.select()
+        assert target.get_selected() is None
+
+    def test_set_model(self, new_outline_model):
+        """Confirm model association."""
+        # Setup
+        outline = PatchOutline()
+        outline._model = new_outline_model('Model')
+        target = AOUTLINE.AdaptTreeView()
+        # Test
+        target.set_model(outline)
+        assert target._view.get_model() is outline.model
+
+    def test_unselect_all(self, new_outline_model):
+        """Confirm selection cleared."""
+        # Setup
+        outline = PatchOutline()
+        outline._model = new_outline_model('Model')
+        PATH_ITEM = '1:1:0'
+        i_item = outline.model.get_iter_from_string(PATH_ITEM)
+        target = AOUTLINE.AdaptTreeView()
+        target.set_model(outline)
+        target._view.expand_all()
+        target._selection.select_iter(i_item)
+        # Test
+        target.unselect_all()
+        assert target.get_selected() is None

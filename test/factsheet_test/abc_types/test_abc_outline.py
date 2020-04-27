@@ -89,6 +89,7 @@ class TestAbstractViewOutline:
         'get_selected',
         'select',
         'set_model',
+        'unselect_all',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -99,6 +100,8 @@ class TestAbstractViewOutline:
             def select(self): return super().select(None)
 
             def set_model(self): return super().set_model(None)
+
+            def unselect_all(self): return super().unselect_all()
 
         target = PatchAbstractViewOutline()
         # Test
