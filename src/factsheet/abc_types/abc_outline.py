@@ -21,15 +21,22 @@ each of its items.
 .. data:: GenericItem
 
     Generic type for an item within an outline.
+
+.. data:: GenericOutline
+
+    Generic type for an outline.  Serves as an outline placeholder for
+    derived classes.
 """
 import abc
 import typing
 
 GenericIndex = typing.TypeVar('GenericIndex')
 GenericItem = typing.TypeVar('GenericItem')
+GenericOutline = typing.TypeVar('GenericOutline')
 
 
-class AbstractOutline(abc.ABC, typing.Generic[GenericIndex, GenericItem]):
+class AbstractOutline(abc.ABC, typing.Generic[
+        GenericIndex, GenericItem, GenericOutline]):
     """Defines interfaces common to outlines of model components.
 
     .. admonition:: About Equality
@@ -57,10 +64,9 @@ class AbstractOutline(abc.ABC, typing.Generic[GenericIndex, GenericItem]):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def copy_section(self,
-                     pm_target: 'AbstractOutline',
-                     px_i_source: GenericIndex = None,
-                     px_i_target: GenericIndex = None) -> None:
+    def deepcopy_section_child(self, pm_target: GenericOutline,
+                               px_i_source: GenericIndex = None,
+                               px_i_target: GenericIndex = None) -> None:
         """Deepcopy section of outline to another outline.
 
         :param pm_target: outline to copy section to.
@@ -81,10 +87,10 @@ class AbstractOutline(abc.ABC, typing.Generic[GenericIndex, GenericItem]):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def find_next(self, px_target: typing.Any,
-                  px_i_after: GenericIndex = None, p_nth_field: int = 0,
-                  px_derive: typing.Callable[[typing.Any], typing.Any] = (
-                      lambda v: v)) -> GenericIndex:
+    def find_next(
+            self, px_target: typing.Any, px_i_after: GenericIndex = None,
+            px_derive: typing.Callable[[typing.Any], typing.Any] = (
+                lambda v: v)) -> GenericIndex:
         """Return index of next item where the target value equals value
         derived from item's content in given field, or None if no match.
 
@@ -93,8 +99,6 @@ class AbstractOutline(abc.ABC, typing.Generic[GenericIndex, GenericItem]):
         :param px_target: search for this value.
         :param px_i_after: start search immediately after item at this
             index.  Default starts search at top item in outline.
-        :param p_nth_field: search for the target value using this
-            field.  Default is first field.
         :param px_derive: function to derive value to compare to target
                 value.  Function takes input from given field.  Default
                 uses field content unaltered.
@@ -102,52 +106,66 @@ class AbstractOutline(abc.ABC, typing.Generic[GenericIndex, GenericItem]):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_item(self, i: GenericIndex) -> typing.Optional[GenericItem]:
+    def get_item(self, px_i: GenericIndex) -> typing.Optional[GenericItem]:
         """Returns item at given index or None when no item at index.
 
-        :param i: index of desired item.
+        :param px_i: index of desired item.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def indices(self, px_index: GenericIndex = None
+    def indices(self, px_i: GenericIndex = None
                 ) -> typing.Iterator[GenericIndex]:
         """Return iterator over indices of items in a section.
 
         The iterator is recursive (that is, includes items from sections
         within a section).
 
-        :param px_index: index of parent item of section.  Default
+        :param px_i: index of parent item of section.  Default
             iterates over entire outline.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
     def insert_after(self, px_item: GenericItem,
-                     i: GenericIndex) -> GenericIndex:
+                     px_i: GenericIndex) -> GenericIndex:
         """Adds item to outline after item at given index.
 
         If index is None, adds item at beginning of outline.
 
         :param px_item: new item to add.
-        :param i: index of item to precede new item.
+        :param px_i: index of item to precede new item.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
     def insert_before(self, px_item: GenericItem,
-                      i: GenericIndex) -> GenericIndex:
+                      px_i: GenericIndex) -> GenericIndex:
         """Adds item to outline before item at given index.
 
         If index is None, adds item at end of outline.
 
         :param px_item: new item to add.
-        :param i: index of item to follow new item.
+        :param px_i: index of item to follow new item.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def insert_child(self, px_item: GenericItem,
+                     px_i: GenericIndex) -> GenericIndex:
+        """Adds item to outline as child of item at given index.
+
+        Method adds item after all existing children.  If index is None,
+        it adds item at end of outline.
+
+        :param px_item: new item to add.
+        :param px_i: index of parent item for new item.
         """
         raise NotImplementedError
 
 
-class AbstractViewOutline(abc.ABC):
+class AbstractViewOutline(abc.ABC, typing.Generic[
+        GenericIndex, GenericOutline]):
     """Defines interfaces common to views of outlines.
 
     A view of an outline may have one distinguished item.  The
@@ -173,8 +191,7 @@ class AbstractViewOutline(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def set_model(self, pm_model:
-                  AbstractOutline[GenericIndex, GenericItem]) -> None:
+    def set_model(self, pm_model: GenericOutline) -> None:
         """Associates view with given model.
 
         :param pm_model: new model for view.

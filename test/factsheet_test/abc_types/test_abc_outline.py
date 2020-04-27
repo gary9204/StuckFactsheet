@@ -24,7 +24,7 @@ class TestAbstractOutline:
     def test_abstract_class(self):
         """Confirm class is abstract."""
         # Setup
-        class ClassOutline(ABC_OUTLINE.AbstractOutline[int, int]):
+        class ClassOutline(ABC_OUTLINE.AbstractOutline[int, int, str]):
             pass
 
         # Test
@@ -34,23 +34,25 @@ class TestAbstractOutline:
     @pytest.mark.parametrize('name_method', [
         '__eq__',
         '__ne__',
-        'copy_section',
+        'deepcopy_section_child',
         'extract_section',
         'find_next',
         'get_item',
         'indices',
         'insert_after',
         'insert_before',
+        'insert_child',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchAbstractOutline(ABC_OUTLINE.AbstractOutline[int, int]):
+        class PatchAbstractOutline(ABC_OUTLINE.AbstractOutline[int, int, str]):
             def __eq__(self): return super().__eq__(0)  # type: ignore[misc]
 
             def __ne__(self): return super().__ne__(0)  # type: ignore[misc]
 
-            def copy_section(self): super().copy_section(None, 0, 0)
+            def deepcopy_section_child(self):
+                super().deepcopy_section_child(None, 0, 0)
 
             def extract_section(self): super().extract_section(0)
 
@@ -63,6 +65,8 @@ class TestAbstractOutline:
             def insert_after(self): return super().insert_after(0, 0)
 
             def insert_before(self): return super().insert_before(0, 0)
+
+            def insert_child(self): return super().insert_child(0, 0)
 
         target = PatchAbstractOutline()
         # Test
