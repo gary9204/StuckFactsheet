@@ -14,3 +14,4 @@ Submodules
    factsheet.adapt_gtk.adapt_factory
    factsheet.adapt_gtk.adapt_infoid
    factsheet.adapt_gtk.adapt_outline
+   factsheet.adapt_gtk.adapt_sheet

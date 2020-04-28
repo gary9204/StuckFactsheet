@@ -38,7 +38,8 @@ class PatchOutline(AOUTLINE.AdaptTreeStore[PatchItem]):
 @pytest.fixture
 def new_outline_model():
     """Pytest fixture returns outline model factory.  Parameter p_tag
-    labels each item.  The structure of each model is as follows.
+    labels each item in title.  The structure of each model is as
+    follows.
 
         | name_0xx
         |     name_00x

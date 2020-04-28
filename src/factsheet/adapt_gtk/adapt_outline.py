@@ -177,7 +177,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """Return index of next item where the target value equals value
         derived from item's content in given field, or None if no match.
 
-        Search covers entire hierarchy by wrapping at end if necessary.
+        Search covers entire outline by wrapping at end if necessary.
 
         :param px_target: search for this value.
         :param px_i_after: start search immediately after item at this
