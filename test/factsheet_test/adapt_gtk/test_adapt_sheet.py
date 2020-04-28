@@ -88,44 +88,15 @@ def new_outline_model():
 
 
 @pytest.fixture
-def patch_item():
-    """Pytext fixture returns stub item for outline contents."""
-    class PatchItem(ABC_SHEET.AbstractTemplate):
-        def __init__(self, p_name='Nemo', p_summary='I am no one.',
-                     p_title='No One'):
-            self._name = p_name
-            self._summary = p_summary
-            self._title = p_title
-
-        def __call__(self): return 'Topic Stub'
-
-        @property
-        def name(self): return self._name
-
-        @property
-        def summary(self): return self._summary
-
-        @property
-        def title(self): return self._title
-
-    return PatchItem
-
-
-@pytest.fixture
-def patch_outline(patch_item):
-    """Pytext fixture returns stub tree store."""
-    tree_store = ASHEET.AdaptTreeStoreTemplate()
-    N_ITEMS = 3
-    index = None
-    for i in range(N_ITEMS):
-        item = patch_item('Item {}'.format(i))
-        index = tree_store.insert_before(item, index)
-
-    return tree_store
+def patch_outline(new_outline_model):
+    """Pytext fixture returns stub template outline."""
+    outline = ASHEET.AdaptTreeStoreTemplate()
+    outline._model = new_outline_model(p_tag='Stub template outline.')
+    return outline
 
 
 class TestAdaptTreeStoreTemplate:
-    """Unit tests for :class:`AdaptTreeStoreTmeplate`."""
+    """Unit tests for :class:`.AdaptTreeStoreTemplate`."""
 
     def test_init(self):
         """Confirm initialization."""
@@ -197,80 +168,116 @@ class TestAdaptTreeStoreTemplate:
 
 
 class TestAdaptTreeViewTemplate:
-    """Unit tests for view class AdaptTreeViewTemplate."""
+    """Unit tests for :class:`.AdaptTreeViewTemplate`."""
 
-    def test_init(self):
+    def test_init(self, monkeypatch):
         """Confirm initialization."""
         # Setup
+        class PatchSetFunc:
+            def __init__(self): self.called = False
+
+            def set_search_equal_func(self, *_a): self.called = True
+
+        patch_func = PatchSetFunc()
+        monkeypatch.setattr(Gtk.TreeView, 'set_search_equal_func',
+                            patch_func.set_search_equal_func)
         # Test
         target = ASHEET.AdaptTreeViewTemplate()
         assert isinstance(target._view, Gtk.TreeView)
         assert target._view.get_model() is None
-
-    def test_set_model(self, patch_outline):
-        """Confirm initialization."""
-        # Setup
-        OUTLINE = patch_outline
-        C_NAME = 0
-        C_TITLE = 1
-        C_PAD = 2
-        N_CELLS = 1
-        target = ASHEET.AdaptTreeViewTemplate()
-        # Test
-        target.set_model(OUTLINE)
-        assert target._view.get_model() is OUTLINE._model
-
-        name_column = target._view.get_column(C_NAME)
-        assert 'Name' == name_column.get_title()
-        assert name_column.get_clickable()
-        assert name_column.get_resizable()
-        assert N_CELLS == len(name_column.get_cells())
-
-        title_column = target._view.get_column(C_TITLE)
-        assert 'Title' == title_column.get_title()
-        assert title_column.get_clickable()
-        assert title_column.get_resizable()
-        assert N_CELLS == len(title_column.get_cells())
-
-        pad_column = target._view.get_column(C_PAD)
-        assert pad_column is not None
-        assert pad_column.get_expand()
+        assert target.ViewFields.NAME
+        assert target.ViewFields.TITLE
+        assert target._active_field is target.ViewFields.NAME
+        assert patch_func.called
 
     def test_name_cell_data(self, patch_outline):
         """Confirm renderer property is set."""
         # Setup
         OUTLINE = patch_outline
-        I_TARGET = 1
-        i_first = OUTLINE._model.get_iter_first()
-        for _ in range(I_TARGET):
-            i_target = OUTLINE._model.iter_next(i_first)
-        TEMPLATE = OUTLINE.get_item(i_target)
+        PATH_ITEM = '1'
+        i_target = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        template = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ASHEET.AdaptTreeViewTemplate()
         target.set_model(OUTLINE)
         # Test
         target._name_cell_data(
             None, renderer, OUTLINE._model, i_target, None)
-        assert TEMPLATE.name == renderer.get_property('text')
+        assert template.name == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
-            assert TEMPLATE.name == renderer.get_property('markup')
+            assert template.name == renderer.get_property('markup')
+
+    @pytest.mark.parametrize('FIELD, PATH_ITEM, VALUE, EXPECT', [
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.NAME,
+         '0', 'name_0xx', False),
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.NAME,
+         '0', 'title_0xx', True),
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE,
+         '1:1:2', 'name_112', True),
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE,
+         '0:1', 'title_01x', False),
+        (None, '1:0', 'title_01x', True),
+        ])
+    def test_test_field_eq(
+            self, FIELD, PATH_ITEM, VALUE, EXPECT, patch_outline):
+        """Confirm results of Gtk.TreeView search equal function."""
+        # Setup
+        OUTLINE = patch_outline
+        i_item = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        target = ASHEET.AdaptTreeViewTemplate()
+        target.set_model(OUTLINE)
+        target._active_field = FIELD
+        # Test
+        actual = target._test_field_ne(
+            OUTLINE._model, OUTLINE.C_ITEM, VALUE, i_item, None)
+        assert actual is EXPECT
 
     def test_title_cell_data(self, patch_outline):
         """Confirm renderer property is set."""
         # Setup
         OUTLINE = patch_outline
-        I_TARGET = 1
-        i_first = OUTLINE._model.get_iter_first()
-        for _ in range(I_TARGET):
-            i_target = OUTLINE._model.iter_next(i_first)
-        TEMPLATE = OUTLINE.get_item(i_target)
+        PATH_ITEM = '0:0'
+        i_target = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        template = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ASHEET.AdaptTreeViewTemplate()
+        target.set_model(OUTLINE)
         # Test
         target._title_cell_data(
             None, renderer, OUTLINE._model, i_target, None)
-        assert TEMPLATE.title == renderer.get_property('text')
+        assert template.title == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
-            assert TEMPLATE.name == renderer.get_property('markup')
+            assert template.name == renderer.get_property('markup')
+
+    def test_set_model(self, patch_outline):
+        """Confirm initialization."""
+        # Setup
+        OUTLINE = patch_outline
+        N_FIELD_NAME = 0
+        N_FIELD_TITLE = 1
+        N_FIELD_PAD = 2
+        N_CELLS = 1
+        target = ASHEET.AdaptTreeViewTemplate()
+        # Test
+        target.set_model(OUTLINE)
+        assert target._view.get_model() is OUTLINE._model
+        assert OUTLINE.C_ITEM == target._view.get_search_column()
+        assert target._view.get_enable_search()
+
+        name_column = target._view.get_column(N_FIELD_NAME)
+        assert 'Name' == name_column.get_title()
+        assert name_column.get_clickable()
+        assert name_column.get_resizable()
+        assert N_CELLS == len(name_column.get_cells())
+
+        title_column = target._view.get_column(N_FIELD_TITLE)
+        assert 'Title' == title_column.get_title()
+        assert title_column.get_clickable()
+        assert title_column.get_resizable()
+        assert N_CELLS == len(title_column.get_cells())
+
+        pad_column = target._view.get_column(N_FIELD_PAD)
+        assert pad_column is not None
+        assert pad_column.get_expand()

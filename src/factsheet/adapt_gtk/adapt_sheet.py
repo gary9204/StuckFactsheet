@@ -4,10 +4,10 @@ classes.
 
 See :mod:`.abc_sheet`.
 """
+import enum
 import gi   # type: ignore[import]
 import typing
 
-from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 
@@ -59,16 +59,91 @@ class AdaptTreeStoreTemplate(
 
 
 class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
-    """TBD"""
+    """Specializes :class:`.AdaptTreeView` with name and title columns
+    for :class:`.AbstractTemplate` items.
+    """
+    class ViewFields(enum.Enum):
+        """Identifies searchable template fields."""
+        #: Denotes template name field.
+        NAME = enum.auto()
+        #: Denotes template title field.
+        TITLE = enum.auto()
 
     def __init__(self):
         """Initialize view for topic hierarchy."""
         self._view = Gtk.TreeView()
+        self._view.set_search_equal_func(self._test_field_ne, None)
+        self._active_field = self.ViewFields.NAME
+
+    def _name_cell_data(self, _column: Gtk.TreeViewColumn,
+                        pm_renderer: Gtk.CellRenderer,
+                        px_store: Gtk.TreeStore,
+                        px_index: AOUTLINE.AdaptIndex,
+                        _data: typing.Any = None) -> None:
+        """Adapter to diaplay topic name in a tree view column.
+
+        Formal Parameters
+            _column: tree view column to display name.
+            pm_renderer: cell renderer to display topic name.
+            px_store: store containing the topic.
+            px_index: store index of topic.
+            _data: (optional) user data for cell function.
+        """
+        C_ITEM = 0
+        template = px_store[px_index][C_ITEM]
+        pm_renderer.set_property('markup', template.name)
+
+    def _test_field_ne(self, px_model: Gtk.TreeModel, p_n_column: int,
+                       p_value: str, px_index: Gtk.TreeIter, _user_data):
+        """Return True when value is not equal to the contents of the
+        active search field.
+
+        Implements `Gtk.TreeViewSearchEqualFunc`_ for name and title
+        search.
+
+        .. _`Gtk.TreeViewSearchEqualFunc`::
+
+            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
+            Gtk.TreeViewSearchEqualFunc
+        """
+        template = px_model[px_index][p_n_column]
+        if self._active_field is self.ViewFields.NAME:
+            value = template.name
+        elif self._active_field is self.ViewFields.TITLE:
+            value = template.title
+        else:
+            return True
+
+        return value != p_value
+
+    def _title_cell_data(self, _column: Gtk.TreeViewColumn,
+                         pm_renderer: Gtk.CellRenderer,
+                         px_store: Gtk.TreeStore,
+                         px_index: AOUTLINE.AdaptIndex,
+                         _data: typing.Any = None) -> None:
+        """Adapter to display topic title in a tree view column.
+
+        Formal Parameters
+            _column: tree view column to display name.
+            pm_renderer: cell renderer to display topic title.
+            px_store: store containing the topic.
+            px_index: store index of topic.
+            _data: (optional) user data for cell function.
+        """
+        C_ITEM = 0
+        template = px_store[px_index][C_ITEM]
+        pm_renderer.set_property('markup', template.title)
 
     def set_model(   # type: ignore[override]
             self, px_outline: AdaptTreeStoreTemplate):
-        """Set model along with columns and renderers for topic hierarchy."""
-        self._view.set_model(px_outline._model)
+        """Associate given model with view.
+
+        Sets up columns and renderers for name and title of template
+        items.
+        """
+        super().set_model(px_outline)
+        self._view.set_search_column(px_outline.C_ITEM)
+        self._view.set_enable_search(True)
 
         name = Gtk.TreeViewColumn(title='Name')
         self._view.append_column(name)
@@ -91,39 +166,3 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
         pad = Gtk.TreeViewColumn(title=' ')
         pad.set_expand(True)
         self._view.append_column(pad)
-
-    def _name_cell_data(self, _column: Gtk.TreeViewColumn,
-                        pm_renderer: Gtk.CellRenderer,
-                        px_store: Gtk.TreeStore,
-                        px_index: AOUTLINE.AdaptIndex,
-                        _data: typing.Any = None) -> None:
-        """Adapter to diaplay topic name in a tree view column.
-
-        Formal Parameters
-            _column: tree view column to display name.
-            pm_renderer: cell renderer to display topic name.
-            px_store: store containing the topic.
-            px_index: store index of topic.
-            _data: (optional) user data for cell function.
-        """
-        C_ITEM = 0
-        template = px_store[px_index][C_ITEM]
-        pm_renderer.set_property('markup', template.name)
-
-    def _title_cell_data(self, _column: Gtk.TreeViewColumn,
-                         pm_renderer: Gtk.CellRenderer,
-                         px_store: Gtk.TreeStore,
-                         px_index: AOUTLINE.AdaptIndex,
-                         _data: typing.Any = None) -> None:
-        """Adapter to display topic title in a tree view column.
-
-        Formal Parameters
-            _column: tree view column to display name.
-            pm_renderer: cell renderer to display topic title.
-            px_store: store containing the topic.
-            px_index: store index of topic.
-            _data: (optional) user data for cell function.
-        """
-        C_ITEM = 0
-        template = px_store[px_index][C_ITEM]
-        pm_renderer.set_property('markup', template.title)
