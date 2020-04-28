@@ -281,7 +281,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
 
 class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[
-        AdaptIndex, AdaptTreeStore]):
+        AdaptIndex, AdaptTreeStore[GenericItem]]):
     """Implements abstract :class:`.AbstractViewOutline`.
 
     ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_

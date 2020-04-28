@@ -40,14 +40,15 @@ class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
         return AINFOID.AdaptEntry()
 
 
-class FactorySheet(ABC_FACTORY.FactorySheet[ASHEET.AdaptTreeViewTemplate]):
+class FactorySheet(ABC_FACTORY.FactorySheet):
     """Implements GTK-based factory for abstract factory
     :class:`.abc_factory.FactorySheet`."""
 
     def new_model_outline_templates(self) -> ASHEET.AdaptTreeStoreTemplate:
-        """Return new instance of Gtk-based :mod:`TBD`."""
+        """Return new instance of Gtk-based template outline"""
         return ASHEET.AdaptTreeStoreTemplate()
 
     def new_view_outline_templates(self) -> ASHEET.AdaptTreeViewTemplate:
-        """Return new instance of Gtk-based :mod:`TBD`."""
+        """Return new instance of Gtk-based template view outline.
+        """
         return ASHEET.AdaptTreeViewTemplate()

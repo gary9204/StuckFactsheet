@@ -58,7 +58,8 @@ class AdaptTreeStoreTemplate(
             px_target, px_i_after, lambda item: item.title)
 
 
-class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
+class AdaptTreeViewTemplate(
+        AOUTLINE.AdaptTreeView[ABC_SHEET.AbstractTemplate]):
     """Specializes :class:`.AdaptTreeView` with name and title columns
     for :class:`.AbstractTemplate` items.
     """
@@ -134,8 +135,7 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
         template = px_store[px_index][C_ITEM]
         pm_renderer.set_property('markup', template.title)
 
-    def set_model(   # type: ignore[override]
-            self, px_outline: AdaptTreeStoreTemplate):
+    def set_model(self, px_outline: AdaptTreeStoreTemplate):
         """Associate given model with view.
 
         Sets up columns and renderers for name and title of template

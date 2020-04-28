@@ -49,15 +49,16 @@ class TestFactoryInfoId:
 
 
 class TestFactorySheet:
-    """Unit tests for :class:`~.adapt_factory.FactoryInfoId`."""
+    """Unit tests for :class:`~.adapt_factory.FactorySheet`."""
 
     @pytest.mark.parametrize('name_method, class_attr', [
         ('new_model_outline_templates', ASHEET.AdaptTreeStoreTemplate),
         ('new_view_outline_templates', ASHEET.AdaptTreeViewTemplate),
         ])
-    def test_new_attr_model(self, name_method, class_attr):
+    def test_new_attr(self, name_method, class_attr):
         """Confirm factory produces instance of each
-        :mod:`~factsheet.model` attribute.
+        :mod:`~factsheet.model` and each :mod:`~factsheet.view`
+        attribute.
         """
         # Setup
         factory = AFACTORY.FactorySheet()

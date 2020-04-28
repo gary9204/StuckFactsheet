@@ -58,24 +58,21 @@ class FactoryInfoId(abc.ABC):
         raise NotImplementedError
 
 
-AbstractViewOutline = typing.TypeVar('AbstractViewOutline')
-
-
-class FactorySheet(abc.ABC, typing.Generic[AbstractViewOutline]):
+class FactorySheet(abc.ABC):
     """Defines abstract factory to produce factsheet components for
-    :class:`~.model.Sheet` and :class:`~.PageSheet`.
+    :class:`~.model.sheet.Sheet` and :class:`.PageSheet`.
     """
 
     @abc.abstractmethod
     def new_model_outline_templates(self) -> ABC_OUTLINE.AbstractOutline:
-        """TBD Return new instance of topic outline class for
-        :class:`~.model.Sheet`.
+        """Return new instance of template outline class for
+        :class:`~.model.sheet.Sheet`.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_view_outline_templates(self) -> AbstractViewOutline:
-        """TBD Return new instance of topic outline class for
-        :class:`~.model.Sheet`.
+    def new_view_outline_templates(self) -> ABC_OUTLINE.AbstractViewOutline:
+        """Return new instance of template view outline class for
+        :class:`.PageSheet`.
         """
         raise NotImplementedError
