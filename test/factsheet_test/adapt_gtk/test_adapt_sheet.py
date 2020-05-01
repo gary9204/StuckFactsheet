@@ -217,6 +217,12 @@ class TestAdaptTreeViewTemplate:
          '1:1:2', 'name_112', True),
         (ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE,
          '0:1', 'title_01x', False),
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE,
+         '0:1', 't', False),
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE,
+         '0:1', 'ti', False),
+        (ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE,
+         '0:1', 'tiX', True),
         (None, '1:0', 'title_01x', True),
         ])
     def test_test_field_eq(
@@ -250,6 +256,30 @@ class TestAdaptTreeViewTemplate:
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_view', 'view'],
+        # ['_active_field', 'active_field'],
+        ])
+    def test_property_entry(self, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+        """
+        # Setup
+        target = ASHEET.AdaptTreeViewTemplate()
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(ASHEET.AdaptTreeViewTemplate, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr == value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     def test_set_model(self, patch_outline):
         """Confirm initialization."""

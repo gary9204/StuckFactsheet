@@ -1,5 +1,5 @@
-``outline`` Template Module
-===========================
+Template Module
+===============
 
 .. automodule:: factsheet.content.outline.template
    :members:

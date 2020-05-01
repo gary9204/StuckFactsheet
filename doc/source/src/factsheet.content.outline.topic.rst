@@ -1,5 +1,5 @@
-``outline`` Topic Module
-===========================
+Topic Module
+============
 
 .. automodule:: factsheet.content.outline.topic
    :members:

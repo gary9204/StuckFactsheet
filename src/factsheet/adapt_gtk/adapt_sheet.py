@@ -115,7 +115,12 @@ class AdaptTreeViewTemplate(
         else:
             return True
 
-        return value != p_value
+        if value.startswith(p_value):
+            return False
+
+        path = px_model.get_path(px_index)
+        self._view.expand_row(path, False)
+        return True
 
     def _title_cell_data(self, _column: Gtk.TreeViewColumn,
                          pm_renderer: Gtk.CellRenderer,
@@ -135,7 +140,8 @@ class AdaptTreeViewTemplate(
         template = px_store[px_index][C_ITEM]
         pm_renderer.set_property('markup', template.title)
 
-    def set_model(self, px_outline: AdaptTreeStoreTemplate):
+    def set_model(  # type: ignore[override]
+            self, px_outline: AdaptTreeStoreTemplate):
         """Associate given model with view.
 
         Sets up columns and renderers for name and title of template
@@ -166,3 +172,8 @@ class AdaptTreeViewTemplate(
         pad = Gtk.TreeViewColumn(title=' ')
         pad.set_expand(True)
         self._view.append_column(pad)
+
+    @property
+    def view(self) -> Gtk.TreeView:
+        """TBD"""
+        return self._view

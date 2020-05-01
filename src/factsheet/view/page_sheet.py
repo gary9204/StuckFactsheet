@@ -6,10 +6,11 @@ from pathlib import Path
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.content.outline import topic as XTOPIC
-from factsheet.content.outline import template as XSECTION
+# from factsheet.content.outline import topic as XTOPIC
+# from factsheet.content.outline import template as XSECTION
 from factsheet.control import sheet as CSHEET
 from factsheet.control import pool as CPOOL
+from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
 
@@ -38,6 +39,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
        Path to user interface defintion of factsheet page.
     """
+
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
@@ -55,6 +57,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._flip_summary = get_object('ui_flip_summary')
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
+        self._query_template = QTEMPLATE.QueryTemplate(self._window)
         self._name_former: typing.Optional[str] = None
         self._infoid = VINFOID.ViewInfoId(get_object)
 
@@ -116,6 +119,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         # Topics Outline Toolbar
         UI.new_action_active(
             self._window, 'new-topic', self.on_new_topic)
+        UI.new_action_active_dialog(
+            self._window, 'show-help-topics',
+            self.on_show_dialog, UI.HELP_SHEET_TOPICS)
 
     def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
         """Construct Data Loss Warning dialog.
@@ -300,29 +306,19 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def on_new_topic(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
-        """TBD"""
-        print('New Topic')
-        model = UI.FACTORY_SHEET.new_model_outline_templates()
-        path_assist = str(Path(XSECTION.__file__).parent / 'assistant.ui')
-        N_ITEMS = 3
-        index = None
-        for i in range(N_ITEMS):
-            item = XSECTION.Section(
-                p_path_assist=path_assist,
-                p_name='Item {}'.format(i),
-                p_model=XTOPIC.Topic,
-                p_summary='No summary',
-                p_title='This is item {}.'.format(i))
-            index = model.insert_before(item, index)
-        view = UI.FACTORY_SHEET.new_view_outline_templates()
-        view.set_model(model)
-        view._view.show()
-        dialog = Gtk.Dialog(use_header_bar=True)
-        box = dialog.get_content_area()
-        box.pack_start(view._view, True, True, 0)
-        dialog.add_button('Close', Gtk.ResponseType.CLOSE)
-        _ = dialog.run()
-        dialog.destroy()
+        """Specify a new topic.
+
+        The method queries for the location of a new topic, the template
+        for the topic, and topic contents.  The user may cancel at any
+        of the queries.
+        """
+        print('In PageSheet.on_new_topic')
+        print('Query place: TODO')
+        print('Query template:')
+        i_template = self._query_template()
+        print('\tTemplate index: {}'.format(i_template))
+        print('Query topic contents: TODO')
+        print('Add topic: TODO')
 
     def on_open_page(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

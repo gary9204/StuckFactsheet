@@ -12,6 +12,7 @@ Submodules
 .. toctree::
 
    factsheet_test.view.conftest
+   factsheet_test.view.test_query_template
    factsheet_test.view.test_page_sheet
    factsheet_test.view.test_pane_topic
    factsheet_test.view.test_ui

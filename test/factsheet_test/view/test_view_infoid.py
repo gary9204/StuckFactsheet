@@ -39,11 +39,11 @@ class TestInfoId:
         # Test
         assert method() is attr
 
-    @pytest.mark.parametrize('name_attr, name_prop', [
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ['_view_name', 'name'],
         ['_view_title', 'title'],
         ])
-    def test_property_entry(self, patch_ui_infoid, name_attr, name_prop):
+    def test_property_entry(self, patch_ui_infoid, NAME_ATTR, NAME_PROP):
         """Confirm name and title properties are get-only.
 
         #. Case: get
@@ -53,9 +53,9 @@ class TestInfoId:
         # Setup
         get_object = patch_ui_infoid
         target = VINFOID.ViewInfoId(get_object)
-        value_attr = getattr(target, name_attr)
-        target_prop = getattr(VINFOID.ViewInfoId, name_prop)
-        value_prop = getattr(target, name_prop)
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(VINFOID.ViewInfoId, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None
         assert value_attr.props.text == value_prop

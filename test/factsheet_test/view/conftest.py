@@ -9,6 +9,25 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
+def patch_dialog_run():
+    """Pytest fixture returns stub `GtkDialog <GtkDialog_>`_.
+
+    .. _GtkDialog: https://lazka.github.io/pgi-docs/
+       #Gtk-3.0/classes/Dialog.html
+    """
+    class PatchDialog:
+        def __init__(self, p_response):
+            self.called = False
+            self.response = p_response
+
+        def run(self):
+            self.called = True
+            return self.response
+
+    return PatchDialog
+
+
+@pytest.fixture
 def text_ui_infoid():
     """Pytest fixture returns set of argument values to construct
     a stock :class:`.ViewInfoId` object.

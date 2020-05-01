@@ -1634,6 +1634,8 @@ investigating algebraic structures.</property>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">12</property>
+            <property name="margin_right">12</property>
             <property name="margin_top">6</property>
             <property name="margin_bottom">6</property>
             <property name="orientation">vertical</property>
@@ -1776,7 +1778,7 @@ investigating algebraic structures.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Specify topic from a template.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Specify new topic from a template.</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                     <property name="max_width_chars">50</property>
@@ -1901,7 +1903,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Specify topic ...&lt;/b&gt;&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;New topic ...&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1916,7 +1918,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Specify a topic from a template.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Specify a new topic from a template.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>

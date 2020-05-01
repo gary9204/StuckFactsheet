@@ -316,7 +316,7 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[
         else:
             self._selection.select_iter(px_i)
 
-    def set_model(self, pm_model: AdaptTreeStore) -> None:
+    def set_model(self, pm_model: AdaptTreeStore[GenericItem]) -> None:
         """Associate given model with view.
 
         :param pm_model: outline model for view.

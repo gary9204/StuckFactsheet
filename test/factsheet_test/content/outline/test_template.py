@@ -60,25 +60,25 @@ class TestSection:
         del target._assistant
 
     @pytest.mark.parametrize(
-        'name_signal, name_attribute, origin, n_default', [
+        'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
             ('apply', '_assistant', Gtk.Assistant, 0),
             ('cancel', '_assistant', Gtk.Assistant, 0),
             ('destroy', '_assistant', Gtk.Assistant, 0),
             ('prepare', '_assistant', Gtk.Assistant, 0),
             ])
-    def test_init_signals(self, name_signal, name_attribute, origin,
-                          n_default, patch_args_section):
+    def test_init_signals(self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN,
+                          N_DEFAULT, patch_args_section):
         """Confirm initialization of signal connections."""
         # Setup
-        origin_gtype = GO.type_from_name(GO.type_name(origin))
-        signal = GO.signal_lookup(name_signal, origin_gtype)
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         ARGS = patch_args_section
         # Test
         target = TEMPLATE.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 
-        attribute = getattr(target, name_attribute)
+        attribute = getattr(target, NAME_ATTRIBUTE)
         n_handlers = 0
         while True:
             id_signal = GO.signal_handler_find(
@@ -90,7 +90,7 @@ class TestSection:
             n_handlers += 1
             GO.signal_handler_disconnect(attribute, id_signal)
 
-        assert n_default + 1 == n_handlers
+        assert N_DEFAULT + 1 == n_handlers
         # Teardown
         target._assistant.destroy()
         del target._assistant

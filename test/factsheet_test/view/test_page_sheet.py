@@ -10,6 +10,7 @@ from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import pool as CPOOL
 from factsheet.control import sheet as CSHEET
 from factsheet.model import sheet as MSHEET
+from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import page_sheet as VSHEET
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
@@ -91,25 +92,6 @@ def patch_dialog_choose():
     return PatchDialog
 
 
-@pytest.fixture
-def patch_dialog_run():
-    """Pytest fixture returns stub `GtkDialog <GtkDialog_>`_.
-
-    .. _GtkDialog: https://lazka.github.io/pgi-docs/
-       #Gtk-3.0/classes/Dialog.html
-    """
-    class PatchDialog:
-        def __init__(self, p_response):
-            self.called = False
-            self.response = p_response
-
-        def run(self):
-            self.called = True
-            return self.response
-
-    return PatchDialog
-
-
 class TestPageSheet:
     """Unit tests for :class:`.PageSheet`."""
 
@@ -135,6 +117,7 @@ class TestPageSheet:
         assert isinstance(target._context_summary, Gtk.Frame)
         assert isinstance(target._flip_summary, Gtk.CheckButton)
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
+        assert isinstance(target._query_template, QTEMPLATE.QueryTemplate)
         assert target._name_former is None
         assert isinstance(target._warning_data_loss, Gtk.Label)
 
@@ -171,6 +154,10 @@ class TestPageSheet:
         assert target._window.lookup_action('delete-sheet') is not None
         assert target._window.lookup_action(
             'show-help-sheet-file') is not None
+
+        # Topics Outline Toolbar and Menu
+        assert target._window.lookup_action('new-topic') is not None
+        assert target._window.lookup_action('show-help-topics') is not None
 
         assert not target._close_window
         assert target._window.is_visible()

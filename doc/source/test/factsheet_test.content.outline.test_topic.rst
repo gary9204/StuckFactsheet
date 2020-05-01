@@ -1,5 +1,5 @@
-``outline`` Topic Test Module
-=============================
+Topic Test Module
+=================
 
 .. automodule:: factsheet_test.content.outline.test_topic
    :members:

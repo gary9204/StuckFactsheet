@@ -169,17 +169,19 @@
               <object class="GtkSearchBar" id="ui_search_bar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="search_mode_enabled">True</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkSearchEntry">
+                      <object class="GtkRadioButton" id="ui_search_by_name">
+                        <property name="label" translatable="yes">By name</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="primary_icon_name">edit-find-symbolic</property>
-                        <property name="primary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">False</property>
+                        <property name="receives_default">False</property>
+                        <property name="active">True</property>
+                        <property name="draw_indicator">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -188,13 +190,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkRadioButton" id="ui_search_by_name">
-                        <property name="label" translatable="yes">by Name</property>
+                      <object class="GtkRadioButton" id="ui_search_by_title">
+                        <property name="label" translatable="yes">By title</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="action_name">dialog.search-by-name</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
+                        <property name="group">ui_search_by_name</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -203,17 +207,16 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkRadioButton" id="ui_search_by_title">
-                        <property name="label" translatable="yes">by Title</property>
+                      <object class="GtkSearchEntry">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">ui_search_by_name</property>
+                        <property name="width_chars">25</property>
+                        <property name="primary_icon_name">edit-find-symbolic</property>
+                        <property name="primary_icon_activatable">False</property>
+                        <property name="primary_icon_sensitive">False</property>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
@@ -837,8 +840,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.specify-topic</property>
-            <property name="text" translatable="yes">Specify topic ...</property>
+            <property name="action_name">win.new-topic</property>
+            <property name="text" translatable="yes">New topic ...</property>
           </object>
           <packing>
             <property name="expand">False</property>

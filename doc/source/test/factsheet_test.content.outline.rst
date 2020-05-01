@@ -1,5 +1,5 @@
-``outline`` Template Test Package
-=================================
+``outline`` Content Test Package
+================================
 
 .. automodule:: factsheet_test.content.outline
    :members:

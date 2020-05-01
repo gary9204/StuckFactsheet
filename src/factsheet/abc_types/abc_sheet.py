@@ -21,7 +21,7 @@ from factsheet.abc_types import abc_infoid as ABC_INFOID
 AbstractTopic = typing.TypeVar('AbstractTopic')
 
 
-class AbstractTemplate(abc.ABC):
+class AbstractTemplate(abc.ABC, typing.Generic[AbstractTopic]):
     """Template to create a section in a factsheet topic outline.
 
     .. warning:: **Update needed**
