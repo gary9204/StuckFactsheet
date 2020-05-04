@@ -106,9 +106,9 @@ class TestInterfaceViewInfoId:
         'get_view_name',
         'get_view_summary',
         'get_view_title',
-        'name',
-        'summary',
-        'title',
+        # 'name',
+        # 'summary',
+        # 'title',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -120,11 +120,11 @@ class TestInterfaceViewInfoId:
 
             def get_view_title(self): super().get_view_title()
 
-            def name(self): super().name
+            # def name(self): super().name
 
-            def summary(self): super().summary
+            # def summary(self): super().summary
 
-            def title(self): super().title
+            # def title(self): super().title
 
         target = PatchInterface()
         # Test

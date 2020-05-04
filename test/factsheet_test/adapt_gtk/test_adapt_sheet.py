@@ -8,6 +8,7 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
+from factsheet.content.outline import topic as XTOPIC
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
@@ -59,28 +60,38 @@ def new_outline_model():
         |         name_111 | title_111
         |         name_112 | title_112
     """
-    def new_model(p_tag='Target'):
+    def new_model(px_class=PatchTemplate, p_tag='Target'):
         model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
 
-        item = PatchTemplate('name_0xx', p_title='title_0xx', p_summary=p_tag)
+        item = px_class(
+            p_name='name_0xx', p_title='title_0xx', p_summary=p_tag)
         i_0xx = model.append(None, [item])
-        item = PatchTemplate('name_00x', p_title='title_00x', p_summary=p_tag)
+        item = px_class(
+            p_name='name_00x', p_title='title_00x', p_summary=p_tag)
         i_00x = model.append(i_0xx, [item])
-        item = PatchTemplate('name_000', p_title='title_000', p_summary=p_tag)
+        item = px_class(
+            p_name='name_000', p_title='title_000', p_summary=p_tag)
         _i_000 = model.append(i_00x, [item])
-        item = PatchTemplate('name_01x', p_title='title_01x', p_summary=p_tag)
+        item = px_class(
+            p_name='name_01x', p_title='title_01x', p_summary=p_tag)
         i_0xx = model.append(i_0xx, [item])
-        item = PatchTemplate('name_1xx', p_title='title_1xx', p_summary=p_tag)
+        item = px_class(
+            p_name='name_1xx', p_title='title_1xx', p_summary=p_tag)
         i_1xx = model.append(None, [item])
-        item = PatchTemplate('name_10x', p_title='title_10x', p_summary=p_tag)
+        item = px_class(
+            p_name='name_10x', p_title='title_10x', p_summary=p_tag)
         _i_10x = model.append(i_1xx, [item])
-        item = PatchTemplate('name_11x', p_title='title_11x', p_summary=p_tag)
+        item = px_class(
+            p_name='name_11x', p_title='title_11x', p_summary=p_tag)
         i_11x = model.append(i_1xx, [item])
-        item = PatchTemplate('name_110', p_title='title_110', p_summary=p_tag)
+        item = px_class(
+            p_name='name_110', p_title='title_110', p_summary=p_tag)
         _i_110 = model.append(i_11x, [item])
-        item = PatchTemplate('name_111', p_title='title_111', p_summary=p_tag)
+        item = px_class(
+            p_name='name_111', p_title='title_111', p_summary=p_tag)
         _i_111 = model.append(i_11x, [item])
-        item = PatchTemplate('name_112', p_title='title_112', p_summary=p_tag)
+        item = px_class(
+            p_name='name_112', p_title='title_112', p_summary=p_tag)
         _i_112 = model.append(i_11x, [item])
         return model
 
@@ -162,6 +173,82 @@ class TestAdaptTreeStoreTemplate:
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTemplate()
         target._model = new_outline_model(p_tag='Target')
+        # Test
+        i_match = target.find_title(VALUE)
+        assert i_match is None
+
+
+class TestAdaptTreeStoreTopic:
+    """Unit tests for :class:`.AdaptTreeStoreTopic`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        INDEX = None
+        topic = XTOPIC.Topic(p_name='Parrot', p_title='The Parrot Sketch')
+        # Test
+        target = ASHEET.AdaptTreeStoreTopic()
+        assert target is not None
+        index_new = target.insert_before(topic, INDEX)
+        assert index_new is not None
+        assert isinstance(index_new, AOUTLINE.AdaptIndex)
+
+    def test_find_name(self, new_outline_model):
+        """| Confirm search by topic name.
+        | Case: matching topic in outline.
+        """
+        # Setup
+        target = ASHEET.AdaptTreeStoreTopic()
+        target._model = new_outline_model(
+            px_class=XTOPIC.Topic, p_tag='Target')
+        PATH_VALUE = '1:1:1'
+        i_value = target._model.get_iter_from_string(PATH_VALUE)
+        value = target.get_item(i_value).name
+        PATH_AFTER = '1:1:1'
+        i_after = target._model.get_iter_from_string(PATH_AFTER)
+        # Test
+        i_match = target.find_name(value, i_after)
+        assert PATH_VALUE == target._model.get_string_from_iter(i_match)
+
+    def test_find_name_absent(self, new_outline_model):
+        """| Confirm search by topic name.
+        | Case: no matching topic in outline.
+        """
+        # Setup
+        VALUE = 'Something completely different'
+        target = ASHEET.AdaptTreeStoreTopic()
+        target._model = new_outline_model(
+            px_class=XTOPIC.Topic, p_tag='Target')
+        # Test
+        i_match = target.find_name(VALUE)
+        assert i_match is None
+
+    def test_find_title(self, new_outline_model):
+        """| Confirm search by topic title.
+        | Case: matching topic in outline.
+        """
+        # Setup
+        target = ASHEET.AdaptTreeStoreTopic()
+        target._model = new_outline_model(
+            px_class=XTOPIC.Topic, p_tag='Target')
+        PATH_VALUE = '0:1'
+        i_value = target._model.get_iter_from_string(PATH_VALUE)
+        value = target.get_item(i_value).title
+        PATH_AFTER = '0:1'
+        i_after = target._model.get_iter_from_string(PATH_AFTER)
+        # Test
+        i_match = target.find_title(value, i_after)
+        assert PATH_VALUE == target._model.get_string_from_iter(i_match)
+
+    def test_find_title_absent(self, new_outline_model):
+        """| Confirm search by topic name.
+        | Case: no matching topic in outline.
+        """
+        # Setup
+        VALUE = 'Something completely different'
+        target = ASHEET.AdaptTreeStoreTopic()
+        target._model = new_outline_model(
+            px_class=XTOPIC.Topic, p_tag='Target')
         # Test
         i_match = target.find_title(VALUE)
         assert i_match is None

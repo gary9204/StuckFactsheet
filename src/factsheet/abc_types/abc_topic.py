@@ -10,6 +10,23 @@ encapsulation.
 import abc
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.abc_types import abc_stalefile as ABC_STALE
+
+
+class AbstractTopic(ABC_STALE.InterfaceStaleFile):
+    """Defines interfaces common to topic model components."""
+
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """Return topic name. """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def title(self) -> str:
+        """Return topic title. """
+        raise NotImplementedError
 
 
 class InterfacePaneTopic(abc.ABC):

@@ -16,28 +16,18 @@ from pathlib import Path
 import typing
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.abc_types import abc_topic as ABC_TOPIC
 
 
-AbstractTopic = typing.TypeVar('AbstractTopic')
+class AbstractTemplate(abc.ABC):
+    """Defines interfaces common to templates for model components.
 
-
-class AbstractTemplate(abc.ABC, typing.Generic[AbstractTopic]):
-    """Template to create a section in a factsheet topic outline.
-
-    .. warning:: **Update needed**
-
-        Class ``Section`` is a stub sufficient for a section topic of a
-        topic outline.  The class may serve as an example for template
-        classes as development proceeds.
-
-        The class provides a call interface that returns topic based on
-        user's input or None when user cancels. The call takes no arguments.
-        Instead, the call presents an assistant to query the user for values
-        that define the new topic.
+    A template creates a topic in a factsheet topic outline.  See
+    :mod:`abc_sheet` and :mod:`abc_outline`.
     """
 
     @abc.abstractmethod
-    def __call__(self) -> typing.Optional[AbstractTopic]:
+    def __call__(self) -> typing.Optional[ABC_TOPIC.AbstractTopic]:
         """Return topic based on user's input or None when user cancels."""
         raise NotImplementedError
 

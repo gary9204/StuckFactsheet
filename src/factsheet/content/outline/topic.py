@@ -9,14 +9,13 @@ class representing the model of a topic.
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.model import infoid as MINFOID
 from factsheet.abc_types import abc_topic as ABC_TOPIC
 
 logger = logging.getLogger('Main.model.topic')
 
 
-class Topic(ABC_STALE.InterfaceStaleFile):
+class Topic(ABC_TOPIC.AbstractTopic):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Topic`` represents a specific subject within a Factsheet.
@@ -156,6 +155,11 @@ class Topic(ABC_STALE.InterfaceStaleFile):
 
         return False
 
+    @property
+    def name(self) -> str:
+        """Returns topic name."""
+        return self._infoid.name
+
     def set_fresh(self) -> None:
         """Mark topic in memory consistent with file contents."""
         self._stale = False
@@ -164,3 +168,8 @@ class Topic(ABC_STALE.InterfaceStaleFile):
     def set_stale(self) -> None:
         """Mark topic in memory changed from file contents."""
         self._stale = True
+
+    @property
+    def title(self) -> str:
+        """Returns topic title."""
+        return self._infoid.title

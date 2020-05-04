@@ -24,8 +24,8 @@ class AdaptTreeStoreTemplate(
     def find_name(self, px_target: str,
                   px_i_after: AOUTLINE.AdaptIndex = None
                   ) -> AOUTLINE.AdaptIndex:
-        """Return index of next item where the target value equals the
-        template name, or None if no match.
+        """Return index of first template where the target value equals
+        the template name, or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 
@@ -42,8 +42,8 @@ class AdaptTreeStoreTemplate(
     def find_title(self, px_target: str,
                    px_i_after: AOUTLINE.AdaptIndex = None
                    ) -> AOUTLINE.AdaptIndex:
-        """Return index of next item where the target value equals the
-        template title, or None if no match.
+        """Return index of first template where the target value equals
+        the template title, or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 
@@ -56,6 +56,49 @@ class AdaptTreeStoreTemplate(
         """
         return self.find_next(
             px_target, px_i_after, lambda item: item.title)
+
+
+class AdaptTreeStoreTopic(
+        AOUTLINE.AdaptTreeStore[ABC_SHEET.AbstractTemplate]):
+    """Specializes :class:`.AdaptTreeStore` with
+    :class:`~.outline.topic.Topic` items.
+    """
+
+    def find_name(self, px_target: str,
+                  px_i_after: AOUTLINE.AdaptIndex = None
+                  ) -> AOUTLINE.AdaptIndex:
+        """Return index of first topic where the target value equals the
+        topic name, or None if no match.
+
+        Search covers entire outline by wrapping at end if necessary.
+
+        :param px_target: search for this name.
+        :param px_i_after: start search immediately after topic at this
+            index. Default starts search at top topic in outline.
+
+        .. warning:: The current implementation does not address risk
+            user modifies outline during search.
+        """
+        return self.find_next(
+            px_target, px_i_after, lambda topic: topic.name)
+
+    def find_title(self, px_target: str,
+                   px_i_after: AOUTLINE.AdaptIndex = None
+                   ) -> AOUTLINE.AdaptIndex:
+        """Return index of first topic where the target value equals the
+        topic title, or None if no match.
+
+        Search covers entire outline by wrapping at end if necessary.
+
+        :param px_target: search for this title.
+        :param px_i_after: start search immediately after topic at this
+            index. Default starts search at top topic in outline.
+
+        .. warning:: The current implementation does not address risk
+            user modifies outline during search.
+        """
+        return self.find_next(
+            px_target, px_i_after, lambda topic: topic.title)
 
 
 class AdaptTreeViewTemplate(

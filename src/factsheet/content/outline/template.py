@@ -11,7 +11,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class Section(ABC_SHEET.AbstractTemplate[TOPIC.Topic]):
+class Section(ABC_SHEET.AbstractTemplate):
     """Template to create a section in a factsheet topic outline.
 
     Class ``Section`` is a stub sufficient for a section topic of a

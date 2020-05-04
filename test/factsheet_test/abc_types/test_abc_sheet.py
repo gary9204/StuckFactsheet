@@ -25,7 +25,7 @@ class TestAbstractTemplate:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchPageSheet(ABC_SHEET.AbstractTemplate):
+        class PatchTemplate(ABC_SHEET.AbstractTemplate):
             def __call__(self): return super().__call__()
 
             def name(self): super().name
@@ -34,7 +34,7 @@ class TestAbstractTemplate:
 
             def title(self): super().title
 
-        target = PatchPageSheet()
+        target = PatchTemplate()
         # Test
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)

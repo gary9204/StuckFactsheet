@@ -6,6 +6,7 @@ See :mod:`~factsheet.model.topic`.
 import logging
 from pathlib import Path
 import pickle
+import pytest   # type: ignore[import]
 
 from factsheet.model import infoid as MINFOID
 from factsheet.content.outline import topic as XTOPIC
@@ -303,6 +304,30 @@ class TestTopic:
         target._infoid.set_fresh()
         assert not target.is_stale()
         assert not target._stale
+
+    @pytest.mark.parametrize('NAME_PROP', [
+        'name',
+        'title',
+        ])
+    def test_property_infoid(self, NAME_PROP):
+        """Confirm pass-through InfoId properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+        """
+        # Setup
+        target = XTOPIC.Topic(p_name='Parrot', p_title='Parrot Sketch')
+        value_attr = getattr(target._infoid, NAME_PROP)
+        target_prop = getattr(XTOPIC.Topic, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr == value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     def test_set_fresh(self):
         """Confirm all attributes set.
