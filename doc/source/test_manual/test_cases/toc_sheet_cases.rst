@@ -9,6 +9,7 @@ Factsheet-level Cases
    case_sheet_open_page
    case_sheet_close_page
    case_sheet_file
+   case_sheet_new_topic
    case_sheet_titles
    case_sheet_summary
    case_sheet_delete
