@@ -8,6 +8,8 @@ import logging
 from pathlib import Path
 import pickle
 
+from factsheet.abc_types import abc_outline as ABC_OUTLINE
+from factsheet.content.outline import topic as XTOPIC
 from factsheet.model import infoid as MINFOID
 from factsheet.model import sheet as MSHEET
 
@@ -20,6 +22,7 @@ class TestSheet:
 
         #. Case: type difference
         #. Case: InfoId difference
+        #. Case: topic outline difference
         #. Case: Equivalence
         """
         # Setup
@@ -30,6 +33,12 @@ class TestSheet:
         # Test: InfoId difference
         TITLE_TARGET = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_TARGET)
+        assert not source.__eq__(target)
+        # Test: topic outline difference
+        target = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        topic = XTOPIC.Topic(p_name='Killer Rabbit')
+        _index = target._topics.insert_child(topic, None)
+
         assert not source.__eq__(target)
         # Test: Equivalence
         target = MSHEET.Sheet(p_title=TITLE_SOURCE)
@@ -45,6 +54,9 @@ class TestSheet:
         source = MSHEET.Sheet(p_title=TITLE_MODEL)
         source._stale = True
 
+        topic = XTOPIC.Topic(p_name='Killer Rabbit')
+        _index = source._topics.insert_child(topic, None)
+
         N_PAGES = 3
         pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
@@ -57,6 +69,7 @@ class TestSheet:
             target = pickle.load(io_in)
 
         assert source._infoid == target._infoid
+        assert source._topics == target._topics
         assert not target._stale
         assert isinstance(target._pages, dict)
         assert not target._pages
@@ -79,6 +92,7 @@ class TestSheet:
         assert NAME == target._infoid.name
         assert SUMMARY == target._infoid.summary
         assert TITLE == target._infoid.title
+        assert isinstance(target._topics, ABC_OUTLINE.AbstractOutline)
 
     def test_init_default(self):
         """Confirm initialization with default arguments."""

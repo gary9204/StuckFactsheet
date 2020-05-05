@@ -12,6 +12,7 @@ import typing   # noqa
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.model import infoid as MINFOID
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.view import ui as UI
 
 logger = logging.getLogger('Main.model.sheet')
 
@@ -45,6 +46,9 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         if self._infoid != px_other._infoid:
             return False
 
+        if self._topics != px_other._topics:
+            return False
+
         return True
 
     def __getstate__(self) -> typing.Dict:
@@ -61,6 +65,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
                  p_title: str = '') -> None:
         self._infoid = MINFOID.InfoId(p_aspect=self.ASPECT, p_name=p_name,
                                       p_summary=p_summary, p_title=p_title)
+        self._topics = UI.FACTORY_SHEET.new_model_outline_topics()
         self._state_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
