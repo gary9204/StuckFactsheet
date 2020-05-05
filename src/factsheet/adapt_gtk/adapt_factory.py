@@ -48,7 +48,16 @@ class FactorySheet(ABC_FACTORY.FactorySheet):
         """Return new instance of Gtk-based template outline"""
         return ASHEET.AdaptTreeStoreTemplate()
 
+    def new_model_outline_topics(self) -> ASHEET.AdaptTreeStoreTopic:
+        """Return new instance of Gtk-based topic outline"""
+        return ASHEET.AdaptTreeStoreTopic()
+
     def new_view_outline_templates(self) -> ASHEET.AdaptTreeViewTemplate:
         """Return new instance of Gtk-based template view outline.
         """
         return ASHEET.AdaptTreeViewTemplate()
+
+    def new_view_outline_topics(self) -> ASHEET.AdaptTreeViewTopic:
+        """Return new instance of Gtk-based topic view outline.
+        """
+        return ASHEET.AdaptTreeViewTopic()

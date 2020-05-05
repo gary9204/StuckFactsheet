@@ -63,6 +63,8 @@ class TestFactorySheet:
     @pytest.mark.parametrize('name_method', [
         'new_model_outline_templates',
         'new_view_outline_templates',
+        'new_model_outline_topics',
+        'new_view_outline_topics',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -73,6 +75,12 @@ class TestFactorySheet:
 
             def new_view_outline_templates(self):
                 super().new_view_outline_templates()
+
+            def new_model_outline_topics(self):
+                super().new_model_outline_topics()
+
+            def new_view_outline_topics(self):
+                super().new_view_outline_topics()
 
         target = PatchFactory()
         # Test

@@ -54,6 +54,8 @@ class TestFactorySheet:
     @pytest.mark.parametrize('name_method, class_attr', [
         ('new_model_outline_templates', ASHEET.AdaptTreeStoreTemplate),
         ('new_view_outline_templates', ASHEET.AdaptTreeViewTemplate),
+        ('new_model_outline_topics', ASHEET.AdaptTreeStoreTopic),
+        ('new_view_outline_topics', ASHEET.AdaptTreeViewTopic),
         ])
     def test_new_attr(self, name_method, class_attr):
         """Confirm factory produces instance of each

@@ -70,8 +70,22 @@ class FactorySheet(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def new_model_outline_topics(self) -> ABC_OUTLINE.AbstractOutline:
+        """Return new instance of topic outline class for
+        :class:`~.model.sheet.Sheet`.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def new_view_outline_templates(self) -> ABC_OUTLINE.AbstractViewOutline:
         """Return new instance of template view outline class for
+        :class:`.PageSheet`.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def new_view_outline_topics(self) -> ABC_OUTLINE.AbstractViewOutline:
+        """Return new instance of topic view outline class for
         :class:`.PageSheet`.
         """
         raise NotImplementedError
