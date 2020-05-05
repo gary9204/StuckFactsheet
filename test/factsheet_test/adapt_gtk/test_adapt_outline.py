@@ -173,7 +173,7 @@ class TestAdaptTreeStore:
         model_source = new_outline_model()
         PATH_ITEM = '0:1'
         i_item = model_source.get_iter_from_string(PATH_ITEM)
-        item = model_source.get_value(i_item, PatchOutline.C_ITEM)
+        item = model_source.get_value(i_item, AOUTLINE.N_COLUMN_ITEM)
         NAME_NEW = 'Something completely different'
         item.name = NAME_NEW
         source = PatchOutline()
@@ -430,7 +430,8 @@ class TestAdaptTreeStore:
         i_target = model.get_iter_from_string(PATH_TARGET)
         source = PatchOutline()
         source._model = model
-        item_source = source._model.get_value(i_target, source.C_ITEM)
+        item_source = source._model.get_value(i_target,
+                                              AOUTLINE.N_COLUMN_ITEM)
         # Test
         target = source.get_item(i_target)
         assert target is item_source

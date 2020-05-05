@@ -257,9 +257,9 @@ class TestDialogTemplate:
         # Setup
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
-        FIELD_TITLE = ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE
+        FIELD_TITLE = ASHEET.FieldsTemplate.TITLE
         target._outline._active_field = FIELD_TITLE
-        FIELD_NAME = ASHEET.AdaptTreeViewTemplate.ViewFields.NAME
+        FIELD_NAME = ASHEET.FieldsTemplate.NAME
         button = Gtk.ToggleButton(active=False)
         # Test
         target.on_toggle_search_field(button, FIELD_NAME)
@@ -274,9 +274,9 @@ class TestDialogTemplate:
         # Setup
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
-        FIELD_NAME = ASHEET.AdaptTreeViewTemplate.ViewFields.NAME
+        FIELD_NAME = ASHEET.FieldsTemplate.NAME
         target._outline._active_field = FIELD_NAME
-        FIELD_TITLE = ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE
+        FIELD_TITLE = ASHEET.FieldsTemplate.TITLE
         button = Gtk.ToggleButton(active=True)
         # Test - not active
         target.on_toggle_search_field(button, FIELD_TITLE)

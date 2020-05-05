@@ -123,13 +123,11 @@ class QueryTemplate:
             GO.BindingFlags.BIDIRECTIONAL)
 
         button_by_name = get_object('ui_search_by_name')
-        _ = button_by_name.connect(
-            'toggled', self.on_toggle_search_field,
-            ASHEET.AdaptTreeViewTemplate.ViewFields.NAME)
+        _ = button_by_name.connect('toggled', self.on_toggle_search_field,
+                                   ASHEET.FieldsTemplate.NAME)
         button_by_title = get_object('ui_search_by_title')
-        _ = button_by_title.connect(
-            'toggled', self.on_toggle_search_field,
-            ASHEET.AdaptTreeViewTemplate.ViewFields.TITLE)
+        _ = button_by_title.connect('toggled', self.on_toggle_search_field,
+                                    ASHEET.FieldsTemplate.TITLE)
 
         self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         # STUB test content - begin
@@ -173,13 +171,12 @@ class QueryTemplate:
             self._summary_current.set_markup(self.NO_SUMMARY)
             self._button_specify.set_sensitive(False)
         else:
-            item = model[index][ASHEET.AdaptTreeStoreTemplate.C_ITEM]  # noqa
+            item = model[index][ASHEET.N_COLUMN_TEMPLATE]
             self._summary_current.set_markup(item.summary)
             self._button_specify.set_sensitive(True)
 
     def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
-                               ASHEET.AdaptTreeViewTemplate.ViewFields
-                               ) -> None:
+                               ASHEET.FieldsTemplate) -> None:
         """Sets search field to match active field button.
 
         :param px_button: button user toggled.

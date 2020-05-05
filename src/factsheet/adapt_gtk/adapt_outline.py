@@ -16,6 +16,10 @@ Other classes specialize :class:`.AdaptTreeStore` and
 .. data:: GenericItem
 
     Generic type for an item within an outline.
+
+.. data:: N_COLUMN_ITEM
+
+    Identifies column containing items.
 """
 import collections as COL
 import copy
@@ -35,6 +39,8 @@ logger = logging.getLogger('Main.adapt.outline')
 AdaptIndex = typing.Union[Gtk.TreeIter]
 GenericItem = typing.TypeVar('GenericItem')
 
+N_COLUMN_ITEM = 0
+
 
 class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         AdaptIndex, GenericItem, 'AdaptTreeStore']):
@@ -46,12 +52,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
     .. _Gtk.TreeStore:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
         TreeStore.html#Gtk.TreeStore
-
-    .. data:: C_ITEM
-
-        Identifies column containing items.
     """
-    C_ITEM = 0
 
     def __init__(self) -> None:
         self._model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
@@ -200,7 +201,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
             indices = indices[n_next:] + indices[:n_next]
 
         for i in indices:
-            if px_target == px_derive(self._model[i][self.C_ITEM]):
+            if px_target == px_derive(self._model[i][N_COLUMN_ITEM]):
                 return i
 
         return None
@@ -217,7 +218,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
                     self.__class__.__name__, self.get_item.__name__))
             return None
 
-        return self._model[px_i][self.C_ITEM]
+        return self._model[px_i][N_COLUMN_ITEM]
 
     def indices(self, px_index: AdaptIndex = None
                 ) -> typing.Iterator[AdaptIndex]:
