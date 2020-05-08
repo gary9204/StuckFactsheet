@@ -54,6 +54,8 @@ DIR_UI = Path(__file__).parent / 'ui'
 
 FACTORY_INFOID = AFACTORY.FactoryInfoId()
 FACTORY_SHEET = AFACTORY.FactorySheet()
+IndexOutline = FACTORY_SHEET.get_type_index()
+
 
 # Application/Sheet-level guidance dialogs
 NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')

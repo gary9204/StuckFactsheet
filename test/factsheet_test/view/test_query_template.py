@@ -87,7 +87,7 @@ def new_outline_model():
 @pytest.fixture
 def patch_outline(new_outline_model):
     outline = UI.FACTORY_SHEET.new_model_outline_templates()
-    outline._model = new_outline_model()
+    outline._gtk_model = new_outline_model()
     return outline
 
 
@@ -159,15 +159,15 @@ class TestDialogTemplate:
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         OUTLINE = patch_outline
-        target._outline.set_model(OUTLINE)
-        target._outline.view.expand_all()
+        OUTLINE.attach_view(target._outline)
+        target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '1:1:0'
-        i_item = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target._cursor.select_iter(i_item)
         # Test
         index_t = target()
-        assert PATH_ITEM == OUTLINE._model.get_string_from_iter(index_t)
+        assert PATH_ITEM == OUTLINE._gtk_model.get_string_from_iter(index_t)
         assert not target._dialog.get_visible()
         assert target.NO_SUMMARY == target._summary_current.get_label()
         # Teardown
@@ -186,11 +186,11 @@ class TestDialogTemplate:
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         OUTLINE = patch_outline
-        target._outline.set_model(OUTLINE)
-        target._outline.view.expand_all()
+        OUTLINE.attach_view(target._outline)
+        target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '1:1:0'
-        i_item = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target._cursor.select_iter(i_item)
 
         target._button_specify.set_sensitive(False)
@@ -210,11 +210,11 @@ class TestDialogTemplate:
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         OUTLINE = patch_outline
-        target._outline.set_model(OUTLINE)
-        target._outline.view.expand_all()
+        OUTLINE.attach_view(target._outline)
+        target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target._cursor.select_iter(i_item)
         item = OUTLINE.get_item(i_item)
 
@@ -235,8 +235,8 @@ class TestDialogTemplate:
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         OUTLINE = patch_outline
-        target._outline.set_model(OUTLINE)
-        target._outline.view.expand_all()
+        OUTLINE.attach_view(target._outline)
+        target._outline.gtk_view.expand_all()
 
         TEXT = 'The Spanish Inquisition'
         target._cursor.unselect_all()

@@ -25,7 +25,12 @@ each of its items.
 .. data:: GenericOutline
 
     Generic type for an outline.  Serves as an outline placeholder for
-    derived classes.
+    derived adapter classes.
+
+.. data:: GenericViewOutline
+
+    Generic type for view of an outline.  Serves as an outline view
+    placeholder for derived adapter classes.
 """
 import abc
 import typing
@@ -33,16 +38,19 @@ import typing
 GenericIndex = typing.TypeVar('GenericIndex')
 GenericItem = typing.TypeVar('GenericItem')
 GenericOutline = typing.TypeVar('GenericOutline')
+GenericViewOutline = typing.TypeVar('GenericViewOutline')
 
 
 class AbstractOutline(abc.ABC, typing.Generic[
-        GenericIndex, GenericItem, GenericOutline]):
+        GenericIndex, GenericItem, GenericOutline, GenericViewOutline]):
     """Defines interfaces common to outlines of model components.
 
     .. admonition:: About Equality
 
         Two outlines are equivalent when they have the same structure
         (fields, items, and sections) and corresponding items are equal.
+        Transient aspects of the outlines (like views) are not compared
+        and may be different.
     """
 
     @abc.abstractmethod
@@ -64,16 +72,32 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def deepcopy_section_child(self, pm_target: GenericOutline,
+    def attach_view(self, pm_view_outline: GenericViewOutline):
+        """Add view to update display when outline changes.
+
+        :param pm_view_outline: view to add.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def deepcopy_section_child(self, pm_source: GenericOutline,
                                px_i_source: GenericIndex = None,
                                px_i_target: GenericIndex = None) -> None:
-        """Deepcopy section of outline to another outline.
+        """Deepcopy section of another outline under given item.
 
-        :param pm_target: outline to copy section to.
+        :param pm_source: outline that contains section to copy.
         :param px_i_source: index of item to copy along with all
             descendents.  Default is to copy all items.
-        :param px_i_target: index in target of copied section.  Default
+        :param px_i_target: index to copy section under.  Default
                 is top level after existing top-level items.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def detach_view(self, pm_view_outline: GenericViewOutline):
+        """Remove view of changes to outline.
+
+        :param pm_view_outline: view to remove.
         """
         raise NotImplementedError
 
@@ -164,8 +188,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
 
-class AbstractViewOutline(abc.ABC, typing.Generic[
-        GenericIndex, GenericOutline]):
+class AbstractViewOutline(abc.ABC, typing.Generic[GenericIndex]):
     """Defines interfaces common to views of outlines.
 
     A view of an outline may have one distinguished item.  The
@@ -187,14 +210,6 @@ class AbstractViewOutline(abc.ABC, typing.Generic[
 
         :param px_i: index of new selection.  If None, then no item is
             selected.
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def set_model(self, pm_model: GenericOutline) -> None:
-        """Associates view with given model.
-
-        :param pm_model: new model for view.
         """
         raise NotImplementedError
 

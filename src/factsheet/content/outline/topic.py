@@ -30,6 +30,12 @@ class Topic(ABC_TOPIC.AbstractTopic):
     .. attribute:: ASPECT
 
        Identifies role of model component.
+
+    .. admonition:: About Equality
+
+        Two topics are equivalent when they have the same fact outlines
+        and identification information. Transient aspects of the topics
+        (like views) are not compared and may be different.
     """
     ASPECT = 'topic'
 

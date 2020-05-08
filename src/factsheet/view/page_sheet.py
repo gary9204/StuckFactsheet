@@ -6,8 +6,7 @@ from pathlib import Path
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-# from factsheet.content.outline import topic as XTOPIC
-# from factsheet.content.outline import template as XSECTION
+from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.control import pool as CPOOL
 from factsheet.view import query_template as QTEMPLATE
@@ -169,6 +168,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     def get_infoid(self) -> VINFOID.ViewInfoId:
         """Return view of factsheet identification information."""
         return self._infoid
+
+    def get_view_topics(self) -> ASHEET.AdaptTreeViewTopic:
+        """Return view of factsheet's topic outline."""
+        raise NotImplementedError
 
     @classmethod
     def link_factsheet(cls, pm_page: 'PageSheet',

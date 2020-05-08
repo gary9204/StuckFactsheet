@@ -65,7 +65,7 @@ _i_112 = BUILTIN.append(i_11x, [item])
 
 
 OUTLINE = UI.FACTORY_SHEET.new_model_outline_templates()
-OUTLINE._model = BUILTIN
+OUTLINE._gtk_model = BUILTIN
 # STUB content - end
 
 
@@ -131,9 +131,9 @@ class QueryTemplate:
 
         self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         # STUB test content - begin
-        self._outline.set_model(OUTLINE)
+        OUTLINE.attach_view(self._outline)
         # STUB test content - end
-        view = self._outline.view
+        view = self._outline.gtk_view
         view.show()
         context_outline = get_object('ui_context_outline_templates')
         context_outline.add(view)
@@ -171,7 +171,7 @@ class QueryTemplate:
             self._summary_current.set_markup(self.NO_SUMMARY)
             self._button_specify.set_sensitive(False)
         else:
-            item = model[index][ASHEET.N_COLUMN_TEMPLATE]
+            item = model[index][ASHEET.AdaptTreeStoreTemplate.N_COLUMN_ITEM]
             self._summary_current.set_markup(item.summary)
             self._button_specify.set_sensitive(True)
 

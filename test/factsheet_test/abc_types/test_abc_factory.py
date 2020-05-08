@@ -61,6 +61,7 @@ class TestFactorySheet:
             _ = ABC_FACTORY.FactorySheet()
 
     @pytest.mark.parametrize('name_method', [
+        'get_type_index',
         'new_model_outline_templates',
         'new_view_outline_templates',
         'new_model_outline_topics',
@@ -70,6 +71,9 @@ class TestFactorySheet:
         """Confirm each method must be overridden."""
         # Setup
         class PatchFactory(ABC_FACTORY.FactorySheet):
+            def get_type_index(self):
+                super().get_type_index()
+
             def new_model_outline_templates(self):
                 super().new_model_outline_templates()
 

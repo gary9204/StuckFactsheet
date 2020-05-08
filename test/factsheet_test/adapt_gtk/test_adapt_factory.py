@@ -7,6 +7,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 
 
@@ -50,6 +51,14 @@ class TestFactoryInfoId:
 
 class TestFactorySheet:
     """Unit tests for :class:`~.adapt_factory.FactorySheet`."""
+
+    def test_get_type_index(self):
+        """Confirm factory produces outline index type."""
+        # Setup
+        # Test
+        target = AFACTORY.FactorySheet()
+        assert getattr(target, 'get_type_index')
+        assert target.get_type_index() is AOUTLINE.AdaptIndex
 
     @pytest.mark.parametrize('name_method, class_attr', [
         ('new_model_outline_templates', ASHEET.AdaptTreeStoreTemplate),

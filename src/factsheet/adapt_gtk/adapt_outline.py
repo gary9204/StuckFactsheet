@@ -16,10 +16,6 @@ Other classes specialize :class:`.AdaptTreeStore` and
 .. data:: GenericItem
 
     Generic type for an item within an outline.
-
-.. data:: N_COLUMN_ITEM
-
-    Identifies column containing items.
 """
 import collections as COL
 import copy
@@ -39,11 +35,9 @@ logger = logging.getLogger('Main.adapt.outline')
 AdaptIndex = typing.Union[Gtk.TreeIter]
 GenericItem = typing.TypeVar('GenericItem')
 
-N_COLUMN_ITEM = 0
-
 
 class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
-        AdaptIndex, GenericItem, 'AdaptTreeStore']):
+        AdaptIndex, GenericItem, 'AdaptTreeStore', 'AdaptTreeView']):
     """Implements abstract :class:`.AbstractOutline` with generic item.
 
     ``AdaptTreeStore`` implements a generic outline using
@@ -52,10 +46,19 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
     .. _Gtk.TreeStore:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
         TreeStore.html#Gtk.TreeStore
-    """
 
-    def __init__(self) -> None:
-        self._model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+    .. admonition:: About Equality
+
+        Two outlines are equivalent when they have the same structure
+        (fields, items, and sections) and corresponding items are equal.
+        Transient aspects of the outlines (like views) are not compared
+        and may be different.
+
+    .. data:: N_COLUMN_ITEM
+
+        Identifies column containing items.
+    """
+    N_COLUMN_ITEM = 0
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True if other is an outline with same structure and
@@ -66,13 +69,13 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         if not isinstance(px_other, AdaptTreeStore):
             return False
 
-        n_columns = self._model.get_n_columns()
-        if n_columns != px_other._model.get_n_columns():
+        n_columns = self._gtk_model.get_n_columns()
+        if n_columns != px_other._gtk_model.get_n_columns():
             return False
 
         for i in range(n_columns):
-            if (self._model.get_column_type(i)
-                    != px_other._model.get_column_type(i)):
+            if (self._gtk_model.get_column_type(i)
+                    != px_other._gtk_model.get_column_type(i)):
                 return False
 
         index_pairs = IT.zip_longest(self.indices(), px_other.indices())
@@ -80,11 +83,12 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
             if not i_self or not i_other:
                 return False
 
-            if self._model.get_string_from_iter(i_self) != (
-                    px_other._model.get_string_from_iter(i_other)):
+            if self._gtk_model.get_string_from_iter(i_self) != (
+                    px_other._gtk_model.get_string_from_iter(i_other)):
                 return False
 
-            if list(self._model[i_self]) != list(px_other._model[i_other]):
+            if list(self._gtk_model[i_self]) != (
+                    list(px_other._gtk_model[i_other])):
                 return False
 
         return True
@@ -97,11 +101,17 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         state: typing.Dict[str, typing.Any] = self.__dict__.copy()
         ex_model = COL.OrderedDict()
         for index in self.indices():
-            path_str = self._model.get_string_from_iter(index)
+            path_str = self._gtk_model.get_string_from_iter(index)
             ex_model[path_str] = self.get_item(index)
         state['ex_model'] = ex_model
-        del state['_model']
+        del state['_gtk_model']
+        del state['_views']
+
         return state
+
+    def __init__(self) -> None:
+        self._gtk_model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+        self._views: typing.Dict[int, 'AdaptTreeView'] = dict()
 
     def __ne__(self, px_other: typing.Any) -> bool:
         """Return False if other is an outline with same structure and
@@ -129,8 +139,25 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
                 _ = path.up()
                 i_parent = model.get_iter(path)
             model.append(i_parent, [item])
-        self._model = model
+        self._gtk_model = model
         del self.ex_model  # type: ignore[attr-defined]
+        self._views = dict()
+
+    def attach_view(self, pm_view_outline: "AdaptTreeView"):
+        """Add view to update display when outline changes.
+
+        :param pm_view: view to add.
+        """
+        id_view_outline = id(pm_view_outline)
+        if id_view_outline in self._views:
+            logger.warning(
+                'Duplicate view: {} ({}.{})'.format(
+                    hex(id_view_outline),
+                    self.__class__.__name__, self.attach_view.__name__))
+            return
+
+        pm_view_outline.gtk_view.set_model(self._gtk_model)
+        self._views[id_view_outline] = pm_view_outline
 
     def deepcopy_section_child(self,
                                px_source: 'AdaptTreeStore',
@@ -152,25 +179,40 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         if px_i_source is None:
             i_to = px_i_target
         else:
-            row = [copy.deepcopy(e) for e in px_source._model[px_i_source]]
-            i_to = self._model.append(px_i_target, row)
+            row = [copy.deepcopy(e) for e in px_source._gtk_model[px_i_source]]
+            i_to = self._gtk_model.append(px_i_target, row)
 
-        i_from = px_source._model.iter_children(px_i_source)
+        i_from = px_source._gtk_model.iter_children(px_i_source)
         while i_from is not None:
             self.deepcopy_section_child(
                 px_source=px_source, px_i_source=i_from, px_i_target=i_to)
-            i_from = px_source._model.iter_next(i_from)
+            i_from = px_source._gtk_model.iter_next(i_from)
+
+    def detach_view(self, pm_view_outline: 'AdaptTreeView') -> None:
+        """Remove view of changes to outline.
+
+        :param pm_view: view to remove.
+        """
+        id_view_outline = id(pm_view_outline)
+        try:
+            view = self._views.pop(id_view_outline)
+            view.gtk_view.set_model(None)
+        except KeyError:
+            logger.warning(
+                'Missing view: {} ({}.{})'.format(
+                    hex(id_view_outline),
+                    self.__class__.__name__, self.detach_view.__name__))
 
     def extract_section(self, px_i: AdaptIndex) -> None:
         """Remove section from outline.
 
         :param px_i: index of parent item to remove along with all
-            descendants.  If index is None, remove all items.s
+            descendants.  If index is None, remove all items.
         """
         if px_i is None:
-            self._model.clear()
+            self._gtk_model.clear()
         else:
-            _ = self._model.remove(px_i)
+            _ = self._gtk_model.remove(px_i)
 
     def find_next(self, px_target: typing.Any, px_i_after: AdaptIndex = None,
                   px_derive: typing.Callable[[typing.Any], typing.Any] = (
@@ -193,15 +235,16 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         indices = list(self.indices())
 
         if px_i_after is not None:
-            s_after = self._model.get_string_from_iter(px_i_after)
+            s_after = self._gtk_model.get_string_from_iter(px_i_after)
             for n, i in enumerate(indices):
-                if s_after == self._model.get_string_from_iter(i):
+                if s_after == self._gtk_model.get_string_from_iter(i):
                     break
             n_next = n + 1
             indices = indices[n_next:] + indices[:n_next]
 
         for i in indices:
-            if px_target == px_derive(self._model[i][N_COLUMN_ITEM]):
+            if px_target == px_derive(
+                    self._gtk_model[i][self.N_COLUMN_ITEM]):
                 return i
 
         return None
@@ -210,15 +253,20 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """Returns item at given index or None when no item at index.
 
         Logs warning when index is None.
+
         :param px_i: index of desired item.
         """
-        if px_i is None:
+        item = None
+        try:
+            item = self._gtk_model[px_i][self.N_COLUMN_ITEM]
+        except TypeError:
+            id_index = hex(id(px_i)) if px_i else 'None'
             logger.warning(
-                'Invalid item index (None): ({}.{})'.format(
-                    self.__class__.__name__, self.get_item.__name__))
-            return None
+                'Invalid item index ({}): ({}.{})'
+                ''.format(id_index, self.__class__.__name__,
+                          self.get_item.__name__))
 
-        return self._model[px_i][N_COLUMN_ITEM]
+        return item
 
     def indices(self, px_index: AdaptIndex = None
                 ) -> typing.Iterator[AdaptIndex]:
@@ -231,13 +279,13 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
             iterates over entire outline.
         """
         if px_index is None:
-            index = self._model.get_iter_first()
+            index = self._gtk_model.get_iter_first()
         else:
             yield px_index
-            index = self._model.iter_children(px_index)
+            index = self._gtk_model.iter_children(px_index)
         while index is not None:
             yield from self.indices(index)
-            index = self._model.iter_next(index)
+            index = self._gtk_model.iter_next(index)
 
     def insert_after(self, px_item: GenericItem,
                      px_i: AdaptIndex) -> AdaptIndex:
@@ -247,9 +295,10 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
         :param px_item: new item to add.
         :param px_i: index of item to precede new item.
+        :returns: index of newly-added item.
         """
         PARENT = None
-        return self._model.insert_after(PARENT, px_i, [px_item])
+        return self._gtk_model.insert_after(PARENT, px_i, [px_item])
 
     def insert_before(self, px_item: GenericItem,
                       px_i: AdaptIndex) -> AdaptIndex:
@@ -259,9 +308,10 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
         :param px_item: new item to add.
         :param px_i: index of item to follow new item.
+        :returns: index of newly-added item.
         """
         PARENT = None
-        return self._model.insert_before(PARENT, px_i, [px_item])
+        return self._gtk_model.insert_before(PARENT, px_i, [px_item])
 
     def insert_child(self, px_item: GenericItem,
                      px_i: AdaptIndex) -> AdaptIndex:
@@ -272,17 +322,17 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
         :param px_item: new item to add.
         :param px_i: index of parent item for new item.
+        :returns: index of newly-added item.
         """
-        return self._model.append(px_i, [px_item])
+        return self._gtk_model.append(px_i, [px_item])
 
-    @property
-    def model(self) -> Gtk.TreeStore:
-        """Return outline model."""
-        return self._model
+#     @property
+#     def gtk_model(self) -> Gtk.TreeStore:
+#         """Return outline model."""
+#         return self._gtk_model
 
 
-class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[
-        AdaptIndex, AdaptTreeStore[GenericItem]]):
+class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
     """Implements abstract :class:`.AbstractViewOutline`.
 
     ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
@@ -295,16 +345,21 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[
     """
 
     def __init__(self):
-        self._view = Gtk.TreeView()
-        self._selection = self._view.get_selection()
+        self._gtk_view = Gtk.TreeView()
+        self._selection = self._gtk_view.get_selection()
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
     def get_selected(self) -> typing.Optional[AdaptIndex]:
-        """Return the index of the selected item or None when no item
+        """Returns the index of the selected item or None when no item
         selected.
         """
         _model, index = self._selection.get_selected()
         return index
+
+    @property
+    def gtk_view(self) -> Gtk.TreeView:
+        """Returns underlying presentation element."""
+        return self._gtk_view
 
     def select(self, px_i: AdaptIndex = None) -> None:
         """Select the item at the given index.
@@ -316,13 +371,6 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[
             self._selection.unselect_all()
         else:
             self._selection.select_iter(px_i)
-
-    def set_model(self, pm_model: AdaptTreeStore[GenericItem]) -> None:
-        """Associate given model with view.
-
-        :param pm_model: outline model for view.
-        """
-        self._view.set_model(pm_model.model)
 
     def unselect_all(self) -> None:
         """Clear selection so that no item is selected."""

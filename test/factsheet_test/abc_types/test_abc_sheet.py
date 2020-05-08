@@ -42,7 +42,7 @@ class TestAbstractTemplate:
 
 
 class TestEffectSafe:
-    """Unit tests for members of enumeration :class:`EffectSafe`."""
+    """Unit tests for members of enumeration :class:`.EffectSafe`."""
 
     def test_effects(self):
         """Confirm member definitions."""
@@ -94,6 +94,7 @@ class TestInterfacePageSheet:
     @pytest.mark.parametrize('name_method', [
         'close_page',
         'get_infoid',
+        'get_view_topics',
         'present',
         'set_titles',
         ])
@@ -104,6 +105,8 @@ class TestInterfacePageSheet:
             def close_page(self): super().close_page()
 
             def get_infoid(self): super().get_infoid()
+
+            def get_view_topics(self): super().get_view_topics()
 
             def present(self): super().present(None)
 

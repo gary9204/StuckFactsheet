@@ -7,6 +7,7 @@ widget toolkit.  Module ``abc_factory`` defines abstract factories for
 component classes of :class:`.InfoId`.
 """
 import abc
+import typing
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
@@ -61,6 +62,11 @@ class FactorySheet(abc.ABC):
     """Defines abstract factory to produce factsheet components for
     :class:`~.model.sheet.Sheet` and :class:`.PageSheet`.
     """
+
+    @abc.abstractmethod
+    def get_type_index(self) -> typing.Type[typing.Any]:
+        """Returns type for index of an item within an outline."""
+        raise NotImplementedError
 
     @abc.abstractmethod
     def new_model_outline_templates(self) -> ABC_OUTLINE.AbstractOutline:

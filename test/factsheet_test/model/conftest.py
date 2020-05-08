@@ -4,8 +4,8 @@ Test fixtures for :mod:`~.factsheet_test.content.outline` unit tests.
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.view import ui as UI
 
@@ -21,32 +21,6 @@ def args_infoid_stock():
         p_title='Stock InfoId Title',
         p_summary='This summarizes a stock identification.',
         )
-
-
-@pytest.fixture
-def patch_class_page_sheet(patch_class_view_infoid):
-    """Pytest fixture returns stub class implementing
-    :class:`.InterfacePageSheet`.
-    """
-    class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
-        def __init__(self):
-            self._infoid = patch_class_view_infoid()
-            self.called_close = False
-            self.called_present = False
-            self.called_set_titles = False
-            self.subtitle = None
-
-        def close_page(self): self.called_close = True
-
-        def get_infoid(self): return self._infoid
-
-        def present(self, _time): self.called_present = True
-
-        def set_titles(self, p_subtitle):
-            self.called_set_titles = True
-            self.subtitle = p_subtitle
-
-    return PatchPageSheet
 
 
 @pytest.fixture
@@ -88,15 +62,51 @@ def patch_class_view_infoid(args_infoid_stock):
     return PatchViewInfoId
 
 
-# @pytest.fixture
-# def patch_class_pane_topic(patch_class_view_infoid):
-#     """Pytest fixture returns stub class implementing
-#     :class:`.InterfacePaneTopic`.
-#     """
-#     class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
-#         def __init__(self):
-#             self._infoid = patch_class_view_infoid()
-# 
-#         def get_infoid(self): return self._infoid
-# 
-#     return PatchPaneTopic
+@pytest.fixture
+def patch_class_view_topics():
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfacePaneTopic`.
+    """
+    class PatchViewTopics(ABC_OUTLINE.AbstractViewOutline):
+        def __init__(self):
+            self.called_get_selected = False
+            self.called_select = False
+            self.called_set_model = False
+            self.called_unselect_all = False
+
+        def get_selected(self): self.called_get_selected = True
+
+        def select(self): self.called_select = True
+
+        def unselect_all(self): self.called_unselect_all = True
+
+    return PatchViewTopics
+
+
+@pytest.fixture
+def patch_class_page_sheet(patch_class_view_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfacePageSheet`.
+    """
+    class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
+        def __init__(self):
+            self._infoid = patch_class_view_infoid()
+            self._topics = UI.FACTORY_SHEET.new_view_outline_topics()
+            self.called_close = False
+            self.called_present = False
+            self.called_set_titles = False
+            self.subtitle = None
+
+        def close_page(self): self.called_close = True
+
+        def get_infoid(self): return self._infoid
+
+        def get_view_topics(self): return self._topics
+
+        def present(self, _time): self.called_present = True
+
+        def set_titles(self, p_subtitle):
+            self.called_set_titles = True
+            self.subtitle = p_subtitle
+
+    return PatchPageSheet

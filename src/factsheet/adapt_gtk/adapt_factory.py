@@ -2,8 +2,11 @@
 Defines GTK-based classes that implement abstract factories in
 :mod:`.abc_factory`.
 """
+import typing
+
 from factsheet.abc_types import abc_factory as ABC_FACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 
 
@@ -43,6 +46,10 @@ class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
 class FactorySheet(ABC_FACTORY.FactorySheet):
     """Implements GTK-based factory for abstract factory
     :class:`.abc_factory.FactorySheet`."""
+
+    def get_type_index(self) -> typing.Type[AOUTLINE.AdaptIndex]:
+        """Returns type for index of an item within an outline."""
+        return AOUTLINE.AdaptIndex
 
     def new_model_outline_templates(self) -> ASHEET.AdaptTreeStoreTemplate:
         """Return new instance of Gtk-based template outline"""

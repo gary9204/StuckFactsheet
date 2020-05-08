@@ -24,7 +24,7 @@ class TestAbstractOutline:
     def test_abstract_class(self):
         """Confirm class is abstract."""
         # Setup
-        class ClassOutline(ABC_OUTLINE.AbstractOutline[int, int, str]):
+        class ClassOutline(ABC_OUTLINE.AbstractOutline[int, int, str, str]):
             pass
 
         # Test
@@ -34,7 +34,9 @@ class TestAbstractOutline:
     @pytest.mark.parametrize('name_method', [
         '__eq__',
         '__ne__',
+        'attach_view',
         'deepcopy_section_child',
+        'detach_view',
         'extract_section',
         'find_next',
         'get_item',
@@ -46,13 +48,18 @@ class TestAbstractOutline:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchAbstractOutline(ABC_OUTLINE.AbstractOutline[int, int, str]):
+        class PatchAbstractOutline(
+                ABC_OUTLINE.AbstractOutline[int, int, str, str]):
             def __eq__(self): return super().__eq__(0)  # type: ignore[misc]
 
             def __ne__(self): return super().__ne__(0)  # type: ignore[misc]
 
+            def attach_view(self): return super().attach_view(None)
+
             def deepcopy_section_child(self):
                 super().deepcopy_section_child(None, 0, 0)
+
+            def detach_view(self): return super().detach_view(None)
 
             def extract_section(self): super().extract_section(0)
 
@@ -88,7 +95,6 @@ class TestAbstractViewOutline:
     @pytest.mark.parametrize('name_method', [
         'get_selected',
         'select',
-        'set_model',
         'unselect_all',
         ])
     def test_must_override(self, name_method):
@@ -98,8 +104,6 @@ class TestAbstractViewOutline:
             def get_selected(self): return super().get_selected()
 
             def select(self): return super().select(None)
-
-            def set_model(self): return super().set_model(None)
 
             def unselect_all(self): return super().unselect_all()
 

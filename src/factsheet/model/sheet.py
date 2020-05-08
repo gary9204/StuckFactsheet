@@ -9,9 +9,10 @@ class representing the model of a factsheet.
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_stalefile as ABC_STALE
-from factsheet.model import infoid as MINFOID
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.abc_types import abc_stalefile as ABC_STALE
+from factsheet.abc_types import abc_topic as ABC_TOPIC
+from factsheet.model import infoid as MINFOID
 from factsheet.view import ui as UI
 
 logger = logging.getLogger('Main.model.sheet')
@@ -28,6 +29,13 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
     :param p_name: name of factsheet.
     :param p_summary: summary of factsheet.
     :param p_title: title of factsheet.
+
+    .. admonition:: About Equality
+
+        Two factsheet are equivalent when they have the same topic
+        outlines and identification information. Transient aspects of
+        the factsheets (like windows) are not compared and may be
+        different.
 
     .. attribute:: ASPECT
 
@@ -99,6 +107,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             return
 
         self._infoid.attach_view(pm_page.get_infoid())
+        self._topics.attach_view(pm_page.get_view_topics())
         self._pages[id(pm_page)] = pm_page
 
     def detach_all(self) -> None:
@@ -136,16 +145,54 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """
         self._infoid.detach_view(pm_page.get_infoid())
 
+    def extract_topic(self, px_i: UI.IndexOutline) -> None:
+        """Remove topic and all its descendants from topic outline.
+
+        :param px_i: index of parent topic to remove along with all
+            descendants.  If index is None, remove all topics.
+        """
+        self._topics.extract_section(px_i)
+
+    def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
+                           px_i: UI.IndexOutline) -> UI.IndexOutline:
+        """Adds topic to topics outline after topic at given index.
+
+        If index is None, adds topic at beginning of outline.
+
+        :param px_topic: new topic to add.
+        :param px_i: index of topic to precede new topic.
+        :returns: index of newly-added topic.
+        """
+        return self._topics.insert_after(px_topic, px_i)
+
+    def insert_topic_before(self, px_topic: ABC_TOPIC.AbstractTopic,
+                            px_i: UI.IndexOutline) -> UI.IndexOutline:
+        """Adds topic to topics outline before topic at given index.
+
+        If index is None, adds topic at end of outline.
+
+        :param px_topic: new topic to add.
+        :param px_i: index of topic to follow new topic.
+        :returns: index of newly-added topic.
+        """
+        return self._topics.insert_before(px_topic, px_i)
+
+    def insert_topic_child(self, px_topic: ABC_TOPIC.AbstractTopic,
+                           px_i: UI.IndexOutline) -> UI.IndexOutline:
+        """Adds topic to topic outline as child of topic at given index.
+
+        Method adds topic after all existing children.  If index is
+        None, it adds topic at end of outline.
+
+        :param px_topic: new topic to add.
+        :param px_i: index of parent topic for new topic.
+        :returns: index of newly-added topic.
+        """
+        return self._topics.insert_child(px_topic, px_i)
+
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to factsheet."""
-        if self._stale:
-            return False
-
-        if self._infoid.is_stale():
-            self._stale = True
-            return False
-
-        return True
+        return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
@@ -157,6 +204,13 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         if self._infoid.is_stale():
             self._stale = True
             return True
+
+        for index in self._topics.indices():
+            topic = self._topics.get_item(index)
+            assert topic is not None
+            if topic.is_stale():
+                self._stale = True
+                return True
 
         return False
 
@@ -176,6 +230,10 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """Mark factsheet in memory consistent with file contents."""
         self._stale = False
         self._infoid.set_fresh()
+        for index in self._topics.indices():
+            topic = self._topics.get_item(index)
+            assert topic is not None
+            topic.set_fresh()
 
     def set_stale(self) -> None:
         """Mark factsheet in memory changed from file contents."""

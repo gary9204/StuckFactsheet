@@ -9,6 +9,6 @@
 
 .. autoclass:: AdaptTreeStore
    :members:
-   :exclude-members: C_ITEM
+   :exclude-members: N_COLUMN_ITEM
    :undoc-members:
    :show-inheritance:

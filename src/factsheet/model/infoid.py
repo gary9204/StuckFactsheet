@@ -25,8 +25,11 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
        to title.
      * *Title:* one-line, editable description of component contents.
 
-    .. tip:: Two `InfoId` instances are equivalent when their aspects,
-       names, titles, and summaries are the equal.
+    .. admonition:: About Equality
+
+        Two `InfoId` instances are equivalent when their aspects, names,
+        titles, and summaries are the equal. Transient aspects of the
+        instances (like views) are not compared and may be different.
     """
 
     def __init__(self, *, p_aspect: str, p_name: str = '',

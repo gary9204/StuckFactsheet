@@ -7,8 +7,10 @@ import re
 import logging
 from pathlib import Path
 import pickle
+import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
+from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.outline import topic as XTOPIC
 from factsheet.model import infoid as MINFOID
 from factsheet.model import sheet as MSHEET
@@ -121,6 +123,8 @@ class TestSheet:
         for page in pages:
             target.attach_page(page)
             assert target._infoid.title == page.get_infoid().title
+            assert target._topics._gtk_model is (
+                page._topics.gtk_view.get_model())
             assert target._pages[id(page)] is page
         assert len(pages) == len(target._pages)
 
@@ -266,6 +270,74 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
+    def test_extract_topic(self, monkeypatch):
+        """Confirm method passes request to outline."""
+        # Setup
+        class PatchExtract:
+            def __init__(self): self.called = False
+
+            def extract_section(self, _index): self.called = True
+
+        patch_outline = PatchExtract()
+        monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic, 'extract_section',
+                            patch_outline.extract_section)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        # Test
+        _ = target.extract_topic(None)
+        assert patch_outline.called
+
+    def test_insert_topic_after(self, monkeypatch):
+        """Confirm method passes request to outline."""
+        # Setup
+        class PatchInsertAfter:
+            def __init__(self): self.called = False
+
+            def insert_after(self, _item, _index): self.called = True
+
+        patch_outline = PatchInsertAfter()
+        monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic,
+                            'insert_after', patch_outline.insert_after)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        # Test
+        _ = target.insert_topic_after(None, None)
+        assert patch_outline.called
+
+    def test_insert_topic_before(self, monkeypatch):
+        """Confirm method passes request to outline."""
+        # Setup
+        class PatchInsertBefore:
+            def __init__(self): self.called = False
+
+            def insert_before(self, _item, _index): self.called = True
+
+        patch_outline = PatchInsertBefore()
+        monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic,
+                            'insert_before', patch_outline.insert_before)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        # Test
+        _ = target.insert_topic_before(None, None)
+        assert patch_outline.called
+
+    def test_insert_topic_child(self, monkeypatch):
+        """Confirm method passes request to outline."""
+        # Setup
+        class PatchInsertChild:
+            def __init__(self): self.called = False
+
+            def insert_child(self, _item, _index): self.called = True
+
+        patch_outline = PatchInsertChild()
+        monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic,
+                            'insert_child', patch_outline.insert_child)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        # Test
+        _ = target.insert_topic_child(None, None)
+        assert patch_outline.called
+
     def test_is_fresh(self):
         """Confirm return is accurate.
 
@@ -299,10 +371,26 @@ class TestSheet:
         #. Case: Sheet stale, identification information fresh
         #. Case: Sheet fresh, identification information stale
         #. Case: Sheet fresh, identification information fresh
+        #. Case: Sheet fresh, ID info fresh, leaf topic stale
+        #. Case: Sheet fresh, ID info fresh, last topic stale
+        #. Case: Sheet fresh, ID info fresh, topics fresh
         """
         # Setup
         TEXT_TITLE = 'Something completely different'
         target = MSHEET.Sheet(p_title=TEXT_TITLE)
+
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            topic = XTOPIC.Topic(p_name='Topic {}'.format(i))
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        parent = target._topics._gtk_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = XTOPIC.Topic(p_name=name)
+            parent = target.insert_topic_child(topic, parent)
+        I_LEAF = 2
+        I_LAST = 4
         # Test: Sheet stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -316,6 +404,36 @@ class TestSheet:
         # Test: Sheet fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
+        assert not target.is_stale()
+        assert not target._stale
+        # Test: Sheet fresh, ID info fresh, leaf topic stale
+        target._stale = False
+        target._infoid.set_fresh()
+        for i, index in enumerate(target._topics.indices()):
+            topic = target._topics.get_item(index)
+            if i == I_LEAF:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, ID info fresh, last topic stale
+        target._stale = False
+        target._infoid.set_fresh()
+        for i, index in enumerate(target._topics.indices()):
+            topic = target._topics.get_item(index)
+            if i == I_LAST:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, ID info fresh, topics fresh
+        target._stale = False
+        target._infoid.set_fresh()
+        for i, index in enumerate(target._topics.indices()):
+            topic = target._topics.get_item(index)
+            topic.set_fresh()
         assert not target.is_stale()
         assert not target._stale
 
@@ -357,10 +475,23 @@ class TestSheet:
         #. Case: Sheet stale, identification information fresh
         #. Case: Sheet fresh, identification information stale
         #. Case: Sheet stale, identification information stale
+        #. Case: Sheet fresh, topics stale
+        #. Case: Sheet stale, topics stale
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
         target = MSHEET.Sheet(p_title=TEXT_TITLE)
+
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            topic = XTOPIC.Topic(p_name='Topic {}'.format(i))
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        parent = target._topics._gtk_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = XTOPIC.Topic(p_name=name)
+            parent = target.insert_topic_child(topic, parent)
         # Test: Sheet fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
@@ -385,6 +516,36 @@ class TestSheet:
         target.set_fresh()
         assert not target._stale
         assert target._infoid.is_fresh()
+        # Test: Sheet fresh, topics stale
+        target._false = True
+        target._infoid.set_stale()
+        for i, index in enumerate(target._topics.indices()):
+            topic = target._topics.get_item(index)
+            if i % 2:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._infoid.is_fresh()
+        for index in target._topics.indices():
+            topic = target._topics.get_item(index)
+            assert topic.is_fresh()
+        # Test: Sheet stale, topics stale
+        target._stale = True
+        target._infoid.set_stale()
+        for i, index in enumerate(target._topics.indices()):
+            topic = target._topics.get_item(index)
+            if not i % 2:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._infoid.is_fresh()
+        for index in target._topics.indices():
+            topic = target._topics.get_item(index)
+            assert topic.is_fresh()
 
     def test_set_stale(self):
         """Confirm all attributes set.
@@ -393,6 +554,7 @@ class TestSheet:
         #. Case: Sheet stale, identification information fresh
         #. Case: Sheet fresh, identification information stale
         #. Case: Sheet stale, identification information stale
+        #. Case: Sheet fresh, ID info fresh, topics fresh
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
@@ -421,6 +583,18 @@ class TestSheet:
         target.set_stale()
         assert target._stale
         assert target._infoid.is_stale()
+        # Test: Sheet fresh, ID info fresh, topics fresh
+        target._stale = True
+        target._infoid.set_fresh()
+        for index in target._topics.indices():
+            topic = target._topics.get_item(index)
+            topic.set_fresh()
+        target.set_stale()
+        assert target._stale
+        assert target._infoid.is_fresh()
+        for index in target._topics.indices():
+            topic = target._topics.get_item(index)
+            assert topic.is_fresh()
 
     def test_update_titles(self, patch_class_page_sheet):
         """Confirm all pages get update notice."""

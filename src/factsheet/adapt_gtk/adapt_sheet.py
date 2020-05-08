@@ -6,14 +6,6 @@ See :mod:`.abc_sheet`.
 
 .. _`Gtk.TreeIter`:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeIter.html
-
-.. data:: N_COLUMN_TEMPLATE
-
-    Identifies column containing tamplates.
-
-.. data:: N_COLUMN_TOPIC
-
-    Identifies column containing tamplates.
 """
 import enum
 import gi   # type: ignore[import]
@@ -25,9 +17,6 @@ from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-
-N_COLUMN_TEMPLATE = AOUTLINE.N_COLUMN_ITEM
-N_COLUMN_TOPIC = AOUTLINE.N_COLUMN_ITEM
 
 
 class AdaptTreeStoreTemplate(
@@ -116,15 +105,14 @@ class AdaptTreeStoreTopic(
             px_target, px_i_after, lambda topic: topic.title)
 
 
-class AdaptTreeViewTemplate(
-        AOUTLINE.AdaptTreeView[ABC_SHEET.AbstractTemplate]):
+class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
     """Specializes :class:`.AdaptTreeView` with name and title columns
     for :class:`.AbstractTemplate` items.
     """
     def __init__(self):
         """Initialize view for template outline."""
-        self._view = Gtk.TreeView()
-        self._view.set_search_equal_func(self._test_field_ne, None)
+        super().__init__()
+        self._gtk_view.set_search_equal_func(self._test_field_ne, None)
         self._active_field = FieldsTemplate.NAME
 
     def _name_cell_data(self, _column: Gtk.TreeViewColumn,
@@ -141,7 +129,7 @@ class AdaptTreeViewTemplate(
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        template = px_store[px_index][N_COLUMN_TEMPLATE]
+        template = px_store[px_index][AdaptTreeStoreTemplate.N_COLUMN_ITEM]
         pm_renderer.set_property('markup', template.name)
 
     def _test_field_ne(self, px_model: Gtk.TreeModel, p_n_column: int,
@@ -169,7 +157,7 @@ class AdaptTreeViewTemplate(
             return False
 
         path = px_model.get_path(px_index)
-        self._view.expand_row(path, False)
+        self._gtk_view.expand_row(path, False)
         return True
 
     def _title_cell_data(self, _column: Gtk.TreeViewColumn,
@@ -187,58 +175,19 @@ class AdaptTreeViewTemplate(
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        template = px_store[px_index][N_COLUMN_TEMPLATE]
+        template = px_store[px_index][AdaptTreeStoreTemplate.N_COLUMN_ITEM]
         pm_renderer.set_property('markup', template.title)
 
-    def set_model(self, px_outline:
-                  AOUTLINE.AdaptTreeStore[ABC_SHEET.AbstractTemplate]):
-        """Associate given model with view.
 
-        Sets up columns and renderers for name and title of template
-        items.
-        """
-        super().set_model(px_outline)
-        self._view.set_search_column(N_COLUMN_TEMPLATE)
-        self._view.set_enable_search(True)
-
-        name = Gtk.TreeViewColumn(title='Name')
-        self._view.append_column(name)
-        name.set_clickable(True)
-        name.set_resizable(True)
-        _ = name.get_button().get_preferred_size()
-        render_name = Gtk.CellRendererText()
-        name.set_cell_data_func(render_name, self._name_cell_data, None)
-        name.pack_start(render_name, expand=False)
-
-        title = Gtk.TreeViewColumn(title='Title')
-        self._view.append_column(title)
-        title.set_clickable(True)
-        title.set_resizable(True)
-        _ = name.get_button().get_preferred_size()
-        render_title = Gtk.CellRendererText()
-        title.set_cell_data_func(render_title, self._title_cell_data, None)
-        title.pack_start(render_title, expand=False)
-
-        pad = Gtk.TreeViewColumn(title=' ')
-        pad.set_expand(True)
-        self._view.append_column(pad)
-
-    @property
-    def view(self) -> Gtk.TreeView:
-        """Returns underlying `Gtk.TreeIter`_."""
-        return self._view
-
-
-class AdaptTreeViewTopic(
-        AOUTLINE.AdaptTreeView[ABC_TOPIC.AbstractTopic]):
+class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
     """Specializes :class:`.AdaptTreeView` with name and title columns
     for :class:`.AbstractTopic` items.
     """
 
     def __init__(self):
         """Initialize view for topic outline."""
-        self._view = Gtk.TreeView()
-        self._view.set_search_equal_func(self._test_field_ne, None)
+        super().__init__()
+        self._gtk_view.set_search_equal_func(self._test_field_ne, None)
         self._search = FieldsTopic.VOID
 
     def _name_cell_data(self, _column: Gtk.TreeViewColumn,
@@ -255,7 +204,7 @@ class AdaptTreeViewTopic(
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        topic = px_store[px_index][N_COLUMN_TOPIC]
+        topic = px_store[px_index][AdaptTreeStoreTopic.N_COLUMN_ITEM]
         pm_renderer.set_property('markup', topic.name)
 
     def _test_field_ne(self, px_model: Gtk.TreeModel, p_n_column: int,
@@ -284,7 +233,7 @@ class AdaptTreeViewTopic(
                 return False
 
         path = px_model.get_path(px_index)
-        _ = self._view.expand_row(path, False)
+        _ = self._gtk_view.expand_row(path, False)
         return True
 
     def _title_cell_data(self, _column: Gtk.TreeViewColumn,
@@ -301,45 +250,8 @@ class AdaptTreeViewTopic(
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        topic = px_store[px_index][N_COLUMN_TOPIC]
+        topic = px_store[px_index][AdaptTreeStoreTopic.N_COLUMN_ITEM]
         pm_renderer.set_property('markup', topic.title)
-
-    def set_model(self, px_outline:
-                  AOUTLINE.AdaptTreeStore[ABC_TOPIC.AbstractTopic]):
-        """Associate given model with view.
-
-        Sets up columns and renderers for name and title of topic items.
-        """
-        super().set_model(px_outline)
-        self._view.set_search_column(N_COLUMN_TOPIC)
-        self._view.set_enable_search(True)
-
-        name = Gtk.TreeViewColumn(title='Name')
-        self._view.append_column(name)
-        name.set_clickable(True)
-        name.set_resizable(True)
-        _ = name.get_button().get_preferred_size()
-        render_name = Gtk.CellRendererText()
-        name.set_cell_data_func(render_name, self._name_cell_data, None)
-        name.pack_start(render_name, expand=False)
-
-        title = Gtk.TreeViewColumn(title='Title')
-        self._view.append_column(title)
-        title.set_clickable(True)
-        title.set_resizable(True)
-        _ = name.get_button().get_preferred_size()
-        render_title = Gtk.CellRendererText()
-        title.set_cell_data_func(render_title, self._title_cell_data, None)
-        title.pack_start(render_title, expand=False)
-
-        pad = Gtk.TreeViewColumn(title=' ')
-        self._view.append_column(pad)
-        pad.set_expand(True)
-
-    @property
-    def view(self) -> Gtk.TreeView:
-        """Returns underlying `Gtk.TreeIter`_."""
-        return self._view
 
 
 class FieldsTemplate(enum.Flag):

@@ -105,7 +105,7 @@ def new_outline(new_outline_model):
                              px_class_item=PatchTemplate,
                              p_tag='Stub outline.'):
         outline = px_class_store()
-        outline._model = new_outline_model(
+        outline._gtk_model = new_outline_model(
             px_class_item=px_class_item, p_tag=p_tag)
         return outline
 
@@ -133,15 +133,16 @@ class TestAdaptTreeStoreTemplate:
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_outline_model(p_tag='Target')
         PATH_VALUE = '1:1:1'
-        i_value = target._model.get_iter_from_string(PATH_VALUE)
+        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
+        assert i_value
         value = target.get_item(i_value).name
         PATH_AFTER = '1:1:1'
-        i_after = target._model.get_iter_from_string(PATH_AFTER)
+        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_name(value, i_after)
-        assert PATH_VALUE == target._model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     def test_find_name_absent(self, new_outline_model):
         """| Confirm search by template name.
@@ -150,7 +151,7 @@ class TestAdaptTreeStoreTemplate:
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_outline_model(p_tag='Target')
         # Test
         i_match = target.find_name(VALUE)
         assert i_match is None
@@ -161,15 +162,15 @@ class TestAdaptTreeStoreTemplate:
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_outline_model(p_tag='Target')
         PATH_VALUE = '0:1'
-        i_value = target._model.get_iter_from_string(PATH_VALUE)
+        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).title
         PATH_AFTER = '0:1'
-        i_after = target._model.get_iter_from_string(PATH_AFTER)
+        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_title(value, i_after)
-        assert PATH_VALUE == target._model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     def test_find_title_absent(self, new_outline_model):
         """| Confirm search by template name.
@@ -178,7 +179,7 @@ class TestAdaptTreeStoreTemplate:
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_outline_model(p_tag='Target')
         # Test
         i_match = target.find_title(VALUE)
         assert i_match is None
@@ -205,16 +206,16 @@ class TestAdaptTreeStoreTopic:
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTopic()
-        target._model = new_outline_model(
+        target._gtk_model = new_outline_model(
             px_class_item=XTOPIC.Topic, p_tag='Target')
         PATH_VALUE = '1:1:1'
-        i_value = target._model.get_iter_from_string(PATH_VALUE)
+        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).name
         PATH_AFTER = '1:1:1'
-        i_after = target._model.get_iter_from_string(PATH_AFTER)
+        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_name(value, i_after)
-        assert PATH_VALUE == target._model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     def test_find_name_absent(self, new_outline_model):
         """| Confirm search by topic name.
@@ -223,7 +224,7 @@ class TestAdaptTreeStoreTopic:
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTopic()
-        target._model = new_outline_model(
+        target._gtk_model = new_outline_model(
             px_class_item=XTOPIC.Topic, p_tag='Target')
         # Test
         i_match = target.find_name(VALUE)
@@ -235,16 +236,16 @@ class TestAdaptTreeStoreTopic:
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTopic()
-        target._model = new_outline_model(
+        target._gtk_model = new_outline_model(
             px_class_item=XTOPIC.Topic, p_tag='Target')
         PATH_VALUE = '0:1'
-        i_value = target._model.get_iter_from_string(PATH_VALUE)
+        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).title
         PATH_AFTER = '0:1'
-        i_after = target._model.get_iter_from_string(PATH_AFTER)
+        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_title(value, i_after)
-        assert PATH_VALUE == target._model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     def test_find_title_absent(self, new_outline_model):
         """| Confirm search by topic name.
@@ -253,7 +254,7 @@ class TestAdaptTreeStoreTopic:
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTopic()
-        target._model = new_outline_model(
+        target._gtk_model = new_outline_model(
             px_class_item=XTOPIC.Topic, p_tag='Target')
         # Test
         i_match = target.find_title(VALUE)
@@ -276,8 +277,8 @@ class TestAdaptTreeViewTemplate:
                             patch_func.set_search_equal_func)
         # Test
         target = ASHEET.AdaptTreeViewTemplate()
-        assert isinstance(target._view, Gtk.TreeView)
-        assert target._view.get_model() is None
+        assert isinstance(target._gtk_view, Gtk.TreeView)
+        assert target._gtk_view.get_model() is None
         assert target._active_field is ASHEET.FieldsTemplate.NAME
         assert patch_func.called
 
@@ -286,14 +287,14 @@ class TestAdaptTreeViewTemplate:
         # Setup
         OUTLINE = new_outline()
         PATH_ITEM = '1'
-        i_target = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ASHEET.AdaptTreeViewTemplate()
-        target.set_model(OUTLINE)
+        OUTLINE.attach_view(target)
         # Test
         target._name_cell_data(
-            None, renderer, OUTLINE._model, i_target, None)
+            None, renderer, OUTLINE._gtk_model, i_target, None)
         assert template.name == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
@@ -321,13 +322,14 @@ class TestAdaptTreeViewTemplate:
         """Confirm results of Gtk.TreeView search equal function."""
         # Setup
         OUTLINE = new_outline()
-        i_item = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTemplate()
-        target.set_model(OUTLINE)
+        OUTLINE.attach_view(target)
         target._active_field = FIELD
         # Test
         actual = target._test_field_ne(
-            OUTLINE._model, ASHEET.N_COLUMN_TEMPLATE, VALUE, i_item, None)
+            OUTLINE._gtk_model, ASHEET.AdaptTreeStoreTemplate.N_COLUMN_ITEM,
+            VALUE, i_item, None)
         assert actual is EXPECT
 
     def test_title_cell_data(self, new_outline):
@@ -335,73 +337,18 @@ class TestAdaptTreeViewTemplate:
         # Setup
         OUTLINE = new_outline()
         PATH_ITEM = '0:0'
-        i_target = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ASHEET.AdaptTreeViewTemplate()
-        target.set_model(OUTLINE)
+        OUTLINE.attach_view(target)
         # Test
         target._title_cell_data(
-            None, renderer, OUTLINE._model, i_target, None)
+            None, renderer, OUTLINE._gtk_model, i_target, None)
         assert template.title == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
-
-    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ['_view', 'view'],
-        # ['_active_field', 'active_field'],
-        ])
-    def test_property_entry(self, NAME_ATTR, NAME_PROP):
-        """Confirm properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-        """
-        # Setup
-        target = ASHEET.AdaptTreeViewTemplate()
-        value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(ASHEET.AdaptTreeViewTemplate, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: read
-        assert target_prop.fget is not None
-        assert value_attr == value_prop
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
-    def test_set_model(self, new_outline):
-        """Confirm model association."""
-        # Setup
-        OUTLINE = new_outline()
-        N_FIELD_NAME = 0
-        N_FIELD_TITLE = 1
-        N_FIELD_PAD = 2
-        N_CELLS = 1
-        target = ASHEET.AdaptTreeViewTemplate()
-        # Test
-        target.set_model(OUTLINE)
-        assert target._view.get_model() is OUTLINE._model
-        assert ASHEET.N_COLUMN_TEMPLATE == target._view.get_search_column()
-        assert target._view.get_enable_search()
-
-        name_column = target._view.get_column(N_FIELD_NAME)
-        assert 'Name' == name_column.get_title()
-        assert name_column.get_clickable()
-        assert name_column.get_resizable()
-        assert N_CELLS == len(name_column.get_cells())
-
-        title_column = target._view.get_column(N_FIELD_TITLE)
-        assert 'Title' == title_column.get_title()
-        assert title_column.get_clickable()
-        assert title_column.get_resizable()
-        assert N_CELLS == len(title_column.get_cells())
-
-        pad_column = target._view.get_column(N_FIELD_PAD)
-        assert pad_column is not None
-        assert pad_column.get_expand()
 
 
 class TestAdaptTreeViewTopic:
@@ -420,8 +367,8 @@ class TestAdaptTreeViewTopic:
                             patch_func.set_search_equal_func)
         # Test
         target = ASHEET.AdaptTreeViewTopic()
-        assert isinstance(target._view, Gtk.TreeView)
-        assert target._view.get_model() is None
+        assert isinstance(target._gtk_view, Gtk.TreeView)
+        assert target._gtk_view.get_model() is None
         assert patch_func.called
         assert isinstance(target._search, ASHEET.FieldsTopic)
         assert target._search is ASHEET.FieldsTopic.VOID
@@ -433,14 +380,14 @@ class TestAdaptTreeViewTopic:
             px_class_store=ASHEET.AdaptTreeStoreTopic,
             px_class_item=XTOPIC.Topic)
         PATH_ITEM = '0'
-        i_target = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         topic = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ASHEET.AdaptTreeViewTopic()
-        target.set_model(OUTLINE)
+        OUTLINE.attach_view(target)
         # Test
         target._name_cell_data(
-            None, renderer, OUTLINE._model, i_target, None)
+            None, renderer, OUTLINE._gtk_model, i_target, None)
         assert topic.name == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
@@ -477,13 +424,14 @@ class TestAdaptTreeViewTopic:
         OUTLINE = new_outline(
             px_class_store=ASHEET.AdaptTreeStoreTopic,
             px_class_item=XTOPIC.Topic)
-        i_item = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTopic()
-        target.set_model(OUTLINE)
+        OUTLINE.attach_view(target)
         target._search = SEARCH
         # Test
         actual = target._test_field_ne(
-            OUTLINE._model, ASHEET.N_COLUMN_TOPIC, VALUE, i_item, None)
+            OUTLINE._gtk_model, ASHEET.AdaptTreeStoreTopic.N_COLUMN_ITEM,
+            VALUE, i_item, None)
         assert actual is EXPECT
         assert patch_expand.called is EXPANDED
         if EXPANDED:
@@ -496,74 +444,18 @@ class TestAdaptTreeViewTopic:
             px_class_store=ASHEET.AdaptTreeStoreTopic,
             px_class_item=XTOPIC.Topic)
         PATH_ITEM = '0:0'
-        i_target = OUTLINE._model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ASHEET.AdaptTreeViewTopic()
-        target.set_model(OUTLINE)
+        OUTLINE.attach_view(target)
         # Test
         target._title_cell_data(
-            None, renderer, OUTLINE._model, i_target, None)
+            None, renderer, OUTLINE._gtk_model, i_target, None)
         assert template.title == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
-
-    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ['_view', 'view'],
-        ])
-    def test_property_entry(self, NAME_ATTR, NAME_PROP):
-        """Confirm properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-        """
-        # Setup
-        target = ASHEET.AdaptTreeViewTopic()
-        value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(ASHEET.AdaptTreeViewTopic, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: read
-        assert target_prop.fget is not None
-        assert value_attr == value_prop
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
-    def test_set_model(self, new_outline):
-        """Confirm initialization."""
-        # Setup
-        OUTLINE = new_outline(
-            px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XTOPIC.Topic)
-        N_FIELD_NAME = 0
-        N_FIELD_TITLE = 1
-        N_FIELD_PAD = 2
-        N_CELLS = 1
-        target = ASHEET.AdaptTreeViewTopic()
-        # Test
-        target.set_model(OUTLINE)
-        assert target._view.get_model() is OUTLINE._model
-        assert ASHEET.N_COLUMN_TOPIC == target._view.get_search_column()
-        assert target._view.get_enable_search()
-
-        name_column = target._view.get_column(N_FIELD_NAME)
-        assert 'Name' == name_column.get_title()
-        assert name_column.get_clickable()
-        assert name_column.get_resizable()
-        assert N_CELLS == len(name_column.get_cells())
-
-        title_column = target._view.get_column(N_FIELD_TITLE)
-        assert 'Title' == title_column.get_title()
-        assert title_column.get_clickable()
-        assert title_column.get_resizable()
-        assert N_CELLS == len(title_column.get_cells())
-
-        pad_column = target._view.get_column(N_FIELD_PAD)
-        assert pad_column is not None
-        assert pad_column.get_expand()
 
 
 class TestFieldsTemplate:
