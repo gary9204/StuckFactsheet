@@ -107,7 +107,9 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             return
 
         self._infoid.attach_view(pm_page.get_infoid())
-        self._topics.attach_view(pm_page.get_view_topics())
+        # See Factsheet project issue #95   # type: ignore[arg-type]
+        self._topics.attach_view(
+            pm_page.get_view_topics())
         self._pages[id(pm_page)] = pm_page
 
     def detach_all(self) -> None:
@@ -144,6 +146,9 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         :param pm_page: page for factsheet as a whole.
         """
         self._infoid.detach_view(pm_page.get_infoid())
+        # See Factsheet project issue #95
+        self._topics.detach_view(
+            pm_page.get_view_topics())   # type: ignore[arg-type]
 
     def extract_topic(self, px_i: UI.IndexOutline) -> None:
         """Remove topic and all its descendants from topic outline.

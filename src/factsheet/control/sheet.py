@@ -63,7 +63,8 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         self.delete_force()
         return ABC_SHEET.EffectSafe.COMPLETED
 
-    def detach_page_force(self, pm_page) -> None:
+    def detach_page_force(self, pm_page: ABC_SHEET.InterfacePageSheet
+                          ) -> None:
         """Remove page unconditionally.
 
         :param pm_page: page to remove.
@@ -73,7 +74,8 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         if 0 == self._model.n_pages():
             self._sheets_active.remove(self)
 
-    def detach_page_safe(self, pm_page) -> ABC_SHEET.EffectSafe:
+    def detach_page_safe(self, pm_page: ABC_SHEET.InterfacePageSheet
+                         ) -> ABC_SHEET.EffectSafe:
         """Remove page provided no changes will be lost.
 
         :param pm_page: page to remove.
@@ -111,7 +113,7 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         self._model.update_titles(subtitle_base)
 
     @classmethod
-    def open(cls, pm_sheet_active: CPOOL.PoolSheets, p_path: Path
+    def open(cls, pm_sheets_active: CPOOL.PoolSheets, p_path: Path
              ) -> 'Sheet':
         """Create and return control with model from file.
 
@@ -119,7 +121,7 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         :param p_path: location of file containing factsheet model.
         :returns: Newly created control.
         """
-        control = Sheet(pm_sheet_active)
+        control = Sheet(pm_sheets_active)
         try:
             with p_path.open(mode='rb') as io_in:
                 model = pickle.load(io_in)
@@ -189,7 +191,7 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
     def save_as(self, p_path: Path) -> None:
         """Save factsheet contents to file at given path.
 
-        :param path: file system path to file.
+        :param p_path: file system path to file.
         :raises OSError: when control cannot open file at path.
         """
         self._path = p_path

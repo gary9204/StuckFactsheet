@@ -7,7 +7,6 @@ import re
 import logging
 from pathlib import Path
 import pickle
-import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
@@ -217,17 +216,27 @@ class TestSheet:
         for page in pages:
             assert target._pages[id(page)] is page
 
-    def test_detach_page_views(self, monkeypatch, patch_class_page_sheet):
+    def test_detach_attribute_views(
+            self, monkeypatch, patch_class_page_sheet):
         """Confirm removal of views."""
         # Setup
-        class PatchInfoIdModel:
+        class PatchInfoIdDetach:
             def __init__(self): self.called = False
 
             def detach_view(self, _v): self.called = True
 
-        patch_infoid = PatchInfoIdModel()
+        patch_infoid = PatchInfoIdDetach()
         monkeypatch.setattr(
             MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
+
+        class PatchTopicsDetach:
+            def __init__(self): self.called = False
+
+            def detach_view(self, _v): self.called = True
+
+        patch_topics = PatchTopicsDetach()
+        monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic, 'detach_view',
+                            patch_topics.detach_view)
 
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
@@ -237,6 +246,7 @@ class TestSheet:
         # Test
         target._detach_attribute_views(page)
         assert patch_infoid.called
+        assert patch_topics.called
 
     def test_detach_page_warn(
             self, patch_class_page_sheet, PatchLogger, monkeypatch):
