@@ -9,6 +9,7 @@ from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.control import sheet as CSHEET
 from factsheet.control import pool as CPOOL
+from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
@@ -54,6 +55,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._context_name = get_object('ui_context_name')
         self._context_summary = get_object('ui_context_summary')
         self._flip_summary = get_object('ui_flip_summary')
+        self._view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        self._cursor_topics = self._view_topics.gtk_view.get_selection()
+        context_view_topics = get_object('ui_context_topics')
+        context_view_topics.add(self._view_topics.gtk_view)
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
         self._query_template = QTEMPLATE.QueryTemplate(self._window)
@@ -118,6 +123,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         # Topics Outline Toolbar
         UI.new_action_active(
             self._window, 'new-topic', self.on_new_topic)
+        UI.new_action_active(
+            self._window, 'delete-topic', self.on_delete_topic)
         UI.new_action_active_dialog(
             self._window, 'show-help-topics',
             self.on_show_dialog, UI.HELP_SHEET_TOPICS)
@@ -171,7 +178,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def get_view_topics(self) -> ASHEET.AdaptTreeViewTopic:
         """Return view of factsheet's topic outline."""
-        raise NotImplementedError
+        return self._view_topics
 
     @classmethod
     def link_factsheet(cls, pm_page: 'PageSheet',
@@ -293,6 +300,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         if response == Gtk.ResponseType.APPLY:
             self._control.delete_force()
 
+    def on_delete_topic(self, _action: Gio.SimpleAction,
+                        _target: GLib.Variant) -> None:
+        """Remove a topic from the topic outline."""
+        _model, index = self._cursor_topics.get_selected()
+        assert self._control is not None
+        self._control.extract_topic(index)
+
     def on_flip_summary(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
         """Flip visibility of summary pane."""
@@ -309,7 +323,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def on_new_topic(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
-        """Specify a new topic.
+        """Specify a new topic and add to topic outline.
 
         The method queries for the location of a new topic, the template
         for the topic, and topic contents.  The user may cancel at any
@@ -317,11 +331,29 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """
         print('In PageSheet.on_new_topic')
         print('Query place: TODO')
+        placement = QPLACE.Placement(None, QPLACE.Places.CHILD)
+        print('\tPlacement: {}'.format(placement))
         print('Query template:')
-        i_template = self._query_template()
-        print('\tTemplate index: {}'.format(i_template))
-        print('Query topic contents: TODO')
-        print('Add topic: TODO')
+        template = self._query_template()
+        if template is None:
+            return
+
+        print('\tTemplate: {}'.format(template))
+        print('Query topic contents')
+        topic = template()
+        if topic is None:
+            return
+
+        print('Add topic')
+        assert self._control is not None
+        if placement.place is QPLACE.Places.AFTER:
+            self._control.insert_topic_after(topic, placement.anchor)
+        elif placement.place is QPLACE.Places.BEFORE:
+            self._control.insert_topic_before(topic, placement.anchor)
+        elif placement.place is QPLACE.Places.CHILD:
+            self._control.insert_topic_child(topic, placement.anchor)
+        else:
+            raise NotImplementedError
 
     def on_open_page(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

@@ -5,6 +5,7 @@ import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.outline import template as TEMPLATE
 from factsheet.content.outline import topic as TOPIC
@@ -164,10 +165,10 @@ class TestDialogTemplate:
 
         PATH_ITEM = '1:1:0'
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        item = OUTLINE.get_item(i_item)
         target._cursor.select_iter(i_item)
         # Test
-        index_t = target()
-        assert PATH_ITEM == OUTLINE._gtk_model.get_string_from_iter(index_t)
+        assert target() is item
         assert not target._dialog.get_visible()
         assert target.NO_SUMMARY == target._summary_current.get_label()
         # Teardown
@@ -196,8 +197,7 @@ class TestDialogTemplate:
         target._button_specify.set_sensitive(False)
         target._summary_current.set_markup(target.NO_SUMMARY)
         # Test
-        index_t = target()
-        assert index_t is None
+        assert target() is None
         assert not target._dialog.get_visible()
         # Teardown
         del WIN

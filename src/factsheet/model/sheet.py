@@ -107,9 +107,9 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             return
 
         self._infoid.attach_view(pm_page.get_infoid())
-        # See Factsheet project issue #95   # type: ignore[arg-type]
+        # See Factsheet project issue #95
         self._topics.attach_view(
-            pm_page.get_view_topics())
+            pm_page.get_view_topics())   # type: ignore[arg-type]
         self._pages[id(pm_page)] = pm_page
 
     def detach_all(self) -> None:
@@ -168,6 +168,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         :param px_i: index of topic to precede new topic.
         :returns: index of newly-added topic.
         """
+        self.set_stale()
         return self._topics.insert_after(px_topic, px_i)
 
     def insert_topic_before(self, px_topic: ABC_TOPIC.AbstractTopic,
@@ -180,6 +181,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         :param px_i: index of topic to follow new topic.
         :returns: index of newly-added topic.
         """
+        self.set_stale()
         return self._topics.insert_before(px_topic, px_i)
 
     def insert_topic_child(self, px_topic: ABC_TOPIC.AbstractTopic,
@@ -193,6 +195,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         :param px_i: index of parent topic for new topic.
         :returns: index of newly-added topic.
         """
+        self.set_stale()
         return self._topics.insert_child(px_topic, px_i)
 
     def is_fresh(self) -> bool:

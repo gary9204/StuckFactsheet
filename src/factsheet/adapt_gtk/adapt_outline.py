@@ -156,7 +156,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
                     self.__class__.__name__, self.attach_view.__name__))
             return
 
-        pm_view_outline.gtk_view.set_model(self._gtk_model)
+        pm_view_outline._gtk_view.set_model(self._gtk_model)
         self._views[id_view_outline] = pm_view_outline
 
     def deepcopy_section_child(self,
@@ -252,21 +252,11 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
     def get_item(self, px_i: AdaptIndex) -> typing.Optional[GenericItem]:
         """Returns item at given index or None when no item at index.
 
-        Logs warning when index is None.
+        Logs warning when no item at index.
 
         :param px_i: index of desired item.
         """
-        item = None
-        try:
-            item = self._gtk_model[px_i][self.N_COLUMN_ITEM]
-        except TypeError:
-            id_index = hex(id(px_i)) if px_i else 'None'
-            logger.warning(
-                'Invalid item index ({}): ({}.{})'
-                ''.format(id_index, self.__class__.__name__,
-                          self.get_item.__name__))
-
-        return item
+        return get_item_gtk(self._gtk_model, px_i)
 
     def indices(self, px_index: AdaptIndex = None
                 ) -> typing.Iterator[AdaptIndex]:
@@ -326,10 +316,29 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """
         return self._gtk_model.append(px_i, [px_item])
 
-#     @property
-#     def gtk_model(self) -> Gtk.TreeStore:
-#         """Return outline model."""
-#         return self._gtk_model
+
+def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
+                 ) -> typing.Optional[GenericItem]:
+    """Returns item at given index in GTK-model of outline model or None.
+
+    Returns None when no item at index and logs warning.
+
+    .. warning:: Expects GTK model to have structure defined in
+        :class:`.AdaptTreeStore`.
+
+    :param px_model: GTK model of an outline model
+    :param px_i: index of desired item.
+    """
+    item = None
+    try:
+        item = px_model[px_i][AdaptTreeStore.N_COLUMN_ITEM]
+    except TypeError:
+        id_index = hex(id(px_i)) if px_i else 'None'
+        logger.warning(
+            'Invalid item index ({}): ({})'
+            ''.format(id_index, get_item_gtk.__name__))
+
+    return item
 
 
 class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):

@@ -115,6 +115,31 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
         self._gtk_view.set_search_equal_func(self._test_field_ne, None)
         self._active_field = FieldsTemplate.NAME
 
+        self._gtk_view.set_search_column(AdaptTreeStoreTemplate.N_COLUMN_ITEM)
+        self._gtk_view.set_enable_search(True)
+
+        name = Gtk.TreeViewColumn(title='Name')
+        self._gtk_view.append_column(name)
+        name.set_clickable(True)
+        name.set_resizable(True)
+        _ = name.get_button().get_preferred_size()
+        render_name = Gtk.CellRendererText()
+        name.set_cell_data_func(render_name, self._name_cell_data, None)
+        name.pack_start(render_name, expand=False)
+
+        title = Gtk.TreeViewColumn(title='Title')
+        self._gtk_view.append_column(title)
+        title.set_clickable(True)
+        title.set_resizable(True)
+        _ = name.get_button().get_preferred_size()
+        render_title = Gtk.CellRendererText()
+        title.set_cell_data_func(render_title, self._title_cell_data, None)
+        title.pack_start(render_title, expand=False)
+
+        pad = Gtk.TreeViewColumn(title=' ')
+        pad.set_expand(True)
+        self._gtk_view.append_column(pad)
+
     def _name_cell_data(self, _column: Gtk.TreeViewColumn,
                         pm_renderer: Gtk.CellRenderer,
                         px_store: Gtk.TreeStore,
@@ -189,6 +214,31 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
         super().__init__()
         self._gtk_view.set_search_equal_func(self._test_field_ne, None)
         self._search = FieldsTopic.VOID
+
+        self._gtk_view.set_search_column(AdaptTreeStoreTopic.N_COLUMN_ITEM)
+        self._gtk_view.set_enable_search(True)
+
+        name = Gtk.TreeViewColumn(title='Name')
+        self._gtk_view.append_column(name)
+        name.set_clickable(True)
+        name.set_resizable(True)
+        _ = name.get_button().get_preferred_size()
+        render_name = Gtk.CellRendererText()
+        name.set_cell_data_func(render_name, self._name_cell_data, None)
+        name.pack_start(render_name, expand=False)
+
+        title = Gtk.TreeViewColumn(title='Title')
+        self._gtk_view.append_column(title)
+        title.set_clickable(True)
+        title.set_resizable(True)
+        _ = name.get_button().get_preferred_size()
+        render_title = Gtk.CellRendererText()
+        title.set_cell_data_func(render_title, self._title_cell_data, None)
+        title.pack_start(render_title, expand=False)
+
+        pad = Gtk.TreeViewColumn(title=' ')
+        self._gtk_view.append_column(pad)
+        pad.set_expand(True)
 
     def _name_cell_data(self, _column: Gtk.TreeViewColumn,
                         pm_renderer: Gtk.CellRenderer,

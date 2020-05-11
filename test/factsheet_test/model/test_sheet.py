@@ -310,9 +310,11 @@ class TestSheet:
                             'insert_after', patch_outline.insert_after)
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        target.set_fresh()
         # Test
         _ = target.insert_topic_after(None, None)
         assert patch_outline.called
+        assert target.is_stale()
 
     def test_insert_topic_before(self, monkeypatch):
         """Confirm method passes request to outline."""
@@ -327,9 +329,11 @@ class TestSheet:
                             'insert_before', patch_outline.insert_before)
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        target.set_fresh()
         # Test
         _ = target.insert_topic_before(None, None)
         assert patch_outline.called
+        assert target.is_stale()
 
     def test_insert_topic_child(self, monkeypatch):
         """Confirm method passes request to outline."""
@@ -344,9 +348,11 @@ class TestSheet:
                             'insert_child', patch_outline.insert_child)
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        target.set_fresh()
         # Test
         _ = target.insert_topic_child(None, None)
         assert patch_outline.called
+        assert target.is_stale()
 
     def test_is_fresh(self):
         """Confirm return is accurate.

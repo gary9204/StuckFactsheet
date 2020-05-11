@@ -1235,6 +1235,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -1336,34 +1337,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkTreeView" id="ui_outline_topics">
+                          <object class="GtkScrolledWindow" id="ui_context_topics">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="enable_grid_lines">both</property>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="ui_selection_topics"/>
-                            </child>
+                            <property name="shadow_type">in</property>
+                            <property name="min_content_height">60</property>
                             <child>
-                              <object class="GtkTreeViewColumn" id="column_name">
-                                <property name="resizable">True</property>
-                                <property name="title" translatable="yes">Name</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="column_title">
-                                <property name="title" translatable="yes">Title</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="column_pad">
-                                <property name="sizing">autosize</property>
-                                <property name="title" translatable="yes"> </property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="column_del">
-                                <property name="title" translatable="yes">Del</property>
-                              </object>
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>

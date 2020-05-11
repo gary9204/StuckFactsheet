@@ -5,6 +5,7 @@ import gi   # type: ignore[import]
 from pathlib import Path
 import typing
 
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # STUB imports - begin
 from factsheet.content.outline import template as TEMPLATE
@@ -134,9 +135,10 @@ class QueryTemplate:
         OUTLINE.attach_view(self._outline)
         # STUB test content - end
         view = self._outline.gtk_view
-        view.show()
+        view.show_all()
         context_outline = get_object('ui_context_outline_templates')
         context_outline.add(view)
+        context_outline.show_all()
         self._cursor = view.get_selection()
         _ = self._cursor.connect('changed', self.on_changed_cursor)
 
@@ -154,11 +156,12 @@ class QueryTemplate:
         """
         response = self._dialog.run()
         self._dialog.hide()
-        index = None
+        item = None
         if response == Gtk.ResponseType.APPLY:
-            _model, index = self._cursor.get_selected()
+            model, index = self._cursor.get_selected()
+            item = AOUTLINE.get_item_gtk(model, index)
             self._cursor.unselect_all()
-        return index
+        return item
 
     def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
         """Changes summary text and Specify button to match current
@@ -168,12 +171,21 @@ class QueryTemplate:
         """
         model, index = px_cursor.get_selected()
         if index is None:
-            self._summary_current.set_markup(self.NO_SUMMARY)
-            self._button_specify.set_sensitive(False)
-        else:
-            item = model[index][ASHEET.AdaptTreeStoreTemplate.N_COLUMN_ITEM]
-            self._summary_current.set_markup(item.summary)
-            self._button_specify.set_sensitive(True)
+            self._on_changed_cursor_invalid()
+            return
+
+        item = AOUTLINE.get_item_gtk(model, index)
+        if item is None:
+            self._on_changed_cursor_invalid()
+            return
+
+        self._summary_current.set_markup(item.summary)
+        self._button_specify.set_sensitive(True)
+
+    def _on_changed_cursor_invalid(self):
+        """ """
+        self._summary_current.set_markup(self.NO_SUMMARY)
+        self._button_specify.set_sensitive(False)
 
     def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
                                ASHEET.FieldsTemplate) -> None:

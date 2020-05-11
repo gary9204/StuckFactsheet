@@ -275,12 +275,36 @@ class TestAdaptTreeViewTemplate:
         patch_func = PatchSetFunc()
         monkeypatch.setattr(Gtk.TreeView, 'set_search_equal_func',
                             patch_func.set_search_equal_func)
+        N_FIELD_NAME = 0
+        N_FIELD_TITLE = 1
+        N_FIELD_PAD = 2
+        N_CELLS = 1
         # Test
         target = ASHEET.AdaptTreeViewTemplate()
         assert isinstance(target._gtk_view, Gtk.TreeView)
         assert target._gtk_view.get_model() is None
         assert target._active_field is ASHEET.FieldsTemplate.NAME
         assert patch_func.called
+
+        assert AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM == (
+            target._gtk_view.get_search_column())
+        assert target._gtk_view.get_enable_search()
+
+        name_column = target._gtk_view.get_column(N_FIELD_NAME)
+        assert 'Name' == name_column.get_title()
+        assert name_column.get_clickable()
+        assert name_column.get_resizable()
+        assert N_CELLS == len(name_column.get_cells())
+
+        title_column = target._gtk_view.get_column(N_FIELD_TITLE)
+        assert 'Title' == title_column.get_title()
+        assert title_column.get_clickable()
+        assert title_column.get_resizable()
+        assert N_CELLS == len(title_column.get_cells())
+
+        pad_column = target._gtk_view.get_column(N_FIELD_PAD)
+        assert pad_column is not None
+        assert pad_column.get_expand()
 
     def test_name_cell_data(self, new_outline):
         """Confirm renderer property is set."""
@@ -328,7 +352,7 @@ class TestAdaptTreeViewTemplate:
         target._active_field = FIELD
         # Test
         actual = target._test_field_ne(
-            OUTLINE._gtk_model, ASHEET.AdaptTreeStoreTemplate.N_COLUMN_ITEM,
+            OUTLINE._gtk_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
             VALUE, i_item, None)
         assert actual is EXPECT
 
@@ -365,6 +389,10 @@ class TestAdaptTreeViewTopic:
         patch_func = PatchSetFunc()
         monkeypatch.setattr(Gtk.TreeView, 'set_search_equal_func',
                             patch_func.set_search_equal_func)
+        N_FIELD_NAME = 0
+        N_FIELD_TITLE = 1
+        N_FIELD_PAD = 2
+        N_CELLS = 1
         # Test
         target = ASHEET.AdaptTreeViewTopic()
         assert isinstance(target._gtk_view, Gtk.TreeView)
@@ -372,6 +400,26 @@ class TestAdaptTreeViewTopic:
         assert patch_func.called
         assert isinstance(target._search, ASHEET.FieldsTopic)
         assert target._search is ASHEET.FieldsTopic.VOID
+
+        assert AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM == (
+            target._gtk_view.get_search_column())
+        assert target._gtk_view.get_enable_search()
+
+        name_column = target._gtk_view.get_column(N_FIELD_NAME)
+        assert 'Name' == name_column.get_title()
+        assert name_column.get_clickable()
+        assert name_column.get_resizable()
+        assert N_CELLS == len(name_column.get_cells())
+
+        title_column = target._gtk_view.get_column(N_FIELD_TITLE)
+        assert 'Title' == title_column.get_title()
+        assert title_column.get_clickable()
+        assert title_column.get_resizable()
+        assert N_CELLS == len(title_column.get_cells())
+
+        pad_column = target._gtk_view.get_column(N_FIELD_PAD)
+        assert pad_column is not None
+        assert pad_column.get_expand()
 
     def test_name_cell_data(self, new_outline):
         """Confirm renderer property is set."""
@@ -430,7 +478,7 @@ class TestAdaptTreeViewTopic:
         target._search = SEARCH
         # Test
         actual = target._test_field_ne(
-            OUTLINE._gtk_model, ASHEET.AdaptTreeStoreTopic.N_COLUMN_ITEM,
+            OUTLINE._gtk_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
             VALUE, i_item, None)
         assert actual is EXPECT
         assert patch_expand.called is EXPANDED

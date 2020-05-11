@@ -97,8 +97,8 @@ class TestControlSheet:
         assert id(target) not in sheets_active._controls.keys()
 
     def test_delete_safe_fresh(self, monkeypatch):
-        """Confirm deletion with guard for unsaved changes.
-        Case: no unsaved changes
+        """| Confirm deletion with guard for unsaved changes.
+        | Case: no unsaved changes
         """
         # Setup
         class PatchModel:
@@ -120,8 +120,8 @@ class TestControlSheet:
         assert response is ABC_SHEET.EffectSafe.COMPLETED
 
     def test_delete_safe_stale(self, monkeypatch):
-        """Confirm deletion with guard for unsaved changes.
-        Case: unsaved changes
+        """| Confirm deletion with guard for unsaved changes.
+        | Case: unsaved changes
         """
         # Setup
         class PatchModel:
@@ -143,8 +143,8 @@ class TestControlSheet:
         assert response is ABC_SHEET.EffectSafe.NO_EFFECT
 
     def test_detach_page_force(self, patch_model_safe):
-        """Confirm page removed unconditionally.
-        Case: not last page."""
+        """| Confirm page removed unconditionally.
+        | Case: not last page."""
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
         sheets_active = CPOOL.PoolSheets()
@@ -158,8 +158,8 @@ class TestControlSheet:
         assert id(target) in sheets_active._controls.keys()
 
     def test_detach_page_force_last(self, patch_model_safe):
-        """Confirm page removed unconditionally.
-        Case: last page."""
+        """| Confirm page removed unconditionally.
+        | Case: last page."""
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=0)
         sheets_active = CPOOL.PoolSheets()
@@ -173,8 +173,8 @@ class TestControlSheet:
         assert id(target) not in sheets_active._controls.keys()
 
     def test_detach_page_safe_fresh(self, patch_model_safe):
-        """Confirm page removal with guard for unsaved changes.
-        Case: no unsaved changes
+        """| Confirm page removal with guard for unsaved changes.
+        | Case: no unsaved changes
         """
         # Setup
         patch_model = patch_model_safe(p_stale=False, p_n_pages=1)
@@ -188,8 +188,8 @@ class TestControlSheet:
         assert N_DETACH == patch_model.n_detach
 
     def test_detach_page_safe_stale_multiple(self, patch_model_safe):
-        """Confirm page removal with guard for unsaved changes.
-        Case: unsaved changes, multiple pages
+        """| Confirm page removal with guard for unsaved changes.
+        | Case: unsaved changes, multiple pages
         """
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=2)
@@ -203,8 +203,8 @@ class TestControlSheet:
         assert N_DETACH == patch_model.n_detach
 
     def test_detach_page_safe_stale_single(self, patch_model_safe):
-        """Confirm page removal with guard for unsaved changes.
-        Case: unsaved changes, single page
+        """| Confirm page removal with guard for unsaved changes.
+        | Case: unsaved changes, single page
         """
         # Setup
         patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
@@ -217,6 +217,46 @@ class TestControlSheet:
             ABC_SHEET.EffectSafe.NO_EFFECT)
         assert N_DETACH == patch_model.n_detach
 
+    def test_extract_topic(self, monkeypatch):
+        """Confirm method passes request to model."""
+        # Setup
+        class PatchExtract:
+            def __init__(self): self.called = False
+
+            def extract_topic(self, _index): self.called = True
+
+        patch_extract = PatchExtract()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
+        # Test
+        _ = target.extract_topic(None)
+        assert patch_extract.called
+
+    @pytest.mark.parametrize('NAME_METHOD', [
+        'insert_topic_after',
+        'insert_topic_before',
+        'insert_topic_child',
+        ])
+    def test_insert_topic(self, monkeypatch, NAME_METHOD):
+        """Confirm each insert method passes request to model."""
+        # Setup
+        class PatchInsert:
+            def __init__(self): self.called = False
+
+            def insert_topic(self, _item, _index): self.called = True
+
+        patch_insert = PatchInsert()
+        monkeypatch.setattr(
+            MSHEET.Sheet, NAME_METHOD, patch_insert.insert_topic)
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
+        method = getattr(target, NAME_METHOD)
+        # Test
+        _ = method(None, None)
+        assert patch_insert.called
+
     def test_new(self):
         """Confirm control creation with default model."""
         # Setup
@@ -227,8 +267,8 @@ class TestControlSheet:
         assert isinstance(target._model, MSHEET.Sheet)
 
     def test_new_name(self, monkeypatch):
-        """Confirm model gets new name notice.
-        Case: factsheet path is defined.
+        """| Confirm model gets new name notice.
+        | Case: factsheet path is defined.
         """
         # Setup
         class PatchModel:
@@ -255,8 +295,8 @@ class TestControlSheet:
         assert FILE == patch_model.base
 
     def test_new_name_unsaved(self, monkeypatch):
-        """Confirm model gets new name notice.
-        Case: factsheet path is not defined.
+        """| Confirm model gets new name notice.
+        | Case: factsheet path is not defined.
         """
         # Setup
         class PatchModel:
@@ -281,8 +321,8 @@ class TestControlSheet:
         assert DEFAULT == patch_model.base
 
     def test_open(self, tmp_path):
-        """Confirm control creation from file.
-        Case: path to file with model contents
+        """| Confirm control creation from file.
+        | Case: path to file with model contents
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -301,8 +341,8 @@ class TestControlSheet:
         assert target._model.is_fresh()
 
     def test_open_empty(self, tmp_path):
-        """Confirm control creation from file.
-        Case: path not to a file
+        """| Confirm control creation from file.
+        | Case: path not to a file
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -321,8 +361,8 @@ class TestControlSheet:
         assert target._path is None
 
     def test_open_except(self, tmp_path):
-        """Confirm control creation from file.
-        Case: path to file with unloadable contents
+        """| Confirm control creation from file.
+        | Case: path to file with unloadable contents
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -392,8 +432,8 @@ class TestControlSheet:
         assert target_prop.fdel is None
 
     def test_save(self, tmp_path):
-        """Confirm write to file.
-        Case: file does not exist.
+        """| Confirm write to file.
+        | Case: file does not exist.
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -453,8 +493,8 @@ class TestControlSheet:
         assert PATH.name == patch_model.base
 
     def test_save_oserror(self, monkeypatch, tmp_path):
-        """Confirm write to file.
-        Case: unexpected operating system exception.
+        """| Confirm write to file.
+        | Case: unexpected operating system exception.
         """
         # Setup
         def open_oserror(_s, **_kwa): raise OSError
@@ -473,8 +513,8 @@ class TestControlSheet:
             source.save()
 
     def test_save_exists(self, tmp_path):
-        """Confirm write to file.
-        Case: file exists.
+        """| Confirm write to file.
+        | Case: file exists.
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -506,8 +546,8 @@ class TestControlSheet:
         assert TEXT == backup_text
 
     def test_save_no_path(self, PatchLogger, monkeypatch):
-        """Confirm write to file.
-        Case: no file path.
+        """| Confirm write to file.
+        | Case: no file path.
         """
         # Setup
         patch_logger = PatchLogger()

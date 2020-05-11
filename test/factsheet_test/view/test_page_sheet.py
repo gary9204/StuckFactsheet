@@ -6,7 +6,10 @@ See :mod:`.page_sheet`.
 from pathlib import Path
 import pytest   # type: ignore[import]
 
+from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
+from factsheet.content.outline import template as XSECTION
 from factsheet.control import pool as CPOOL
 from factsheet.control import sheet as CSHEET
 from factsheet.model import sheet as MSHEET
@@ -22,36 +25,40 @@ from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-@pytest.fixture
-def patch_control_safe():
-    """Pytest fixture returns stub control :class:`~.control.sheet.Sheet`.
-    """
-    class PatchSafe(CSHEET.Sheet):
-        def __init__(self, p_effect, pm_sheets_active):
-            super().__init__(pm_sheets_active)
-            self.n_delete_force = 0
-            self.n_delete_safe = 0
-            self.n_detach_force = 0
-            self.n_detach_safe = 0
-            self.effect = p_effect
+class PatchCall:
+    def __init__(self, p_response):
+        self.response = p_response
+        self.called = False
 
-        def delete_force(self):
-            self.n_delete_force += 1
-            return self.effect
+    def __call__(self):
+        self.called = True
+        return self.response
 
-        def delete_safe(self):
-            self.n_delete_safe += 1
-            return self.effect
 
-        def detach_page_force(self, _view):
-            self.n_detach_force += 1
-            return self.effect
+class PatchSafe(CSHEET.Sheet):
+    def __init__(self, p_effect, pm_sheets_active):
+        super().__init__(pm_sheets_active)
+        self.n_delete_force = 0
+        self.n_delete_safe = 0
+        self.n_detach_force = 0
+        self.n_detach_safe = 0
+        self.effect = p_effect
 
-        def detach_page_safe(self, _view):
-            self.n_detach_safe += 1
-            return self.effect
+    def delete_force(self):
+        self.n_delete_force += 1
+        return self.effect
 
-    return PatchSafe
+    def delete_safe(self):
+        self.n_delete_safe += 1
+        return self.effect
+
+    def detach_page_force(self, _view):
+        self.n_detach_force += 1
+        return self.effect
+
+    def detach_page_safe(self, _view):
+        self.n_detach_safe += 1
+        return self.effect
 
 
 @pytest.fixture
@@ -116,6 +123,10 @@ class TestPageSheet:
         assert isinstance(target._context_name, Gtk.Popover)
         assert isinstance(target._context_summary, Gtk.Frame)
         assert isinstance(target._flip_summary, Gtk.CheckButton)
+        assert isinstance(
+            target._view_topics, ABC_OUTLINE.AbstractViewOutline)
+        assert isinstance(target._cursor_topics, Gtk.TreeSelection)
+        assert target._view_topics.gtk_view.get_parent() is not None
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
         assert isinstance(target._query_template, QTEMPLATE.QueryTemplate)
         assert target._name_former is None
@@ -157,6 +168,7 @@ class TestPageSheet:
 
         # Topics Outline Toolbar and Menu
         assert target._window.lookup_action('new-topic') is not None
+        assert target._window.lookup_action('delete-topic') is not None
         assert target._window.lookup_action('show-help-topics') is not None
 
         assert not target._close_window
@@ -271,6 +283,22 @@ class TestPageSheet:
         del target._window
         del factsheet
 
+    def test_get_view_topics(self, patch_factsheet, capfd):
+        """Confirm returns view of topics outline."""
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        assert target._view_topics is target.get_view_topics()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
     def test_link_factsheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm creation of factsheet links."""
         # Setup
@@ -354,10 +382,9 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    def test_on_close_page_force(
-            self, patch_factsheet, capfd, patch_control_safe):
-        """Confirm response to request to close page.
-        Case: unconditional close.
+    def test_on_close_page_force(self, patch_factsheet, capfd):
+        """| Confirm response to request to close page.
+        | Case: unconditional close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -368,8 +395,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
         target._control = control
         target._close_window = True
         N_CALLS_SAFE = 0
@@ -383,10 +409,9 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    def test_on_close_page_safe(
-            self, patch_factsheet, capfd, patch_control_safe):
-        """Confirm response to request to close page.
-        Case: safe to close.
+    def test_on_close_page_safe(self, patch_factsheet, capfd):
+        """| Confirm response to request to close page.
+        | Case: safe to close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -397,8 +422,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
@@ -412,9 +436,9 @@ class TestPageSheet:
         del factsheet
 
     def test_on_close_page_cancel(
-            self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
-        """Confirm response to request to close page.
-        Case: not safe to close, user cancels close.
+            self, patch_factsheet, capfd, monkeypatch):
+        """| Confirm response to request to close page.
+        | Case: not safe to close, user cancels close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -431,8 +455,7 @@ class TestPageSheet:
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 0
@@ -447,9 +470,9 @@ class TestPageSheet:
         del factsheet
 
     def test_on_close_page_discard(
-            self, patch_factsheet, capfd, monkeypatch, patch_control_safe):
-        """Confirm response to request to close page.
-        Case: not safe to close, user approves close.
+            self, patch_factsheet, capfd, monkeypatch):
+        """| Confirm response to request to close page.
+        | Case: not safe to close, user approves close.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -466,8 +489,7 @@ class TestPageSheet:
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         target._control = control
         N_CALLS_SAFE = 1
         N_CALLS_FORCE = 1
@@ -482,10 +504,9 @@ class TestPageSheet:
         del factsheet
 
     def test_on_delete_sheet_safe(
-            self, patch_factsheet, capfd, patch_dialog_run,
-            monkeypatch, patch_control_safe):
-        """Confirm response to request to delete factsheet.
-        Case: no unsaved changes.
+            self, patch_factsheet, capfd, patch_dialog_run, monkeypatch):
+        """| Confirm response to request to delete factsheet.
+        | Case: no unsaved changes.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -499,8 +520,7 @@ class TestPageSheet:
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
         control._model = MSHEET.Sheet()
         VSHEET.PageSheet.link_factsheet(target, control)
         N_CALLS_SAFE = 1
@@ -516,10 +536,9 @@ class TestPageSheet:
         del factsheet
 
     def test_on_delete_sheet_cancel(
-            self, patch_factsheet, capfd, patch_dialog_run,
-            monkeypatch, patch_control_safe):
-        """Confirm response to request to delete factsheet.
-        Case: unsaved chagnes, user cancels delete.
+            self, patch_factsheet, capfd, patch_dialog_run, monkeypatch):
+        """| Confirm response to request to delete factsheet.
+        | Case: unsaved chagnes, user cancels delete.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -536,8 +555,7 @@ class TestPageSheet:
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         control._model = MSHEET.Sheet()
         VSHEET.PageSheet.link_factsheet(target, control)
         N_CALLS_SAFE = 1
@@ -554,10 +572,9 @@ class TestPageSheet:
         del factsheet
 
     def test_on_delete_sheet_discard(
-            self, patch_factsheet, capfd, patch_dialog_run,
-            monkeypatch, patch_control_safe):
-        """Confirm response to request to delete factsheet.
-        Case: unsaved changes, user approves delete.
+            self, patch_factsheet, capfd, patch_dialog_run, monkeypatch):
+        """| Confirm response to request to delete factsheet.
+        | Case: unsaved changes, user approves delete.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -574,8 +591,7 @@ class TestPageSheet:
             Gtk.Dialog, 'hide', lambda self: self.set_visible(False))
 
         sheets_active = CPOOL.PoolSheets()
-        control = patch_control_safe(
-            ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
+        control = PatchSafe(ABC_SHEET.EffectSafe.NO_EFFECT, sheets_active)
         control._model = MSHEET.Sheet()
         VSHEET.PageSheet.link_factsheet(target, control)
         N_CALLS_SAFE = 1
@@ -591,10 +607,36 @@ class TestPageSheet:
         del target._window
         del factsheet
 
+    @pytest.mark.skip(reason='add guard against index of None')
+    def test_on_delete_topic(self, monkeypatch, patch_factsheet, capfd):
+        # Setup
+        class PatchExtract:
+            def __init__(self): self.called = False
+
+            def extract_topic(self, _index): self.called = True
+
+        patch_extract = PatchExtract()
+        monkeypatch.setattr(
+            CSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet(sheets_active)
+        target._control = control
+        # Test
+        target.on_delete_topic(None, None)
+        assert patch_extract.called
+
     def test_on_flip_summary(self, patch_factsheet, capfd):
         """Confirm flip of facthseet summary visibility.
-        Case: hide
-        Case: show
+
+        #. Case: hide
+        #. Case: show
         """
         # Setup
         factsheet = patch_factsheet()
@@ -650,6 +692,92 @@ class TestPageSheet:
         target._window.destroy()
         del target._window
         del factsheet
+
+    @pytest.mark.skip(reason=' cancel case first')
+    def test_on_new_topic(self, patch_factsheet, capfd, monkeypatch):
+        """| Confirm response to request to specify topic.
+        | Case: TBD
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet(sheets_active)
+        target._control = control
+
+        query_template = target._query_template
+        outline = query_template._outline
+        model = outline.gtk_view.get_model()
+        i_first = model.get_iter_first()
+        template = model[i_first][0]
+        print('Index: {}'.format(i_first))
+        print('Name:  {}'.format(template.name))
+        assert False
+        patch_query_template = PatchCall(i_first)
+        monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
+                            patch_query_template.__call__)
+        # Test
+        target.on_new_topic(None, None)
+
+    def test_on_new_topic_cancel_template(
+            self, patch_factsheet, capfd, monkeypatch):
+        """| Confirm response to request to specify topic.
+        | Case: user cancels template selection.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet(sheets_active)
+        target._control = control
+
+        patch_query_template = PatchCall(None)
+        monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
+                            patch_query_template.__call__)
+        # Test
+        target.on_new_topic(None, None)
+        # No observable yet
+
+    def test_on_new_topic_cancel_topic(
+            self, patch_factsheet, capfd, monkeypatch):
+        """| Confirm response to request to specify topic.
+        | Case: user cancels topic specification.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet(sheets_active)
+        target._control = control
+
+        query_template = target._query_template
+        outline = query_template._outline
+        model = outline.gtk_view.get_model()
+        i_first = model.get_iter_first()
+        template = AOUTLINE.get_item_gtk(model, i_first)
+
+        patch_query_template = PatchCall(template)
+        monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
+                            patch_query_template.__call__)
+
+        patch_template = PatchCall(None)
+        monkeypatch.setattr(
+            XSECTION.Section, '__call__', patch_template.__call__)
+        # Test
+        target.on_new_topic(None, None)
+        # No observable yet
 
     def test_on_open_page(self, patch_factsheet, capfd):
         """Confirm response to request to open new view."""

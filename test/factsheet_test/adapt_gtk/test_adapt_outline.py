@@ -569,7 +569,7 @@ class TestAdaptTreeStore:
         model = new_outline_model('Source')
         PATH_TARGET = '1:1'
         i_target = model.get_iter_from_string(PATH_TARGET)
-        log_message = ('Invalid item index ({}): (PatchOutline.get_item)'
+        log_message = ('Invalid item index ({}): (get_item_gtk)'
                        ''.format(hex(id(i_target))))
         source = PatchOutline()
         source._gtk_model = model
@@ -590,7 +590,7 @@ class TestAdaptTreeStore:
         patch_logger = PatchLogger()
         monkeypatch.setattr(
             logging.Logger, 'warning', patch_logger.warning)
-        log_message = 'Invalid item index (None): (PatchOutline.get_item)'
+        log_message = 'Invalid item index (None): (get_item_gtk)'
 
         model = new_outline_model('Source')
         i_target = None
@@ -865,3 +865,49 @@ class TestAdaptTreeView:
         # Test
         target.unselect_all()
         assert target.get_selected() is None
+
+
+class TestFunctions:
+    """Unit tests for generic function defined in :mod:`.adapt_outline`."""
+
+    @pytest.mark.parametrize('PATH_TARGET', [
+        '0',
+        '1:0',
+        '0:0:0',
+        '1:1:2',
+        ])
+    def test_get_item_gtk(
+            self, PATH_TARGET, new_outline_model):
+        """Confirm returns correct item at all levels."""
+        # Setup
+        model = new_outline_model('Source')
+        i_target = model.get_iter_from_string(PATH_TARGET)
+        item = model.get_value(
+            i_target, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM)
+        # Test
+        target = AOUTLINE.get_item_gtk(model, i_target)
+        assert target is item
+
+    def test_get_item_gtk_invalid(
+            self, PatchLogger, monkeypatch, new_outline_model):
+        """Confirm returns correct when index is None."""
+        # Setup
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+
+        model = new_outline_model('Source')
+        PATH_TARGET = '1:1'
+        i_target = model.get_iter_from_string(PATH_TARGET)
+        log_message = ('Invalid item index ({}): (get_item_gtk)'
+                       ''.format(hex(id(i_target))))
+        item = model.get_value(
+            i_target, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM)
+        assert item is not None
+        model.clear()
+        # Test
+        target = AOUTLINE.get_item_gtk(model, i_target)
+        assert target is None
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
