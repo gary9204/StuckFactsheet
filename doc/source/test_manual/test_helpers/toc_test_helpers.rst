@@ -6,3 +6,4 @@ Tests Helpers
 
    help_start_application
    help_sheet_sample
+   help_sheet_new_topic

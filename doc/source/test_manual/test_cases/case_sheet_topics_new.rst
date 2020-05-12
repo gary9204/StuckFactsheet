@@ -3,6 +3,15 @@ Case Factsheet New Topic
 
 **Purpose:** demonstrate specifying a new topic in a factsheet.
 
+.. |document-new| image::  /icons/document-new-symbolic.svg
+   :alt: (page outline with plus)
+
+.. |edit-find| image::  /icons/edit-find-symbolic.svg
+   :alt: (magnifying glass)
+
+.. |window-close| image::  /icons/window-close-symbolic.svg
+   :alt: (x)
+
 Setup
 -----
 None
@@ -29,8 +38,8 @@ Steps - start topic specification
    a. *Expect:* Dialog disappears.
    #. *Expect:* The factsheet remains unchanged.
 
-#. **Step:** Select *Factsheet* **New Topic icon** (lower left pane
-   toolbar, second icon from left).
+#. **Step:** Select *Factsheet* **New Topic icon** |document-new| (lower
+   left pane toolbar, second icon from left).
 
    a. *Expect:* Select Template dialog appears as before.
 
@@ -44,8 +53,8 @@ Steps - topic placement
 .. helper TODO: help_sheet_place_topic.rst
     outline
 
-1. **Step:** Select *Factsheet* **New Topic icon** (lower left
-   pane toolbar, second icon from left).
+1. **Step:** Select *Factsheet* **New Topic icon** |document-new| (lower
+   left pane toolbar, second icon from left).
 
    a. *Expect:* Select Template dialog appears.
 
@@ -55,8 +64,8 @@ Steps - topic placement
 
 Steps - template selection
 --------------------------
-1. **Step:** Select *Topics* **New Topic icon** (lower left pane
-   toolbar, second icon from left).
+1. **Step:** Select *Topics* **New Topic icon** |document-new| (lower
+   left pane toolbar, second icon from left).
 
    a. *Expect:* Select Template dialog appears.
 
@@ -67,16 +76,17 @@ Steps - template selection
    #. *Expect:* Specify button (dialog title far right) changes from
       disabled (gray) to enabled (blue).
 
-#. **Step:** Click **Specify button**.
+#. **Step:** Click **Specify button** (dialog title far right).
 
    a. *Expect:* Dialog disappears.
+   #. *Expect:* New Section dialog appears.
 
-   .. admonition:: To Do
-   
-      Update when Template Completion feature is finished.  Cancel Template
-      Completion.  Continue with template selection test cases.
+#. **Step:** Click dialog **Cancel button** (dialog title on far left).
 
-#. **Step:** Select *Topics* **New Topic icon**.
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* The factsheet remains unchanged.
+
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
    a. *Expect:* Select Template dialog appears.
 
@@ -124,13 +134,14 @@ Steps - template selection
 #. **Step:** Click **Specify button**.
 
    a. *Expect:* Dialog disappears.
+   #. *Expect:* New Section dialog appears.
 
-   .. admonition:: To Do
-   
-      Update when Template Completion feature is finished.  Cancel Template
-      Completion.  Continue with template selection.
+#. **Step:** Click dialog **Cancel button**.
 
-#. **Step:** Select *Topics* **New Topic icon**.
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* The factsheet remains unchanged.
+
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
    a. *Expect:* Select Template dialog appears.
 
@@ -144,11 +155,11 @@ Steps - template selection
 #. **Step:** Click **collapser** of template ``name_1xx``.
 
    a. *Expect:* All templates under ``name_1xx`` disappear.
-   #. *Expect:* Templates ``name_1xx`` is selected.
+   #. *Expect:* Template ``name_1xx`` is selected.
    #. *Expect:* *Summary* pane content changes to "Stub summary_1xx".
 
-#. **Step:** Click on **find icon** (magnifying glass immediately left
-   of **Specify button** in dialog title).
+#. **Step:** Click on **find icon** |edit-find| (immediately left of
+   Specify button in dialog title).
 
    a. *Expect:* Find bar appears between dialog title and *Templates*
       pane.
@@ -157,11 +168,11 @@ Steps - template selection
    #. *Expect:* Find bar contains a text entry field (light background
       box with magnifying glass icon).
 
-#. **Step:** Click on **find icon** in dialog title.
+#. **Step:** Click on **find icon** |edit-find| in dialog title.
 
    a. *Expect:* Find bar disappears.
 
-#. **Step:** Click on **find icon** in dialog title.
+#. **Step:** Click on **find icon** |edit-find| in dialog title.
 
    a. *Expect:* Find bar reappears.
 
@@ -206,17 +217,123 @@ Steps - template completion
 .. helper TODO: help_sheet_specify_topic.rst
     outline
 
-.. admonition:: To Do
+1. **Step:** Select *Topics* **New Topic icon** |document-new| (lower
+   left pane toolbar, second icon from left).
 
-   Add template completion feature to Factsheet and complete test
-   section.
+   a. *Expect:* Select Template dialog appears.
+
+#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+
+   a. *Expect:* Template ``name_0xx`` is selected (highlighted in blue).
+   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
+   #. *Expect:* Specify button (dialog title far right) changes from
+      disabled (gray) to enabled (blue).
+
+#. **Step:** Click **Specify button** (dialog title far right).
+
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* New Section dialog appears.
+   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* Page explains topic, assistant steps, and navegation
+      buttons.
+
+#. **Step:** Click **Next button** (dialog title far right)
+
+   a. *Expect:* Dialog displays page Identity.
+   #. *Expect:* Page explains Name, Title, and Description fields.
+   #. *Expect:* Page contains Name, Title, and Description fields.
+
+#. **Step:** Click in **Name** field and type "Topic One".
+
+   a. *Expect:* Field contents changes from "Enter section name" to
+      "Topic One".
+
+#. **Step:** Click in **Title** field and type "Initial Topic".
+
+   a. *Expect:* Field contents changes from "Enter section title" to
+      "Initial Topic".
+
+#. **Step:** Click in **Description** field and type "This is the
+   initial section added to the factsheet."
+
+   a. *Expect:* Field contents matches typed text.
+
+#. **Step:** Click **Back button** (dialog title on left next to Cancel
+   button)
+
+   a. *Expect:* Dialog displays page New Section.
+   #. *Expect:* Page explains topic, assistant steps, and navegation
+      buttons.
+
+#. **Step:** Click **Next button**.
+
+   a. *Expect:* Dialog displays page Identity.
+   #. *Expect:* Page explains Name, Title, and Description fields.
+   #. *Expect:* Name field contains "Topic One".
+   #. *Expect:* Title field contains "Initial Topic".
+   #. *Expect:* Summary field contains "This is the initial section
+      added to the factsheet."
+
+#. **Step:** Click **Next button**.
+
+   a. *Expect:* Dialog displays page Confirm.
+   #. *Expect:* Page explains **Apply** and **Back** buttons.
+   #. *Expect:* Page displays Name value "Topic One".
+   #. *Expect:* You can select but not edit the Name value.
+   #. *Expect:* Page displays Title value "Initial Topic".
+   #. *Expect:* You can select but not edit the Title value.
+   #. *Expect:* Page diaplays Description value "This is the initial
+      section added to the factsheet."
+   #. *Expect:* You can select but not edit the Description value.
+
+#. **Step:** Click **Back button**.
+
+   a. *Expect:* Dialog displays page Identity.
+   #. *Expect:* Page explains Name, Title, and Description fields.
+   #. *Expect:* Name field contains "Topic One".
+   #. *Expect:* Title field contains "Initial Topic".
+   #. *Expect:* Summary field contains "This is the initial section
+      added to the factsheet."
+
+#. **Step:** Click in **Name** field and edit to "Topic 1".
+
+   a. *Expect:* Field contents changes from "Topic One" to
+      "Topic 1".
+
+#. **Step:** Click in **Title** field and edit to "First Topic".
+
+   a. *Expect:* Field contents changes from "Initial Topic" to
+      "First Topic".
+
+#. **Step:** Click in **Description** field and edit "This is the
+   first section added to the factsheet."
+
+   a. *Expect:* Field contents matches edited text.
+
+#. **Step:** Click **Next button**.
+
+   a. *Expect:* Dialog displays page Confirm.
+   #. *Expect:* Page explains **Apply** and **Back** buttons.
+   #. *Expect:* Page displays Name value "Topic 1".
+   #. *Expect:* Page displays Title value "First Topic".
+   #. *Expect:* Page diaplays Description value "This is the first
+      section added to the factsheet."
+   #. *Expect:* You can select but not edit the Name, Title, and
+      Description values.
+
+#. **Step:** Click **Apply button** (dialog title far right).
+
+   a. *Expect:* Dialog disappears.
+   #. *Expect:* *Topics* pane contains topic.
+   #. *Expect:* "Topic 1" appears in Name column.
+   #. *Expect:* "First Topic" appears in Title column.
 
 Teardown
 --------
 1. Check console for exceptions, GTK errors, and warning messages. There
    should be none.
 
-#. **Step:** Click window **close icon**.
+#. **Step:** Click window **close icon** |window-close|.
 
    a. *Expect:* Window disappears.
    #. *Expect:* Application closes.

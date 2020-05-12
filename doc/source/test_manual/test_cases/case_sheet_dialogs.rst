@@ -4,6 +4,12 @@ Case Factsheet Dialogs
 **Purpose:** demonstrate factsheet dialogs Help, Display Help, and Data
 Loss Warning.
 
+.. |menu| image::  /icons/format-justify-fill-symbolic.svg
+   :alt: (three horizontal bars)
+
+.. |window-close| image::  /icons/window-close-symbolic.svg
+   :alt: (x)
+
 Setup
 -----
 None
@@ -15,46 +21,65 @@ Steps -- Help
 
    a. *Expect:* Application displays default factsheet.
 
-#. **Step:** Click Factsheet **menu > Help** (right of **Factsheet**
+#. **Step:** Click Factsheet menu |menu| **Help** (right of *Factsheet*
    field).
 
-   a. *Expect:* Factsheet Help dialog appears.
+   a. *Expect:* *Factsheet Help* dialog appears.
 
 #. **Step:** Review dialog contents (title, text, references, etc.).
 
    a. *Expect:* Content is current and correct.
 
-#. **Step:** Click dialog **close icon** (dialog title far right).
+#. **Step:** Click dialog **close icon** |window-close| (dialog title
+   far right).
 
    a. *Expect:* Dialog disappears.
 
 Steps -- Display Help
 ---------------------
-1. **Step:** Click factsheet **menu > Display ... > Help** (right of
+1. **Step:** Click Factsheet menu |menu| **Display ... > Help** (right of
    **Factsheet** field)
 
-   a. *Expect:* Factsheet Display Help dialog appears.
+   a. *Expect:* *Factsheet Display Help* dialog appears.
 
 #. **Step:** Review dialog contents (title, text, references, etc.).
 
    a. *Expect:* Content is current and correct.
 
-#. **Step:** Click dialog **close icon** (dialog title far right).
+#. **Step:** Click dialog **close icon** |window-close| (dialog title
+   far right).
 
    a. *Expect:* Dialog disappears.
 
 Steps -- File Help
 ------------------
-1. **Step:** Click factsheet **menu > File ... > Help** (right of
-   **Factsheet** field)
+1. **Step:** Click Factsheet menu |menu| **File ... > Help** (right of
+   *Factsheet* field)
 
-   a. *Expect:* Factsheet File Help dialog appears.
+   a. *Expect:* *Factsheet File Help* dialog appears.
 
 #. **Step:** Review dialog contents (title, text, references, etc.).
 
    a. *Expect:* Content is current and correct.
 
-#. **Step:** Click dialog **close icon** (dialog title far right).
+#. **Step:** Click dialog **close icon** |window-close| (dialog title
+   far right).
+
+   a. *Expect:* Dialog disappears.
+
+Steps -- Topics Help
+--------------------
+1. **Step:** Click *Topics* menu |menu| **Help** (pane toolbar, last
+   icon on right).
+
+   a. *Expect:* *Factsheet Topics Help* dialog appears.
+
+#. **Step:** Review dialog contents (title, text, references, etc.).
+
+   a. *Expect:* Content is current and correct.
+
+#. **Step:** Click dialog **close icon** |window-close| (dialog title
+   far right).
 
    a. *Expect:* Dialog disappears.
 
@@ -64,15 +89,16 @@ Steps -- Data Loss Warning
 
    a. *Expect:* Text appears in field.
 
-1. **Step:** Click window **close icon** (window title far right).
+#. **Step:** Click window **close icon** |window-close| (window title
+   far right).
 
-   a. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* *Data Loss Warning* dialog appears.
 
 #. **Step:** Review dialog contents (title, text, buttons, etc.).
 
    a. *Expect:* Content is current and correct.
 
-#. **Step:** Click **Discard** button (dialog title far right).
+#. **Step:** Click **Discard button** (dialog title far right).
 
    a. *Expect:* Dialog disappears and application closes.
 

@@ -1966,7 +1966,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Delete topic&lt;/b&gt;&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Delete topic&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
@@ -2030,7 +2030,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Remove the current topic from the factsheet.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Remove the current topic from the factsheet.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
