@@ -189,10 +189,12 @@ class QueryTemplate:
 
     def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
                                ASHEET.FieldsTemplate) -> None:
-        """Sets search field to match active field button.
+        """Sets search to match active field button.
 
         :param px_button: button user toggled.
         :param p_field: search field of toggled button.
         """
         if px_button.get_active():
-            self._outline._active_field = p_field
+            self._outline._search |= p_field
+        else:
+            self._outline._search &= ~p_field

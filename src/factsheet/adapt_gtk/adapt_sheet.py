@@ -113,7 +113,7 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
         """Initialize view for template outline."""
         super().__init__()
         self._gtk_view.set_search_equal_func(self._test_field_ne, None)
-        self._active_field = FieldsTemplate.NAME
+        self._search = FieldsTemplate.VOID
 
         self._gtk_view.set_search_column(AdaptTreeStoreTemplate.N_COLUMN_ITEM)
         self._gtk_view.set_enable_search(True)
@@ -154,13 +154,14 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        template = px_store[px_index][AdaptTreeStoreTemplate.N_COLUMN_ITEM]
+        template = AOUTLINE.get_item_gtk(px_store, px_index)
+        assert template is not None
         pm_renderer.set_property('markup', template.name)
 
     def _test_field_ne(self, px_model: Gtk.TreeModel, p_n_column: int,
                        p_value: str, px_index: Gtk.TreeIter, _user_data):
-        """Return True when value is not equal to the contents of the
-        active search field.
+        """Return True when value is not equal to the contents of any
+        search field.
 
         Implements `Gtk.TreeViewSearchEqualFunc`_ for name and title
         search.
@@ -170,19 +171,20 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
             https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
             Gtk.TreeViewSearchEqualFunc
         """
-        template = px_model[px_index][p_n_column]
-        if self._active_field is FieldsTemplate.NAME:
-            value = template.name
-        elif self._active_field is FieldsTemplate.TITLE:
-            value = template.title
-        else:
+        if not self._search:
             return True
 
-        if value.startswith(p_value):
-            return False
+        template = px_model[px_index][p_n_column]
+        if self._search & FieldsTemplate.NAME:
+            if template.name.startswith(p_value):
+                return False
+
+        if self._search & FieldsTemplate.TITLE:
+            if template.title.startswith(p_value):
+                return False
 
         path = px_model.get_path(px_index)
-        self._gtk_view.expand_row(path, False)
+        _ = self._gtk_view.expand_row(path, False)
         return True
 
     def _title_cell_data(self, _column: Gtk.TreeViewColumn,
@@ -200,7 +202,8 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        template = px_store[px_index][AdaptTreeStoreTemplate.N_COLUMN_ITEM]
+        template = AOUTLINE.get_item_gtk(px_store, px_index)
+        assert template is not None
         pm_renderer.set_property('markup', template.title)
 
 
@@ -254,7 +257,8 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        topic = px_store[px_index][AdaptTreeStoreTopic.N_COLUMN_ITEM]
+        topic = AOUTLINE.get_item_gtk(px_store, px_index)
+        assert topic is not None
         pm_renderer.set_property('markup', topic.name)
 
     def _test_field_ne(self, px_model: Gtk.TreeModel, p_n_column: int,
@@ -300,7 +304,8 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
             px_index: store index of topic.
             _data: (optional) user data for cell function.
         """
-        topic = px_store[px_index][AdaptTreeStoreTopic.N_COLUMN_ITEM]
+        topic = AOUTLINE.get_item_gtk(px_store, px_index)
+        assert topic is not None
         pm_renderer.set_property('markup', topic.title)
 
 

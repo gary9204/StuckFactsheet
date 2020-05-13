@@ -66,12 +66,12 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkRadioButton" id="ui_search_by_name">
+                      <object class="GtkCheckButton" id="ui_search_by_name">
                         <property name="label" translatable="yes">By name</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="active">True</property>
+                        <property name="active">False</property>
                         <property name="draw_indicator">True</property>
                       </object>
                       <packing>
@@ -81,13 +81,13 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkRadioButton" id="ui_search_by_title">
+                      <object class="GtkCheckButton" id="ui_search_by_title">
                         <property name="label" translatable="yes">By title</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="active">False</property>
                         <property name="draw_indicator">True</property>
-                        <property name="group">ui_search_by_name</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>

@@ -173,7 +173,7 @@ class TestAdaptTreeStoreTemplate:
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     def test_find_title_absent(self, new_outline_model):
-        """| Confirm search by template name.
+        """| Confirm search by template title.
         | Case: no matching template in outline.
         """
         # Setup
@@ -248,7 +248,7 @@ class TestAdaptTreeStoreTopic:
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     def test_find_title_absent(self, new_outline_model):
-        """| Confirm search by topic name.
+        """| Confirm search by topic title.
         | Case: no matching topic in outline.
         """
         # Setup
@@ -283,7 +283,8 @@ class TestAdaptTreeViewTemplate:
         target = ASHEET.AdaptTreeViewTemplate()
         assert isinstance(target._gtk_view, Gtk.TreeView)
         assert target._gtk_view.get_model() is None
-        assert target._active_field is ASHEET.FieldsTemplate.NAME
+        assert isinstance(target._search, ASHEET.FieldsTemplate)
+        assert target._search is ASHEET.FieldsTemplate.VOID
         assert patch_func.called
 
         assert AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM == (
@@ -324,37 +325,49 @@ class TestAdaptTreeViewTemplate:
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
 
-    @pytest.mark.parametrize('FIELD, PATH_ITEM, VALUE, EXPECT', [
-        (ASHEET.FieldsTemplate.NAME,
-         '0', 'name_0xx', False),
-        (ASHEET.FieldsTemplate.NAME,
-         '0', 'title_0xx', True),
-        (ASHEET.FieldsTemplate.TITLE,
-         '1:1:2', 'name_112', True),
-        (ASHEET.FieldsTemplate.TITLE,
-         '0:1', 'title_01x', False),
-        (ASHEET.FieldsTemplate.TITLE,
-         '0:1', 't', False),
-        (ASHEET.FieldsTemplate.TITLE,
-         '0:1', 'ti', False),
-        (ASHEET.FieldsTemplate.TITLE,
-         '0:1', 'tiX', True),
-        (None, '1:0', 'title_01x', True),
+    @pytest.mark.parametrize(
+        'SEARCH, PATH_ITEM, VALUE, EXPECT, EXPANDED', [
+            (ASHEET.FieldsTopic.VOID, '1:0', 'title_10x', True, False),
+            (ASHEET.FieldsTemplate.NAME, '0', 'name_0xx', False, False),
+            (ASHEET.FieldsTemplate.NAME, '0', 'title_0xx', True, True),
+            (~ASHEET.FieldsTemplate.VOID, '0', 'title_0xx', False, False),
+            (ASHEET.FieldsTemplate.TITLE, '1:1:2', 'name_112', True, True),
+            (ASHEET.FieldsTemplate.TITLE, '0:1', 'title_01x', False, False),
+            (ASHEET.FieldsTemplate.TITLE, '0:1', 't', False, False),
+            (ASHEET.FieldsTemplate.TITLE, '0:1', 'ti', False, False),
+            (ASHEET.FieldsTemplate.TITLE, '0:1', 'tiX', True, True),
+            (None, '1:0', 'title_01x', True, False),
         ])
-    def test_test_field_eq(
-            self, FIELD, PATH_ITEM, VALUE, EXPECT, new_outline):
+    def test_test_field_eq(self, monkeypatch, SEARCH, PATH_ITEM, VALUE,
+                           EXPECT, EXPANDED, new_outline):
         """Confirm results of Gtk.TreeView search equal function."""
         # Setup
+        class PatchExpand:
+            def __init__(self):
+                self.called = False
+                self.path = None
+
+            def expand_row(self, p, _a):
+                self.called = True
+                self.path = p
+
+        patch_expand = PatchExpand()
+        monkeypatch.setattr(
+            Gtk.TreeView, 'expand_row', patch_expand.expand_row)
+
         OUTLINE = new_outline()
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTemplate()
         OUTLINE.attach_view(target)
-        target._active_field = FIELD
+        target._search = SEARCH
         # Test
         actual = target._test_field_ne(
             OUTLINE._gtk_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
             VALUE, i_item, None)
         assert actual is EXPECT
+        assert patch_expand.called is EXPANDED
+        if EXPANDED:
+            assert PATH_ITEM == patch_expand.path.to_string()
 
     def test_title_cell_data(self, new_outline):
         """Confirm renderer property is set."""
@@ -397,9 +410,9 @@ class TestAdaptTreeViewTopic:
         target = ASHEET.AdaptTreeViewTopic()
         assert isinstance(target._gtk_view, Gtk.TreeView)
         assert target._gtk_view.get_model() is None
-        assert patch_func.called
         assert isinstance(target._search, ASHEET.FieldsTopic)
         assert target._search is ASHEET.FieldsTopic.VOID
+        assert patch_func.called
 
         assert AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM == (
             target._gtk_view.get_search_column())

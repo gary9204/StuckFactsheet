@@ -257,13 +257,13 @@ class TestDialogTemplate:
         # Setup
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
-        FIELD_TITLE = ASHEET.FieldsTemplate.TITLE
-        target._outline._active_field = FIELD_TITLE
-        FIELD_NAME = ASHEET.FieldsTemplate.NAME
+        SEARCH_ALL = ~ASHEET.FieldsTemplate.VOID
+        target._outline._search = SEARCH_ALL
         button = Gtk.ToggleButton(active=False)
         # Test
-        target.on_toggle_search_field(button, FIELD_NAME)
-        assert target._outline._active_field is FIELD_TITLE
+        target.on_toggle_search_field(button, ASHEET.FieldsTemplate.NAME)
+        assert not target._outline._search & ASHEET.FieldsTemplate.NAME
+        assert target._outline._search & ASHEET.FieldsTemplate.TITLE
         # Teardown
         del WIN
 
@@ -274,12 +274,12 @@ class TestDialogTemplate:
         # Setup
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
-        FIELD_NAME = ASHEET.FieldsTemplate.NAME
-        target._outline._active_field = FIELD_NAME
-        FIELD_TITLE = ASHEET.FieldsTemplate.TITLE
+        SEARCH_NONE = ASHEET.FieldsTemplate.VOID
+        target._outline._search = SEARCH_NONE
         button = Gtk.ToggleButton(active=True)
         # Test - not active
-        target.on_toggle_search_field(button, FIELD_TITLE)
-        assert target._outline._active_field is FIELD_TITLE
+        target.on_toggle_search_field(button, ASHEET.FieldsTemplate.TITLE)
+        assert target._outline._search & ASHEET.FieldsTemplate.TITLE
+        assert not target._outline._search & ASHEET.FieldsTemplate.NAME
         # Teardown
         del WIN
