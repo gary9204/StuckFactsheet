@@ -111,17 +111,30 @@ class QueryTemplate:
         style_specify.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
         self._button_specify.set_sensitive(False)
 
+        instructions = get_object('ui_info')
+        instructions.hide()
+        image_show_info = Gtk.Image.new_from_icon_name(
+            'dialog-information-symbolic', Gtk.IconSize.SMALL_TOOLBAR)
+        button_show_info = Gtk.ToggleButton()
+        button_show_info.set_image(image_show_info)
+        _binding = button_show_info.bind_property(
+            'active', instructions, 'visible',
+            GO.BindingFlags.BIDIRECTIONAL)
+        button_show_info.show()
+
+        search_bar = get_object('ui_search_bar')
         image_show_search = Gtk.Image.new_from_icon_name(
             'edit-find-symbolic', Gtk.IconSize.SMALL_TOOLBAR)
         button_show_search = Gtk.ToggleButton()
         button_show_search.set_image(image_show_search)
-        button_show_search.show()
-        header_bar = get_object('ui_header_bar')
-        header_bar.pack_end(button_show_search)
-        search_bar = get_object('ui_search_bar')
         _binding = button_show_search.bind_property(
             'active', search_bar, 'search-mode-enabled',
             GO.BindingFlags.BIDIRECTIONAL)
+        button_show_search.show()
+
+        header_bar = get_object('ui_header_bar')
+        header_bar.pack_end(button_show_search)
+        header_bar.pack_end(button_show_info)
 
         button_by_name = get_object('ui_search_by_name')
         _ = button_by_name.connect('toggled', self.on_toggle_search_field,
