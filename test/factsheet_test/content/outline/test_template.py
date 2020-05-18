@@ -52,6 +52,7 @@ class TestSection:
         assert target._model_topic is TOPIC.Topic
 
         assert isinstance(target._assistant, Gtk.Assistant)
+        assert target._assistant.get_modal()
         assert isinstance(target._summary_topic, Gtk.TextBuffer)
         assert isinstance(target._name_topic, Gtk.EntryBuffer)
         assert isinstance(target._title_topic, Gtk.EntryBuffer)
