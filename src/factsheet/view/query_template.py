@@ -10,8 +10,8 @@ from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # STUB imports - begin
 from factsheet.content.outline import template as TEMPLATE
 from factsheet.content.outline import topic as TOPIC
-from factsheet.view import ui as UI
 # STUB imports - end
+from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -79,7 +79,6 @@ class QueryTemplate:
     template.
 
     :param px_parent: parent window for Select Template dialog.
-    :param p_get_object: function to get predefined dialog elements.
 
     .. attribute:: NAME_FILE_QUERY_UI
 
@@ -195,8 +194,11 @@ class QueryTemplate:
         self._summary_current.set_markup(item.summary)
         self._button_specify.set_sensitive(True)
 
-    def _on_changed_cursor_invalid(self):
-        """ """
+    def _on_changed_cursor_invalid(self) -> None:
+        """Changes summary text and Specify button if there is no template.
+
+        This is a helper method to consistently handle multiple cases.
+        """
         self._summary_current.set_markup(self.NO_SUMMARY)
         self._button_specify.set_sensitive(False)
 

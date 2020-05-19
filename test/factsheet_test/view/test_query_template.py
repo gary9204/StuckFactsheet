@@ -1,11 +1,10 @@
 """
-Unit tests for dialog classes.  See :mod:`.query_template`.
+Unit tests for template selection class.  See :mod:`.query_template`.
 """
 import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.outline import template as TEMPLATE
 from factsheet.content.outline import topic as TOPIC
@@ -19,9 +18,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def new_outline_model():
-    """Pytest fixture returns outline model factory.  Parameter p_tag
-    labels each item in summary.  The structure of each model is as
-    follows.
+    """Pytest fixture returns outline model factory.  The structure of
+    each model is as follows.
 
         | name_0xx | title_0xx | summary_0xx
         |     name_00x | title_00x | summary_00x
@@ -92,8 +90,18 @@ def patch_outline(new_outline_model):
     return outline
 
 
-class TestDialogTemplate:
+class TestQueryTemplate:
     """Unit tests for :class:`.QueryTemplate`."""
+
+    def test_attr(self):
+        """Confirm class attributes are defined."""
+        # Setup
+        target = QTEMPLATES.QueryTemplate
+        # Test
+        assert isinstance(target.NO_SUMMARY, str)
+        assert target.NO_SUMMARY
+        assert isinstance(target.NAME_FILE_QUERY_UI, str)
+        assert target.NAME_FILE_QUERY_UI
 
     def test_init(self):
         """Confirm initialization."""
@@ -277,7 +285,7 @@ class TestDialogTemplate:
         SEARCH_NONE = ASHEET.FieldsTemplate.VOID
         target._outline._search = SEARCH_NONE
         button = Gtk.ToggleButton(active=True)
-        # Test - not active
+        # Test
         target.on_toggle_search_field(button, ASHEET.FieldsTemplate.TITLE)
         assert target._outline._search & ASHEET.FieldsTemplate.TITLE
         assert not target._outline._search & ASHEET.FieldsTemplate.NAME

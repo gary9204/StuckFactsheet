@@ -331,7 +331,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """
         print('In PageSheet.on_new_topic')
         print('Query place: TODO')
-        placement = QPLACE.Placement(None, QPLACE.Places.CHILD)
+        placement = QPLACE.Placement(None, QPLACE.Order.CHILD)
         print('\tPlacement: {}'.format(placement))
         print('Query template:')
         template = self._query_template()
@@ -346,11 +346,11 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         print('Add topic')
         assert self._control is not None
-        if placement.place is QPLACE.Places.AFTER:
+        if placement.order is QPLACE.Order.AFTER:
             self._control.insert_topic_after(topic, placement.anchor)
-        elif placement.place is QPLACE.Places.BEFORE:
+        elif placement.order is QPLACE.Order.BEFORE:
             self._control.insert_topic_before(topic, placement.anchor)
-        elif placement.place is QPLACE.Places.CHILD:
+        elif placement.order is QPLACE.Order.CHILD:
             self._control.insert_topic_child(topic, placement.anchor)
         else:
             raise NotImplementedError

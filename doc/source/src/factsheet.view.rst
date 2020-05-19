@@ -11,8 +11,9 @@ Submodules
 
 .. toctree::
 
-   factsheet.view.query_template
    factsheet.view.page_sheet
    factsheet.view.pane_topic
+   factsheet.view.query_place
+   factsheet.view.query_template
    factsheet.view.ui
    factsheet.view.view_infoid
