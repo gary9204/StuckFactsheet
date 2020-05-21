@@ -21,7 +21,7 @@ already in the outline.
 
 .. attribute:: anchor
 
-    Reference item already in the outline.
+    Index of reference item already in the outline.
 
 .. attribute:: order
 
@@ -72,9 +72,9 @@ class QueryPlace:
 
     NO_SUMMARY = 'Please select a topic.'
 
-# STUB Glade patch - begin
-#    <property name="use-header-bar">1</property>
-# STUB Glade patch - end
+    # STUB Glade patch - begin
+    #    <property name="use-header-bar">1</property>
+    # STUB Glade patch - end
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_place.ui')
 
     def __init__(self, px_parent: Gtk.Window, px_donor_outline:
@@ -162,9 +162,8 @@ class QueryPlace:
         self._dialog.hide()
         place = None
         if response == Gtk.ResponseType.APPLY:
-            model, index = self._cursor.get_selected()
-            item = AOUTLINE.get_item_gtk(model, index)
-            place = Placement(item, self._order)
+            _model, index = self._cursor.get_selected()
+            place = Placement(index, self._order)
             self._cursor.unselect_all()
         return place
 

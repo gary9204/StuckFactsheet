@@ -10,9 +10,11 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.content.outline import template as XSECTION
+from factsheet.content.outline import topic as XTOPIC
 from factsheet.control import pool as CPOOL
 from factsheet.control import sheet as CSHEET
 from factsheet.model import sheet as MSHEET
+from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import page_sheet as VSHEET
 from factsheet.view import ui as UI
@@ -128,6 +130,7 @@ class TestPageSheet:
         assert isinstance(target._cursor_topics, Gtk.TreeSelection)
         assert target._view_topics.gtk_view.get_parent() is not None
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
+        assert target._query_place is None
         assert isinstance(target._query_template, QTEMPLATE.QueryTemplate)
         assert target._name_former is None
         assert isinstance(target._warning_data_loss, Gtk.Label)
@@ -299,17 +302,12 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    def test_link_factsheet(self, monkeypatch, patch_factsheet, capfd):
+    def test_link_factsheet(self, patch_factsheet, capfd):
         """Confirm creation of factsheet links."""
         # Setup
-        def patch_attach_page(self, pm_view):
-            self.test_view = pm_view
-
-        monkeypatch.setattr(
-            CSHEET.Sheet, 'attach_page', patch_attach_page)
         factsheet = patch_factsheet()
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
+        control = CSHEET.Sheet.new(sheets_active)
         page = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
@@ -317,8 +315,12 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
         # Test
         VSHEET.PageSheet.link_factsheet(page, control)
-        assert control.test_view is page
         assert page._control is control
+        model = page._view_topics.gtk_view.get_model()
+        assert model is not None
+        assert page._query_place is not None
+        query_view_topics = page._query_place._outline
+        assert query_view_topics.gtk_view.get_model() is model
         # Teardown
         page._window.destroy()
         del page._window
@@ -693,10 +695,10 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    @pytest.mark.skip(reason=' cancel case first')
     def test_on_new_topic(self, patch_factsheet, capfd, monkeypatch):
         """| Confirm response to request to specify topic.
-        | Case: TBD
+        | Case: user completes placement, template selection, and topic
+          specification.
         """
         # Setup
         factsheet = patch_factsheet()
@@ -706,22 +708,85 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
-        target._control = control
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        gtk_model = target._view_topics.gtk_view.get_model()
+        _index = gtk_model.append(None)
+
+        placement = QPLACE.Placement(None, QPLACE.Order.CHILD)
+        patch_place = PatchCall(placement)
+        monkeypatch.setattr(
+            QPLACE.QueryPlace, '__call__', patch_place.__call__)
 
         query_template = target._query_template
         outline = query_template._outline
         model = outline.gtk_view.get_model()
         i_first = model.get_iter_first()
-        template = model[i_first][0]
-        print('Index: {}'.format(i_first))
-        print('Name:  {}'.format(template.name))
-        assert False
-        patch_query_template = PatchCall(i_first)
+        template = AOUTLINE.get_item_gtk(model, i_first)
+        patch_query_template = PatchCall(template)
         monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
                             patch_query_template.__call__)
+
+        NAME = 'Parrot'
+        SUMMARY = 'A sketch about customer service.'
+        TITLE = 'Dead Parrot Sketch'
+        topic = XTOPIC.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        patch_template = PatchCall(topic)
+        monkeypatch.setattr(
+            XSECTION.Section, '__call__', patch_template.__call__)
+
+        class PatchInsert:
+            def __init__(self): self.called = False
+
+            def insert_topic_child(self, _t, _a): self.called = True
+
+        patch_insert = PatchInsert()
+        monkeypatch.setattr(CSHEET.Sheet, 'insert_topic_child',
+                            patch_insert.insert_topic_child)
         # Test
         target.on_new_topic(None, None)
+        assert patch_place.called
+        assert patch_query_template.called
+        assert patch_template.called
+        assert patch_insert.called
+
+    def test_on_new_topic_cancel_place(
+            self, patch_factsheet, capfd, monkeypatch):
+        """| Confirm response to request to specify topic.
+        | Case: user cancels placement.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        gtk_model = target._view_topics.gtk_view.get_model()
+        _index = gtk_model.append(None)
+
+        patch_place = PatchCall(None)
+        monkeypatch.setattr(
+            QPLACE.QueryPlace, '__call__', patch_place.__call__)
+
+        patch_query_template = PatchCall(None)
+        monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
+                            patch_query_template.__call__)
+
+        class PatchInsert:
+            def __init__(self): self.called = False
+
+            def insert_topic_child(self, _t, _a): self.called = True
+
+        patch_insert = PatchInsert()
+        monkeypatch.setattr(CSHEET.Sheet, 'insert_topic_child',
+                            patch_insert.insert_topic_child)
+        # Test
+        target.on_new_topic(None, None)
+        assert not patch_query_template.called
 
     def test_on_new_topic_cancel_template(
             self, patch_factsheet, capfd, monkeypatch):
@@ -736,15 +801,15 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
-        target._control = control
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
 
         patch_query_template = PatchCall(None)
         monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
                             patch_query_template.__call__)
         # Test
         target.on_new_topic(None, None)
-        # No observable yet
+        # Return from call shows guard against template = None
 
     def test_on_new_topic_cancel_topic(
             self, patch_factsheet, capfd, monkeypatch):
@@ -759,8 +824,8 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
-        target._control = control
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
 
         query_template = target._query_template
         outline = query_template._outline
@@ -775,9 +840,18 @@ class TestPageSheet:
         patch_template = PatchCall(None)
         monkeypatch.setattr(
             XSECTION.Section, '__call__', patch_template.__call__)
+
+        class PatchInsert:
+            def __init__(self): self.called = False
+
+            def insert_topic_child(self, _t, _a): self.called = True
+
+        patch_insert = PatchInsert()
+        monkeypatch.setattr(CSHEET.Sheet, 'insert_topic_child',
+                            patch_insert.insert_topic_child)
         # Test
         target.on_new_topic(None, None)
-        # No observable yet
+        assert not patch_insert.called
 
     def test_on_open_page(self, patch_factsheet, capfd):
         """Confirm response to request to open new view."""

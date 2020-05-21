@@ -61,6 +61,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         context_view_topics.add(self._view_topics.gtk_view)
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
+        self._query_place: typing.Optional[QPLACE.QueryPlace] = None
         self._query_template = QTEMPLATE.QueryTemplate(self._window)
         self._name_former: typing.Optional[str] = None
         self._infoid = VINFOID.ViewInfoId(get_object)
@@ -190,6 +191,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :param pm_control: new factsheet control.
         """
         pm_control.attach_page(pm_page)
+        pm_page._query_place = QPLACE.QueryPlace(
+            pm_page._window, pm_page._view_topics)
         pm_page._control = pm_control
 
     def _make_dialog_file(self, p_action: Gtk.FileChooserAction
@@ -325,26 +328,27 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
                      _target: GLib.Variant) -> None:
         """Specify a new topic and add to topic outline.
 
-        The method queries for the location of a new topic, the template
+        The method queries for the placement of new topic, the template
         for the topic, and topic contents.  The user may cancel at any
         of the queries.
         """
-        print('In PageSheet.on_new_topic')
-        print('Query place: TODO')
-        placement = QPLACE.Placement(None, QPLACE.Order.CHILD)
-        print('\tPlacement: {}'.format(placement))
-        print('Query template:')
+        gtk_model = self._view_topics.gtk_view.get_model()
+        if len(gtk_model):
+            assert self._query_place is not None
+            placement = self._query_place()
+        else:
+            placement = QPLACE.Placement(None, QPLACE.Order.CHILD)
+        if placement is None:
+            return
+
         template = self._query_template()
         if template is None:
             return
 
-        print('\tTemplate: {}'.format(template))
-        print('Query topic contents')
         topic = template()
         if topic is None:
             return
 
-        print('Add topic')
         assert self._control is not None
         if placement.order is QPLACE.Order.AFTER:
             self._control.insert_topic_after(topic, placement.anchor)

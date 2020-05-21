@@ -176,12 +176,14 @@ class TestQueryPlace:
         PATH_ITEM = '1:1:1'
         model = DONOR.gtk_view.get_model()
         i_item = model.get_iter_from_string(PATH_ITEM)
-        item = AOUTLINE.get_item_gtk(model, i_item)
         target._cursor.select_iter(i_item)
         ORDER = QPLACE.Order.BEFORE
         target._order = ORDER
         # Test
-        assert (item, ORDER) == target()
+        place_anchor, place_order = target()
+        place_path = model.get_string_from_iter(place_anchor)
+        assert PATH_ITEM == place_path
+        assert ORDER == place_order
         assert patch_dialog.called
         assert not target._dialog.get_visible()
         text = self.gtk_to_text(target._summary_current)
