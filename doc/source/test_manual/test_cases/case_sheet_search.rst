@@ -1,5 +1,5 @@
-Case Factsheet New Topic
-========================
+Case Factsheet Searches
+=======================
 
 **Purpose:** demonstrate specifying a new topic in a factsheet.
 
@@ -7,7 +7,175 @@ Case Factsheet New Topic
 
 Setup
 -----
-None
+Create a outline containing topics with the following name-title pairs.
+See :doc:`../test_helpers/help_sheet_new_topic`.  
+
+    | Name 0 - Title 0
+    | Name 1 - Title 1
+    |   Name 10 - Title 10 
+    |      Name 100 - Title 100
+    | Name 2 - Title 2
+    | Title 1 - Name 1
+    |    Title 10 - Name 10
+
+Steps - Topics Outline
+----------------------
+
+#. **Step:** Click *Topics* **find icon** |edit-find| (*Topics* pane
+   toolbar first icon from left).
+
+   a. *Expect:* Find bar appears between toolbar and topics outline.
+   #. *Expect:* Find bar contains a text entry field (light background
+      box with magnifying glass icon).
+   #. *Expect:* Find bar contains two check buttons labeled "By name"
+      and "By title".  Both buttons are checked.
+
+#. **Step:** Click *Topics* **find icon** |edit-find|.
+
+   a. *Expect:* Find bar disappears.
+
+#. **Step:** Click *Topics* **find icon** |edit-find|.
+
+   a. *Expect:* Find bar reappears.
+
+#. **Step:** Click in find entry field and press "N" key.
+
+   a. *Expect:* Topic ``Name 0`` is selected.
+
+#. **Step:** Continue typing "ame 1" in the find entry field.
+
+   a. *Expect:* Topic ``Name 1`` is selected.
+
+#. **Step:** Continue typing "0" in the find entry field.
+
+   #. *Expect:* ``Name 1`` expander |expander| changes to collapser
+      |collapser|.
+   #. *Expect:* Topic ``Name 10`` appears indented under ``Name 1``.
+   #. *Expect:* Topic ``Name 10`` is selected.
+
+#. **Step:** Continue typing "0" in the find entry field.
+
+   a. *Expect:* ``Name 10`` expander |expander| changes to collapser
+      |collapser|.
+   #. *Expect:* Topic ``Name 100`` appears indented under
+      ``Name 100``.
+   #. *Expect:* Topic ``Name 100`` is selected.
+
+#. **Step:** Continue typing "0" in the find entry field.
+
+   a. *Expect:* The entire outline of seven topics appears.
+   #. *Expect:* No topic is selected.
+
+#. **Step:** Backspace over the final "0" in the find entry field.
+
+   a. *Expect:* Topic ``Name 100`` is selected.
+
+#. **Step:** Continue backspacing over the find entry field until the
+   field is empty.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Click **By name** check button.
+
+   a. *Expect:* Button **By name** is cleared.
+   #. *Expect:* Button **By title** remains checked.
+
+#. **Step:** Click in find entry field and press "N" key.
+
+   a. *Expect:* Topic with title ``Name 1`` is selected.  The topic name
+      is ``Title 1``.
+
+#. **Step:** Continue typing "ame 1" in the find entry field.
+
+   a. *Expect:* Topic with name ``Title 1`` remains selected.
+
+#. **Step:** Continue typing "0" in the find entry field.
+
+   #. *Expect:* ``Title 1`` expander |expander| changes to collapser
+      |collapser|.
+   #. *Expect:* Topic with name ``Title 10`` appears indented under
+      ``Title 1``.
+   #. *Expect:* Topic ``Title 10`` is selected.
+
+#. **Step:** Continue typing "0" in the find entry field.
+
+   a. *Expect:* The entire outline of seven topics appears.
+   #. *Expect:* No topic is selected.
+
+#. **Step:** Backspace over the final "0" in the find entry field.
+
+   a. *Expect:* Topic ``Title 10`` is selected.
+
+#. **Step:** Backspace over the find entry field until the
+   field is empty.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Click **By title** check button.
+
+   a. *Expect:* Button **By title** is cleared.
+   #. *Expect:* Button **By name** remains cleared.
+
+#. **Step:** Click in find entry field and press "T" key.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Continue typing "Title 1" in the find entry field.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Backspace over the find entry field until the
+   field is empty.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Click in find entry field and press "N" key.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Continue typing "ame 0" in the find entry field.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Continue backspacing over the find entry field until the
+   field is empty.
+
+   a. *Expect:* No topic is selected.
+
+#. **Step:** Click **By name** check button.
+
+   a. *Expect:* Button **By name** is checked.
+   #. *Expect:* Button **By title** remains cleared.
+
+#. **Step:** Click in find entry field and press "T" key.
+
+   a. *Expect:* Topic with name ``Title 1`` is selected.
+
+#. **Step:** Continue typing "itle 1" in the find entry field.
+
+   a. *Expect:* Topic ``Title 1`` remains selected.
+
+#. **Step:** Continue typing "0" in the find entry field.
+
+   #. *Expect:* ``Title 1`` expander |expander| changes to collapser
+      |collapser|.
+   #. *Expect:* Topic with namne``Title 10`` appears indented under
+      ``Title 1``.
+   #. *Expect:* Topic ``Title 10`` is selected.
+
+#. **Step:** Backspace over the find entry field until the field is
+   empty.
+
+   a. *Expect:* No topic is selected.
+
+Steps - Templates Outline
+-------------------------
+
+.. admonition:: To Do
+
+   Add steps to verify search function for template outlines.
+
+.. End of work
 
 Steps - start topic specification
 ---------------------------------
@@ -343,7 +511,7 @@ Steps - topic placement
    #. *Expect:* *Topics* pane contains three topic.
    #. *Expect:* The order of the topics are  ``Three`` ``Topic 3``,
       ``One`` ``Topic 1``, and ``Two`` ``Topic 2``.
-   #. *Expect:* There is an collapser immediately left of
+   #. *Expect:* There is an collapser |collapser| immediately left of
       ``One`` ``Topic 1``.
    #. *Expect:* *Topics* outline shows two children of topic ``One``
       ``Topic 1``: topic ``Four`` ``Topic 4`` followed by topic ``Five``
@@ -354,8 +522,8 @@ Steps - topic placement
    a. *Expect:* Place New Topic dialog appears.
    #. *Expect:* The *Topics* pane contains three topics: ``Three``
       ``Topic 3``, ``One`` ``Topic 1`` and ``Two`` ``Topic 2``.
-   #. *Expect:* There is an expander immediately left of ``One`` ``Topic
-      1``.
+   #. *Expect:* There is an expander |expander| immediately left of
+      ``One`` ``Topic 1``.
    #. *Expect:* The *Summary* pane contains "Please select a topic."
 
 #. **Step:** Click on the **expander** |expander| for ``One`` ``Topic
@@ -418,22 +586,22 @@ Steps - template selection
 #. **Step:** Click **expander** |expander| of template ``name_0xx`` in
    *Templates* pane (right-pointing triangle at start of template line).
 
-   a. *Expect:* Expander changes to collapser (|collapser|).
+   a. *Expect:* Expander |expander| changes to collapser (|collapser|).
    #. *Expect:* Templates ``name_00x`` and ``name_01x`` appear indented
       under ``name_0xx``.
-   #. *Expect:* Template ``name_00x`` has a expander and template
-      ``name_01x`` does not.
+   #. *Expect:* Template ``name_00x`` has a expander |expander| and
+      template ``name_01x`` does not.
 
 #. **Step:** Click **expander** |expander| of template ``name_00x``.
 
-   a. *Expect:* Expander changes to collapser.
+   a. *Expect:* Expander |expander| changes to collapser.
    #. *Expect:* Template ``name_000`` appears indented under
       ``name_00x``.
 
 #. **Step:** Click **expander** |expander| of template ``name_1xx`` and
    **expanders** |expander| of all templates that appear.
 
-   a. *Expect:* Each expander changes to a collapser.
+   a. *Expect:* Each expander |expander| changes to a collapser.
    #. *Expect:* *Templates* outline contains templates under template
       ``name_1xx``.
 
@@ -474,8 +642,8 @@ Steps - template selection
 
    a. *Expect:* Templates ``name_00x``, ``name_000``, and ``name_01x``
       disappear.
-   #. *Expect:* An expander replaces the collapser of template
-      ``name_0xx``.
+   #. *Expect:* An expander |expander| replaces the collapser of
+      template ``name_0xx``.
 
 #. **Step:** Click **collapser** |collapser| of template ``name_1xx``.
 
@@ -483,7 +651,7 @@ Steps - template selection
    #. *Expect:* Template ``name_1xx`` is selected.
    #. *Expect:* *Summary* pane content changes to "Stub summary_1xx".
 
-#. **Step:** Click on **Find icon** |edit-find| (immediately left of
+#. **Step:** Click on **find icon** |edit-find| (immediately left of
    Specify button in dialog title).
 
    a. *Expect:* Find bar appears between dialog title and *Templates*
@@ -493,11 +661,11 @@ Steps - template selection
    #. *Expect:* Find bar contains a text entry field (light background
       box with magnifying glass icon).
 
-#. **Step:** Click on **Find icon** |edit-find| in dialog title.
+#. **Step:** Click on **find icon** |edit-find| in dialog title.
 
    a. *Expect:* Find bar disappears.
 
-#. **Step:** Click on **Find icon** |edit-find| in dialog title.
+#. **Step:** Click on **find icon** |edit-find| in dialog title.
 
    a. *Expect:* Find bar reappears.
 
@@ -508,7 +676,7 @@ Steps - template selection
 
 #. **Step:** Continue typing "ame_00" in the find entry field.
 
-   a. *Expect:* ``name_0xx`` expander changes to collapser.
+   a. *Expect:* ``name_0xx`` expander |expander| changes to collapser.
    #. *Expect:* Templates ``name_00x`` and ``name_01x`` appear indented
       under ``name_0xx``.
    #. *Expect:* Template ``name_00x`` is selected.
@@ -516,7 +684,7 @@ Steps - template selection
 
 #. **Step:** Continue typing "0" in the find entry field.
 
-   a. *Expect:* ``name_00x`` expander changes to collapser.
+   a. *Expect:* ``name_00x`` expander |expander| changes to collapser.
    #. *Expect:* Template ``name_000`` appears indented under
       ``name_00x`` and is selected.
    #. *Expect:* *Summary* pane contents changes to "Stub summary_000".

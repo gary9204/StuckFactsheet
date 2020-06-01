@@ -141,6 +141,7 @@ class TestQueryPlace:
         assert NAME_INFO == name_image
 
         assert isinstance(target._outline, ASHEET.AdaptTreeViewTopic)
+        assert target._outline._search is ~ASHEET.FieldsTopic.VOID
         gtk_view = target._outline.gtk_view
         assert gtk_view is not DONOR.gtk_view
         assert gtk_view.get_model() is DONOR.gtk_view.get_model()

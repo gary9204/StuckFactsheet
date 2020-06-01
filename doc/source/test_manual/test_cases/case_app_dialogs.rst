@@ -4,11 +4,7 @@ Case Application Dialogs
 **Purpose:** demonstrate application dialogs About, Help, and
 Introduction.
 
-.. |menu| image::  /icons/format-justify-fill-symbolic.svg
-   :alt: (three horizontal bars)
-
-.. |window-close| image::  /icons/window-close-symbolic.svg
-   :alt: (x)
+.. include:: /icons/icons-include.txt
 
 Setup
 -----

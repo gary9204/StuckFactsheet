@@ -4,11 +4,7 @@ Case Factsheet Dialogs
 **Purpose:** demonstrate factsheet dialogs Help, Display Help, and Data
 Loss Warning.
 
-.. |menu| image::  /icons/format-justify-fill-symbolic.svg
-   :alt: (three horizontal bars)
-
-.. |window-close| image::  /icons/window-close-symbolic.svg
-   :alt: (x)
+.. include:: /icons/icons-include.txt
 
 Setup
 -----

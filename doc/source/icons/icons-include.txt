@@ -1,0 +1,23 @@
+.. Commonly used symbols in Factsheet documentation.
+
+
+.. |expander| unicode:: U+25B8 .. Black right-pointing small triangle
+
+.. |collapser| unicode:: U+25BE .. Black down-pointing small triangle
+
+.. |document-new| image::  /icons/document-new-symbolic.svg
+   :alt: (page outline with plus)
+
+.. |edit-find| image::  /icons/edit-find-symbolic.svg
+   :alt: (magnifying glass)
+
+.. |open-popup| image::  /icons/go-down-symbolic.svg
+   :alt: (arrow head down)
+
+.. |menu| image::  /icons/format-justify-fill-symbolic.svg
+   :alt: (three horizontal bars)
+
+.. |window-close| image::  /icons/window-close-symbolic.svg
+   :alt: (x)
+
+

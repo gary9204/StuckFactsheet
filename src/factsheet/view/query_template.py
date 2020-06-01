@@ -91,9 +91,9 @@ class QueryTemplate:
 
     NO_SUMMARY = 'Please select a <b>template.</b>'
 
-# STUB Glade patch - begin
-#    <property name="use-header-bar">1</property>
-# STUB Glade patch - end
+    # STUB Glade patch - begin
+    #    <property name="use-header-bar">1</property>
+    # STUB Glade patch - end
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_template.ui')
 
     def __init__(self, px_parent: Gtk.Window) -> None:
@@ -143,6 +143,7 @@ class QueryTemplate:
                                     ASHEET.FieldsTemplate.TITLE)
 
         self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
+        self._outline._search = ~ASHEET.FieldsTemplate.VOID
         # STUB test content - begin
         OUTLINE.attach_view(self._outline)
         # STUB test content - end

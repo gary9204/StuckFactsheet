@@ -1763,7 +1763,7 @@ investigating algebraic structures.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Search the topic collection for topic with name you enter.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Search the topic collection for topic by name or title.</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                     <property name="max_width_chars">50</property>

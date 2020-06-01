@@ -3,17 +3,7 @@ Case Factsheet Delete Topic
 
 **Purpose:** demonstrate specifying a new topic in a factsheet.
 
-.. |document-new| image::  /icons/document-new-symbolic.svg
-   :alt: (page outline with plus)
-
-.. |edit-find| image::  /icons/edit-find-symbolic.svg
-   :alt: (magnifying glass)
-
-.. |menu| image::  /icons/format-justify-fill-symbolic.svg
-   :alt: (three horizontal bars)
-
-.. |window-close| image::  /icons/window-close-symbolic.svg
-   :alt: (x)
+.. include:: /icons/icons-include.txt
 
 Setup
 -----

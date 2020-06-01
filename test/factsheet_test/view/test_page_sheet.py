@@ -9,6 +9,7 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
+from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.outline import template as XSECTION
 from factsheet.content.outline import topic as XTOPIC
 from factsheet.control import pool as CPOOL
@@ -127,6 +128,7 @@ class TestPageSheet:
         assert isinstance(target._flip_summary, Gtk.CheckButton)
         assert isinstance(
             target._view_topics, ABC_OUTLINE.AbstractViewOutline)
+        assert target._view_topics._search is ~ASHEET.FieldsTopic.VOID
         assert isinstance(target._cursor_topics, Gtk.TreeSelection)
         assert target._view_topics.gtk_view.get_parent() is not None
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
@@ -170,6 +172,7 @@ class TestPageSheet:
             'show-help-sheet-file') is not None
 
         # Topics Outline Toolbar and Menu
+        assert target._view_topics.gtk_view.get_search_entry() is not None
         assert target._window.lookup_action('new-topic') is not None
         assert target._window.lookup_action('delete-topic') is not None
         assert target._window.lookup_action('show-help-topics') is not None
@@ -1270,6 +1273,56 @@ class TestPageSheet:
         # Teardown
         target._window.destroy()
         del target._window
+        del factsheet
+
+    def test_on_toggle_search_field_inactive(self, patch_factsheet, capfd):
+        """| Confirm search field set.
+        | Case: button inactive.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target_page = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        target = target_page._view_topics
+        SEARCH_ALL = ~ASHEET.FieldsTopic.VOID
+        target._search = SEARCH_ALL
+        button = Gtk.ToggleButton(active=False)
+        # Test
+        target_page.on_toggle_search_field(button, ASHEET.FieldsTopic.NAME)
+        assert not target._search & ASHEET.FieldsTopic.NAME
+        assert target._search & ASHEET.FieldsTopic.TITLE
+        # Teardown
+        target_page._window.destroy()
+        del target_page._window
+        del factsheet
+
+    def test_on_toggle_search_field_active(self, patch_factsheet, capfd):
+        """| Confirm search field set.
+        | Case: button inactive.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target_page = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        target = target_page._view_topics
+        SEARCH_NONE = ASHEET.FieldsTopic.VOID
+        target._search = SEARCH_NONE
+        button = Gtk.ToggleButton(active=True)
+        # Test - not active
+        target_page.on_toggle_search_field(button, ASHEET.FieldsTopic.TITLE)
+        assert target._search & ASHEET.FieldsTopic.TITLE
+        assert not target._search & ASHEET.FieldsTopic.NAME
+        # Teardown
+        target_page._window.destroy()
+        del target_page._window
         del factsheet
 
     def test_open_factsheet(

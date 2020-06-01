@@ -95,7 +95,6 @@ class QueryPlace:
         self._button_place.set_sensitive(False)
 
         search_bar = get_object('ui_search_bar')
-        search_bar.hide()
         image_show_search = Gtk.Image.new_from_icon_name(
             'edit-find-symbolic', Gtk.IconSize.SMALL_TOOLBAR)
         button_show_search = Gtk.ToggleButton()
@@ -130,6 +129,7 @@ class QueryPlace:
         gtk_model = px_donor_outline.gtk_view.get_model()
         self._outline.gtk_view.set_model(gtk_model)
         # STUB - end
+        self._outline._search = ~ASHEET.FieldsTopic.VOID
         gtk_view = self._outline.gtk_view
         context_outline = get_object('ui_context_outline_topics')
         context_outline.add(gtk_view)

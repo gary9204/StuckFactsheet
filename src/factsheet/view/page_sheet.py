@@ -18,6 +18,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GLib   # type: ignore[import]    # noqa: E402
+from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
@@ -56,6 +57,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._context_summary = get_object('ui_context_summary')
         self._flip_summary = get_object('ui_flip_summary')
         self._view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        self._view_topics._search = ~ASHEET.FieldsTopic.VOID
         self._cursor_topics = self._view_topics.gtk_view.get_selection()
         context_view_topics = get_object('ui_context_topics')
         context_view_topics.add(self._view_topics.gtk_view)
@@ -122,6 +124,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             self.on_show_dialog, UI.HELP_SHEET_FILE)
 
         # Topics Outline Toolbar
+        search_bar = get_object('ui_search_bar')
+        button_find = get_object('ui_find_topic')
+        _binding = button_find.bind_property(
+            'active', search_bar, 'search-mode-enabled',
+            GO.BindingFlags.BIDIRECTIONAL)
+        entry_find = get_object('ui_find_topic_entry')
+        self._view_topics.gtk_view.set_search_entry(entry_find)
         UI.new_action_active(
             self._window, 'new-topic', self.on_new_topic)
         UI.new_action_active(
@@ -129,6 +138,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         UI.new_action_active_dialog(
             self._window, 'show-help-topics',
             self.on_show_dialog, UI.HELP_SHEET_TOPICS)
+
+        button_by_name = get_object('ui_find_by_name')
+        _ = button_by_name.connect(
+            'toggled', self.on_toggle_search_field, ASHEET.FieldsTopic.NAME)
+        button_by_title = get_object('ui_find_by_title')
+        _ = button_by_title.connect(
+            'toggled', self.on_toggle_search_field, ASHEET.FieldsTopic.TITLE)
 
     def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
         """Construct Data Loss Warning dialog.
@@ -438,6 +454,18 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         px_dialog.set_transient_for(self._window)
         _ = px_dialog.run()
         px_dialog.hide()
+
+    def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
+                               ASHEET.FieldsTopic) -> None:
+        """Sets topic search to match active field buttons.
+
+        :param px_button: button user toggled.
+        :param p_field: search field of toggled button.
+        """
+        if px_button.get_active():
+            self._view_topics._search |= p_field
+        else:
+            self._view_topics._search &= ~p_field
 
     @classmethod
     def open_factsheet(cls, px_app: Gtk.Application,

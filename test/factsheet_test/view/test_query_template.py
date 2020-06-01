@@ -120,6 +120,7 @@ class TestQueryTemplate:
         assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
 
         assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
+        assert target._outline._search is ~ASHEET.FieldsTemplate.VOID
         assert isinstance(target._cursor, Gtk.TreeSelection)
 
         assert isinstance(target._summary_current, Gtk.Label)

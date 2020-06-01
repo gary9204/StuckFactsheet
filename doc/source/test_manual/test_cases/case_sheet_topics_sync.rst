@@ -3,20 +3,7 @@ Case Factsheet Windows with Topic
 
 **Purpose:** demonstrate specifying a new topic in a factsheet.
 
-.. |document-new| image::  /icons/document-new-symbolic.svg
-   :alt: (page outline with plus)
-
-.. |edit-name| image::  /icons/go-down-symbolic.svg
-   :alt: (arrow head down)
-
-.. |edit-find| image::  /icons/edit-find-symbolic.svg
-   :alt: (magnifying glass)
-
-.. |menu| image::  /icons/format-justify-fill-symbolic.svg
-   :alt: (three horizontal bars)
-
-.. |window-close| image::  /icons/window-close-symbolic.svg
-   :alt: (x)
+.. include:: /icons/icons-include.txt
 
 Setup
 -----
@@ -24,7 +11,7 @@ Setup
 
 Steps
 -----
-#. **Step:** Click on Name **drop-down icon** |edit-name| (left of
+#. **Step:** Click on Name **drop-down icon** |open-popup| (left of
    *Factsheet* field).
 
    a. *Expect:* *Edit Name* dropdown appears.
@@ -43,7 +30,7 @@ Steps
    #. New window may cover first window.
 
 #. **Step:** In ``Unnamed`` window, click on Name **drop-down icon**
-   |edit-name|.
+   |open-popup|.
 
    a. *Expect:* *Edit Name* dropdown appears.
    #. *Expect:* Name entry field contains "Unnamed", which is selected.
