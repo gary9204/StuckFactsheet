@@ -6,75 +6,18 @@ import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.outline import topic as TOPIC
 from factsheet.view import query_place as QPLACE
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
-def new_outline_model():
-    """Pytest fixture returns outline model factory.  The structure of
-    each model is as follows.
-
-        | name_0xx | title_0xx | summary_0xx
-        |     name_00x | title_00x | summary_00x
-        |         name_000 | title_000 | summary_000
-        |     name_01x | title_01x | summary_01x
-        | name_1xx | title_1xx | summary_1xx
-        |     name_10x | title_10x | summary_10x
-        |     name_11x | title_11x | summary_11x
-        |         name_110 | title_110 | summary_110
-        |         name_111 | title_111 | summary_111
-        |         name_112 | title_112 | summary_112
-    """
-    def new_model():
-        model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
-
-        item = TOPIC.Topic(
-            p_name='name_0xx', p_title='title_0xx', p_summary='summary_0xx')
-        i_0xx = model.append(None, [item])
-        item = TOPIC.Topic(
-            p_name='name_00x', p_title='title_00x', p_summary='summary_00x')
-        i_00x = model.append(
-            i_0xx, [item])
-        item = TOPIC.Topic(
-            p_name='name_000', p_title='title_000', p_summary='summary_000')
-        _i_000 = model.append(i_00x, [item])
-        item = TOPIC.Topic(
-            p_name='name_01x', p_title='title_01x', p_summary='summary_01x')
-        i_0xx = model.append(i_0xx, [item])
-        item = TOPIC.Topic(
-            p_name='name_1xx', p_title='title_1xx', p_summary='summary_1xx')
-        i_1xx = model.append(None, [item])
-        item = TOPIC.Topic(
-            p_name='name_10x', p_title='title_10x', p_summary='summary_10x')
-        _i_10x = model.append(i_1xx, [item])
-        item = TOPIC.Topic(
-            p_name='name_11x', p_title='title_11x', p_summary='summary_11x')
-        i_11x = model.append(i_1xx, [item])
-        item = TOPIC.Topic(
-            p_name='name_110', p_title='title_110', p_summary='summary_110')
-        _i_110 = model.append(i_11x, [item])
-        item = TOPIC.Topic(
-            p_name='name_111', p_title='title_111', p_summary='summary_111')
-        _i_111 = model.append(i_11x, [item])
-        item = TOPIC.Topic(
-            p_name='name_112', p_title='title_112', p_summary='summary_112')
-        _i_112 = model.append(i_11x, [item])
-        return model
-
-    return new_model
-
-
-@pytest.fixture
-def patch_donor_outline(new_outline_model):
+def patch_donor_outline(new_outline_topics):
     """Pytest fixture returns view of topic outline."""
     outline = UI.FACTORY_SHEET.new_view_outline_topics()
-    gtk_model = new_outline_model()
+    gtk_model = new_outline_topics()
     outline.gtk_view.set_model(gtk_model)
     return outline
 

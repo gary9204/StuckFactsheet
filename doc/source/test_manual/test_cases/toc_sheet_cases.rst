@@ -13,6 +13,7 @@ Factsheet-level Cases
    case_sheet_topics_file
    case_sheet_topics_new
    case_sheet_topics_delete
+   case_sheet_topics_toolbar
    case_sheet_search
    case_sheet_titles
    case_sheet_summary

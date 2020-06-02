@@ -1646,7 +1646,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">The Topics toolbar and menu let you manage the collection of topics in a factsheet.</property>
+                <property name="label" translatable="yes">The Topics toolbar and menu let you manage the outline of topics in a factsheet.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -1664,7 +1664,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">The Topics toolbar provides buttons to search for a topic, specify a topic, move to the first topic in the factsheet, move to the last topic, and show the Topics menu.</property>
+                <property name="label" translatable="yes">The Topics toolbar provides buttons to search for a topic, specify a topic, move to the first topic in the factsheet, move to the last topic, expand the topic outline, collapse the outline, and show the Topics menu.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -1755,7 +1755,7 @@ investigating algebraic structures.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">7</property>
                   </packing>
                 </child>
                 <child>
@@ -1793,7 +1793,7 @@ investigating algebraic structures.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Set the current topic to the first topic in the factsheet.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Set the current topic to the first topic in the factsheet.</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                     <property name="max_width_chars">50</property>
@@ -1808,7 +1808,7 @@ investigating algebraic structures.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Set the current topic to the last topic in the factsheet.&lt;/s&gt;</property>
+                    <property name="label" translatable="yes">Set the current topic to the last topic in the factsheet.</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                     <property name="max_width_chars">50</property>
@@ -1830,6 +1830,58 @@ investigating algebraic structures.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
+                    <property name="top_attach">7</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">format-indent-more-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">format-indent-less-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="label" translatable="yes">Collapse the topics outline to top-level topics.</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="label" translatable="yes">Expand all levels of the topic outline.</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">5</property>
                   </packing>
                 </child>
@@ -1847,7 +1899,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">The Topics menu provides options to search for a topic, specify a topic, expand the topic hierarchy, collapse the topic hierarchy, delete a topic, and show a help dialog.</property>
+                <property name="label" translatable="yes">The Topics menu provides options to search for a topic, specify a topic, delete a topic, and show a help dialog.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -1935,44 +1987,13 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Expand all&lt;/b&gt;&lt;/s&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Collapse all&lt;/b&gt;&lt;/s&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
                     <property name="label" translatable="yes">&lt;b&gt;Delete topic&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="wrap">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -1987,40 +2008,6 @@ investigating algebraic structures.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Expand the topic hierarchy to show all topics specified in the factsheet.&lt;/s&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Collapse the topic hierarchy to hide all factsheet topics except for top-level topics.&lt;/s&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
                     <property name="top_attach">4</property>
                   </packing>
                 </child>
@@ -2038,7 +2025,7 @@ investigating algebraic structures.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -2055,7 +2042,7 @@ investigating algebraic structures.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">6</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
                 <child>

@@ -174,6 +174,8 @@ class TestPageSheet:
         # Topics Outline Toolbar and Menu
         assert target._view_topics.gtk_view.get_search_entry() is not None
         assert target._window.lookup_action('new-topic') is not None
+        assert target._window.lookup_action('go-first-topic') is not None
+        assert target._window.lookup_action('go-last-topic') is not None
         assert target._window.lookup_action('delete-topic') is not None
         assert target._window.lookup_action('show-help-topics') is not None
 
@@ -665,6 +667,188 @@ class TestPageSheet:
         target._flip_summary.clicked()
         assert target._context_summary.get_visible()
         assert target._flip_summary.get_active()
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_go_first_topic(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm first topic selection.
+        | Case: Topic outline is not empty.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        topics = new_outline_topics()
+        i_first = topics.get_iter_first()
+        row_topics = topics[i_first]
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        cursor = view.get_selection()
+        cursor.unselect_all()
+        # Test
+        target.on_go_first_topic(None, None)
+        model, index = cursor.get_selected()
+        assert model is topics
+        row_model = model[index]
+        assert row_model.path == row_topics.path
+        assert list(row_model) == list(row_topics)
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_go_first_topic_none(
+            self, monkeypatch, patch_factsheet, capfd):
+        """| Confirm first topic selection.
+        | Case: topic outline is empty.
+        """
+        # Setup
+        class PatchSelect:
+            def __init__(self): self.called = False
+
+            def select_iter(self, _index):
+                self.called = True
+
+        patch_select = PatchSelect()
+        monkeypatch.setattr(
+            Gtk.TreeSelection, 'select_iter', patch_select.select_iter)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        # Test
+        target.on_go_first_topic(None, None)
+        assert not patch_select.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_go_last_topic(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm last topic selection.
+        | Case: Topic outline is not empty; last topic is not top level.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        topics = new_outline_topics()
+        PATH_LAST = '1:1:2'
+        i_last = topics.get_iter(PATH_LAST)
+        row_topics = topics[i_last]
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        cursor = view.get_selection()
+        cursor.unselect_all()
+        # Test
+        target.on_go_last_topic(None, None)
+        model, index = cursor.get_selected()
+        assert model is topics
+        row_model = model[index]
+        assert row_model.path == row_topics.path
+        assert list(row_model) == list(row_topics)
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_go_last_topic_top(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm last topic selection.
+        | Case: Topic outline is not empty; last topic is top level.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        topics = new_outline_topics()
+        PATH_LAST = '1'
+        i_last = topics.get_iter(PATH_LAST)
+        i_prune = topics.iter_children(i_last)
+        while i_prune:
+            is_valid = topics.remove(i_prune)
+            if not is_valid:
+                i_prune = None
+        row_topics = topics[i_last]
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        cursor = view.get_selection()
+        cursor.unselect_all()
+        # Test
+        target.on_go_last_topic(None, None)
+        model, index = cursor.get_selected()
+        assert model is topics
+        row_model = model[index]
+        assert row_model.path == row_topics.path
+        assert list(row_model) == list(row_topics)
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_go_last_topic_none(
+            self, monkeypatch, patch_factsheet, capfd):
+        """| Confirm last topic selection.
+        | Case: topic outline is empty.
+        """
+        # Setup
+        class PatchSelect:
+            def __init__(self): self.called = False
+
+            def select_iter(self, _index):
+                self.called = True
+
+        patch_select = PatchSelect()
+        monkeypatch.setattr(
+            Gtk.TreeSelection, 'select_iter', patch_select.select_iter)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        # Test
+        target.on_go_last_topic(None, None)
+        assert not patch_select.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
         """Confirm response to request to create default factsheet."""

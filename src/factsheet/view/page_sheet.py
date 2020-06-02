@@ -134,6 +134,16 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         UI.new_action_active(
             self._window, 'new-topic', self.on_new_topic)
         UI.new_action_active(
+            self._window, 'go-first-topic', self.on_go_first_topic)
+        UI.new_action_active(
+            self._window, 'go-last-topic', self.on_go_last_topic)
+        button_expand = get_object('ui_tool_expand_topics')
+        _ = button_expand.connect(
+            'clicked', lambda _b: self._view_topics.gtk_view.expand_all())
+        button_collapse = get_object('ui_tool_collapse_topics')
+        _ = button_collapse.connect(
+            'clicked', lambda _b: self._view_topics.gtk_view.collapse_all())
+        UI.new_action_active(
             self._window, 'delete-topic', self.on_delete_topic)
         UI.new_action_active_dialog(
             self._window, 'show-help-topics',
@@ -331,6 +341,31 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """Flip visibility of summary pane."""
         new_state = not self._context_summary.get_visible()
         self._context_summary.set_visible(new_state)
+
+    def on_go_first_topic(self, _action: Gio.SimpleAction,
+                          _target: GLib.Variant) -> None:
+        """Change selected topic to first topic."""
+        gtk_model = self._view_topics.gtk_view.get_model()
+        i_first = gtk_model.get_iter_first()
+        if i_first is not None:
+            self._cursor_topics.select_iter(i_first)
+
+    def on_go_last_topic(self, _action: Gio.SimpleAction,
+                         _target: GLib.Variant) -> None:
+        """Change selected topic to last topic."""
+        gtk_view = self._view_topics.gtk_view
+        gtk_model = gtk_view.get_model()
+        i_last = None
+        n_children = gtk_model.iter_n_children(i_last)
+        while 0 < n_children:
+            i_last = gtk_model.iter_nth_child(i_last, n_children - 1)
+            n_children = gtk_model.iter_n_children(i_last)
+        if i_last is not None:
+            path = gtk_model.get_path(i_last)
+            gtk_view.expand_to_path(path)
+            self._cursor_topics.select_iter(i_last)
+            IGNORE = 0
+            gtk_view.scroll_to_cell(path, None, False, IGNORE, IGNORE)
 
     def on_new_sheet(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

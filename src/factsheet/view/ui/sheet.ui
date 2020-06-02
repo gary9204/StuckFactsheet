@@ -978,7 +978,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkToolButton" id="ui_tool_first_topic">
+                                  <object class="GtkToolButton" id="tool_first_topic">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="action_name">win.go-first-topic</property>
@@ -992,13 +992,39 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkToolButton" id="ui_tool_last_topic">
+                                  <object class="GtkToolButton" id="tool_last_topic">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="action_name">win.go-last-topic</property>
                                     <property name="label" translatable="yes">Bottom</property>
                                     <property name="use_underline">True</property>
                                     <property name="icon_name">go-bottom-symbolic</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="homogeneous">True</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToolButton" id="ui_tool_expand_topics">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Expand</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="icon_name">format-indent-more-symbolic</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="homogeneous">True</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToolButton" id="ui_tool_collapse_topics">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Collapse</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="icon_name">format-indent-less-symbolic</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
