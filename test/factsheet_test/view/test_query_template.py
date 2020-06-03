@@ -5,6 +5,7 @@ import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.outline import template as TEMPLATE
 from factsheet.content.outline import topic as TOPIC
@@ -107,6 +108,10 @@ class TestQueryTemplate:
         """Confirm initialization."""
         # Setup
         WIN = Gtk.Window()
+        NAME_CANCEL = 'Cancel'
+        NAME_SPEC = 'Specify'
+        NAME_SEARCH = 'edit-find-symbolic'
+        NAME_INFO = 'dialog-information-symbolic'
         # Test
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         assert isinstance(target._dialog, Gtk.Dialog)
@@ -114,13 +119,35 @@ class TestQueryTemplate:
         assert dialog.get_transient_for() is WIN
         assert dialog.get_destroy_with_parent()
 
+        header_bar = dialog.get_header_bar()
+        button_cancel, button_spec, button_search, button_info = (
+            tuple(header_bar.get_children()))
+
+        assert isinstance(button_cancel, Gtk.Button)
+        assert NAME_CANCEL == button_cancel.get_label()
+
         assert isinstance(target._button_specify, Gtk.Button)
+        assert target._button_specify is button_spec
+        assert NAME_SPEC == button_spec.get_label()
         assert not target._button_specify.get_sensitive()
         style = target._button_specify.get_style_context()
         assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
 
+        assert isinstance(button_info, Gtk.ToggleButton)
+        assert button_info.get_visible()
+        image = button_info.get_image()
+        name_image, _size_image = image.get_icon_name()
+        assert NAME_INFO == name_image
+
+        assert isinstance(button_search, Gtk.ToggleButton)
+        assert button_search.get_visible()
+        image = button_search.get_image()
+        name_image, _size_image = image.get_icon_name()
+        assert NAME_SEARCH == name_image
+
         assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
-        assert target._outline._search is ~ASHEET.FieldsTemplate.VOID
+        assert target._outline.scope_search is ~ASHEET.FieldsTemplate.VOID
+        assert target._outline.gtk_view.get_search_entry() is not None
         assert isinstance(target._cursor, Gtk.TreeSelection)
 
         assert isinstance(target._summary_current, Gtk.Label)
@@ -236,6 +263,33 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    def test_on_changed_cursor_to_empty(self, patch_outline):
+        """| Confirm updates when current template changes.
+        | Case: change to template None
+        """
+        # Setup
+        WIN = Gtk.Window()
+        target = QTEMPLATES.QueryTemplate(px_parent=WIN)
+        OUTLINE = patch_outline
+        OUTLINE.attach_view(target._outline)
+        target._outline.gtk_view.expand_all()
+
+        PATH_ITEM = '0:0:0'
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        OUTLINE._gtk_model.set_value(
+            i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, None)
+        target._cursor.select_iter(i_item)
+
+        TEXT = 'The Spanish Inquisition'
+        target._summary_current.set_markup(TEXT)
+        target._button_specify.set_sensitive(True)
+        # Test
+        target.on_changed_cursor(target._cursor)
+        assert target.NO_SUMMARY == target._summary_current.get_label()
+        assert not target._button_specify.get_sensitive()
+        # Teardown
+        del WIN
+
     def test_on_changed_cursor_to_none(self, patch_outline):
         """| Confirm updates when current template changes.
         | Case: change to no current template
@@ -267,12 +321,12 @@ class TestQueryTemplate:
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         SEARCH_ALL = ~ASHEET.FieldsTemplate.VOID
-        target._outline._search = SEARCH_ALL
+        target._outline.scope_search = SEARCH_ALL
         button = Gtk.ToggleButton(active=False)
         # Test
         target.on_toggle_search_field(button, ASHEET.FieldsTemplate.NAME)
-        assert not target._outline._search & ASHEET.FieldsTemplate.NAME
-        assert target._outline._search & ASHEET.FieldsTemplate.TITLE
+        assert not target._outline.scope_search & ASHEET.FieldsTemplate.NAME
+        assert target._outline.scope_search & ASHEET.FieldsTemplate.TITLE
         # Teardown
         del WIN
 
@@ -284,11 +338,11 @@ class TestQueryTemplate:
         WIN = Gtk.Window()
         target = QTEMPLATES.QueryTemplate(px_parent=WIN)
         SEARCH_NONE = ASHEET.FieldsTemplate.VOID
-        target._outline._search = SEARCH_NONE
+        target._outline.scope_search = SEARCH_NONE
         button = Gtk.ToggleButton(active=True)
         # Test
         target.on_toggle_search_field(button, ASHEET.FieldsTemplate.TITLE)
-        assert target._outline._search & ASHEET.FieldsTemplate.TITLE
-        assert not target._outline._search & ASHEET.FieldsTemplate.NAME
+        assert target._outline.scope_search & ASHEET.FieldsTemplate.TITLE
+        assert not target._outline.scope_search & ASHEET.FieldsTemplate.NAME
         # Teardown
         del WIN

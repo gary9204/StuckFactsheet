@@ -57,7 +57,10 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._context_summary = get_object('ui_context_summary')
         self._flip_summary = get_object('ui_flip_summary')
         self._view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
-        self._view_topics._search = ~ASHEET.FieldsTopic.VOID
+        self._view_topics.scope_search = ~ASHEET.FieldsTopic.VOID
+        # STUB begin
+        self._view_topics.gtk_view.set_reorderable(True)
+        # STUB end
         self._cursor_topics = self._view_topics.gtk_view.get_selection()
         context_view_topics = get_object('ui_context_topics')
         context_view_topics.add(self._view_topics.gtk_view)
@@ -145,6 +148,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             'clicked', lambda _b: self._view_topics.gtk_view.collapse_all())
         UI.new_action_active(
             self._window, 'delete-topic', self.on_delete_topic)
+        UI.new_action_active(
+            self._window, 'clear-topics', self.on_clear_topics)
         UI.new_action_active_dialog(
             self._window, 'show-help-topics',
             self.on_show_dialog, UI.HELP_SHEET_TOPICS)
@@ -331,10 +336,20 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def on_delete_topic(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
-        """Remove a topic from the topic outline."""
+        """Remove selected topic from the topics outline.
+
+        If not topic is selected, then the topics outline is unchanged.
+        """
         _model, index = self._cursor_topics.get_selected()
+        if index is not None:
+            assert self._control is not None
+            self._control.extract_topic(index)
+
+    def on_clear_topics(self, _action: Gio.SimpleAction,
+                        _target: GLib.Variant) -> None:
+        """Remove all topics from the topics outline."""
         assert self._control is not None
-        self._control.extract_topic(index)
+        self._control.clear()
 
     def on_flip_summary(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
@@ -498,9 +513,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :param p_field: search field of toggled button.
         """
         if px_button.get_active():
-            self._view_topics._search |= p_field
+            self._view_topics.scope_search |= p_field
         else:
-            self._view_topics._search &= ~p_field
+            self._view_topics.scope_search &= ~p_field
 
     @classmethod
     def open_factsheet(cls, px_app: Gtk.Application,

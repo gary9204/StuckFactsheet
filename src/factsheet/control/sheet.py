@@ -47,6 +47,11 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         self._model.attach_page(pm_page)
         self.new_name()
 
+    def clear(self) -> None:
+        """Requests topics outline to remove all topics."""
+        assert self._model is not None
+        self._model.clear()
+
     def delete_force(self) -> None:
         """Delete factsheet unconditionally."""
         assert self._model is not None
@@ -95,10 +100,10 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         return ABC_SHEET.EffectSafe.NO_EFFECT
 
     def extract_topic(self, px_i: UI.IndexOutline) -> None:
-        """Requests topics outline to rmove topic and all its descendants.
+        """Requests topics outline to remove topic and all descendants.
 
         :param px_i: index of parent topic to remove along with all
-            descendants.  If index is None, remove all topics.
+            descendants.  If index is None, remove no topics.
         """
         assert self._model is not None
         self._model.extract_topic(px_i)

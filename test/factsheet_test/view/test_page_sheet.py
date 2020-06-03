@@ -128,7 +128,7 @@ class TestPageSheet:
         assert isinstance(target._flip_summary, Gtk.CheckButton)
         assert isinstance(
             target._view_topics, ABC_OUTLINE.AbstractViewOutline)
-        assert target._view_topics._search is ~ASHEET.FieldsTopic.VOID
+        assert target._view_topics.scope_search is ~ASHEET.FieldsTopic.VOID
         assert isinstance(target._cursor_topics, Gtk.TreeSelection)
         assert target._view_topics.gtk_view.get_parent() is not None
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
@@ -177,6 +177,7 @@ class TestPageSheet:
         assert target._window.lookup_action('go-first-topic') is not None
         assert target._window.lookup_action('go-last-topic') is not None
         assert target._window.lookup_action('delete-topic') is not None
+        assert target._window.lookup_action('clear-topics') is not None
         assert target._window.lookup_action('show-help-topics') is not None
 
         assert not target._close_window
@@ -335,7 +336,7 @@ class TestPageSheet:
         (Gtk.FileChooserAction.SAVE, 'Save'),
         (Gtk.FileChooserAction.OPEN, 'Open'),
         ])
-    def test_make_dialog_file_save(
+    def test_make_dialog_file(
             self, patch_factsheet, capfd, action, label):
         """Confirm construction of dialog for file save."""
         # Setup
@@ -614,8 +615,53 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    @pytest.mark.skip(reason='add guard against index of None')
-    def test_on_delete_topic(self, monkeypatch, patch_factsheet, capfd):
+    def test_on_delete_topic(
+            self, monkeypatch, patch_factsheet, capfd, new_outline_topics):
+        # Setup
+        class PatchExtract:
+            def __init__(self):
+                self.called = False
+                self.index = None
+
+            def extract_topic(self, p_index):
+                self.called = True
+                self.index = p_index
+
+        patch_extract = PatchExtract()
+        monkeypatch.setattr(
+            CSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
+
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        topics = new_outline_topics()
+        i_first = topics.get_iter_first()
+        path_first = topics.get_string_from_iter(i_first)
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        view.expand_all()
+        cursor = view.get_selection()
+        cursor.select_iter(i_first)
+        # Test
+        target.on_delete_topic(None, None)
+        assert patch_extract.called
+        path_target = topics.get_string_from_iter(patch_extract.index)
+        assert path_first == path_target
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_delete_topic_none(
+            self, monkeypatch, patch_factsheet, capfd):
         # Setup
         class PatchExtract:
             def __init__(self): self.called = False
@@ -633,11 +679,40 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
-        target._control = control
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
         # Test
         target.on_delete_topic(None, None)
-        assert patch_extract.called
+        assert not patch_extract.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_clear_topics(
+            self, monkeypatch, patch_factsheet, capfd):
+        # Setup
+        class PatchClear:
+            def __init__(self): self.called = False
+
+            def clear(self): self.called = True
+
+        patch_clear = PatchClear()
+        monkeypatch.setattr(
+            CSHEET.Sheet, 'clear', patch_clear.clear)
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        # Test
+        target.on_clear_topics(None, None)
+        assert patch_clear.called
 
     def test_on_flip_summary(self, patch_factsheet, capfd):
         """Confirm flip of facthseet summary visibility.
@@ -690,7 +765,8 @@ class TestPageSheet:
 
         topics = new_outline_topics()
         i_first = topics.get_iter_first()
-        row_topics = topics[i_first]
+        path_first = topics.get_path(i_first)
+        item_first = AOUTLINE.get_item_gtk(topics, i_first)
         view = target._view_topics.gtk_view
         view.set_model(topics)
         cursor = view.get_selection()
@@ -699,9 +775,10 @@ class TestPageSheet:
         target.on_go_first_topic(None, None)
         model, index = cursor.get_selected()
         assert model is topics
-        row_model = model[index]
-        assert row_model.path == row_topics.path
-        assert list(row_model) == list(row_topics)
+        path_target = model.get_path(index)
+        assert path_first == path_target
+        item_target = AOUTLINE.get_item_gtk(model, index)
+        assert item_target is item_first
         # Teardown
         target._window.destroy()
         del target._window
@@ -729,6 +806,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -752,6 +830,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -759,7 +838,7 @@ class TestPageSheet:
         topics = new_outline_topics()
         PATH_LAST = '1:1:2'
         i_last = topics.get_iter(PATH_LAST)
-        row_topics = topics[i_last]
+        item_last = AOUTLINE.get_item_gtk(topics, i_last)
         view = target._view_topics.gtk_view
         view.set_model(topics)
         cursor = view.get_selection()
@@ -768,50 +847,10 @@ class TestPageSheet:
         target.on_go_last_topic(None, None)
         model, index = cursor.get_selected()
         assert model is topics
-        row_model = model[index]
-        assert row_model.path == row_topics.path
-        assert list(row_model) == list(row_topics)
-        # Teardown
-        target._window.destroy()
-        del target._window
-        del factsheet
-
-    def test_on_go_last_topic_top(
-            self, patch_factsheet, capfd, new_outline_topics):
-        """| Confirm last topic selection.
-        | Case: Topic outline is not empty; last topic is top level.
-        """
-        # Setup
-        factsheet = patch_factsheet()
-        target = VSHEET.PageSheet(px_app=factsheet)
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert not snapshot.out
-        assert 'Gtk-CRITICAL' in snapshot.err
-        assert 'GApplication::startup signal' in snapshot.err
-        sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
-        target.link_factsheet(target, control)
-
-        topics = new_outline_topics()
-        PATH_LAST = '1'
-        i_last = topics.get_iter(PATH_LAST)
-        i_prune = topics.iter_children(i_last)
-        while i_prune:
-            is_valid = topics.remove(i_prune)
-            if not is_valid:
-                i_prune = None
-        row_topics = topics[i_last]
-        view = target._view_topics.gtk_view
-        view.set_model(topics)
-        cursor = view.get_selection()
-        cursor.unselect_all()
-        # Test
-        target.on_go_last_topic(None, None)
-        model, index = cursor.get_selected()
-        assert model is topics
-        row_model = model[index]
-        assert row_model.path == row_topics.path
-        assert list(row_model) == list(row_topics)
+        path_target = model.get_string_from_iter(index)
+        assert PATH_LAST == path_target
+        item_target = AOUTLINE.get_item_gtk(model, index)
+        assert item_target is item_last
         # Teardown
         target._window.destroy()
         del target._window
@@ -839,12 +878,56 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_go_last_topic(None, None)
         assert not patch_select.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_go_last_topic_top(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm last topic selection.
+        | Case: Topic outline is not empty; last topic is top level.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        topics = new_outline_topics()
+        PATH_LAST = '1'
+        i_last = topics.get_iter(PATH_LAST)
+        i_prune = topics.iter_children(i_last)
+        while i_prune:
+            is_valid = topics.remove(i_prune)
+            if not is_valid:
+                i_prune = None
+        item_last = AOUTLINE.get_item_gtk(topics, i_last)
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        cursor = view.get_selection()
+        cursor.unselect_all()
+        # Test
+        target.on_go_last_topic(None, None)
+        model, index = cursor.get_selected()
+        assert model is topics
+        path_target = model.get_string_from_iter(index)
+        assert PATH_LAST == path_target
+        item_target = AOUTLINE.get_item_gtk(model, index)
+        assert item_target is item_last
         # Teardown
         target._window.destroy()
         del target._window
@@ -871,9 +954,10 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
-        target._control = control
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
         # Test
         target.on_new_sheet(None, None)
         assert patch_new.called
@@ -894,6 +978,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -949,6 +1034,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -987,6 +1073,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -1010,6 +1097,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -1049,6 +1137,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target._control = control
@@ -1098,9 +1187,10 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet(sheets_active)
-        target._control = control
+        control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
         # Test
         target.on_open_sheet(None, None)
         assert patch_dialog.called_run
@@ -1182,7 +1272,7 @@ class TestPageSheet:
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
-        target._control = control
+        target.link_factsheet(target, control)
         target._infoid.get_view_name().set_text('The Confy Chair!')
         target._name_former = target._infoid.name + ' Oh no!'
         # Test
@@ -1284,12 +1374,12 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
         control._path = PATH
         assert not control._path.exists()
-        target._control = control
         # Test
         target.on_save_sheet(None, None)
         assert control._path.exists()
@@ -1321,8 +1411,8 @@ class TestPageSheet:
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
         control._path = None
-        target._control = control
         # Test
         target.on_save_sheet(None, None)
         assert patch_save_as.called
@@ -1359,11 +1449,11 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        PATH_OLD = Path(tmp_path / 'old_factsheet.fsg')
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
+        PATH_OLD = Path(tmp_path / 'old_factsheet.fsg')
         control._path = PATH_OLD
-        target._control = control
         # Test
         target.on_save_as_sheet(None, None)
         assert patch_dialog.called_set_filename
@@ -1409,8 +1499,8 @@ class TestPageSheet:
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
+        target.link_factsheet(target, control)
         control._path = None
-        target._control = control
         # Test
         target.on_save_as_sheet(None, None)
         assert not patch_dialog.called_set_filename
@@ -1473,12 +1563,12 @@ class TestPageSheet:
 
         target = target_page._view_topics
         SEARCH_ALL = ~ASHEET.FieldsTopic.VOID
-        target._search = SEARCH_ALL
+        target.scope_search = SEARCH_ALL
         button = Gtk.ToggleButton(active=False)
         # Test
         target_page.on_toggle_search_field(button, ASHEET.FieldsTopic.NAME)
-        assert not target._search & ASHEET.FieldsTopic.NAME
-        assert target._search & ASHEET.FieldsTopic.TITLE
+        assert not target.scope_search & ASHEET.FieldsTopic.NAME
+        assert target.scope_search & ASHEET.FieldsTopic.TITLE
         # Teardown
         target_page._window.destroy()
         del target_page._window
@@ -1498,12 +1588,12 @@ class TestPageSheet:
 
         target = target_page._view_topics
         SEARCH_NONE = ASHEET.FieldsTopic.VOID
-        target._search = SEARCH_NONE
+        target.scope_search = SEARCH_NONE
         button = Gtk.ToggleButton(active=True)
         # Test - not active
         target_page.on_toggle_search_field(button, ASHEET.FieldsTopic.TITLE)
-        assert target._search & ASHEET.FieldsTopic.TITLE
-        assert not target._search & ASHEET.FieldsTopic.NAME
+        assert target.scope_search & ASHEET.FieldsTopic.TITLE
+        assert not target.scope_search & ASHEET.FieldsTopic.NAME
         # Teardown
         target_page._window.destroy()
         del target_page._window
@@ -1592,7 +1682,7 @@ class TestPageSheet:
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
-        target._control = control
+        target.link_factsheet(target, control)
         target._window.hide()
         # Test
         target.present(Gdk.CURRENT_TIME)

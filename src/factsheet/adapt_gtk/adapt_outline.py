@@ -159,6 +159,10 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         pm_view_outline._gtk_view.set_model(self._gtk_model)
         self._views[id_view_outline] = pm_view_outline
 
+    def clear(self) -> None:
+        """Remove all sections from outline."""
+        self._gtk_model.clear()
+
     def deepcopy_section_child(self,
                                px_source: 'AdaptTreeStore',
                                px_i_source: AdaptIndex = None,
@@ -207,11 +211,9 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """Remove section from outline.
 
         :param px_i: index of parent item to remove along with all
-            descendants.  If index is None, remove all items.
+            descendants.  If index is None, remove no items.
         """
-        if px_i is None:
-            self._gtk_model.clear()
-        else:
+        if px_i is not None:
             _ = self._gtk_model.remove(px_i)
 
     def find_next(self, px_target: typing.Any, px_i_after: AdaptIndex = None,

@@ -143,7 +143,7 @@ class QueryTemplate:
                                     ASHEET.FieldsTemplate.TITLE)
 
         self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
-        self._outline._search = ~ASHEET.FieldsTemplate.VOID
+        self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
         # STUB test content - begin
         OUTLINE.attach_view(self._outline)
         # STUB test content - end
@@ -155,8 +155,8 @@ class QueryTemplate:
         self._cursor = view.get_selection()
         _ = self._cursor.connect('changed', self.on_changed_cursor)
 
-        self._search_entry = get_object('ui_search_entry')
-        view.set_search_entry(self._search_entry)
+        search_entry = get_object('ui_search_entry')
+        view.set_search_entry(search_entry)
 
         self._summary_current = get_object('ui_summary_current')
         self._summary_current.set_markup(self.NO_SUMMARY)
@@ -211,6 +211,6 @@ class QueryTemplate:
         :param p_field: search field of toggled button.
         """
         if px_button.get_active():
-            self._outline._search |= p_field
+            self._outline.scope_search |= p_field
         else:
-            self._outline._search &= ~p_field
+            self._outline.scope_search &= ~p_field

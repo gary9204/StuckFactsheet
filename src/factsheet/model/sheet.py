@@ -112,6 +112,11 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             pm_page.get_view_topics())   # type: ignore[arg-type]
         self._pages[id(pm_page)] = pm_page
 
+    def clear(self) -> None:
+        """Remove all topics from the topics outline."""
+        self.set_stale()
+        self._topics.clear()
+
     def detach_all(self) -> None:
         """Detach all pages from sheet."""
         while self._pages:
@@ -154,9 +159,11 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """Remove topic and all its descendants from topic outline.
 
         :param px_i: index of parent topic to remove along with all
-            descendants.  If index is None, remove all topics.
+            descendants.  If index is None, remove no topics.
         """
-        self._topics.extract_section(px_i)
+        if px_i is not None:
+            self.set_stale()
+            self._topics.extract_section(px_i)
 
     def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
                            px_i: UI.IndexOutline) -> UI.IndexOutline:

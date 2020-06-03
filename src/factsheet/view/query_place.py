@@ -59,7 +59,7 @@ class QueryPlace:
     dialog without selecting a placement.
 
     :param px_parent: parent window for Place New Topic dialog.
-    :param px_donor_outline: existing view of topics outline.
+    :param px_donor_view: existing view of topics outline.
 
     .. attribute:: NAME_FILE_QUERY_UI
 
@@ -77,7 +77,7 @@ class QueryPlace:
     # STUB Glade patch - end
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_place.ui')
 
-    def __init__(self, px_parent: Gtk.Window, px_donor_outline:
+    def __init__(self, px_parent: Gtk.Window, px_donor_view:
                  ASHEET.AdaptTreeViewTopic) -> None:
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         get_object = builder.get_object
@@ -124,12 +124,8 @@ class QueryPlace:
         _ = button_by_title.connect(
             'toggled', self.on_toggle_search_field, ASHEET.FieldsTopic.TITLE)
 
-        # STUB - begin: substitute for clone
-        self._outline = ASHEET.AdaptTreeViewTopic()
-        gtk_model = px_donor_outline.gtk_view.get_model()
-        self._outline.gtk_view.set_model(gtk_model)
-        # STUB - end
-        self._outline._search = ~ASHEET.FieldsTopic.VOID
+        self._outline = px_donor_view.clone()
+        self._outline.scope_search = ~ASHEET.FieldsTopic.VOID
         gtk_view = self._outline.gtk_view
         context_outline = get_object('ui_context_outline_topics')
         context_outline.add(gtk_view)
@@ -211,6 +207,6 @@ class QueryPlace:
         :param p_field: search field of toggled button.
         """
         if px_button.get_active():
-            self._outline._search |= p_field
+            self._outline.scope_search |= p_field
         else:
-            self._outline._search &= ~p_field
+            self._outline.scope_search &= ~p_field

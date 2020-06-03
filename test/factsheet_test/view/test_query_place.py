@@ -51,7 +51,7 @@ class TestQueryPlace:
         NAME_SEARCH = 'edit-find-symbolic'
         NAME_INFO = 'dialog-information-symbolic'
         # Test
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         assert isinstance(target._dialog, Gtk.Dialog)
         dialog = target._dialog
         assert dialog.get_transient_for() is WIN
@@ -84,7 +84,7 @@ class TestQueryPlace:
         assert NAME_INFO == name_image
 
         assert isinstance(target._outline, ASHEET.AdaptTreeViewTopic)
-        assert target._outline._search is ~ASHEET.FieldsTopic.VOID
+        assert target._outline.scope_search is ~ASHEET.FieldsTopic.VOID
         gtk_view = target._outline.gtk_view
         assert gtk_view is not DONOR.gtk_view
         assert gtk_view.get_model() is DONOR.gtk_view.get_model()
@@ -113,7 +113,7 @@ class TestQueryPlace:
 
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         target._dialog.show()
         target._outline.gtk_view.expand_all()
 
@@ -147,7 +147,7 @@ class TestQueryPlace:
 
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         target._dialog.show()
         target._outline.gtk_view.expand_all()
 
@@ -170,7 +170,7 @@ class TestQueryPlace:
         # Setup
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '0:1'
@@ -196,7 +196,7 @@ class TestQueryPlace:
         # Setup
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         target._outline.gtk_view.expand_all()
 
         target._cursor.unselect_all()
@@ -218,7 +218,7 @@ class TestQueryPlace:
         # Setup
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '0:1'
@@ -255,7 +255,7 @@ class TestQueryPlace:
         # Setup
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         target._order = ORDER_OLD
         button = Gtk.ToggleButton(active=IS_ACTIVE)
         # Test
@@ -271,14 +271,14 @@ class TestQueryPlace:
         # Setup
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         SEARCH_ALL = ~ASHEET.FieldsTopic.VOID
-        target._outline._search = SEARCH_ALL
+        target._outline.scope_search = SEARCH_ALL
         button = Gtk.ToggleButton(active=False)
         # Test
         target.on_toggle_search_field(button, ASHEET.FieldsTopic.NAME)
-        assert not target._outline._search & ASHEET.FieldsTopic.NAME
-        assert target._outline._search & ASHEET.FieldsTopic.TITLE
+        assert not target._outline.scope_search & ASHEET.FieldsTopic.NAME
+        assert target._outline.scope_search & ASHEET.FieldsTopic.TITLE
         # Teardown
         del WIN
 
@@ -289,13 +289,13 @@ class TestQueryPlace:
         # Setup
         WIN = Gtk.Window()
         DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_outline=DONOR)
+        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
         SEARCH_NONE = ASHEET.FieldsTopic.VOID
-        target._outline._search = SEARCH_NONE
+        target._outline.scope_search = SEARCH_NONE
         button = Gtk.ToggleButton(active=True)
         # Test - not active
         target.on_toggle_search_field(button, ASHEET.FieldsTopic.TITLE)
-        assert target._outline._search & ASHEET.FieldsTopic.TITLE
-        assert not target._outline._search & ASHEET.FieldsTopic.NAME
+        assert target._outline.scope_search & ASHEET.FieldsTopic.TITLE
+        assert not target._outline.scope_search & ASHEET.FieldsTopic.NAME
         # Teardown
         del WIN

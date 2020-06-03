@@ -76,6 +76,23 @@ class TestControlSheet:
         assert patch_model.called_attach_page
         assert patch_model.called_update_titles
 
+    def test_clear(self, monkeypatch):
+        """Confirm method passes request to model."""
+        # Setup
+        class PatchClear:
+            def __init__(self): self.called = False
+
+            def clear(self): self.called = True
+
+        patch_clear = PatchClear()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'clear', patch_clear.clear)
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.Sheet.new(sheets_active)
+        # Test
+        target.clear()
+        assert patch_clear.called
+
     def test_delete_force(self, monkeypatch):
         """Confirm unconditional deletion."""
         # Setup
@@ -404,11 +421,11 @@ class TestControlSheet:
         target.present_factsheet(NO_TIME)
         assert patch_present.called
 
-    @pytest.mark.parametrize('name_attr, name_prop', [
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ['_path', 'path'],
         ['_sheets_active', 'sheets_active'],
         ])
-    def test_property(self, tmp_path, name_attr, name_prop):
+    def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
         """Confirm properties are get-only.
 
         #. Case: get
@@ -420,9 +437,9 @@ class TestControlSheet:
         target = CSHEET.Sheet(sheets_active)
         PATH = Path(tmp_path / 'path_factsheet.fsg')
         target._path = PATH
-        value_attr = getattr(target, name_attr)
-        target_prop = getattr(CSHEET.Sheet, name_prop)
-        value_prop = getattr(target, name_prop)
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(CSHEET.Sheet, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None
         assert str(value_attr) == str(value_prop)

@@ -113,7 +113,7 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
         """Initialize view for template outline."""
         super().__init__()
         self._gtk_view.set_search_equal_func(self._test_field_ne, None)
-        self._search = FieldsTemplate.VOID
+        self._scope_search = FieldsTemplate.VOID
 
         self._gtk_view.set_search_column(AdaptTreeStoreTemplate.N_COLUMN_ITEM)
         self._gtk_view.set_enable_search(True)
@@ -171,15 +171,15 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
             https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
             Gtk.TreeViewSearchEqualFunc
         """
-        if not self._search:
+        if not self._scope_search:
             return True
 
         template = px_model[px_index][p_n_column]
-        if self._search & FieldsTemplate.NAME:
+        if self._scope_search & FieldsTemplate.NAME:
             if template.name.startswith(p_value):
                 return False
 
-        if self._search & FieldsTemplate.TITLE:
+        if self._scope_search & FieldsTemplate.TITLE:
             if template.title.startswith(p_value):
                 return False
 
@@ -206,6 +206,20 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
         assert template is not None
         pm_renderer.set_property('markup', template.title)
 
+    @property
+    def scope_search(self) -> 'FieldsTemplate':
+        """Scope of templates outline search.
+
+        The scope of search can be by template name, by template title,
+        by both name and title, or neither.  The scope can be read or
+        set, but not deleted.
+        """
+        return self._scope_search
+
+    @scope_search.setter
+    def scope_search(self, p_scope: 'FieldsTemplate') -> None:
+        self._scope_search = p_scope
+
 
 class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
     """Specializes :class:`.AdaptTreeView` with name and title columns
@@ -216,7 +230,7 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
         """Initialize view for topic outline."""
         super().__init__()
         self._gtk_view.set_search_equal_func(self._test_field_ne, None)
-        self._search = FieldsTopic.VOID
+        self._scope_search = FieldsTopic.VOID
 
         self._gtk_view.set_search_column(AdaptTreeStoreTopic.N_COLUMN_ITEM)
         self._gtk_view.set_enable_search(True)
@@ -274,15 +288,15 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
             https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
             Gtk.TreeViewSearchEqualFunc
         """
-        if not self._search:
+        if not self._scope_search:
             return True
 
         topic = px_model[px_index][p_n_column]
-        if self._search & FieldsTopic.NAME:
+        if self._scope_search & FieldsTopic.NAME:
             if topic.name.startswith(p_value):
                 return False
 
-        if self._search & FieldsTopic.TITLE:
+        if self._scope_search & FieldsTopic.TITLE:
             if topic.title.startswith(p_value):
                 return False
 
@@ -307,6 +321,27 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
         topic = AOUTLINE.get_item_gtk(px_store, px_index)
         assert topic is not None
         pm_renderer.set_property('markup', topic.title)
+
+    def clone(self) -> 'AdaptTreeViewTopic':
+        """Returns new outline view with same model self."""
+        view_new = AdaptTreeViewTopic()
+        model = self.gtk_view.get_model()
+        view_new.gtk_view.set_model(model)
+        return view_new
+
+    @property
+    def scope_search(self) -> 'FieldsTopic':
+        """Scope of topics outline search.
+
+        The scope of search can be by topic name, by topic title, by
+        both name and title, or neither.  The scope can be read or set,
+        but not deleted.
+        """
+        return self._scope_search
+
+    @scope_search.setter
+    def scope_search(self, p_scope: 'FieldsTopic') -> None:
+        self._scope_search = p_scope
 
 
 class FieldsTemplate(enum.Flag):

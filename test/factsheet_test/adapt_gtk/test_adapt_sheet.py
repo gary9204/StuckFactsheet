@@ -283,8 +283,8 @@ class TestAdaptTreeViewTemplate:
         target = ASHEET.AdaptTreeViewTemplate()
         assert isinstance(target._gtk_view, Gtk.TreeView)
         assert target._gtk_view.get_model() is None
-        assert isinstance(target._search, ASHEET.FieldsTemplate)
-        assert target._search is ASHEET.FieldsTemplate.VOID
+        assert isinstance(target._scope_search, ASHEET.FieldsTemplate)
+        assert target._scope_search is ASHEET.FieldsTemplate.VOID
         assert patch_func.called
 
         assert AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM == (
@@ -359,7 +359,7 @@ class TestAdaptTreeViewTemplate:
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTemplate()
         OUTLINE.attach_view(target)
-        target._search = SEARCH
+        target._scope_search = SEARCH
         # Test
         actual = target._test_field_ne(
             OUTLINE._gtk_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
@@ -387,6 +387,31 @@ class TestAdaptTreeViewTemplate:
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
 
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_scope_search', 'scope_search'],
+        ])
+    def test_property(self, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: set
+        #. Case: no delete
+        """
+        # Setup
+        target = ASHEET.AdaptTreeViewTemplate()
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(ASHEET.AdaptTreeViewTemplate, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
+        # Test: no replace
+        assert target_prop.fset is not None
+        target.scope_search = ASHEET.FieldsTemplate.NAME
+        assert target._scope_search is ASHEET.FieldsTemplate.NAME
+        # Test: no delete
+        assert target_prop.fdel is None
+
 
 class TestAdaptTreeViewTopic:
     """Unit tests for :class:`.AdaptTreeViewTopic`."""
@@ -410,8 +435,8 @@ class TestAdaptTreeViewTopic:
         target = ASHEET.AdaptTreeViewTopic()
         assert isinstance(target._gtk_view, Gtk.TreeView)
         assert target._gtk_view.get_model() is None
-        assert isinstance(target._search, ASHEET.FieldsTopic)
-        assert target._search is ASHEET.FieldsTopic.VOID
+        assert isinstance(target._scope_search, ASHEET.FieldsTopic)
+        assert target._scope_search is ASHEET.FieldsTopic.VOID
         assert patch_func.called
 
         assert AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM == (
@@ -488,7 +513,7 @@ class TestAdaptTreeViewTopic:
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTopic()
         OUTLINE.attach_view(target)
-        target._search = SEARCH
+        target._scope_search = SEARCH
         # Test
         actual = target._test_field_ne(
             OUTLINE._gtk_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
@@ -517,6 +542,42 @@ class TestAdaptTreeViewTopic:
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
+
+    def test_clone(self):
+        """Confirm view duplication with shared model."""
+        # Setup
+        MODEL = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+        source = ASHEET.AdaptTreeViewTopic()
+        source.gtk_view.set_model(MODEL)
+        # Test
+        target = source.clone()
+        assert isinstance(target, ASHEET.AdaptTreeViewTopic)
+        assert target.gtk_view.get_model() is source.gtk_view.get_model()
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_scope_search', 'scope_search'],
+        ])
+    def test_property(self, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: set
+        #. Case: no delete
+        """
+        # Setup
+        target = ASHEET.AdaptTreeViewTopic()
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(ASHEET.AdaptTreeViewTopic, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
+        # Test: no replace
+        assert target_prop.fset is not None
+        target.scope_search = ASHEET.FieldsTopic.NAME
+        assert target._scope_search is ASHEET.FieldsTopic.NAME
+        # Test: no delete
+        assert target_prop.fdel is None
 
 
 class TestFieldsTemplate:

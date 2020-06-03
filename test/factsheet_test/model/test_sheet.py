@@ -158,6 +158,24 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
+    def test_clear(self, monkeypatch):
+        """| Confirm topics outline removal."""
+        # Setup
+        class PatchClear:
+            def __init__(self): self.called = False
+
+            def clear(self): self.called = True
+
+        patch_outline = PatchClear()
+        monkeypatch.setattr(
+            ASHEET.AdaptTreeStoreTopic, 'clear', patch_outline.clear)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        # Test
+        target.clear()
+        assert patch_outline.called
+        assert target.is_stale()
+
     def test_detach_all(self, monkeypatch, patch_class_page_sheet):
         """Confirm notifications and removals."""
         # Setup
@@ -281,7 +299,30 @@ class TestSheet:
         assert log_message == patch_logger.message
 
     def test_extract_topic(self, monkeypatch):
-        """Confirm method passes request to outline."""
+        """| Confirm method request relay to outline.
+        | Case: relay index.
+        """
+        # Setup
+        class PatchExtract:
+            def __init__(self): self.called = False
+
+            def extract_section(self, _index): self.called = True
+
+        patch_outline = PatchExtract()
+        monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic, 'extract_section',
+                            patch_outline.extract_section)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        I_STUB = 'Not None'
+        # Test
+        target.extract_topic(I_STUB)
+        assert patch_outline.called
+        assert target.is_stale()
+
+    def test_extract_topic_none(self, monkeypatch):
+        """| Confirm method request relay to outline.
+        | Case: drop None.
+        """
         # Setup
         class PatchExtract:
             def __init__(self): self.called = False
@@ -295,7 +336,8 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
         # Test
         _ = target.extract_topic(None)
-        assert patch_outline.called
+        assert not patch_outline.called
+        assert target.is_fresh()
 
     def test_insert_topic_after(self, monkeypatch):
         """Confirm method passes request to outline."""

@@ -319,6 +319,17 @@ class TestAdaptTreeStore:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
+    def test_clear(self, new_outline_model):
+        """Confirm all sections removed from outline."""
+        # Setup
+        target = PatchOutline()
+        model = new_outline_model('Target')
+        target._gtk_model = model
+        assert len(target._gtk_model)
+        # Test
+        target.clear()
+        assert 0 == len(target._gtk_model)
+
     @pytest.mark.parametrize('PATH_SOURCE, PATH_TARGET, N_INSERT', [
         (None, None, 10),
         ('0', None, 10),
@@ -514,14 +525,14 @@ class TestAdaptTreeStore:
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
     @pytest.mark.parametrize('PATH_PARENT, N_CUT_BEGIN, N_CUT_END', [
-        (None, 0, 10),
+        (None, 10, 10),
         ('0', 0, 4),
         ('0:0', 1, 3),
         ('1:1:1', 8, 9),
         ])
-    def test_extract_topic(
+    def test_extract_section(
             self, new_outline_model, PATH_PARENT, N_CUT_BEGIN, N_CUT_END):
-        """Confirm topic removed from collection."""
+        """Confirm section removed from outline."""
         # Setup
         target = PatchOutline()
         model = new_outline_model('Target')
