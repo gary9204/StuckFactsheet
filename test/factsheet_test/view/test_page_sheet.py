@@ -10,8 +10,9 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.outline import template as XSECTION
-from factsheet.content.outline import topic as XTOPIC
+from factsheet.content import heading as XHEADING
+from factsheet.content.section import section_spec as XSPEC
+from factsheet.content.section import section_topic as XSECTION
 from factsheet.control import pool as CPOOL
 from factsheet.control import sheet as CSHEET
 from factsheet.model import sheet as MSHEET
@@ -806,7 +807,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -830,7 +831,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -878,7 +879,7 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        
+
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.Sheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -1002,10 +1003,10 @@ class TestPageSheet:
         NAME = 'Parrot'
         SUMMARY = 'A sketch about customer service.'
         TITLE = 'Dead Parrot Sketch'
-        topic = XTOPIC.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        topic = XSECTION.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         patch_template = PatchCall(topic)
         monkeypatch.setattr(
-            XSECTION.Section, '__call__', patch_template.__call__)
+            XSPEC.Section, '__call__', patch_template.__call__)
 
         class PatchInsert:
             def __init__(self): self.called = False
@@ -1114,7 +1115,7 @@ class TestPageSheet:
 
         patch_template = PatchCall(None)
         monkeypatch.setattr(
-            XSECTION.Section, '__call__', patch_template.__call__)
+            XSPEC.Section, '__call__', patch_template.__call__)
 
         class PatchInsert:
             def __init__(self): self.called = False

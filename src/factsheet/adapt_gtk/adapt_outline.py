@@ -183,7 +183,10 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         if px_i_source is None:
             i_to = px_i_target
         else:
-            row = [copy.deepcopy(e) for e in px_source._gtk_model[px_i_source]]
+            # ISSUE #108 begin - patch
+            row = [e for e in px_source._gtk_model[px_i_source]]
+            # row = [copy.deepcopy(e) for e in px_source._gtk_model[px_i_source]]
+            # ISSUE #108 end   - patch
             i_to = self._gtk_model.append(px_i_target, row)
 
         i_from = px_source._gtk_model.iter_children(px_i_source)

@@ -11,4 +11,12 @@ Subpackages
 
 .. toctree::
 
-   factsheet.content.outline
+   factsheet.content.sets
+   factsheet.content.section
+
+Submodules
+-----------
+
+.. toctree::
+
+   factsheet.content.heading

@@ -1,14 +1,14 @@
 """
 Unit test for template class to create a section in a factsheet topic
-outline.  See :mod:`.template`.
+outline.  See :mod:`~.section.section_spec`.
 """
 import collections as COL
 import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.content.outline import template as TEMPLATE
-from factsheet.content.outline import topic as TOPIC
+from factsheet.content.section import section_spec as XSPEC
+from factsheet.content.section import section_topic as XSECTION
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -24,12 +24,13 @@ ArgsSection = COL.namedtuple(
 def patch_args_section():
     """Pytest fixture returns set of argument values to construct
     a stock :class:`.Section` object."""
+    print('Module: {}'.format(XSPEC))
     return ArgsSection(
         name='Inquisition',
         summary='No one expects the Spanish Inquisition!',
         title='The Spanish Inquisition',
-        path_assist=str(Path(TEMPLATE.__file__).parent / 'assistant.ui'),
-        model=TOPIC.Topic
+        path_assist=str(Path(XSPEC.__file__).parent / 'section_spec.ui'),
+        model=XSECTION.Topic
         )
 
 
@@ -41,7 +42,7 @@ class TestSection:
         # Setup
         ARGS = patch_args_section
         # Test
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         assert ARGS.name == target._name_template
@@ -49,7 +50,7 @@ class TestSection:
         assert ARGS.title == target._title_template
 
         assert target._response is None
-        assert target._model_topic is TOPIC.Topic
+        assert target._model_topic is XSECTION.Topic
 
         assert isinstance(target._assistant, Gtk.Assistant)
         assert target._assistant.get_modal()
@@ -75,7 +76,7 @@ class TestSection:
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         ARGS = patch_args_section
         # Test
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 
@@ -102,7 +103,7 @@ class TestSection:
         """
         # Setup
         ARGS = patch_args_section
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         target._assistant.show()
@@ -120,7 +121,7 @@ class TestSection:
         """
         # Setup
         ARGS = patch_args_section
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         target._assistant.show()
@@ -136,7 +137,7 @@ class TestSection:
         """Confirm no-op handler exists."""
         # Setup
         ARGS = patch_args_section
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         target._assistant.show()
@@ -160,11 +161,11 @@ class TestSection:
         """
         # Setup
         ARGS = patch_args_section
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         value_attr = getattr(target, name_attr)
-        target_prop = getattr(TEMPLATE.Section, name_prop)
+        target_prop = getattr(XSPEC.Section, name_prop)
         value_prop = getattr(target, name_prop)
         # Test: read
         assert target_prop.fget is not None
@@ -184,7 +185,7 @@ class TestSection:
         """
         # Setup
         ARGS = patch_args_section
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 
@@ -209,7 +210,7 @@ class TestSection:
             Gtk, 'main_iteration', patch_iter.main_iteration)
         # Test
         result = target()
-        assert isinstance(result, TOPIC.Topic)
+        assert isinstance(result, XSECTION.Topic)
         assert NAME == result._infoid.name
         assert SUMMARY == result._infoid.summary
         assert TITLE == result._infoid.title
@@ -232,7 +233,7 @@ class TestSection:
         """
         # Setup
         ARGS = patch_args_section
-        target = TEMPLATE.Section(
+        target = XSPEC.Section(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 

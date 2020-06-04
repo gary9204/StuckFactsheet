@@ -1,7 +1,7 @@
 """
 Unit tests for topic-level model.
 
-See :mod:`~factsheet.model.topic`.
+See :mod:`~.section.section`.
 """
 import logging
 from pathlib import Path
@@ -9,7 +9,7 @@ import pickle
 import pytest   # type: ignore[import]
 
 from factsheet.model import infoid as MINFOID
-from factsheet.content.outline import topic as XTOPIC
+from factsheet.content.section import section_topic as XTOPIC
 
 
 class TestTopic:

@@ -10,7 +10,7 @@ import pickle
 
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.outline import topic as XTOPIC
+from factsheet.content.section import section_topic as XSECTION
 from factsheet.model import infoid as MINFOID
 from factsheet.model import sheet as MSHEET
 
@@ -37,7 +37,7 @@ class TestSheet:
         assert not source.__eq__(target)
         # Test: topic outline difference
         target = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        topic = XTOPIC.Topic(p_name='Killer Rabbit')
+        topic = XSECTION.Topic(p_name='Killer Rabbit')
         _index = target._topics.insert_child(topic, None)
 
         assert not source.__eq__(target)
@@ -55,7 +55,7 @@ class TestSheet:
         source = MSHEET.Sheet(p_title=TITLE_MODEL)
         source._stale = True
 
-        topic = XTOPIC.Topic(p_name='Killer Rabbit')
+        topic = XSECTION.Topic(p_name='Killer Rabbit')
         _index = source._topics.insert_child(topic, None)
 
         N_PAGES = 3
@@ -439,13 +439,13 @@ class TestSheet:
 
         N_TOPICS = 3
         for i in range(N_TOPICS):
-            topic = XTOPIC.Topic(p_name='Topic {}'.format(i))
+            topic = XSECTION.Topic(p_name='Topic {}'.format(i))
             target.insert_topic_before(topic, None)
         N_DESCEND = 2
         parent = target._topics._gtk_model.get_iter_first()
         for j in range(N_DESCEND):
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-            topic = XTOPIC.Topic(p_name=name)
+            topic = XSECTION.Topic(p_name=name)
             parent = target.insert_topic_child(topic, parent)
         I_LEAF = 2
         I_LAST = 4
@@ -542,13 +542,13 @@ class TestSheet:
 
         N_TOPICS = 3
         for i in range(N_TOPICS):
-            topic = XTOPIC.Topic(p_name='Topic {}'.format(i))
+            topic = XSECTION.Topic(p_name='Topic {}'.format(i))
             target.insert_topic_before(topic, None)
         N_DESCEND = 2
         parent = target._topics._gtk_model.get_iter_first()
         for j in range(N_DESCEND):
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-            topic = XTOPIC.Topic(p_name=name)
+            topic = XSECTION.Topic(p_name=name)
             parent = target.insert_topic_child(topic, parent)
         # Test: Sheet fresh, identification information fresh
         target._stale = False

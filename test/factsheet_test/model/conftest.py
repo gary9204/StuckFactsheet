@@ -1,5 +1,5 @@
 """
-Test fixtures for :mod:`~.factsheet_test.content.outline` unit tests.
+Test fixtures for :mod:`~.factsheet_test.content.section` unit tests.
 """
 import pytest   # type: ignore[import]
 

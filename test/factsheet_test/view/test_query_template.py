@@ -7,8 +7,8 @@ import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.outline import template as TEMPLATE
-from factsheet.content.outline import topic as TOPIC
+from factsheet.content.section import section_spec as XSPEC
+from factsheet.content.section import section_topic as XSECTION
 from factsheet.view import query_template as QTEMPLATES
 from factsheet.view import ui as UI
 
@@ -34,48 +34,48 @@ def new_outline_model():
         |         name_112 | title_112 | summary_112
     """
     def new_model():
-        PATH_ASSIST = str(Path(TEMPLATE.__file__).parent / 'assistant.ui')
-        MODEL_TOPIC = TOPIC.Topic
+        PATH_ASSIST = str(Path(XSPEC.__file__).parent / 'section_spec.ui')
+        MODEL_TOPIC = XSECTION.Topic
         model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
 
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_0xx', p_title='title_0xx', p_summary='summary_0xx',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         i_0xx = model.append(None, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_00x', p_title='title_00x', p_summary='summary_00x',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         i_00x = model.append(
             i_0xx, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_000', p_title='title_000', p_summary='summary_000',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         _i_000 = model.append(i_00x, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_01x', p_title='title_01x', p_summary='summary_01x',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         i_0xx = model.append(i_0xx, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_1xx', p_title='title_1xx', p_summary='summary_1xx',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         i_1xx = model.append(None, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_10x', p_title='title_10x', p_summary='summary_10x',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         _i_10x = model.append(i_1xx, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_11x', p_title='title_11x', p_summary='summary_11x',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         i_11x = model.append(i_1xx, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_110', p_title='title_110', p_summary='summary_110',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         _i_110 = model.append(i_11x, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_111', p_title='title_111', p_summary='summary_111',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         _i_111 = model.append(i_11x, [item])
-        item = TEMPLATE.Section(
+        item = XSPEC.Section(
             p_name='name_112', p_title='title_112', p_summary='summary_112',
             p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
         _i_112 = model.append(i_11x, [item])

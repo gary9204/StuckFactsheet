@@ -5,7 +5,7 @@ import gi   # type: ignore[import]
 import typing
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.content.outline import topic as TOPIC
+from factsheet.content.section import section_topic as XSECTION
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -25,7 +25,7 @@ class Section(ABC_SHEET.AbstractTemplate):
     """
 
     def __init__(self, *, p_name: str, p_summary: str, p_title: str,
-                 p_path_assist: str, p_model: typing.Type[TOPIC.Topic]
+                 p_path_assist: str, p_model: typing.Type[XSECTION.Topic]
                  ) -> None:
         self._name_template = p_name
         self._summary_template = p_summary
@@ -47,7 +47,7 @@ class Section(ABC_SHEET.AbstractTemplate):
         self._summary_topic = get_object('ui_summary_section')
         self._title_topic = get_object('ui_title_section')
 
-    def __call__(self) -> typing.Optional[TOPIC.Topic]:
+    def __call__(self) -> typing.Optional[XSECTION.Topic]:
         """Return topic based on user's input or None when user cancels."""
         self._assistant.show()
         while self._response is None:
@@ -93,7 +93,7 @@ class Section(ABC_SHEET.AbstractTemplate):
                    ) -> None:
         """Update assistant pages based on user's actions.
 
-        Method on_prepare is a no-op for :class:`~.outline.Section`.
+        Method on_prepare is a no-op for :class:`~.section.Section`.
         """
         pass
 
