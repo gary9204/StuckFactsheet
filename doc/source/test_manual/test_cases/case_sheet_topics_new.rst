@@ -1,7 +1,12 @@
 Case Factsheet New Topic
 ========================
 
-**Purpose:** demonstrate specifying a new topic in a factsheet.
+**Purpose:** demonstrate specifying a new topic in a factsheet. The
+demonstration includes:
+
+   * selecting a place for the topic,
+   * selecting a template to specify the topic, and
+   * specifying the topic.
 
 .. include:: /icons/icons-include.txt
 
@@ -9,20 +14,29 @@ Setup
 -----
 None
 
-Steps - start topic specification
+Steps - Start Topic Specification
 ---------------------------------
 1. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
    #. *Expect:* *Topics* pane contains a toolbar but no topics.
 
-#. **Step:** Select *Topics* **menu > New Topic ...** (lower left
-   pane).
+#. **Step:** Select *Factsheet* **menu** item **Display ... > Open
+   window** (right of *Factsheet* field).
 
-   a. *Expect:* Select Template dialog appears.
-   #. *Expect:* *Templates* pane in dialog contains templates named
-      ``name_0xx`` and ``name_1xx``.
+   a. *Expect:* Second window appears with default factsheet.
+   #. New window may cover first window.
+
+   .. note:: Perform the following steps in the second window. Monitor
+      the first window for unexpected behavior.
+
+#. **Step:** Select *Topics* **menu** |menu| item **New Topic ...**
+   (lower left pane toolbar, icon on far right).
+
+   a. *Expect:* *Select Template* dialog appears.
+   #. *Expect:* *Templates* pane in dialog contains templates with the
+      first named ``Section``.
    #. *Expect:* *Summary* pane in dialog contains "Please select a
       **template**."
 
@@ -31,67 +45,71 @@ Steps - start topic specification
    a. *Expect:* Dialog disappears.
    #. *Expect:* The factsheet remains unchanged.
 
-#. **Step:** Select *Factsheet* **New Topic icon** |document-new| (lower
-   left pane toolbar, second icon from left).
+#. **Step:** Select *Topics* **New Topic icon** |document-new|
+   (lower left pane toolbar, second icon from left).
 
-   a. *Expect:* Select Template dialog appears as before.
+   a. *Expect:* *Select Template* dialog appears as before.
 
 #. **Step:** Press Esc key.
 
    a. *Expect:* Dialog disappears.
    #. *Expect:* The factsheet remains unchanged.
 
-Steps - topic placement
+Steps - Topic Placement
 -----------------------
 .. helper TODO: help_sheet_place_topic.rst
     outline
 
-1. **Step:** Select *Factsheet* **New Topic icon** |document-new| (lower
+1. **Step:** Select *Topics* **New Topic icon** |document-new| (lower
    left pane toolbar, second icon from left).
 
-   a. *Expect:* Select Template dialog appears.
+   a. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected (highlighted in blue).
-   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
-   #. *Expect:* Specify button (dialog title far right) changes from
+   a. *Expect:* Template ``Section`` is selected (highlighted in blue).
+   #. *Expect:* *Specify button* (dialog title far right) changes from
       disabled (gray) to enabled (blue).
+   #. *Expect:* *Summary* pane content changes to the following.
+
+      **Section Summary:** "You may group topics in the topics outline
+      into sections.  Template Section creates a section heading in the
+      outline where you may place or move topics."
 
 #. **Step:** Click **Specify button** (dialog title far right).
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
-   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* *New Section* dialog appears.
+   #. *Expect:* Dialog displays page *New Section*.
    #. *Expect:* Page explains topic, assistant steps, and navegation
       buttons.
 
 #. **Step:** Click **Next button** (dialog title far right)
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
    #. *Expect:* Page explains Name, Title, and Description fields.
    #. *Expect:* Page contains Name, Title, and Description fields.
 
-#. **Step:** Click in **Name** field and type "One".
+#. **Step:** Click in **Name** field and type "Alpha".
 
    a. *Expect:* Field contents changes from "Enter section name" to
-      "One".
+      "Alpha".
 
 #. **Step:** Click in **Title** field and type "Topic 1".
 
    a. *Expect:* Field contents changes from "Enter section title" to
       "Topic 1".
 
-#. **Step:** Click in **Description** field and type "This section is
+#. **Step:** Click in **Description** field and edit to "This section is
    for Topic 1."
 
    a. *Expect:* Field contents matches typed text.
 
 #. **Step:** Click **Next button** (dialog title far right).
 
-   a. *Expect:* Dialog displays page Confirm.
+   a. *Expect:* Dialog displays page *Confirm*.
    #. *Expect:* Page explains **Apply** and **Back** buttons.
-   #. *Expect:* Page displays *Name* value "One".
+   #. *Expect:* Page displays *Name* value "Alpha".
    #. *Expect:* Page displays *Title* value "Topic 1".
    #. *Expect:* Page diaplays Description value "This section is for
       Topic 1."
@@ -100,84 +118,84 @@ Steps - topic placement
 
    a. *Expect:* Dialog disappears.
    #. *Expect:* *Topics* pane contains topic.
-   #. *Expect:* ``One`` appears in Name column.
+   #. *Expect:* ``Alpha`` appears in Name column.
    #. *Expect:* ``Topic 1`` appears in Title column.
 
-#. **Step:** Select *Factsheet* **New Topic icon** |document-new|.
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Place New Topic dialog appears.
-   #. *Expect:* The *Topics* pane contains one topic with name ``One`` and
+   a. *Expect:* *Place New Topic* dialog appears.
+   #. *Expect:* The *Topics* pane contains one topic with name ``Alpha`` and
       title ``Topic 1``.
    #. *Expect:* The *Summary* pane contains "Please select a topic."
 
-#. **Step:** Click on topic ``One`` ``Topic 1`` in *Topics* pane.
+#. **Step:** Click on topic ``Alpha`` ``Topic 1`` in *Topics* pane.
 
-   a. *Expect:* Topic ``One`` ``Topic 1`` is selected (highlighted in
+   a. *Expect:* Topic ``Alpha`` ``Topic 1`` is selected (highlighted in
       blue).
    #. *Expect:* *Summary* pane content changes to "This section is for
       Topic 1."
    #. *Expect:* *After* option is selected (filled dot to left of option).
    #. *Expect:* *Before* option is not selected (empty to left of
       option).
-   #. *Expect:* *Child* option is not selected (empty to left of
-      option).
-   #. *Expect:* Specify button (dialog title far right) changes from
+   #. *Expect:* *Child* option is not selected.
+   #. *Expect:* *Place button* (dialog title far right) changes from
       disabled (gray) to enabled (blue).
 
 #. **Step:** Click **Place button** (dialog title far right).
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* Select Template dialog appears.
+   #. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected.
-   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
-   #. *Expect:* Specify button changes from disabled to enabled.
+   a. *Expect:* Template ``Section`` is selected.
+   #. *Expect:* *Summary* pane content changes to **Section Summary**
+      shown above.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Specify button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
-   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* *New Section* dialog appears.
+   #. *Expect:* Dialog displays page *New Section*.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
 
-#. **Step:** Enter "Two" in **Name** field and "Topic 2" in **Title**
+#. **Step:** Enter "Beta" in **Name** field and "Topic 2" in **Title**
    field.
 
    a. *Expect:* Field contents changes to entered text in each field.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Confirm.
-   #. *Expect:* Page displays *Name* value "Two".
+   a. *Expect:* Dialog displays page *Confirm*.
+   #. *Expect:* Page displays *Name* value "Beta".
    #. *Expect:* Page displays *Title* value "Topic 2".
 
 #. **Step:** Click **Apply button**.
 
    a. *Expect:* Dialog disappears.
    #. *Expect:* *Topics* pane contains two topic.
-   #. *Expect:* Topic ``Two`` ``Topic 2`` appears immediately below
-      topic ``One`` ``Topic 1``.
+   #. *Expect:* Topic ``Beta`` ``Topic 2`` appears immediately below
+      topic ``Alpha`` ``Topic 1``.
 
-#. **Step:** Select *Factsheet* **New Topic icon** |document-new|.
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Place New Topic dialog appears.
-   #. *Expect:* The *Topics* pane contains two topics ``One`` ``Topic
-      1`` and ``Two`` ``Topic 2``.
+   a. *Expect:* *Place New Topic* dialog appears.
+   #. *Expect:* The *Topics* pane contains two topics ``Alpha`` ``Topic
+      1`` and ``Beta`` ``Topic 2``.
    #. *Expect:* The *Summary* pane contains "Please select a topic."
 
-#. **Step:** Click on topic ``One`` ``Topic 1`` in *Topics* pane.
+#. **Step:** Click on topic ``Alpha`` ``Topic 1`` in *Topics* pane.
 
-   a. *Expect:* Topic ``One`` ``Topic 1`` is selected.
+   a. *Expect:* Topic ``Alpha`` ``Topic 1`` is selected.
    #. *Expect:* *Summary* pane content changes to "This section is for
       Topic 1."
    #. *Expect:* *After* option is selected.
    #. *Expect:* *Before* and *Child* options are not selected.
-   #. *Expect:* Specify button changes from disabled to enabled.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Before option**.
 
@@ -187,56 +205,56 @@ Steps - topic placement
 #. **Step:** Click **Place button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* Select Template dialog appears.
+   #. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected.
-   #. *Expect:* Specify button changes from disabled to enabled.
+   a. *Expect:* Template ``Section`` is selected.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Specify button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
-   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* *New Section* dialog appears.
+   #. *Expect:* Dialog displays page *New Section*.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
 
-#. **Step:** Enter "Three" in **Name** field and "Topic 3" in **Title**
+#. **Step:** Enter "Gamma" in **Name** field and "Topic 3" in **Title**
    field.
 
    a. *Expect:* Field contents changes to entered text in each field.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Confirm.
-   #. *Expect:* Page displays *Name* value "Three".
+   a. *Expect:* Dialog displays page *Confirm*.
+   #. *Expect:* Page displays *Name* value "Gamma".
    #. *Expect:* Page displays *Title* value "Topic 3".
 
 #. **Step:** Click **Apply button**.
 
    a. *Expect:* Dialog disappears.
    #. *Expect:* *Topics* pane contains three topic.
-   #. *Expect:* The order of the topics are  ``Three`` ``Topic 3``,
-      ``One`` ``Topic 1``, and ``Two`` ``Topic 2``.
+   #. *Expect:* The order of the topics are  ``Gamma`` ``Topic 3``,
+      ``Alpha`` ``Topic 1``, and ``Beta`` ``Topic 2``.
 
-#. **Step:** Select *Factsheet* **New Topic icon** |document-new|.
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Place New Topic dialog appears.
-   #. *Expect:* The *Topics* pane contains three topics: ``Three``
-      ``Topic 3``, ``One`` ``Topic 1`` and ``Two`` ``Topic 2``.
+   a. *Expect:* *Place New Topic* dialog appears.
+   #. *Expect:* The *Topics* pane contains three topics: ``Gamma``
+      ``Topic 3``, ``Alpha`` ``Topic 1`` and ``Beta`` ``Topic 2``.
    #. *Expect:* The *Summary* pane contains "Please select a topic."
 
-#. **Step:** Click on topic ``One`` ``Topic 1`` in *Topics* pane.
+#. **Step:** Click on topic ``Alpha`` ``Topic 1`` in *Topics* pane.
 
-   a. *Expect:* Topic ``One`` ``Topic 1`` is selected.
+   a. *Expect:* Topic ``Alpha`` ``Topic 1`` is selected.
    #. *Expect:* *Summary* pane content changes to "This section is for
       Topic 1."
    #. *Expect:* *Before* option is selected.
    #. *Expect:* *After* and *Child* options are not selected.
-   #. *Expect:* Specify button changes from disabled to enabled.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Child option**.
 
@@ -246,123 +264,124 @@ Steps - topic placement
 #. **Step:** Click **Place button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* Select Template dialog appears.
+   #. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected.
-   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
-   #. *Expect:* Specify button changes from disabled to enabled.
+   a. *Expect:* Template ``Section`` is selected.
+   #. *Expect:* *Summary* pane content changes to **Section Summary**
+      shown above.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Specify button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
-   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* *New Section* dialog appears.
+   #. *Expect:* Dialog displays page *New Section*.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
 
-#. **Step:** Enter "Four" in **Name** field and "Topic 4" in **Title**
+#. **Step:** Enter "Delta" in **Name** field and "Topic 4" in **Title**
    field.
 
    a. *Expect:* Field contents changes to entered text in each field.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Confirm.
-   #. *Expect:* Page displays *Name* value "Four".
+   a. *Expect:* Dialog displays page *Confirm*.
+   #. *Expect:* Page displays *Name* value "Delta".
    #. *Expect:* Page displays *Title* value "Topic 4".
 
 #. **Step:** Click **Apply button**.
 
    a. *Expect:* Dialog disappears.
    #. *Expect:* *Topics* pane contains three topic.
-   #. *Expect:* The order of the topics are  ``Three`` ``Topic 3``,
-      ``One`` ``Topic 1``, and ``Two`` ``Topic 2``.
-   #. *Expect:* There is an expander (|expander|) immediately left of
-      ``One`` ``Topic 1``.
+   #. *Expect:* The order of the topics are  ``Gamma`` ``Topic 3``,
+      ``Alpha`` ``Topic 1``, and ``Beta`` ``Topic 2``.
+   #. *Expect:* There is an expander |expander| immediately left of
+      ``Alpha`` ``Topic 1``.
 
-#. **Step:** Click on the **expander** |expander| for ``One`` ``Topic
+#. **Step:** Click on the **expander** |expander| for ``Alpha`` ``Topic
    1``.
 
-   a. *Expect:* *Topics* outline shows topic ``Four`` ``Topic 4`` as a
-      child of topic ``One`` ``Topic 1``.
+   a. *Expect:* *Topics* outline shows topic ``Delta`` ``Topic 4`` as a
+      child of topic ``Alpha`` ``Topic 1``.
 
-#. **Step:** Select *Factsheet* **New Topic icon** |document-new|.
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Place New Topic dialog appears.
-   #. *Expect:* The *Topics* pane contains three topics: ``Three``
-      ``Topic 3``, ``One`` ``Topic 1`` and ``Two`` ``Topic 2``.
+   a. *Expect:* *Place New Topic* dialog appears.
+   #. *Expect:* The *Topics* pane contains three topics: ``Gamma``
+      ``Topic 3``, ``Alpha`` ``Topic 1`` and ``Beta`` ``Topic 2``.
    #. *Expect:* The *Summary* pane contains "Please select a topic."
 
-#. **Step:** Click on topic ``One`` ``Topic 1`` in *Topics* pane.
+#. **Step:** Click on topic ``Alpha`` ``Topic 1`` in *Topics* pane.
 
-   a. *Expect:* Topic ``One`` ``Topic 1`` is selected.
+   a. *Expect:* Topic ``Alpha`` ``Topic 1`` is selected.
    #. *Expect:* *Summary* pane content changes to "This section is for
       Topic 1."
    #. *Expect:* *Child* option is selected.
    #. *Expect:* *After* and *Before* options are not selected.
-   #. *Expect:* Specify button changes from disabled to enabled.
+   #. *Expect:* *Place button* changes from disabled to enabled.
 
 #. **Step:** Click **Place button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* Select Template dialog appears.
+   #. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected.
-   #. *Expect:* Specify button changes from disabled to enabled.
+   a. *Expect:* Template ``Section`` is selected.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Specify button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
-   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* *New Section* dialog appears.
+   #. *Expect:* Dialog displays page *New Section*.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
 
-#. **Step:** Enter "Five" in **Name** field and "Topic 5" in **Title**
+#. **Step:** Enter "Epsilon" in **Name** field and "Topic 5" in **Title**
    field.
 
    a. *Expect:* Field contents changes to entered text in each field.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Confirm.
-   #. *Expect:* Page displays *Name* value "Five".
+   a. *Expect:* Dialog displays page *Confirm*.
+   #. *Expect:* Page displays *Name* value "Epsilon".
    #. *Expect:* Page displays *Title* value "Topic 5".
 
 #. **Step:** Click **Apply button**.
 
    a. *Expect:* Dialog disappears.
    #. *Expect:* *Topics* pane contains three topic.
-   #. *Expect:* The order of the topics are  ``Three`` ``Topic 3``,
-      ``One`` ``Topic 1``, and ``Two`` ``Topic 2``.
+   #. *Expect:* The order of the topics are  ``Gamma`` ``Topic 3``,
+      ``Alpha`` ``Topic 1``, and ``Beta`` ``Topic 2``.
    #. *Expect:* There is an collapser immediately left of
-      ``One`` ``Topic 1``.
-   #. *Expect:* *Topics* outline shows two children of topic ``One``
-      ``Topic 1``: topic ``Four`` ``Topic 4`` followed by topic ``Five``
+      ``Alpha`` ``Topic 1``.
+   #. *Expect:* *Topics* outline shows two children of topic ``Alpha``
+      ``Topic 1``: topic ``Delta`` ``Topic 4`` followed by topic ``Epsilon``
       ``Topic 5``.
 
-#. **Step:** Select *Factsheet* **New Topic icon** |document-new|.
+#. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Place New Topic dialog appears.
-   #. *Expect:* The *Topics* pane contains three topics: ``Three``
-      ``Topic 3``, ``One`` ``Topic 1`` and ``Two`` ``Topic 2``.
-   #. *Expect:* There is an expander immediately left of ``One`` ``Topic
+   a. *Expect:* *Place New Topic* dialog appears.
+   #. *Expect:* The *Topics* pane contains three topics: ``Gamma``
+      ``Topic 3``, ``Alpha`` ``Topic 1`` and ``Beta`` ``Topic 2``.
+   #. *Expect:* There is an expander immediately left of ``Alpha`` ``Topic
       1``.
    #. *Expect:* The *Summary* pane contains "Please select a topic."
 
-#. **Step:** Click on the **expander** |expander| for ``One`` ``Topic
+#. **Step:** Click on the **expander** |expander| for ``Alpha`` ``Topic
    1``.
 
-   #. *Expect:* *Topics* outline shows two children of topic ``One``
-      ``Topic 1``: topic ``Four`` ``Topic 4`` followed by topic ``Five``
+   #. *Expect:* *Topics* outline shows two children of topic ``Alpha``
+      ``Topic 1``: topic ``Delta`` ``Topic 4`` followed by topic ``Epsilon``
       ``Topic 5``.
 
 #. **Step:** Click **Cancel button** (dialog title far left).
@@ -373,7 +392,12 @@ Steps - topic placement
 #. **Step:** Click window **close icon** |window-close| (window title
    far right).
 
-   a. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* The window closes.
+   #. *Expect:* The original window remains.
+
+#. **Step:** Click window **close icon** |window-close|.
+
+   a. *Expect:* *Data Loss Warning* dialog appears.
 
 #. **Step:** Click **Discard button** (dialog title far right).
 
@@ -381,30 +405,40 @@ Steps - topic placement
    #. *Expect:* The factsheet window closes.
    #. *Expect:* The application exits.
 
-Steps - template selection
+Steps - Template Selection
 --------------------------
 1. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
    #. *Expect:* *Topics* pane contains a toolbar but no topics.
+
+#. **Step:** Select *Factsheet* **menu** item **Display ... > Open
+   window** (right of *Factsheet* field).
+
+   a. *Expect:* Second window appears with default factsheet.
+   #. New window may cover first window.
+
+   .. note:: Perform the following steps in the second window. Monitor
+      the first window for unexpected behavior.
 
 #. **Step:** Select *Topics* **New Topic icon** |document-new| (lower
    left pane toolbar, second icon from left).
 
-   a. *Expect:* Select Template dialog appears.
+   a. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected (highlighted in blue).
-   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
-   #. *Expect:* Specify button (dialog title far right) changes from
+   a. *Expect:* Template ``Section`` is selected (highlighted in blue).
+   #. *Expect:* *Summary* pane content changes to **Section Summary**
+      shown above.
+   #. *Expect:* *Specify button* (dialog title far right) changes from
       disabled (gray) to enabled (blue).
 
 #. **Step:** Click **Specify button** (dialog title far right).
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
+   #. *Expect:* *New Section* dialog appears.
 
 #. **Step:** Click dialog **Cancel button** (dialog title on far left).
 
@@ -413,14 +447,14 @@ Steps - template selection
 
 #. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Select Template dialog appears.
+   a. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click **expander** |expander| of template ``name_0xx`` in
+#. **Step:** Click **expander** |expander| of template ``Section`` in
    *Templates* pane (right-pointing triangle at start of template line).
 
    a. *Expect:* Expander changes to collapser (|collapser|).
    #. *Expect:* Templates ``name_00x`` and ``name_01x`` appear indented
-      under ``name_0xx``.
+      under ``Section``.
    #. *Expect:* Template ``name_00x`` has a expander and template
       ``name_01x`` does not.
 
@@ -454,12 +488,12 @@ Steps - template selection
 
    a. *Expect:* Template ``name_112`` is selected.
    #. *Expect:* *Summary* pane content changes to "Stub summary_112".
-   #. *Expect:* Specify button changes from disabled to enabled.
+   #. *Expect:* *Specify button* changes from disabled to enabled.
 
 #. **Step:** Click **Specify button**.
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
+   #. *Expect:* *New Section* dialog appears.
 
 #. **Step:** Click dialog **Cancel button**.
 
@@ -468,14 +502,14 @@ Steps - template selection
 
 #. **Step:** Select *Topics* **New Topic icon** |document-new|.
 
-   a. *Expect:* Select Template dialog appears.
+   a. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click **collapser** |collapser| of template ``name_0xx``.
+#. **Step:** Click **collapser** |collapser| of template ``Section``.
 
    a. *Expect:* Templates ``name_00x``, ``name_000``, and ``name_01x``
       disappear.
    #. *Expect:* An expander replaces the collapser of template
-      ``name_0xx``.
+      ``Section``.
 
 #. **Step:** Click **collapser** |collapser| of template ``name_1xx``.
 
@@ -484,7 +518,7 @@ Steps - template selection
    #. *Expect:* *Summary* pane content changes to "Stub summary_1xx".
 
 #. **Step:** Click on **Find icon** |edit-find| (immediately left of
-   Specify button in dialog title).
+   *Specify button* in dialog title).
 
    a. *Expect:* Find bar appears between dialog title and *Templates*
       pane.
@@ -503,14 +537,15 @@ Steps - template selection
 
 #. **Step:** Click in find entry field and press "n" key.
 
-   a. *Expect:* Template ``name_0xx`` is selected.
-   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
+   a. *Expect:* Template ``Section`` is selected.
+   #. *Expect:* *Summary* pane content changes to **Section Summary**
+      shown above.
 
 #. **Step:** Continue typing "ame_00" in the find entry field.
 
-   a. *Expect:* ``name_0xx`` expander changes to collapser.
+   a. *Expect:* ``Section`` expander changes to collapser.
    #. *Expect:* Templates ``name_00x`` and ``name_01x`` appear indented
-      under ``name_0xx``.
+      under ``Section``.
    #. *Expect:* Template ``name_00x`` is selected.
    #. *Expect:* *Summary* pane content changes to "Stub summary_00x".
 
@@ -537,7 +572,7 @@ Steps - template selection
 
    a. *Expect:* Dialog disappears.
 
-Steps - template completion
+Steps - Template Completion
 ---------------------------
 .. helper TODO: help_sheet_specify_topic.rst
     outline
@@ -545,33 +580,34 @@ Steps - template completion
 1. **Step:** Select *Topics* **New Topic icon** |document-new| (lower
    left pane toolbar, second icon from left).
 
-   a. *Expect:* Select Template dialog appears.
+   a. *Expect:* *Select Template* dialog appears.
 
-#. **Step:** Click on template ``name_0xx`` in *Templates* pane.
+#. **Step:** Click on template ``Section`` in *Templates* pane.
 
-   a. *Expect:* Template ``name_0xx`` is selected (highlighted in blue).
-   #. *Expect:* *Summary* pane content changes to "Stub summary_0xx".
-   #. *Expect:* Specify button (dialog title far right) changes from
+   a. *Expect:* Template ``Section`` is selected (highlighted in blue).
+   #. *Expect:* *Summary* pane content changes to **Section Summary**
+      shown above.
+   #. *Expect:* *Specify button* (dialog title far right) changes from
       disabled (gray) to enabled (blue).
 
 #. **Step:** Click **Specify button** (dialog title far right).
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* New Section dialog appears.
-   #. *Expect:* Dialog displays page New Section.
+   #. *Expect:* *New Section* dialog appears.
+   #. *Expect:* Dialog displays page *New Section*.
    #. *Expect:* Page explains topic, assistant steps, and navegation
       buttons.
 
 #. **Step:** Click **Next button** (dialog title far right)
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
    #. *Expect:* Page explains Name, Title, and Description fields.
    #. *Expect:* Page contains Name, Title, and Description fields.
 
-#. **Step:** Click in **Name** field and type "Topic One".
+#. **Step:** Click in **Name** field and type "Alpha".
 
    a. *Expect:* Field contents changes from "Enter section name" to
-      "Topic One".
+      "Alpha".
 
 #. **Step:** Click in **Title** field and type "Initial Topic".
 
@@ -586,24 +622,24 @@ Steps - template completion
 #. **Step:** Click **Back button** (dialog title on left next to Cancel
    button)
 
-   a. *Expect:* Dialog displays page New Section.
+   a. *Expect:* Dialog displays page *New Section*.
    #. *Expect:* Page explains topic, assistant steps, and navegation
       buttons.
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
    #. *Expect:* Page explains Name, Title, and Description fields.
-   #. *Expect:* Name field contains "Topic One".
+   #. *Expect:* Name field contains "Alpha".
    #. *Expect:* Title field contains "Initial Topic".
    #. *Expect:* Summary field contains "This is the initial section
       added to the factsheet."
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Confirm.
+   a. *Expect:* Dialog displays page *Confirm*.
    #. *Expect:* Page explains **Apply** and **Back** buttons.
-   #. *Expect:* Page displays *Name* value "Topic One".
+   #. *Expect:* Page displays *Name* value "Alpha".
    #. *Expect:* You can select but not edit the *Name* value.
    #. *Expect:* Page displays *Title* value "Initial Topic".
    #. *Expect:* You can select but not edit the Title value.
@@ -613,16 +649,16 @@ Steps - template completion
 
 #. **Step:** Click **Back button**.
 
-   a. *Expect:* Dialog displays page Identity.
+   a. *Expect:* Dialog displays page *Identity*.
    #. *Expect:* Page explains Name, Title, and Description fields.
-   #. *Expect:* Name field contains "Topic One".
+   #. *Expect:* Name field contains "Alpha".
    #. *Expect:* Title field contains "Initial Topic".
    #. *Expect:* Summary field contains "This is the initial section
       added to the factsheet."
 
 #. **Step:** Click in **Name** field and edit to "Topic 1".
 
-   a. *Expect:* Field contents changes from "Topic One" to
+   a. *Expect:* Field contents changes from "Alpha" to
       "Topic 1".
 
 #. **Step:** Click in **Title** field and edit to "First Topic".
@@ -637,7 +673,7 @@ Steps - template completion
 
 #. **Step:** Click **Next button**.
 
-   a. *Expect:* Dialog displays page Confirm.
+   a. *Expect:* Dialog displays page *Confirm*.
    #. *Expect:* Page explains **Apply** and **Back** buttons.
    #. *Expect:* Page displays *Name* value "Topic 1".
    #. *Expect:* Page displays *Title* value "First Topic".
@@ -655,11 +691,12 @@ Steps - template completion
 
 Teardown
 --------
-1. Check console for exceptions, GTK errors, and warning messages. There
+1. In each window, click window **close icon** |window-close|.
+
+   | *Data Loss Warning* may appear for the last window of each
+      sheet. Click **Discard button**.
+   | Window disappears.
+   | Application closes when last window closes.
+
+#. Check console for exceptions, GTK errors, and warning messages. There
    should be none.
-
-#. **Step:** Click window **close icon** |window-close|.
-
-   a. *Expect:* Window disappears.
-   #. *Expect:* Application closes.
-

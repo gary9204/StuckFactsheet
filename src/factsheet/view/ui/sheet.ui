@@ -91,14 +91,14 @@
   <object class="GtkImage" id="image_new">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">document-new</property>
-    <property name="icon_size">3</property>
+    <property name="icon_name">document-new-symbolic</property>
+    <property name="icon_size">2</property>
   </object>
   <object class="GtkImage" id="image_save_as">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">document-save-as</property>
-    <property name="icon_size">3</property>
+    <property name="icon_name">document-save-as-symbolic</property>
+    <property name="icon_size">2</property>
   </object>
   <object class="GtkTextBuffer" id="stub_buffer_summary">
     <property name="text" translatable="yes">Oops! Summary is missing!</property>
@@ -752,8 +752,8 @@
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="icon_name">format-justify-fill</property>
-                <property name="icon_size">3</property>
+                <property name="icon_name">format-justify-fill-symbolic</property>
+                <property name="icon_size">2</property>
               </object>
             </child>
           </object>
@@ -874,8 +874,8 @@
                   <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="icon_name">format-justify-fill</property>
-                    <property name="icon_size">3</property>
+                    <property name="icon_name">format-justify-fill-symbolic</property>
+                    <property name="icon_size">2</property>
                   </object>
                 </child>
               </object>

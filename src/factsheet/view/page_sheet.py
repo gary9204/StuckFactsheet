@@ -67,6 +67,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
         self._query_place: typing.Optional[QPLACE.QueryPlace] = None
+#         print('\nPageSheet.init ID {}'.format(id(self)))
         self._query_template = QTEMPLATE.QueryTemplate(self._window)
         self._name_former: typing.Optional[str] = None
         self._infoid = VINFOID.ViewInfoId(get_object)
@@ -221,6 +222,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :param pm_page: new factsheet page.
         :param pm_control: new factsheet control.
         """
+#         print('PageSheet.link_factsheet')
+#         print('\tPage: {}'.format(hex(id(pm_page))))
         pm_control.attach_page(pm_page)
         pm_page._query_place = QPLACE.QueryPlace(
             pm_page._window, pm_page._view_topics)
@@ -274,6 +277,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         page = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.new(pm_sheets_active)
         PageSheet.link_factsheet(page, control)
+#         print('PageSheet.new_factsheet')
+#         print('\tNew:  {}'.format(hex(id(page))))
         return page
 
     def on_close_page(
@@ -431,8 +436,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         assert self._control is not None
         app = self._window.get_application()
         page = PageSheet(px_app=app)
-        page._control = self._control
-        page._control.attach_page(page)
+        PageSheet.link_factsheet(page, self._control)
+#         page._control = self._control
+#         page._control.attach_page(page)
 
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
@@ -542,6 +548,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         page = PageSheet(px_app=px_app)
         control = CSHEET.Sheet.open(pm_sheets_active, p_path)
         PageSheet.link_factsheet(page, control)
+#         print('PageSheet.open_factsheet')
+#         print('\tNew:  {}'.format(hex(id(page))))
         return page
 
     def present(self, p_time: int) -> None:

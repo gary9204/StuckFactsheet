@@ -17,8 +17,8 @@ Steps -- Help
 
    a. *Expect:* Application displays default factsheet.
 
-#. **Step:** Click Factsheet menu |menu| **Help** (right of *Factsheet*
-   field).
+#. **Step:** Click *Factsheet* **menu** |menu| item **Help** (right of
+   *Factsheet* field).
 
    a. *Expect:* *Factsheet Help* dialog appears.
 
@@ -33,8 +33,8 @@ Steps -- Help
 
 Steps -- Display Help
 ---------------------
-1. **Step:** Click Factsheet menu |menu| **Display ... > Help** (right of
-   **Factsheet** field)
+1. **Step:** Click *Factsheet* **menu** |menu| item **Display ... >
+   Help** (right of *Factsheet* field).
 
    a. *Expect:* *Factsheet Display Help* dialog appears.
 
@@ -49,8 +49,8 @@ Steps -- Display Help
 
 Steps -- File Help
 ------------------
-1. **Step:** Click Factsheet menu |menu| **File ... > Help** (right of
-   *Factsheet* field)
+1. **Step:** Click *Factsheet* **menu** |menu| item **File ... > Help**
+   (right of *Factsheet* field).
 
    a. *Expect:* *Factsheet File Help* dialog appears.
 
@@ -65,8 +65,8 @@ Steps -- File Help
 
 Steps -- Topics Help
 --------------------
-1. **Step:** Click *Topics* menu |menu| **Help** (pane toolbar, last
-   icon on right).
+1. **Step:** Click *Topics* **menu** |menu| item **Help** (pane toolbar,
+   last icon on right).
 
    a. *Expect:* *Factsheet Topics Help* dialog appears.
 

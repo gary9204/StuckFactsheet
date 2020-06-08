@@ -9,6 +9,9 @@
 .. |document-new| image::  /icons/document-new-symbolic.svg
    :alt: (page outline with plus)
 
+.. |document-save-as| image::  /icons/document-save-as-symbolic.svg
+   :alt: (page with arrow down to file box)
+
 .. |edit-find| image::  /icons/edit-find-symbolic.svg
    :alt: (magnifying glass)
 

@@ -10,7 +10,6 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content import heading as XHEADING
 from factsheet.content.section import section_spec as XSPEC
 from factsheet.content.section import section_topic as XSECTION
 from factsheet.control import pool as CPOOL
@@ -1144,7 +1143,11 @@ class TestPageSheet:
         target._control = control
         # Test
         target.on_open_page(None, None)
-        assert 1 == control._model.n_pages()
+        model = control._model
+        assert 1 == model.n_pages()
+        for page in model._pages.values():
+            assert page._control is control
+            assert page._query_place is not None
         # Teardown
         target._window.destroy()
         del target._window

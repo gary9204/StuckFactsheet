@@ -41,8 +41,8 @@ Steps
    a. *Expect:* *Edit Name* dropdown disappears.
    #. *Expect:* Window title changes to ``Topics``.
 
-#. **Step:** Select Factsheet menu |menu| item **Display ... > Open
-   Window**.
+#. **Step:** In ``Topics`` window, select Factsheet menu |menu| item
+   **Display ... > Open Window**.
 
    a. *Expect:* Third window appears with window title ``Topics``.
    #. Note window subtitle of the form "Unsaved XXX-ZZZ".
@@ -52,9 +52,9 @@ Steps
    :doc:`../test_helpers/help_sheet_new_topic`. Use name "Topic 1" and
    title "First Topic".
 
-   a. *Expect:* ``Topic 1`` appears in topic outline of window
+   a. *Expect:* ``Topic 1`` appears in *Topics* pane of window
       ``Topics - ZZZ``.
-   #. *Expect:* ``Topic 1`` appears in topic outline of window
+   #. *Expect:* ``Topic 1`` appears in *Topics* pane of window
       ``Topics - YYY``.
    #. *Expect:* Window ``Base`` is unchanged.
 
@@ -63,9 +63,9 @@ Steps
    title "Second Topic" for the first addition.  Use name "Topic 3" and
    title "Third Window" for the second addition.
 
-   a. *Expect:* ``Topic 2`` and ``Topic 3`` appear in topic outline of
+   a. *Expect:* ``Topic 2`` and ``Topic 3`` appear in *Topics* pane of
       window ``Topics - YYY``.
-   #. *Expect:* ``Topic 2`` and ``Topic 3`` appear in topic outline of
+   #. *Expect:* ``Topic 2`` and ``Topic 3`` appear in *Topics* pane of
       window ``Topics - ZZZ``.
    #. *Expect:* Window ``Base`` is unchanged.
 
@@ -76,8 +76,8 @@ Steps
       (highlighted in blue).
    #. *Expect:* ``Topic 1`` is not selected in window ``Topics - ZZZ``.
 
-#. **Step:** Select *Topics* menu |menu| item **Delete Topic**
-   (pane toolbar, last icon on right).
+#. **Step:** In window ``Topics - YYY``, select *Topics* menu |menu|
+   item **Delete Topic** (pane toolbar, last icon on right).
 
    a. *Expect:* ``Topic 1`` disappears from window ``Topics - YYY``.
    #. *Expect:* ``Topic 2`` is selected in window ``Topics - YYY``
@@ -87,12 +87,11 @@ Steps
 #. **Step:** In window ``Topics - ZZZ``, click on ``Topic 3`` in the
    topics outline.
 
-   a. *Expect:* ``Topic 3`` is selected in window ``Topics - ZZZ``
-      (highlighted in blue).
+   a. *Expect:* ``Topic 3`` is selected in window ``Topics - ZZZ``.
    #. *Expect:* ``Topic 2`` is selected in window ``Topics - YYY``.
 
-#. **Step:** Select *Topics* menu |menu| item **Delete Topic**
-   (pane toolbar, last icon on right).
+#. **Step:** In window ``Topics - ZZZ``, select *Topics* menu |menu|
+   item **Delete Topic**.
 
    a. *Expect:* ``Topic 3`` disappears from window ``Topics - ZZZ``.
    #. *Expect:* ``Topic 2`` is selected in window ``Topics - ZZZ``
@@ -103,10 +102,10 @@ Teardown
 --------
 1. In each window, click window **close icon** |window-close|.
 
-   a. *Data Loss Warning* appears for the last window of each
+   | *Data Loss Warning* appears for the last window of each
       sheet. Click **Discard button**.
-   #. Window disappears.
-   #. Application closes when last window closes.
+   | Window disappears.
+   | Application closes when last window closes.
 
 #. Check console for exceptions, GTK errors, and warning messages. There
    should be none.

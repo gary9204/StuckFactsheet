@@ -3,6 +3,8 @@ Case Factsheet Open Window
 
 **Purpose:** demonstrate opening of Factsheet windows.
 
+.. include:: /icons/icons-include.txt
+
 Setup
 -----
 None
@@ -12,47 +14,43 @@ Steps
 1. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
 
-#. **Step:** Type factsheet title in **Factsheet** field (e.g. First
-   Factsheet).
+#. **Step:** Type factsheet title "Alpha" in **Factsheet** field.
 
    a. *Expect:* Title appears in field.
 
-#. **Step:** Select Factsheet **menu > Display ... > Open window**
-   (right of **Factsheet** field).
+#. **Step:** Select *Factsheet* **menu** item **Display ... > Open
+   window** (right of *Factsheet* field).
 
-   a. *Expect:* Second window appears with same factsheet title as first
-      window.  New window may cover first window.
+   a. *Expect:* Second window appears with factsheet title ``Alpha``.
+   #. New window may cover first window.
 
-#. **Step:** Change title in second window (e.g. Modified First
-   Factsheet).
+#. **Step:** Change title in second Alpha window to "Alpha Plus".
 
-   a. *Expect:* Title changes in both windows.
+   a. *Expect:* Title changes to ``Alpha Plus`` in both windows.
 
-#. **Step:** Click Factsheet **new Factsheet icon** (window title on
+#. **Step:** Click *Factsheet* **new Factsheet icon** (window title on
    left next to open buttons).
 
-   a. *Expect:* Third window appears with blank factsheet title. New
-      window may cover first or second window.
+   a. *Expect:* Third window appears with blank factsheet title.
+   #. New window may cover first or second window.
 
-#. **Step:** Type factsheet title in third window (e.g. Second
-   Factsheet).
+#. **Step:** Type *Factsheet* title "Beta" in third window.
 
-   a. *Expect:* Title appears in new window.
-   #. *Expect:* No change in first and second windows.
+   a. *Expect:* Title appears in third window.
+   #. *Expect:* No change in either ``Alpha`` window.
 
-#. **Step:** In second sheet, select Factsheet **menu > Display ... >
-   Open window**.
+#. **Step:** In ``Beta`` window, select *Factsheet* **menu** |menu|
+   **Display ... > Open window**.
 
-   a. *Expect:* Fourth window appears with same factsheet title as
-      second sheet.  New window may cover second sheet window.
+   a. *Expect:* Fourth window appears with factsheet title ``Beta``.
+   #. New window may cover second sheet window.
 
-#. **Step:** Change title in new window (e.g. Modified Second
-   Factsheet).
+#. **Step:** In second ``Beta`` window, change title to "Beta minus".
 
-   a. *Expect:* Title changes in both second sheet windows.
-   #. *Expect:* Title is unchanged in both first sheet windows.
+   a. *Expect:* Title changes in both ``Beta`` windows.
+   #. *Expect:* Title is unchanged in both ``Alpha`` windows.
 
 Teardown
 --------
@@ -61,12 +59,12 @@ Teardown
 
 Close each window as follows.
 
-1. **Step:** In window, click window **close icon** (window title far
-   right).
+1. **Step:** In window, click window **close icon** |window-close|
+   (window title far right).
 
-   a. *Expect:* Window closes or Data Loss Warning dialog appears.
+   | Window closes or *Data Loss Warning* dialog appears.
 
-#. **Step:** When dialog appears, click **Discard button**
+#. **Step:** When dialog appears, click **Discard button**.
 
-   a. *Expect:* Dialog and window disappear.
+   | Dialog and window disappear.
 

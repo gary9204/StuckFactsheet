@@ -19,7 +19,7 @@ Setup
 
 Steps
 -----
-#. **Step:** Type factsheet title "Topics Check" in **Factsheet** field.
+#. **Step:** Type title "Topics Check" in **Factsheet** field.
 
    a. *Expect:* Title appears in field.
 
@@ -33,30 +33,30 @@ Steps
 
    a. *Expect:* Save dialog shows directory contents.
 
-#. **Step:** Edit file **Name** field to "topics_save.fsg"
+#. **Step:** Edit file **Name** field to "TopicsSave.fsg"
 
    a. *Expect:* Field contains new file name.
 
-#. **Step:** Click Save button (dialog title on right).
+#. **Step:** Click dialog **Save button** (dialog title on right).
 
    a. *Expect:* Dialog disappears.
 
 #. **Step:** List test data directory contents (in shell or file
    browser).
 
-   a. *Expect:* File ``topics_save.fsg`` appears with current timestamp.
+   a. *Expect:* File ``TopicsSave.fsg`` appears with current timestamp.
    #. *Take note of file time and size.*
 
 #. **Step:** Click window **close icon** |window-close| (window title
    far right).
 
    a. *Expect:* Window disappears.
-   #. *Expect:* Application closes.
+   #. *Expect:* *Application* closes.
 
 #. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
 
 #. **Step:** Click Factsheet **Open button** (window title on far
    left).
@@ -67,7 +67,7 @@ Steps
 
    a. *Expect:* Open dialog shows directory contents.
 
-#. **Step:** Select ``topics_file.fsg`` and click **Open button**
+#. **Step:** Select ``TopicsSave.fsg`` and click **Open button**
    (dialog title on right)
 
    a. *Expect:* Open dialog disappears.
@@ -84,5 +84,5 @@ Teardown
 #. In each window, click window **close icon** |window-close|.
 
    a. *Expect:* Windows disappears.
-   #. *Expect:* Application closes with last window.
+   #. *Expect:* *Application* closes with last window.
 

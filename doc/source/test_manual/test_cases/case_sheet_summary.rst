@@ -4,6 +4,8 @@ Case Factsheet Summary
 **Purpose:** confirm Factsheet summary management is correct and
 consistent.
 
+.. include:: /icons/icons-include.txt
+
 Setup
 -----
 1. Create a test data directory (for example,
@@ -14,20 +16,21 @@ Steps -- Save and Load with Summary
 1. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
    #. *Expect:* *Factsheet Summary* pane is blank.
 
 #. **Step:** Type summary "This sample factsheet includes a summary."
 
    a. *Expect:* Text appears in summary pane as typed.
 
-#. **Step:** Select Factsheet **menu > Display ... > Summary**
-   (right of **Factsheet** field).
+#. **Step:** Select Factsheet **menu** |menu| item **Display ... >
+   Summary** (right of *Factsheet* field).
 
    a. *Expect:* The *Factsheet Summary* pane disappears.
    #. *Expect:* The *Factsheet Topics* pane expands to replace it.
    #. *Expect:* The popup menu remains visible.
-   #. *Expect:* The check box to the left of **Summary** menu item is cleared. 
+   #. *Expect:* The check box to the left of **Summary** menu item is
+      cleared. 
 
 #. **Step:** Select **Summary** menu item
 
@@ -41,9 +44,10 @@ Steps -- Save and Load with Summary
 
    a. *Expect:* The popum menu disappears.
 
-#. **Step:** Click window **close icon** (window title far right).
+#. **Step:** Click window **close icon** |window-close| (window title
+   far right).
 
-   a. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* *Data Loss Warning* dialog appears.
 
 #. **Step:** Click **Cancel button** (dialog title far left).
 
@@ -60,29 +64,29 @@ Steps -- Save and Load with Summary
 
    a. *Expect:* Save dialog shows directory contents.
 
-#. **Step:** Edit file Name field to "summary sample.fsg".
+#. **Step:** Edit file Name field to "SummaryTest.fsg".
 
    a. *Expect:* Field contains new file name.
 
 #. **Step:** Click **Save button** (dialog title on right).
 
    a. *Expect:* Dialog disappears.
-   #. *Expect:* Subtitle changes to "summary sample.fsg (TTT-UUU)",
+   #. *Expect:* Subtitle changes to "SummaryTest.fsg (TTT-UUU)",
       where TTT identifies the factsheet and UUU identifies the window.
 
       *Take note of TTT and UUU.*
 
-#. **Step:** Click window **close icon**.
+#. **Step:** Click window **close icon** |window-close|.
 
    a. *Expect:* Window disappears.
-   #. *Expect:* Application closes.
+   #. *Expect:* *Application* closes.
    #. *Expect:* There are no exceptions, GTK messages, or warning
       messages in the console.
 
 #. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
    #. *Expect:* *Factsheet Summary* pane is blank.
 
 #. **Step:** Click Factsheet **Open button** (window title on far
@@ -94,13 +98,13 @@ Steps -- Save and Load with Summary
 
    a. *Expect:* Open dialog shows directory contents.
 
-#. **Step:** Select ``summary sample.fsg`` and click **Open button**
+#. **Step:** Select ``SummaryTest.fsg`` and click **Open button**
    (dialog title on right)
 
    a. *Expect:* Open dialog disappears.
    #. *Expect:* Second window appears with "This sample factsheet
       includes a summary." in *Factsheet Summary* pane.
-   #. *Expect:* Window subtitle is "summary sample.fsg (VVV-WWW)".
+   #. *Expect:* Window subtitle is "SummaryTest.fsg (VVV-WWW)".
    #. *Expect:* Factsheet identifier (VVV) is distinct from that of the
       first window.
    #. *Expect:* Window identifier (WWW) is distinct from that of the
@@ -112,7 +116,7 @@ Steps -- Save and Load with Summary
 
 Steps -- Edit and View Summary
 ------------------------------
-1. **Step** Continue with **summary sample.fsg (VVV-WWW)** window.
+1. **Step** Continue with **SummaryTest.fsg (VVV-WWW)** window.
 
    a. *Expect:* Summary Sample window contains "This sample factsheet
       includes a summary." in *Factsheet Summary* pane.
@@ -165,15 +169,15 @@ Steps -- Edit and View Summary
 
    a. *Expect:* Save button shows press-release color changes.
 
-#. **Step:** Click Summary Sample window **close icon** (window title
-   far right).
+#. **Step:** Click Summary Sample window **close icon** |window-close|
+   (window title far right).
 
    a. *Expect:* Summary Sample window disappears.
 
-#. **Step:** Click initial window **close icon**.
+#. **Step:** Click initial window **close icon** |window-close|.
 
    a. *Expect:* Window disappears.
-   #. *Expect:* Application closes.
+   #. *Expect:* *Application* closes.
    #. *Expect:* There are no exceptions, GTK messages, or warning
       messages in the console.
 
@@ -182,7 +186,7 @@ Steps -- Multiple Windows and Sheets
 1. **Step** Start application with
    :doc:`../test_helpers/help_start_application`
 
-   a. *Expect:* Application displays default factsheet.
+   a. *Expect:* *Application* displays default factsheet.
    #. *Expect:* *Factsheet Summary* pane is blank.
 
 #. **Step:** Click Factsheet **Open button** (window title on far
@@ -194,14 +198,14 @@ Steps -- Multiple Windows and Sheets
 
    a. *Expect:* Open dialog shows directory contents.
 
-#. **Step:** Select ``summary sample.fsg`` and click **Open button**
+#. **Step:** Select ``SummaryTest.fsg`` and click **Open button**
    (dialog title on right)
 
    a. *Expect:* Open dialog disappears.
    #. *Expect:* Second window appears with "This sample factsheet
       includes a summary." along with added text in *Factsheet Summary*
       field.
-   #. *Expect:* Window subtitle is "summary sample.fsg (XXX-YYY)".
+   #. *Expect:* Window subtitle is "SummaryTest.fsg (XXX-YYY)".
    #. *Expect:* Factsheet identifier (XXX) is distinct from that of the
       first window.
    #. *Expect:* Window identifier (YYY) is distinct from that of the
@@ -211,8 +215,8 @@ Steps -- Multiple Windows and Sheets
 
       *An identifier may repeat in different Factsheet runs.*
 
-#. **Step:** Select Factsheet **menu > Display ... > Open window**
-   (right of **Factsheet** field).
+#. **Step:** Select *Factsheet* **menu** |menu| item **Display ... >
+   Open window** (right of *Factsheet* field).
 
    a. *Expect:* New window appears with window subtitle "Summary
       Sample.fsgt (XXX-ZZZ)".
@@ -238,7 +242,8 @@ Steps -- Multiple Windows and Sheets
    #. *Expect:* In the initial window, the summary pane remains blank.
 
 #. **Step:** In the first Summary Sample window, select Factsheet
-   **menu > Display ... > Summary** (right of **Factsheet** field).
+   **menu** |menu| item **Display ... > Summary** (right of *Factsheet*
+   field).
 
    a. *Expect:* In the first Summary Sample window, the *Factsheet
       Summary* pane disappears.
@@ -259,20 +264,20 @@ Steps -- Multiple Windows and Sheets
 
    a. *Expect:* The popum menu disappears.
 
-#. **Step:** In first Summary Sample window, select Factsheet **menu
-   > File ... > Close.**
+#. **Step:** In first Summary Sample window, select Factsheet **menu**
+   |menu| item **File ... > Close.**
 
-   a. *Expect:* Data Loss Warning dialog appears.
+   a. *Expect:* *Data Loss Warning* dialog appears.
 
 #. **Step:** Click **Discard button** (dialog title far right).
 
    a. *Expect:* Dialog and both Summary Sample windows disappear.
    #. *Expect:* The initial window remains.
 
-#. **Step:** Click initial window **close icon**.
+#. **Step:** Click initial window **close icon** |window-close|.
 
    a. *Expect:* Window disappears.
-   #. *Expect:* Application closes.
+   #. *Expect:* *Application* closes.
 
 Teardown
 --------

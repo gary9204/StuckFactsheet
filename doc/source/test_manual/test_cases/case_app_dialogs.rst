@@ -17,8 +17,8 @@ Steps -- About
 
    a. *Expect:* Application displays default factsheet.
 
-#. **Step:** Click Application menu |menu| item **About** (window title
-   on right).
+#. **Step:** Click *Application* **menu** |menu| item **About** (window
+   title on right).
 
    a. *Expect:* Application *About* dialog appears.
 
@@ -33,7 +33,7 @@ Steps -- About
 
 Steps -- Help
 -------------
-1. **Step:** Click Application menu |menu| item **Help**.
+1. **Step:** Click *Application* **menu** |menu| item **Help**.
 
    a. *Expect:* Application *Help* dialog appears.
 
@@ -48,7 +48,7 @@ Steps -- Help
 
 Steps -- Introduction
 ---------------------
-1. **Step:** Click Application menu |menu| item **Introduction**.
+1. **Step:** Click *Application* **menu** |menu| item **Introduction**.
 
    a. *Expect:* Application *Introduction* dialog appears.
 

@@ -91,11 +91,12 @@ Perform the test steps in :doc:`case_sheet_dialogs`. Specifically,
 
 Teardown
 --------
-1. Check console for exceptions, GTK errors, and warning messages. There
+1. In each window, click window **close icon** |window-close|.
+
+   | *Data Loss Warning* may appear for the last window of each
+      sheet. Click **Discard button**.
+   | Window disappears.
+   | Application closes when last window closes.
+
+#. Check console for exceptions, GTK errors, and warning messages. There
    should be none.
-
-#. **Step:** Click window **close icon** |window-close|.
-
-   a. *Expect:* Window disappears.
-   #. *Expect:* Application closes.
-

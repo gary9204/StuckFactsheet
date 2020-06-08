@@ -974,7 +974,7 @@ investigating algebraic structures.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Open a menu of file menu options such as Open, Save, and Close sheet.</property>
+                    <property name="label" translatable="yes">Open a menu of file menu options such as Open, Save, and Close factsheet.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>

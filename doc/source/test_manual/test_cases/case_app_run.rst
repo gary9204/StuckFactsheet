@@ -3,6 +3,8 @@ Case Application Run
 
 **Purpose:** demonstrate starting and stopping Factsheet.
 
+.. include:: /icons/icons-include.txt
+
 Setup
 -----
 In Factsheet project, change to directory ``src``.
@@ -13,7 +15,8 @@ Steps
 
    a. *Expect:* Desktop displays a Factsheet window.
 
-#. **Step:** Click window **close icon** (window title far right).
+#. **Step:** Click window **close icon** |window-close| (window title
+   far right).
 
    a. *Expect:* Factsheet window closes.
 
