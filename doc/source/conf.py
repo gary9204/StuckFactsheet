@@ -23,7 +23,7 @@ copyright = '2020, Gary Grainger'
 author = 'Gary Grainger'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.3.0'
 version = '0.2'
 
 

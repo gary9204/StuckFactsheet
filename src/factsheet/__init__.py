@@ -18,4 +18,4 @@ there is a corresponding unit test subpackage in the
    Factsheet application version.
 """
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
