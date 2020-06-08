@@ -1,7 +1,5 @@
 """
-Unit tests for topic-level model.
-
-See :mod:`~.section.section`.
+Unit tests for topic-level model. See :mod:`~.section.section_topic`.
 """
 import logging
 from pathlib import Path

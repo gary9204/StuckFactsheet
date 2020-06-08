@@ -617,6 +617,9 @@ class TestPageSheet:
 
     def test_on_delete_topic(
             self, monkeypatch, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm topic removal.
+        | Case: Topic selected.
+        """
         # Setup
         class PatchExtract:
             def __init__(self):
@@ -662,6 +665,9 @@ class TestPageSheet:
 
     def test_on_delete_topic_none(
             self, monkeypatch, patch_factsheet, capfd):
+        """| Confirm topic removal.
+        | Case: No topic selected.
+        """
         # Setup
         class PatchExtract:
             def __init__(self): self.called = False
