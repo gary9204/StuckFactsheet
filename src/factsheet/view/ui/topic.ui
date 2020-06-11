@@ -131,7 +131,7 @@
     <property name="icon_size">2</property>
   </object>
   <object class="GtkTextBuffer" id="stub_buffer_summary">
-    <property name="text" translatable="yes">Oops! Summary is missing!</property>
+    <property name="text" translatable="yes">Oops! Topic summary is missing!</property>
   </object>
   <object class="GtkListStore" id="stub_store_fact">
     <columns>
@@ -246,12 +246,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="display_show_name">
+          <object class="GtkCheckButton" id="ui_flip_name">
+            <property name="label" translatable="yes">Name</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">topic.popup-name</property>
-            <property name="text" translatable="yes">Show name</property>
+            <property name="receives_default">False</property>
+            <property name="draw_indicator">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -313,7 +313,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
-            <property name="action_name">topics.flip-related-topics</property>
+            <property name="action_name">topic.flip-related-topics</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
@@ -483,16 +483,38 @@
     <property name="width_request">500</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="margin_left">6</property>
-    <property name="margin_right">6</property>
-    <property name="margin_top">6</property>
-    <property name="margin_bottom">6</property>
+    <property name="border_width">6</property>
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">6</property>
+        <child>
+          <object class="GtkEntry" id="ui_title_infoid">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="placeholder_text" translatable="yes">Enter topic title here</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">&lt;b&gt;Topic: &lt;/b&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkMenuButton" id="button_show_name">
             <property name="visible">True</property>
@@ -516,36 +538,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">&lt;b&gt;Topic: &lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child type="center">
-          <object class="GtkEntry" id="ui_title_infoid">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="placeholder_text" translatable="yes">Enter topic title here</property>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkMenuButton" id="open_menu_topic">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="relief">none</property>
             <property name="direction">up</property>
             <property name="popover">context_menu_topic</property>
             <child>
@@ -561,7 +557,7 @@
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="pack_type">end</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -571,14 +567,13 @@
             <property name="receives_default">True</property>
             <property name="action_name">topic.show-help</property>
             <property name="image">image_topic_info</property>
-            <property name="relief">none</property>
             <property name="always_show_image">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="pack_type">end</property>
-            <property name="position">1</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
@@ -599,7 +594,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_top">3</property>
-            <property name="margin_bottom">3</property>
+            <property name="margin_bottom">6</property>
             <property name="label_xalign">0.10000000149011612</property>
             <property name="shadow_type">in</property>
             <child>
@@ -657,7 +652,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
-                    <property name="spacing">6</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
@@ -828,6 +822,7 @@
                       <object class="GtkScrolledWindow" id="ui_context_topics">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="border_width">3</property>
                         <property name="shadow_type">in</property>
                         <property name="min_content_height">60</property>
                         <child>
