@@ -35,7 +35,6 @@ class TestAbstractOutline:
         '__eq__',
         '__ne__',
         'attach_view',
-        'deepcopy_section_child',
         'detach_view',
         'extract_section',
         'find_next',
@@ -44,6 +43,7 @@ class TestAbstractOutline:
         'insert_after',
         'insert_before',
         'insert_child',
+        'insert_section',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -55,9 +55,6 @@ class TestAbstractOutline:
             def __ne__(self): return super().__ne__(0)  # type: ignore[misc]
 
             def attach_view(self): return super().attach_view(None)
-
-            def deepcopy_section_child(self):
-                super().deepcopy_section_child(None, 0, 0)
 
             def detach_view(self): return super().detach_view(None)
 
@@ -74,6 +71,9 @@ class TestAbstractOutline:
             def insert_before(self): return super().insert_before(0, 0)
 
             def insert_child(self): return super().insert_child(0, 0)
+
+            def insert_section(self):
+                super().insert_section(None, 0, 0)
 
         target = PatchAbstractOutline()
         # Test

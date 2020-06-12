@@ -1,9 +1,19 @@
 """
 Defines GTK-based classes that implement abstract factories in
 :mod:`.abc_factory`.
-"""
-import typing
 
+.. data:: IndexOutline
+
+    Type for index to item in an outline.
+
+.. data:: OutlineTemplates
+
+    Type for outline containing templates.
+
+.. data:: OutlineTopics
+
+    Type for outline containing topics.
+"""
 from factsheet.abc_types import abc_factory as ABC_FACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
@@ -43,21 +53,22 @@ class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
         return AINFOID.AdaptEntry()
 
 
+IndexOutline = AOUTLINE.AdaptIndex
+OutlineTemplates = ASHEET.AdaptTreeStoreTemplate
+OutlineTopics = ASHEET.AdaptTreeStoreTopic
+
+
 class FactorySheet(ABC_FACTORY.FactorySheet):
     """Implements GTK-based factory for abstract factory
     :class:`.abc_factory.FactorySheet`."""
 
-    def get_type_index(self) -> typing.Type[AOUTLINE.AdaptIndex]:
-        """Returns type for index of an item within an outline."""
-        return AOUTLINE.AdaptIndex
-
-    def new_model_outline_templates(self) -> ASHEET.AdaptTreeStoreTemplate:
+    def new_model_outline_templates(self) -> OutlineTemplates:
         """Return new instance of Gtk-based template outline"""
-        return ASHEET.AdaptTreeStoreTemplate()
+        return OutlineTemplates()
 
-    def new_model_outline_topics(self) -> ASHEET.AdaptTreeStoreTopic:
+    def new_model_outline_topics(self) -> OutlineTopics:
         """Return new instance of Gtk-based topic outline"""
-        return ASHEET.AdaptTreeStoreTopic()
+        return OutlineTopics()
 
     def new_view_outline_templates(self) -> ASHEET.AdaptTreeViewTemplate:
         """Return new instance of Gtk-based template view outline.

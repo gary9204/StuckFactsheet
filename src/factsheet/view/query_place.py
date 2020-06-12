@@ -149,10 +149,10 @@ class QueryPlace:
         _ = button_child.connect('toggled', self.on_toggle_order, Order.CHILD)
 
     def __call__(self) -> typing.Optional[Placement]:
-        """Presents Place New Topic dialog and returns placement user
+        """Presents Place New Topic dialog and return placement user
         selects or None.
 
-        Returns None when user cancels dialog.
+        Return None when user cancels dialog.
         """
         response = self._dialog.run()
         self._dialog.hide()

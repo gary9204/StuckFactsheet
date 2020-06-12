@@ -109,7 +109,7 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         self._model.extract_topic(px_i)
 
     def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> UI.IndexOutline:
+                           px_i: UI.IndexOutline) -> 'UI.IndexOutline':
         """Requests topics outline add topic after topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_after`.

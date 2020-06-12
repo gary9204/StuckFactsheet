@@ -10,20 +10,19 @@ from factsheet.content.sets import integer as XINTEGER
 class TestInteger:
     """Unit tests for content initialization."""
 
-    def test_builtin(self):
-        """Confirm content initialization."""
+    def test_new_templates(self):
+        """Confirm template outline initialization."""
         # Setup
         N_HEADINGS = 1
         NAME = '<i>Integer</i>'
-        PATH = '0'
         N_CHILDREN = 0
         # Test
-        assert isinstance(XINTEGER.BUILTIN, ASHEET.AdaptTreeStoreTemplate)
-        model = XINTEGER.BUILTIN._gtk_model
+        target = XINTEGER.new_templates()
+        assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
+        model = target._gtk_model
         assert N_HEADINGS == len(model)
         i_first = model.get_iter_first()
-        heading = XINTEGER.BUILTIN.get_item(i_first)
+        heading = target.get_item(i_first)
         assert isinstance(heading, XHEADING.Heading)
         assert NAME == heading.name
-        assert PATH == model.get_string_from_iter(XINTEGER.i_integer)
         assert N_CHILDREN == model.iter_n_children(i_first)

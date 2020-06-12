@@ -8,7 +8,7 @@ import typing
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # STUB imports - begin
-from factsheet.content import BUILTIN
+from factsheet import content as XCONTENT
 from factsheet.content.section import section_spec as XSPEC
 # from factsheet.content.section import section_topic as TOPIC
 # STUB imports - end
@@ -146,7 +146,8 @@ class QueryTemplate:
         self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
         # STUB test content - begin
-        BUILTIN.attach_view(self._outline)
+        templates = XCONTENT.new_templates()
+        templates.attach_view(self._outline)
 #         OUTLINE.attach_view(self._outline)
         # STUB test content - end
         view = self._outline.gtk_view
@@ -164,10 +165,10 @@ class QueryTemplate:
         self._summary_current.set_markup(self.NO_SUMMARY)
 
     def __call__(self) -> typing.Optional[Gtk.TreeIter]:
-        """Presents Select Template dialog and returns template user
+        """Presents Select Template dialog and return template user
         selects or None.
 
-        Returns none when user cancels dialog.
+        Return none when user cancels dialog.
         """
         response = self._dialog.run()
         self._dialog.hide()

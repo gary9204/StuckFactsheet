@@ -18,7 +18,6 @@ Other classes specialize :class:`.AdaptTreeStore` and
     Generic type for an item within an outline.
 """
 import collections as COL
-import copy
 import gi   # type: ignore[import]
 import itertools as IT
 import logging
@@ -163,38 +162,6 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """Remove all sections from outline."""
         self._gtk_model.clear()
 
-    def deepcopy_section_child(self,
-                               px_source: 'AdaptTreeStore',
-                               px_i_source: AdaptIndex = None,
-                               px_i_target: AdaptIndex = None) -> None:
-        """Deepcopy section of another outline under given item.
-
-        Method ``deepcopy_section_child`` copies the section after all
-        existing children.  If index is None, it copies section at end
-        of outline.  The method makes a deep copy of the section and
-        each of its descendants.
-
-        :param px_source: outline that contains section to copy.
-        :param px_i_source: index of item to copy along with all
-            descendents.  Default is to copy all items.
-        :param px_i_target: index to copy section under.  Default
-                is top level after existing top-level items.
-        """
-        if px_i_source is None:
-            i_to = px_i_target
-        else:
-            # ISSUE #108 begin - patch
-            row = [e for e in px_source._gtk_model[px_i_source]]
-            # row = [copy.deepcopy(e) for e in px_source._gtk_model[px_i_source]]
-            # ISSUE #108 end   - patch
-            i_to = self._gtk_model.append(px_i_target, row)
-
-        i_from = px_source._gtk_model.iter_children(px_i_source)
-        while i_from is not None:
-            self.deepcopy_section_child(
-                px_source=px_source, px_i_source=i_from, px_i_target=i_to)
-            i_from = px_source._gtk_model.iter_next(i_from)
-
     def detach_view(self, pm_view_outline: 'AdaptTreeView') -> None:
         """Remove view of changes to outline.
 
@@ -255,7 +222,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         return None
 
     def get_item(self, px_i: AdaptIndex) -> typing.Optional[GenericItem]:
-        """Returns item at given index or None when no item at index.
+        """Return item at given index or None when no item at index.
 
         Logs warning when no item at index.
 
@@ -321,12 +288,43 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """
         return self._gtk_model.append(px_i, [px_item])
 
+    def insert_section(self, px_source: 'AdaptTreeStore',
+                       px_i_source: AdaptIndex = None,
+                       px_i_target: AdaptIndex = None) -> None:
+        """Copy section of another outline under given item.
+
+        Method ``insert_section`` copies the section after all
+        existing children.  If index is None, it copies section at end
+        of outline.  The method makes a shallow copy of the section and
+        each of its descendants.
+
+        .. note:: This method makes a shallow copy.  The outlines share
+            the templates after the copy.
+
+        :param px_source: outline that contains section to copy.
+        :param px_i_source: index of item to copy along with all
+            descendents.  Default is to copy all items.
+        :param px_i_target: index to copy section under.  Default
+                is top level after existing top-level items.
+        """
+        if px_i_source is None:
+            i_to = px_i_target
+        else:
+            row = list(px_source._gtk_model[px_i_source])
+            i_to = self._gtk_model.append(px_i_target, row)
+
+        i_from = px_source._gtk_model.iter_children(px_i_source)
+        while i_from is not None:
+            self.insert_section(
+                px_source=px_source, px_i_source=i_from, px_i_target=i_to)
+            i_from = px_source._gtk_model.iter_next(i_from)
+
 
 def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
                  ) -> typing.Optional[GenericItem]:
-    """Returns item at given index in GTK-model of outline model or None.
+    """Return item at given index in GTK-model of outline model or None.
 
-    Returns None when no item at index and logs warning.
+    Return None when no item at index and logs warning.
 
     .. warning:: Expects GTK model to have structure defined in
         :class:`.AdaptTreeStore`.
@@ -364,7 +362,7 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
     def get_selected(self) -> typing.Optional[AdaptIndex]:
-        """Returns the index of the selected item or None when no item
+        """Return the index of the selected item or None when no item
         selected.
         """
         _model, index = self._selection.get_selected()
@@ -372,7 +370,7 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
 
     @property
     def gtk_view(self) -> Gtk.TreeView:
-        """Returns underlying presentation element."""
+        """Return underlying presentation element."""
         return self._gtk_view
 
     def select(self, px_i: AdaptIndex = None) -> None:

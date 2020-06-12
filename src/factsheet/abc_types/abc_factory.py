@@ -64,11 +64,6 @@ class FactorySheet(abc.ABC):
     """
 
     @abc.abstractmethod
-    def get_type_index(self) -> typing.Type[typing.Any]:
-        """Returns type for index of an item within an outline."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def new_model_outline_templates(self) -> ABC_OUTLINE.AbstractOutline:
         """Return new instance of template outline class for
         :class:`~.model.sheet.Sheet`.

@@ -7,7 +7,7 @@ from factsheet.abc_types import abc_sheet as ABC_SHEET
 class Heading(ABC_SHEET.AbstractTemplate):
     """Heading in Factsheet Template outline.
 
-    The class call interface always returns None, since a heading does
+    The class call interface always return None, since a heading does
     not define a topic.
     """
 
@@ -19,7 +19,7 @@ class Heading(ABC_SHEET.AbstractTemplate):
         return
 
     def __call__(self) -> None:
-        """Returns None, since heading does not define a topic."""
+        """Return None, since heading does not define a topic."""
         pass
 
     @property

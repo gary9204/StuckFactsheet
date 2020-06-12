@@ -52,14 +52,6 @@ class TestFactoryInfoId:
 class TestFactorySheet:
     """Unit tests for :class:`~.adapt_factory.FactorySheet`."""
 
-    def test_get_type_index(self):
-        """Confirm factory produces outline index type."""
-        # Setup
-        # Test
-        target = AFACTORY.FactorySheet()
-        assert getattr(target, 'get_type_index')
-        assert target.get_type_index() is AOUTLINE.AdaptIndex
-
     @pytest.mark.parametrize('name_method, class_attr', [
         ('new_model_outline_templates', ASHEET.AdaptTreeStoreTemplate),
         ('new_view_outline_templates', ASHEET.AdaptTreeViewTemplate),
@@ -77,3 +69,11 @@ class TestFactorySheet:
         # Test
         attr_model = target()
         assert isinstance(attr_model, class_attr)
+
+    def test_types(self):
+        """Confirm alias definitions for type hints."""
+        # Setup
+        # Test
+        assert AFACTORY.IndexOutline is AOUTLINE.AdaptIndex
+        assert AFACTORY.OutlineTemplates is ASHEET.AdaptTreeStoreTemplate
+        assert AFACTORY.OutlineTopics is ASHEET.AdaptTreeStoreTopic

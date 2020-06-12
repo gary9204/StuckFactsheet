@@ -80,20 +80,6 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def deepcopy_section_child(self, pm_source: GenericOutline,
-                               px_i_source: GenericIndex = None,
-                               px_i_target: GenericIndex = None) -> None:
-        """Deepcopy section of another outline under given item.
-
-        :param pm_source: outline that contains section to copy.
-        :param px_i_source: index of item to copy along with all
-            descendents.  Default is to copy all items.
-        :param px_i_target: index to copy section under.  Default
-                is top level after existing top-level items.
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def detach_view(self, pm_view_outline: GenericViewOutline):
         """Remove view of changes to outline.
 
@@ -131,7 +117,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
 
     @abc.abstractmethod
     def get_item(self, px_i: GenericIndex) -> typing.Optional[GenericItem]:
-        """Returns item at given index or None when no item at index.
+        """Return item at given index or None when no item at index.
 
         :param px_i: index of desired item.
         """
@@ -184,6 +170,20 @@ class AbstractOutline(abc.ABC, typing.Generic[
 
         :param px_item: new item to add.
         :param px_i: index of parent item for new item.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def insert_section(self, pm_source: GenericOutline,
+                       px_i_source: GenericIndex = None,
+                       px_i_target: GenericIndex = None) -> None:
+        """Copy section of another outline under given item.
+
+        :param pm_source: outline that contains section to copy.
+        :param px_i_source: index of item to copy along with all
+            descendents.  Default is to copy all items.
+        :param px_i_target: index to copy section under.  Default
+                is top level after existing top-level items.
         """
         raise NotImplementedError
 

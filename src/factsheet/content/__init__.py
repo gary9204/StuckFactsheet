@@ -9,6 +9,12 @@ from factsheet.view import ui as UI
 from . import section as XSECTION
 from . import sets as XSETS
 
-BUILTIN = UI.FACTORY_SHEET.new_model_outline_templates()
-BUILTIN.deepcopy_section_child(XSECTION.BUILTIN)
-BUILTIN.deepcopy_section_child(XSETS.BUILTIN)
+
+def new_templates() -> UI.OutlineTemplates:
+    """Return outline of all templates."""
+    templates = UI.FACTORY_SHEET.new_model_outline_templates()
+
+    # UNRESOLVED: Issue #108
+    templates.insert_section(XSECTION.new_templates())
+    templates.insert_section(XSETS.new_templates())
+    return templates

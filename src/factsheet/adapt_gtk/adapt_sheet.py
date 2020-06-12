@@ -323,7 +323,7 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
         pm_renderer.set_property('markup', topic.title)
 
     def clone(self) -> 'AdaptTreeViewTopic':
-        """Returns new outline view with same model self."""
+        """Return new outline view with same model self."""
         view_new = AdaptTreeViewTopic()
         model = self.gtk_view.get_model()
         view_new.gtk_view.set_model(model)

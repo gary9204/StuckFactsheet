@@ -348,7 +348,7 @@ class TestAdaptTreeStore:
         ('1:1', '1:1:1', 9),
         ('0:0:0', '1:1:1', 9),
         ])
-    def test_deecopy_section_child(
+    def test_insert_section(
             self, PATH_SOURCE, PATH_TARGET, N_INSERT, new_outline_model):
         """Confirm topic inserted at correct index for all levels."""
         # Setup
@@ -373,7 +373,7 @@ class TestAdaptTreeStore:
         items_after = (
             items_before[:N_INSERT] + items_section + items_before[N_INSERT:])
         # Test
-        i_target = target.deepcopy_section_child(source, i_source, i_target)
+        i_target = target.insert_section(source, i_source, i_target)
         items_target = [target.get_item(i) for i in target.indices()]
         assert items_after == items_target
 

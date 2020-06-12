@@ -9,11 +9,12 @@ from factsheet.adapt_gtk import adapt_sheet as ASHEET
 class TestContent:
     """Unit tests for content initialization."""
 
-    def test_builtin(self):
-        """Confirm content initialization."""
+    def test_new_templates(self):
+        """Confirm templates outline initialization."""
         # Setup
-        N_ITEMS = 2
+        N_HEADINGS = 2
         # Test
-        assert isinstance(XCONTENT.BUILTIN, ASHEET.AdaptTreeStoreTemplate)
-        model = XCONTENT.BUILTIN._gtk_model
-        assert N_ITEMS == len(model)
+        target = XCONTENT.new_templates()
+        assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
+        model = target._gtk_model
+        assert N_HEADINGS == len(model)

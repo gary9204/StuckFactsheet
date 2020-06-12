@@ -29,10 +29,21 @@ Defines constants, functions, and objects for user interface elements.
 
    Factsheet Help dialog.
 
+.. data:: IndexOutline
+
+    Type hint for index to item in an outline.
+
 .. data:: INTRO_APP
 
    Factsheet Introduction dialog.
 
+.. data:: OutlineTemplates
+
+    Type hint for outline containing templates.
+
+.. data:: OutlineTopics
+
+    Type hint for outline containing topics.
 """
 import typing
 
@@ -54,7 +65,9 @@ DIR_UI = Path(__file__).parent / 'ui'
 
 FACTORY_INFOID = AFACTORY.FactoryInfoId()
 FACTORY_SHEET = AFACTORY.FactorySheet()
-IndexOutline = FACTORY_SHEET.get_type_index()
+
+IndexOutline = AFACTORY.IndexOutline
+OutlineTemplates = AFACTORY.OutlineTemplates
 
 
 # Application/Sheet-level guidance dialogs

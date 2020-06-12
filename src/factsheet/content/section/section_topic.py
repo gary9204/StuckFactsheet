@@ -163,7 +163,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     @property
     def name(self) -> str:
-        """Returns topic name."""
+        """Return topic name."""
         return self._infoid.name
 
     def set_fresh(self) -> None:
@@ -177,5 +177,5 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     @property
     def title(self) -> str:
-        """Returns topic title."""
+        """Return topic title."""
         return self._infoid.title

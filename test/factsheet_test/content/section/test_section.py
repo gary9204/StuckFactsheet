@@ -4,26 +4,24 @@ Unit tests for section template of Factsheet content.  See
 """
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import section as XSECTION
-from factsheet.content.section import section_spec as XSPEC
 
 
 class TestSection:
     """Unit tests for content initialization."""
 
-    def test_builtin(self):
-        """Confirm content initialization."""
+    def test_new_templates(self):
+        """Confirm template outline initialization."""
         # Setup
-        N_ITEMS = 1
+        N_HEADINGS = 1
         NAME = 'Section'
-        PATH = '0'
         N_CHILDREN = 0
         # Test
-        assert isinstance(XSECTION.BUILTIN, ASHEET.AdaptTreeStoreTemplate)
-        model = XSECTION.BUILTIN._gtk_model
-        assert N_ITEMS == len(model)
+        target = XSECTION.new_templates()
+        assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
+        model = target._gtk_model
+        assert N_HEADINGS == len(model)
         i_first = model.get_iter_first()
-        item = XSECTION.BUILTIN.get_item(i_first)
-        assert isinstance(item, XSPEC.Section)
-        assert NAME == item.name
-        assert PATH == model.get_string_from_iter(XSECTION.i_sets)
+        heading = target.get_item(i_first)
+        assert isinstance(heading, XSECTION.section_spec.Section)
+        assert NAME == heading.name
         assert N_CHILDREN == model.iter_n_children(i_first)
