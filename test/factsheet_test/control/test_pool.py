@@ -1,8 +1,6 @@
 """
 Unit tests for class that tracks and maintains pool of active
-factsheets.
-
-See :mod:`.pool`.
+factsheets.  See :mod:`.pool`.
 """
 import logging
 from pathlib import Path
@@ -13,10 +11,10 @@ from factsheet.control import pool as CPOOL
 
 @pytest.fixture
 def patch_sheet():
-    class Sheet:
+    class ControlSheet:
         def __init__(self): pass
 
-    return Sheet
+    return ControlSheet
 
 
 class TestPoolSheets:

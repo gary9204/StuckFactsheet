@@ -1,7 +1,6 @@
 """
-Unit tests for class to display Factsheet document.
-
-See :mod:`.page_sheet`.
+Unit tests for class to display Factsheet document.See
+:mod:`.page_sheet`.
 """
 from pathlib import Path
 import pytest   # type: ignore[import]
@@ -13,7 +12,7 @@ from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.section import section_spec as XSPEC
 from factsheet.content.section import section_topic as XSECTION
 from factsheet.control import pool as CPOOL
-from factsheet.control import sheet as CSHEET
+from factsheet.control import control_sheet as CSHEET
 from factsheet.model import sheet as MSHEET
 from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
@@ -38,7 +37,7 @@ class PatchCall:
         return self.response
 
 
-class PatchSafe(CSHEET.Sheet):
+class PatchSafe(CSHEET.ControlSheet):
     def __init__(self, p_effect, pm_sheets_active):
         super().__init__(pm_sheets_active)
         self.n_delete_force = 0
@@ -313,7 +312,7 @@ class TestPageSheet:
         # Setup
         factsheet = patch_factsheet()
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         page = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
@@ -384,7 +383,7 @@ class TestPageSheet:
         assert isinstance(target, VSHEET.PageSheet)
         assert target._window.get_application() is factsheet
         control = target._control
-        assert isinstance(control, CSHEET.Sheet)
+        assert isinstance(control, CSHEET.ControlSheet)
         # Teardown
         target._window.destroy()
         del target._window
@@ -632,7 +631,7 @@ class TestPageSheet:
 
         patch_extract = PatchExtract()
         monkeypatch.setattr(
-            CSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
+            CSHEET.ControlSheet, 'extract_topic', patch_extract.extract_topic)
 
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -642,7 +641,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
         topics = new_outline_topics()
@@ -676,7 +675,7 @@ class TestPageSheet:
 
         patch_extract = PatchExtract()
         monkeypatch.setattr(
-            CSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
+            CSHEET.ControlSheet, 'extract_topic', patch_extract.extract_topic)
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
@@ -685,7 +684,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_delete_topic(None, None)
@@ -705,7 +704,7 @@ class TestPageSheet:
 
         patch_clear = PatchClear()
         monkeypatch.setattr(
-            CSHEET.Sheet, 'clear', patch_clear.clear)
+            CSHEET.ControlSheet, 'clear', patch_clear.clear)
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
         snapshot = capfd.readouterr()   # Resets the internal buffer
@@ -714,7 +713,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_clear_topics(None, None)
@@ -766,7 +765,7 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
         topics = new_outline_topics()
@@ -814,7 +813,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_go_first_topic(None, None)
@@ -838,7 +837,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
         topics = new_outline_topics()
@@ -886,7 +885,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_go_last_topic(None, None)
@@ -910,7 +909,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
         topics = new_outline_topics()
@@ -962,7 +961,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_new_sheet(None, None)
@@ -986,7 +985,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         gtk_model = target._view_topics.gtk_view.get_model()
         _index = gtk_model.append(None)
@@ -1019,7 +1018,7 @@ class TestPageSheet:
             def insert_topic_child(self, _t, _a): self.called = True
 
         patch_insert = PatchInsert()
-        monkeypatch.setattr(CSHEET.Sheet, 'insert_topic_child',
+        monkeypatch.setattr(CSHEET.ControlSheet, 'insert_topic_child',
                             patch_insert.insert_topic_child)
         # Test
         target.on_new_topic(None, None)
@@ -1042,7 +1041,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         gtk_model = target._view_topics.gtk_view.get_model()
         _index = gtk_model.append(None)
@@ -1061,7 +1060,7 @@ class TestPageSheet:
             def insert_topic_child(self, _t, _a): self.called = True
 
         patch_insert = PatchInsert()
-        monkeypatch.setattr(CSHEET.Sheet, 'insert_topic_child',
+        monkeypatch.setattr(CSHEET.ControlSheet, 'insert_topic_child',
                             patch_insert.insert_topic_child)
         # Test
         target.on_new_topic(None, None)
@@ -1081,7 +1080,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
         patch_query_template = PatchCall(None)
@@ -1105,7 +1104,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
         query_template = target._query_template
@@ -1128,7 +1127,7 @@ class TestPageSheet:
             def insert_topic_child(self, _t, _a): self.called = True
 
         patch_insert = PatchInsert()
-        monkeypatch.setattr(CSHEET.Sheet, 'insert_topic_child',
+        monkeypatch.setattr(CSHEET.ControlSheet, 'insert_topic_child',
                             patch_insert.insert_topic_child)
         # Test
         target.on_new_topic(None, None)
@@ -1145,7 +1144,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target._control = control
         # Test
         target.on_open_page(None, None)
@@ -1185,7 +1184,7 @@ class TestPageSheet:
                 self.called = True
                 self.app = p_app
                 self.path = p_path
-                return CSHEET.Sheet(p_pool)
+                return CSHEET.ControlSheet(p_pool)
 
         patch_page = PatchPageSheet()
         monkeypatch.setattr(
@@ -1199,7 +1198,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         # Test
         target.on_open_sheet(None, None)
@@ -1237,7 +1236,7 @@ class TestPageSheet:
                 self.called = True
                 self.app = p_app
                 self.path = p_path
-                return CSHEET.Sheet()
+                return CSHEET.ControlSheet()
 
         patch_page = PatchPageSheet()
         monkeypatch.setattr(
@@ -1271,7 +1270,7 @@ class TestPageSheet:
 
         patch_new_name = PatchNewName()
         monkeypatch.setattr(
-            CSHEET.Sheet, 'new_name', patch_new_name.new_name)
+            CSHEET.ControlSheet, 'new_name', patch_new_name.new_name)
 
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -1281,7 +1280,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         target._infoid.get_view_name().set_text('The Confy Chair!')
         target._name_former = target._infoid.name + ' Oh no!'
@@ -1307,7 +1306,7 @@ class TestPageSheet:
 
         patch_new_name = PatchNewName()
         monkeypatch.setattr(
-            CSHEET.Sheet, 'new_name', patch_new_name.new_name)
+            CSHEET.ControlSheet, 'new_name', patch_new_name.new_name)
 
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -1317,7 +1316,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target._control = control
         target._infoid.get_view_name().set_text('The Confy Chair!')
         target._name_former = target._infoid.name
@@ -1385,7 +1384,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
         control._path = PATH
@@ -1420,7 +1419,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         control._path = None
         # Test
@@ -1460,7 +1459,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         PATH_OLD = Path(tmp_path / 'old_factsheet.fsg')
         control._path = PATH_OLD
@@ -1508,7 +1507,7 @@ class TestPageSheet:
         target._window.hide()
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         control._path = None
         # Test
@@ -1617,13 +1616,13 @@ class TestPageSheet:
         # Setup
         def patch_open(p_pool, p_path):
             sheets_active = CPOOL.PoolSheets()
-            control = CSHEET.Sheet(sheets_active)
+            control = CSHEET.ControlSheet(sheets_active)
             control._model = MSHEET.Sheet()
             control._path = p_path
             control._sheets_active = p_pool
             return control
 
-        monkeypatch.setattr(CSHEET.Sheet, 'open', patch_open)
+        monkeypatch.setattr(CSHEET.ControlSheet, 'open', patch_open)
         factsheet = patch_factsheet()
 
         PATH = Path(tmp_path / 'factsheet.fsg')
@@ -1639,7 +1638,7 @@ class TestPageSheet:
         assert isinstance(target, VSHEET.PageSheet)
         assert target._window.get_application() is factsheet
         control = target._control
-        assert isinstance(control, CSHEET.Sheet)
+        assert isinstance(control, CSHEET.ControlSheet)
         # Teardown
         target._window.destroy()
         del target._window
@@ -1657,7 +1656,7 @@ class TestPageSheet:
             def present_factsheet(self, _time): self.called = True
 
         patch_present = PatchPresentFactsheet()
-        monkeypatch.setattr(CSHEET.Sheet, 'present_factsheet',
+        monkeypatch.setattr(CSHEET.ControlSheet, 'present_factsheet',
                             patch_present.present_factsheet)
 
         PATH_MISS = Path(tmp_path / 'miss.fsg')
@@ -1667,7 +1666,7 @@ class TestPageSheet:
 
         sheets_active = CPOOL.PoolSheets()
         for path in paths:
-            control = CSHEET.Sheet.new(sheets_active)
+            control = CSHEET.ControlSheet.new(sheets_active)
             control._path = path
 
         factsheet = patch_factsheet()
@@ -1691,7 +1690,7 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
 
         sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.Sheet.new(sheets_active)
+        control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         target._window.hide()
         # Test

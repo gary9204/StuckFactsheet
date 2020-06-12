@@ -12,7 +12,7 @@ logger = logging.getLogger('Main.CPOOL')
 
 class PoolSheets:
     """Represents collection of active factsheets identified by
-    control :class:`~.control.sheet.Sheet`.
+    control :class:`~.ControlSheet`.
     """
     def __init__(self) -> None:
         self._controls: typing.Dict[int, ABC_SHEET.InterfaceControlSheet] = (

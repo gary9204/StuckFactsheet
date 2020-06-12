@@ -7,7 +7,7 @@ import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.control import sheet as CSHEET
+from factsheet.control import control_sheet as CSHEET
 from factsheet.control import pool as CPOOL
 from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
@@ -46,7 +46,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
     def __init__(self, *, px_app: Gtk.Application) -> None:
-        self._control: typing.Optional[CSHEET.Sheet] = None
+        self._control: typing.Optional[CSHEET.ControlSheet] = None
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
@@ -214,7 +214,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     @classmethod
     def link_factsheet(cls, pm_page: 'PageSheet',
-                       pm_control: CSHEET.Sheet) -> None:
+                       pm_control: CSHEET.ControlSheet) -> None:
         """Initialize links between new page and new control for a
         factsheet.
 
@@ -272,7 +272,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :returns: Window for new factsheet.
         """
         page = PageSheet(px_app=px_app)
-        control = CSHEET.Sheet.new(pm_sheets_active)
+        control = CSHEET.ControlSheet.new(pm_sheets_active)
         PageSheet.link_factsheet(page, control)
         return page
 
@@ -449,7 +449,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
     def on_popdown_name(self, _popover: Gtk.Popover) -> None:
         """Hide factsheet name popover and notify control
-        :class:`~.control.sheet.Sheet` when name changes."""
+        :class:`~.ControlSheet` when name changes."""
         assert self._control is not None
         if self._name_former != self._infoid.name:
             self._control.new_name()
@@ -539,7 +539,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             return None
 
         page = PageSheet(px_app=px_app)
-        control = CSHEET.Sheet.open(pm_sheets_active, p_path)
+        control = CSHEET.ControlSheet.open(pm_sheets_active, p_path)
         PageSheet.link_factsheet(page, control)
         return page
 

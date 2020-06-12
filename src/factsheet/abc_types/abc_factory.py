@@ -7,7 +7,6 @@ widget toolkit.  Module ``abc_factory`` defines abstract factories for
 component classes of :class:`.InfoId`.
 """
 import abc
-import typing
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_outline as ABC_OUTLINE

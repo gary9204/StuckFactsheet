@@ -12,5 +12,5 @@ Submodules
 .. toctree::
 
    factsheet.control.pool
-   factsheet.control.sheet
+   factsheet.control.control_sheet
    factsheet.control.topic

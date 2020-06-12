@@ -5,7 +5,7 @@ Defines abstract interfaces for factsheet documents.
 ``import`` cycles and to encapsulate dependencies of
 :mod:`~factsheet.model` on a user interface widget toolkit.  Module
 ``abc_sheet`` defines an abstract interface for factsheet control
-(:class:`~.control.sheet.Sheet`) to break an ``import`` cycle. It
+(:class:`~.ControlSheet`) to break an ``import`` cycle. It
 defines an interface for factsheet view (:class:`.PageSheet`) for
 encapsulation. In addition, the module defines an enumeration for
 factsheet control method results.
@@ -63,7 +63,7 @@ class EffectSafe(enum.Enum):
 
 class InterfaceControlSheet(abc.ABC):
     """Defines interface class to break import cycle between control
-    :class:`~.control.sheet.Sheet` and view :class:`.PoolSheets`.
+    :class:`~.ControlSheet` and view :class:`.PoolSheets`.
     """
 
     @property

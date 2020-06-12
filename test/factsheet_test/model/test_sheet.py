@@ -1,7 +1,5 @@
 """
-Unit tests for factsheet-level model.
-
-See :mod:`~factsheet.model`.
+Unit tests for factsheet-level model.  See :mod:`~factsheet.model`.
 """
 import re
 import logging

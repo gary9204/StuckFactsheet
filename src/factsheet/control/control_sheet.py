@@ -3,8 +3,9 @@ Defines class that mediates factsheet-level interaction from
 :mod:`~factsheet.view` to :mod:`~factsheet.model`.
 
 :doc:`../guide/devel_notes` explains how application Factsheet is based
-on a Model-View-Controller (MVC) design.  Module ``sheet`` defines
-classes representing control components for a factsheet as a whole.
+on a Model-View-Controller (MVC) design.  Module ``control_sheet``
+defines classes representing control components for a factsheet as a
+whole.
 """
 import errno
 import logging
@@ -22,10 +23,10 @@ from factsheet.view import ui as UI
 logger = logging.getLogger('Main.CSHEET')
 
 
-class Sheet(ABC_SHEET.InterfaceControlSheet):
+class ControlSheet(ABC_SHEET.InterfaceControlSheet):
     """Mediates user actions at view to model updates for a factsheet.
 
-    Class ``Sheet`` translates user requests in a factsheet page
+    Class ``ControlSheet`` translates user requests in a factsheet page
     into changes in the factsheet model (such as save or delete) or in
     the collection of factsheet views (such as add or close a view).
 
@@ -149,13 +150,13 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
         return self._model.insert_topic_child(px_topic, px_i)
 
     @classmethod
-    def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'Sheet':
+    def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
         """Create and return control with default model.
 
         :param pm_sheets_active: collection of open factsheet documents.
         :returns: Newly created control.
         """
-        control = Sheet(pm_sheets_active)
+        control = ControlSheet(pm_sheets_active)
         control._model = MSHEET.Sheet()
         return control
 
@@ -170,14 +171,14 @@ class Sheet(ABC_SHEET.InterfaceControlSheet):
 
     @classmethod
     def open(cls, pm_sheets_active: CPOOL.PoolSheets, p_path: Path
-             ) -> 'Sheet':
+             ) -> 'ControlSheet':
         """Create and return control with model from file.
 
         :param pm_sheets_active: collection of open factsheet documents.
         :param p_path: location of file containing factsheet model.
         :returns: Newly created control.
         """
-        control = Sheet(pm_sheets_active)
+        control = ControlSheet(pm_sheets_active)
         try:
             with p_path.open(mode='rb') as io_in:
                 model = pickle.load(io_in)
