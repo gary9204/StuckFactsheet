@@ -19,58 +19,6 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-# # STUB content - begin
-# PATH_ASSIST = str(Path(TEMPLATE.__file__).parent / 'section_spec.ui')
-# MODEL_TOPIC = TOPIC.Topic
-# BUILTIN = Gtk.TreeStore(GO.TYPE_PYOBJECT)
-# item = TEMPLATE.Section(
-#     p_name='name_0xx', p_title='title_0xx', p_summary='Stub summary_0xx',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# i_0xx = BUILTIN.append(None, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_00x', p_title='title_00x', p_summary='Stub summary_00x',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# i_00x = BUILTIN.append(
-#     i_0xx, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_000', p_title='title_000', p_summary='Stub summary_000',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# _i_000 = BUILTIN.append(i_00x, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_01x', p_title='title_01x', p_summary='Stub summary_01x',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# i_0xx = BUILTIN.append(i_0xx, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_1xx', p_title='title_1xx', p_summary='Stub summary_1xx',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# i_1xx = BUILTIN.append(None, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_10x', p_title='title_10x', p_summary='Stub summary_10x',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# _i_10x = BUILTIN.append(i_1xx, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_11x', p_title='title_11x', p_summary='Stub summary_11x',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# i_11x = BUILTIN.append(i_1xx, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_110', p_title='title_110', p_summary='Stub summary_110',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# _i_110 = BUILTIN.append(i_11x, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_111', p_title='title_111', p_summary='Stub summary_111',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# _i_111 = BUILTIN.append(i_11x, [item])
-# item = TEMPLATE.Section(
-#     p_name='name_112', p_title='title_112', p_summary='Stub summary_112',
-#     p_path_assist=PATH_ASSIST, p_model=MODEL_TOPIC)
-# _i_112 = BUILTIN.append(i_11x, [item])
-#
-#
-# OUTLINE = UI.FACTORY_SHEET.new_model_outline_templates()
-# OUTLINE._gtk_model = BUILTIN
-# # STUB content - end
-
-
 class QueryTemplate:
     """Provides mechanism for user to select from available templates.
 
@@ -148,7 +96,6 @@ class QueryTemplate:
         # STUB test content - begin
         templates = XCONTENT.new_templates()
         templates.attach_view(self._outline)
-#         OUTLINE.attach_view(self._outline)
         # STUB test content - end
         view = self._outline.gtk_view
         view.show_all()
