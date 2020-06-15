@@ -1,5 +1,5 @@
 """
-Unit tests for class to display Factsheet document.See
+Unit tests for class to display Factsheet document.  See
 :mod:`.page_sheet`.
 """
 from pathlib import Path
@@ -17,6 +17,7 @@ from factsheet.model import sheet as MSHEET
 from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import page_sheet as VSHEET
+from factsheet.view import scenes as VSCENES
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
 
@@ -128,8 +129,10 @@ class TestPageSheet:
         assert isinstance(
             target._view_topics, ABC_OUTLINE.AbstractViewOutline)
         assert target._view_topics.scope_search is ~ASHEET.FieldsTopic.VOID
-        assert isinstance(target._cursor_topics, Gtk.TreeSelection)
+        assert target._view_topics.gtk_view.get_reorderable()
         assert target._view_topics.gtk_view.get_parent() is not None
+        assert isinstance(target._cursor_topics, Gtk.TreeSelection)
+        assert isinstance(target._scenes_topic, VSCENES.Scenes)
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
         assert target._query_place is None
         assert isinstance(target._query_template, QTEMPLATE.QueryTemplate)

@@ -1212,14 +1212,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkStack" id="ui_scene_topics">
+                  <object class="GtkStack" id="ui_scenes_topic">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - blank page</property>
+                        <property name="label" translatable="yes">Placeholder - Topic 1</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
@@ -1232,13 +1232,55 @@
                         <property name="width_request">240</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Topic View</property>
+                        <property name="label" translatable="yes">Placeholder - Topic 2</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
                         <property name="name">page1</property>
                         <property name="title" translatable="yes">page1</property>
                         <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="width_request">240</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Placeholder - Topic 3</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="name">page2</property>
+                        <property name="title" translatable="yes">page2</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="width_request">240</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Placeholder - Topic 4</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="name">page3</property>
+                        <property name="title" translatable="yes">page3</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="width_request">240</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Placeholder - Topic 5</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="name">page4</property>
+                        <property name="title" translatable="yes">page4</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                   </object>

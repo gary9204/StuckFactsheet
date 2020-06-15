@@ -11,6 +11,7 @@ from factsheet.control import control_sheet as CSHEET
 from factsheet.control import pool as CPOOL
 from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
+from factsheet.view import scenes as VSCENES
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
 
@@ -56,14 +57,17 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._context_name = get_object('ui_context_name')
         self._context_summary = get_object('ui_context_summary')
         self._flip_summary = get_object('ui_flip_summary')
+
         self._view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
         self._view_topics.scope_search = ~ASHEET.FieldsTopic.VOID
-        # STUB begin
         self._view_topics.gtk_view.set_reorderable(True)
-        # STUB end
-        self._cursor_topics = self._view_topics.gtk_view.get_selection()
         context_view_topics = get_object('ui_context_topics')
         context_view_topics.add(self._view_topics.gtk_view)
+        self._cursor_topics = self._view_topics.gtk_view.get_selection()
+
+        stack_topics = get_object('ui_scenes_topic')
+        self._scenes_topic = VSCENES.Scenes(stack_topics)
+
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
         self._query_place: typing.Optional[QPLACE.QueryPlace] = None
