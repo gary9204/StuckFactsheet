@@ -1,8 +1,6 @@
 """
 Unit tests for Factsheet :mod:`~factsheet.model` component
-identification information.
-
-See :mod:`.infoid`.
+identification information.  See :mod:`.infoid`.
 """
 import copy
 import pytest   # type: ignore[import]
@@ -12,40 +10,22 @@ from factsheet.model import infoid as MINFOID
 from factsheet.view import ui as UI
 
 
-@pytest.fixture
-def args_infoid_target():
-    """Pytest fixture returns set of argument values to construct InfoId
-    object as test target.
-    """
-    return dict(
-        p_aspect='section',
-        p_name='Target InfoId Name',
-        p_title='Target InfoId Title',
-        p_summary='This summarizes target identification.',
-        )
-
-
 class TestInfoId:
     """Unit tests for :class:`.InfoId`."""
 
-    def test_eq(self, args_infoid_target):
+    def test_eq(self, args_infoid_stock):
         """Confirm equivalence operator.
 
         #. Case: type difference.
-        #. Case: aspect difference.
         #. Case: name difference.
         #. Case: summary difference.
         #. Case: title difference.
         #. Case: equivalent
         """
         # Setup
-        source = MINFOID.InfoId(**args_infoid_target)
+        source = MINFOID.InfoId(**args_infoid_stock)
         # Test: type difference.
         assert not source.__eq__('Something completely different')
-        # Test: aspect difference.
-        target = copy.deepcopy(source)
-        target._aspect = 'Something completely different'
-        assert not source.__eq__(target)
         # Test: name difference.
         target = copy.deepcopy(source)
         target._name._buffer.set_text('Something completely different', -1)
@@ -73,7 +53,6 @@ class TestInfoId:
         # Test
         target = MINFOID.InfoId(**args_infoid_stock)
 
-        assert args_infoid_stock['p_aspect'] == target._aspect
         assert id(target) == target._id_model
         assert not target._stale
 
@@ -86,33 +65,33 @@ class TestInfoId:
         assert isinstance(target._title, ABC_INFOID.AbstractTextModel)
         assert args_infoid_stock['p_title'] == str(target._title)
 
-    def test_init_default(self, args_infoid_stock):
+    def test_init_default(self):
         """Confirm initialization with default arguments."""
         # Setup
         # Test
-        target = MINFOID.InfoId(p_aspect=args_infoid_stock['p_aspect'])
+        target = MINFOID.InfoId()
         assert '' == str(target._name)
         assert '' == str(target._summary)
         assert '' == str(target._title)
 
-    def test_attach_view(self, patch_class_view_infoid, args_infoid_target):
+    def test_attach_view(self, patch_class_view_infoid, args_infoid_stock):
         """Confirm view addition."""
         # Setup
         patch_view = patch_class_view_infoid()
 
-        target = MINFOID.InfoId(**args_infoid_target)
+        target = MINFOID.InfoId(**args_infoid_stock)
         # Test
         target.attach_view(patch_view)
         assert patch_view.name == str(target._name)
         assert patch_view.summary == str(target._summary)
         assert patch_view.title == str(target._title)
 
-    def test_detach_view(self, patch_class_view_infoid, args_infoid_target):
+    def test_detach_view(self, patch_class_view_infoid, args_infoid_stock):
         """Confirm view removal."""
         # Setup
         patch_view = patch_class_view_infoid()
 
-        target = MINFOID.InfoId(**args_infoid_target)
+        target = MINFOID.InfoId(**args_infoid_stock)
         target.attach_view(patch_view)
         patch_view._name.set_visible(True)
         assert patch_view.summary == str(target._summary)
@@ -218,7 +197,6 @@ class TestInfoId:
         assert not target._stale
 
     @pytest.mark.parametrize('name_attr, name_prop', [
-        ['_aspect', 'aspect'],
         ['_id_model', 'id_model'],
         ['_name', 'name'],
         ['_summary', 'summary'],

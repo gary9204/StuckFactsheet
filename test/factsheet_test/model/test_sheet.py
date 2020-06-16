@@ -76,7 +76,6 @@ class TestSheet:
     def test_init(self, args_infoid_stock):
         """Confirm initialization."""
         # Setup
-        ASPECT = MSHEET.Sheet.ASPECT
         NAME = args_infoid_stock['p_name']
         SUMMARY = args_infoid_stock['p_summary']
         TITLE = args_infoid_stock['p_title']
@@ -87,7 +86,6 @@ class TestSheet:
         assert isinstance(target._pages, dict)
         assert not target._pages
         assert isinstance(target._infoid, MINFOID.InfoId)
-        assert ASPECT == target._infoid.aspect
         assert NAME == target._infoid.name
         assert SUMMARY == target._infoid.summary
         assert TITLE == target._infoid.title

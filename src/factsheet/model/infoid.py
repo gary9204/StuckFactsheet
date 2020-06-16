@@ -18,7 +18,6 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
     The information represented by ``InfoId`` is as follows.
 
      * *ID:* identifier that is unique for lifetime of the component.
-     * *Aspect:* identifies contribution of component (for example, set).
      * *Name:* short, editable identifier (suitable, for example, as
        label).
      * *Summary:* editable description of component, which adds detail
@@ -27,14 +26,13 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
 
     .. admonition:: About Equality
 
-        Two `InfoId` instances are equivalent when their aspects, names,
-        titles, and summaries are the equal. Transient aspects of the
-        instances (like views) are not compared and may be different.
+        Two `InfoId` instances are equivalent when their names, titles,
+        and summaries are the equal. Transient aspects of the instances
+        (like views) are not compared and may be different.
     """
 
-    def __init__(self, *, p_aspect: str, p_name: str = '',
-                 p_summary: str = '', p_title: str = '') -> None:
-        self._aspect = p_aspect
+    def __init__(self, *, p_name: str = '', p_summary: str = '',
+                 p_title: str = '') -> None:
         self._id_model = id(self)
         self._stale = False
         self._name = UI.FACTORY_INFOID.new_model_name(p_name)
@@ -42,15 +40,11 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         self._title = UI.FACTORY_INFOID.new_model_title(p_title)
 
     def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when px_other has same aspect name, summary, and
-        title.
+        """Return True when px_other has same name, summary, and title.
 
         :param px_other: object to compare with self.
         """
         if not isinstance(px_other, InfoId):
-            return False
-
-        if not self._aspect == px_other._aspect:
             return False
 
         if str(self._name) != str(px_other._name):
@@ -63,11 +57,6 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
             return False
 
         return True
-
-    @property
-    def aspect(self) -> str:
-        """Return component contribution to :mod:`~factsheet.model`."""
-        return self._aspect
 
     def attach_view(self, pm_view: ABC_INFOID.InterfaceViewInfoId) -> None:
         """Add view to update display when identification information

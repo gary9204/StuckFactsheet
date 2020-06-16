@@ -36,12 +36,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         outlines and identification information. Transient aspects of
         the factsheets (like windows) are not compared and may be
         different.
-
-    .. attribute:: ASPECT
-
-       Identifies role of model component.
     """
-    ASPECT = 'factsheet'
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same identification information.
@@ -71,8 +66,8 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
 
     def __init__(self, *, p_name: str = 'Unnamed', p_summary: str = '',
                  p_title: str = '') -> None:
-        self._infoid = MINFOID.InfoId(p_aspect=self.ASPECT, p_name=p_name,
-                                      p_summary=p_summary, p_title=p_title)
+        self._infoid = MINFOID.InfoId(
+            p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._topics = UI.FACTORY_SHEET.new_model_outline_topics()
         self._state_transient()
 

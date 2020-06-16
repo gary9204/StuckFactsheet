@@ -120,12 +120,6 @@ class TestInterfaceViewInfoId:
 
             def get_view_title(self): super().get_view_title()
 
-            # def name(self): super().name
-
-            # def summary(self): super().summary
-
-            # def title(self): super().title
-
         target = PatchInterface()
         # Test
         with pytest.raises(NotImplementedError):

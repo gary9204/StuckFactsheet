@@ -15,7 +15,6 @@ def args_infoid_stock():
     stock InfoId object.
     """
     return dict(
-        p_aspect='section',
         p_name='Stock InfoId Name',
         p_title='Stock InfoId Title',
         p_summary='This summarizes a stock identification.',

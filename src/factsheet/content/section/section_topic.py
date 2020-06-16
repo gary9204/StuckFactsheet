@@ -27,17 +27,12 @@ class Topic(ABC_TOPIC.AbstractTopic):
     :param p_summary: summary of topic.
     :param p_title: title of topic.
 
-    .. attribute:: ASPECT
-
-       Identifies role of model component.
-
     .. admonition:: About Equality
 
         Two topics are equivalent when they have the same fact outlines
         and identification information. Transient aspects of the topics
         (like views) are not compared and may be different.
     """
-    ASPECT = 'topic'
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same topic information.
@@ -64,8 +59,8 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
                  p_title: str = '') -> None:
-        self._infoid = MINFOID.InfoId(p_aspect=self.ASPECT, p_name=p_name,
-                                      p_summary=p_summary, p_title=p_title)
+        self._infoid = MINFOID.InfoId(
+            p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._state_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
