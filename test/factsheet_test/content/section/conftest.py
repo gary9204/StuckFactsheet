@@ -22,7 +22,7 @@ def args_infoid_stock():
 
 
 @pytest.fixture
-def patch_class_view_infoid(args_infoid_stock):
+def interface_view_infoid(args_infoid_stock):
     """Pytest fixture returns stub class implementing
     :class:`.InterfaceViewInfoId`.
      """
@@ -61,13 +61,13 @@ def patch_class_view_infoid(args_infoid_stock):
 
 
 @pytest.fixture
-def patch_class_pane_topic(patch_class_view_infoid):
+def interface_pane_topic(interface_view_infoid):
     """Pytest fixture returns stub class implementing
     :class:`.InterfacePaneTopic`.
     """
     class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
         def __init__(self):
-            self._infoid = patch_class_view_infoid()
+            self._infoid = interface_view_infoid()
 
         def get_infoid(self): return self._infoid
 

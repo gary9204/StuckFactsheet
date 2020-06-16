@@ -4,13 +4,14 @@ Defines topic-level model.
 :doc:`../guide/devel_notes` explains how application Factsheet is based
 on a Model-View-Controller (MVC) design.  The design is partitioned into
 factsheet, topic, and fact layers.  Module ``topic`` defines
-class representing the model of a topic.
+the base class representing the model of a topic.  Additional classes
+specialize the model for sets, operations, and so on.
 """
 import logging
 import typing   # noqa
 
-from factsheet.model import infoid as MINFOID
 from factsheet.abc_types import abc_topic as ABC_TOPIC
+from factsheet.model import infoid as MINFOID
 
 logger = logging.getLogger('Main.model.topic')
 
@@ -19,7 +20,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Topic`` represents a specific subject within a Factsheet.
-    A model topic consists of a hierarchy of facts along with
+    A model topic consists of an outline of facts along with
     identification information (see :class:`.InfoId`.) Each fact
     represents statement about the topic's subject.
 
@@ -58,7 +59,8 @@ class Topic(ABC_TOPIC.AbstractTopic):
         return state
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '') -> None:
+                 p_title: str = '', **_kwargs: typing.Dict) -> None:
+        pass
         self._infoid = MINFOID.InfoId(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._state_transient()
@@ -99,9 +101,10 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     def detach_all(self) -> None:
         """Detach all views from topic."""
-        while self._views:
-            _id_view, view = self._views.popitem()
-            self._detach_attribute_views(view)
+        raise NotImplementedError
+#         while self._views:
+#             _id_view, view = self._views.popitem()
+#             self._detach_attribute_views(view)
 
     def detach_view(self, px_view: ABC_TOPIC.InterfacePaneTopic) -> None:
         """Remove one view from topic.
@@ -169,11 +172,10 @@ class Topic(ABC_TOPIC.AbstractTopic):
         """Mark topic in memory changed from file contents."""
         self._stale = True
 
-#     @property
+    @property
     def summary(self) -> str:
         """Return topic title."""
-        return ""
-        return self._infoid.title
+        return self._infoid.summary
 
     @property
     def title(self) -> str:

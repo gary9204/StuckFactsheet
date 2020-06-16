@@ -44,7 +44,7 @@ class TestSheet:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_get_set_state(self, tmp_path, patch_class_page_sheet):
+    def test_get_set_state(self, tmp_path, interface_page_sheet):
         """Confirm conversion to and from pickle format."""
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
@@ -57,7 +57,7 @@ class TestSheet:
         _index = source._topics.insert_child(topic, None)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             source.attach_page(page)
         # Test
@@ -103,7 +103,7 @@ class TestSheet:
         assert SUMMARY_DEFAULT == target._infoid.summary
         assert TITLE_DEFAULT == target._infoid.title
 
-    def test_attach_page(self, patch_class_page_sheet):
+    def test_attach_page(self, interface_page_sheet):
         """Confirm page addition.
         Case: page not attached initially
         """
@@ -112,7 +112,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         # Test
         for page in pages:
@@ -124,7 +124,7 @@ class TestSheet:
         assert len(pages) == len(target._pages)
 
     def test_attach_page_warn(
-            self, patch_class_page_sheet, PatchLogger, monkeypatch):
+            self, interface_page_sheet, PatchLogger, monkeypatch):
         """Confirm page addition.
         Case: page attached initially
         """
@@ -133,7 +133,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         for page in pages:
             target.attach_page(page)
@@ -172,7 +172,7 @@ class TestSheet:
         assert patch_outline.called
         assert target.is_stale()
 
-    def test_detach_all(self, monkeypatch, patch_class_page_sheet):
+    def test_detach_all(self, monkeypatch, interface_page_sheet):
         """Confirm notifications and removals."""
         # Setup
         class PatchInfoIdModel:
@@ -188,7 +188,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             target.attach_page(page)
         assert N_PAGES == len(target._pages)
@@ -199,7 +199,7 @@ class TestSheet:
         for page in pages:
             assert page.called_close
 
-    def test_detach_page(self, monkeypatch, patch_class_page_sheet):
+    def test_detach_page(self, monkeypatch, interface_page_sheet):
         """Confirm page removal.
         Case: page attached initially
         """
@@ -217,7 +217,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             target.attach_page(page)
         N_REMOVE = 1
@@ -231,7 +231,7 @@ class TestSheet:
             assert target._pages[id(page)] is page
 
     def test_detach_attribute_views(
-            self, monkeypatch, patch_class_page_sheet):
+            self, monkeypatch, interface_page_sheet):
         """Confirm removal of views."""
         # Setup
         class PatchInfoIdDetach:
@@ -255,7 +255,7 @@ class TestSheet:
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
-        page = patch_class_page_sheet()
+        page = interface_page_sheet()
         target.attach_page(page)
         # Test
         target._detach_attribute_views(page)
@@ -263,7 +263,7 @@ class TestSheet:
         assert patch_topics.called
 
     def test_detach_page_warn(
-            self, patch_class_page_sheet, PatchLogger, monkeypatch):
+            self, interface_page_sheet, PatchLogger, monkeypatch):
         """Confirm page removal.
         Case: page not attached initially
         """
@@ -272,7 +272,7 @@ class TestSheet:
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         for page in pages:
             target.attach_page(page)
@@ -491,14 +491,14 @@ class TestSheet:
         assert not target.is_stale()
         assert not target._stale
 
-    def test_n_pages(self, patch_class_page_sheet):
+    def test_n_pages(self, interface_page_sheet):
         """Confrim reported number of pages."""
         # Setup
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         assert pages[0].get_infoid().title != target._infoid.title
         # Test
         for i, page in enumerate(pages):
@@ -506,14 +506,14 @@ class TestSheet:
             target.attach_page(page)
         assert N_PAGES == target.n_pages()
 
-    def test_present_pages(self, patch_class_page_sheet):
+    def test_present_pages(self, interface_page_sheet):
         """Confirm all pages get present notice."""
         # Setup
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             target.attach_page(page)
         NO_TIME = 0
@@ -650,7 +650,7 @@ class TestSheet:
             topic = target._topics.get_item(index)
             assert topic.is_fresh()
 
-    def test_update_titles(self, patch_class_page_sheet):
+    def test_update_titles(self, interface_page_sheet):
         """Confirm all pages get update notice."""
         # Setup
         NAME_MODEL = 'The Larch'
@@ -661,7 +661,7 @@ class TestSheet:
             r'/home/larch\.fsg \([0-9A-Fa-f]{3}:[0-9A-Fa-f]{3}\)')
 
         N_PAGES = 3
-        pages = [patch_class_page_sheet() for _ in range(N_PAGES)]
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
         for page in pages:
             target.attach_page(page)
         # Test

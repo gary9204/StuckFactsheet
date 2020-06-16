@@ -6,6 +6,7 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.view import ui as UI
 
@@ -16,14 +17,14 @@ def args_infoid_stock():
     stock InfoId object.
     """
     return dict(
-        p_name='Stock InfoId Name',
-        p_title='Stock InfoId Title',
-        p_summary='This summarizes a stock identification.',
+        p_name='Parrot',
+        p_summary='The parrot is a Norwegian Blue.',
+        p_title='The Parrot Sketch',
         )
 
 
 @pytest.fixture
-def patch_class_view_infoid(args_infoid_stock):
+def interface_view_infoid(args_infoid_stock):
     """Pytest fixture returns stub class implementing
     :class:`.InterfaceViewInfoId`.
      """
@@ -62,6 +63,20 @@ def patch_class_view_infoid(args_infoid_stock):
 
 
 @pytest.fixture
+def interface_pane_topic(interface_view_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfacePaneTopic`.
+    """
+    class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
+        def __init__(self):
+            self._infoid = interface_view_infoid()
+
+        def get_infoid(self): return self._infoid
+
+    return PatchPaneTopic
+
+
+@pytest.fixture
 def patch_class_view_topics():
     """Pytest fixture returns stub class implementing
     :class:`.InterfacePaneTopic`.
@@ -83,13 +98,13 @@ def patch_class_view_topics():
 
 
 @pytest.fixture
-def patch_class_page_sheet(patch_class_view_infoid):
+def interface_page_sheet(interface_view_infoid):
     """Pytest fixture returns stub class implementing
     :class:`.InterfacePageSheet`.
     """
     class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
         def __init__(self):
-            self._infoid = patch_class_view_infoid()
+            self._infoid = interface_view_infoid()
             self._topics = UI.FACTORY_SHEET.new_view_outline_topics()
             self.called_close = False
             self.called_present = False

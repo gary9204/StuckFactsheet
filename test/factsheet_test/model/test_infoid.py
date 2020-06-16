@@ -74,10 +74,10 @@ class TestInfoId:
         assert '' == str(target._summary)
         assert '' == str(target._title)
 
-    def test_attach_view(self, patch_class_view_infoid, args_infoid_stock):
+    def test_attach_view(self, interface_view_infoid, args_infoid_stock):
         """Confirm view addition."""
         # Setup
-        patch_view = patch_class_view_infoid()
+        patch_view = interface_view_infoid()
 
         target = MINFOID.InfoId(**args_infoid_stock)
         # Test
@@ -86,10 +86,10 @@ class TestInfoId:
         assert patch_view.summary == str(target._summary)
         assert patch_view.title == str(target._title)
 
-    def test_detach_view(self, patch_class_view_infoid, args_infoid_stock):
+    def test_detach_view(self, interface_view_infoid, args_infoid_stock):
         """Confirm view removal."""
         # Setup
-        patch_view = patch_class_view_infoid()
+        patch_view = interface_view_infoid()
 
         target = MINFOID.InfoId(**args_infoid_stock)
         target.attach_view(patch_view)

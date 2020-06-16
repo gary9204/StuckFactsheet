@@ -1,5 +1,5 @@
 """
-Unit tests for topic-level model. See :mod:`~.section.section_topic`.
+Unit tests for topic-level model. See :mod:`~.topic`.
 """
 import logging
 from pathlib import Path
@@ -7,7 +7,7 @@ import pickle
 import pytest   # type: ignore[import]
 
 from factsheet.model import infoid as MINFOID
-from factsheet.content.section import section_topic as XTOPIC
+from factsheet.model import topic as MTOPIC
 
 
 class TestTopic:
@@ -22,15 +22,15 @@ class TestTopic:
         """
         # Setup
         TITLE_SOURCE = 'The Parrot Sketch'
-        source = XTOPIC.Topic(p_title=TITLE_SOURCE)
+        source = MTOPIC.Topic(p_title=TITLE_SOURCE)
         # Test: type difference
         assert not source.__eq__(TITLE_SOURCE)
         # Test: InfoId difference
         TITLE_TARGET = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_TARGET)
+        target = MTOPIC.Topic(p_title=TITLE_TARGET)
         assert not source.__eq__(target)
         # Test: Equivalence
-        target = XTOPIC.Topic(p_title=TITLE_SOURCE)
+        target = MTOPIC.Topic(p_title=TITLE_SOURCE)
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
@@ -40,7 +40,7 @@ class TestTopic:
         path = Path(str(tmp_path / 'get_set.fsg'))
 
         TITLE_MODEL = 'Something completely different.'
-        source = XTOPIC.Topic(p_title=TITLE_MODEL)
+        source = MTOPIC.Topic(p_title=TITLE_MODEL)
         source._stale = True
 
         N_VIEWS = 3
@@ -56,8 +56,8 @@ class TestTopic:
 
         assert isinstance(target._views, dict)
         assert not target._views
-        assert source._infoid == target._infoid
         assert not target._stale
+        assert source._infoid == target._infoid
 
     def test_init(self, args_infoid_stock):
         """Confirm initialization."""
@@ -66,7 +66,7 @@ class TestTopic:
         SUMMARY = args_infoid_stock['p_summary']
         TITLE = args_infoid_stock['p_title']
         # Test
-        target = XTOPIC.Topic(
+        target = MTOPIC.Topic(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         assert not target._stale
         assert isinstance(target._views, dict)
@@ -83,10 +83,36 @@ class TestTopic:
         SUMMARY_DEFAULT = ''
         TITLE_DEFAULT = ''
         # Test
-        target = XTOPIC.Topic()
+        target = MTOPIC.Topic()
         assert NAME_DEFAULT == target._infoid.name
         assert SUMMARY_DEFAULT == target._infoid.summary
         assert TITLE_DEFAULT == target._infoid.title
+
+    @pytest.mark.parametrize('NAME_PROP', [
+        'name',
+        'summary',
+        'title',
+        ])
+    def test_property_infoid(self, NAME_PROP):
+        """Confirm pass-through InfoId properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+        """
+        # Setup
+        target = MTOPIC.Topic(p_name='Parrot', p_summary='Norwegian Blue',
+                              p_title='Parrot Sketch')
+        value_attr = getattr(target._infoid, NAME_PROP)
+        target_prop = getattr(MTOPIC.Topic, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr == value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     def test_attach_view(self, interface_pane_topic):
         """Confirm view addition.
@@ -94,7 +120,7 @@ class TestTopic:
         """
         # Setup
         TITLE_MODEL = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_MODEL)
+        target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [interface_pane_topic() for _ in range(N_VIEWS)]
@@ -113,7 +139,7 @@ class TestTopic:
         """
         # Setup
         TITLE_MODEL = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_MODEL)
+        target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [interface_pane_topic() for _ in range(N_VIEWS)]
@@ -121,8 +147,8 @@ class TestTopic:
         for view in views:
             target.attach_view(view)
         assert N_VIEWS == len(target._views)
-        I_DUPLIDATE = 1
-        view_dup = views[I_DUPLIDATE]
+        I_DUP = 1
+        view_dup = views[I_DUP]
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(
@@ -141,27 +167,27 @@ class TestTopic:
     def test_detach_all(self, monkeypatch, interface_pane_topic):
         """Confirm removals."""
         # Setup
-        class PatchInfoIdModel:
-            def __init__(self): self.n_calls = 0
+#         class PatchInfoIdModel:
+#             def __init__(self): self.n_calls = 0
+# 
+#             def detach_view(self, _v): self.n_calls += 1
 
-            def detach_view(self, _v): self.n_calls += 1
+#         patch_detach = PatchInfoIdModel()
+#         monkeypatch.setattr(
+#             MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
 
-        patch_detach = PatchInfoIdModel()
-        monkeypatch.setattr(
-            MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
+#         TITLE_MODEL = 'Something completely different.'
+#         target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
-        TITLE_MODEL = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_MODEL)
-
-        N_VIEWS = 3
-        views = [interface_pane_topic() for _ in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
-        assert N_VIEWS == len(target._views)
+#         N_VIEWS = 3
+#         views = [interface_pane_topic() for _ in range(N_VIEWS)]
+#         for view in views:
+#             target.attach_view(view)
+#         assert N_VIEWS == len(target._views)
         # Test
-        target.detach_all()
-        assert not target._views
-        assert N_VIEWS == patch_detach.n_calls
+#         target.detach_all()
+#         assert not target._views
+#         assert N_VIEWS == patch_detach.n_calls
 
     def test_detach_view(self, monkeypatch, interface_pane_topic):
         """Confirm view removal.
@@ -178,7 +204,7 @@ class TestTopic:
             MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
 
         TITLE_MODEL = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_MODEL)
+        target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [interface_pane_topic() for _ in range(N_VIEWS)]
@@ -208,7 +234,7 @@ class TestTopic:
             MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
 
         TITLE_MODEL = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_MODEL)
+        target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         view = interface_pane_topic()
         target.attach_view(view)
@@ -223,15 +249,15 @@ class TestTopic:
         """
         # Setup
         TITLE_MODEL = 'Something completely different.'
-        target = XTOPIC.Topic(p_title=TITLE_MODEL)
+        target = MTOPIC.Topic(p_title=TITLE_MODEL)
 
         N_VIEWS = 3
         views = [interface_pane_topic() for _ in range(N_VIEWS)]
         assert views[0].get_infoid().title != target._infoid.title
         for view in views:
             target.attach_view(view)
-        I_DUPLICATE = 1
-        view_dup = views.pop(I_DUPLICATE)
+        I_DUP = 1
+        view_dup = views.pop(I_DUP)
         target.detach_view(view_dup)
         assert len(views) == len(target._views)
 
@@ -257,7 +283,7 @@ class TestTopic:
         """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = XTOPIC.Topic(p_title=TEXT_TITLE)
+        target = MTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: InfoId stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -284,7 +310,7 @@ class TestTopic:
         """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = XTOPIC.Topic(p_title=TEXT_TITLE)
+        target = MTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: Topic stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -301,30 +327,6 @@ class TestTopic:
         assert not target.is_stale()
         assert not target._stale
 
-    @pytest.mark.parametrize('NAME_PROP', [
-        'name',
-        'title',
-        ])
-    def test_property_infoid(self, NAME_PROP):
-        """Confirm pass-through InfoId properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-        """
-        # Setup
-        target = XTOPIC.Topic(p_name='Parrot', p_title='Parrot Sketch')
-        value_attr = getattr(target._infoid, NAME_PROP)
-        target_prop = getattr(XTOPIC.Topic, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: read
-        assert target_prop.fget is not None
-        assert value_attr == value_prop
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
     def test_set_fresh(self):
         """Confirm all attributes set.
 
@@ -335,7 +337,7 @@ class TestTopic:
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = XTOPIC.Topic(p_title=TEXT_TITLE)
+        target = MTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: Topic fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
@@ -371,7 +373,7 @@ class TestTopic:
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
-        target = XTOPIC.Topic(p_title=TEXT_TITLE)
+        target = MTOPIC.Topic(p_title=TEXT_TITLE)
         # Test: Topic fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
