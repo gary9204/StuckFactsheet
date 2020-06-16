@@ -10,6 +10,7 @@ encapsulation.
 import abc
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
+# from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 
 
@@ -28,6 +29,12 @@ class AbstractTopic(ABC_STALE.InterfaceStaleFile):
         """Return topic title. """
         raise NotImplementedError
 
+    @property
+    @abc.abstractmethod
+    def summary(self) -> str:
+        """Return topic summary. """
+        raise NotImplementedError
+
 
 class InterfacePaneTopic(abc.ABC):
     """Defines interface for :class:`~.model.topic.Topic` model to
@@ -38,3 +45,8 @@ class InterfacePaneTopic(abc.ABC):
     def get_infoid(self) -> ABC_INFOID.InterfaceViewInfoId:
         """Return view of topic identification information."""
         raise NotImplementedError
+
+#     @abc.abstractmethod
+#     def get_view_facts(self) -> ABC_OUTLINE.AbstractViewOutline:
+#         """Return view of topic's fact outline."""
+#         raise NotImplementedError

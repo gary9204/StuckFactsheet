@@ -1,5 +1,5 @@
 """
-Unit tests for topic abstract interfaces.
+Unit tests for topic abstract interfaces.  See :mod:`.abc_topic`.
 """
 import pytest   # type: ignore[import]
 
@@ -18,6 +18,7 @@ class TestAbstractTopic:
 
     @pytest.mark.parametrize('name_method', [
         'name',
+        'summary',
         'title',
         ])
     def test_must_override(self, name_method):
@@ -25,6 +26,8 @@ class TestAbstractTopic:
         # Setup
         class PatchTopic(ABC_TOPIC.AbstractTopic):
             def name(self): return super().name
+
+            def summary(self): return super().summary
 
             def title(self): return super().title
 
@@ -55,12 +58,15 @@ class TestInterfacePaneTopic:
 
     @pytest.mark.parametrize('name_method', [
         'get_infoid',
+        # 'get_view_facts',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
             def get_infoid(self): super().get_infoid()
+
+            def get_view_facts(self): super().get_view_facts()
 
         target = PatchPaneTopic()
         # Test

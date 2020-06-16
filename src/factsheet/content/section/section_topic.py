@@ -170,6 +170,12 @@ class Topic(ABC_TOPIC.AbstractTopic):
         """Mark topic in memory changed from file contents."""
         self._stale = True
 
+#     @property
+    def summary(self) -> str:
+        """Return topic title."""
+        return ""
+        return self._infoid.title
+
     @property
     def title(self) -> str:
         """Return topic title."""
