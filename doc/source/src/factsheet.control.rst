@@ -13,4 +13,4 @@ Submodules
 
    factsheet.control.pool
    factsheet.control.control_sheet
-   factsheet.control.topic
+   factsheet.control.control_topic

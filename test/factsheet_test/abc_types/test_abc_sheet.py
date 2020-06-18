@@ -93,6 +93,7 @@ class TestInterfacePageSheet:
 
     @pytest.mark.parametrize('name_method', [
         'close_page',
+        'close_topic',
         'get_infoid',
         'get_view_topics',
         'present',
@@ -103,6 +104,8 @@ class TestInterfacePageSheet:
         # Setup
         class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
             def close_page(self): super().close_page()
+
+            def close_topic(self): super().close_topic(0)
 
             def get_infoid(self): super().get_infoid()
 

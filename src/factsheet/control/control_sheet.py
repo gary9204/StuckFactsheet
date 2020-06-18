@@ -15,9 +15,10 @@ import traceback as TB
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.control import pool as CPOOL
+from factsheet.control import control_topic as CTOPIC
 from factsheet.model import sheet as MSHEET
+from factsheet.model import topic as MTOPIC
 from factsheet.view import ui as UI
 
 logger = logging.getLogger('Main.CSHEET')
@@ -38,6 +39,19 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         self._path: typing.Optional[Path] = None
         self._sheets_active = pm_sheets_active
         self._sheets_active.add(self)
+        self._controls_topic: typing.Dict[
+            UI.IdTopic, CTOPIC.ControlTopic] = dict()
+
+    def _add_new_control_topic(self, px_topic: MTOPIC.Topic
+                               ) -> CTOPIC.ControlTopic:
+        """Return a new topic control after adding it to the collection.
+
+        :param px_topic: topic model for new control.
+        """
+        control_new = CTOPIC.ControlTopic(px_topic)
+        id_topic = px_topic.id_topic
+        self._controls_topic[id_topic] = control_new
+        return control_new
 
     def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Add page to model.
@@ -109,8 +123,21 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         assert self._model is not None
         self._model.extract_topic(px_i)
 
-    def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> 'UI.IndexOutline':
+    def get_control_topic(self, px_topic: MTOPIC.Topic
+                          ) -> typing.Optional[CTOPIC.ControlTopic]:
+        """Return topic control for given topic or None when no control.
+
+        :param px_topic: topic corresponding to desired control.
+        """
+        id_control = px_topic.id_topic
+        try:
+            return self._controls_topic[id_control]
+        except KeyError:
+            return None
+
+    def insert_topic_after(
+            self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
+            ) -> typing.Tuple[CTOPIC.ControlTopic, UI.IndexOutline]:
         """Requests topics outline add topic after topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_after`.
@@ -120,10 +147,13 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         :returns: index of newly-added topic.
         """
         assert self._model is not None
-        return self._model.insert_topic_after(px_topic, px_i)
+        index_new = self._model.insert_topic_after(px_topic, px_i)
+        control_new = self._add_new_control_topic(px_topic)
+        return index_new, control_new
 
-    def insert_topic_before(self, px_topic: ABC_TOPIC.AbstractTopic,
-                            px_i: UI.IndexOutline) -> UI.IndexOutline:
+    def insert_topic_before(
+            self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
+            ) -> typing.Tuple[CTOPIC.ControlTopic, UI.IndexOutline]:
         """Requests topics outline add topic before topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_before`.
@@ -133,10 +163,13 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         :returns: index of newly-added topic.
         """
         assert self._model is not None
-        return self._model.insert_topic_before(px_topic, px_i)
+        index_new = self._model.insert_topic_before(px_topic, px_i)
+        control_new = self._add_new_control_topic(px_topic)
+        return index_new, control_new
 
-    def insert_topic_child(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> UI.IndexOutline:
+    def insert_topic_child(
+            self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
+            ) -> typing.Tuple[CTOPIC.ControlTopic, UI.IndexOutline]:
         """Requests topics outline add topic as child of topic at given
         index.
 
@@ -147,7 +180,9 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         :returns: index of newly-added topic.
         """
         assert self._model is not None
-        return self._model.insert_topic_child(px_topic, px_i)
+        index_new = self._model.insert_topic_child(px_topic, px_i)
+        control_new = self._add_new_control_topic(px_topic)
+        return index_new, control_new
 
     @classmethod
     def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':

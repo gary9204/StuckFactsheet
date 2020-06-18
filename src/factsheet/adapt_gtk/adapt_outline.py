@@ -35,8 +35,53 @@ AdaptIndex = typing.Union[Gtk.TreeIter]
 GenericItem = typing.TypeVar('GenericItem')
 
 
+class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
+    """Implements abstract :class:`.AbstractViewOutline`.
+
+    ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
+    for presentation, :class:`.AdaptTreeStore` for storage, and
+    `Gtk.TreeIter`_ for index.
+
+    .. _Gtk.TreeView:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
+        TreeView.html#Gtk.TreeView
+    """
+
+    def __init__(self):
+        self._gtk_view = Gtk.TreeView()
+        self._selection = self._gtk_view.get_selection()
+        self._selection.set_mode(Gtk.SelectionMode.BROWSE)
+
+    def get_selected(self) -> typing.Optional[AdaptIndex]:
+        """Return the index of the selected item or None when no item
+        selected.
+        """
+        _model, index = self._selection.get_selected()
+        return index
+
+    @property
+    def gtk_view(self) -> Gtk.TreeView:
+        """Return underlying presentation element."""
+        return self._gtk_view
+
+    def select(self, px_i: AdaptIndex = None) -> None:
+        """Select the item at the given index.
+
+        :param px_i: index of new selection.  If None, then no item is
+            selected.
+        """
+        if px_i is None:
+            self._selection.unselect_all()
+        else:
+            self._selection.select_iter(px_i)
+
+    def unselect_all(self) -> None:
+        """Clear selection so that no item is selected."""
+        self._selection.unselect_all()
+
+
 class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
-        AdaptIndex, GenericItem, 'AdaptTreeStore', 'AdaptTreeView']):
+        AdaptIndex, GenericItem, 'AdaptTreeStore', AdaptTreeView]):
     """Implements abstract :class:`.AbstractOutline` with generic item.
 
     ``AdaptTreeStore`` implements a generic outline using
@@ -110,7 +155,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
     def __init__(self) -> None:
         self._gtk_model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
-        self._views: typing.Dict[int, 'AdaptTreeView'] = dict()
+        self._views: typing.Dict[int, AdaptTreeView] = dict()
 
     def __ne__(self, px_other: typing.Any) -> bool:
         """Return False if other is an outline with same structure and
@@ -142,7 +187,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         del self.ex_model  # type: ignore[attr-defined]
         self._views = dict()
 
-    def attach_view(self, pm_view_outline: "AdaptTreeView"):
+    def attach_view(self, pm_view_outline: AdaptTreeView):
         """Add view to update display when outline changes.
 
         :param pm_view: view to add.
@@ -162,7 +207,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """Remove all sections from outline."""
         self._gtk_model.clear()
 
-    def detach_view(self, pm_view_outline: 'AdaptTreeView') -> None:
+    def detach_view(self, pm_view_outline: AdaptTreeView) -> None:
         """Remove view of changes to outline.
 
         :param pm_view: view to remove.
@@ -344,46 +389,46 @@ def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
     return item
 
 
-class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
-    """Implements abstract :class:`.AbstractViewOutline`.
+# class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
+#     """Implements abstract :class:`.AbstractViewOutline`.
 
-    ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
-    for presentation, :class:`.AdaptTreeStore` for storage, and
-    `Gtk.TreeIter`_ for index.
+#     ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
+#     for presentation, :class:`.AdaptTreeStore` for storage, and
+#     `Gtk.TreeIter`_ for index.
 
-    .. _Gtk.TreeView:
-        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
-        TreeView.html#Gtk.TreeView
-    """
+#     .. _Gtk.TreeView:
+#         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
+#         TreeView.html#Gtk.TreeView
+#     """
 
-    def __init__(self):
-        self._gtk_view = Gtk.TreeView()
-        self._selection = self._gtk_view.get_selection()
-        self._selection.set_mode(Gtk.SelectionMode.BROWSE)
+#     def __init__(self):
+#         self._gtk_view = Gtk.TreeView()
+#         self._selection = self._gtk_view.get_selection()
+#         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
-    def get_selected(self) -> typing.Optional[AdaptIndex]:
-        """Return the index of the selected item or None when no item
-        selected.
-        """
-        _model, index = self._selection.get_selected()
-        return index
+#     def get_selected(self) -> typing.Optional[AdaptIndex]:
+#         """Return the index of the selected item or None when no item
+#         selected.
+#         """
+#         _model, index = self._selection.get_selected()
+#         return index
 
-    @property
-    def gtk_view(self) -> Gtk.TreeView:
-        """Return underlying presentation element."""
-        return self._gtk_view
+#     @property
+#     def gtk_view(self) -> Gtk.TreeView:
+#         """Return underlying presentation element."""
+#         return self._gtk_view
 
-    def select(self, px_i: AdaptIndex = None) -> None:
-        """Select the item at the given index.
+#     def select(self, px_i: AdaptIndex = None) -> None:
+#         """Select the item at the given index.
 
-        :param px_i: index of new selection.  If None, then no item is
-            selected.
-        """
-        if px_i is None:
-            self._selection.unselect_all()
-        else:
-            self._selection.select_iter(px_i)
+#         :param px_i: index of new selection.  If None, then no item is
+#             selected.
+#         """
+#         if px_i is None:
+#             self._selection.unselect_all()
+#         else:
+#             self._selection.select_iter(px_i)
 
-    def unselect_all(self) -> None:
-        """Clear selection so that no item is selected."""
-        self._selection.unselect_all()
+#     def unselect_all(self) -> None:
+#         """Clear selection so that no item is selected."""
+#         self._selection.unselect_all()

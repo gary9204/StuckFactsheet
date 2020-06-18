@@ -5,6 +5,7 @@ See :mod:`.adapt_factory`.
 """
 import pytest   # type: ignore[import]
 
+from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
@@ -77,3 +78,13 @@ class TestFactorySheet:
         assert AFACTORY.IndexOutline is AOUTLINE.AdaptIndex
         assert AFACTORY.OutlineTemplates is ASHEET.AdaptTreeStoreTemplate
         assert AFACTORY.OutlineTopics is ASHEET.AdaptTreeStoreTopic
+
+
+class TestFactoryTopic:
+    """Unit tests for class TBD."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert AFACTORY.IdTopic is ABC_TOPIC.IdTopic

@@ -6,6 +6,16 @@ import pytest   # type: ignore[import]
 import factsheet.abc_types.abc_topic as ABC_TOPIC
 
 
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.abc_topic`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert ABC_TOPIC.IdTopic is not None
+
+
 class TestAbstractTopic:
     """Unit tests for interface :class:`.AbstractTopic`."""
 
@@ -17,6 +27,7 @@ class TestAbstractTopic:
             _ = ABC_TOPIC.AbstractTopic()
 
     @pytest.mark.parametrize('name_method', [
+        'id_topic',
         'name',
         'summary',
         'title',
@@ -25,6 +36,8 @@ class TestAbstractTopic:
         """Confirm each method must be overridden."""
         # Setup
         class PatchTopic(ABC_TOPIC.AbstractTopic):
+            def id_topic(self): return super().id_topic
+
             def name(self): return super().name
 
             def summary(self): return super().summary

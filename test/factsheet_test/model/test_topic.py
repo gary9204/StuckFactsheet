@@ -167,27 +167,27 @@ class TestTopic:
     def test_detach_all(self, monkeypatch, interface_pane_topic):
         """Confirm removals."""
         # Setup
-#         class PatchInfoIdModel:
-#             def __init__(self): self.n_calls = 0
-# 
-#             def detach_view(self, _v): self.n_calls += 1
+        class PatchInfoIdModel:
+            def __init__(self): self.n_calls = 0
 
-#         patch_detach = PatchInfoIdModel()
-#         monkeypatch.setattr(
-#             MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
+            def detach_view(self, _v): self.n_calls += 1
 
-#         TITLE_MODEL = 'Something completely different.'
-#         target = MTOPIC.Topic(p_title=TITLE_MODEL)
+        patch_detach = PatchInfoIdModel()
+        monkeypatch.setattr(
+            MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
 
-#         N_VIEWS = 3
-#         views = [interface_pane_topic() for _ in range(N_VIEWS)]
-#         for view in views:
-#             target.attach_view(view)
-#         assert N_VIEWS == len(target._views)
+        TITLE_MODEL = 'Something completely different.'
+        target = MTOPIC.Topic(p_title=TITLE_MODEL)
+
+        N_VIEWS = 3
+        views = [interface_pane_topic() for _ in range(N_VIEWS)]
+        for view in views:
+            target.attach_view(view)
+        assert N_VIEWS == len(target._views)
         # Test
-#         target.detach_all()
-#         assert not target._views
-#         assert N_VIEWS == patch_detach.n_calls
+        target.detach_all()
+        assert not target._views
+        assert N_VIEWS == patch_detach.n_calls
 
     def test_detach_view(self, monkeypatch, interface_pane_topic):
         """Confirm view removal.
@@ -273,6 +273,21 @@ class TestTopic:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+
+    def test_id_topic(self):
+        """Confirm return is accurate"""
+        # Setup
+        TEXT_TITLE = 'Something completely different'
+        target = MTOPIC.Topic(p_title=TEXT_TITLE)
+        # Test: read
+        target_prop = getattr(MTOPIC.Topic, 'id_topic')
+        assert target_prop.fget is not None
+        assert target._infoid.id_model == target.id_topic
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
 
     def test_is_fresh(self):
         """Confirm return is accurate.

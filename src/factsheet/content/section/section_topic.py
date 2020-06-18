@@ -131,6 +131,11 @@ class Topic(ABC_TOPIC.AbstractTopic):
         """
         self._infoid.detach_view(pm_view.get_infoid())
 
+    @property
+    def id_topic(self) -> ABC_TOPIC.IdTopic:
+        """Return topic identifier. """
+        return ABC_TOPIC.IdTopic(self._infoid.id_model)
+
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to topic."""
         if self._stale:

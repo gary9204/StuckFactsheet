@@ -5,7 +5,7 @@ See :mod:`.pane_topic`.
 """
 import pytest   # type: ignore[import]
 
-from factsheet.control import topic as CTOPIC
+from factsheet.control import control_topic as CTOPIC
 from factsheet.content.section import section_topic as MTOPIC
 from factsheet.view import pane_topic as VTOPIC
 from factsheet.view import ui as UI
@@ -27,7 +27,7 @@ def patch_control_topic(text_ui_infoid):
     SUMMARY = text_ui_infoid['summary']
     TITLE = text_ui_infoid['title']
     model = MTOPIC.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-    control = CTOPIC.Topic.open(pm_model=model)
+    control = CTOPIC.ControlTopic(pm_model=model)
     return control
 
 

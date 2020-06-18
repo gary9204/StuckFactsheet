@@ -60,7 +60,6 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
                  p_title: str = '', **_kwargs: typing.Dict) -> None:
-        pass
         self._infoid = MINFOID.InfoId(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._state_transient()
@@ -101,10 +100,9 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     def detach_all(self) -> None:
         """Detach all views from topic."""
-        raise NotImplementedError
-#         while self._views:
-#             _id_view, view = self._views.popitem()
-#             self._detach_attribute_views(view)
+        while self._views:
+            _id_view, view = self._views.popitem()
+            self._detach_attribute_views(view)
 
     def detach_view(self, px_view: ABC_TOPIC.InterfacePaneTopic) -> None:
         """Remove one view from topic.
@@ -133,6 +131,11 @@ class Topic(ABC_TOPIC.AbstractTopic):
         :param pm_view: view of topic as a whole.
         """
         self._infoid.detach_view(pm_view.get_infoid())
+
+    @property
+    def id_topic(self) -> ABC_TOPIC.IdTopic:
+        """Return topic identifier. """
+        return ABC_TOPIC.IdTopic(self._infoid.id_model)
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to topic."""

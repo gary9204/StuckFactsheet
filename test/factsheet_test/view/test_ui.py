@@ -6,12 +6,23 @@ See :mod:`.view.ui`.
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 
+from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.ui`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert UI.IdTopic is AFACTORY.IdTopic
 
 
 class TestUiActions:

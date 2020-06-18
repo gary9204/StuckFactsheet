@@ -8,14 +8,24 @@ break ``import`` cycles and to encapsulate dependencies of
 encapsulation.
 """
 import abc
+import typing
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 # from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 
 
+IdTopic = typing.NewType('IdTopic', int)
+
+
 class AbstractTopic(ABC_STALE.InterfaceStaleFile):
     """Defines interfaces common to topic model components."""
+
+    @property
+    @abc.abstractmethod
+    def id_topic(self) -> IdTopic:
+        """Return topic identifier. """
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod

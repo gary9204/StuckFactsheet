@@ -11,20 +11,20 @@ import logging
 import typing   # noqa
 
 from factsheet.abc_types import abc_topic as ABC_TOPIC
-from factsheet.content.section import section_topic as MTOPIC
+from factsheet.model import topic as MTOPIC
 
 logger = logging.getLogger('Main.CSHEET')
 
 
-class Topic:
+class ControlTopic:
     """Mediates user actions at view to model updates for a topic.
 
     Class ``Topic`` translates user requests in a topic view into
     changes in the topic model.
     """
 
-    def __init__(self) -> None:
-        self._model: typing.Optional[MTOPIC.Topic] = None
+    def __init__(self, pm_model: MTOPIC.Topic) -> None:
+        self._model = pm_model
 
     def attach_view(self, pm_view: ABC_TOPIC.InterfacePaneTopic) -> None:
         """Add view to model.
@@ -41,24 +41,3 @@ class Topic:
         """
         assert self._model is not None
         self._model.detach_view(px_view)
-
-    @classmethod
-    def new(cls) -> 'Topic':
-        """Create and return control with default model.
-
-        :returns: Newly created control.
-        """
-        control = Topic()
-        control._model = MTOPIC.Topic()
-        return control
-
-    @classmethod
-    def open(cls, pm_model: MTOPIC.Topic) -> 'Topic':
-        """Create control with given model.
-
-        :param pm_model: model for new control.
-        :returns: Newly created control.
-        """
-        control = Topic()
-        control._model = pm_model
-        return control

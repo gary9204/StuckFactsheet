@@ -8,9 +8,9 @@ import pickle
 
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.section import section_topic as XSECTION
 from factsheet.model import infoid as MINFOID
 from factsheet.model import sheet as MSHEET
+from factsheet.model import topic as MTOPIC
 
 
 class TestSheet:
@@ -35,7 +35,7 @@ class TestSheet:
         assert not source.__eq__(target)
         # Test: topic outline difference
         target = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        topic = XSECTION.Topic(p_name='Killer Rabbit')
+        topic = MTOPIC.Topic(p_name='Killer Rabbit')
         _index = target._topics.insert_child(topic, None)
 
         assert not source.__eq__(target)
@@ -53,7 +53,7 @@ class TestSheet:
         source = MSHEET.Sheet(p_title=TITLE_MODEL)
         source._stale = True
 
-        topic = XSECTION.Topic(p_name='Killer Rabbit')
+        topic = MTOPIC.Topic(p_name='Killer Rabbit')
         _index = source._topics.insert_child(topic, None)
 
         N_PAGES = 3
@@ -154,7 +154,7 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_clear(self, monkeypatch):
+    def test_clear(self, monkeypatch, interface_page_sheet):
         """| Confirm topics outline removal."""
         # Setup
         class PatchClear:
@@ -165,12 +165,31 @@ class TestSheet:
         patch_outline = PatchClear()
         monkeypatch.setattr(
             ASHEET.AdaptTreeStoreTopic, 'clear', patch_outline.clear)
+
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
+
+        N_PAGES = 3
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            target.attach_page(page)
+
+        N_TOPICS = 5
+        topics = [MTOPIC.Topic() for _ in range(N_TOPICS)]
+        parent = None
+        for topic in topics:
+            parent = target.insert_topic_child(topic, parent)
+
+        N_REMOVE = 5
+        ids_extracted = [t.id_topic for t in topics]
+        target.set_fresh()
         # Test
         target.clear()
-        assert patch_outline.called
         assert target.is_stale()
+        for page in pages:
+            assert page.called_close_topic == N_REMOVE
+            assert ids_extracted == page.closed_topics
+        assert patch_outline.called
 
     def test_detach_all(self, monkeypatch, interface_page_sheet):
         """Confirm notifications and removals."""
@@ -197,7 +216,7 @@ class TestSheet:
         assert not target._pages
         assert N_PAGES == patch_detach.n_calls
         for page in pages:
-            assert page.called_close
+            assert page.called_close_page
 
     def test_detach_page(self, monkeypatch, interface_page_sheet):
         """Confirm page removal.
@@ -294,7 +313,7 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_extract_topic(self, monkeypatch):
+    def test_extract_topic(self, monkeypatch, interface_page_sheet):
         """| Confirm method request relay to outline.
         | Case: relay index.
         """
@@ -307,13 +326,36 @@ class TestSheet:
         patch_outline = PatchExtract()
         monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic, 'extract_section',
                             patch_outline.extract_section)
+
         TITLE_MODEL = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        I_STUB = 'Not None'
+
+        N_PAGES = 3
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            target.attach_page(page)
+
+        N_TOPICS = 5
+        topics = [MTOPIC.Topic() for _ in range(N_TOPICS)]
+        parent = None
+        for topic in topics:
+            parent = target.insert_topic_child(topic, parent)
+
+        N_REMOVE = 2
+        N_START = 3
+        gtk_model = target._topics._gtk_model
+        i_start = gtk_model.get_iter_first()
+        for _ in range(N_START):
+            i_start = gtk_model.iter_children(i_start)
+        ids_extracted = [t.id_topic for t in topics[N_START:]]
+        target.set_fresh()
         # Test
-        target.extract_topic(I_STUB)
-        assert patch_outline.called
+        target.extract_topic(i_start)
         assert target.is_stale()
+        for page in pages:
+            assert page.called_close_topic == N_REMOVE
+            assert ids_extracted == page.closed_topics
+        assert patch_outline.called
 
     def test_extract_topic_none(self, monkeypatch):
         """| Confirm method request relay to outline.
@@ -435,13 +477,13 @@ class TestSheet:
 
         N_TOPICS = 3
         for i in range(N_TOPICS):
-            topic = XSECTION.Topic(p_name='Topic {}'.format(i))
+            topic = MTOPIC.Topic(p_name='Topic {}'.format(i))
             target.insert_topic_before(topic, None)
         N_DESCEND = 2
         parent = target._topics._gtk_model.get_iter_first()
         for j in range(N_DESCEND):
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-            topic = XSECTION.Topic(p_name=name)
+            topic = MTOPIC.Topic(p_name=name)
             parent = target.insert_topic_child(topic, parent)
         I_LEAF = 2
         I_LAST = 4
@@ -538,13 +580,13 @@ class TestSheet:
 
         N_TOPICS = 3
         for i in range(N_TOPICS):
-            topic = XSECTION.Topic(p_name='Topic {}'.format(i))
+            topic = MTOPIC.Topic(p_name='Topic {}'.format(i))
             target.insert_topic_before(topic, None)
         N_DESCEND = 2
         parent = target._topics._gtk_model.get_iter_first()
         for j in range(N_DESCEND):
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-            topic = XSECTION.Topic(p_name=name)
+            topic = MTOPIC.Topic(p_name=name)
             parent = target.insert_topic_child(topic, parent)
         # Test: Sheet fresh, identification information fresh
         target._stale = False
@@ -649,6 +691,21 @@ class TestSheet:
         for index in target._topics.indices():
             topic = target._topics.get_item(index)
             assert topic.is_fresh()
+
+    def test_topics(self):
+        """Confirm iterations over topics."""
+        # Setup
+        TEXT_TITLE = 'Something completely different'
+        target = MSHEET.Sheet(p_title=TEXT_TITLE)
+        N_TOPICS = 3
+        TOPICS = [MTOPIC.Topic(p_name='Topic {}'.format(i))
+                  for i in range(N_TOPICS)]
+        parent = None
+        for topic in TOPICS:
+            parent = target.insert_topic_child(topic, parent)
+        # Test
+        assert TOPICS == list(target.topics())
+        assert TOPICS[2:] == list(target.topics(parent))
 
     def test_update_titles(self, interface_page_sheet):
         """Confirm all pages get update notice."""

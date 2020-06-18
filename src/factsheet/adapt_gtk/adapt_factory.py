@@ -15,6 +15,7 @@ Defines GTK-based classes that implement abstract factories in
     Type for outline containing topics.
 """
 from factsheet.abc_types import abc_factory as ABC_FACTORY
+from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
@@ -79,3 +80,6 @@ class FactorySheet(ABC_FACTORY.FactorySheet):
         """Return new instance of Gtk-based topic view outline.
         """
         return ASHEET.AdaptTreeViewTopic()
+
+
+IdTopic = ABC_TOPIC.IdTopic

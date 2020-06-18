@@ -208,6 +208,15 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._close_window = True
         self._window.close()
 
+    def close_topic(self, p_id: int) -> None:
+        """Close topic pane in response to notice from model.
+
+        Closing a topic pane removes the pane from the factsheet page.
+
+        :param p_id: identity of topic pane to close.
+        """
+        raise NotImplementedError
+
     def get_infoid(self) -> VINFOID.ViewInfoId:
         """Return view of factsheet identification information."""
         return self._infoid

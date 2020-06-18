@@ -5,7 +5,7 @@ import gi   # type: ignore[import]
 import typing   # noqa
 
 from factsheet.abc_types import abc_topic as ABC_TOPIC
-from factsheet.control import topic as CTOPIC
+from factsheet.control import control_topic as CTOPIC
 # from factsheet.control import pool as CPOOL
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
@@ -30,7 +30,7 @@ class PaneTopic(ABC_TOPIC.InterfacePaneTopic):
     """
     NAME_FILE_TOPIC_UI = str(UI.DIR_UI / 'topic.ui')
 
-    def __init__(self, *, pm_control: CTOPIC.Topic) -> None:
+    def __init__(self, *, pm_control: CTOPIC.ControlTopic) -> None:
         self._control = pm_control
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_TOPIC_UI)
         get_object = builder.get_object

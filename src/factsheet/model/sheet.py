@@ -102,14 +102,15 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             return
 
         self._infoid.attach_view(pm_page.get_infoid())
-        # See Factsheet project issue #95
+        # See Factsheet project issue #95 - switched to generic as per outline
         self._topics.attach_view(
-            pm_page.get_view_topics())   # type: ignore[arg-type]
+            pm_page.get_view_topics())
         self._pages[id(pm_page)] = pm_page
 
     def clear(self) -> None:
         """Remove all topics from the topics outline."""
         self.set_stale()
+        self._close_topic(None)
         self._topics.clear()
 
     def detach_all(self) -> None:
@@ -147,8 +148,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """
         self._infoid.detach_view(pm_page.get_infoid())
         # See Factsheet project issue #95
-        self._topics.detach_view(
-            pm_page.get_view_topics())   # type: ignore[arg-type]
+        self._topics.detach_view(pm_page.get_view_topics())
 
     def extract_topic(self, px_i: UI.IndexOutline) -> None:
         """Remove topic and all its descendants from topic outline.
@@ -158,7 +158,21 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """
         if px_i is not None:
             self.set_stale()
+            self._close_topic(px_i)
             self._topics.extract_section(px_i)
+
+    def _close_topic(self, px_i: UI.IndexOutline) -> None:
+        """Signal all pages to close panes for a topic and all its descendants.
+
+        :parm px_i: index of parent topic to close pane along with all
+            descendants.  If index is None, close all topic panes.
+        """
+        for index in self._topics.indices(px_i):
+            topic = self._topics.get_item(index)
+            assert topic is not None
+            id_topic = topic.id_topic
+            for page in self._pages.values():
+                page.close_topic(id_topic)
 
     def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
                            px_i: UI.IndexOutline) -> UI.IndexOutline:
@@ -248,6 +262,21 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
     def set_stale(self) -> None:
         """Mark factsheet in memory changed from file contents."""
         self._stale = True
+
+    def topics(self, px_index: UI.IndexOutline = None
+               ) -> typing.Iterator[ABC_TOPIC.AbstractTopic]:
+        """Return iterator over topics in topics outline.
+
+        The iterator is recursive (that is, includes topic at given
+        index along with all its descendants).
+
+        :param px_index: index of parent item of section.  Default
+            iterates over entire outline.
+        """
+        for index in self._topics.indices(px_index):
+            topic = self._topics.get_item(index)
+            assert topic is not None
+            yield topic
 
     def update_titles(self, p_subtitle_base: str) -> None:
         """Notify each page to update titles in page's window.

@@ -106,12 +106,18 @@ def interface_page_sheet(interface_view_infoid):
         def __init__(self):
             self._infoid = interface_view_infoid()
             self._topics = UI.FACTORY_SHEET.new_view_outline_topics()
-            self.called_close = False
+            self.called_close_page = False
+            self.called_close_topic = 0
+            self.closed_topics = []
             self.called_present = False
             self.called_set_titles = False
             self.subtitle = None
 
-        def close_page(self): self.called_close = True
+        def close_page(self): self.called_close_page = True
+
+        def close_topic(self, id_topic):
+            self.called_close_topic += 1
+            self.closed_topics.append(id_topic)
 
         def get_infoid(self): return self._infoid
 

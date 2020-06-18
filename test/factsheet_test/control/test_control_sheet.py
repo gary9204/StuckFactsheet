@@ -10,8 +10,11 @@ import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import control_sheet as CSHEET
+from factsheet.control import control_topic as CTOPIC
 from factsheet.control import pool as CPOOL
 from factsheet.model import sheet as MSHEET
+from factsheet.model import topic as MTOPIC
+import typing
 
 
 @pytest.fixture
@@ -45,6 +48,8 @@ class TestControlSheet:
         assert target._path is None
         assert target._sheets_active is sheets_active
         assert sheets_active._controls[id(target)] is target
+        assert isinstance(target._controls_topic, typing.Dict)
+        assert not target._controls_topic
 
     def test_attach_page(self, monkeypatch):
         """Confirm page addition."""
@@ -250,6 +255,50 @@ class TestControlSheet:
         _ = target.extract_topic(None)
         assert patch_extract.called
 
+    def test_get_control_topic(self):
+        """| Confirm
+        | Case: topic in model
+        """
+        # Setup
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.ControlSheet.new(sheets_active)
+
+        N_TOPICS = 3
+        topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
+                  for i in range(N_TOPICS)]
+        for topic in topics:
+            control_topic = CTOPIC.ControlTopic(pm_model=topic)
+            key_topic = topic.id_topic
+            target._controls_topic[key_topic] = control_topic
+
+        N_EXPECT = 1
+        topic_expect = topics[N_EXPECT]
+        id_expect = topic_expect.id_topic
+        # Test
+        control_actual = target.get_control_topic(topic_expect)
+        assert control_actual is target._controls_topic[id_expect]
+
+    def test_get_control_topic_absent(self):
+        """| Confirm
+        | Case: topic in model
+        """
+        # Setup
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.ControlSheet.new(sheets_active)
+
+        N_TOPICS = 3
+        topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
+                  for i in range(N_TOPICS)]
+        for topic in topics:
+            control_topic = CTOPIC.ControlTopic(pm_model=topic)
+            key_topic = topic.id_topic
+            target._controls_topic[key_topic] = control_topic
+
+        topic_absent = MTOPIC.Topic(p_title="Spanish Inquisition")
+        # Test
+        control_actual = target.get_control_topic(topic_absent)
+        assert control_actual is None
+
     @pytest.mark.parametrize('NAME_METHOD', [
         'insert_topic_after',
         'insert_topic_before',
@@ -261,7 +310,9 @@ class TestControlSheet:
         class PatchInsert:
             def __init__(self): self.called = False
 
-            def insert_topic(self, _item, _index): self.called = True
+            def insert_topic(self, _item, index):
+                self.called = True
+                return index
 
         patch_insert = PatchInsert()
         monkeypatch.setattr(
@@ -269,9 +320,17 @@ class TestControlSheet:
         sheets_active = CPOOL.PoolSheets()
         target = CSHEET.ControlSheet.new(sheets_active)
         method = getattr(target, NAME_METHOD)
+
+        TITLE = 'Something completely different.'
+        TOPIC = MTOPIC.Topic(pm_title=TITLE)
+        id_topic = TOPIC.id_topic
+        I_TOPIC = 'Parrot'
         # Test
-        _ = method(None, None)
+        index_new, control_new = method(TOPIC, I_TOPIC)
         assert patch_insert.called
+        assert index_new is I_TOPIC
+        assert isinstance(control_new, CTOPIC.ControlTopic)
+        assert target._controls_topic[id_topic] is control_new
 
     def test_new(self):
         """Confirm control creation with default model."""
