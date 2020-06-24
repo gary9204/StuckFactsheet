@@ -93,7 +93,7 @@ class InterfacePageSheet(
         raise NotImplementedError
 
     @abc.abstractmethod
-    def close_topic(self, p_id: int) -> None:
+    def close_topic(self, p_id: ABC_TOPIC.IdTopic) -> None:
         """Close topic pane in response to notice from model.
 
         Closing a topic pane removes the pane from the factsheet page.

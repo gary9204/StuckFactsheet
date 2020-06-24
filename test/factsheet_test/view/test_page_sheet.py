@@ -10,14 +10,16 @@ from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.section import section_spec as XSPEC
-from factsheet.content.section import section_topic as XSECTION
 from factsheet.control import pool as CPOOL
 from factsheet.control import control_sheet as CSHEET
+from factsheet.control import control_topic as CTOPIC
 from factsheet.model import sheet as MSHEET
+from factsheet.model import topic as MTOPIC
 from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import page_sheet as VSHEET
 from factsheet.view import scenes as VSCENES
+from factsheet.view import pane_topic as VTOPIC
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
 
@@ -124,7 +126,7 @@ class TestPageSheet:
 
         # Components
         assert isinstance(target._context_name, Gtk.Popover)
-        assert isinstance(target._context_summary, Gtk.Frame)
+        assert isinstance(target._context_summary, Gtk.Expander)
         assert isinstance(target._flip_summary, Gtk.CheckButton)
         assert isinstance(
             target._view_topics, ABC_OUTLINE.AbstractViewOutline)
@@ -190,16 +192,17 @@ class TestPageSheet:
         del factsheet
 
     @pytest.mark.parametrize(
-        'name_signal, name_attribute, origin, n_default', [
+        'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
             ('closed', '_context_name', Gtk.Popover, 0),
             ('delete-event', '_window', Gtk.ApplicationWindow, 0),
+            ('changed', '_cursor_topics', Gtk.TreeSelection, 0),
             ])
-    def test_init_signals(self, name_signal, name_attribute, origin,
-                          n_default, patch_factsheet, capfd):
+    def test_init_signals(self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN,
+                          N_DEFAULT, patch_factsheet, capfd):
         """Confirm initialization of signal connections."""
         # Setup
-        origin_gtype = GO.type_from_name(GO.type_name(origin))
-        signal = GO.signal_lookup(name_signal, origin_gtype)
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         factsheet = patch_factsheet()
         # Test
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -208,7 +211,7 @@ class TestPageSheet:
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
 
-        attribute = getattr(target, name_attribute)
+        attribute = getattr(target, NAME_ATTRIBUTE)
         n_handlers = 0
         while True:
             id_signal = GO.signal_handler_find(
@@ -220,7 +223,7 @@ class TestPageSheet:
             n_handlers += 1
             GO.signal_handler_disconnect(attribute, id_signal)
 
-        assert n_default + 1 == n_handlers
+        assert N_DEFAULT + 1 == n_handlers
         # Cleanup
         target._window.destroy()
         del target._window
@@ -250,7 +253,7 @@ class TestPageSheet:
         del factsheet
 
     def test_close_page(self, monkeypatch, patch_factsheet, capfd):
-        """Confirm view detaches from control and closes."""
+        """Confirm window of page hidden and closed."""
         # Setup
         class PatchWindow:
             def __init__(self): self.called = False
@@ -273,6 +276,43 @@ class TestPageSheet:
         assert not target._window.get_visible()
         assert target._close_window
         assert patch_window.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_close_topic(self, patch_factsheet, capfd, new_outline_topics):
+        """Confirm pane removed from scenes and closed"""
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        for index in outline_topics.indices():
+            topic = outline_topics.get_item(index)
+            control = CTOPIC.ControlTopic(pm_model=topic)
+            pane = VTOPIC.PaneTopic(pm_control=control)
+            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+
+        target._cursor_topics.unselect_all()
+        PATH_CURRENT = '0:0:0'
+        i_remove = topics.get_iter_from_string(PATH_CURRENT)
+        topic_remove = AOUTLINE.get_item_gtk(topics, i_remove)
+        id_remove = topic_remove.id_topic
+        # Test
+        target.close_topic(id_remove)
+        is_scene = target._scenes_topic.show_scene(id_remove)
+        assert not is_scene
         # Teardown
         target._window.destroy()
         del target._window
@@ -334,12 +374,12 @@ class TestPageSheet:
         del page._window
         del factsheet
 
-    @pytest.mark.parametrize('action, label', [
+    @pytest.mark.parametrize('ACTION, LABEL', [
         (Gtk.FileChooserAction.SAVE, 'Save'),
         (Gtk.FileChooserAction.OPEN, 'Open'),
         ])
     def test_make_dialog_file(
-            self, patch_factsheet, capfd, action, label):
+            self, patch_factsheet, capfd, ACTION, LABEL):
         """Confirm construction of dialog for file save."""
         # Setup
         factsheet = patch_factsheet()
@@ -350,19 +390,19 @@ class TestPageSheet:
         assert 'GApplication::startup signal' in snapshot.err
         FILTERS = set(['Factsheet', 'Any'])
         # Test
-        target = source._make_dialog_file(action)
+        target = source._make_dialog_file(ACTION)
         assert isinstance(target, Gtk.FileChooserDialog)
-        assert target.get_action() is action
+        assert target.get_action() is ACTION
         assert target.get_transient_for() is source._window
         assert target.get_destroy_with_parent()
-        if action is Gtk.FileChooserAction.SAVE:
+        if ACTION is Gtk.FileChooserAction.SAVE:
             assert target.get_do_overwrite_confirmation()
 
         button = target.get_widget_for_response(Gtk.ResponseType.CANCEL)
         assert 'Cancel' == button.get_label()
 
         button = target.get_widget_for_response(Gtk.ResponseType.APPLY)
-        assert label == button.get_label()
+        assert LABEL == button.get_label()
         style = button.get_style_context()
         assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
 
@@ -387,6 +427,211 @@ class TestPageSheet:
         assert target._window.get_application() is factsheet
         control = target._control
         assert isinstance(control, CSHEET.ControlSheet)
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_changed_cursor(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm updates when current topic changes.
+        | Case: change to topic with scene.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        for index in outline_topics.indices():
+            topic = outline_topics.get_item(index)
+            control = CTOPIC.ControlTopic(pm_model=topic)
+            pane = VTOPIC.PaneTopic(pm_control=control)
+            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+
+        view.expand_all()
+        PATH_CURRENT = '0:0:0'
+        i_current = topics.get_iter_from_string(PATH_CURRENT)
+        topic_current = AOUTLINE.get_item_gtk(topics, i_current)
+        # Test
+        target._cursor_topics.select_iter(i_current)
+        id_visible = target._scenes_topic.get_scene_visible()
+        assert id_visible == topic_current.id_topic
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_changed_cursor_new(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm updates when current topic changes.
+        | Case: change to topic without scene.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        for index in outline_topics.indices():
+            topic = outline_topics.get_item(index)
+            control = CTOPIC.ControlTopic(pm_model=topic)
+            pane = VTOPIC.PaneTopic(pm_control=control)
+            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+
+        view.expand_all()
+        PATH_CURRENT = '0:0:0'
+        i_current = topics.get_iter_from_string(PATH_CURRENT)
+        topic_current = AOUTLINE.get_item_gtk(topics, i_current)
+        # Test
+        target._cursor_topics.select_iter(i_current)
+        topic_visible = target._scenes_topic.get_scene_visible()
+        assert topic_visible == topic_current.id_topic
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_changed_cursor_no_control(
+            self, patch_factsheet, capfd, new_outline_topics, monkeypatch):
+        """| Confirm updates when current topic changes.
+        | Case: change to topic without scene.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        for index in outline_topics.indices():
+            topic = outline_topics.get_item(index)
+            control = CTOPIC.ControlTopic(pm_model=topic)
+            pane = VTOPIC.PaneTopic(pm_control=control)
+            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+
+        monkeypatch.setattr(
+            CSHEET.ControlSheet, 'get_control_topic', lambda _s, _t: None)
+
+        view.expand_all()
+        PATH_INIT = '0'
+        i_init = topics.get_iter_from_string(PATH_INIT)
+        target._cursor_topics.select_iter(i_init)
+
+        PATH_CURRENT = '0:0:0'
+        i_current = topics.get_iter_from_string(PATH_CURRENT)
+        topic_current = AOUTLINE.get_item_gtk(topics, i_current)
+        target._scenes_topic.remove_scene(topic_current.id_topic)
+        # Test
+        target._cursor_topics.select_iter(i_current)
+        topic_visible = target._scenes_topic.get_scene_visible()
+        assert topic_visible == target._scenes_topic.ID_NONE
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_changed_cursor_to_none(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm updates when current topic changes.
+        | Case: change to no current topic.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        for index in outline_topics.indices():
+            topic = outline_topics.get_item(index)
+            control = CTOPIC.ControlTopic(pm_model=topic)
+            pane = VTOPIC.PaneTopic(pm_control=control)
+            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+
+        # pane_none = Gtk.Label(label='No pane')
+        # target._scenes_topic.add_scene(
+        #     pane_none, target._scenes_topic.ID_NONE)
+
+        target._cursor_topics.unselect_all()
+        # Test
+        target.on_changed_cursor(target._cursor_topics)
+        id_visible = target._scenes_topic.get_scene_visible()
+        assert id_visible is target._scenes_topic.ID_NONE
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
+
+    def test_on_changed_cursor_no_topic(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """| Confirm updates when current topic changes.
+        | Case: change to a topic is that is None.
+        """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
+        view = target._view_topics.gtk_view
+        view.set_model(topics)
+        for index in outline_topics.indices():
+            topic = outline_topics.get_item(index)
+            control = CTOPIC.ControlTopic(pm_model=topic)
+            pane = VTOPIC.PaneTopic(pm_control=control)
+            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+
+        view.expand_all()
+        PATH_CURRENT = '0:0:0'
+        i_current = topics.get_iter_from_string(PATH_CURRENT)
+        target._cursor_topics.select_iter(i_current)
+        topics[i_current][AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM] = None
+        # Test
+        target.on_changed_cursor(target._cursor_topics)
+        id_visible = target._scenes_topic.get_scene_visible()
+        assert id_visible is target._scenes_topic.ID_NONE
         # Teardown
         target._window.destroy()
         del target._window
@@ -647,7 +892,8 @@ class TestPageSheet:
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
-        topics = new_outline_topics()
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
         i_first = topics.get_iter_first()
         path_first = topics.get_string_from_iter(i_first)
         view = target._view_topics.gtk_view
@@ -721,6 +967,10 @@ class TestPageSheet:
         # Test
         target.on_clear_topics(None, None)
         assert patch_clear.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_flip_summary(self, patch_factsheet, capfd):
         """Confirm flip of facthseet summary visibility.
@@ -771,7 +1021,8 @@ class TestPageSheet:
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
-        topics = new_outline_topics()
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
         i_first = topics.get_iter_first()
         path_first = topics.get_path(i_first)
         item_first = AOUTLINE.get_item_gtk(topics, i_first)
@@ -843,7 +1094,8 @@ class TestPageSheet:
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
-        topics = new_outline_topics()
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
         PATH_LAST = '1:1:2'
         i_last = topics.get_iter(PATH_LAST)
         item_last = AOUTLINE.get_item_gtk(topics, i_last)
@@ -915,7 +1167,8 @@ class TestPageSheet:
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
 
-        topics = new_outline_topics()
+        outline_topics = new_outline_topics()
+        topics = outline_topics._gtk_model
         PATH_LAST = '1'
         i_last = topics.get_iter(PATH_LAST)
         i_prune = topics.iter_children(i_last)
@@ -991,9 +1244,14 @@ class TestPageSheet:
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
         gtk_model = target._view_topics.gtk_view.get_model()
-        _index = gtk_model.append(None)
+        NAME = 'Parrot'
+        SUMMARY = 'A sketch about customer service.'
+        TITLE = 'The Parrot Sketch'
+        topic = MTOPIC.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        index_0 = gtk_model.append(None, [topic])
 
-        placement = QPLACE.Placement(None, QPLACE.Order.CHILD)
+        PATH_EXPECT = '0:0'
+        placement = QPLACE.Placement(index_0, QPLACE.Order.CHILD)
         patch_place = PatchCall(placement)
         monkeypatch.setattr(
             QPLACE.QueryPlace, '__call__', patch_place.__call__)
@@ -1007,28 +1265,24 @@ class TestPageSheet:
         monkeypatch.setattr(QTEMPLATE.QueryTemplate, '__call__',
                             patch_query_template.__call__)
 
-        NAME = 'Parrot'
-        SUMMARY = 'A sketch about customer service.'
-        TITLE = 'Dead Parrot Sketch'
-        topic = XSECTION.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         patch_template = PatchCall(topic)
         monkeypatch.setattr(
             XSPEC.Section, '__call__', patch_template.__call__)
-
-        class PatchInsert:
-            def __init__(self): self.called = False
-
-            def insert_topic_child(self, _t, _a): self.called = True
-
-        patch_insert = PatchInsert()
-        monkeypatch.setattr(CSHEET.ControlSheet, 'insert_topic_child',
-                            patch_insert.insert_topic_child)
         # Test
         target.on_new_topic(None, None)
         assert patch_place.called
         assert patch_query_template.called
         assert patch_template.called
-        assert patch_insert.called
+        id_visible = target._scenes_topic.show_scene(topic.id_topic)
+        assert id_visible == topic.id_topic
+        topics, i_new = target._cursor_topics.get_selected()
+        assert PATH_EXPECT == gtk_model.get_string_from_iter(i_new)
+        topic_new = AOUTLINE.get_item_gtk(topics, i_new)
+        assert topic_new is topic
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_new_topic_cancel_place(
             self, patch_factsheet, capfd, monkeypatch):
@@ -1068,6 +1322,10 @@ class TestPageSheet:
         # Test
         target.on_new_topic(None, None)
         assert not patch_query_template.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_new_topic_cancel_template(
             self, patch_factsheet, capfd, monkeypatch):
@@ -1092,6 +1350,10 @@ class TestPageSheet:
         # Test
         target.on_new_topic(None, None)
         # Return from call shows guard against template = None
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_new_topic_cancel_topic(
             self, patch_factsheet, capfd, monkeypatch):
@@ -1135,6 +1397,10 @@ class TestPageSheet:
         # Test
         target.on_new_topic(None, None)
         assert not patch_insert.called
+        # Teardown
+        target._window.destroy()
+        del target._window
+        del factsheet
 
     def test_on_open_page(self, patch_factsheet, capfd):
         """Confirm response to request to open new view."""
@@ -1560,6 +1826,7 @@ class TestPageSheet:
         target._window.destroy()
         del target._window
         del factsheet
+        del window
 
     def test_on_toggle_search_field_inactive(self, patch_factsheet, capfd):
         """| Confirm search field set.
@@ -1681,6 +1948,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert not snapshot.err
         assert patch_present.called
+        # Teardown
+        # None - no window created
 
     def test_present(self, patch_factsheet, capfd):
         """Confirm page becomes visible."""

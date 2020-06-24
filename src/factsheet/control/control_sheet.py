@@ -137,7 +137,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
 
     def insert_topic_after(
             self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
-            ) -> typing.Tuple[CTOPIC.ControlTopic, UI.IndexOutline]:
+            ) -> typing.Tuple[UI.IndexOutline, CTOPIC.ControlTopic]:
         """Requests topics outline add topic after topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_after`.
@@ -153,14 +153,14 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
 
     def insert_topic_before(
             self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
-            ) -> typing.Tuple[CTOPIC.ControlTopic, UI.IndexOutline]:
+            ) -> typing.Tuple[UI.IndexOutline, CTOPIC.ControlTopic]:
         """Requests topics outline add topic before topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_before`.
 
         :param px_topic: new topic to add.
         :param px_i: index of topic to follow new topic.
-        :returns: index of newly-added topic.
+        :returns: index of and control for newly-added topic.
         """
         assert self._model is not None
         index_new = self._model.insert_topic_before(px_topic, px_i)
@@ -169,7 +169,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
 
     def insert_topic_child(
             self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
-            ) -> typing.Tuple[CTOPIC.ControlTopic, UI.IndexOutline]:
+            ) -> typing.Tuple[UI.IndexOutline, CTOPIC.ControlTopic]:
         """Requests topics outline add topic as child of topic at given
         index.
 

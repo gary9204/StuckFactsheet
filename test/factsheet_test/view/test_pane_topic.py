@@ -6,7 +6,7 @@ See :mod:`.pane_topic`.
 import pytest   # type: ignore[import]
 
 from factsheet.control import control_topic as CTOPIC
-from factsheet.content.section import section_topic as MTOPIC
+from factsheet.model import topic as MTOPIC
 from factsheet.view import pane_topic as VTOPIC
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
@@ -41,18 +41,20 @@ class TestPaneTopic:
         """
         # Setup
         CONTROL = patch_control_topic
+        model = CONTROL._model
         # Test
         target = VTOPIC.PaneTopic(pm_control=CONTROL)
         assert target._control is CONTROL
-        assert isinstance(target._pane, Gtk.Box)
-        assert target._pane.is_visible()
-        actions_topic = target._pane.get_action_group('topic')
+        assert isinstance(target._gtk_pane, Gtk.Box)
+        assert target in model._views.values()
+        assert target._gtk_pane.is_visible()
+        actions_topic = target._gtk_pane.get_action_group('topic')
         assert isinstance(actions_topic, Gio.SimpleActionGroup)
 
         # Components
         assert isinstance(target._context_name, Gtk.Popover)
-        assert isinstance(target._context_summary, Gtk.Frame)
-        assert isinstance(target._flip_summary, Gtk.CheckButton)
+        # assert isinstance(target._context_summary, Gtk.Frame)
+        # assert isinstance(target._flip_summary, Gtk.CheckButton)
         assert target._name_former is None
 
         # Identification Information
@@ -67,13 +69,13 @@ class TestPaneTopic:
         # Topic Display Menu
         assert actions_topic.lookup_action('popup-name') is not None
         assert actions_topic.lookup_action('reset-name') is not None
-        assert actions_topic.lookup_action('flip-summary') is not None
+        # assert actions_topic.lookup_action('flip-summary') is not None
         assert actions_topic.lookup_action(
             'show-help-topic-display') is not None
 
         # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
 
     def test_init_activate(self, patch_control_topic):
         """Confirm initialization.
@@ -91,8 +93,32 @@ class TestPaneTopic:
             0, None, None, None)
         assert 0 != activate_id
         # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_gtk_pane', 'gtk_pane'],
+        ])
+    def test_property(self, patch_control_topic, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+        """
+        # Setup
+        CONTROL = patch_control_topic
+        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(VTOPIC.PaneTopic, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     def test_get_infoid(self, patch_control_topic):
         """Confirm returns :class:`.InfoId` attribute."""
@@ -102,35 +128,8 @@ class TestPaneTopic:
         # Test
         assert target._infoid is target.get_infoid()
         # Teardown
-        target._pane.destroy()
-        del target._pane
-
-    def test_on_flip_summary(self, patch_control_topic):
-        """Confirm flip of facthseet summary visibility.
-
-        - Case: hide
-        - Case: show
-        """
-        # Setup
-        CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
-        target._context_summary.show()
-        assert target._context_summary.get_visible()
-        assert target._flip_summary.get_active()
-        # Test: hide
-        # Call clicked to invoke target.on_flip_summary.  Method clicked
-        # has the side effect of setting active state of _flip_summary.
-        target._flip_summary.clicked()
-        assert not target._context_summary.get_visible()
-        assert not target._flip_summary.get_active()
-        # Test: show
-        # As in case hide.
-        target._flip_summary.clicked()
-        assert target._context_summary.get_visible()
-        assert target._flip_summary.get_active()
-        # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
 
     def test_on_popup_name(self, patch_control_topic):
         """Confirm name popover becomes visible."""
@@ -144,8 +143,8 @@ class TestPaneTopic:
         assert target._context_name.get_visible()
         assert target._infoid.name == target._name_former
         # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
 
     def test_on_reset_name(self, patch_control_topic):
         """Confirm name reset in popover."""
@@ -159,8 +158,8 @@ class TestPaneTopic:
         target.on_reset_name(None, None)
         assert target._name_former == name.get_text()
         # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
 
     def test_on_show_dialog(self, patch_control_topic, monkeypatch):
         """Confirm handler runs dialog.
@@ -192,8 +191,8 @@ class TestPaneTopic:
         assert not dialog.is_visible()
         assert dialog.get_transient_for() is window
         # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
 
     def test_on_show_dialog_no_top(self, patch_control_topic, monkeypatch):
         """Confirm handler runs dialog.
@@ -213,7 +212,7 @@ class TestPaneTopic:
         target = VTOPIC.PaneTopic(pm_control=CONTROL)
 
         monkeypatch.setattr(
-            Gtk.Widget, 'get_toplevel', lambda *_args: target._pane)
+            Gtk.Widget, 'get_toplevel', lambda *_args: target._gtk_pane)
         window = Gtk.ApplicationWindow()
         dialog = Gtk.Dialog()
         dialog.set_transient_for(window)
@@ -224,8 +223,8 @@ class TestPaneTopic:
         assert not dialog.is_visible()
         assert dialog.get_transient_for() is None
         # Teardown
-        target._pane.destroy()
-        del target._pane
+        target._gtk_pane.destroy()
+        del target._gtk_pane
 
     def test_on_show_dialog_input(self):
         """Confirm presence of shared dialogs."""

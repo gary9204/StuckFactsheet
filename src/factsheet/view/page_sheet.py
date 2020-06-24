@@ -6,6 +6,7 @@ from pathlib import Path
 import typing   # noqa
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
+from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.control import control_sheet as CSHEET
 from factsheet.control import pool as CPOOL
@@ -13,6 +14,7 @@ from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import scenes as VSCENES
 from factsheet.view import view_infoid as VINFOID
+from factsheet.view import pane_topic as VTOPIC
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -65,8 +67,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         context_view_topics.add(self._view_topics.gtk_view)
         self._cursor_topics = self._view_topics.gtk_view.get_selection()
 
-        stack_topics = get_object('ui_scenes_topic')
-        self._scenes_topic = VSCENES.Scenes(stack_topics)
+        gtk_scenes_topic = get_object('ui_scenes_topic')
+        self._scenes_topic = VSCENES.Scenes[UI.IdTopic](gtk_scenes_topic)
 
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
@@ -79,10 +81,11 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._window.show_all()
 
         # Signals
-        _id = self._context_name.connect('closed', self.on_popdown_name)
         view_name = self._infoid.get_view_name()
         _id = view_name.connect(
             'activate', lambda _entry: self._context_name.popdown())
+        _id = self._context_name.connect('closed', self.on_popdown_name)
+        _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
         _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
@@ -208,14 +211,14 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._close_window = True
         self._window.close()
 
-    def close_topic(self, p_id: int) -> None:
+    def close_topic(self, p_id: UI.IdTopic) -> None:
         """Close topic pane in response to notice from model.
 
         Closing a topic pane removes the pane from the factsheet page.
 
         :param p_id: identity of topic pane to close.
         """
-        raise NotImplementedError
+        self._scenes_topic.remove_scene(p_id)
 
     def get_infoid(self) -> VINFOID.ViewInfoId:
         """Return view of factsheet identification information."""
@@ -288,6 +291,36 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         control = CSHEET.ControlSheet.new(pm_sheets_active)
         PageSheet.link_factsheet(page, control)
         return page
+
+    def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
+        """Changes topic scene to match current topic.
+
+        :param px_cursor: identifies now-current topic.
+        """
+        id_none = self._scenes_topic.ID_NONE
+        model, index = px_cursor.get_selected()
+        if index is None:
+            _ = self._scenes_topic.show_scene(id_none)
+            return
+
+        topic = AOUTLINE.get_item_gtk(model, index)
+        if topic is None:
+            _ = self._scenes_topic.show_scene(id_none)
+            return
+
+        id_topic = topic.id_topic
+        id_visible = self._scenes_topic.show_scene(id_topic)
+        if id_topic == id_visible:
+            return
+
+        control = self._control.get_control_topic(topic)
+        if control is None:
+            _ = self._scenes_topic.show_scene(id_none)
+            return
+
+        pane = VTOPIC.PaneTopic(pm_control=control)
+        self._scenes_topic.add_scene(pane.gtk_pane, id_topic)
+        _ = self._scenes_topic.show_scene(id_topic)
 
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
@@ -430,13 +463,22 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         assert self._control is not None
         if placement.order is QPLACE.Order.AFTER:
-            self._control.insert_topic_after(topic, placement.anchor)
+            index, control = self._control.insert_topic_after(
+                topic, placement.anchor)
         elif placement.order is QPLACE.Order.BEFORE:
-            self._control.insert_topic_before(topic, placement.anchor)
+            index, control = self._control.insert_topic_before(
+                topic, placement.anchor)
         elif placement.order is QPLACE.Order.CHILD:
-            self._control.insert_topic_child(topic, placement.anchor)
+            index, control = self._control.insert_topic_child(
+                topic, placement.anchor)
         else:
             raise NotImplementedError
+
+        pane = VTOPIC.PaneTopic(pm_control=control)
+        self._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+        path = gtk_model.get_path(index)
+        self._view_topics.gtk_view.expand_to_path(path)
+        self._cursor_topics.select_iter(index)
 
     def on_open_page(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

@@ -922,31 +922,46 @@
             <property name="orientation">vertical</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkFrame" id="ui_context_summary">
+              <object class="GtkExpander" id="ui_context_summary">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_left">6</property>
-                <property name="margin_right">6</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="label_xalign">0.10000000149011612</property>
-                <property name="shadow_type">in</property>
+                <property name="can_focus">True</property>
+                <property name="expanded">True</property>
                 <child>
-                  <object class="GtkScrolledWindow">
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="min_content_height">60</property>
-                    <property name="propagate_natural_height">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">3</property>
+                    <property name="margin_bottom">3</property>
+                    <property name="label_xalign">0.10000000149011612</property>
+                    <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkTextView" id="ui_summary_infoid">
+                      <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="wrap_mode">word</property>
-                        <property name="left_margin">6</property>
-                        <property name="right_margin">6</property>
-                        <property name="top_margin">6</property>
-                        <property name="bottom_margin">6</property>
-                        <property name="buffer">stub_buffer_summary</property>
+                        <property name="min_content_height">60</property>
+                        <property name="propagate_natural_height">True</property>
+                        <child>
+                          <object class="GtkTextView" id="ui_summary_infoid">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="wrap_mode">word</property>
+                            <property name="left_margin">6</property>
+                            <property name="right_margin">6</property>
+                            <property name="top_margin">6</property>
+                            <property name="bottom_margin">6</property>
+                            <property name="buffer">stub_buffer_summary</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_markup">True</property>
                       </object>
                     </child>
                   </object>
@@ -955,8 +970,10 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">&lt;i&gt;Factsheet Summary&lt;/i&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="label" translatable="yes">Factsheet Summary</property>
+                    <attributes>
+                      <attribute name="style" value="italic"/>
+                    </attributes>
                   </object>
                 </child>
               </object>
@@ -1219,68 +1236,16 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Topic 1</property>
+                        <property name="valign">start</property>
+                        <property name="label" translatable="yes">
+Select a topic from the &lt;i&gt;Topics&lt;/i&gt; outline.
+</property>
+                        <property name="use_markup">True</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
-                        <property name="name">page0</property>
-                        <property name="title" translatable="yes">page0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="width_request">240</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Topic 2</property>
-                        <property name="wrap">True</property>
-                      </object>
-                      <packing>
-                        <property name="name">page1</property>
-                        <property name="title" translatable="yes">page1</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="width_request">240</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Topic 3</property>
-                        <property name="wrap">True</property>
-                      </object>
-                      <packing>
-                        <property name="name">page2</property>
-                        <property name="title" translatable="yes">page2</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="width_request">240</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Topic 4</property>
-                        <property name="wrap">True</property>
-                      </object>
-                      <packing>
-                        <property name="name">page3</property>
-                        <property name="title" translatable="yes">page3</property>
-                        <property name="position">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="width_request">240</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Topic 5</property>
-                        <property name="wrap">True</property>
-                      </object>
-                      <packing>
-                        <property name="name">page4</property>
-                        <property name="title" translatable="yes">page4</property>
-                        <property name="position">4</property>
+                        <property name="name">None</property>
+                        <property name="title" translatable="yes">None</property>
                       </packing>
                     </child>
                   </object>
