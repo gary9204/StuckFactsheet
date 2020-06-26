@@ -12,7 +12,7 @@ Subpackages
 .. toctree::
 
    factsheet.content.sets
-   factsheet.content.section
+   factsheet.content.note
 
 Submodules
 -----------

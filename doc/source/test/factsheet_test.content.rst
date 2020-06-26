@@ -13,7 +13,7 @@ Subpackages
    :maxdepth: 3
 
    factsheet_test.content.sets
-   factsheet_test.content.section
+   factsheet_test.content.note
 
 Submodules
 ----------

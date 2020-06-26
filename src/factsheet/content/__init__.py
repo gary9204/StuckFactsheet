@@ -6,7 +6,7 @@ Defines topic templates and fact forms for Factsheet content.
     Content for topic templates and fact forms outlines.
 """
 from factsheet.view import ui as UI
-from . import section as XSECTION
+from factsheet.content import note as XSECTION
 from . import sets as XSETS
 
 
