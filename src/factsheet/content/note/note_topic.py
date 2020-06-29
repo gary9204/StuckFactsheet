@@ -1,12 +1,9 @@
 """
 Defines topic class for user to record notes.  See :class:`.Topic`.
 """
-import logging
 import typing   # noqa
 
 from factsheet.model import topic as MTOPIC
-
-logger = logging.getLogger('Main.model.topic')
 
 
 class Note(MTOPIC.Topic):

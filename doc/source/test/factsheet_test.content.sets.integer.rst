@@ -12,3 +12,4 @@ Submodules
 .. toctree::
 
    factsheet_test.content.sets.integer.test_integer
+   factsheet_test.content.sets.integer.test_setint_topic
