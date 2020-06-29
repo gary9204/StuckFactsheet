@@ -8,7 +8,7 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.section import section_topic as XSECTION
+from factsheet.content.note import note_topic as XNOTE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
@@ -192,7 +192,7 @@ class TestAdaptTreeStoreTopic:
         """Confirm initialization."""
         # Setup
         INDEX = None
-        topic = XSECTION.Topic(p_name='Parrot', p_title='The Parrot Sketch')
+        topic = XNOTE.Note(p_name='Parrot', p_title='The Parrot Sketch')
         # Test
         target = ASHEET.AdaptTreeStoreTopic()
         assert target is not None
@@ -207,7 +207,7 @@ class TestAdaptTreeStoreTopic:
         # Setup
         target = ASHEET.AdaptTreeStoreTopic()
         target._gtk_model = new_outline_model(
-            px_class_item=XSECTION.Topic, p_tag='Target')
+            px_class_item=XNOTE.Note, p_tag='Target')
         PATH_VALUE = '1:1:1'
         i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).name
@@ -225,7 +225,7 @@ class TestAdaptTreeStoreTopic:
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTopic()
         target._gtk_model = new_outline_model(
-            px_class_item=XSECTION.Topic, p_tag='Target')
+            px_class_item=XNOTE.Note, p_tag='Target')
         # Test
         i_match = target.find_name(VALUE)
         assert i_match is None
@@ -237,7 +237,7 @@ class TestAdaptTreeStoreTopic:
         # Setup
         target = ASHEET.AdaptTreeStoreTopic()
         target._gtk_model = new_outline_model(
-            px_class_item=XSECTION.Topic, p_tag='Target')
+            px_class_item=XNOTE.Note, p_tag='Target')
         PATH_VALUE = '0:1'
         i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).title
@@ -255,7 +255,7 @@ class TestAdaptTreeStoreTopic:
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTopic()
         target._gtk_model = new_outline_model(
-            px_class_item=XSECTION.Topic, p_tag='Target')
+            px_class_item=XNOTE.Note, p_tag='Target')
         # Test
         i_match = target.find_title(VALUE)
         assert i_match is None
@@ -464,7 +464,7 @@ class TestAdaptTreeViewTopic:
         # Setup
         OUTLINE = new_outline(
             px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XSECTION.Topic)
+            px_class_item=XNOTE.Note)
         PATH_ITEM = '0'
         i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         topic = OUTLINE.get_item(i_target)
@@ -509,7 +509,7 @@ class TestAdaptTreeViewTopic:
 
         OUTLINE = new_outline(
             px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XSECTION.Topic)
+            px_class_item=XNOTE.Note)
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTopic()
         OUTLINE.attach_view(target)
@@ -528,7 +528,7 @@ class TestAdaptTreeViewTopic:
         # Setup
         OUTLINE = new_outline(
             px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XSECTION.Topic)
+            px_class_item=XNOTE.Note)
         PATH_ITEM = '0:0'
         i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)

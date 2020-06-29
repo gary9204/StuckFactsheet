@@ -1,14 +1,14 @@
 """
-Unit test for template class to create a section in a factsheet topic
-outline.  See :mod:`~.section.section_spec`.
+Unit test for template class to specify a topic for user notes.  See
+:mod:`~.note_spec`.
 """
 import collections as COL
 import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.content.section import section_spec as XSPEC
-from factsheet.content.section import section_topic as XSECTION
+from factsheet.content.note import note_spec as XNOTE_SPEC
+from factsheet.content.note import note_topic as XNOTE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -16,33 +16,33 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 #: Container for clear and convenient reference to stock argument values.
-ArgsSection = COL.namedtuple(
-    'ArgsSection', 'name summary title path_assist model')
+ArgsNote = COL.namedtuple(
+    'ArgsNote', 'name summary title path_assist model')
 
 
 @pytest.fixture
-def patch_args_section():
+def patch_args_spec_note():
     """Pytest fixture returns set of argument values to construct
-    a stock :class:`.Section` object."""
-    print('Module: {}'.format(XSPEC))
-    return ArgsSection(
+    a stock :class:`.SpecNote` object."""
+    print('Module: {}'.format(XNOTE_SPEC))
+    return ArgsNote(
         name='Inquisition',
         summary='No one expects the Spanish Inquisition!',
         title='The Spanish Inquisition',
-        path_assist=str(Path(XSPEC.__file__).parent / 'section_spec.ui'),
-        model=XSECTION.Topic
+        path_assist=str(Path(XNOTE_SPEC.__file__).parent / 'note_spec.ui'),
+        model=XNOTE.Note
         )
 
 
-class TestSection:
-    """Unit tests for :class:`.Section`."""
+class TestSpecNote:
+    """Unit tests for :class:`.SpecNote`."""
 
-    def test_init(self, patch_args_section):
+    def test_init(self, patch_args_spec_note):
         """Confirm initialization."""
         # Setup
-        ARGS = patch_args_section
+        ARGS = patch_args_spec_note
         # Test
-        target = XSPEC.Section(
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         assert ARGS.name == target._name_template
@@ -50,7 +50,7 @@ class TestSection:
         assert ARGS.title == target._title_template
 
         assert target._response is None
-        assert target._model_topic is XSECTION.Topic
+        assert target._model_topic is XNOTE.Note
 
         assert isinstance(target._assistant, Gtk.Assistant)
         assert target._assistant.get_modal()
@@ -69,14 +69,14 @@ class TestSection:
             ('prepare', '_assistant', Gtk.Assistant, 0),
             ])
     def test_init_signals(self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN,
-                          N_DEFAULT, patch_args_section):
+                          N_DEFAULT, patch_args_spec_note):
         """Confirm initialization of signal connections."""
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        ARGS = patch_args_section
+        ARGS = patch_args_spec_note
         # Test
-        target = XSPEC.Section(
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 
@@ -97,13 +97,13 @@ class TestSection:
         target._assistant.destroy()
         del target._assistant
 
-    def test_on_apply(self, patch_args_section):
+    def test_on_apply(self, patch_args_spec_note):
         """Confirm assistant hidden, response set, and call method
         unblocked.
         """
         # Setup
-        ARGS = patch_args_section
-        target = XSPEC.Section(
+        ARGS = patch_args_spec_note
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         target._assistant.show()
@@ -115,13 +115,13 @@ class TestSection:
         target._assistant.destroy()
         del target._assistant
 
-    def test_on_cancel(self, patch_args_section):
+    def test_on_cancel(self, patch_args_spec_note):
         """Confirm assistant hidden, response set, and call method
         unblocked.
         """
         # Setup
-        ARGS = patch_args_section
-        target = XSPEC.Section(
+        ARGS = patch_args_spec_note
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         target._assistant.show()
@@ -133,11 +133,11 @@ class TestSection:
         target._assistant.destroy()
         del target._assistant
 
-    def test_on_prepare(self, patch_args_section):
+    def test_on_prepare(self, patch_args_spec_note):
         """Confirm no-op handler exists."""
         # Setup
-        ARGS = patch_args_section
-        target = XSPEC.Section(
+        ARGS = patch_args_spec_note
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         target._assistant.show()
@@ -152,7 +152,7 @@ class TestSection:
         ['_summary_template', 'summary'],
         ['_title_template', 'title'],
         ])
-    def test_property(self, patch_args_section, name_attr, name_prop):
+    def test_property(self, patch_args_spec_note, name_attr, name_prop):
         """Confirm properties are get-only.
 
         #. Case: get
@@ -160,12 +160,12 @@ class TestSection:
         #. Case: no delete
         """
         # Setup
-        ARGS = patch_args_section
-        target = XSPEC.Section(
+        ARGS = patch_args_spec_note
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
         value_attr = getattr(target, name_attr)
-        target_prop = getattr(XSPEC.Section, name_prop)
+        target_prop = getattr(XNOTE_SPEC.SpecNote, name_prop)
         value_prop = getattr(target, name_prop)
         # Test: read
         assert target_prop.fget is not None
@@ -178,14 +178,14 @@ class TestSection:
         target._assistant.destroy()
         del target._assistant
 
-    def test_call_apply(self, patch_args_section, monkeypatch):
+    def test_call_apply(self, patch_args_spec_note, monkeypatch):
         """Confirm call method specifies a topic.
 
         Case: user completes assistant.
         """
         # Setup
-        ARGS = patch_args_section
-        target = XSPEC.Section(
+        ARGS = patch_args_spec_note
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 
@@ -210,7 +210,7 @@ class TestSection:
             Gtk, 'main_iteration', patch_iter.main_iteration)
         # Test
         result = target()
-        assert isinstance(result, XSECTION.Topic)
+        assert isinstance(result, XNOTE.Note)
         assert NAME == result._infoid.name
         assert SUMMARY == result._infoid.summary
         assert TITLE == result._infoid.title
@@ -226,14 +226,14 @@ class TestSection:
         target._assistant.destroy()
         del target._assistant
 
-    def test_call_cancel(self, patch_args_section, monkeypatch):
+    def test_call_cancel(self, patch_args_spec_note, monkeypatch):
         """Confirm call method specifies a topic.
 
         Case: user cancels assistant.
         """
         # Setup
-        ARGS = patch_args_section
-        target = XSPEC.Section(
+        ARGS = patch_args_spec_note
+        target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
 

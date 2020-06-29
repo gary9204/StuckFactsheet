@@ -9,7 +9,7 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.section import section_spec as XSPEC
+from factsheet.content.note import note_spec as XNOTE_SPEC
 from factsheet.control import pool as CPOOL
 from factsheet.control import control_sheet as CSHEET
 from factsheet.control import control_topic as CTOPIC
@@ -1267,7 +1267,7 @@ class TestPageSheet:
 
         patch_template = PatchCall(topic)
         monkeypatch.setattr(
-            XSPEC.Section, '__call__', patch_template.__call__)
+            XNOTE_SPEC.SpecNote, '__call__', patch_template.__call__)
         # Test
         target.on_new_topic(None, None)
         assert patch_place.called
@@ -1384,7 +1384,7 @@ class TestPageSheet:
 
         patch_template = PatchCall(None)
         monkeypatch.setattr(
-            XSPEC.Section, '__call__', patch_template.__call__)
+            XNOTE_SPEC.SpecNote, '__call__', patch_template.__call__)
 
         class PatchInsert:
             def __init__(self): self.called = False

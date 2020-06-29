@@ -9,8 +9,8 @@ from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # STUB imports - begin
 from factsheet import content as XCONTENT
-from factsheet.content.section import section_spec as XSPEC
-# from factsheet.content.section import section_topic as TOPIC
+from factsheet.content.note import note_spec as XNOTE_SPEC
+# from factsheet.content.note import note_topic as XNOTE
 # STUB imports - end
 from factsheet.view import ui as UI
 
@@ -144,7 +144,7 @@ class QueryTemplate:
 
         self._summary_current.set_markup(item.summary)
         # Stub - begin: handling headings
-        is_template = isinstance(item, XSPEC.Section)
+        is_template = isinstance(item, XNOTE_SPEC.SpecNote)
         self._button_specify.set_sensitive(is_template)
         # Stub - end: handling headings
 

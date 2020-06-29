@@ -1,31 +1,30 @@
 """
-Defines template class to create a section in a factsheet topic outline.
+Defines template class to specify a topic for user notes.  See
+:mod:`~.factsheet.content.note`.
 """
 import gi   # type: ignore[import]
 import typing
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.content.section import section_topic as XSECTION
+from factsheet.content.note import note_topic as XNOTE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class Section(ABC_SHEET.AbstractTemplate):
-    """Template to create a section in a factsheet topic outline.
+class SpecNote(ABC_SHEET.AbstractTemplate):
+    """Template to specify a topic for user notes.
 
-    Class ``Section`` is a stub sufficient for a section topic of a
-    topic outline.  The class may serve as an example for template
-    classes as development proceeds.
-
-    The class provides a call interface that returns topic based on
+    The class provides a call interface that returns note topic based on
     user's input or None when user cancels. The call takes no arguments.
     Instead, the call presents an assistant to query the user for values
-    that define the new topic.
+    that define the new note.
+
+    See also :class:`.Note`.
     """
 
     def __init__(self, *, p_name: str, p_summary: str, p_title: str,
-                 p_path_assist: str, p_model: typing.Type[XSECTION.Topic]
+                 p_path_assist: str, p_model: typing.Type[XNOTE.Note]
                  ) -> None:
         self._name_template = p_name
         self._summary_template = p_summary
@@ -37,17 +36,17 @@ class Section(ABC_SHEET.AbstractTemplate):
         self._response: typing.Optional[Gtk.ResponseType] = None
         self._model_topic = p_model
 
-        self._assistant = get_object('ui_assistant_section')
+        self._assistant = get_object('ui_assistant')
         _ = self._assistant.connect('apply', self.on_apply)
         _ = self._assistant.connect('cancel', self.on_cancel)
         _ = self._assistant.connect('destroy', self.on_cancel)
         _ = self._assistant.connect('prepare', self.on_prepare)
 
-        self._name_topic = get_object('ui_name_section')
-        self._summary_topic = get_object('ui_summary_section')
-        self._title_topic = get_object('ui_title_section')
+        self._name_topic = get_object('ui_name')
+        self._summary_topic = get_object('ui_summary')
+        self._title_topic = get_object('ui_title')
 
-    def __call__(self) -> typing.Optional[XSECTION.Topic]:
+    def __call__(self) -> typing.Optional[XNOTE.Note]:
         """Return topic based on user's input or None when user cancels."""
         self._assistant.show()
         while self._response is None:
@@ -93,7 +92,7 @@ class Section(ABC_SHEET.AbstractTemplate):
                    ) -> None:
         """Update assistant pages based on user's actions.
 
-        Method on_prepare is a no-op for :class:`~.section.Section`.
+        Method on_prepare is a no-op for :class:`~.SpecNote`.
         """
         pass
 

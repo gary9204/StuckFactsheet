@@ -12,5 +12,5 @@ Submodules
 .. toctree::
 
    factsheet_test.content.note.test_note
-   factsheet_test.content.note.test_note_topic
    factsheet_test.content.note.test_note_spec
+   factsheet_test.content.note.test_note_topic

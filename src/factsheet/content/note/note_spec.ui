@@ -2,12 +2,10 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkEntryBuffer" id="ui_name_section"/>
-  <object class="GtkTextBuffer" id="ui_summary_section">
-    <property name="text" translatable="yes">This section is user-defined.</property>
-  </object>
-  <object class="GtkEntryBuffer" id="ui_title_section"/>
-  <object class="GtkAssistant" id="ui_assistant_section">
+  <object class="GtkEntryBuffer" id="ui_name"/>
+  <object class="GtkTextBuffer" id="ui_summary"/>
+  <object class="GtkEntryBuffer" id="ui_title"/>
+  <object class="GtkAssistant" id="ui_assistant">
     <property name="can_focus">False</property>
     <property name="modal">True</property>
     <property name="window_position">mouse</property>
@@ -30,7 +28,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="label" translatable="yes">You may group topics into sections within the topic hierarchy of a factsheet.  Use this assistant to create a section.  The steps are as follows.</property>
+            <property name="label" translatable="yes">Use this assistant to add a note to the &lt;i&gt;Topics &lt;/i&gt;outline. Also, you may group topics within the outline by adding a note and then adding or moving topics underneath it. The steps for adding a note are as follows.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -83,7 +81,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Customize identification information for the new section.  A section is identified by name, title, and description that you add.</property>
+                <property name="label" translatable="yes">Customize identification information for the new note.  A note is identified by the name, title, and content that you enter.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -99,7 +97,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Confirm the section information is correct.</property>
+                <property name="label" translatable="yes">Confirm the note information is correct.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -123,7 +121,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="margin_top">6</property>
-            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt;to proceed.  Click &lt;b&gt;Cancel &lt;/b&gt;at any time to abandon the new section.</property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt;to proceed.  Click &lt;b&gt;Cancel &lt;/b&gt;at any time to abandon the new note.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -137,7 +135,7 @@
       </object>
       <packing>
         <property name="page_type">intro</property>
-        <property name="title" translatable="yes">New Section</property>
+        <property name="title" translatable="yes">New Note</property>
         <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
@@ -157,7 +155,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Enter a name, a title, and a description for the new section. </property>
+            <property name="label" translatable="yes">Enter a name, a title, and content for the new note </property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -217,7 +215,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">&lt;i&gt;Description:&lt;/i&gt;</property>
+                <property name="label" translatable="yes">&lt;i&gt;Content:&lt;/i&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -233,7 +231,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">short identifier for the section.</property>
+                <property name="label" translatable="yes">short identifier for the note.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -249,7 +247,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">one-line description of the section.</property>
+                <property name="label" translatable="yes">one-line description of the note.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -265,7 +263,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">full description of the section.</property>
+                <property name="label" translatable="yes">information you want to record in the note.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -326,11 +324,11 @@
               <object class="GtkEntry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Enter short identifier, which will be used for labels, tabs, etc.</property>
+                <property name="tooltip_text" translatable="yes">Enter short identifier, which may be used for labels, tabs, etc.</property>
                 <property name="halign">start</property>
-                <property name="buffer">ui_name_section</property>
+                <property name="buffer">ui_name</property>
                 <property name="width_chars">20</property>
-                <property name="placeholder_text" translatable="yes">Enter section name</property>
+                <property name="placeholder_text" translatable="yes">Enter note name</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -341,10 +339,10 @@
               <object class="GtkEntry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Enter a brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">ui_title_section</property>
+                <property name="tooltip_text" translatable="yes">Enter a brief title, which will serve to distinguish the note.</property>
+                <property name="buffer">ui_title</property>
                 <property name="width_chars">50</property>
-                <property name="placeholder_text" translatable="yes">Enter section title</property>
+                <property name="placeholder_text" translatable="yes">Enter note title</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -363,7 +361,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_top">6</property>
-            <property name="label" translatable="yes">&lt;b&gt;Description&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Content&lt;/b&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -384,11 +382,11 @@
               <object class="GtkTextView">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Enter a complete description of the topic.</property>
+                <property name="tooltip_text" translatable="yes">Enter note content.</property>
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">ui_summary_section</property>
+                <property name="buffer">ui_summary</property>
               </object>
             </child>
           </object>
@@ -420,7 +418,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Click &lt;b&gt;Apply&lt;/b&gt; to accept the identification information below or &lt;b&gt;Back&lt;/b&gt; to change the information.</property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Apply&lt;/b&gt; to accept the note information below or &lt;b&gt;Back&lt;/b&gt; to change the information.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -471,7 +469,7 @@
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Short identifier, which will be used for labels, tabs, etc.</property>
                 <property name="halign">start</property>
-                <property name="buffer">ui_name_section</property>
+                <property name="buffer">ui_name</property>
                 <property name="editable">False</property>
                 <property name="has_frame">False</property>
                 <property name="width_chars">20</property>
@@ -487,7 +485,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">ui_title_section</property>
+                <property name="buffer">ui_title</property>
                 <property name="editable">False</property>
                 <property name="has_frame">False</property>
                 <property name="width_chars">50</property>
@@ -509,7 +507,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">center</property>
-            <property name="label" translatable="yes">&lt;i&gt;Description&lt;/i&gt;</property>
+            <property name="label" translatable="yes">&lt;i&gt;Content&lt;/i&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -534,7 +532,7 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">ui_summary_section</property>
+                <property name="buffer">ui_summary</property>
               </object>
             </child>
           </object>

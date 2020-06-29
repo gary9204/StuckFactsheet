@@ -17,7 +17,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 def patch_donor_outline(new_outline_topics):
     """Pytest fixture returns view of topic outline."""
     outline = UI.FACTORY_SHEET.new_view_outline_topics()
-    gtk_model = new_outline_topics()
+    topics = new_outline_topics()
+    gtk_model = topics._gtk_model
     outline.gtk_view.set_model(gtk_model)
     return outline
 
