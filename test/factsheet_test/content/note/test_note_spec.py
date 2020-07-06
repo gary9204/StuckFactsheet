@@ -3,9 +3,11 @@ Unit test for template class to specify a topic for user notes.  See
 :mod:`~.note_spec`.
 """
 import collections as COL
+import dataclasses as DC
 import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
+import typing
 
 from factsheet.content.note import note_spec as XNOTE_SPEC
 from factsheet.content.note import note_topic as XNOTE
@@ -15,17 +17,29 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-#: Container for clear and convenient reference to stock argument values.
-ArgsNote = COL.namedtuple(
-    'ArgsNote', 'name summary title path_assist model')
+@DC.dataclass
+class ArgsSpec:
+    """Convenience class for assembling arguments to
+    :class:`.SpecNote` method ``__init__``.
+    """
+    name: str
+    summary: str
+    title: str
+    path_assist: str
+    model: typing.Type[XNOTE.Note]
+
+
+# #: Container for clear and convenient reference to stock argument values.
+# ArgsNote = COL.namedtuple(
+#     'ArgsNote', 'name summary title path_assist model')
 
 
 @pytest.fixture
-def patch_args_spec_note():
+def patch_args_spec():
     """Pytest fixture returns set of argument values to construct
-    a stock :class:`.SpecNote` object."""
-    print('Module: {}'.format(XNOTE_SPEC))
-    return ArgsNote(
+    a stock :class:`.SpecNote` object.
+    """
+    return ArgsSpec(
         name='Inquisition',
         summary='No one expects the Spanish Inquisition!',
         title='The Spanish Inquisition',
@@ -37,10 +51,10 @@ def patch_args_spec_note():
 class TestSpecNote:
     """Unit tests for :class:`.SpecNote`."""
 
-    def test_init(self, patch_args_spec_note):
+    def test_init(self, patch_args_spec):
         """Confirm initialization."""
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         # Test
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
@@ -69,12 +83,12 @@ class TestSpecNote:
             ('prepare', '_assistant', Gtk.Assistant, 0),
             ])
     def test_init_signals(self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN,
-                          N_DEFAULT, patch_args_spec_note):
+                          N_DEFAULT, patch_args_spec):
         """Confirm initialization of signal connections."""
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         # Test
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
@@ -97,12 +111,12 @@ class TestSpecNote:
         target._assistant.destroy()
         del target._assistant
 
-    def test_on_apply(self, patch_args_spec_note):
+    def test_on_apply(self, patch_args_spec):
         """Confirm assistant hidden, response set, and call method
         unblocked.
         """
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
@@ -115,12 +129,12 @@ class TestSpecNote:
         target._assistant.destroy()
         del target._assistant
 
-    def test_on_cancel(self, patch_args_spec_note):
+    def test_on_cancel(self, patch_args_spec):
         """Confirm assistant hidden, response set, and call method
         unblocked.
         """
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
@@ -133,10 +147,10 @@ class TestSpecNote:
         target._assistant.destroy()
         del target._assistant
 
-    def test_on_prepare(self, patch_args_spec_note):
+    def test_on_prepare(self, patch_args_spec):
         """Confirm no-op handler exists."""
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
@@ -152,7 +166,7 @@ class TestSpecNote:
         ['_summary_template', 'summary'],
         ['_title_template', 'title'],
         ])
-    def test_property(self, patch_args_spec_note, name_attr, name_prop):
+    def test_property(self, patch_args_spec, name_attr, name_prop):
         """Confirm properties are get-only.
 
         #. Case: get
@@ -160,7 +174,7 @@ class TestSpecNote:
         #. Case: no delete
         """
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
@@ -178,13 +192,13 @@ class TestSpecNote:
         target._assistant.destroy()
         del target._assistant
 
-    def test_call_apply(self, patch_args_spec_note, monkeypatch):
+    def test_call_apply(self, patch_args_spec, monkeypatch):
         """Confirm call method specifies a topic.
 
         Case: user completes assistant.
         """
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)
@@ -226,13 +240,13 @@ class TestSpecNote:
         target._assistant.destroy()
         del target._assistant
 
-    def test_call_cancel(self, patch_args_spec_note, monkeypatch):
+    def test_call_cancel(self, patch_args_spec, monkeypatch):
         """Confirm call method specifies a topic.
 
         Case: user cancels assistant.
         """
         # Setup
-        ARGS = patch_args_spec_note
+        ARGS = patch_args_spec
         target = XNOTE_SPEC.SpecNote(
             p_name=ARGS.name, p_summary=ARGS.summary, p_title=ARGS.title,
             p_path_assist=ARGS.path_assist, p_model=ARGS.model)

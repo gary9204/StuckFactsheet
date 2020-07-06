@@ -11,7 +11,7 @@ Subpackages
 
 .. toctree::
 
-   factsheet.content.sets.integer
+   factsheet.content.sets.int
 
 Submodules
 ----------

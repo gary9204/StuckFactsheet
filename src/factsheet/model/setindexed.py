@@ -45,6 +45,11 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
         after construction.  Please do not modify the elements, members,
         and indicies of ``SetIndexed`` instances.
 
+    .. admonition:: About Equality
+
+        Two indexed sets are equivalent when they have the same
+        indexed elements (that is, same set of member-index pairs).
+
     .. admonition:: Work-in-Progress
 
         Initially, class ``SetIndexed`` only provides features of
@@ -87,6 +92,17 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
             return False
 
         return member == other_member
+
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True if other is indexed set with equal elements, or
+        False otherwise.
+
+        :param p_other: object to test for equality.
+        """
+        if not isinstance(p_other, SetIndexed):
+            return False
+
+        return self._elements == p_other._elements
 
     def __init__(
             self, p_members: typing.Iterable[GenericMember] = []) -> None:

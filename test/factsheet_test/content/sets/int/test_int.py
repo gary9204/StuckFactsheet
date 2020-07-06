@@ -1,10 +1,10 @@
 """
 Unit tests for integer subsection of sets content.  See
-:mod:`~.factsheet.content.sets.integer`.
+:mod:`~.factsheet.content.sets.int`.
 """
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
-from factsheet.content.sets import integer as XINTEGER
+from factsheet.content.sets import int as XINTEGER
 
 
 class TestInteger:
@@ -15,7 +15,7 @@ class TestInteger:
         # Setup
         N_HEADINGS = 1
         NAME = '<i>Integer</i>'
-        N_CHILDREN = 0
+        N_CHILDREN = 1
         # Test
         target = XINTEGER.new_templates()
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)

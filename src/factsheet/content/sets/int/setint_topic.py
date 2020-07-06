@@ -15,7 +15,7 @@ class SetInt(XSET.Set):
     :class:`~.Set`.
 
     :param p_name: name of set of integers.
-    :param p_summary: summary of setof integers.
+    :param p_summary: summary of set of integers.
     :param p_title: title of set of integers.
     """
 

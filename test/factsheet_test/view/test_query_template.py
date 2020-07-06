@@ -7,6 +7,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
+from factsheet.content import heading as XHEADING
 from factsheet.content.note import note_spec as XNOTE_SPEC
 from factsheet.content.note import note_topic as XNOTE
 from factsheet.view import query_template as QTEMPLATES
@@ -240,7 +241,7 @@ class TestQueryTemplate:
 
     def test_on_changed_cursor(self, patch_outline):
         """| Confirm updates when current template changes.
-        | Case: change to template
+        | Case: change to specification template
         """
         # Setup
         WIN = Gtk.Window()
@@ -263,9 +264,40 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    def test_on_changed_cursor_to_heading(self, patch_outline):
+        """| Confirm updates when current template changes.
+        | Case: change to heading template.
+        """
+        # Setup
+        WIN = Gtk.Window()
+        target = QTEMPLATES.QueryTemplate(px_parent=WIN)
+        OUTLINE = patch_outline
+        OUTLINE.attach_view(target._outline)
+        target._outline.gtk_view.expand_all()
+
+        BLANK = ''
+        SUMMARY = 'Something completely different.'
+        heading = XHEADING.Heading(
+            p_name=BLANK, p_summary=SUMMARY, p_title=BLANK)
+        PATH_ITEM = '0:0:0'
+        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        OUTLINE._gtk_model.set_value(
+            i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, heading)
+        target._cursor.select_iter(i_item)
+
+        TEXT = 'The Spanish Inquisition'
+        target._summary_current.set_markup(TEXT)
+        target._button_specify.set_sensitive(True)
+        # Test
+        target.on_changed_cursor(target._cursor)
+        assert SUMMARY == target._summary_current.get_label()
+        assert not target._button_specify.get_sensitive()
+        # Teardown
+        del WIN
+
     def test_on_changed_cursor_to_empty(self, patch_outline):
         """| Confirm updates when current template changes.
-        | Case: change to template None
+        | Case: change to template None.
         """
         # Setup
         WIN = Gtk.Window()

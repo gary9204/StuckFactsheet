@@ -1,5 +1,5 @@
-``content`` Test Module
-=======================
+``test_content`` Test Module
+============================
 
 .. automodule:: factsheet_test.content.test_content
    :members:

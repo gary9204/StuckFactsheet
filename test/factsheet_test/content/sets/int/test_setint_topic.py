@@ -3,7 +3,7 @@ Unit tests for set of integer topic class. See :mod:`~.setint_topic`.
 """
 from factsheet.model import infoid as MINFOID
 from factsheet.model import setindexed as MSET
-from factsheet.content.sets.integer import setint_topic as XSET_INT
+from factsheet.content.sets.int import setint_topic as XSET_INT
 
 
 class TestSetInt:
@@ -23,10 +23,9 @@ class TestSetInt:
         assert not target._stale
         assert isinstance(target._views, dict)
         assert not target._views
-        assert isinstance(target._infoid, MINFOID.InfoId)
-        assert NAME == target._infoid.name
-        assert SUMMARY == target._infoid.summary
-        assert TITLE == target._infoid.title
+        assert NAME == target.name
+        assert SUMMARY == target.summary
+        assert TITLE == target.title
         assert isinstance(target._scope, SCOPE)
         assert SIZE == len(target._scope)
 
@@ -38,6 +37,6 @@ class TestSetInt:
         TITLE_DEFAULT = ''
         # Test
         target = XSET_INT.SetInt()
-        assert NAME_DEFAULT == target._infoid.name
-        assert SUMMARY_DEFAULT == target._infoid.summary
-        assert TITLE_DEFAULT == target._infoid.title
+        assert NAME_DEFAULT == target.name
+        assert SUMMARY_DEFAULT == target.summary
+        assert TITLE_DEFAULT == target.title

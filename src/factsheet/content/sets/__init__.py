@@ -8,7 +8,7 @@ See :mod:`~.factsheet.content`.
 """
 from factsheet.content import heading as XHEADING
 from factsheet.view import ui as UI
-from . import integer as XINTEGER
+from . import int as XINT
 
 
 def new_templates() -> UI.OutlineTemplates:
@@ -27,5 +27,5 @@ def new_templates() -> UI.OutlineTemplates:
 
     i_sets = templates.insert_child(heading_sets, None)
     # UNRESOLVED: Issue #108
-    templates.insert_section(XINTEGER.new_templates(), px_i_target=i_sets)
+    templates.insert_section(XINT.new_templates(), px_i_target=i_sets)
     return templates

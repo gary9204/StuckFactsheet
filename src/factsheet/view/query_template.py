@@ -9,7 +9,9 @@ from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # STUB imports - begin
 from factsheet import content as XCONTENT
-from factsheet.content.note import note_spec as XNOTE_SPEC
+from factsheet.content import heading as XHEADING
+from factsheet.content.note import note_spec as XSPEC_NOTE
+from factsheet.content.sets.int import segint_spec as XSPEC_SEGINT
 # from factsheet.content.note import note_topic as XNOTE
 # STUB imports - end
 from factsheet.view import ui as UI
@@ -143,10 +145,8 @@ class QueryTemplate:
             return
 
         self._summary_current.set_markup(item.summary)
-        # Stub - begin: handling headings
-        is_template = isinstance(item, XNOTE_SPEC.SpecNote)
+        is_template = not isinstance(item, XHEADING.Heading)
         self._button_specify.set_sensitive(is_template)
-        # Stub - end: handling headings
 
     def _on_changed_cursor_invalid(self) -> None:
         """Changes summary text and Specify button if there is no template.

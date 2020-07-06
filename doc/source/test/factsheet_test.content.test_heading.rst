@@ -1,5 +1,5 @@
-``heading`` Content Test Module
-===============================
+``test_heading`` Content Test Module
+====================================
 
 .. automodule:: factsheet_test.content.test_heading
    :members:

@@ -20,10 +20,9 @@ class TestSet:
         assert not target._stale
         assert isinstance(target._views, dict)
         assert not target._views
-        assert isinstance(target._infoid, MINFOID.InfoId)
-        assert NAME == target._infoid.name
-        assert SUMMARY == target._infoid.summary
-        assert TITLE == target._infoid.title
+        assert NAME == target.name
+        assert SUMMARY == target.summary
+        assert TITLE == target.title
 
     def test_init_default(self):
         """Confirm initialization with default arguments."""
@@ -33,6 +32,6 @@ class TestSet:
         TITLE_DEFAULT = ''
         # Test
         target = XSET.Set()
-        assert NAME_DEFAULT == target._infoid.name
-        assert SUMMARY_DEFAULT == target._infoid.summary
-        assert TITLE_DEFAULT == target._infoid.title
+        assert NAME_DEFAULT == target.name
+        assert SUMMARY_DEFAULT == target.summary
+        assert TITLE_DEFAULT == target.title

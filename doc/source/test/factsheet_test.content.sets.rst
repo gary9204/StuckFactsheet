@@ -12,7 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 3
 
-   factsheet_test.content.sets.integer
+   factsheet_test.content.sets.int
 
 Submodules
 ----------

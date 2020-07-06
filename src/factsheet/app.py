@@ -20,7 +20,7 @@ path_log = Path('factsheet.log')
 formatter = logging.Formatter(
     '[%(asctime)-8s.%(msecs)03d] | %(levelname)-8s | %(name)s | '
     '%(funcName)-20s | %(message)s', datefmt='%H:%M:%S')
-file_handler = RotatingFileHandler(path_log, backupCount=9)
+file_handler = RotatingFileHandler(path_log, backupCount=2)
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 if path_log.exists() and path_log.stat().st_size > 0:

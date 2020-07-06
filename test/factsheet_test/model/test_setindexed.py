@@ -44,6 +44,35 @@ class TestSetIndexed:
         # Test
         assert not target.__contains__(NON_ELEMENT)
 
+    @pytest.mark.parametrize('MEMBERS_L, MEMBERS_R, RESULT', [
+        ((), (), True),
+        ((1,), (), False),
+        ((), (1,), False),
+        ((1, 2), (1,), False),
+        ((1, 2), (2, 1), False),
+        ((1, 2, 3), (1, 4, 3), False),
+        ((1, 2, 3), (1, 2, 3), True),
+        ])
+    def test_eq(self, MEMBERS_L, MEMBERS_R, RESULT):
+        """ """
+        # Setup
+        Set = MSET.SetIndexed[str]
+        target_left = Set(MEMBERS_L)
+        target_right = Set(MEMBERS_R)
+        # Test
+        assert target_left.__eq__(target_right) is RESULT
+
+    def test_eq_domain(self, patch_members):
+        """ """
+        # Setup
+        Set = MSET.SetIndexed[str]
+        target = Set(patch_members)
+        SAMPLE = dict(enumerate(patch_members))
+        print('Target: {}'.format(target))
+        print('Sample: {}'.format(SAMPLE))
+        # Test
+        assert not target.__eq__(SAMPLE)
+
     def test_init(self, patch_members):
         """| Confirm initialization.
         | Case: distinct members, none of which are None.
@@ -271,6 +300,9 @@ class TestSetIndexed:
         source._elements[-1] = None
         # Test
         target = MSET.SetIndexed.new_from_elements(source)
+        print('Reference: {}'.format(reference._elements.values()))
+        print('Source:    {}'.format(source._elements.values()))
+        print('Target:    {}'.format(target._elements.values()))
         assert reference == target
 
 #     def test_new_product_set_none(self):

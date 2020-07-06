@@ -21,4 +21,5 @@ Submodules
 .. toctree::
 
    factsheet_test.content.test_content
+   factsheet_test.content.test_gtk_helper
    factsheet_test.content.test_heading
