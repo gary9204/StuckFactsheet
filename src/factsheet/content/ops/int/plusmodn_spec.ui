@@ -2,18 +2,19 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkAdjustment" id="segment_bound">
-    <property name="lower">1</property>
+  <object class="GtkAdjustment" id="modulus_min">
+    <property name="lower">2</property>
     <property name="upper">100</property>
     <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkEntryBuffer" id="ui_name"/>
-  <object class="GtkTextBuffer" id="ui_summary">
-    <property name="text" translatable="yes">This topic is an initial segment of natural numbers.</property>
+  <object class="GtkEntryBuffer" id="ui_name_op"/>
+  <object class="GtkTextBuffer" id="ui_summary_op"/>
+  <object class="GtkTextBuffer" id="ui_summary_set_current">
+    <property name="text" translatable="yes">Placeholder for summary of topic to serve as set of representatives.</property>
   </object>
-  <object class="GtkEntryBuffer" id="ui_title"/>
+  <object class="GtkEntryBuffer" id="ui_title_op"/>
   <object class="GtkAssistant" id="ui_assistant">
     <property name="can_focus">False</property>
     <property name="modal">True</property>
@@ -36,7 +37,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="label" translatable="yes">Use this assistant add a topic for an initial segment of natural numbers to the &lt;i&gt;Topics &lt;/i&gt;outline. The steps are as follows.</property>
+            <property name="label" translatable="yes">Use this assistant to add a topic for modular addition to the &lt;i&gt;Topics &lt;/i&gt;outline. The steps are as follows.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -68,14 +69,14 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
+                <property name="top_attach">3</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Customize identification information for the new set.  The set is identified by the name, title, and description that you enter.</property>
+                <property name="label" translatable="yes">Customize identification information for the new operation.  The operation is identified by the name, title, and description that you enter.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -83,7 +84,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">1</property>
+                <property name="top_attach">2</property>
               </packing>
             </child>
             <child>
@@ -91,7 +92,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Confirm the set information is as you desire.</property>
+                <property name="label" translatable="yes">Confirm the operation information is as you desire.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -99,7 +100,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">2</property>
+                <property name="top_attach">3</property>
               </packing>
             </child>
             <child>
@@ -114,7 +115,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
+                <property name="top_attach">2</property>
               </packing>
             </child>
             <child>
@@ -123,7 +124,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">&lt;i&gt;Bound:&lt;/i&gt;</property>
+                <property name="label" translatable="yes">&lt;i&gt;Modulus:&lt;/i&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -137,7 +138,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Select a positive integer &lt;i&gt;k &lt;/i&gt;as the upper bound for integers in the set. The new set will consist of the integers [0, &lt;i&gt;k&lt;/i&gt;) (that is, {0, ..., &lt;i&gt;k &lt;/i&gt; - 1}). </property>
+                <property name="label" translatable="yes">Select an integer &lt;i&gt;n &lt;/i&gt;greater than one as the modulus for the addition operation.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -146,6 +147,36 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="label" translatable="yes">&lt;i&gt;Set:&lt;/i&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Select a set of integers for the operation.  The topic will use the elements of the set as representatives of congruence classes modulo &lt;i&gt;n.&lt;/i&gt;&lt;sup&gt;(1)&lt;/sup&gt;  </property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
               </packing>
             </child>
           </object>
@@ -160,7 +191,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt;to proceed.  Click &lt;b&gt;Cancel &lt;/b&gt;at any time to abandon the new note.</property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt;to proceed.  Click &lt;b&gt;Cancel &lt;/b&gt;at any time to abandon the new topic.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -171,16 +202,86 @@
             <property name="position">2</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="row_spacing">6</property>
+            <property name="column_spacing">12</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+                <property name="label" translatable="yes">&lt;small&gt;Note (1)&lt;/small&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+                <property name="height">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">&lt;small&gt;Congruence modulo &lt;i&gt;n &lt;/i&gt;is an equivalence relation with &lt;i&gt;n &lt;/i&gt;equivalence classes.  A complete set of equivalence class representatives contains exactly one element from each class.&lt;/small&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">&lt;small&gt;The set of integers you select for addition modulo &lt;i&gt;n &lt;/i&gt;need not be a complete set of congruence class representatives.  However, if the set of representatives is incomplete, the operation may be a partial operation.&lt;/small&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
       </object>
       <packing>
         <property name="page_type">intro</property>
-        <property name="title" translatable="yes">New Segment</property>
+        <property name="title" translatable="yes">New Operation</property>
         <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="bound">
+      <object class="GtkBox" id="modulus">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_left">12</property>
@@ -194,7 +295,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Set the bound &lt;i&gt;k &lt;/i&gt;for the initial segment [0, &lt;i&gt;k&lt;/i&gt;).</property>
+            <property name="label" translatable="yes">Select the modulus &lt;i&gt;n &lt;/i&gt;for the addition operation.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -218,7 +319,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
-                <property name="label" translatable="yes">&lt;b&gt;&lt;i&gt;k&lt;/i&gt;: &lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;&lt;i&gt;n&lt;/i&gt;: &lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -228,14 +329,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="ui_bound">
+              <object class="GtkSpinButton" id="ui_modulus">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="halign">start</property>
                 <property name="input_purpose">digits</property>
-                <property name="adjustment">segment_bound</property>
+                <property name="adjustment">modulus_min</property>
                 <property name="numeric">True</property>
-                <property name="value">1</property>
+                <property name="value">2</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -266,7 +367,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt; to continue to add identification information for the set.  Click &lt;b&gt;Finish &lt;/b&gt;to continue using the default identification information.  Click &lt;b&gt;Back &lt;/b&gt;to return to the introduction.  </property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt; to continue to select a set of integers as congruence class representatives for the operation.  Click &lt;b&gt;Back &lt;/b&gt;to return to the introduction.  </property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -280,7 +381,221 @@
         </child>
       </object>
       <packing>
-        <property name="title" translatable="yes">Bound</property>
+        <property name="title" translatable="yes">Modulus</property>
+        <property name="complete">True</property>
+        <property name="has_padding">False</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="set">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">12</property>
+        <property name="margin_right">12</property>
+        <property name="margin_top">6</property>
+        <property name="margin_bottom">6</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="label" translatable="yes">The outline below lists the names and titles of existing topics.  Click on a row to select a topic and show its summary.  Type in the &lt;b&gt;search field &lt;/b&gt;below the &lt;i&gt;Topics&lt;/i&gt; outline to search for a set topic by name or by title.</property>
+            <property name="use_markup">True</property>
+            <property name="justify">fill</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkPaned">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="orientation">vertical</property>
+            <property name="wide_handle">True</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0.10000000149011612</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="ui_context_outline_topics">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="shadow_type">in</property>
+                        <property name="min_content_height">120</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Topics&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSearchBar" id="ui_search_bar">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="search_mode_enabled">True</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkCheckButton" id="ui_search_by_name">
+                            <property name="label" translatable="yes">By name</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="ui_search_by_title">
+                            <property name="label" translatable="yes">By title</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSearchEntry" id="ui_search_entry">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="width_chars">25</property>
+                            <property name="primary_icon_name">edit-find-symbolic</property>
+                            <property name="primary_icon_activatable">False</property>
+                            <property name="primary_icon_sensitive">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0.10000000149011612</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="shadow_type">in</property>
+                    <property name="min_content_height">60</property>
+                    <child>
+                      <object class="GtkTextView">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="editable">False</property>
+                        <property name="wrap_mode">word</property>
+                        <property name="justification">fill</property>
+                        <property name="left_margin">6</property>
+                        <property name="right_margin">6</property>
+                        <property name="cursor_visible">False</property>
+                        <property name="buffer">ui_summary_set_current</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">&lt;i&gt;Summary&lt;/i&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt; to continue to add identification information for the operation.  Click &lt;b&gt;Finish &lt;/b&gt;to continue using the default identification information.  Click &lt;b&gt;Back &lt;/b&gt;to return to the modulus selection.</property>
+            <property name="use_markup">True</property>
+            <property name="justify">fill</property>
+            <property name="wrap">True</property>
+            <property name="max_width_chars">60</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="title" translatable="yes">Set</property>
         <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
@@ -300,7 +615,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Enter name, title, and description for the new set topic.</property>
+            <property name="label" translatable="yes">Enter name, title, and description for the new addition operation topic.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -353,7 +668,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Enter short identifier, which will be used for labels, tabs, etc.</property>
-                <property name="buffer">ui_name</property>
+                <property name="buffer">ui_name_op</property>
                 <property name="max_length">20</property>
                 <property name="width_chars">40</property>
                 <property name="max_width_chars">20</property>
@@ -369,7 +684,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Enter a brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">ui_title</property>
+                <property name="buffer">ui_title_op</property>
                 <property name="placeholder_text" translatable="yes">Enter set title</property>
               </object>
               <packing>
@@ -413,7 +728,7 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">ui_summary</property>
+                <property name="buffer">ui_summary_op</property>
               </object>
             </child>
           </object>
@@ -428,7 +743,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt; to continue.  Click &lt;b&gt;Back &lt;/b&gt;to return to the previous step.</property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt; to continue to confirmation.  Click &lt;b&gt;Back &lt;/b&gt;to return to the set selection.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -462,7 +777,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Click &lt;b&gt;Apply&lt;/b&gt; to accept the set specification below or &lt;b&gt;Back&lt;/b&gt; to change the bound or identification information.</property>
+            <property name="label" translatable="yes">Click &lt;b&gt;Apply&lt;/b&gt; to accept the set specification below or &lt;b&gt;Back&lt;/b&gt; to change the identification information, set, or modulus.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -475,11 +790,96 @@
           </packing>
         </child>
         <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label_xalign">0.05000000074505806</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">&lt;i&gt;Set Name:&lt;/i&gt;</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">&lt;i&gt;Set Title:&lt;/i&gt;</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="has_frame">False</property>
+                    <property name="width_chars">39</property>
+                    <property name="placeholder_text" translatable="yes">Oops! no set name.</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="has_frame">False</property>
+                    <property name="placeholder_text" translatable="yes">Oops! no set title.</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">&lt;i&gt;Set&lt;/i&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkLabel" id="ui_segment">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">&lt;i&gt;Segment: &lt;/i&gt;[0, &lt;i&gt;k&lt;/i&gt;)</property>
+            <property name="label" translatable="yes">&lt;i&gt;Modulus: n&lt;/i&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">right</property>
             <property name="width_chars">13</property>
@@ -487,7 +887,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -499,6 +899,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">end</property>
                 <property name="label" translatable="yes">&lt;i&gt;Name:&lt;/i&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="justify">right</property>
@@ -514,6 +915,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">end</property>
                 <property name="label" translatable="yes">&lt;i&gt;Title:&lt;/i&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="justify">right</property>
@@ -544,12 +946,13 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Short identifier, which will be used for labels, tabs, etc.</property>
-                <property name="buffer">ui_name</property>
+                <property name="buffer">ui_name_op</property>
                 <property name="editable">False</property>
                 <property name="max_length">20</property>
                 <property name="has_frame">False</property>
                 <property name="width_chars">40</property>
                 <property name="max_width_chars">20</property>
+                <property name="placeholder_text" translatable="yes">Oops! no operation name.</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -561,9 +964,10 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">ui_title</property>
+                <property name="buffer">ui_title_op</property>
                 <property name="editable">False</property>
                 <property name="has_frame">False</property>
+                <property name="placeholder_text" translatable="yes">Oops! to operation title.</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -574,7 +978,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child>
@@ -591,14 +995,14 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">ui_summary</property>
+                <property name="buffer">ui_summary_op</property>
               </object>
             </child>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
@@ -608,9 +1012,6 @@
         <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
-    </child>
-    <child>
-      <placeholder/>
     </child>
     <child>
       <placeholder/>
