@@ -1,11 +1,10 @@
 """
-Unit tests for topic class defining initial segment of natural numbers.
-See :mod:`~.SegInt_topic`.
+Unit tests for class defining initial segment of natural numbers topics.
+See :mod:`~.segint_topic`.
 """
 import pytest   # type: ignore[import]
 
-from factsheet.model import setindexed as MSET
-from factsheet.content.sets.int import segint_topic as XSET_INT
+from factsheet.content.sets.int import segint_topic as XSEG_INT
 
 
 class TestSegInt:
@@ -25,9 +24,9 @@ class TestSegInt:
         NAME = 'Parrot'
         SUMMARY = 'This parrot is no more.'
         TITLE = 'Parrot Sketch'
-        target_left = XSET_INT.SegInt(
+        target_left = XSEG_INT.SegInt(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE, p_bound=BOUND_L)
-        target_right = XSET_INT.SegInt(
+        target_right = XSEG_INT.SegInt(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE, p_bound=BOUND_R)
         # Test
         assert (target_left == target_right) is RESULT
@@ -42,11 +41,11 @@ class TestSegInt:
         TITLE_MATCH = 'Parrot Sketch'
         TITLE_DIFFER = 'Something completely different.'
         BOUND = 5
-        reference = XSET_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
+        reference = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
                                     p_title=TITLE_MATCH, p_bound=BOUND)
-        target_match = XSET_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
+        target_match = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
                                        p_title=TITLE_MATCH, p_bound=BOUND)
-        target_differ = XSET_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
+        target_differ = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
                                         p_title=TITLE_DIFFER, p_bound=BOUND)
         # Test
         assert reference.__eq__(target_match)
@@ -61,7 +60,7 @@ class TestSegInt:
         SUMMARY = 'This parrot is no more.'
         TITLE = 'Parrot Sketch'
         BOUND = 5
-        reference = XSET_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
+        reference = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
                                     p_title=TITLE, p_bound=BOUND)
         OTHER = 'Something completely different.'
         # Test
@@ -75,10 +74,9 @@ class TestSegInt:
         NAME = 'SegInt'
         SUMMARY = 'This topic represents a set of integers.'
         TITLE = 'Integer Set'
-        SCOPE = MSET.SetIndexed
         BOUND = 5
         # Test
-        target = XSET_INT.SegInt(
+        target = XSEG_INT.SegInt(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE, p_bound=BOUND)
         assert not target._stale
         assert isinstance(target._views, dict)
@@ -86,8 +84,7 @@ class TestSegInt:
         assert NAME == target.name
         assert SUMMARY == target.summary
         assert TITLE == target.title
-        assert isinstance(target._scope, SCOPE)
-        assert BOUND == len(target._scope)
+        assert BOUND == len(target._elements)
 
     def test_init_default(self):
         """| Confirm initialization.
@@ -99,11 +96,11 @@ class TestSegInt:
         TITLE_DEFAULT = ''
         BOUND_DEFAULT = 1
         # Test
-        target = XSET_INT.SegInt()
+        target = XSEG_INT.SegInt()
         assert NAME_DEFAULT == target.name
         assert SUMMARY_DEFAULT == target.summary
         assert TITLE_DEFAULT == target.title
-        assert BOUND_DEFAULT == len(target._scope)
+        assert BOUND_DEFAULT == len(target._elements)
 
     def test_init_guard(self):
         """| Confirm initialization.
@@ -113,8 +110,8 @@ class TestSegInt:
         BOUND = -42
         SIZE = 1
         # Test
-        target = XSET_INT.SegInt(p_bound=BOUND)
-        assert SIZE == len(target._scope)
+        target = XSEG_INT.SegInt(p_bound=BOUND)
+        assert SIZE == len(target._elements)
 
     @pytest.mark.parametrize('BOUND_R, TITLE_R, BOUND_N, TITLE_N', [
         (5, 'N(5)', 5, 'N(5)'),
@@ -132,7 +129,7 @@ class TestSegInt:
     def test_guard_bound(self, BOUND_R, TITLE_R, BOUND_N, TITLE_N):
         """Confirm bound check."""
         # Setup
-        target = XSET_INT.SegInt()
+        target = XSEG_INT.SegInt()
         # Test
         bound_new, title_new = target.guard_bound(BOUND_R, TITLE_R)
         assert BOUND_N == bound_new

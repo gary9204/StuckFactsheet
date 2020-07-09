@@ -7,13 +7,13 @@ import typing
 
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.content import gtk_helper as XHELPER
-from factsheet.content.sets.int import segint_topic as XSEGINT
+from factsheet.content.ops.int import plusmodn_topic as XPLUS_N
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class SpecSegInt(ABC_SHEET.AbstractTemplate):
+class SpecPlusModN(ABC_SHEET.AbstractTemplate):
     """Class to specify a topic for initial segment of natural numbers.
 
     The class provides a call interface that returns segment topic based
@@ -25,7 +25,7 @@ class SpecSegInt(ABC_SHEET.AbstractTemplate):
     """
 
     def __init__(self, *, p_name: str, p_summary: str, p_title: str,
-                 p_path_assist: str, p_model: typing.Type[XSEGINT.SegInt]
+                 p_path_assist: str, p_model: typing.Type[XPLUS_N.PlusModN]
                  ) -> None:
         pass
         self._name_template = p_name
@@ -50,7 +50,7 @@ class SpecSegInt(ABC_SHEET.AbstractTemplate):
         self._response: typing.Optional[Gtk.ResponseType]
         self._clear_assist()
 
-    def __call__(self) -> typing.Optional[XSEGINT.SegInt]:
+    def __call__(self) -> typing.Optional[XPLUS_N.PlusModN]:
         """Return topic based on user's input or None when user cancels."""
         self._assistant.show()
         while self._response is None:

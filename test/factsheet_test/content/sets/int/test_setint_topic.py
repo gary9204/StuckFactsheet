@@ -1,21 +1,27 @@
 """
-Unit tests for set of integer topic class. See :mod:`~.setint_topic`.
+Unit tests for class for set of integers topics. See
+:mod:`~.setint_topic`.
 """
-from factsheet.model import infoid as MINFOID
-from factsheet.model import setindexed as MSET
 from factsheet.content.sets.int import setint_topic as XSET_INT
 
 
 class TestSetInt:
     """Unit tests for :class:`~.SetInt`."""
 
+    def test_types(self):
+        """Confirm support types defined."""
+        # Setup
+        # Test
+        assert XSET_INT.ElementInt is not None
+
     def test_init(self):
-        """Confirm initialization."""
+        """| Confirm initialization.
+        | Case: explicit arguments.
+        """
         # Setup
         NAME = 'SetInt'
         SUMMARY = 'This topic represents a set of integers.'
         TITLE = 'Integer Set'
-        SCOPE = MSET.SetIndexed
         SIZE = 0
         # Test
         target = XSET_INT.SetInt(
@@ -26,11 +32,11 @@ class TestSetInt:
         assert NAME == target.name
         assert SUMMARY == target.summary
         assert TITLE == target.title
-        assert isinstance(target._scope, SCOPE)
-        assert SIZE == len(target._scope)
+        assert SIZE == len(target._elements)
 
     def test_init_default(self):
-        """Confirm initialization with default arguments."""
+        """Confirm initialization.
+        | Case: default arguments."""
         # Setup
         NAME_DEFAULT = ''
         SUMMARY_DEFAULT = ''

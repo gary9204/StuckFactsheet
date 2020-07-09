@@ -1,13 +1,10 @@
 """
 Defines topic templates and fact forms for Factsheet content.
-
-.. attribute:: BUILTIN
-
-    Content for topic templates and fact forms outlines.
 """
 from factsheet.view import ui as UI
 from factsheet.content import note as XSECTION
 from . import sets as XSETS
+from . import ops as XOPS
 
 
 def new_templates() -> UI.OutlineTemplates:
@@ -17,4 +14,5 @@ def new_templates() -> UI.OutlineTemplates:
     # UNRESOLVED: Issue #108
     templates.insert_section(XSECTION.new_templates())
     templates.insert_section(XSETS.new_templates())
+    templates.insert_section(XOPS.new_templates())
     return templates

@@ -1,5 +1,5 @@
-``note_spec`` Test Module
-=========================
+``test_note_spec`` Test Module
+==============================
 
 .. automodule:: factsheet_test.content.note.test_note_spec
    :members:

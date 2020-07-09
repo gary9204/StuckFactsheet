@@ -1,14 +1,13 @@
 """
-Defines topic class for initial segment of natural numbers.  See
+Defines class for initial segment of natural numbers topics.  See
 :mod:`.setint_topic`.
 """
 import typing
 
-from factsheet.content.sets.int import setint_topic as XSETINT
-from factsheet.model import setindexed as MSET
+from factsheet.content.sets.int import setint_topic as XSET_INT
 
 
-class SegInt(XSETINT.SetInt):
+class SegInt(XSET_INT.SetInt):
     """Defines topic class for initial segment of integers.
 
     Class ``SegInt`` represents sets of nautral numbers of the form
@@ -18,6 +17,7 @@ class SegInt(XSETINT.SetInt):
     :param p_summary: summary for segment.
     :param p_title: title of segment.
     :param p_bound: upper bound for segment. Default is 1.
+    :param kwargs: keyword arguments for superclass.
 
     .. admonition:: About Equality
 
@@ -37,16 +37,17 @@ class SegInt(XSETINT.SetInt):
         if not super().__eq__(p_other):
             return False
 
-        if self._scope != p_other._scope:
+        if self._elements != p_other._elements:
             return False
 
         return True
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '', p_bound: int = 1) -> None:
+                 p_title: str = '', p_bound: int = 1, **kwargs) -> None:
         bound, title = self.guard_bound(p_bound, p_title)
-        super().__init__(p_name=p_name, p_summary=p_summary, p_title=title)
-        self._scope = MSET.SetIndexed[int](range(bound))
+        members = range(bound)
+        super().__init__(p_name=p_name, p_summary=p_summary, p_title=title,
+                         p_members=members, **kwargs)
 
     def guard_bound(self, p_bound_raw: int, p_title_raw: str
                     ) -> typing.Tuple[int, str]:

@@ -29,7 +29,7 @@ class AdaptTreeStoreTemplate(
                   px_i_after: AOUTLINE.AdaptIndex = None
                   ) -> AOUTLINE.AdaptIndex:
         """Return index of first template where the target value equals
-        the template name, or None if no match.
+        the template name or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 
@@ -47,7 +47,7 @@ class AdaptTreeStoreTemplate(
                    px_i_after: AOUTLINE.AdaptIndex = None
                    ) -> AOUTLINE.AdaptIndex:
         """Return index of first template where the target value equals
-        the template title, or None if no match.
+        the template title or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 
@@ -72,7 +72,7 @@ class AdaptTreeStoreTopic(
                   px_i_after: AOUTLINE.AdaptIndex = None
                   ) -> AOUTLINE.AdaptIndex:
         """Return index of first topic where the target value equals the
-        topic name, or None if no match.
+        topic name or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 
@@ -90,7 +90,7 @@ class AdaptTreeStoreTopic(
                    px_i_after: AOUTLINE.AdaptIndex = None
                    ) -> AOUTLINE.AdaptIndex:
         """Return index of first topic where the target value equals the
-        topic title, or None if no match.
+        topic title or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 

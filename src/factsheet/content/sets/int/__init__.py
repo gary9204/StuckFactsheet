@@ -15,7 +15,6 @@ from . import segint_topic as XSEGINT
 
 
 def new_templates() -> UI.OutlineTemplates:
-    # def new_templates() -> ABC_OUTLINE.AbstractOutline:
     """Return outline of integer templates."""
     templates = UI.FACTORY_SHEET.new_model_outline_templates()
 

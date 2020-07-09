@@ -1,5 +1,5 @@
-``sets`` Content Test Module
-============================
+``test_sets`` Content Test Module
+=================================
 
 .. automodule:: factsheet_test.content.sets.test_sets
    :members:

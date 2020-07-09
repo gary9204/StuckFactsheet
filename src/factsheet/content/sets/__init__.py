@@ -1,10 +1,6 @@
 """
 Defines sets section of Factsheet content.
 See :mod:`~.factsheet.content`.
-
-.. attribute:: BUILTIN
-
-    Content for set topic templates and set fact forms.
 """
 from factsheet.content import heading as XHEADING
 from factsheet.view import ui as UI
@@ -26,6 +22,5 @@ def new_templates() -> UI.OutlineTemplates:
         )
 
     i_sets = templates.insert_child(heading_sets, None)
-    # UNRESOLVED: Issue #108
     templates.insert_section(XINT.new_templates(), px_i_target=i_sets)
     return templates

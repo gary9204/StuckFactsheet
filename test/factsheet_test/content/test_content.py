@@ -12,7 +12,7 @@ class TestContent:
     def test_new_templates(self):
         """Confirm templates outline initialization."""
         # Setup
-        N_HEADINGS = 2
+        N_HEADINGS = 3
         # Test
         target = XCONTENT.new_templates()
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)

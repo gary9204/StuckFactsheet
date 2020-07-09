@@ -235,7 +235,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
                   px_derive: typing.Callable[[typing.Any], typing.Any] = (
                       lambda v: v)) -> AdaptIndex:
         """Return index of next item where the target value equals value
-        derived from item's content in given field, or None if no match.
+        derived from item's content in given field or None if no match.
 
         Search covers entire outline by wrapping at end if necessary.
 

@@ -105,8 +105,11 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
         return self._elements == p_other._elements
 
     def __init__(
-            self, p_members: typing.Iterable[GenericMember] = []) -> None:
+            self, p_members: typing.Iterable[GenericMember] = None) -> None:
         self._elements: typing.Dict[IndexElement, GenericMember] = dict()
+        if p_members is None:
+            return
+
         index_next = 0
         for member in p_members:
             if member is None:

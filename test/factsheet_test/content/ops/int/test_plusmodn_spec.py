@@ -2,7 +2,6 @@
 Unit test for class to specify an initial segment of natural numbers.
 See :mod:`~.segint_spec`.
 """
-import collections as COL
 import dataclasses as DC
 import gi   # type: ignore[import]
 from pathlib import Path

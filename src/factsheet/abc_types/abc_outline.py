@@ -102,7 +102,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
             px_derive: typing.Callable[[typing.Any], typing.Any] = (
                 lambda v: v)) -> GenericIndex:
         """Return index of next item where the target value equals value
-        derived from item's content in given field, or None if no match.
+        derived from item's content in given field or None if no match.
 
         Search covers entire hierarchy by wrapping at end if necessary.
 

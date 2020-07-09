@@ -11,8 +11,9 @@ Subpackages
 
 .. toctree::
 
-   factsheet.content.sets
    factsheet.content.note
+   factsheet.content.ops
+   factsheet.content.sets
 
 Submodules
 -----------
