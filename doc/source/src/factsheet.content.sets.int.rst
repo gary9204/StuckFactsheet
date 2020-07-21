@@ -11,4 +11,6 @@ Submodules
 
 .. toctree::
 
+   factsheet.content.sets.int.segint_spec
+   factsheet.content.sets.int.segint_topic
    factsheet.content.sets.int.setint_topic

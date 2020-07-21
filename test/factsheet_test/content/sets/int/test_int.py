@@ -5,6 +5,7 @@ Unit tests for integer subsection of sets content.  See
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.content.sets import int as XINTEGER
+from factsheet.view import ui as UI
 
 
 class TestInteger:
@@ -13,11 +14,12 @@ class TestInteger:
     def test_new_templates(self):
         """Confirm template outline initialization."""
         # Setup
+        VIEW_TOPICS = UI.FACTORY_SHEET.new_view_outline_topics()
         N_HEADINGS = 1
         NAME = '<i>Integer</i>'
         N_CHILDREN = 1
         # Test
-        target = XINTEGER.new_templates()
+        target = XINTEGER.new_templates(lambda: VIEW_TOPICS)
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
         model = target._gtk_model
         assert N_HEADINGS == len(model)

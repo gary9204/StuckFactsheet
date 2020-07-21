@@ -5,16 +5,16 @@
   <object class="GtkAdjustment" id="modulus_min">
     <property name="lower">2</property>
     <property name="upper">100</property>
-    <property name="value">1</property>
+    <property name="value">2</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkEntryBuffer" id="ui_name_op"/>
-  <object class="GtkTextBuffer" id="ui_summary_op"/>
-  <object class="GtkTextBuffer" id="ui_summary_set_current">
+  <object class="GtkEntryBuffer" id="ui_name"/>
+  <object class="GtkTextBuffer" id="ui_summary"/>
+  <object class="GtkTextBuffer" id="ui_summary_set">
     <property name="text" translatable="yes">Placeholder for summary of topic to serve as set of representatives.</property>
   </object>
-  <object class="GtkEntryBuffer" id="ui_title_op"/>
+  <object class="GtkEntryBuffer" id="ui_title"/>
   <object class="GtkAssistant" id="ui_assistant">
     <property name="can_focus">False</property>
     <property name="modal">True</property>
@@ -336,7 +336,6 @@
                 <property name="input_purpose">digits</property>
                 <property name="adjustment">modulus_min</property>
                 <property name="numeric">True</property>
-                <property name="value">2</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -431,7 +430,7 @@
                     <property name="label_xalign">0.10000000149011612</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkScrolledWindow" id="ui_context_outline_topics">
+                      <object class="GtkScrolledWindow" id="ui_context_topics">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="margin_bottom">6</property>
@@ -458,7 +457,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSearchBar" id="ui_search_bar">
+                  <object class="GtkSearchBar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="search_mode_enabled">True</property>
@@ -550,7 +549,7 @@
                         <property name="left_margin">6</property>
                         <property name="right_margin">6</property>
                         <property name="cursor_visible">False</property>
-                        <property name="buffer">ui_summary_set_current</property>
+                        <property name="buffer">ui_summary_set</property>
                       </object>
                     </child>
                   </object>
@@ -596,7 +595,6 @@
       </object>
       <packing>
         <property name="title" translatable="yes">Set</property>
-        <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
     </child>
@@ -668,7 +666,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Enter short identifier, which will be used for labels, tabs, etc.</property>
-                <property name="buffer">ui_name_op</property>
+                <property name="buffer">ui_name</property>
                 <property name="max_length">20</property>
                 <property name="width_chars">40</property>
                 <property name="max_width_chars">20</property>
@@ -684,7 +682,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Enter a brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">ui_title_op</property>
+                <property name="buffer">ui_title</property>
                 <property name="placeholder_text" translatable="yes">Enter set title</property>
               </object>
               <packing>
@@ -728,7 +726,7 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">ui_summary_op</property>
+                <property name="buffer">ui_summary</property>
               </object>
             </child>
           </object>
@@ -830,30 +828,35 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkLabel" id="ui_title_set">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="editable">False</property>
-                    <property name="has_frame">False</property>
-                    <property name="width_chars">39</property>
-                    <property name="placeholder_text" translatable="yes">Oops! no set name.</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="editable">False</property>
-                    <property name="has_frame">False</property>
-                    <property name="placeholder_text" translatable="yes">Oops! no set title.</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="label" translatable="yes">Oops! no set title.</property>
+                    <property name="use_markup">True</property>
+                    <property name="justify">fill</property>
+                    <property name="wrap">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="ui_name_set">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="label" translatable="yes">Oops! no set name.</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                    <property name="selectable">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
               </object>
@@ -875,7 +878,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="ui_segment">
+          <object class="GtkLabel" id="ui_view_modulus">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -946,7 +949,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Short identifier, which will be used for labels, tabs, etc.</property>
-                <property name="buffer">ui_name_op</property>
+                <property name="buffer">ui_name</property>
                 <property name="editable">False</property>
                 <property name="max_length">20</property>
                 <property name="has_frame">False</property>
@@ -964,7 +967,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Brief title, which will serve to distinguish between topics.</property>
-                <property name="buffer">ui_title_op</property>
+                <property name="buffer">ui_title</property>
                 <property name="editable">False</property>
                 <property name="has_frame">False</property>
                 <property name="placeholder_text" translatable="yes">Oops! to operation title.</property>
@@ -995,7 +998,7 @@
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">6</property>
                 <property name="right_margin">6</property>
-                <property name="buffer">ui_summary_op</property>
+                <property name="buffer">ui_summary</property>
               </object>
             </child>
           </object>

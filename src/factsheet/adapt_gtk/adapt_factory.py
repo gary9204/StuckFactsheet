@@ -57,6 +57,8 @@ class FactoryInfoId(ABC_FACTORY.FactoryInfoId):
 IndexOutline = AOUTLINE.AdaptIndex
 OutlineTemplates = ASHEET.AdaptTreeStoreTemplate
 OutlineTopics = ASHEET.AdaptTreeStoreTopic
+ViewOutlineTemplates = ASHEET.AdaptTreeViewTemplate
+ViewOutlineTopics = ASHEET.AdaptTreeViewTopic
 
 
 class FactorySheet(ABC_FACTORY.FactorySheet):

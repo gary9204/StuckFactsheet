@@ -5,15 +5,10 @@ import gi   # type: ignore[import]
 # from pathlib import Path
 import typing
 
+from factsheet import content as XCONTENT
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-# STUB imports - begin
-from factsheet import content as XCONTENT
 from factsheet.content import heading as XHEADING
-from factsheet.content.note import note_spec as XSPEC_NOTE
-from factsheet.content.sets.int import segint_spec as XSPEC_SEGINT
-# from factsheet.content.note import note_topic as XNOTE
-# STUB imports - end
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -29,7 +24,7 @@ class QueryTemplate:
     new topic.  A user may cancel the dialog without selecting a
     template.
 
-    :param px_parent: parent window for Select Template dialog.
+    :param p_parent: parent window for Select Template dialog.
 
     .. attribute:: NAME_FILE_QUERY_UI
 
@@ -47,11 +42,12 @@ class QueryTemplate:
     # STUB Glade patch - end
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_template.ui')
 
-    def __init__(self, px_parent: Gtk.Window) -> None:
+    def __init__(self, p_parent: Gtk.Window,
+                 p_new_view_topics: UI.NewViewOutlineTopics) -> None:
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         get_object = builder.get_object
         self._dialog = get_object('ui_dialog_select_template')
-        self._dialog.set_transient_for(px_parent)
+        self._dialog.set_transient_for(p_parent)
         self._dialog.set_destroy_with_parent(True)
 
         _ = self._dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
@@ -95,10 +91,8 @@ class QueryTemplate:
 
         self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
-        # STUB test content - begin
-        templates = XCONTENT.new_templates()
+        templates = XCONTENT.new_templates(p_new_view_topics)
         templates.attach_view(self._outline)
-        # STUB test content - end
         view = self._outline.gtk_view
         view.show_all()
         context_outline = get_object('ui_context_outline_templates')

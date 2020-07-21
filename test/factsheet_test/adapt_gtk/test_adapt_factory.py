@@ -78,6 +78,8 @@ class TestFactorySheet:
         assert AFACTORY.IndexOutline is AOUTLINE.AdaptIndex
         assert AFACTORY.OutlineTemplates is ASHEET.AdaptTreeStoreTemplate
         assert AFACTORY.OutlineTopics is ASHEET.AdaptTreeStoreTopic
+        assert AFACTORY.ViewOutlineTemplates is ASHEET.AdaptTreeViewTemplate
+        assert AFACTORY.ViewOutlineTopics is ASHEET.AdaptTreeViewTopic
 
 
 class TestFactoryTopic:

@@ -173,7 +173,7 @@ class TestPlusModN:
         ])
     def test_guard_modulus(self, patch_new_segment,
                            MODULUS_R, TITLE_R, MODULUS_N, TITLE_N):
-        """Confirm bound check."""
+        """Confirm modulus check."""
         # Setup
         SET = patch_new_segment()
         target = XPLUS_N.PlusModN(p_set=SET, p_modulus=MODULUS_R)

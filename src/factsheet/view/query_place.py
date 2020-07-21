@@ -58,8 +58,8 @@ class QueryPlace:
     the new topic.  See :class:`.Placement`. A user may cancel the
     dialog without selecting a placement.
 
-    :param px_parent: parent window for Place New Topic dialog.
-    :param px_donor_view: existing view of topics outline.
+    :param p_parent: parent window for Place New Topic dialog.
+    :param p_view_topics: existing view of topics outline.
 
     .. attribute:: NAME_FILE_QUERY_UI
 
@@ -77,12 +77,12 @@ class QueryPlace:
     # STUB Glade patch - end
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_place.ui')
 
-    def __init__(self, px_parent: Gtk.Window, px_donor_view:
-                 ASHEET.AdaptTreeViewTopic) -> None:
+    def __init__(self, p_parent: Gtk.Window, p_view_topics:
+                 UI.ViewOutlineTopics) -> None:
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         get_object = builder.get_object
         self._dialog = get_object('ui_dialog_query_place')
-        self._dialog.set_transient_for(px_parent)
+        self._dialog.set_transient_for(p_parent)
         self._dialog.set_destroy_with_parent(True)
 
         header_bar = get_object('ui_header_bar')
@@ -124,12 +124,12 @@ class QueryPlace:
         _ = button_by_title.connect(
             'toggled', self.on_toggle_search_field, ASHEET.FieldsTopic.TITLE)
 
-        self._outline = px_donor_view.clone()
-        self._outline.scope_search = ~ASHEET.FieldsTopic.VOID
-        gtk_view = self._outline.gtk_view
-        context_outline = get_object('ui_context_outline_topics')
-        context_outline.add(gtk_view)
-        context_outline.show_all()
+        self._view_topics = p_view_topics
+        self._view_topics.scope_search = ~ASHEET.FieldsTopic.VOID
+        gtk_view = self._view_topics.gtk_view
+        context_view_topics = get_object('ui_context_view_topics')
+        context_view_topics.add(gtk_view)
+        context_view_topics.show_all()
         self._cursor = gtk_view.get_selection()
         _ = self._cursor.connect('changed', self.on_changed_cursor)
 
@@ -163,12 +163,12 @@ class QueryPlace:
             self._cursor.unselect_all()
         return place
 
-    def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
+    def on_changed_cursor(self, p_cursor: Gtk.TreeSelection) -> None:
         """Changes summary text and Place button to match current topic.
 
-        :param px_cursor: identifies now-current topic.
+        :param p_cursor: identifies now-current topic.
         """
-        model, index = px_cursor.get_selected()
+        model, index = p_cursor.get_selected()
         if index is None:
             self._on_changed_cursor_invalid()
             return
@@ -189,24 +189,24 @@ class QueryPlace:
         self._summary_current.set_text(self.NO_SUMMARY)
         self._button_place.set_sensitive(False)
 
-    def on_toggle_order(self, px_button: Gtk.ToggleButton,
+    def on_toggle_order(self, p_button: Gtk.ToggleButton,
                         p_order: Order) -> None:
         """Sets order to match active order button.
 
-        :param px_button: button user toggled.
+        :param p_button: button user toggled.
         :param p_order: order of toggled button.
         """
-        if px_button.get_active():
+        if p_button.get_active():
             self._order = p_order
 
-    def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
+    def on_toggle_search_field(self, p_button: Gtk.ToggleButton, p_field:
                                ASHEET.FieldsTopic) -> None:
         """Sets search to match active field buttons.
 
-        :param px_button: button user toggled.
+        :param p_button: button user toggled.
         :param p_field: search field of toggled button.
         """
-        if px_button.get_active():
-            self._outline.scope_search |= p_field
+        if p_button.get_active():
+            self._view_topics.scope_search |= p_field
         else:
-            self._outline.scope_search &= ~p_field
+            self._view_topics.scope_search &= ~p_field

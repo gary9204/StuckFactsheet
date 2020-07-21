@@ -80,6 +80,46 @@ class TestControlSheet:
         assert patch_model.called_attach_page
         assert patch_model.called_update_titles
 
+    def test_attach_view_topics(self, monkeypatch):
+        """Confirm topics outline view addition."""
+        # Setup
+        class PatchModel:
+            def __init__(self):
+                self.called_attach_page = False
+
+            def attach_view_topics(self, _view):
+                self.called_attach_view_topics = True
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'attach_view_topics', patch_model.attach_view_topics)
+
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.ControlSheet.new(sheets_active)
+        # Test
+        target.attach_view_topics(None)
+        assert patch_model.called_attach_view_topics
+
+    def test_detach_view_topics(self, monkeypatch):
+        """Confirm topics outline view removal."""
+        # Setup
+        class PatchModel:
+            def __init__(self):
+                self.called_detach_page = False
+
+            def detach_view_topics(self, _view):
+                self.called_detach_view_topics = True
+
+        patch_model = PatchModel()
+        monkeypatch.setattr(
+            MSHEET.Sheet, 'detach_view_topics', patch_model.detach_view_topics)
+
+        sheets_active = CPOOL.PoolSheets()
+        target = CSHEET.ControlSheet.new(sheets_active)
+        # Test
+        target.detach_view_topics(None)
+        assert patch_model.called_detach_view_topics
+
     def test_clear(self, monkeypatch):
         """Confirm method passes request to model."""
         # Setup

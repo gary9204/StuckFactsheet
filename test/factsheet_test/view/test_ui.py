@@ -23,6 +23,12 @@ class TestTypes:
         # Setup
         # Test
         assert UI.IdTopic is AFACTORY.IdTopic
+        assert UI.IndexOutline is AFACTORY.IndexOutline
+        assert UI.OutlineTemplates is AFACTORY.OutlineTemplates
+        assert UI.OutlineTopics is AFACTORY.OutlineTopics
+        assert UI.ViewOutlineTemplates is AFACTORY.ViewOutlineTemplates
+        assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
+        assert UI.NewViewOutlineTopics is not None
 
 
 class TestUiActions:

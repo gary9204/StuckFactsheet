@@ -20,5 +20,5 @@ Submodules
 
 .. toctree::
 
-   factsheet.content.gtk_helper
    factsheet.content.heading
+   factsheet.content.spec

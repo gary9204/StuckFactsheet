@@ -367,7 +367,7 @@ class TestPageSheet:
         model = page._view_topics.gtk_view.get_model()
         assert model is not None
         assert page._query_place is not None
-        query_view_topics = page._query_place._outline
+        query_view_topics = page._query_place._view_topics
         assert query_view_topics.gtk_view.get_model() is model
         # Teardown
         page._window.destroy()
@@ -431,6 +431,27 @@ class TestPageSheet:
         target._window.destroy()
         del target._window
         del factsheet
+
+    def test_new_view_topics(
+            self, patch_factsheet, capfd, new_outline_topics):
+        """ """
+        # Setup
+        factsheet = patch_factsheet()
+        target = VSHEET.PageSheet(px_app=factsheet)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        sheets_active = CPOOL.PoolSheets()
+        control = CSHEET.ControlSheet.new(sheets_active)
+        target.link_factsheet(target, control)
+
+        # Test
+        view_new = target.new_view_topics()
+        assert isinstance(view_new, UI.ViewOutlineTopics)
+        model = target._view_topics.gtk_view.get_model()
+        assert view_new.gtk_view.get_model() is model
+        # Teardown
 
     def test_on_changed_cursor(
             self, patch_factsheet, capfd, new_outline_topics):

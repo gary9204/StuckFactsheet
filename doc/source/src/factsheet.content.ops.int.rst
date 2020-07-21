@@ -12,4 +12,5 @@ Submodules
 .. toctree::
 
    factsheet.content.ops.int.opint_topic
+   factsheet.content.ops.int.plusmodn_spec
    factsheet.content.ops.int.plusmodn_topic

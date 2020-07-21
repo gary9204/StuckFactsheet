@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkAdjustment" id="segment_bound">
+  <object class="GtkAdjustment" id="bound_segment">
     <property name="lower">1</property>
     <property name="upper">100</property>
     <property name="value">1</property>
@@ -233,7 +233,7 @@
                 <property name="can_focus">True</property>
                 <property name="halign">start</property>
                 <property name="input_purpose">digits</property>
-                <property name="adjustment">segment_bound</property>
+                <property name="adjustment">bound_segment</property>
                 <property name="numeric">True</property>
                 <property name="value">1</property>
               </object>

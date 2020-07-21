@@ -73,7 +73,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
         self._query_place: typing.Optional[QPLACE.QueryPlace] = None
-        self._query_template = QTEMPLATE.QueryTemplate(self._window)
+        self._query_template = QTEMPLATE.QueryTemplate(
+            self._window, self.new_view_topics)
         self._name_former: typing.Optional[str] = None
         self._infoid = VINFOID.ViewInfoId(get_object)
 
@@ -238,9 +239,11 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         :param pm_control: new factsheet control.
         """
         pm_control.attach_page(pm_page)
-        pm_page._query_place = QPLACE.QueryPlace(
-            pm_page._window, pm_page._view_topics)
         pm_page._control = pm_control
+        query_view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        pm_page._control.attach_view_topics(query_view_topics)
+        pm_page._query_place = QPLACE.QueryPlace(
+            pm_page._window, query_view_topics)
 
     def _make_dialog_file(self, p_action: Gtk.FileChooserAction
                           ) -> Gtk.FileChooserDialog:
@@ -291,6 +294,13 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         control = CSHEET.ControlSheet.new(pm_sheets_active)
         PageSheet.link_factsheet(page, control)
         return page
+
+    def new_view_topics(self) -> UI.ViewOutlineTopics:
+        """Return new, unattached view of topics outline. """
+        view_topics_new = UI.FACTORY_SHEET.new_view_outline_topics()
+        assert self._control is not None
+        self._control.attach_view_topics(view_topics_new)
+        return view_topics_new
 
     def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
         """Changes topic scene to match current topic.

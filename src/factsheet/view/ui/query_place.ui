@@ -142,7 +142,7 @@
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkScrolledWindow" id="ui_context_outline_topics">
+                          <object class="GtkScrolledWindow" id="ui_context_view_topics">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="margin_bottom">6</property>

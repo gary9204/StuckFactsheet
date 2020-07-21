@@ -5,6 +5,7 @@ Unit tests for operations section of Factsheet content.  See
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.content import ops as XOPS
+from factsheet.view import ui as UI
 
 
 class TestOps:
@@ -13,11 +14,12 @@ class TestOps:
     def test_new_templates(self):
         """Confirm template outline initialization."""
         # Setup
+        VIEW_TOPICS = UI.FACTORY_SHEET.new_view_outline_topics()
         N_HEADINGS = 1
         NAME = '<i>Operations</i>'
         N_CHILDREN = 1
         # Test
-        target = XOPS.new_templates()
+        target = XOPS.new_templates(lambda: VIEW_TOPICS)
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
         model = target._gtk_model
         assert N_HEADINGS == len(model)

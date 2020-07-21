@@ -288,7 +288,6 @@ class TestTopic:
         # Test: no delete
         assert target_prop.fdel is None
 
-
     def test_is_fresh(self):
         """Confirm return is accurate.
 

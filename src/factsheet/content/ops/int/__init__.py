@@ -4,15 +4,16 @@ See :mod:`~.factsheet.content.ops`.
 """
 from pathlib import Path
 
+from factsheet.content import spec as XSPEC
 from factsheet.content import heading as XHEADING
 from factsheet.view import ui as UI
 from . import plusmodn_spec as XSPEC_PLUS_N
 from . import plusmodn_topic as XPLUS_N
 
 
-def new_templates() -> UI.OutlineTemplates:
-    # def new_templates() -> ABC_OUTLINE.AbstractOutline:
-    """Return outline of integer templates."""
+def new_templates(
+       p_new_view_topic: UI.NewViewOutlineTopics) -> UI.OutlineTemplates:
+    """Return outline of integer operation templates."""
     templates = UI.FACTORY_SHEET.new_model_outline_templates()
 
     heading_int = XHEADING.Heading(
@@ -33,9 +34,10 @@ def new_templates() -> UI.OutlineTemplates:
             ''
             ),
         p_title='Modular Addition',
-        p_path_assist=str(Path(
-            XSPEC_PLUS_N.__file__).parent / 'plusmodn_spec.ui'),
-        p_model=XPLUS_N.PlusModN
+        p_class_topic=XPLUS_N.PlusModN,
+        p_path_assist=XSPEC.StrAssist(
+            str(Path(XSPEC_PLUS_N.__file__).parent / 'plusmodn_spec.ui')),
+        p_new_view_topics=p_new_view_topic
         )
 
     _ = templates.insert_child(spec_plusmodn, i_int)

@@ -70,6 +70,9 @@ IdTopic = AFACTORY.IdTopic
 IndexOutline = AFACTORY.IndexOutline
 OutlineTemplates = AFACTORY.OutlineTemplates
 OutlineTopics = AFACTORY.OutlineTopics
+ViewOutlineTemplates = AFACTORY.ViewOutlineTemplates
+ViewOutlineTopics = AFACTORY.ViewOutlineTopics
+NewViewOutlineTopics = typing.Callable[[], ViewOutlineTopics]
 
 # Application/Sheet-level guidance dialogs
 NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')

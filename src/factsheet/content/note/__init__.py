@@ -7,13 +7,18 @@ Defines templates for sections to organize a factsheet topic outline.
 """
 from pathlib import Path
 
+from factsheet.content import spec as XSPEC
 from factsheet.content.note import note_spec as XNOTE_SPEC
 from factsheet.content.note import note_topic as XNOTE
 from factsheet.view import ui as UI
 
 
-def new_templates() -> UI.OutlineTemplates:
-    """Return outline of set templates."""
+def new_templates(
+       p_new_view_topic: UI.NewViewOutlineTopics) -> UI.OutlineTemplates:
+    """Return outline containing note template.
+
+    :param p_new_view_topics: funcion that returns current topics outline.
+    """
     templates = UI.FACTORY_SHEET.new_model_outline_templates()
 
     note_spec = XNOTE_SPEC.SpecNote(
@@ -24,8 +29,10 @@ def new_templates() -> UI.OutlineTemplates:
             'adding or moving topics underneath it.'
             ),
         p_title='Add note to <i>Topics </i>outline',
-        p_path_assist=str(Path(XNOTE_SPEC.__file__).parent / 'note_spec.ui'),
-        p_model=XNOTE.Note
+        p_class_topic=XNOTE.Note,
+        p_path_assist=XSPEC.StrAssist(
+            str(Path(XNOTE_SPEC.__file__).parent / 'note_spec.ui')),
+        p_new_view_topics=p_new_view_topic
         )
 
     _ = templates.insert_child(note_spec, None)

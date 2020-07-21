@@ -322,12 +322,12 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
         assert topic is not None
         pm_renderer.set_property('markup', topic.title)
 
-    def clone(self) -> 'AdaptTreeViewTopic':
-        """Return new outline view with same model self."""
-        view_new = AdaptTreeViewTopic()
-        model = self.gtk_view.get_model()
-        view_new.gtk_view.set_model(model)
-        return view_new
+#     def clone(self) -> 'AdaptTreeViewTopic':
+#         """Return new outline view with same model self."""
+#         view_new = AdaptTreeViewTopic()
+#         model = self.gtk_view.get_model()
+#         view_new.gtk_view.set_model(model)
+#         return view_new
 
     @property
     def scope_search(self) -> 'FieldsTopic':

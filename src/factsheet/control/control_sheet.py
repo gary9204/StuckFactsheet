@@ -62,6 +62,14 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         self._model.attach_page(pm_page)
         self.new_name()
 
+    def attach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+        """Add view of topics outline to model.
+
+        :param p_view: topics outline view to add.
+        """
+        assert self._model is not None
+        self._model.attach_view_topics(p_view)
+
     def clear(self) -> None:
         """Requests topics outline to remove all topics."""
         assert self._model is not None
@@ -113,6 +121,14 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
             return ABC_SHEET.EffectSafe.COMPLETED
 
         return ABC_SHEET.EffectSafe.NO_EFFECT
+
+    def detach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+        """Remove view of topics outline from model.
+
+        :param p_view: topics outline view to remove.
+        """
+        assert self._model is not None
+        self._model.detach_view_topics(p_view)
 
     def extract_topic(self, px_i: UI.IndexOutline) -> None:
         """Requests topics outline to remove topic and all descendants.

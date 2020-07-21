@@ -543,16 +543,16 @@ class TestAdaptTreeViewTopic:
                            match='property markup is not readable'):
             assert template.name == renderer.get_property('markup')
 
-    def test_clone(self):
-        """Confirm view duplication with shared model."""
-        # Setup
-        MODEL = Gtk.TreeStore(GO.TYPE_PYOBJECT)
-        source = ASHEET.AdaptTreeViewTopic()
-        source.gtk_view.set_model(MODEL)
-        # Test
-        target = source.clone()
-        assert isinstance(target, ASHEET.AdaptTreeViewTopic)
-        assert target.gtk_view.get_model() is source.gtk_view.get_model()
+#     def test_clone(self):
+#         """Confirm view duplication with shared model."""
+#         # Setup
+#         MODEL = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+#         source = ASHEET.AdaptTreeViewTopic()
+#         source.gtk_view.set_model(MODEL)
+#         # Test
+#         target = source.clone()
+#         assert isinstance(target, ASHEET.AdaptTreeViewTopic)
+#         assert target.gtk_view.get_model() is source.gtk_view.get_model()
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ['_scope_search', 'scope_search'],

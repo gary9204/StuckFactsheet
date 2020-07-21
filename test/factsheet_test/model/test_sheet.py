@@ -154,6 +154,16 @@ class TestSheet:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
+    def test_attach_view_topics(self):
+        """Confirm topics outline view addition."""
+        # Setup
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+        # Test
+        target.attach_view_topics(VIEW_TOPICS)
+        assert target._topics._gtk_model is VIEW_TOPICS.gtk_view.get_model()
+
     def test_clear(self, monkeypatch, interface_page_sheet):
         """| Confirm topics outline removal."""
         # Setup
@@ -218,37 +228,6 @@ class TestSheet:
         for page in pages:
             assert page.called_close_page
 
-    def test_detach_page(self, monkeypatch, interface_page_sheet):
-        """Confirm page removal.
-        Case: page attached initially
-        """
-        # Setup
-        class PatchInfoIdModel:
-            def __init__(self): self.n_calls = 0
-
-            def detach_view(self, _v): self.n_calls += 1
-
-        patch_infoid = PatchInfoIdModel()
-        monkeypatch.setattr(
-            MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
-
-        TITLE_MODEL = 'Something completely different.'
-        target = MSHEET.Sheet(p_title=TITLE_MODEL)
-
-        N_PAGES = 3
-        pages = [interface_page_sheet() for _ in range(N_PAGES)]
-        for page in pages:
-            target.attach_page(page)
-        N_REMOVE = 1
-        I_REMOVE = 1
-        page_rem = pages.pop(I_REMOVE)
-        # Test
-        target.detach_page(page_rem)
-        assert N_REMOVE == patch_infoid.n_calls
-        assert len(pages) == len(target._pages)
-        for page in pages:
-            assert target._pages[id(page)] is page
-
     def test_detach_attribute_views(
             self, monkeypatch, interface_page_sheet):
         """Confirm removal of views."""
@@ -281,6 +260,37 @@ class TestSheet:
         assert patch_infoid.called
         assert patch_topics.called
 
+    def test_detach_page(self, monkeypatch, interface_page_sheet):
+        """Confirm page removal.
+        Case: page attached initially
+        """
+        # Setup
+        class PatchInfoIdModel:
+            def __init__(self): self.n_calls = 0
+
+            def detach_view(self, _v): self.n_calls += 1
+
+        patch_infoid = PatchInfoIdModel()
+        monkeypatch.setattr(
+            MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
+
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+
+        N_PAGES = 3
+        pages = [interface_page_sheet() for _ in range(N_PAGES)]
+        for page in pages:
+            target.attach_page(page)
+        N_REMOVE = 1
+        I_REMOVE = 1
+        page_rem = pages.pop(I_REMOVE)
+        # Test
+        target.detach_page(page_rem)
+        assert N_REMOVE == patch_infoid.n_calls
+        assert len(pages) == len(target._pages)
+        for page in pages:
+            assert target._pages[id(page)] is page
+
     def test_detach_page_warn(
             self, interface_page_sheet, PatchLogger, monkeypatch):
         """Confirm page removal.
@@ -312,6 +322,17 @@ class TestSheet:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+
+    def test_detach_view_topics(self):
+        """Confirm topics outline view removal."""
+        # Setup
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+        target.attach_view_topics(VIEW_TOPICS)
+        # Test
+        target.detach_view_topics(VIEW_TOPICS)
+        assert VIEW_TOPICS.gtk_view.get_model() is None
 
     def test_extract_topic(self, monkeypatch, interface_page_sheet):
         """| Confirm method request relay to outline.

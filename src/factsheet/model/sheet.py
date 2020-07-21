@@ -9,6 +9,7 @@ class representing the model of a factsheet.
 import logging
 import typing   # noqa
 
+# from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.abc_types import abc_topic as ABC_TOPIC
@@ -102,10 +103,15 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             return
 
         self._infoid.attach_view(pm_page.get_infoid())
-        # See Factsheet project issue #95 - switched to generic as per outline
-        self._topics.attach_view(
-            pm_page.get_view_topics())
+        self.attach_view_topics(pm_page.get_view_topics())
         self._pages[id(pm_page)] = pm_page
+
+    def attach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+        """Add view to update dialpay when topics outline changes.
+
+        :param p_view: topics outline view to add.
+        """
+        self._topics.attach_view(p_view)
 
     def clear(self) -> None:
         """Remove all topics from the topics outline."""
@@ -119,6 +125,16 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             _id_page, page = self._pages.popitem()
             self._detach_attribute_views(page)
             page.close_page()
+
+    def _detach_attribute_views(
+            self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
+        """For each sheet attribute with a distinct view, remove the
+        view for the attribute.
+
+        :param pm_page: page for factsheet as a whole.
+        """
+        self._infoid.detach_view(pm_page.get_infoid())
+        self.detach_view_topics(pm_page.get_view_topics())
 
     def detach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
         """Remove one page from sheet.
@@ -139,16 +155,12 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
 
         self._detach_attribute_views(pm_page)
 
-    def _detach_attribute_views(
-            self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-        """For each sheet attribute with a distinct view, remove the
-        view for the attribute.
+    def detach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+        """Remove topics outline view.
 
-        :param pm_page: page for factsheet as a whole.
+        :param p_view: topics outline view to remove.
         """
-        self._infoid.detach_view(pm_page.get_infoid())
-        # See Factsheet project issue #95
-        self._topics.detach_view(pm_page.get_view_topics())
+        self._topics.detach_view(p_view)
 
     def extract_topic(self, px_i: UI.IndexOutline) -> None:
         """Remove topic and all its descendants from topic outline.
