@@ -177,7 +177,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     @property
     def summary(self) -> str:
-        """Return topic title."""
+        """Return topic summary."""
         return self._infoid.summary
 
     @property
