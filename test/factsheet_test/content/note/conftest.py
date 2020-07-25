@@ -9,20 +9,20 @@ from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.view import ui as UI
 
 
-@pytest.fixture
-def args_infoid_stock():
-    """Pytest fixture returns set of argument values to construct a
-    stock InfoId object.
-    """
-    return dict(
-        p_name='Stock InfoId Name',
-        p_title='Stock InfoId Title',
-        p_summary='This summarizes a stock identification.',
-        )
+# @pytest.fixture
+# def patch_args_infoid():
+#     """Pytest fixture returns set of argument values to construct a
+#     stock InfoId object.
+#     """
+#     return dict(
+#         p_name='Stock InfoId Name',
+#         p_title='Stock InfoId Title',
+#         p_summary='This summarizes a stock identification.',
+#         )
 
 
 @pytest.fixture
-def interface_view_infoid(args_infoid_stock):
+def interface_view_infoid(patch_args_infoid):
     """Pytest fixture returns stub class implementing
     :class:`.InterfaceViewInfoId`.
      """
@@ -31,14 +31,15 @@ def interface_view_infoid(args_infoid_stock):
         INCLUDE_HIDDEN = True
 
         def __init__(self):
+            ARGS = patch_args_infoid
             self._name = UI.FACTORY_INFOID.new_view_name()
-            self._name.set_text(args_infoid_stock['p_name'])
+            self._name.set_text(ARGS.p_name)
             self._summary = UI.FACTORY_INFOID.new_view_summary()
             buffer_summary = self._summary.get_buffer()
             buffer_summary.set_text(
-                args_infoid_stock['p_summary'], self.ALL_TEXT)
+                ARGS.p_summary, self.ALL_TEXT)
             self._title = UI.FACTORY_INFOID.new_view_title()
-            self._title.set_text(args_infoid_stock['p_title'])
+            self._title.set_text(ARGS.p_title)
 
         def get_view_name(self): return self._name
 

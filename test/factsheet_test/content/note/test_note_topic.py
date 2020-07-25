@@ -8,12 +8,13 @@ from factsheet.content.note import note_topic as XNOTE
 class TestNote:
     """Unit tests for :class:`~.Note`."""
 
-    def test_init(self, args_infoid_stock):
+    def test_init(self, patch_args_infoid):
         """Confirm initialization."""
         # Setup
-        NAME = args_infoid_stock['p_name']
-        SUMMARY = args_infoid_stock['p_summary']
-        TITLE = args_infoid_stock['p_title']
+        ARGS = patch_args_infoid
+        NAME = ARGS.p_name
+        SUMMARY = ARGS.p_summary
+        TITLE = ARGS.p_title
         # Test
         target = XNOTE.Note(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE)

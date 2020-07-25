@@ -59,12 +59,13 @@ class TestTopic:
         assert not target._stale
         assert source._infoid == target._infoid
 
-    def test_init(self, args_infoid_stock):
+    def test_init(self, patch_args_infoid):
         """Confirm initialization."""
         # Setup
-        NAME = args_infoid_stock['p_name']
-        SUMMARY = args_infoid_stock['p_summary']
-        TITLE = args_infoid_stock['p_title']
+        ARGS = patch_args_infoid
+        NAME = ARGS.p_name
+        SUMMARY = ARGS.p_summary
+        TITLE = ARGS.p_title
         # Test
         target = MTOPIC.Topic(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE)

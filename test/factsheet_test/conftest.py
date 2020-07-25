@@ -1,8 +1,7 @@
 """
 Test fixtures for Factsheet as a whole.
 """
-
-
+import dataclasses as DC
 import pytest   # type: ignore[import]
 
 
@@ -28,6 +27,28 @@ def patch_factsheet():
             Gtk.Application.do_startup(self)
 
     return Factsheet
+
+
+@DC.dataclass
+class ArgsInfoId:
+    """Convenience class for assembling arguments to
+    :class:`.InfoId` method ``__init__``.
+    """
+    p_name: str
+    p_summary: str
+    p_title: str
+
+
+@pytest.fixture
+def patch_args_infoid():
+    """Pytest fixture returns set of argument values to construct a
+    stock :class:`InfoId` object.
+    """
+    return ArgsInfoId(
+        p_name='Parrot',
+        p_summary='The parrot is a Norwegian Blue.',
+        p_title='The Parrot Sketch',
+        )
 
 
 @pytest.fixture

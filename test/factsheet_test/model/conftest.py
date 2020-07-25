@@ -1,8 +1,10 @@
 """
-Test fixtures for :mod:`~.factsheet_test.content.section` unit tests.
+Test fixtures for :mod:`~.factsheet_test.model` unit tests.
 """
+# import dataclasses as DC
 import pytest   # type: ignore[import]
 
+from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
@@ -12,19 +14,7 @@ from factsheet.view import ui as UI
 
 
 @pytest.fixture
-def args_infoid_stock():
-    """Pytest fixture returns set of argument values to construct a
-    stock InfoId object.
-    """
-    return dict(
-        p_name='Parrot',
-        p_summary='The parrot is a Norwegian Blue.',
-        p_title='The Parrot Sketch',
-        )
-
-
-@pytest.fixture
-def interface_view_infoid(args_infoid_stock):
+def interface_view_infoid(patch_args_infoid):
     """Pytest fixture returns stub class implementing
     :class:`.InterfaceViewInfoId`.
      """
@@ -33,14 +23,15 @@ def interface_view_infoid(args_infoid_stock):
         INCLUDE_HIDDEN = True
 
         def __init__(self):
+            ARGS = patch_args_infoid
             self._name = UI.FACTORY_INFOID.new_view_name()
-            self._name.set_text(args_infoid_stock['p_name'])
+            self._name.set_text(ARGS.p_name)
             self._summary = UI.FACTORY_INFOID.new_view_summary()
             buffer_summary = self._summary.get_buffer()
             buffer_summary.set_text(
-                args_infoid_stock['p_summary'], self.ALL_TEXT)
+                ARGS.p_summary, self.ALL_TEXT)
             self._title = UI.FACTORY_INFOID.new_view_title()
-            self._title.set_text(args_infoid_stock['p_title'])
+            self._title.set_text(ARGS.p_title)
 
         def get_view_name(self): return self._name
 
@@ -60,6 +51,20 @@ def interface_view_infoid(args_infoid_stock):
         def title(self): return self._title.get_text()
 
     return PatchViewInfoId
+
+
+@pytest.fixture
+def interface_pane_fact(interface_view_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfacePaneFact`.
+    """
+    class PatchPaneFact(ABC_FACT.InterfacePaneFact):
+        def __init__(self):
+            self._infoid = interface_view_infoid()
+
+        def get_infoid(self): return self._infoid
+
+    return PatchPaneFact
 
 
 @pytest.fixture

@@ -3,6 +3,7 @@ Unit tests for Factsheet :mod:`~factsheet.model` component
 identification information.  See :mod:`.infoid`.
 """
 import copy
+import dataclasses as DC
 import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
@@ -13,7 +14,7 @@ from factsheet.view import ui as UI
 class TestInfoId:
     """Unit tests for :class:`.InfoId`."""
 
-    def test_eq(self, args_infoid_stock):
+    def test_eq(self, patch_args_infoid):
         """Confirm equivalence operator.
 
         #. Case: type difference.
@@ -23,7 +24,8 @@ class TestInfoId:
         #. Case: equivalent
         """
         # Setup
-        source = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        source = MINFOID.InfoId(**DC.asdict(ARGS))
         # Test: type difference.
         assert not source.__eq__('Something completely different')
         # Test: name difference.
@@ -47,23 +49,24 @@ class TestInfoId:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_init(self, args_infoid_stock):
+    def test_init(self, patch_args_infoid):
         """Confirm initialization."""
         # Setup
+        ARGS = patch_args_infoid
         # Test
-        target = MINFOID.InfoId(**args_infoid_stock)
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
 
         assert id(target) == target._id_model
         assert not target._stale
 
         assert isinstance(target._name, ABC_INFOID.AbstractTextModel)
-        assert args_infoid_stock['p_name'] == str(target._name)
+        assert ARGS.p_name == str(target._name)
 
         assert isinstance(target._summary, ABC_INFOID.AbstractTextModel)
-        assert args_infoid_stock['p_summary'] == str(target._summary)
+        assert ARGS.p_summary == str(target._summary)
 
         assert isinstance(target._title, ABC_INFOID.AbstractTextModel)
-        assert args_infoid_stock['p_title'] == str(target._title)
+        assert ARGS.p_title == str(target._title)
 
     def test_init_default(self):
         """Confirm initialization with default arguments."""
@@ -74,24 +77,24 @@ class TestInfoId:
         assert '' == str(target._summary)
         assert '' == str(target._title)
 
-    def test_attach_view(self, interface_view_infoid, args_infoid_stock):
+    def test_attach_view(self, interface_view_infoid, patch_args_infoid):
         """Confirm view addition."""
         # Setup
         patch_view = interface_view_infoid()
-
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         # Test
         target.attach_view(patch_view)
         assert patch_view.name == str(target._name)
         assert patch_view.summary == str(target._summary)
         assert patch_view.title == str(target._title)
 
-    def test_detach_view(self, interface_view_infoid, args_infoid_stock):
+    def test_detach_view(self, interface_view_infoid, patch_args_infoid):
         """Confirm view removal."""
         # Setup
         patch_view = interface_view_infoid()
-
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         target.attach_view(patch_view)
         patch_view._name.set_visible(True)
         assert patch_view.summary == str(target._summary)
@@ -102,7 +105,7 @@ class TestInfoId:
         assert patch_view.summary != str(target._summary)
         assert not patch_view._title.get_visible()
 
-    def test_is_fresh(self, args_infoid_stock):
+    def test_is_fresh(self, patch_args_infoid):
         """Confirm return is accurate.
 
         #. Case: InfoId stale, name, summary, and title fresh
@@ -112,7 +115,8 @@ class TestInfoId:
         #. Case: InfoId fresh, name, summary, and title fresh
         """
         # Setup
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         # Test: InfoId stale, name and title fresh
         target._stale = True
         target._name.set_fresh()
@@ -149,7 +153,7 @@ class TestInfoId:
         assert target.is_fresh()
         assert not target._stale
 
-    def test_is_stale(self, args_infoid_stock):
+    def test_is_stale(self, patch_args_infoid):
         """Confirm return is accurate.
 
         #. Case: InfoId stale, name, summary, and title fresh
@@ -159,7 +163,8 @@ class TestInfoId:
         #. Case: InfoId fresh, name, summary, and title fresh
         """
         # Setup
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         # Test: InfoId stale, name, summary, and title fresh
         target._stale = True
         target._name.set_fresh()
@@ -202,7 +207,7 @@ class TestInfoId:
         ['_summary', 'summary'],
         ['_title', 'title'],
         ])
-    def test_property(self, args_infoid_stock, name_attr, name_prop):
+    def test_property(self, patch_args_infoid, name_attr, name_prop):
         """Confirm properties are get-only.
 
         #. Case: get
@@ -210,7 +215,8 @@ class TestInfoId:
         #. Case: no delete
         """
         # Setup
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         value_attr = getattr(target, name_attr)
         target_prop = getattr(MINFOID.InfoId, name_prop)
         value_prop = getattr(target, name_prop)
@@ -222,14 +228,15 @@ class TestInfoId:
         # Test: no delete
         assert target_prop.fdel is None
 
-    def test_set_fresh(self, args_infoid_stock):
+    def test_set_fresh(self, patch_args_infoid):
         """Confirm all attributes set.
 
         #. Case: InfoId fresh, name, summary, and title stale
         #. Case: InfoId stale, name, summary, and title stale
          """
         # Setup
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         # Test: InfoId fresh, name and title stale
         target._stale = False
         target._name.set_stale()
@@ -251,7 +258,7 @@ class TestInfoId:
         assert target._summary.is_fresh()
         assert target._title.is_fresh()
 
-    def test_set_stale(self, args_infoid_stock):
+    def test_set_stale(self, patch_args_infoid):
         """Confirm all attributes set.
 
         #. Case: InfoId fresh, name, summary, and title fresh
@@ -260,7 +267,8 @@ class TestInfoId:
         #. Case: InfoId stale, name, summary, and title stale
          """
         # Setup
-        target = MINFOID.InfoId(**args_infoid_stock)
+        ARGS = patch_args_infoid
+        target = MINFOID.InfoId(**DC.asdict(ARGS))
         # Test: InfoId fresh, name, summary, and title fresh
         target._stale = False
         target._name.set_fresh()

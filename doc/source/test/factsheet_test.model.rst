@@ -12,6 +12,7 @@ Submodules
 .. toctree::
 
    factsheet_test.model.conftest
+   factsheet_test.model.test_fact
    factsheet_test.model.test_infoid
    factsheet_test.model.test_setindexed
    factsheet_test.model.test_sheet

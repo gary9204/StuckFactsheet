@@ -11,12 +11,12 @@ import enum
 import logging
 import typing   # noqa
 
-GenericValue = typing.TypeVar('GenericValue')
-
-# from factsheet.abc_types import abc_topic as ABC_TOPIC
-# from factsheet.model import infoid as MINFOID
+from factsheet.abc_types import abc_fact as ABC_FACT
+from factsheet.model import infoid as MINFOID
 
 logger = logging.getLogger('Main.model.fact')
+
+GenericValue = typing.TypeVar('GenericValue')
 
 
 class StateOfCheck(enum.Enum):
@@ -61,13 +61,16 @@ class Fact(typing.Generic[GenericValue]):
         the facts (like views) are not compared and may be different.
     """
 
-    def __call__(self) -> typing.Tuple[bool, typing.Optional[GenericValue]]:
+    def __call__(self) -> typing.Optional[GenericValue]:
         """Return fact value or None.
 
         Return None when the the user has not checked the fact or the
         fact value is not defined.
         """
-        raise NotImplementedError
+        if self._state_of_check is not StateOfCheck.CHECKED:
+            return None
+
+        return self._value
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same fact information.
@@ -96,10 +99,11 @@ class Fact(typing.Generic[GenericValue]):
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
                  p_title: str = '', **_kwargs: typing.Dict) -> None:
-        pass
-        # self._infoid = MINFOID.InfoId(
-        #     p_name=p_name, p_summary=p_summary, p_title=p_title)
-        # self._state_transient()
+        self._infoid = MINFOID.InfoId(
+            p_name=p_name, p_summary=p_summary, p_title=p_title)
+        self._value: typing.Optional[GenericValue] = None
+        self._state_of_check = StateOfCheck.UNCHECKED
+        self._set_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct fact model from state pickle loads.
@@ -110,16 +114,14 @@ class Fact(typing.Generic[GenericValue]):
         """
         raise NotImplementedError
         # self.__dict__.update(px_state)
-        # self._state_transient()
+        # self._set_transient()
 
-    def _state_transient(self) -> None:
+    def _set_transient(self) -> None:
         """Helper ensures __init__ and __setstate__ are consistent."""
-        raise NotImplementedError
-        # self._stale = False
-        # self._views: typing.Dict[int, ABC_TOPIC.InterfacePaneTopic] = dict()
+        self._stale = False
+        self._views: typing.Dict[int, ABC_FACT.InterfacePaneFact] = dict()
 
-    def attach_view(self, pm_view) -> None:
-        # ABC_TOPIC.InterfacePaneTopic) -> None:
+    def attach_view(self, pm_view: ABC_FACT.InterfacePaneFact) -> None:
         """Add view to show fact status and value.
 
         Log warning when requested view is already attached.
@@ -140,12 +142,16 @@ class Fact(typing.Generic[GenericValue]):
 
     def check(self, **_kwargs: typing.Mapping[str, typing.Any]
               ) -> StateOfCheck:
-        """Determine fact value and set corresponding state of fact check."""
-        raise NotImplementedError
+        """Set fact value and set corresponding state of fact check."""
+        self._state_of_check = StateOfCheck.UNDEFINED
+        self.set_stale()
+        return self._state_of_check
 
     def clear(self, **_kwargs: typing.Mapping[str, typing.Any]) -> None:
         """Clear fact value and set state of fact check to unchecked."""
-        raise NotImplementedError
+        self._value = None
+        self._state_of_check = StateOfCheck.UNCHECKED
+        self.set_stale()
 
     def detach_all(self) -> None:
         """Detach all views from topic."""
@@ -154,8 +160,7 @@ class Fact(typing.Generic[GenericValue]):
         #     _id_view, view = self._views.popitem()
         #     self._detach_attribute_views(view)
 
-    def detach_view(self, px_view) -> None:
-        # ABC_TOPIC.InterfacePaneTopic) -> None:
+    def detach_view(self, px_view: ABC_FACT.InterfacePaneFact) -> None:
         """Remove one view from fact.
 
         Log warning when requested view is not attached.
@@ -175,8 +180,8 @@ class Fact(typing.Generic[GenericValue]):
 
         # self._detach_attribute_views(px_view)
 
-    def _detach_attribute_views(self, pm_view) -> None:
-        #: ABC_TOPIC.InterfacePaneTopic) -> None:
+    def _detach_attribute_views(self, pm_view: ABC_FACT.InterfacePaneFact
+                                ) -> None:
         """For each fact attribute with a distinct view, remove the
         view for the attribute.
 
@@ -185,40 +190,32 @@ class Fact(typing.Generic[GenericValue]):
         raise NotImplementedError
         # self._infoid.detach_view(pm_view.get_infoid())
 
-    # @property
-    def id_fact(self):  # -> ABC_TOPIC.IdTopic:
+    @property
+    def id_fact(self) -> ABC_FACT.IdFact:
         """Return fact identifier. """
-        raise NotImplementedError
-        # return ABC_TOPIC.IdTopic(self._infoid.id_model)
+        return ABC_FACT.IdFact(self._infoid.id_model)
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to fact."""
-        # if self._stale:
-        #     return False
-
-        # if self._infoid.is_stale():
-        #     self._stale = True
-        #     return False
-
-        # return True
+        return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         fact.
         """
-        # if self._stale:
-        #     return True
+        if self._stale:
+            return True
 
-        # if self._infoid.is_stale():
-        #     self._stale = True
-        #     return True
+        if self._infoid.is_stale():
+            self._stale = True
+            return True
 
-        # return False
+        return False
 
-    # @property
+    @property
     def state_of_check(self) -> StateOfCheck:
         """Return status of fact check."""
-        raise NotImplementedError
+        return self._state_of_check
 
     # @property
     def name(self) -> str:
@@ -234,14 +231,12 @@ class Fact(typing.Generic[GenericValue]):
 
     def set_fresh(self) -> None:
         """Mark fact in memory consistent with file contents."""
-        raise NotImplementedError
-        # self._stale = False
-        # self._infoid.set_fresh()
+        self._stale = False
+        self._infoid.set_fresh()
 
     def set_stale(self) -> None:
         """Mark fact in memory changed from file contents."""
-        raise NotImplementedError
-        # self._stale = True
+        self._stale = True
 
     # @property
     def summary(self) -> str:

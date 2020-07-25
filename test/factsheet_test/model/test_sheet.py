@@ -73,12 +73,13 @@ class TestSheet:
         assert isinstance(target._pages, dict)
         assert not target._pages
 
-    def test_init(self, args_infoid_stock):
+    def test_init(self, patch_args_infoid):
         """Confirm initialization."""
         # Setup
-        NAME = args_infoid_stock['p_name']
-        SUMMARY = args_infoid_stock['p_summary']
-        TITLE = args_infoid_stock['p_title']
+        ARGS = patch_args_infoid
+        NAME = ARGS.p_name
+        SUMMARY = ARGS.p_summary
+        TITLE = ARGS.p_title
         # Test
         target = MSHEET.Sheet(
             p_name=NAME, p_summary=SUMMARY, p_title=TITLE)

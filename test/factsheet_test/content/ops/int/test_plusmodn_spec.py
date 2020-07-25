@@ -338,7 +338,7 @@ class TestSpecPlusModN:
         model, index = page_confirm.ui_cursor.get_selected()
         topic_set = AOUTLINE.get_item_gtk(model, index)
         modulus = page_confirm.ui_modulus.get_value_as_int()
-        text_modulus = '<b>Modulus: </b>{})'.format(modulus)
+        text_modulus = '<i>Modulus: </i>{}'.format(modulus)
         # Test
         target.on_prepare(assistant, page, UI_PAGES)
         assert topic_set.name == page_confirm.ui_name_set.get_label()
@@ -367,7 +367,7 @@ class TestSpecPlusModN:
         page_confirm.ui_cursor.unselect_all()
         WARNING = 'Oops! Please go back and select a set.'
         modulus = page_confirm.ui_modulus.get_value_as_int()
-        text_modulus = '<b>Modulus: </b>{})'.format(modulus)
+        text_modulus = '<i>Modulus: </i>{}'.format(modulus)
         # Test
         target.on_prepare(assistant, page, UI_PAGES)
         assert WARNING == page_confirm.ui_name_set.get_label()
