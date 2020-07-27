@@ -66,6 +66,7 @@ DIR_UI = Path(__file__).parent / 'ui'
 FACTORY_INFOID = AFACTORY.FactoryInfoId()
 FACTORY_SHEET = AFACTORY.FactorySheet()
 
+KWArgs = typing.Mapping[str, typing.Any]
 IdTopic = AFACTORY.IdTopic
 IndexOutline = AFACTORY.IndexOutline
 OutlineTemplates = AFACTORY.OutlineTemplates

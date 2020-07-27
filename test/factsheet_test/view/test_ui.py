@@ -22,6 +22,7 @@ class TestTypes:
         """Confirm types defined."""
         # Setup
         # Test
+        assert UI.KWArgs is not None
         assert UI.IdTopic is AFACTORY.IdTopic
         assert UI.IndexOutline is AFACTORY.IndexOutline
         assert UI.OutlineTemplates is AFACTORY.OutlineTemplates
