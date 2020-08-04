@@ -17,6 +17,7 @@ Submodules
    factsheet.view.query_template
    factsheet.view.scenes
    factsheet.view.scene_int
+   factsheet.view.scene_table
    factsheet.view.scene_value
    factsheet.view.ui
    factsheet.view.view_infoid

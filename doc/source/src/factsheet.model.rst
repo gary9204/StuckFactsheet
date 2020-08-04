@@ -11,6 +11,7 @@ Submodules
 
 .. toctree::
 
+   factsheet.model.element
    factsheet.model.fact
    factsheet.model.infoid
    factsheet.model.setindexed

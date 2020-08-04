@@ -1,9 +1,10 @@
 """
 Unit tests for classes representing indexed sets.  See :mod:`.setindexed`.
 """
-import dataclasses as DC
+# import dataclasses as DC
 import pytest   # type: ignore[import]
 
+from factsheet.model import element as MELEMENT
 from factsheet.model import setindexed as MSET
 
 
@@ -26,10 +27,10 @@ class TestSetIndexed:
         | Case: indexed elements in and not in set.
         """
         # Setup
-        Element = MSET.ElementGeneric[str]
+        Element = MELEMENT.ElementGeneric[str]
         Set = MSET.SetIndexed[str]
         target = Set(patch_members)
-        element = Element(member=MEMBER, index=INDEX)
+        element = Element(p_member=MEMBER, p_index=INDEX)
         # Test
         assert target.__contains__(element) is RESULT
 
@@ -80,7 +81,7 @@ class TestSetIndexed:
         # Setup
         Set = MSET.SetIndexed[str]
         EXPECT = {
-            MSET.IndexElement(i): m for i, m in enumerate(patch_members)}
+            MELEMENT.IndexElement(i): m for i, m in enumerate(patch_members)}
         # Test
         target = Set(patch_members)
         assert isinstance(target, MSET.SetIndexed)
@@ -104,7 +105,7 @@ class TestSetIndexed:
         # Setup
         Set = MSET.SetIndexed[str]
         EXPECT = {
-            MSET.IndexElement(i): m for i, m in enumerate(patch_members)}
+            MELEMENT.IndexElement(i): m for i, m in enumerate(patch_members)}
         MEMBERS_DUP = list(patch_members)
         MEMBERS_DUP.insert(3, 'b')
         # Test
@@ -118,7 +119,7 @@ class TestSetIndexed:
         # Setup
         Set = MSET.SetIndexed[str]
         EXPECT = {
-            MSET.IndexElement(i): m for i, m in enumerate(patch_members)}
+            MELEMENT.IndexElement(i): m for i, m in enumerate(patch_members)}
         MEMBERS_NONE = list(patch_members)
         MEMBERS_NONE.insert(1, None)
         # Test
@@ -215,30 +216,6 @@ class TestSetIndexed:
             assert EXPECT_I == element.index
             assert EXPECT_M == element.member
 
-#     @pytest.mark.skip(reason='Removing indices - redundant')
-#     def test_indices(self, patch_members):
-#         """| Confirm index iterator.
-#         | Case: non-empty set.
-#         """
-#         # Setup
-#         Set = MSET.SetIndexed[str]
-#         target = Set(patch_members)
-#         EXPECT = list(range(len(patch_members)))
-#         # Test
-#         assert EXPECT == sorted(target.indices())
-
-#     @pytest.mark.skip(reason='Removing indices - redundant')
-#     def test_indices_empty(self):
-#         """| Confirm index iterator.
-#         | Case: empty set.
-#         """
-#         # Setup
-#         Set = MSET.SetIndexed[str]
-#         target = Set()
-#         EXPECT = list()
-#         # Test
-#         assert EXPECT == list(target.indices())
-
     def test_new_from_elements(self, patch_members):
         """| Confirm construction from elements.
         | Case: distinct elements, none with member None.
@@ -255,11 +232,11 @@ class TestSetIndexed:
         | Case: elements with duplicate index.
         """
         # Setup
-        Element = MSET.ElementGeneric[str]
+        Element = MELEMENT.ElementGeneric[str]
         Set = MSET.SetIndexed[str]
         reference = Set(patch_members)
         source = list(reference)
-        source.append(Element(member='z', index=MSET.IndexElement(2)))
+        source.append(Element(p_member='z', p_index=MELEMENT.IndexElement(2)))
         # Test
         target = MSET.SetIndexed.new_from_elements(source)
         assert reference == target
@@ -269,11 +246,11 @@ class TestSetIndexed:
         | Case: elements with duplicate member.
         """
         # Setup
-        Element = MSET.ElementGeneric[str]
+        Element = MELEMENT.ElementGeneric[str]
         Set = MSET.SetIndexed[str]
         reference = Set(patch_members)
         source = list(reference)
-        source.append(Element(member='a', index=MSET.IndexElement(-1)))
+        source.append(Element(p_member='a', p_index=MELEMENT.IndexElement(-1)))
         # Test
         target = MSET.SetIndexed.new_from_elements(source)
         assert reference == target
@@ -364,27 +341,27 @@ class TestTypes:
         """Confirm types defined."""
         # Setup
         # Test
-        assert MSET.IndexElement is not None
-        assert MSET.GenericMember is not None
+        assert MELEMENT.IndexElement is not None
+        assert MELEMENT.MemberGeneric is not None
 
 
-class TestElementGeneric:
-    """Unit test fors :class:`.ElementGeneric`."""
+# class TestElementGeneric:
+#     """Unit test fors :class:`.ElementGeneric`."""
 
-    def test_defined(self):
-        """Confirm class definition."""
-        # Setup
-        Element = MSET.ElementGeneric[str]
-        INDEX = MSET.IndexElement(42)
-        MEMBER = 'Parrot'
-        target = Element(MEMBER, INDEX)
-        # Test
-        assert MEMBER == target.member
-        with pytest.raises(DC.FrozenInstanceError):
-            target.member = MEMBER
-        assert INDEX == target.index
-        with pytest.raises(DC.FrozenInstanceError):
-            target.index = INDEX
+#     def test_defined(self):
+#         """Confirm class definition."""
+#         # Setup
+#         Element = MELEMENT.ElementGeneric[str]
+#         INDEX = MELEMENT.IndexElement(42)
+#         MEMBER = 'Parrot'
+#         target = Element(p_member=MEMBER, p_index=INDEX)
+#         # Test
+#         assert MEMBER == target.member
+#         with pytest.raises(DC.FrozenInstanceError):
+#             target.member = MEMBER
+#         assert INDEX == target.index
+#         with pytest.raises(DC.FrozenInstanceError):
+#             target.index = INDEX
 
 
 class TestSubsets:

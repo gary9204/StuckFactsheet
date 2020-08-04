@@ -113,12 +113,12 @@ class TestSpec:
         #     # Test
         #     target.on_prepare(None, None)
 
-    @pytest.mark.parametrize('name_attr, name_prop', [
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ['_name_template', 'name'],
         ['_summary_template', 'summary'],
         ['_title_template', 'title'],
         ])
-    def test_property(self, patch_args_spec, name_attr, name_prop):
+    def test_property(self, patch_args_spec, NAME_ATTR, NAME_PROP):
         """Confirm properties are get-only.
 
         #. Case: get
@@ -128,9 +128,9 @@ class TestSpec:
         # Setup
         ARGS = patch_args_spec
         target = XSPEC.Spec(**DC.asdict(ARGS))
-        value_attr = getattr(target, name_attr)
-        target_prop = getattr(XSPEC.Spec, name_prop)
-        value_prop = getattr(target, name_prop)
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(XSPEC.Spec, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None
         assert str(value_attr) == str(value_prop)
