@@ -4,6 +4,7 @@ Unit tests for ancestor class for set topicss. See :mod:`~.set_topic`.
 import pytest   # type: ignore[import]
 
 from factsheet.content.sets import set_topic as XSET
+from factsheet.model import element as MELEMENT
 from factsheet.model import setindexed as MSET
 
 
@@ -31,8 +32,8 @@ class TestSet:
         TITLE = 'Parrot Sketch'
         target = XSET.Set[str](p_name=NAME, p_summary=SUMMARY, p_title=TITLE,
                                p_members=patch_members)
-        Element = MSET.ElementGeneric[str]
-        element = Element(member=MEMBER, index=INDEX)
+        Element = MELEMENT.ElementGeneric[str]
+        element = Element(p_member=MEMBER, p_index=INDEX)
         # Test
         assert target.__contains__(element) is RESULT
 

@@ -5,15 +5,15 @@ See :mod:`.topic`.
 import typing
 
 from factsheet.content.sets import set_topic as XSET
-from factsheet.model import setindexed as MSET
+from factsheet.model import element as MELEMENT
 from factsheet.model import topic as MTOPIC
 
 
-GenericMember = typing.TypeVar('GenericMember')
-Element = MSET.ElementGeneric[GenericMember]
+MemberGeneric = typing.TypeVar('MemberGeneric')
+Element = MELEMENT.ElementGeneric[MemberGeneric]
 
 
-class Operation(MTOPIC.Topic, typing.Generic[GenericMember]):
+class Operation(MTOPIC.Topic, typing.Generic[MemberGeneric]):
     """Defines ancestor class for binary operation topics.
 
     Class ``Operation`` serves as a common ancestor class for topics
@@ -28,7 +28,7 @@ class Operation(MTOPIC.Topic, typing.Generic[GenericMember]):
     """
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '', p_set: XSET.Set[GenericMember],
+                 p_title: str = '', p_set: XSET.Set[MemberGeneric],
                  **kwargs) -> None:
         super().__init__(
             p_name=p_name, p_summary=p_summary, p_title=p_title, **kwargs)

@@ -2,10 +2,10 @@
 Defines class for set of integers topics.  See :mod:`.set_topic`.
 """
 from factsheet.content.sets import set_topic as XSET
-from factsheet.model import setindexed as MSET
+from factsheet.model import element as MELEMENT
 
 
-ElementInt = MSET.ElementGeneric[int]
+ElementInt = MELEMENT.ElementGeneric[int]
 
 
 class SetInt(XSET.Set[int]):

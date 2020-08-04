@@ -1,5 +1,5 @@
 """
-Defines unit tests for classes to display integer fact values.
+Defines unit tests for classes to display fact value that is integer.
 See :mod:`.scene_int`.
 """
 from factsheet.view import scene_int as VINT

@@ -8,9 +8,9 @@ import pytest   # type: ignore[import]
 from factsheet.content.ops.int import plusmodn_topic as XPLUS_N
 from factsheet.content.sets.int import segint_topic as XSEG_INT
 from factsheet.content.sets.int import setint_topic as XSET_INT
-from factsheet.model import setindexed as MSET
+from factsheet.model import element as MELEMENT
 
-IE = MSET.IndexElement
+IE = MELEMENT.IndexElement
 Element = XSET_INT.ElementInt
 
 
@@ -183,14 +183,17 @@ class TestPlusModN:
         assert TITLE_N == title_new
 
     @pytest.mark.parametrize('LEFT, RIGHT, RESULT', [
-        (Element(member=1, index=IE(1)), Element(member=2, index=IE(2)),
-            Element(member=3, index=IE(3))),
-        (Element(member=1, index=IE(1)), Element(member=4, index=IE(4)),
-            Element(member=5, index=IE(5))),
-        (Element(member=3, index=IE(3)), Element(member=4, index=IE(4)),
-            Element(member=2, index=IE(2))),
-        ('Oops!', Element(member=4, index=IE(4)), None),
-        (Element(member=4, index=IE(4)), 'Oops!', None),
+        (Element(p_member=1, p_index=IE(1)),
+            Element(p_member=2, p_index=IE(2)),
+            Element(p_member=3, p_index=IE(3))),
+        (Element(p_member=1, p_index=IE(1)),
+            Element(p_member=4, p_index=IE(4)),
+            Element(p_member=5, p_index=IE(5))),
+        (Element(p_member=3, p_index=IE(3)),
+            Element(p_member=4, p_index=IE(4)),
+            Element(p_member=2, p_index=IE(2))),
+        ('Oops!', Element(p_member=4, p_index=IE(4)), None),
+        (Element(p_member=4, p_index=IE(4)), 'Oops!', None),
         ])
     def test_op(self, patch_new_segment, LEFT, RIGHT, RESULT):
         """| Confirm modular addition.
@@ -213,8 +216,8 @@ class TestPlusModN:
         SET = patch_new_segment(SIZE_SET)
         MODULUS = 5
         target = XPLUS_N.PlusModN(p_set=SET, p_modulus=MODULUS)
-        LEFT = Element(member=1, index=IE(1))
-        RIGHT = Element(member=2, index=IE(2))
+        LEFT = Element(p_member=1, p_index=IE(1))
+        RIGHT = Element(p_member=2, p_index=IE(2))
         # Test
         assert target._op(LEFT, RIGHT) is None
 

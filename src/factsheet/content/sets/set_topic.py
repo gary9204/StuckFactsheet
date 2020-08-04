@@ -3,13 +3,14 @@ Defines ancestor class for set topics.  See :mod:`.topic`.
 """
 import typing
 
+from factsheet.model import element as MELEMENT
 from factsheet.model import setindexed as MSET
 from factsheet.model import topic as MTOPIC
 
-GenericMember = typing.TypeVar('GenericMember')
+MemberGeneric = typing.TypeVar('MemberGeneric')
 
 
-class Set(MTOPIC.Topic, typing.Generic[GenericMember]):
+class Set(MTOPIC.Topic, typing.Generic[MemberGeneric]):
     """Defines ancestor class for set topics.
 
     Class ``Set`` serves as a common ancestor class for topics that
@@ -54,13 +55,14 @@ class Set(MTOPIC.Topic, typing.Generic[GenericMember]):
 
     def __init__(
             self, *, p_name: str = '', p_summary: str = '', p_title: str = '',
-            p_members: typing.Optional[typing.Iterable[GenericMember]] = None,
+            p_members: typing.Optional[typing.Iterable[MemberGeneric]] = None,
             **kwargs: typing.Dict) -> None:
         super().__init__(
             p_name=p_name, p_summary=p_summary, p_title=p_title, **kwargs)
         members = p_members if p_members is not None else list()
-        self._elements = MSET.SetIndexed[GenericMember](p_members=members)
+        self._elements = MSET.SetIndexed[MemberGeneric](p_members=members)
 
-    def __iter__(self) -> typing.Iterator[MSET.ElementGeneric[GenericMember]]:
+    def __iter__(self) -> typing.Iterator[
+            MELEMENT.ElementGeneric[MemberGeneric]]:
         """Return iterator over indexed elements in set topic."""
         return iter(self._elements)

@@ -2,37 +2,35 @@
 Defines classes for Factsheet-specific implementation of set-like type.
 
 The classes support a set whose elements are indexed (that is, labeled).
-
-.. data:: IndexElement
-
-    Type for labeling elements of a set.
 """
 
 import collections as COL
-import dataclasses as DC
+# import dataclasses as DC
 import typing
 
+from factsheet.model import element as MELEMENT
 
-IndexElement = typing.NewType('IndexElement', int)
-GenericMember = typing.TypeVar('GenericMember')
-
-
-@DC.dataclass(frozen=True)
-class ElementGeneric(typing.Generic[GenericMember]):
-    """Defines an indexed element.
-
-    An indexed element represents a member of a set with a label (index)
-    for each member.  For consistency, the terms "indexed element" and
-    "element" refer to a member-index pair.
-
-    :param member: value of element.
-    :param index: label of element.
-    """
-    member: GenericMember
-    index: IndexElement
+# IndexElement = typing.NewType('IndexElement', int)
+MemberGeneric = typing.TypeVar('MemberGeneric')
+Element = MELEMENT.ElementGeneric[MemberGeneric]
 
 
-class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
+# @DC.dataclass(frozen=True)
+# class ElementGeneric(typing.Generic[MemberGeneric]):
+#     """Defines an indexed element.
+
+#     An indexed element represents a member of a set with a label (index)
+#     for each member.  For consistency, the terms "indexed element" and
+#     "element" refer to a member-index pair.
+
+#     :param member: value of element.
+#     :param index: label of element.
+#     """
+#     member: MemberGeneric
+#     index: MELEMENT.IndexElement
+
+
+class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
     """Set-like collection with indexed elements.
 
     Indexed set methods preclude the following:
@@ -105,8 +103,9 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
         return self._elements == p_other._elements
 
     def __init__(
-            self, p_members: typing.Iterable[GenericMember] = None) -> None:
-        self._elements: typing.Dict[IndexElement, GenericMember] = dict()
+            self, p_members: typing.Iterable[MemberGeneric] = None) -> None:
+        self._elements: typing.Dict[
+            MELEMENT.IndexElement, MemberGeneric] = dict()
         if p_members is None:
             return
 
@@ -116,13 +115,13 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
                 continue
             if member in self._elements.values():
                 continue
-            self._elements[IndexElement(index_next)] = member
+            self._elements[MELEMENT.IndexElement(index_next)] = member
             index_next += 1
 
-    def __iter__(self) -> typing.Iterator[ElementGeneric[GenericMember]]:
+    def __iter__(self) -> typing.Iterator[Element]:
         """Return iterator over indexed elements in set."""
         for i, m in self._elements.items():
-            element = ElementGeneric[GenericMember](member=m, index=i)
+            element = Element(p_member=m, p_index=i)
             yield element
 
     def __len__(self) -> int:
@@ -133,14 +132,14 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
         """Return printable representation of set."""
         return '<SetIndexed: ' + str(sorted(self._elements.items())) + '>'
 
-#     def indices(self) -> typing.Iterator[IndexElement]:
+#     def indices(self) -> typing.Iterator[MELEMENT.IndexElement]:
 #         """Return iterator over indices of elements in the set."""
 #         for i in self._elements.keys():
 #             yield i
 
-    def find_element(self, *, p_index: IndexElement = None,
-                     p_member: GenericMember = None
-                     ) -> typing.Optional[ElementGeneric[GenericMember]]:
+    def find_element(self, *, p_index: MELEMENT.IndexElement = None,
+                     p_member: MemberGeneric = None
+                     ) -> typing.Optional[Element]:
         """Return element matching given information or None.
 
         Return None when no element matches all given information.
@@ -154,8 +153,7 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
 
             for index, member in self._elements.items():
                 if member == p_member:
-                    element = ElementGeneric[GenericMember](
-                        member=member, index=index)
+                    element = Element(p_member=member, p_index=index)
                     return element
 
             return None
@@ -165,7 +163,7 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
         except KeyError:
             return None
 
-        element = ElementGeneric[GenericMember](member=member, index=p_index)
+        element = Element(p_member=member, p_index=p_index)
         if p_member is None:
             return element
 
@@ -175,9 +173,8 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
         return None
 
     @classmethod
-    def new_from_elements(cls, p_elements:
-                          typing.Iterable[ElementGeneric[GenericMember]] = []
-                          ) -> 'SetIndexed[GenericMember]':
+    def new_from_elements(cls, p_elements: typing.Iterable[Element] = []
+                          ) -> 'SetIndexed[MemberGeneric]':
         """Return set containing given indexed elements.
 
         Method ``new_from_elements`` enforces the restrictions listed in
@@ -186,7 +183,7 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
 
         :param p_elements: collection of indexed elements for the set.
         """
-        new_set = SetIndexed[GenericMember]()
+        new_set = SetIndexed[MemberGeneric]()
         for element in p_elements:
             index = element.index
             member = element.member
@@ -220,7 +217,7 @@ class SetIndexed(COL.abc.Set, typing.Generic[GenericMember]):
 #         """Return dictionary view of set values."""
 #         return self._elements.values()
 
-#     def value_of(self, p_tag: IndexElement) -> Value:
+#     def value_of(self, p_tag: MELEMENT.IndexElement) -> Value:
 #         """Return value corresponding to given tag.
 
 #         Formal Parameters
