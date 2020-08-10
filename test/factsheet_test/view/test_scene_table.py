@@ -1,6 +1,6 @@
 """
 Defines unit tests for classes to display fact value that is sequence
-of integers.  See :mod:`.scene_int`.
+of integers.  See :mod:`.scene_table`.
 """
 import pytest   # type: ignore[import]
 

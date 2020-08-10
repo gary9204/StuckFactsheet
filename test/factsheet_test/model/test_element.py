@@ -25,6 +25,40 @@ def patch_args_element():
         )
 
 
+class TestStyle:
+    """Unit tests for :class:`.Style`."""
+
+    def test_eq(self, patch_args_element):
+        """Confirm equivalence operator
+
+        #. Case: type difference
+        #. Case: name difference
+        #. Case: Equivalence
+        """
+        # Setup
+        NAME = MELEMENT.IdStyle('Norwegian Blue')
+        NAME_DIFF = MELEMENT.Style(p_name='Something completely different')
+        reference = MELEMENT.Style(p_name=NAME)
+        # Test: type difference
+        target = MELEMENT.Style(p_name=NAME_DIFF)
+        assert not target.__eq__('Something completely different')
+        # Test: name difference
+        target = MELEMENT.Style(p_name=NAME_DIFF)
+        assert not target.__eq__(reference)
+        # Test: Equivalence
+        target = MELEMENT.Style(p_name=NAME)
+        assert target.__eq__(reference)
+        assert not target.__ne__(reference)
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        NAME = MELEMENT.IdStyle('Norwegian Blue')
+        # Test
+        target = MELEMENT.Style(p_name=NAME)
+        assert NAME == target.name
+
+
 class TestTypes:
     """Unit tests for :mod:`.element` module-level type definitions."""
 
@@ -32,17 +66,21 @@ class TestTypes:
         """Confirm types defined."""
         # Setup
         # Test
-        assert MELEMENT.IdStyleElement is not None
+        assert MELEMENT.IdStyle is not None
         assert MELEMENT.IndexElement is not None
         assert MELEMENT.MemberGeneric is not None
-        # omit: assert MELEMENT.StyleElement is not None  # [misc] error
+
+
+class TestElementGeneric:
+    """Unit tests for :class:`.ElementGeneric`."""
 
     def test_eq(self, patch_args_element):
         """Confirm equivalence operator
 
         #. Case: type difference - no index
         #. Case: type difference - no member
-        #. Case: InfoId difference
+        #. Case: index difference
+        #. Case: member difference
         #. Case: Equivalence
         """
         # Setup

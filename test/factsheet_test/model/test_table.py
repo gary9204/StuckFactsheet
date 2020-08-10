@@ -74,7 +74,7 @@ class TestInfoColumn:
 
 
 class TestTableElements:
-    """Unit tests for :class:`TableElements`."""
+    """Unit tests for :class:`.TableElements`."""
 
     def test_init(self, patch_args_table):
         """Confirm initialization."""

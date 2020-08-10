@@ -5,7 +5,7 @@ element.  See :mod:`.setindexed`.
 Each element of a :class:`.SetIndexed` object is a pair: the member of
 the abstract set the object represents along with an index.
 
-.. data:: IdStyleElement
+.. data:: IdStyle
 
     Type for labeling text style to format an element.
 
@@ -19,9 +19,36 @@ the abstract set the object represents along with an index.
 """
 import typing
 
-IdStyleElement = typing.NewType('IdStyleElement', str)
+IdStyle = typing.NewType('IdStyle', str)
 IndexElement = typing.NewType('IndexElement', int)
 MemberGeneric = typing.TypeVar('MemberGeneric')
+
+
+class Style:
+    """Style for converting an object to text.
+
+    .. attribute:: name
+
+    Identifies the style.
+
+    :param p_name: identifier for style
+    """
+
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when other has same name.
+
+        :param p_other: object to compare with self.
+        """
+        if not isinstance(p_other, Style):
+            return False
+
+        if self.name != p_other.name:
+            return False
+
+        return True
+
+    def __init__(self, p_name: IdStyle) -> None:
+        self.name = p_name
 
 
 class ElementGeneric(typing.Generic[MemberGeneric]):
@@ -69,7 +96,7 @@ class ElementGeneric(typing.Generic[MemberGeneric]):
             'Plain': self.style_plain,
             }
 
-    def format(self, p_id_style: IdStyleElement,
+    def format(self, p_id_style: IdStyle,
                p_symbol: str = 'a') -> str:
         """Return element as text in given style.
 
@@ -79,7 +106,7 @@ class ElementGeneric(typing.Generic[MemberGeneric]):
 
         A style may include `Pango markup`_.
 
-        :param p_style_id: identifier of style to use.
+        :param p_is_style: identifier of style to use.
         :param p_symbol: symbol to use in label.
         """
         try:
@@ -98,10 +125,10 @@ class ElementGeneric(typing.Generic[MemberGeneric]):
         """Return member of element."""
         return self._member
 
-    def ids_style(self) -> typing.Iterator[IdStyleElement]:
+    def ids_style(self) -> typing.Iterator[IdStyle]:
         """Return iterator over identifiers of styles the element supports."""
         for id_style in self._apply_style:
-            yield IdStyleElement(id_style)
+            yield IdStyle(id_style)
 
     def style_element(self, p_symbol: str = 'a') -> str:
         r"""Return element as '*symbol*\ :sub:`index` = member'."""

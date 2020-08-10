@@ -1,5 +1,5 @@
 """
-Defines stub class for table of elements.  See :mod:`element`.
+Defines stub class for table of elements.  See :mod:`.element`.
 """
 import dataclasses as DC
 import gi   # type: ignore[import]

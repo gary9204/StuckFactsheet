@@ -136,38 +136,3 @@ def patch_ui_infoid(text_ui_infoid):
         '''.format(**text_ui_infoid)
     builder = Gtk.Builder.new_from_string(ui_infoid, -1)
     return builder.get_object
-
-
-@DC.dataclass
-class ArgsTable:
-    """Convenience class assembles arguments to
-    :meth:`.TableElements.__init__` for pytest fixture.
-    """
-    rows: Gtk.ListStore
-    columns: typing.Sequence[MTABLE.InfoColumn]
-
-
-@pytest.fixture
-def patch_args_table():
-    """Pytest fixture returns arguments for
-    :meth:`.TableElements.__init__`.
-    """
-    set_int = MSET.SetIndexed[int]([0, 2, 4, 6, 8])
-    set_str = MSET.SetIndexed[str](['a', 'e', 'i', 'o', 'u'])
-    list_mix = [MELEMENT.ElementGeneric('x', 0), None,
-                MELEMENT.ElementGeneric('y', 1), None,
-                MELEMENT.ElementGeneric('z', 2)]
-    rows = Gtk.ListStore(GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT)
-    for e_int, e_str, e_mix in zip(set_int, set_str, list_mix):
-        rows.append([e_int, e_str, e_mix])
-    info_int = MTABLE.InfoColumn(title='Integers', symbol='i', styles=[
-        'Label', 'Element', 'Index', 'Member', 'Plain'])
-    info_str = MTABLE.InfoColumn(title='Strings', symbol='s', styles=[
-        'Label', 'Element', 'Index', 'Member', 'Plain', 'Oops'])
-    info_mix = MTABLE.InfoColumn(title='Mixed', symbol='m', styles=[
-        'Label', 'Element', 'Index', 'Member', 'Plain'])
-    columns = [info_int, info_str, info_mix]
-    return ArgsTable(
-        rows=rows,
-        columns=columns,
-        )
