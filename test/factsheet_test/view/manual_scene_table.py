@@ -119,7 +119,7 @@ def run_app():
     """Start application and show initial window."""
     app = AppTable()
     app.run(sys.argv)
-    print('Done')
+    print('Done.')
 
 
 if __name__ == '__main__':
