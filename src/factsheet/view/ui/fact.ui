@@ -351,17 +351,16 @@
         <property name="orientation">vertical</property>
         <property name="wide_handle">True</property>
         <child>
-          <object class="GtkFrame" id="ui_context_summary">
+          <object class="GtkExpander" id="ui_context_summary">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_top">3</property>
-            <property name="margin_bottom">6</property>
-            <property name="label_xalign">0.10000000149011612</property>
-            <property name="shadow_type">in</property>
+            <property name="can_focus">True</property>
+            <property name="expanded">True</property>
+            <property name="resize_toplevel">True</property>
             <child>
               <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="shadow_type">etched-in</property>
                 <property name="min_content_height">60</property>
                 <property name="propagate_natural_height">True</property>
                 <child>
@@ -399,145 +398,149 @@
             <property name="orientation">vertical</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkFrame">
-                <property name="height_request">120</property>
+              <object class="GtkExpander">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_top">6</property>
-                <property name="margin_bottom">6</property>
-                <property name="label_xalign">0.10000000149011612</property>
-                <property name="shadow_type">in</property>
+                <property name="can_focus">True</property>
+                <property name="expanded">True</property>
+                <property name="resize_toplevel">True</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkViewport">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="spacing">6</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkButton">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="action_name">visage.show-help</property>
-                            <property name="image">image_visage_info</property>
-                            <property name="always_show_image">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Name: &lt;/b&gt;</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="ui_name_infoid">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="hexpand">True</property>
-                            <property name="editable">False</property>
-                            <property name="placeholder_text" translatable="yes">Oops! fact name missing.</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="select_visage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="model">stub_store_visage</property>
-                            <property name="active">0</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCellRendererText" id="visage"/>
-                              <attributes>
-                                <attribute name="markup">0</attribute>
-                              </attributes>
+                              <object class="GtkButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="action_name">visage.show-help</property>
+                                <property name="image">image_visage_info</property>
+                                <property name="always_show_image">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="pack_type">end</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Name: &lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="ui_name_infoid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="editable">False</property>
+                                <property name="placeholder_text" translatable="yes">Oops! fact name missing.</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="select_visage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="model">stub_store_visage</property>
+                                <property name="active">0</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="visage"/>
+                                  <attributes>
+                                    <attribute name="markup">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="pack_type">end</property>
+                                <property name="position">3</property>
+                              </packing>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">3</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkStack" id="ui_scene_facts">
-                        <property name="height_request">200</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Placeholder - Top of fact visage stack.</property>
-                            <property name="wrap">True</property>
-                          </object>
-                          <packing>
-                            <property name="name">page0</property>
-                            <property name="title" translatable="yes">page0</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel">
-                            <property name="width_request">240</property>
+                          <object class="GtkStack" id="ui_scene_facts">
+                            <property name="height_request">200</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Placeholder - MIddle of fact visage stack</property>
-                            <property name="wrap">True</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="width_request">300</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Placeholder - Top of fact visage stack.</property>
+                                <property name="wrap">True</property>
+                              </object>
+                              <packing>
+                                <property name="name">page0</property>
+                                <property name="title" translatable="yes">page0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Placeholder - MIddle of fact visage stack</property>
+                                <property name="wrap">True</property>
+                              </object>
+                              <packing>
+                                <property name="name">page1</property>
+                                <property name="title" translatable="yes">page1</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Bottom of fact visate stack</property>
+                              </object>
+                              <packing>
+                                <property name="name">page2</property>
+                                <property name="title" translatable="yes">page2</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="name">page1</property>
-                            <property name="title" translatable="yes">page1</property>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Bottom of fact visate stack</property>
-                          </object>
-                          <packing>
-                            <property name="name">page2</property>
-                            <property name="title" translatable="yes">page2</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
                     </child>
                   </object>
                 </child>
@@ -562,27 +565,32 @@
                 <property name="orientation">vertical</property>
                 <property name="wide_handle">True</property>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkExpander">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="margin_top">6</property>
-                    <property name="margin_bottom">6</property>
-                    <property name="label_xalign">0.10000000149011612</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can_focus">True</property>
+                    <property name="expanded">True</property>
+                    <property name="resize_toplevel">True</property>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="height_request">40</property>
+                      <object class="GtkViewport">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_bottom">3</property>
-                        <property name="label" translatable="yes">Placeholder - User Notes</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_bottom">3</property>
+                            <property name="vexpand">True</property>
+                            <property name="label" translatable="yes">Placeholder - User Notes</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child type="label">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;i&gt;User Notes&lt;/i&gt;</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Notes&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                     </child>
@@ -593,19 +601,26 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkExpander">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0.10000000149011612</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can_focus">True</property>
+                    <property name="expanded">True</property>
+                    <property name="resize_toplevel">True</property>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="height_request">40</property>
+                      <object class="GtkViewport">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Placeholder - Related Facts</property>
-                        <property name="use_markup">True</property>
-                        <property name="wrap">True</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="vexpand">True</property>
+                            <property name="label" translatable="yes">Placeholder - Related Facts</property>
+                            <property name="use_markup">True</property>
+                            <property name="wrap">True</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child type="label">
