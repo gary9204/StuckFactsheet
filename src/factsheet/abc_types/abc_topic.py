@@ -6,6 +6,10 @@ break ``import`` cycles and to encapsulate dependencies of
 :mod:`~factsheet.model` on a user interface widget toolkit.  Module
 ``abc_topic`` defines interface for topic view (:class:`.PaneTopic`) for
 encapsulation.
+
+.. data:: IdTopic
+
+    Type for topic identifiers.
 """
 import abc
 import typing

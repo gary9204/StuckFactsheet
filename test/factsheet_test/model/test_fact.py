@@ -15,9 +15,9 @@ class TestFact:
     """Unit tests for :class:`~.Fact`."""
 
     @pytest.mark.parametrize('STATE, EXPECT_NONE', [
-        (MFACT.StateOfCheck.UNCHECKED, True),
-        (MFACT.StateOfCheck.UNDEFINED, True),
-        (MFACT.StateOfCheck.CHECKED, False),
+        (MFACT.StatusOfFact.UNCHECKED, True),
+        (MFACT.StatusOfFact.UNDEFINED, True),
+        (MFACT.StatusOfFact.DEFINED, False),
         ])
     def test_call(self, patch_args_infoid, STATE, EXPECT_NONE):
         """Confirm call result for each fact check state."""
@@ -89,7 +89,7 @@ class TestFact:
         assert ARGS.p_summary == target._infoid.summary
         assert ARGS.p_title == target._infoid.title
         assert target._value is None
-        assert target._state_of_check is MFACT.StateOfCheck.UNCHECKED
+        assert target._state_of_check is MFACT.StatusOfFact.UNCHECKED
         assert not target._stale
         assert isinstance(target._views, dict)
         assert not target._views
@@ -141,9 +141,9 @@ class TestFact:
         # Test
         result = target.check()
         assert target._value is value_pre
-        assert target._state_of_check is MFACT.StateOfCheck.UNDEFINED
+        assert target._state_of_check is MFACT.StatusOfFact.UNDEFINED
         assert target.is_stale()
-        assert result is MFACT.StateOfCheck.UNDEFINED
+        assert result is MFACT.StatusOfFact.UNDEFINED
 
     def test_clear(self, patch_args_infoid):
         """Confirm default check."""
@@ -151,12 +151,12 @@ class TestFact:
         ARGS = patch_args_infoid
         target = MFACT.Fact(**DC.asdict(ARGS))
         target._value = 'Something completely different.'
-        target._state_of_check = MFACT.StateOfCheck.CHECKED
+        target._state_of_check = MFACT.StatusOfFact.DEFINED
         target.set_fresh()
         # Test
         target.clear()
         assert target._value is None
-        assert target._state_of_check is MFACT.StateOfCheck.UNCHECKED
+        assert target._state_of_check is MFACT.StatusOfFact.UNCHECKED
         assert target.is_stale()
 
     @pytest.mark.parametrize('NAME_PROP', [

@@ -1,6 +1,7 @@
 """
 Unit tests for fact abstract interfaces.  See :mod:`.abc_fact`.
 """
+import enum
 import pytest   # type: ignore[import]
 
 import factsheet.abc_types.abc_fact as ABC_FACT
@@ -13,7 +14,16 @@ class TestTypes:
         """Confirm types defined."""
         # Setup
         # Test
-        assert ABC_FACT.IdFact is not None
+        assert ABC_FACT.IdFact
+        assert ABC_FACT.NameScene
+        Status = ABC_FACT.StatusOfFact
+        assert issubclass(Status, enum.Enum)
+        assert Status.BLOCKED
+        assert Status.DEFINED
+        assert Status.UNCHECKED
+        assert Status.UNDEFINED
+        assert ABC_FACT.ValueAny
+        # assert ABC_FACT.ValueOfFact  # Not testable at runtime [misc]
 
 
 class TestAbstractFact:
@@ -26,23 +36,26 @@ class TestAbstractFact:
         with pytest.raises(TypeError):
             _ = ABC_FACT.AbstractFact()
 
-    @pytest.mark.parametrize('name_method', [
+    @pytest.mark.parametrize('NAME_METHOD', [
         'id_fact',
-        'name',
-        'summary',
-        'title',
+        'status',
+        # 'name',
+        # 'summary',
+        # 'title',
         ])
-    def test_must_override(self, name_method):
+    def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
         class PatchFact(ABC_FACT.AbstractFact):
             def id_fact(self): return super().id_fact
 
-            def name(self): return super().name
+            def status(self): return super().status
 
-            def summary(self): return super().summary
+            # def name(self): return super().name
 
-            def title(self): return super().title
+            # def summary(self): return super().summary
+
+            # def title(self): return super().title
 
             def is_fresh(self): super().is_fresh()
 
@@ -55,7 +68,7 @@ class TestAbstractFact:
         target = PatchFact()
         # Test
         with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
+            method = getattr(target, NAME_METHOD)
             method()
 
 
@@ -69,19 +82,23 @@ class TestInterfacePaneFact:
         with pytest.raises(TypeError):
             _ = ABC_FACT.InterfacePaneFact()
 
-    @pytest.mark.parametrize('name_method', [
+    @pytest.mark.parametrize('NAME_METHOD', [
+        'checked',
+        'cleared',
         'get_infoid',
         ])
-    def test_must_override(self, name_method):
+    def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
         class PatchPaneFact(ABC_FACT.InterfacePaneFact):
-            def get_infoid(self): super().get_infoid()
+            def checked(self): super().checked(None)
 
-            def get_view_facts(self): super().get_view_facts()
+            def cleared(self): super().cleared(None)
+
+            def get_infoid(self): super().get_infoid()
 
         target = PatchPaneFact()
         # Test
         with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
+            method = getattr(target, NAME_METHOD)
             method()

@@ -7,7 +7,6 @@ factsheet, topic, and fact layers.  Module ``fact`` defines
 the base class representing the model of a fact.  Additional classes
 specialize the model for facts about sets, operations, and so on.
 """
-import enum
 import logging
 import typing   # noqa
 
@@ -16,30 +15,11 @@ from factsheet.model import infoid as MINFOID
 
 logger = logging.getLogger('Main.model.fact')
 
-GenericValue = typing.TypeVar('GenericValue')
+ValueAny = typing.TypeVar('ValueAny')
+StatusOfFact = ABC_FACT.StatusOfFact
 
 
-class StateOfCheck(enum.Enum):
-    """Indicates whether user has checked fact and outcome of check.
-
-    .. attribute:: UNCHECKED
-
-        User has not checked fact and its value is unknown.
-
-    .. attribute:: UNDEFINED
-
-        User checked fact but its value is not defined.
-
-    .. attribute:: CHECKED
-
-        User checked fact and its value is known.
-    """
-    UNCHECKED = enum.auto()
-    UNDEFINED = enum.auto()
-    CHECKED = enum.auto()
-
-
-class Fact(typing.Generic[GenericValue]):
+class Fact(typing.Generic[ValueAny]):
     """Fact component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a
@@ -61,13 +41,13 @@ class Fact(typing.Generic[GenericValue]):
         the facts (like views) are not compared and may be different.
     """
 
-    def __call__(self) -> typing.Optional[GenericValue]:
+    def __call__(self) -> typing.Optional[ValueAny]:
         """Return fact value or None.
 
         Return None when the the user has not checked the fact or the
         fact value is not defined.
         """
-        if self._state_of_check is not StateOfCheck.CHECKED:
+        if self._state_of_check is not ABC_FACT.StatusOfFact.DEFINED:
             return None
 
         return self._value
@@ -101,8 +81,8 @@ class Fact(typing.Generic[GenericValue]):
                  p_title: str = '', **_kwargs: typing.Dict) -> None:
         self._infoid = MINFOID.InfoId(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
-        self._value: typing.Optional[GenericValue] = None
-        self._state_of_check = StateOfCheck.UNCHECKED
+        self._value: typing.Optional[ValueAny] = None
+        self._state_of_check = ABC_FACT.StatusOfFact.UNCHECKED
         self._set_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
@@ -141,16 +121,16 @@ class Fact(typing.Generic[GenericValue]):
         # self._views[id_view] = pm_view
 
     def check(self, **_kwargs: typing.Mapping[str, typing.Any]
-              ) -> StateOfCheck:
+              ) -> ABC_FACT.StatusOfFact:
         """Set fact value and set corresponding state of fact check."""
-        self._state_of_check = StateOfCheck.UNDEFINED
+        self._state_of_check = ABC_FACT.StatusOfFact.UNDEFINED
         self.set_stale()
         return self._state_of_check
 
     def clear(self, **_kwargs: typing.Mapping[str, typing.Any]) -> None:
         """Clear fact value and set state of fact check to unchecked."""
         self._value = None
-        self._state_of_check = StateOfCheck.UNCHECKED
+        self._state_of_check = ABC_FACT.StatusOfFact.UNCHECKED
         self.set_stale()
 
     def detach_all(self) -> None:
@@ -213,7 +193,7 @@ class Fact(typing.Generic[GenericValue]):
         return False
 
     @property
-    def state_of_check(self) -> StateOfCheck:
+    def state_of_check(self) -> ABC_FACT.StatusOfFact:
         """Return status of fact check."""
         return self._state_of_check
 
