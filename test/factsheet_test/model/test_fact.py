@@ -2,9 +2,9 @@
 Unit tests for fact-level model. See :mod:`~.fact`.
 """
 import dataclasses as DC
-# import logging
-# from pathlib import Path
-# import pickle
+import logging
+from pathlib import Path
+import pickle
 import pytest   # type: ignore[import]
 
 from factsheet.model import infoid as MINFOID
@@ -52,31 +52,31 @@ class TestFact:
         # assert source.__eq__(target)
         # assert not source.__ne__(target)
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_get_set_state(self, tmp_path, interface_block_fact):
+    def test_get_set_state(self, tmp_path, patch_class_block_fact):
         """Confirm conversion to and from pickle format."""
         # Setup
-        # path = Path(str(tmp_path / 'get_set.fsg'))
+        path = Path(str(tmp_path / 'get_set.fsg'))
 
-        # TITLE_MODEL = 'Something completely different.'
-        # source = MFACT.Fact(p_title=TITLE_MODEL)
-        # source._stale = True
+        TITLE_MODEL = 'Something completely different.'
+        source = MFACT.Fact(p_title=TITLE_MODEL)
+        source._stale = True
 
-        # N_VIEWS = 3
-        # views = [interface_block_fact() for _ in range(N_VIEWS)]
-        # for view in views:
-        #     source.attach_view(view)
-        # # Test
-        # with path.open(mode='wb') as io_out:
-        #     pickle.dump(source, io_out)
+        PatchBlockFact = patch_class_block_fact
+        N_BLOCKS = 3
+        blocks = [PatchBlockFact() for _ in range(N_BLOCKS)]
+        for block in blocks:
+            source.attach_block(block)
+        # Test
+        with path.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
 
-        # with path.open(mode='rb') as io_in:
-        #     target = pickle.load(io_in)
+        with path.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
 
-        # assert isinstance(target._views, dict)
-        # assert not target._views
-        # assert not target._stale
-        # assert source._infoid == target._infoid
+        assert isinstance(target._blocks, dict)
+        assert not target._blocks
+        assert not target._stale
+        assert source._infoid == target._infoid
 
     def test_init(self, patch_args_infoid):
         """Confirm initialization."""
@@ -91,8 +91,8 @@ class TestFact:
         assert target._value is None
         assert target._state_of_check is MFACT.StatusOfFact.UNCHECKED
         assert not target._stale
-        assert isinstance(target._views, dict)
-        assert not target._views
+        assert isinstance(target._blocks, dict)
+        assert not target._blocks
 
     def test_init_default(self):
         """Confirm initialization with default arguments."""
@@ -100,7 +100,7 @@ class TestFact:
         NAME_DEFAULT = ''
         SUMMARY_DEFAULT = ''
         TITLE_DEFAULT = ''
-        # # Test
+        # Test
         target = MFACT.Fact()
         assert NAME_DEFAULT == target._infoid.name
         assert SUMMARY_DEFAULT == target._infoid.summary
@@ -126,6 +126,32 @@ class TestFact:
         # Test: read
         assert target_prop.fget is not None
         assert str(value_attr) == str(value_prop)
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
+    @pytest.mark.parametrize('NAME_PROP', [
+        'name',
+        'summary',
+        'title',
+        ])
+    def test_property_infoid(self, NAME_PROP):
+        """Confirm pass-through InfoId properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+        """
+        # Setup
+        target = MFACT.Fact(p_name='Parrot', p_summary='Norwegian Blue',
+                            p_title='Parrot Sketch')
+        value_attr = getattr(target._infoid, NAME_PROP)
+        target_prop = getattr(MFACT.Fact, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr == value_prop
         # Test: no replace
         assert target_prop.fset is None
         # Test: no delete
@@ -159,197 +185,170 @@ class TestFact:
         assert target._state_of_check is MFACT.StatusOfFact.UNCHECKED
         assert target.is_stale()
 
-    @pytest.mark.parametrize('NAME_PROP', [
-        # 'name',
-        # 'summary',
-        # 'title',
-        ])
-    def test_property_infoid(self, NAME_PROP):
-        """Confirm pass-through InfoId properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
+    def test_attach_block(self, patch_class_block_fact):
+        """Confirm fact block addition.
+        Case: block not attached initially
         """
         # Setup
-        # target = MFACT.Fact(p_name='Parrot', p_summary='Norwegian Blue',
-        #                       p_title='Parrot Sketch')
-        # value_attr = getattr(target._infoid, NAME_PROP)
-        # target_prop = getattr(MFACT.Fact, NAME_PROP)
-        # value_prop = getattr(target, NAME_PROP)
-        # # Test: read
-        # assert target_prop.fget is not None
-        # assert value_attr == value_prop
-        # # Test: no replace
-        # assert target_prop.fset is None
-        # # Test: no delete
-        # assert target_prop.fdel is None
+        TITLE_MODEL = 'Something completely different.'
+        target = MFACT.Fact(p_title=TITLE_MODEL)
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_attach_view(self, interface_block_fact):
-        """Confirm view addition.
-        Case: view not attached initially
-        """
-        # Setup
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_MODEL)
-
-        # N_VIEWS = 3
-        # views = [interface_block_fact() for _ in range(N_VIEWS)]
-        # assert views[0].get_infoid().title != target._infoid.title
+        PatchBlockFact = patch_class_block_fact
+        N_VIEWS = 3
+        blocks = [PatchBlockFact() for _ in range(N_VIEWS)]
+        assert blocks[0].get_infoid().title != target._infoid.title
         # # Test
-        # for view in views:
-        #     target.attach_view(view)
-        #     assert target._infoid.title == view.get_infoid().title
-        #     assert target._views[id(view)] is view
-        # assert len(views) == len(target._views)
+        for block in blocks:
+            target.attach_block(block)
+            assert target._infoid.title == block.get_infoid().title
+            assert target._blocks[id(block)] is block
+        assert len(blocks) == len(target._blocks)
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_attach_view_warn(
-            self, interface_block_fact, PatchLogger, monkeypatch):
-        """Confirm view addition.
-        Case: view attached initially
+    def test_attach_block_warn(
+            self, patch_class_block_fact, PatchLogger, monkeypatch):
+        """Confirm fact blcok addition.
+        Case: block attached initially
         """
         # Setup
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_MODEL)
+        TITLE_MODEL = 'Something completely different.'
+        target = MFACT.Fact(p_title=TITLE_MODEL)
 
-        # N_VIEWS = 3
-        # views = [interface_block_fact() for _ in range(N_VIEWS)]
-        # assert views[0].get_infoid().title != target._infoid.title
-        # for view in views:
-        #     target.attach_view(view)
-        # assert N_VIEWS == len(target._views)
-        # I_DUP = 1
-        # view_dup = views[I_DUP]
+        PatchBlockFact = patch_class_block_fact
+        N_BLOCKS = 3
+        blocks = [PatchBlockFact() for _ in range(N_BLOCKS)]
+        assert blocks[0].get_infoid().title != target._infoid.title
+        for block in blocks:
+            target.attach_block(block)
+        assert N_BLOCKS == len(target._blocks)
+        I_DUP = 1
+        block_dup = blocks[I_DUP]
 
-        # patch_logger = PatchLogger()
-        # monkeypatch.setattr(
-        #     logging.Logger, 'warning', patch_logger.warning)
-        # log_message = (
-        #     'Duplicate view: {} (Fact.attach_view)'
-        #     ''.format(hex(id(view_dup))))
-        # assert not patch_logger.called
-        # # Test
-        # target.attach_view(view_dup)
-        # assert len(views) == len(target._views)
-        # assert patch_logger.called
-        # assert PatchLogger.T_WARNING == patch_logger.level
-        # assert log_message == patch_logger.message
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Duplicate fact block: {} (Fact.attach_block)'
+            ''.format(hex(id(block_dup))))
+        assert not patch_logger.called
+        # Test
+        target.attach_block(block_dup)
+        assert len(blocks) == len(target._blocks)
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_detach_all(self, monkeypatch, interface_block_fact):
+    def test_detach_all(self, monkeypatch, patch_class_block_fact):
         """Confirm removals."""
         # Setup
-        # class PatchInfoIdModel:
-        #     def __init__(self): self.n_calls = 0
+        class PatchInfoIdModel:
+            def __init__(self): self.n_calls = 0
 
-        #     def detach_view(self, _v): self.n_calls += 1
+            def detach_view(self, _v): self.n_calls += 1
 
-        # patch_detach = PatchInfoIdModel()
-        # monkeypatch.setattr(
-        #     MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
+        patch_detach = PatchInfoIdModel()
+        monkeypatch.setattr(
+            MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
 
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_MODEL)
+        TITLE_MODEL = 'Something completely different.'
+        target = MFACT.Fact(p_title=TITLE_MODEL)
 
-        # N_VIEWS = 3
-        # views = [interface_block_fact() for _ in range(N_VIEWS)]
-        # for view in views:
-        #     target.attach_view(view)
-        # assert N_VIEWS == len(target._views)
-        # # Test
-        # target.detach_all()
-        # assert not target._views
-        # assert N_VIEWS == patch_detach.n_calls
+        PatchBlockFact = patch_class_block_fact
+        N_BLOCKS = 3
+        blocks = [PatchBlockFact() for _ in range(N_BLOCKS)]
+        for block in blocks:
+            target.attach_block(block)
+        assert N_BLOCKS == len(target._blocks)
+        # Test
+        target.detach_all()
+        assert not target._blocks
+        assert N_BLOCKS == patch_detach.n_calls
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_detach_view(self, monkeypatch, interface_block_fact):
-        """Confirm view removal.
-        Case: view attached initially
+    # def test_detach_attribute_views(
+    #         self, monkeypatch, patch_class_block_fact):
+    #     """Confirm removal of attribute views."""
+    #     # Setup
+    #     class PatchInfoIdModel:
+    #         def __init__(self): self.called = False
+    #
+    #         def detach_view(self, _v): self.called = True
+    #
+    #     patch_infoid = PatchInfoIdModel()
+    #     monkeypatch.setattr(
+    #         MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
+    #
+    #     TITLE_MODEL = 'Something completely different.'
+    #     target = MFACT.Fact(p_title=TITLE_MODEL)
+    #
+    #     block = patch_class_block_fact()
+    #     target.attach_block(block)
+    #     # Test
+    #     target._detach_attribute_views(block)
+    #     assert patch_infoid.called
+
+    def test_detach_block(self, monkeypatch, patch_class_block_fact):
+        """Confirm fact block removal.
+        Case: block attached initially
         """
         # Setup
-        # class PatchInfoIdModel:
-        #     def __init__(self): self.n_calls = 0
+        class PatchInfoIdModel:
+            def __init__(self): self.n_calls = 0
 
-        #     def detach_view(self, _v): self.n_calls += 1
+            def detach_view(self, _v): self.n_calls += 1
 
-        # patch_infoid = PatchInfoIdModel()
-        # monkeypatch.setattr(
-        #     MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
+        patch_infoid = PatchInfoIdModel()
+        monkeypatch.setattr(
+            MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
 
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_MODEL)
+        TITLE_MODEL = 'Something completely different.'
+        target = MFACT.Fact(p_title=TITLE_MODEL)
 
-        # N_VIEWS = 3
-        # views = [interface_block_fact() for _ in range(N_VIEWS)]
-        # for view in views:
-        #     target.attach_view(view)
-        # N_REMOVE = 1
-        # I_REMOVE = 1
-        # view_rem = views.pop(I_REMOVE)
-        # # Test
-        # target.detach_view(view_rem)
-        # assert N_REMOVE == patch_infoid.n_calls
-        # assert len(views) == len(target._views)
-        # for view in views:
-        #     assert target._views[id(view)] is view
-
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_detach_attribute_views(
-            self, monkeypatch, interface_block_fact):
-        """Confirm removal of attribute views."""
-        # Setup
-        # class PatchInfoIdModel:
-        #     def __init__(self): self.called = False
-
-        #     def detach_view(self, _v): self.called = True
-
-        # patch_infoid = PatchInfoIdModel()
-        # monkeypatch.setattr(
-        #     MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
-
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_MODEL)
-
-        # view = interface_block_fact()
-        # target.attach_view(view)
+        PatchBlockFact = patch_class_block_fact
+        N_BLOCKS = 3
+        blocks = [PatchBlockFact() for _ in range(N_BLOCKS)]
+        for block in blocks:
+            target.attach_block(block)
+        N_REMOVE = 1
+        I_REMOVE = 1
+        block_rem = blocks.pop(I_REMOVE)
         # Test
-        # target._detach_attribute_views(view)
-        # assert patch_infoid.called
+        target.detach_block(block_rem)
+        assert N_REMOVE == patch_infoid.n_calls
+        assert len(blocks) == len(target._blocks)
+        for block in blocks:
+            assert target._blocks[id(block)] is block
 
-    @pytest.mark.skip(reason='Implementation in progress.')
-    def test_detach_view_warn(
-            self, interface_block_fact, PatchLogger, monkeypatch):
-        """Confirm view removal.
-        Case: view not attached initially
+    def test_detach_block_warn(
+            self, patch_class_block_fact, PatchLogger, monkeypatch):
+        """Confirm fact block removal.
+        Case: block not attached initially
         """
         # Setup
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_MODEL)
+        TITLE_MODEL = 'Something completely different.'
+        target = MFACT.Fact(p_title=TITLE_MODEL)
 
-        # N_VIEWS = 3
-        # views = [interface_block_fact() for _ in range(N_VIEWS)]
-        # assert views[0].get_infoid().title != target._infoid.title
-        # for view in views:
-        #     target.attach_view(view)
-        # I_DUP = 1
-        # view_dup = views.pop(I_DUP)
-        # target.detach_view(view_dup)
-        # assert len(views) == len(target._views)
+        PatchBlockFact = patch_class_block_fact
+        N_BLOCKS = 3
+        blocks = [PatchBlockFact() for _ in range(N_BLOCKS)]
+        assert blocks[0].get_infoid().title != target._infoid.title
+        for block in blocks:
+            target.attach_block(block)
+        I_DUP = 1
+        block_dup = blocks.pop(I_DUP)
+        target.detach_block(block_dup)
+        assert len(blocks) == len(target._blocks)
 
-        # patch_logger = PatchLogger()
-        # monkeypatch.setattr(
-        #     logging.Logger, 'warning', patch_logger.warning)
-        # log_message = (
-        #     'Missing view: {} (Fact.detach_view)'
-        #     ''.format(hex(id(view_dup))))
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Missing fact block: {} (Fact.detach_block)'
+            ''.format(hex(id(block_dup))))
         # Test
-        # target.detach_view(view_dup)
-        # assert len(views) == len(target._views)
-        # assert patch_logger.called
-        # assert PatchLogger.T_WARNING == patch_logger.level
-        # assert log_message == patch_logger.message
+        target.detach_block(block_dup)
+        assert len(blocks) == len(target._blocks)
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
 
     def test_id_fact(self):
         """Confirm return is accurate"""

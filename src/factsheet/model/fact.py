@@ -71,11 +71,10 @@ class Fact(typing.Generic[ValueAny]):
 
         Persistent form of fact excludes run-time information.
         """
-        raise NotImplementedError
-        # state = self.__dict__.copy()
-        # del state['_views']
-        # del state['_stale']
-        # return state
+        state = self.__dict__.copy()
+        del state['_blocks']
+        del state['_stale']
+        return state
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
                  p_title: str = '', **_kwargs: typing.Dict) -> None:
@@ -92,33 +91,31 @@ class Fact(typing.Generic[ValueAny]):
 
         :param px_state: unpickled state of stored fact model.
         """
-        raise NotImplementedError
-        # self.__dict__.update(px_state)
-        # self._set_transient()
+        self.__dict__.update(px_state)
+        self._set_transient()
 
     def _set_transient(self) -> None:
         """Helper ensures __init__ and __setstate__ are consistent."""
         self._stale = False
-        self._views: typing.Dict[int, ABC_FACT.InterfaceBlockFact] = dict()
+        self._blocks: typing.MutableMapping[
+            int, ABC_FACT.InterfaceBlockFact] = dict()
 
-    def attach_view(self, pm_view: ABC_FACT.InterfaceBlockFact) -> None:
-        """Add view to show fact status and value.
+    def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact) -> None:
+        """Add fact block to show fact identification, status, and value.
 
-        Log warning when requested view is already attached.
+        Log warning when requested block is already attached.
 
-        :param pm_view: view to add.
+        :param p_block: block to add.
         """
-        raise NotImplementedError
-        # id_view = id(pm_view)
-        # if id_view in self._views.keys():
-        #     logger.warning(
-        #         'Duplicate view: {} ({}.{})'.format(
-        #             hex(id_view),
-        #             self.__class__.__name__, self.attach_view.__name__))
-        #     return
+        id_block = id(p_block)
+        if id_block in self._blocks.keys():
+            logger.warning('Duplicate fact block: {} ({}.{})'
+                           ''.format(hex(id_block), self.__class__.__name__,
+                                     self.attach_block.__name__))
+            return
 
-        # self._infoid.attach_view(pm_view.get_infoid())
-        # self._views[id_view] = pm_view
+        self._infoid.attach_view(p_block.get_infoid())
+        self._blocks[id_block] = p_block
 
     def check(self, **_kwargs: typing.Mapping[str, typing.Any]
               ) -> ABC_FACT.StatusOfFact:
@@ -134,41 +131,39 @@ class Fact(typing.Generic[ValueAny]):
         self.set_stale()
 
     def detach_all(self) -> None:
-        """Detach all views from topic."""
-        raise NotImplementedError
-        # while self._views:
-        #     _id_view, view = self._views.popitem()
+        """Detach all fact blocks from fact."""
+        while self._blocks:
+            _id_block, block = self._blocks.popitem()
+            self._infoid.detach_view(block.get_infoid())
         #     self._detach_attribute_views(view)
 
-    def detach_view(self, px_view: ABC_FACT.InterfaceBlockFact) -> None:
-        """Remove one view from fact.
+    def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact) -> None:
+        """Remove one fact block from fact.
 
-        Log warning when requested view is not attached.
+        Log warning when requested block is not attached.
 
-        :param px_view: view to remove.
+        :param p_block: block to remove.
         """
-        raise NotImplementedError
-        # id_view = id(px_view)
-        # try:
-        #     self._views.pop(id_view)
-        # except KeyError:
-        #     logger.warning(
-        #         'Missing view: {} ({}.{})'.format(
-        #             hex(id_view),
-        #             self.__class__.__name__, self.detach_view.__name__))
-        #     return
+        id_block = id(p_block)
+        try:
+            _ = self._blocks.pop(id_block)
+        except KeyError:
+            logger.warning('Missing fact block: {} ({}.{})'
+                           ''.format(hex(id_block), self.__class__.__name__,
+                                     self.detach_block.__name__))
+            return
 
-        # self._detach_attribute_views(px_view)
+        # self._detach_attribute_blocks(p_block)
+        self._infoid.detach_view(p_block.get_infoid())
 
-    def _detach_attribute_views(self, pm_view: ABC_FACT.InterfaceBlockFact
-                                ) -> None:
-        """For each fact attribute with a distinct view, remove the
-        view for the attribute.
-
-        :param pm_view: view of topic as a whole.
-        """
-        raise NotImplementedError
-        # self._infoid.detach_view(pm_view.get_infoid())
+    # def _detach_attribute_views(self, p_block: ABC_FACT.InterfaceBlockFact
+    #                             ) -> None:
+    #     """For each fact attribute with a distinct view, remove the
+    #     view from the block.
+    #
+    #     :param pm_view: view of topic as a whole.
+    #     """
+    #     self._infoid.detach_view(p_block.get_infoid())
 
     @property
     def id_fact(self) -> ABC_FACT.IdFact:
@@ -197,11 +192,10 @@ class Fact(typing.Generic[ValueAny]):
         """Return status of fact check."""
         return self._state_of_check
 
-    # @property
+    @property
     def name(self) -> str:
         """Return fact name."""
-        raise NotImplementedError
-        # return self._infoid.name
+        return self._infoid.name
 
     # @property
     def note(self) -> str:
@@ -218,14 +212,12 @@ class Fact(typing.Generic[ValueAny]):
         """Mark fact in memory changed from file contents."""
         self._stale = True
 
-    # @property
+    @property
     def summary(self) -> str:
         """Return fact summary."""
-        raise NotImplementedError
-        # return self._infoid.summary
+        return self._infoid.summary
 
-    # @property
+    @property
     def title(self) -> str:
         """Return fact title."""
-        raise NotImplementedError
-        # return self._infoid.title
+        return self._infoid.title
