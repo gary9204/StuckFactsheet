@@ -72,15 +72,15 @@ class TestAbstractFact:
             method()
 
 
-class TestInterfacePaneFact:
-    """Unit tests for interface :class:`.InterfacePaneFact`."""
+class TestInterfaceBlockFact:
+    """Unit tests for interface :class:`.InterfaceBlockFact`."""
 
     def test_abstract_class(self):
         """Confirm the interface class is abstract."""
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = ABC_FACT.InterfacePaneFact()
+            _ = ABC_FACT.InterfaceBlockFact()
 
     @pytest.mark.parametrize('NAME_METHOD', [
         'checked',
@@ -90,14 +90,14 @@ class TestInterfacePaneFact:
     def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchPaneFact(ABC_FACT.InterfacePaneFact):
+        class PatchBlockFact(ABC_FACT.InterfaceBlockFact):
             def checked(self): super().checked(None)
 
             def cleared(self): super().cleared(None)
 
             def get_infoid(self): super().get_infoid()
 
-        target = PatchPaneFact()
+        target = PatchBlockFact()
         # Test
         with pytest.raises(NotImplementedError):
             method = getattr(target, NAME_METHOD)

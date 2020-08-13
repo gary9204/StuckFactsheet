@@ -18,7 +18,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class PaneTopic(ABC_TOPIC.InterfacePaneTopic):
-    """Displays topic and translates user actions.
+    """Display topic and translate user actions.
 
     Class ``PaneTopic`` maintains presentation of a topic in a pane of a
     Factsheet window.  The class displays the content of a topic model.

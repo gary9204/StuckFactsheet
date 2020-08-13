@@ -53,7 +53,7 @@ class TestFact:
         # assert not source.__ne__(target)
 
     @pytest.mark.skip(reason='Implementation in progress.')
-    def test_get_set_state(self, tmp_path, interface_pane_fact):
+    def test_get_set_state(self, tmp_path, interface_block_fact):
         """Confirm conversion to and from pickle format."""
         # Setup
         # path = Path(str(tmp_path / 'get_set.fsg'))
@@ -63,7 +63,7 @@ class TestFact:
         # source._stale = True
 
         # N_VIEWS = 3
-        # views = [interface_pane_fact() for _ in range(N_VIEWS)]
+        # views = [interface_block_fact() for _ in range(N_VIEWS)]
         # for view in views:
         #     source.attach_view(view)
         # # Test
@@ -186,7 +186,7 @@ class TestFact:
         # assert target_prop.fdel is None
 
     @pytest.mark.skip(reason='Implementation in progress.')
-    def test_attach_view(self, interface_pane_fact):
+    def test_attach_view(self, interface_block_fact):
         """Confirm view addition.
         Case: view not attached initially
         """
@@ -195,7 +195,7 @@ class TestFact:
         # target = MFACT.Fact(p_title=TITLE_MODEL)
 
         # N_VIEWS = 3
-        # views = [interface_pane_fact() for _ in range(N_VIEWS)]
+        # views = [interface_block_fact() for _ in range(N_VIEWS)]
         # assert views[0].get_infoid().title != target._infoid.title
         # # Test
         # for view in views:
@@ -206,7 +206,7 @@ class TestFact:
 
     @pytest.mark.skip(reason='Implementation in progress.')
     def test_attach_view_warn(
-            self, interface_pane_fact, PatchLogger, monkeypatch):
+            self, interface_block_fact, PatchLogger, monkeypatch):
         """Confirm view addition.
         Case: view attached initially
         """
@@ -215,7 +215,7 @@ class TestFact:
         # target = MFACT.Fact(p_title=TITLE_MODEL)
 
         # N_VIEWS = 3
-        # views = [interface_pane_fact() for _ in range(N_VIEWS)]
+        # views = [interface_block_fact() for _ in range(N_VIEWS)]
         # assert views[0].get_infoid().title != target._infoid.title
         # for view in views:
         #     target.attach_view(view)
@@ -238,7 +238,7 @@ class TestFact:
         # assert log_message == patch_logger.message
 
     @pytest.mark.skip(reason='Implementation in progress.')
-    def test_detach_all(self, monkeypatch, interface_pane_fact):
+    def test_detach_all(self, monkeypatch, interface_block_fact):
         """Confirm removals."""
         # Setup
         # class PatchInfoIdModel:
@@ -254,7 +254,7 @@ class TestFact:
         # target = MFACT.Fact(p_title=TITLE_MODEL)
 
         # N_VIEWS = 3
-        # views = [interface_pane_fact() for _ in range(N_VIEWS)]
+        # views = [interface_block_fact() for _ in range(N_VIEWS)]
         # for view in views:
         #     target.attach_view(view)
         # assert N_VIEWS == len(target._views)
@@ -264,7 +264,7 @@ class TestFact:
         # assert N_VIEWS == patch_detach.n_calls
 
     @pytest.mark.skip(reason='Implementation in progress.')
-    def test_detach_view(self, monkeypatch, interface_pane_fact):
+    def test_detach_view(self, monkeypatch, interface_block_fact):
         """Confirm view removal.
         Case: view attached initially
         """
@@ -282,7 +282,7 @@ class TestFact:
         # target = MFACT.Fact(p_title=TITLE_MODEL)
 
         # N_VIEWS = 3
-        # views = [interface_pane_fact() for _ in range(N_VIEWS)]
+        # views = [interface_block_fact() for _ in range(N_VIEWS)]
         # for view in views:
         #     target.attach_view(view)
         # N_REMOVE = 1
@@ -297,7 +297,7 @@ class TestFact:
 
     @pytest.mark.skip(reason='Implementation in progress.')
     def test_detach_attribute_views(
-            self, monkeypatch, interface_pane_fact):
+            self, monkeypatch, interface_block_fact):
         """Confirm removal of attribute views."""
         # Setup
         # class PatchInfoIdModel:
@@ -312,7 +312,7 @@ class TestFact:
         # TITLE_MODEL = 'Something completely different.'
         # target = MFACT.Fact(p_title=TITLE_MODEL)
 
-        # view = interface_pane_fact()
+        # view = interface_block_fact()
         # target.attach_view(view)
         # Test
         # target._detach_attribute_views(view)
@@ -320,7 +320,7 @@ class TestFact:
 
     @pytest.mark.skip(reason='Implementation in progress.')
     def test_detach_view_warn(
-            self, interface_pane_fact, PatchLogger, monkeypatch):
+            self, interface_block_fact, PatchLogger, monkeypatch):
         """Confirm view removal.
         Case: view not attached initially
         """
@@ -329,7 +329,7 @@ class TestFact:
         # target = MFACT.Fact(p_title=TITLE_MODEL)
 
         # N_VIEWS = 3
-        # views = [interface_pane_fact() for _ in range(N_VIEWS)]
+        # views = [interface_block_fact() for _ in range(N_VIEWS)]
         # assert views[0].get_infoid().title != target._infoid.title
         # for view in views:
         #     target.attach_view(view)

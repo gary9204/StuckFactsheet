@@ -29,7 +29,8 @@ class TestTypes:
         assert UI.OutlineTopics is AFACTORY.OutlineTopics
         assert UI.ViewOutlineTemplates is AFACTORY.ViewOutlineTemplates
         assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
-        assert UI.NewViewOutlineTopics is not None
+        # assert UI.NewViewOutlineTopics is not None  # Not testable at
+        #     runtime [misc]
 
 
 class TestUiActions:

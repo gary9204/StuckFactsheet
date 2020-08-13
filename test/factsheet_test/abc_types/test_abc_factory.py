@@ -10,7 +10,7 @@ from factsheet.abc_types import abc_factory as ABC_FACTORY
 
 
 class TestFactoryFact:
-    """Unit tests for abstract factory :class:`~.FactoryFact`."""
+    """Unit tests for abstract factory :class:`~.abc_factory.FactoryFact`."""
 
     def test_abstract_class(self):
         """Confirm the factory class is abstract."""
@@ -20,19 +20,19 @@ class TestFactoryFact:
             _ = ABC_FACTORY.FactoryFact()
 
     @pytest.mark.parametrize('NAME_METHOD', [
-        'new_view_fact',
-        'register_view',
+        'new_block_fact',
+        'register_block',
         ])
     def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
         class PatchFactory(ABC_FACTORY.FactoryFact):
 
-            def new_view_fact(self):
-                super().new_view_fact(None)
+            def new_block_fact(self):
+                super().new_block_fact(None)
 
-            def register_view(self):
-                super().register_view(None, None)
+            def register_block(self):
+                super().register_block(None, None)
 
         target = PatchFactory()
         # Test

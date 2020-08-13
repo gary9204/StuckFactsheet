@@ -54,17 +54,17 @@ def interface_view_infoid(patch_args_infoid):
 
 
 @pytest.fixture
-def interface_pane_fact(interface_view_infoid):
+def interface_block_fact(interface_view_infoid):
     """Pytest fixture returns stub class implementing
-    :class:`.InterfacePaneFact`.
+    :class:`.InterfaceBlockFact`.
     """
-    class PatchPaneFact(ABC_FACT.InterfacePaneFact):
+    class PatchBlockFact(ABC_FACT.InterfaceBlockFact):
         def __init__(self):
             self._infoid = interface_view_infoid()
 
         def get_infoid(self): return self._infoid
 
-    return PatchPaneFact
+    return PatchBlockFact
 
 
 @pytest.fixture

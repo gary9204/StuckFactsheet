@@ -99,9 +99,9 @@ class Fact(typing.Generic[ValueAny]):
     def _set_transient(self) -> None:
         """Helper ensures __init__ and __setstate__ are consistent."""
         self._stale = False
-        self._views: typing.Dict[int, ABC_FACT.InterfacePaneFact] = dict()
+        self._views: typing.Dict[int, ABC_FACT.InterfaceBlockFact] = dict()
 
-    def attach_view(self, pm_view: ABC_FACT.InterfacePaneFact) -> None:
+    def attach_view(self, pm_view: ABC_FACT.InterfaceBlockFact) -> None:
         """Add view to show fact status and value.
 
         Log warning when requested view is already attached.
@@ -140,7 +140,7 @@ class Fact(typing.Generic[ValueAny]):
         #     _id_view, view = self._views.popitem()
         #     self._detach_attribute_views(view)
 
-    def detach_view(self, px_view: ABC_FACT.InterfacePaneFact) -> None:
+    def detach_view(self, px_view: ABC_FACT.InterfaceBlockFact) -> None:
         """Remove one view from fact.
 
         Log warning when requested view is not attached.
@@ -160,7 +160,7 @@ class Fact(typing.Generic[ValueAny]):
 
         # self._detach_attribute_views(px_view)
 
-    def _detach_attribute_views(self, pm_view: ABC_FACT.InterfacePaneFact
+    def _detach_attribute_views(self, pm_view: ABC_FACT.InterfaceBlockFact
                                 ) -> None:
         """For each fact attribute with a distinct view, remove the
         view for the attribute.

@@ -4,7 +4,7 @@ Defines abstract interfaces for facts.
 :doc:`../guide/devel_notes` describes the use of abstract classes to
 break ``import`` cycles and to encapsulate dependencies of
 :mod:`~factsheet.model` on a user interface widget toolkit.  Module
-``abc_fact`` defines interface for fact view (:class:`.PaneFact`) for
+``abc_fact`` defines interface for fact view (:class:`.BlockFact`) for
 encapsulation.
 
 .. data:: IdFact
@@ -69,13 +69,13 @@ class AbstractFact(ABC_STALE.InterfaceStaleFile):
     @property
     @abc.abstractmethod
     def id_fact(self) -> IdFact:
-        """Return fact identifier. """
+        """Return fact identifier."""
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
-    def status(self) -> str:
-        """Return check status of fact. """
+    def status(self) -> StatusOfFact:
+        """Return status of fact. """
         raise NotImplementedError
 
     # @property
@@ -97,9 +97,9 @@ class AbstractFact(ABC_STALE.InterfaceStaleFile):
     #     raise NotImplementedError
 
 
-class InterfacePaneFact(abc.ABC, typing.Generic[ValueAny]):
+class InterfaceBlockFact(abc.ABC, typing.Generic[ValueAny]):
     """Defines interface for :class:`~.Fact` model to signal
-    :class:`~.PaneFact`.
+    :class:`~.BlockFact`.
     """
 
     @abc.abstractmethod

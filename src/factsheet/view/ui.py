@@ -65,6 +65,7 @@ DIR_UI = Path(__file__).parent / 'ui'
 
 FACTORY_INFOID = AFACTORY.FactoryInfoId()
 FACTORY_SHEET = AFACTORY.FactorySheet()
+FACTORY_FACT = AFACTORY.FactoryFact()
 
 KWArgs = typing.Mapping[str, typing.Any]
 IdTopic = AFACTORY.IdTopic
@@ -104,6 +105,19 @@ HELP_TOPIC_DISPLAY = get_object_guide_topic('ui_help_topic_display')
 
 del builder_guide_topic
 del get_object_guide_topic
+
+
+# Fact-level guidance dialogs
+NAME_FILE_GUIDE_FACT_UI = str(DIR_UI / 'guide_fact.ui')
+builder_guide_fact = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_FACT_UI)
+get_object_guide_fact = builder_guide_fact.get_object
+
+HELP_FACT = get_object_guide_fact('ui_help_fact')
+HELP_FACT_DISPLAY = get_object_guide_fact('ui_help_fact_display')
+HELP_FACT_VALUE = get_object_guide_fact('ui_help_fact_value')
+
+del builder_guide_fact
+del get_object_guide_fact
 
 
 def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,

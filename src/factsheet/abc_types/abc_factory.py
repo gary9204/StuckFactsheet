@@ -16,29 +16,29 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 
 class FactoryFact(abc.ABC):
     """Defines abstract factory to produce factsheet components for
-    :class:`.Fact` and :class:`.PaneFact`.
+    :class:`.Fact` and :class:`.BlockFact`.
     """
 
     @abc.abstractmethod
-    def new_view_fact(self, p_fact: ABC_FACT.AbstractFact
-                      ) -> ABC_FACT.InterfacePaneFact:
-        """Return new instance suited to display given fact.
+    def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
+                       ) -> ABC_FACT.InterfaceBlockFact:
+        """Return new block to display given fact.
 
         :param p_fact: fact to display.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def register_view(
-            self, p_type_fact: typing.Type[ABC_FACT.AbstractFact],
-            p_view_type: typing.Type[ABC_FACT.InterfacePaneFact]) -> None:
-        """Record view type as display for fact type.
+    def register_block(
+            self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
+            p_class_type: typing.Type[ABC_FACT.InterfaceBlockFact]) -> None:
+        """Associate block class with fact class.
 
-        Method :meth:`.new_view_fact` uses the association from fact
-        types to view types.
+        Method :meth:`.new_block_fact` uses the association from fact
+        classes to block classes when creating block instances.
 
-        :param p_type_fact: target fact class.
-        :param p_type_view: view class to display fact class.
+        :param p_class_fact: target fact class.
+        :param p_class_block: block class for fact class.
         """
         raise NotImplementedError
 
