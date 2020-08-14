@@ -20,7 +20,7 @@ class TestTopic:
         assert target._model is MODEL
 
     def test_attach_view(self, monkeypatch):
-        """Confirm view addition."""
+        """Confirm topic pane addition."""
         # Setup
         class PatchModel:
             def __init__(self):
@@ -41,7 +41,7 @@ class TestTopic:
         assert patch_model.called_attach_view
 
     def test_detach_view(self, monkeypatch):
-        """Confirm page removal."""
+        """Confirm topic pane removal."""
         # Setup
         class PatchModel:
             def __init__(self):

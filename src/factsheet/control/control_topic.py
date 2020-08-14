@@ -1,6 +1,6 @@
 """
 Defines class that mediates topic-level interaction from
-:mod:`~factsheet.view` to :mod:`~factsheet.model`.
+:class:`~.PaneTopic` to :class:`~.Topic`.
 
 :doc:`../guide/devel_notes` explains how application Factsheet is based
 on a Model-View-Controller (MVC) design.  The design is partitioned into
@@ -13,14 +13,13 @@ import typing   # noqa
 from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.model import topic as MTOPIC
 
-logger = logging.getLogger('Main.CSHEET')
+logger = logging.getLogger('Main.control_fact')
 
 
 class ControlTopic:
-    """Mediates user actions at view to model updates for a topic.
+    """Translates user requests in topic pane to updates in topic model.
 
-    Class ``Topic`` translates user requests in a topic view into
-    changes in the topic model.
+    :param pm_topic: topic model.
     """
 
     def __init__(self, pm_model: MTOPIC.Topic) -> None:
