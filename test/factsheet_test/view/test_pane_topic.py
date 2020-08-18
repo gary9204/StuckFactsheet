@@ -3,6 +3,7 @@ Unit tests for class to display topic in a factsheet window pane.
 
 See :mod:`.pane_topic`.
 """
+import dataclasses as DC
 import pytest   # type: ignore[import]
 
 from factsheet.control import control_topic as CTOPIC
@@ -19,14 +20,10 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
-def patch_control_topic(text_ui_infoid):
-    """Pytest fixture returns a stock
-    :class:`~.factsheet.control.topic.Topic` control.
-    """
-    NAME = text_ui_infoid['name']
-    SUMMARY = text_ui_infoid['summary']
-    TITLE = text_ui_infoid['title']
-    model = MTOPIC.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+def patch_control_topic(patch_args_infoid):
+    """Pytest fixture returns a stock :class:`.ControlTopic`."""
+    ARGS = patch_args_infoid
+    model = MTOPIC.Topic(**DC.asdict(ARGS))
     control = CTOPIC.ControlTopic(pm_model=model)
     return control
 

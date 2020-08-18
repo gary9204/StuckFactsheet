@@ -12,7 +12,6 @@ from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content.note import note_spec as XNOTE_SPEC
 from factsheet.control import pool as CPOOL
 from factsheet.control import control_sheet as CSHEET
-from factsheet.control import control_topic as CTOPIC
 from factsheet.model import sheet as MSHEET
 from factsheet.model import topic as MTOPIC
 from factsheet.view import query_place as QPLACE
@@ -119,6 +118,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         assert target._control is None
         assert isinstance(target._window, Gtk.ApplicationWindow)
@@ -210,6 +211,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         attribute = getattr(target, NAME_ATTRIBUTE)
         n_handlers = 0
@@ -241,6 +244,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         entry = target._infoid.get_view_name()
         activate_id = GO.signal_handler_find(
@@ -270,6 +275,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         target._window.set_visible(True)
         # Test
         target.close_page()
@@ -290,6 +297,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -300,19 +309,21 @@ class TestPageSheet:
         view.set_model(topics)
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
-            control = CTOPIC.ControlTopic(pm_model=topic)
+            control = target._control._add_new_control_topic(topic)
             pane = VTOPIC.PaneTopic(pm_control=control)
-            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+            target._scenes_topic.add_scene(
+                pane.gtk_pane, hex(topic.id_topic))
 
         target._cursor_topics.unselect_all()
         PATH_CURRENT = '0:0:0'
         i_remove = topics.get_iter_from_string(PATH_CURRENT)
         topic_remove = AOUTLINE.get_item_gtk(topics, i_remove)
         id_remove = topic_remove.id_topic
+        NAME_DEFAULT = 'Default'
         # Test
         target.close_topic(id_remove)
-        is_scene = target._scenes_topic.show_scene(id_remove)
-        assert not is_scene
+        is_scene = target._scenes_topic.show_scene(hex(id_remove))
+        assert NAME_DEFAULT == is_scene
         # Teardown
         target._window.destroy()
         del target._window
@@ -327,6 +338,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         # Test
         assert target._infoid is target.get_infoid()
         # Teardown
@@ -343,6 +356,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         # Test
         assert target._view_topics is target.get_view_topics()
         # Teardown
@@ -361,6 +376,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        # page._window.set_skip_pager_hint(True)
+        page._window.set_skip_taskbar_hint(True)
         # Test
         VSHEET.PageSheet.link_factsheet(page, control)
         assert page._control is control
@@ -388,6 +405,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        # source._window.set_skip_pager_hint(True)
+        source._window.set_skip_taskbar_hint(True)
         FILTERS = set(['Factsheet', 'Any'])
         # Test
         target = source._make_dialog_file(ACTION)
@@ -423,6 +442,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         assert isinstance(target, VSHEET.PageSheet)
         assert target._window.get_application() is factsheet
         control = target._control
@@ -432,8 +453,7 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    def test_new_view_topics(
-            self, patch_factsheet, capfd, new_outline_topics):
+    def test_new_view_topics(self, patch_factsheet, capfd):
         """ """
         # Setup
         factsheet = patch_factsheet()
@@ -442,6 +462,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -465,6 +487,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -475,9 +499,10 @@ class TestPageSheet:
         view.set_model(topics)
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
-            control = CTOPIC.ControlTopic(pm_model=topic)
+            control = target._control._add_new_control_topic(topic)
             pane = VTOPIC.PaneTopic(pm_control=control)
-            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+            target._scenes_topic.add_scene(
+                pane.gtk_pane, hex(topic.id_topic))
 
         view.expand_all()
         PATH_CURRENT = '0:0:0'
@@ -486,7 +511,7 @@ class TestPageSheet:
         # Test
         target._cursor_topics.select_iter(i_current)
         id_visible = target._scenes_topic.get_scene_visible()
-        assert id_visible == topic_current.id_topic
+        assert id_visible == hex(topic_current.id_topic)
         # Teardown
         target._window.destroy()
         del target._window
@@ -504,6 +529,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -514,18 +541,20 @@ class TestPageSheet:
         view.set_model(topics)
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
-            control = CTOPIC.ControlTopic(pm_model=topic)
+            control = target._control._add_new_control_topic(topic)
             pane = VTOPIC.PaneTopic(pm_control=control)
-            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+            target._scenes_topic.add_scene(
+                pane.gtk_pane, hex(topic.id_topic))
 
         view.expand_all()
         PATH_CURRENT = '0:0:0'
         i_current = topics.get_iter_from_string(PATH_CURRENT)
         topic_current = AOUTLINE.get_item_gtk(topics, i_current)
+        target._scenes_topic.remove_scene(hex(topic_current.id_topic))
         # Test
         target._cursor_topics.select_iter(i_current)
         topic_visible = target._scenes_topic.get_scene_visible()
-        assert topic_visible == topic_current.id_topic
+        assert topic_visible == hex(topic_current.id_topic)
         # Teardown
         target._window.destroy()
         del target._window
@@ -543,6 +572,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -553,9 +584,10 @@ class TestPageSheet:
         view.set_model(topics)
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
-            control = CTOPIC.ControlTopic(pm_model=topic)
+            control = target._control._add_new_control_topic(topic)
             pane = VTOPIC.PaneTopic(pm_control=control)
-            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+            target._scenes_topic.add_scene(
+                pane.gtk_pane, hex(topic.id_topic))
 
         monkeypatch.setattr(
             CSHEET.ControlSheet, 'get_control_topic', lambda _s, _t: None)
@@ -568,11 +600,12 @@ class TestPageSheet:
         PATH_CURRENT = '0:0:0'
         i_current = topics.get_iter_from_string(PATH_CURRENT)
         topic_current = AOUTLINE.get_item_gtk(topics, i_current)
-        target._scenes_topic.remove_scene(topic_current.id_topic)
+        target._scenes_topic.remove_scene(hex(topic_current.id_topic))
+        NAME_DEFAULT = 'Default'
         # Test
         target._cursor_topics.select_iter(i_current)
         topic_visible = target._scenes_topic.get_scene_visible()
-        assert topic_visible == target._scenes_topic.ID_NONE
+        assert NAME_DEFAULT == topic_visible
         # Teardown
         target._window.destroy()
         del target._window
@@ -590,6 +623,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -600,19 +635,21 @@ class TestPageSheet:
         view.set_model(topics)
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
-            control = CTOPIC.ControlTopic(pm_model=topic)
+            control = target._control._add_new_control_topic(topic)
             pane = VTOPIC.PaneTopic(pm_control=control)
-            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+            target._scenes_topic.add_scene(
+                pane.gtk_pane, hex(topic.id_topic))
 
         # pane_none = Gtk.Label(label='No pane')
         # target._scenes_topic.add_scene(
         #     pane_none, target._scenes_topic.ID_NONE)
 
         target._cursor_topics.unselect_all()
+        NAME_DEFAULT = 'Default'
         # Test
         target.on_changed_cursor(target._cursor_topics)
         id_visible = target._scenes_topic.get_scene_visible()
-        assert id_visible is target._scenes_topic.ID_NONE
+        assert NAME_DEFAULT == id_visible
         # Teardown
         target._window.destroy()
         del target._window
@@ -630,6 +667,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -640,19 +679,21 @@ class TestPageSheet:
         view.set_model(topics)
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
-            control = CTOPIC.ControlTopic(pm_model=topic)
+            control = target._control._add_new_control_topic(topic)
             pane = VTOPIC.PaneTopic(pm_control=control)
-            target._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+            target._scenes_topic.add_scene(
+                pane.gtk_pane, hex(topic.id_topic))
 
         view.expand_all()
         PATH_CURRENT = '0:0:0'
         i_current = topics.get_iter_from_string(PATH_CURRENT)
         target._cursor_topics.select_iter(i_current)
         topics[i_current][AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM] = None
+        NAME_DEFAULT = 'Default'
         # Test
         target.on_changed_cursor(target._cursor_topics)
         id_visible = target._scenes_topic.get_scene_visible()
-        assert id_visible is target._scenes_topic.ID_NONE
+        assert NAME_DEFAULT == id_visible
         # Teardown
         target._window.destroy()
         del target._window
@@ -669,6 +710,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = PatchSafe(ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
@@ -696,6 +739,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = PatchSafe(ABC_SHEET.EffectSafe.COMPLETED, sheets_active)
@@ -723,6 +768,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         monkeypatch.setattr(
             Gtk.Dialog, 'run', lambda _self: Gtk.ResponseType.CANCEL)
@@ -757,6 +804,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         monkeypatch.setattr(
             Gtk.Dialog, 'run', lambda _self: Gtk.ResponseType.APPLY)
@@ -791,6 +840,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         patch_dialog = patch_dialog_run(Gtk.ResponseType.CANCEL)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
@@ -823,6 +874,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         patch_dialog = patch_dialog_run(Gtk.ResponseType.CANCEL)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
@@ -859,6 +912,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         patch_dialog = patch_dialog_run(Gtk.ResponseType.APPLY)
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
@@ -908,6 +963,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -952,6 +1009,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -981,6 +1040,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1006,6 +1067,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         target._context_summary.set_visible(True)
         assert target._context_summary.get_visible()
@@ -1038,6 +1101,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
         target.link_factsheet(target, control)
@@ -1086,6 +1151,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1110,6 +1177,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1159,6 +1228,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1183,6 +1254,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1236,6 +1309,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1260,6 +1335,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1294,8 +1371,8 @@ class TestPageSheet:
         assert patch_place.called
         assert patch_query_template.called
         assert patch_template.called
-        id_visible = target._scenes_topic.show_scene(topic.id_topic)
-        assert id_visible == topic.id_topic
+        id_visible = target._scenes_topic.show_scene(hex(topic.id_topic))
+        assert id_visible == hex(topic.id_topic)
         topics, i_new = target._cursor_topics.get_selected()
         assert PATH_EXPECT == gtk_model.get_string_from_iter(i_new)
         topic_new = AOUTLINE.get_item_gtk(topics, i_new)
@@ -1317,6 +1394,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1360,6 +1439,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1388,6 +1469,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1432,6 +1515,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1486,6 +1571,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1538,6 +1625,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         # Test
         target.on_open_sheet(None, None)
         assert patch_dialog.called_run
@@ -1568,6 +1657,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1604,6 +1695,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1628,6 +1721,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         target._context_name.set_visible(False)
         target._infoid.get_view_name().set_text('The Confy Chair!')
@@ -1649,6 +1744,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         name = target._infoid.get_view_name()
         name.set_text('The Spanish Inquisition!')
@@ -1672,6 +1769,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1707,6 +1806,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1747,6 +1848,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -1794,6 +1897,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
         target._window.hide()
 
         sheets_active = CPOOL.PoolSheets()
@@ -1825,6 +1930,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         class DialogPatch:
             def __init__(self): self.called = False
@@ -1860,6 +1967,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        # target_page._window.set_skip_pager_hint(True)
+        target_page._window.set_skip_taskbar_hint(True)
 
         target = target_page._view_topics
         SEARCH_ALL = ~ASHEET.FieldsTopic.VOID
@@ -1885,6 +1994,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        # target_page._window.set_skip_pager_hint(True)
+        target_page._window.set_skip_taskbar_hint(True)
 
         target = target_page._view_topics
         SEARCH_NONE = ASHEET.FieldsTopic.VOID
@@ -1925,6 +2036,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         assert isinstance(target, VSHEET.PageSheet)
         assert target._window.get_application() is factsheet
@@ -1981,6 +2094,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         sheets_active = CPOOL.PoolSheets()
         control = CSHEET.ControlSheet.new(sheets_active)
@@ -2003,6 +2118,8 @@ class TestPageSheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        target._window.set_skip_pager_hint(True)
+        target._window.set_skip_taskbar_hint(True)
 
         TITLE = 'The Larch'
         entry_name = target._infoid.get_view_name()

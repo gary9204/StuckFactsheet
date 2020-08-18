@@ -12,17 +12,30 @@ from factsheet.view import view_infoid as VINFOID
 class TestInfoId:
     """Unit tests for :class:`.ViewInfoId`."""
 
-    def test_init(self, patch_ui_infoid, text_ui_infoid):
+    def test_init(self, patch_ui_infoid, patch_args_infoid):
         """Confirm initialization."""
         # Setup
+        ARGS = patch_args_infoid
         get_object = patch_ui_infoid
         # Test
         target = VINFOID.ViewInfoId(get_object)
         assert isinstance(target._view_title, AINOFID.AdaptEntry)
-        assert text_ui_infoid['name'] == target._view_name.get_text()
-        assert text_ui_infoid['summary'] == (
+        assert ARGS.p_name == target._view_name.get_text()
+        assert ARGS.p_summary == (
             AINOFID.str_adapt_textview(target.get_view_summary()))
-        assert text_ui_infoid['title'] == target._view_title.get_text()
+        assert ARGS.p_title == target._view_title.get_text()
+
+    # def test_init(self, patch_ui_infoid, text_ui_infoid):
+    #     """Confirm initialization."""
+    #     # Setup
+    #     get_object = patch_ui_infoid
+    #     # Test
+    #     target = VINFOID.ViewInfoId(get_object)
+    #     assert isinstance(target._view_title, AINOFID.AdaptEntry)
+    #     assert text_ui_infoid['name'] == target._view_name.get_text()
+    #     assert text_ui_infoid['summary'] == (
+    #         AINOFID.str_adapt_textview(target.get_view_summary()))
+    #     assert text_ui_infoid['title'] == target._view_title.get_text()
 
     @pytest.mark.parametrize('name_method, name_attr', [
         ['get_view_name', '_view_name'],
@@ -64,7 +77,7 @@ class TestInfoId:
         # Test: no delete
         assert target_prop.fdel is None
 
-    def test_property_summary(self, patch_ui_infoid, text_ui_infoid):
+    def test_property_summary(self, patch_ui_infoid, patch_args_infoid):
         """Confirm summary property is get-only.
 
         #. Case: get
@@ -72,13 +85,14 @@ class TestInfoId:
         #. Case: no delete
         """
         # Setup
-        TEXT = text_ui_infoid['summary']
+        ARGS = patch_args_infoid
+        text = ARGS.p_summary
         get_object = patch_ui_infoid
         target_prop = getattr(VINFOID.ViewInfoId, 'summary')
         target = VINFOID.ViewInfoId(get_object)
         # Test: read
         assert target_prop.fget is not None
-        assert TEXT == target.summary
+        assert text == target.summary
         # Test: no replace
         assert target_prop.fset is None
         # Test: no delete

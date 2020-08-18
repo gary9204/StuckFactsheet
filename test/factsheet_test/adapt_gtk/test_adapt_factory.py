@@ -14,7 +14,7 @@ from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.view import block_fact as VFACT
+from factsheet.view.block import block_fact as VFACT
 
 
 class PatchClassFact(ABC_FACT.AbstractFact):
@@ -46,7 +46,7 @@ class PatchClassBlockFact(ABC_FACT.InterfaceBlockFact[int]):
     """Defines test stub for  :class:`.InterfaceBlockFact`.
     """
 
-    def checked(self, p_value: ValueInt) -> None:
+    def update_value(self, p_value: ValueInt) -> None:
         pass
 
     def cleared(self, p_value: ValueInt) -> None:

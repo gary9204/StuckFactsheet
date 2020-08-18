@@ -6,13 +6,21 @@
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 3
+
+   factsheet.view.aspect
+   factsheet.view.block
+
 Submodules
 ----------
 
 .. toctree::
 
    factsheet.view.page_sheet
-   factsheet.view.block_fact
    factsheet.view.pane_topic
    factsheet.view.query_place
    factsheet.view.query_template

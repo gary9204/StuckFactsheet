@@ -83,17 +83,14 @@ class TestInterfaceBlockFact:
             _ = ABC_FACT.InterfaceBlockFact()
 
     @pytest.mark.parametrize('NAME_METHOD', [
-        'checked',
-        'cleared',
+        'update_value',
         'get_infoid',
         ])
     def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
         class PatchBlockFact(ABC_FACT.InterfaceBlockFact):
-            def checked(self): super().checked(None)
-
-            def cleared(self): super().cleared(None)
+            def update_value(self): super().update_value(None)
 
             def get_infoid(self): super().get_infoid()
 

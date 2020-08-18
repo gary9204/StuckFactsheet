@@ -1244,8 +1244,8 @@ Select a topic from the &lt;i&gt;Topics&lt;/i&gt; outline.
                         <property name="wrap">True</property>
                       </object>
                       <packing>
-                        <property name="name">None</property>
-                        <property name="title" translatable="yes">None</property>
+                        <property name="name">Default</property>
+                        <property name="title" translatable="yes">Default</property>
                       </packing>
                     </child>
                   </object>

@@ -68,7 +68,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._cursor_topics = self._view_topics.gtk_view.get_selection()
 
         gtk_scenes_topic = get_object('ui_scenes_topic')
-        self._scenes_topic = VSCENES.Scenes[UI.IdTopic](gtk_scenes_topic)
+        self._scenes_topic = VSCENES.Scenes(
+            gtk_scenes_topic, p_name_fixed='Default')
 
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
@@ -219,7 +220,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         :param p_id: identity of topic pane to close.
         """
-        self._scenes_topic.remove_scene(p_id)
+        name_scene = hex(p_id)
+        self._scenes_topic.remove_scene(name_scene)
 
     def get_infoid(self) -> VINFOID.ViewInfoId:
         """Return view of factsheet identification information."""
@@ -307,30 +309,30 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
 
         :param px_cursor: identifies now-current topic.
         """
-        id_none = self._scenes_topic.ID_NONE
+        # id_none = self._scenes_topic.ID_NONE
         model, index = px_cursor.get_selected()
         if index is None:
-            _ = self._scenes_topic.show_scene(id_none)
+            _ = self._scenes_topic.show_scene(None)
             return
 
         topic = AOUTLINE.get_item_gtk(model, index)
         if topic is None:
-            _ = self._scenes_topic.show_scene(id_none)
+            _ = self._scenes_topic.show_scene(None)
             return
 
-        id_topic = topic.id_topic
-        id_visible = self._scenes_topic.show_scene(id_topic)
-        if id_topic == id_visible:
+        name_topic = hex(topic.id_topic)
+        name_visible = self._scenes_topic.show_scene(name_topic)
+        if name_topic == name_visible:
             return
 
         control = self._control.get_control_topic(topic)
         if control is None:
-            _ = self._scenes_topic.show_scene(id_none)
+            _ = self._scenes_topic.show_scene(None)
             return
 
         pane = VTOPIC.PaneTopic(pm_control=control)
-        self._scenes_topic.add_scene(pane.gtk_pane, id_topic)
-        _ = self._scenes_topic.show_scene(id_topic)
+        self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
+        _ = self._scenes_topic.show_scene(name_topic)
 
     def on_close_page(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
@@ -485,7 +487,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             raise NotImplementedError
 
         pane = VTOPIC.PaneTopic(pm_control=control)
-        self._scenes_topic.add_scene(pane.gtk_pane, topic.id_topic)
+        name_topic = hex(topic.id_topic)
+        self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
         path = gtk_model.get_path(index)
         self._view_topics.gtk_view.expand_to_path(path)
         self._cursor_topics.select_iter(index)

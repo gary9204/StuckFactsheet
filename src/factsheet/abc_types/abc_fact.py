@@ -32,24 +32,24 @@ from factsheet.abc_types import abc_stalefile as ABC_STALE
 
 
 class StatusOfFact(enum.Enum):
-    """Indicates whether user has checked fact and outcome of check.
+    """Indicates whether user has update_value fact and outcome of check.
 
     .. attribute:: BLOCKED
 
-        Fact cannot be checked because, for example, prerequisite
+        Fact cannot be update_value because, for example, prerequisite
         information is unavailable.
 
     .. attribute:: DEFINED
 
-        User checked fact and its value is defined.
+        User update_value fact and its value is defined.
 
     .. attribute:: UNCHECKED
 
-        User has not checked fact and its value is unknown.
+        User has not update_value fact and its value is unknown.
 
     .. attribute:: UNDEFINED
 
-        User checked fact but its value is not defined.
+        User update_value fact but its value is not defined.
     """
     BLOCKED = enum.Enum
     UNCHECKED = enum.auto()
@@ -103,18 +103,10 @@ class InterfaceBlockFact(abc.ABC, typing.Generic[ValueAny]):
     """
 
     @abc.abstractmethod
-    def checked(self, p_value: ValueOfFact) -> None:
+    def update_value(self, p_value: ValueOfFact) -> None:
         """Update view with new fact value.
 
         :param p_value: new fact value.
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def cleared(self, p_value: ValueOfFact) -> None:
-        """Restore view to unchecked or blocked fact status.
-
-        :param p_value: new fact status.
         """
         raise NotImplementedError
 

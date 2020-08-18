@@ -102,7 +102,7 @@ class LabelColumn:
 
     @property
     def label_gtk(self) -> Gtk.Label:
-        """Return underlying GTK widget."""
+        """Return GTK presentation element for column label."""
         return self._label_gtk
 
     def refresh(self) -> None:
@@ -172,7 +172,7 @@ class LabelArray:
 
     @property
     def label_gtk(self) -> Gtk.ComboBox:
-        """Return underlying GTK widget."""
+        """Return GTK presentation element for array label."""
         return self._label_gtk
 
     def on_changed(self, p_label_gtk: Gtk.ComboBox) -> None:
@@ -235,7 +235,7 @@ class ColumnEntryArray:
 
     @property
     def column_gtk(self) -> Gtk.ComboBox:
-        """Return underlying GTK widget."""
+        """Return GTK presentation element for column."""
         return self._column_gtk
 
     def _fill_column_gtk(self, _column: Gtk.TreeViewColumn,
@@ -322,7 +322,7 @@ class ColumnLabelArray:
 
     @property
     def column_gtk(self) -> Gtk.ComboBox:
-        """Return underlying GTK widget."""
+        """Return GTK presentation element for column."""
         return self._column_gtk
 
     def _fill_column_gtk(self, _column: Gtk.TreeViewColumn,
@@ -443,7 +443,7 @@ class HeaderColumn:
 
     @property
     def header_gtk(self) -> Gtk.ComboBox:
-        """Return underlying GTK widget."""
+        """Return GTK presentation element for header column."""
         return self._header_gtk
 
     def on_changed(self, p_header_gtk: Gtk.ComboBox) -> None:
@@ -504,7 +504,7 @@ class ColumnTableau:
 
     @property
     def column_gtk(self) -> Gtk.ComboBox:
-        """Return underlying GTK widget."""
+        """Return GTK presentation element for tableau column."""
         return self._column_gtk
 
     def _fill_column_gtk(

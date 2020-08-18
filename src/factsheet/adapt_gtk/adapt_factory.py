@@ -23,7 +23,7 @@ from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.view import block_fact as VFACT
+# from factsheet.view.block import block_fact as VFACT
 
 logger = logging.getLogger('Main.model.adapt_factory')
 
@@ -37,7 +37,7 @@ class FactoryFact(ABC_FACTORY.FactoryFact):
         self._fact_to_block: typing.MutableMapping[
             typing.Type[ABC_FACT.AbstractFact],
             typing.Type[ABC_FACT.InterfaceBlockFact]] = dict()
-        self._block_default = VFACT.BlockFact
+        self._block_default = None  # VFACT.BlockFact
 
     def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
                        ) -> ABC_FACT.InterfaceBlockFact:

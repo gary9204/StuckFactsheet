@@ -1,7 +1,7 @@
 ``block_fact`` View Module
 ==========================
 
-.. automodule:: factsheet.view.block_fact
+.. automodule:: factsheet.view.block.block_fact
    :members:
    :exclude-members: BlockFact
    :undoc-members:

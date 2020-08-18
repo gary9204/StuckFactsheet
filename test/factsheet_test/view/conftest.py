@@ -4,16 +4,16 @@ Test fixtures for :mod:`~.factsheet.view` unit tests.
 import dataclasses as DC
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
-import typing
+# import typing
 
-from factsheet.model import element as MELEMENT
-from factsheet.model import setindexed as MSET
-from factsheet.model import table as MTABLE
+# from factsheet.model import element as MELEMENT
+# from factsheet.model import setindexed as MSET
+# from factsheet.model import table as MTABLE
 from factsheet.model import topic as MTOPIC
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
+# from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
@@ -92,20 +92,31 @@ def patch_dialog_run():
     return PatchDialog
 
 
-@pytest.fixture
-def text_ui_infoid():
-    """Pytest fixture returns set of argument values to construct
-    a stock :class:`.ViewInfoId` object.
+@DC.dataclass
+class ArgsInfoid:
+    """Convenience class for pytest fixture.
+
+    Class assembles arguments to :class:`.InfoId` method ``__init__``.
     """
-    return dict(
-        name='UI InfoId Name',
-        title='UI InfoId Title',
-        summary='This summarizes UI identification.',
+    p_name: str
+    p_summary: str
+    p_title: str
+
+
+@pytest.fixture
+def patch_args_infoid():
+    """Pytest fixture returns set of argument values to construct
+    a stock :class:`.InfoId` object.
+    """
+    return ArgsInfoid(
+        p_name='Parrot',
+        p_summary='The parrot is a Norwegian Blue.',
+        p_title='The Parrot Sketch',
         )
 
 
 @pytest.fixture
-def patch_ui_infoid(text_ui_infoid):
+def patch_ui_infoid(patch_args_infoid):
     """Pytest fixture returns stub builder defintion for
     :class:`.ViewInfoId`.
     """
@@ -117,10 +128,10 @@ def patch_ui_infoid(text_ui_infoid):
           <object class="GtkEntry" id="ui_name_infoid">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="text" translatable="yes">{name}</property>
+            <property name="text" translatable="yes">{p_name}</property>
           </object>
           <object class="GtkTextBuffer" id="buffer_summary">
-            <property name="text" translatable="yes">{summary}</property>
+            <property name="text" translatable="yes">{p_summary}</property>
           </object>
           <object class="GtkTextView" id="ui_summary_infoid">
             <property name="visible">True</property>
@@ -130,9 +141,10 @@ def patch_ui_infoid(text_ui_infoid):
           <object class="GtkEntry" id="ui_title_infoid">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="text" translatable="yes">{title}</property>
+            <property name="text" translatable="yes">{p_title}</property>
           </object>
         </interface>
-        '''.format(**text_ui_infoid)
+        '''.format(**DC.asdict(patch_args_infoid))
+    #     '''.format(**text_ui_infoid)
     builder = Gtk.Builder.new_from_string(ui_infoid, -1)
     return builder.get_object

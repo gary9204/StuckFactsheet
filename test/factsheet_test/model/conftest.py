@@ -63,7 +63,7 @@ def patch_class_block_fact(interface_view_infoid):
 
         def get_infoid(self): return self._infoid
 
-        def checked(self, p_value: ABC_FACT.ValueOfFact) -> None:
+        def update_value(self, p_value: ABC_FACT.ValueOfFact) -> None:
             pass
 
         def cleared(self, p_value: ABC_FACT.ValueOfFact) -> None:

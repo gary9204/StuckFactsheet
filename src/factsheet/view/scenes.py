@@ -9,131 +9,103 @@ import gi   # type: ignore[import]
 import logging
 import typing
 
-from factsheet.view import ui as UI
-
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.view.scenes')
 
 
-GenericId = typing.TypeVar('GenericId', UI.IdTopic, int)
-
-
-class Scenes(typing.Generic[GenericId]):
+class Scenes:
     """Displays one scene at a time from a collection of scenes.
 
-    A scene is a display element for an item.  You associate an item
-    identifier with a scene when you add the scene to the collection.
-    You use the item identifier to show or remove a scene.
+    A scene is a presentation element for an item (such as a topic pane,
+    fact block, or fact aspect).  Each scene is identified by a name,
+    which methods use to show or remove the scene.  The class supports
+    fixing one name so that the corresponding scene cannot be replaced
+    or removed.
 
-    :param px_scenes: pre-defined scene collection.  If None, ``Scenes``
+    :param p_scenes: pre-defined scene collection.  If None, ``Scenes``
         creates an empty collection.
-
-    .. attribute:: ID_NONE
-
-    Value distinct from all item identifiers.  Used, for example, to
-    indicate no item has a visible scene.
-
-    .. attribute:: NAME_NONE
-
-    Value distinct from all scene names.  May be used, for example, to
-    identify a blank scene when no item scene is visible.
+    :param p_name_fixed: name of a scene that cannot be replaced or
+        removed.
+    :param p_scene_fixed: scene that cannot be replaced or removed.
     """
 
-    NAME_NONE = 'None'
-    ID_NONE = None
+    def __init__(self, p_scenes: Gtk.Stack = None, p_name_fixed: str = None,
+                 p_scene_fixed: Gtk.Widget = None) -> None:
+        self._stack_gtk = p_scenes if p_scenes else Gtk.Stack()
+        self._name_fixed = p_name_fixed
+        if self._name_fixed is not None and p_scene_fixed is not None:
+            self.add_scene(p_scene_fixed, self._name_fixed)
 
-    def __init__(self, px_scenes: Gtk.Stack = None) -> None:
-        self._gtk_stack = px_scenes if px_scenes else Gtk.Stack()
-
-    def add_scene(self, pm_scene: Gtk.Widget, p_id_item: GenericId) -> None:
+    def add_scene(self, p_scene: Gtk.Widget, p_name: str) -> None:
         """Add a scene to the collection.
 
-        Log a warning when the item already has a scene in the
-        collection.
+        Do not change the collection and log a warning when the
+        collection contains a scene with the given name.
 
-        :param pm_scene: scene to add.
-        :param p_id_item: item identifier for scene.  An item may have
+        :param p_scene: scene to add.
+        :param p_name: name of scene.  An item may have
             at most one scene in the collection.
         """
-        name = self._id_to_name(p_id_item)
-        child = self._gtk_stack.get_child_by_name(name)
+        child = self._stack_gtk.get_child_by_name(p_name)
         if child is not None:
             logger.warning(
-                'Duplicate scene of item {}: {} ({}.{})'
-                ''.format(name, pm_scene, self.__class__.__name__,
+                'Duplicate name \'{}\' with scene {} ({}.{})'
+                ''.format(p_name, p_scene, self.__class__.__name__,
                           self.add_scene.__name__))
             return
 
-        pm_scene.show()
-        self._gtk_stack.add_named(pm_scene, name)
+        p_scene.show()
+        self._stack_gtk.add_named(p_scene, p_name)
 
-    def get_scene_visible(self) -> typing.Optional[GenericId]:
-        """Return item identifier of visible scene or ID_NONE when no
-        scene is visible.
-        """
-        name = self._gtk_stack.get_visible_child_name()
-        if name is None:
-            return self.ID_NONE
+    def clear(self) -> None:
+        """Remove all scenes from collection."""
+        # for scene in self._stack_gtk.get_children():
+        for scene in self._stack_gtk:
+            self._stack_gtk.remove(scene)
 
-        id_item = self._name_to_id(name)
-        return typing.cast(GenericId, id_item)
+    def get_scene_visible(self) -> typing.Optional[str]:
+        """Return name of visible scene or None when no scene is visible."""
+        return self._stack_gtk.get_visible_child_name()
 
-    def _id_to_name(self, p_id: typing.Optional[GenericId]) -> str:
-        """Return name corresponding to item identifier.
-
-        :param p_id: item identifier to convert.
-        """
-        if p_id is self.ID_NONE:
-            return self.NAME_NONE
-
-        try:
-            return hex(p_id)
-        except TypeError:
-            return self.NAME_NONE
-
-    def _name_to_id(self, p_name: str) -> typing.Optional[GenericId]:
-        """Return item identifier corresponding to name.
-
-        :param p_id: name to convert.
-        """
-        try:
-            return typing.cast(GenericId, int(p_name, base=0))
-        except (TypeError, ValueError):
-            return typing.cast(GenericId, self.ID_NONE)
-
-    def remove_scene(self, p_id_item: GenericId) -> None:
+    def remove_scene(self, p_name: str) -> None:
         """Remove a scene from the collection.
 
         Log a warning when the item does not have a scene in the
         collection.
 
-        :param p_id_item: item identifier of the scene to remove.
+        :param p_name: name of the scene to remove.
         """
-        name = self._id_to_name(p_id_item)
-        item = self._gtk_stack.get_child_by_name(name)
-        if item is None:
+        if p_name == self._name_fixed:
             logger.warning(
-                'Missing scene for item {} ({}.{})'.format(
-                    name, self.__class__.__name__,
+                'Fixed scene \'{}\' cannot be removed. ({}.{})'.format(
+                    p_name, self.__class__.__name__,
                     self.remove_scene.__name__))
             return
 
-        self._gtk_stack.remove(item)
+        item = self._stack_gtk.get_child_by_name(p_name)
+        if item is None:
+            logger.warning(
+                'Missing scene named \'{}\' ({}.{})'.format(
+                    p_name, self.__class__.__name__,
+                    self.remove_scene.__name__))
+            return
 
-    def show_scene(self, p_id_item: typing.Optional[GenericId]
-                   ) -> typing.Optional[GenericId]:
-        """Attempt to show a scene and return item identifier of
-        resulting visible scene.
+        self._stack_gtk.remove(item)
 
-        :param p_id_item: item identifier for scene to show to show.
+    def show_scene(self, p_name: typing.Optional[str]
+                   ) -> typing.Optional[str]:
+        """Attempt to show a scene and return item name of resulting
+        visible scene.
+
+        :param p_name: name of scene to show to show.
         """
-        name = self._id_to_name(p_id_item)
-        item = self._gtk_stack.get_child_by_name(name)
-        if item is not None:
-            self._gtk_stack.set_visible_child(item)
+        name = p_name if p_name else self._name_fixed
+        if name is not None:
+            item = self._stack_gtk.get_child_by_name(name)
+            if item is not None:
+                self._stack_gtk.set_visible_child(item)
 
-        name_visible = self._gtk_stack.get_visible_child_name()
-        id_visible = self._name_to_id(name_visible)
-        return id_visible
+        name_visible = self._stack_gtk.get_visible_child_name()
+        return name_visible
