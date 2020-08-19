@@ -12,7 +12,6 @@ Subpackages
 .. toctree::
    :maxdepth: 3
 
-   factsheet.view.aspect
    factsheet.view.block
 
 Submodules

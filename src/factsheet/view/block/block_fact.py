@@ -95,8 +95,11 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
         self._names = SelectorName(select_gtk, self.select_aspect)
         for name in self._new_aspect:
             self._names.add_name(name, p_select=False)
+#         select_gtk.set_active_id('Synopsis')
+#         self._name_default = select_gtk.get_active_id()
         self._name_default = 'Synopsis'
-        self.select_aspect(self._name_default)
+        self._names.select(self._name_default)
+#         self.select_aspect(self._name_default)
 
         self._block_gtk.show_all()
         self._control.attach_block(self)
@@ -168,6 +171,7 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
         label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         label.set_selectable(True)
         label.set_label(str(self._value))
+        label.show()
 
         aspect = Gtk.ScrolledWindow()
         aspect.add(label)
@@ -199,15 +203,21 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
         WIDTH_MAX = 50
 
         label = Gtk.Label()
-        label.set_halign(Gtk.Align.START)
-        label.set_valign(Gtk.Align.START)
+        label.set_xalign(0.0)
+        label.set_yalign(0.0)
         label.set_width_chars(WIDTH_DEFAULT)
         label.set_max_width_chars(WIDTH_MAX)
         label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
         label.set_selectable(True)
-        label.set_label(str(self._value))
+        if isinstance(self._value, ABC_FACT.StatusOfFact):
+            text = self._value.name
+        else:
+            text = str(self._value)
+        label.set_markup(text)
+        label.show()
 
         aspect = Gtk.ScrolledWindow()
+        aspect.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         aspect.add(label)
         return aspect
 
@@ -218,7 +228,10 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
         """
         self._value = p_value
         self._aspects.clear()
-        self.select_aspect(self._name_default)
+        if self._name_default == self._names.get_name():
+            self.select_aspect(self._name_default)
+        else:
+            self._names.select(self._name_default)
 
 
 class SelectorName:
@@ -261,6 +274,10 @@ class SelectorName:
         i_new = model.append([p_name])
         if p_select:
             self._selector_gtk.set_active_iter(i_new)
+
+    def get_name(self) -> typing.Optional[str]:
+        """Return name that is selected."""
+        return self._selector_gtk.get_active_id()
 
     def remove_name(self, p_name: str) -> None:
         """Remove name from list of names.

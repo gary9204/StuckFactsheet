@@ -92,7 +92,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
-            <property name="action_name">topic.flip-summary</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
@@ -108,7 +107,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
-            <property name="action_name">topic.flip-value</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
@@ -124,7 +122,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
-            <property name="action_name">fact.flip-notes</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
@@ -140,7 +137,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
-            <property name="action_name">fact.flip-related-facts</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
@@ -468,6 +464,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="model">stub_store_names</property>
                                 <property name="active">0</property>
+                                <property name="id_column">0</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="visage"/>
                                   <attributes>
@@ -491,7 +488,6 @@
                         </child>
                         <child>
                           <object class="GtkStack" id="ui_aspects_fact">
-                            <property name="height_request">200</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="vexpand">True</property>

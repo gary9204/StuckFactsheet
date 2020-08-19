@@ -3,8 +3,9 @@ Unit tests for class to display fact in topic pane.  See
 :mod:`.block_fact`.
 """
 import dataclasses as DC
-import logging
 import gi   # type: ignore[import]
+import logging
+import math
 import pytest   # type: ignore[import]
 import typing
 
@@ -226,9 +227,7 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_scene(target.synopsis(), 'Synopsis')
         target._aspects.add_scene(target.plain(), 'Plain')
-        # view_init = target._aspects.show_scene('Plain')
         NAME_SELECT = 'Synopsis'
         # Test
         target.select_aspect(NAME_SELECT)
@@ -278,36 +277,43 @@ class TestBlockFact:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_synopsis(self, patch_control_fact):
+    @pytest.mark.parametrize('VALUE, TEXT', [
+        ('A Norwegian Blue.', 'A Norwegian Blue.'),
+        (MFACT.StatusOfFact.DEFINED, 'DEFINED'),
+        ])
+    def test_synopsis(self, patch_control_fact, VALUE, TEXT):
         """Confirm synopsis aspect construction."""
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact[str](p_control=CONTROL)
         WIDTH_DEFAULT = 30
         WIDTH_MAX = 50
-        MARKUP = 'A Norwegian Blue.'
-        target._value = MARKUP
+        target._value = VALUE
         # Test
         synopsis = target.synopsis()
         assert isinstance(synopsis, Gtk.ScrolledWindow)
         viewport = synopsis.get_child()
         label = viewport.get_child()
         assert isinstance(label, Gtk.Label)
-        assert label.get_halign() is Gtk.Align.START
-        assert label.get_valign() is Gtk.Align.START
+        assert math.isclose(0.0, label.get_xalign(), abs_tol=0.01)
+        assert math.isclose(0.0, label.get_yalign(), abs_tol=0.01)
         assert label.get_width_chars() is WIDTH_DEFAULT
         assert label.get_max_width_chars() is WIDTH_MAX
         assert label.get_ellipsize() is Pango.EllipsizeMode.MIDDLE
         assert label.get_selectable()
-        assert MARKUP == label.get_label()
+        assert TEXT == label.get_label()
 
-    def test_update_value(self, patch_control_fact):
+    @pytest.mark.parametrize('NAME_CURRENT', [
+        'Plain',
+        'Synopsis',
+        ])
+    def test_update_value(self, patch_control_fact, NAME_CURRENT):
         """Confirm value and aspect updates."""
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_scene(target.synopsis(), 'Synopsis')
         target._aspects.add_scene(target.plain(), 'Plain')
+        target._names.select(NAME_CURRENT)
         VALUE_NEW = 'Something completely different'
         N_ASPECTS = 1
         # Test
@@ -431,6 +437,35 @@ class TestSelectorName:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+
+    def test_get_name(self, patch_args_selector_name):
+        """| Confirm name returned.
+        | Case: name selected.
+        """
+        # Setup
+        ARGS = patch_args_selector_name
+        target = VFACT.SelectorName(
+            p_view=ARGS.p_view, p_on_select=ARGS.p_on_select)
+        NAMES = list(target)
+        I_NAME = 1
+        name = NAMES.pop(I_NAME)
+        target.select(name)
+        # Test
+        target_name = target.get_name()
+        assert name == target_name
+
+    def test_get_name_none(self, patch_args_selector_name):
+        """| Confirm name returned.
+        | Case: no name selected.
+        """
+        # Setup
+        ARGS = patch_args_selector_name
+        target = VFACT.SelectorName(
+            p_view=ARGS.p_view, p_on_select=ARGS.p_on_select)
+        target._selector_gtk.set_active_id(None)
+        # Test
+        target_name = target.get_name()
+        assert target_name is None
 
     def test_remove_name(self, patch_args_selector_name):
         """| Confirm name removal.

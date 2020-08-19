@@ -51,7 +51,7 @@ class StatusOfFact(enum.Enum):
 
         User update_value fact but its value is not defined.
     """
-    BLOCKED = enum.Enum
+    BLOCKED = enum.auto()
     UNCHECKED = enum.auto()
     UNDEFINED = enum.auto()
     DEFINED = enum.auto()
