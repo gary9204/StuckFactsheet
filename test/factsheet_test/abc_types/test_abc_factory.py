@@ -1,7 +1,5 @@
 """
-Unit tests for abstract factory classes.
-
-See :mod:`.abc_factory`.
+Unit tests for abstract factory classes.  See :mod:`.abc_factory`.
 """
 
 import pytest   # type: ignore[import]
@@ -113,6 +111,37 @@ class TestFactorySheet:
 
             def new_view_outline_topics(self):
                 super().new_view_outline_topics()
+
+        target = PatchFactory()
+        # Test
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, NAME_METHOD)
+            method()
+
+
+class TestFactoryTopic:
+    """Unit tests for abstract factory :class:`~.abc_factory.FactoryTopic`."""
+
+    def test_abstract_class(self):
+        """Confirm the factory class is abstract."""
+        # Setup
+        # Test
+        with pytest.raises(TypeError):
+            _ = ABC_FACTORY.FactoryTopic()
+
+    @pytest.mark.parametrize('NAME_METHOD', [
+        'new_model_outline_facts',
+        'new_view_outline_facts',
+        ])
+    def test_must_override(self, NAME_METHOD):
+        """Confirm each method must be overridden."""
+        # Setup
+        class PatchFactory(ABC_FACTORY.FactoryTopic):
+            def new_model_outline_facts(self):
+                super().new_model_outline_facts()
+
+            def new_view_outline_facts(self):
+                super().new_view_outline_facts()
 
         target = PatchFactory()
         # Test

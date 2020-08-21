@@ -18,12 +18,16 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class TestTypes:
     """Unit tests for type definitions in :mod:`.ui`."""
 
-    def test_types(self):
-        """Confirm types defined."""
+    def test_types_misc(self):
+        """Confirm types defined for miscellaneous components."""
         # Setup
         # Test
         assert UI.KWArgs is not None
-        assert UI.IdTopic is AFACTORY.IdTopic
+
+    def test_types_sheet(self):
+        """Confirm types defined for sheet components."""
+        # Setup
+        # Test
         assert UI.IndexOutline is AFACTORY.IndexOutline
         assert UI.OutlineTemplates is AFACTORY.OutlineTemplates
         assert UI.OutlineTopics is AFACTORY.OutlineTopics
@@ -31,6 +35,14 @@ class TestTypes:
         assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
         # assert UI.NewViewOutlineTopics is not None  # Not testable at
         #     runtime [misc]
+
+    def test_types_topic(self):
+        """Confirm types defined for topic components."""
+        # Setup
+        # Test
+        assert UI.IdTopic is AFACTORY.IdTopic
+        assert UI.OutlineFacts is AFACTORY.OutlineFacts
+        assert UI.ViewOutlineFacts is AFACTORY.ViewOutlineFacts
 
 
 class TestUiActions:

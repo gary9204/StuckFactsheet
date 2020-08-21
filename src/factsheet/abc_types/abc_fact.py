@@ -74,14 +74,14 @@ class AbstractFact(ABC_STALE.InterfaceStaleFile):
 
     @property
     @abc.abstractmethod
-    def status(self) -> StatusOfFact:
-        """Return status of fact. """
+    def name(self) -> str:
+        """Return fact name. """
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
-    def name(self) -> str:
-        """Return fact name. """
+    def status(self) -> StatusOfFact:
+        """Return status of fact. """
         raise NotImplementedError
 
     @property

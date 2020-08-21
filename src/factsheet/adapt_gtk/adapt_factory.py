@@ -23,6 +23,8 @@ from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
+from factsheet.adapt_gtk import adapt_topic as ATOPIC
+# ERROR: Circular import
 # from factsheet.view.block import block_fact as VFACT
 
 logger = logging.getLogger('Main.model.adapt_factory')
@@ -37,6 +39,7 @@ class FactoryFact(ABC_FACTORY.FactoryFact):
         self._fact_to_block: typing.MutableMapping[
             typing.Type[ABC_FACT.AbstractFact],
             typing.Type[ABC_FACT.InterfaceBlockFact]] = dict()
+        # ERROR: Circular import
         self._block_default = None  # VFACT.BlockFact
 
     def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
@@ -124,18 +127,33 @@ class FactorySheet(ABC_FACTORY.FactorySheet):
         return OutlineTemplates()
 
     def new_model_outline_topics(self) -> OutlineTopics:
-        """Return new instance of Gtk-based topic outline"""
+        """Return new instance of Gtk-based topic outline."""
         return OutlineTopics()
 
-    def new_view_outline_templates(self) -> ASHEET.AdaptTreeViewTemplate:
+    def new_view_outline_templates(self) -> ViewOutlineTemplates:
         """Return new instance of Gtk-based template view outline.
         """
-        return ASHEET.AdaptTreeViewTemplate()
+        return ViewOutlineTemplates()
 
-    def new_view_outline_topics(self) -> ASHEET.AdaptTreeViewTopic:
+    def new_view_outline_topics(self) -> ViewOutlineTopics:
         """Return new instance of Gtk-based topic view outline.
         """
-        return ASHEET.AdaptTreeViewTopic()
+        return ViewOutlineTopics()
 
 
 IdTopic = ABC_TOPIC.IdTopic
+OutlineFacts = ATOPIC.AdaptTreeStoreFact
+ViewOutlineFacts = ATOPIC.AdaptTreeViewFact
+
+
+class FactoryTopic(ABC_FACTORY.FactoryTopic):
+    """Implements GTK-based factory for abstract factory
+    :class:`.abc_factory.FactoryTopic`."""
+
+    def new_model_outline_facts(self) -> OutlineFacts:
+        """Return new instance of Gtk-based fact outline."""
+        return OutlineFacts()
+
+    def new_view_outline_facts(self) -> ViewOutlineFacts:
+        """Return new instance of Gtk-based fact view outline."""
+        return ViewOutlineFacts()
