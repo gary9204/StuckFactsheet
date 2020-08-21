@@ -17,7 +17,7 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PaneTopic(ABC_TOPIC.InterfacePaneTopic):
+class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
     """Display topic and translate user actions.
 
     Class ``PaneTopic`` maintains presentation of a topic in a pane of a

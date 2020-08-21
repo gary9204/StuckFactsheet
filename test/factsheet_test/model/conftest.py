@@ -75,9 +75,9 @@ def patch_class_block_fact(interface_view_infoid):
 @pytest.fixture
 def interface_pane_topic(interface_view_infoid):
     """Pytest fixture returns stub class for
-    :class:`.InterfacePaneTopic`.
+    :class:`.InterfaceFormTopic`.
     """
-    class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
+    class PatchPaneTopic(ABC_TOPIC.InterfaceFormTopic):
         def __init__(self):
             self._infoid = interface_view_infoid()
 
@@ -89,7 +89,7 @@ def interface_pane_topic(interface_view_infoid):
 @pytest.fixture
 def patch_class_view_topics():
     """Pytest fixture returns stub class implementing
-    :class:`.InterfacePaneTopic`.
+    :class:`.InterfaceFormTopic`.
     """
     class PatchViewTopics(ABC_OUTLINE.AbstractViewOutline):
         def __init__(self):

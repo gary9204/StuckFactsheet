@@ -25,7 +25,7 @@ class TestFact:
         ARGS = patch_args_infoid
         target = MFACT.Fact[int](**DC.asdict(ARGS))
         target._value = 'Shropshire Blue'
-        target._state_of_check = STATE
+        target._status = STATE
         expect = None if EXPECT_NONE else target._value
         # Test
         assert target() is expect
@@ -89,7 +89,7 @@ class TestFact:
         assert ARGS.p_summary == target._infoid.summary
         assert ARGS.p_title == target._infoid.title
         assert target._value is None
-        assert target._state_of_check is MFACT.StatusOfFact.UNCHECKED
+        assert target._status is MFACT.StatusOfFact.BLOCKED
         assert not target._stale
         assert isinstance(target._blocks, dict)
         assert not target._blocks
@@ -107,7 +107,7 @@ class TestFact:
         assert TITLE_DEFAULT == target._infoid.title
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ('_state_of_check', 'state_of_check'),
+        ('_status', 'status'),
         # ('_note', 'note'),
         ])
     def test_property(self, patch_args_infoid, NAME_ATTR, NAME_PROP):
@@ -167,7 +167,7 @@ class TestFact:
         # Test
         result = target.check()
         assert target._value is value_pre
-        assert target._state_of_check is MFACT.StatusOfFact.UNDEFINED
+        assert target._status is MFACT.StatusOfFact.UNDEFINED
         assert target.is_stale()
         assert result is MFACT.StatusOfFact.UNDEFINED
 
@@ -177,12 +177,12 @@ class TestFact:
         ARGS = patch_args_infoid
         target = MFACT.Fact(**DC.asdict(ARGS))
         target._value = 'Something completely different.'
-        target._state_of_check = MFACT.StatusOfFact.DEFINED
+        target._status = MFACT.StatusOfFact.DEFINED
         target.set_fresh()
         # Test
         target.clear()
-        assert target._value is None
-        assert target._state_of_check is MFACT.StatusOfFact.UNCHECKED
+        assert target._value is MFACT.StatusOfFact.UNCHECKED
+        assert target._status is MFACT.StatusOfFact.UNCHECKED
         assert target.is_stale()
 
     def test_attach_block(self, patch_class_block_fact):

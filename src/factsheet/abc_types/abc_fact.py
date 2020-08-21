@@ -78,23 +78,23 @@ class AbstractFact(ABC_STALE.InterfaceStaleFile):
         """Return status of fact. """
         raise NotImplementedError
 
-    # @property
-    # @abc.abstractmethod
-    # def name(self) -> str:
-    #     """Return fact name. """
-    #     raise NotImplementedError
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """Return fact name. """
+        raise NotImplementedError
 
-    # @property
-    # @abc.abstractmethod
-    # def summary(self) -> str:
-    #     """Return fact summary. """
-    #     raise NotImplementedError
+    @property
+    @abc.abstractmethod
+    def summary(self) -> str:
+        """Return fact summary. """
+        raise NotImplementedError
 
-    # @property
-    # @abc.abstractmethod
-    # def title(self) -> str:
-    #     """Return fact title. """
-    #     raise NotImplementedError
+    @property
+    @abc.abstractmethod
+    def title(self) -> str:
+        """Return fact title. """
+        raise NotImplementedError
 
 
 class InterfaceBlockFact(abc.ABC, typing.Generic[ValueAny]):

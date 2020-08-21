@@ -38,28 +38,21 @@ class AbstractTopic(ABC_STALE.InterfaceStaleFile):
 
     @property
     @abc.abstractmethod
-    def title(self) -> str:
-        """Return topic title. """
-        raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
     def summary(self) -> str:
         """Return topic summary. """
         raise NotImplementedError
 
+    @property
+    @abc.abstractmethod
+    def title(self) -> str:
+        """Return topic title. """
+        raise NotImplementedError
 
-class InterfacePaneTopic(abc.ABC):
-    """Defines interface for :class:`~.model.topic.Topic` model to
-    signal :class:`~.view.pane_topic.PaneTopic`.
-    """
+
+class InterfaceFormTopic(abc.ABC):
+    """Defines interface for :class:`.Topic` to signal :class:`.FormTopic`."""
 
     @abc.abstractmethod
     def get_infoid(self) -> ABC_INFOID.InterfaceViewInfoId:
         """Return view of topic identification information."""
         raise NotImplementedError
-
-#     @abc.abstractmethod
-#     def get_view_facts(self) -> ABC_OUTLINE.AbstractViewOutline:
-#         """Return view of topic's fact outline."""
-#         raise NotImplementedError

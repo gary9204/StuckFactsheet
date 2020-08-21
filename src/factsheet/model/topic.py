@@ -77,9 +77,9 @@ class Topic(ABC_TOPIC.AbstractTopic):
     def _state_transient(self) -> None:
         """Helper ensures __init__ and __setstate__ are consistent."""
         self._stale = False
-        self._views: typing.Dict[int, ABC_TOPIC.InterfacePaneTopic] = dict()
+        self._views: typing.Dict[int, ABC_TOPIC.InterfaceFormTopic] = dict()
 
-    def attach_view(self, pm_view: ABC_TOPIC.InterfacePaneTopic) -> None:
+    def attach_view(self, pm_view: ABC_TOPIC.InterfaceFormTopic) -> None:
         """Add view to update display when topic changes.
 
         Log warning when requested view is already attached.
@@ -104,7 +104,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
             _id_view, view = self._views.popitem()
             self._detach_attribute_views(view)
 
-    def detach_view(self, px_view: ABC_TOPIC.InterfacePaneTopic) -> None:
+    def detach_view(self, px_view: ABC_TOPIC.InterfaceFormTopic) -> None:
         """Remove one view from topic.
 
         Log warning when requested view is not attached.
@@ -124,7 +124,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         self._detach_attribute_views(px_view)
 
     def _detach_attribute_views(
-            self, pm_view: ABC_TOPIC.InterfacePaneTopic) -> None:
+            self, pm_view: ABC_TOPIC.InterfaceFormTopic) -> None:
         """For each topic attribute with a distinct view, remove the
         view for the attribute.
 

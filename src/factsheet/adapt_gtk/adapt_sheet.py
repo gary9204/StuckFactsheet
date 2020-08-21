@@ -64,9 +64,7 @@ class AdaptTreeStoreTemplate(
 
 class AdaptTreeStoreTopic(
         AOUTLINE.AdaptTreeStore[ABC_TOPIC.AbstractTopic]):
-    """Specializes :class:`.AdaptTreeStore` with
-    :class:`~.section.sectoin.Topic` items.
-    """
+    """Specializes :class:`.AdaptTreeStore` with :class:`.Topic` items."""
 
     def find_name(self, px_target: str,
                   px_i_after: AOUTLINE.AdaptIndex = None

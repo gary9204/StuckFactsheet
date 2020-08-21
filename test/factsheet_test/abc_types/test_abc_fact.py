@@ -39,9 +39,9 @@ class TestAbstractFact:
     @pytest.mark.parametrize('NAME_METHOD', [
         'id_fact',
         'status',
-        # 'name',
-        # 'summary',
-        # 'title',
+        'name',
+        'summary',
+        'title',
         ])
     def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
@@ -51,11 +51,11 @@ class TestAbstractFact:
 
             def status(self): return super().status
 
-            # def name(self): return super().name
+            def name(self): return super().name
 
-            # def summary(self): return super().summary
+            def summary(self): return super().summary
 
-            # def title(self): return super().title
+            def title(self): return super().title
 
             def is_fresh(self): super().is_fresh()
 

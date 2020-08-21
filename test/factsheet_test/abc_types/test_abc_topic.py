@@ -17,7 +17,7 @@ class TestTypes:
 
 
 class TestAbstractTopic:
-    """Unit tests for interface :class:`.AbstractTopic`."""
+    """Unit tests for :class:`.AbstractTopic`."""
 
     def test_abstract_class(self):
         """Confirm the interface class is abstract."""
@@ -59,15 +59,15 @@ class TestAbstractTopic:
             method()
 
 
-class TestInterfacePaneTopic:
-    """Unit tests for interface :class:`.InterfacePaneTopic`."""
+class TestInterfaceFormTopic:
+    """Unit tests for :class:`.InterfaceFormTopic`."""
 
     def test_abstract_class(self):
         """Confirm the interface class is abstract."""
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = ABC_TOPIC.InterfacePaneTopic()
+            _ = ABC_TOPIC.InterfaceFormTopic()
 
     @pytest.mark.parametrize('name_method', [
         'get_infoid',
@@ -76,7 +76,7 @@ class TestInterfacePaneTopic:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchPaneTopic(ABC_TOPIC.InterfacePaneTopic):
+        class PatchPaneTopic(ABC_TOPIC.InterfaceFormTopic):
             def get_infoid(self): super().get_infoid()
 
             def get_view_facts(self): super().get_view_facts()
