@@ -19,6 +19,7 @@ from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import page_sheet as VSHEET
 from factsheet.view import scenes as VSCENES
 from factsheet.view import pane_topic as VTOPIC
+from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
 
@@ -482,7 +483,7 @@ class TestPageSheet:
 
         # Test
         view_new = target.new_view_topics()
-        assert isinstance(view_new, UI.ViewOutlineTopics)
+        assert isinstance(view_new, VTYPES.ViewOutlineTopics)
         model = target._view_topics.gtk_view.get_model()
         assert view_new.gtk_view.get_model() is model
         # Teardown

@@ -8,6 +8,7 @@ import typing
 
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
+from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -78,7 +79,7 @@ class QueryPlace:
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_place.ui')
 
     def __init__(self, p_parent: Gtk.Window, p_view_topics:
-                 UI.ViewOutlineTopics) -> None:
+                 VTYPES.ViewOutlineTopics) -> None:
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         get_object = builder.get_object
         self._dialog = get_object('ui_dialog_query_place')

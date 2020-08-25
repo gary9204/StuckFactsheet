@@ -8,7 +8,7 @@ import pytest   # type: ignore[import]
 
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.model import infoid as MINFOID
-from factsheet.view import ui as UI
+from factsheet.adapt_gtk import adapt_infoid as AINFOID
 
 
 class TestInfoId:
@@ -44,7 +44,8 @@ class TestInfoId:
         # Test: equivalent
         target = copy.deepcopy(source)
         target._stale = True
-        view = UI.FACTORY_INFOID.new_view_title()
+        # view = UI.FACTORY_INFOID.new_view_title()
+        view = AINFOID.AdaptEntry()
         target._title.attach_view(view)
         assert source.__eq__(target)
         assert not source.__ne__(target)

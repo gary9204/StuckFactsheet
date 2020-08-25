@@ -5,7 +5,8 @@ See :mod:`.scenes`.
 import logging
 
 from factsheet.view import scenes as VSCENES
-from factsheet.view import ui as UI
+from factsheet.view import types_view as VTYPES
+# from factsheet.view import ui as UI
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -143,7 +144,7 @@ class TestScenes:
             scenes[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_scene(scenes[i], hex(i))
 
-        ID_VISIBLE = UI.IdTopic(1)
+        ID_VISIBLE = VTYPES.IdTopic(1)
         name_visible = hex(ID_VISIBLE)
         scene_visible = scenes[ID_VISIBLE]
         target._stack_gtk.set_visible_child(scene_visible)

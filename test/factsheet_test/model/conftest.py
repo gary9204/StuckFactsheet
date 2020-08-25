@@ -10,7 +10,8 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.view import types_view as VTYPES
 
 
 @pytest.fixture
@@ -24,13 +25,16 @@ def interface_view_infoid(patch_args_infoid):
 
         def __init__(self):
             ARGS = patch_args_infoid
-            self._name = UI.FACTORY_INFOID.new_view_name()
+            # self._name = UI.FACTORY_INFOID.new_view_name()
+            self._name = AINFOID.AdaptEntry()
             self._name.set_text(ARGS.p_name)
-            self._summary = UI.FACTORY_INFOID.new_view_summary()
+            # self._summary = UI.FACTORY_INFOID.new_view_summary()
+            self._summary = AINFOID.AdaptTextView()
             buffer_summary = self._summary.get_buffer()
             buffer_summary.set_text(
                 ARGS.p_summary, self.ALL_TEXT)
-            self._title = UI.FACTORY_INFOID.new_view_title()
+            # self._title = UI.FACTORY_INFOID.new_view_title()
+            self._title = AINFOID.AdaptEntry()
             self._title.set_text(ARGS.p_title)
 
         def get_view_name(self): return self._name
@@ -115,7 +119,7 @@ def interface_page_sheet(interface_view_infoid):
     class PatchPageSheet(ABC_SHEET.InterfacePageSheet):
         def __init__(self):
             self._infoid = interface_view_infoid()
-            self._topics = UI.FACTORY_SHEET.new_view_outline_topics()
+            self._topics = VTYPES.ViewOutlineTopics()
             self.called_close_page = False
             self.called_close_topic = 0
             self.closed_topics = []

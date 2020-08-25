@@ -29,5 +29,6 @@ Submodules
    factsheet_test.view.test_scene_int
    factsheet_test.view.test_scene_table
    factsheet_test.view.test_scene_value
+   factsheet_test.view.test_types_view
    factsheet_test.view.test_ui
    factsheet_test.view.test_view_infoid

@@ -1,7 +1,7 @@
-``abc_factory`` Abstract Type Module
+``test_types_view`` Type Test Module
 ====================================
 
-.. automodule:: factsheet.abc_types.abc_factory
+.. automodule:: factsheet_test.view.test_types_view
    :members:
    :undoc-members:
    :show-inheritance:

@@ -18,3 +18,4 @@ Submodules
    factsheet.model.setindexed
    factsheet.model.sheet
    factsheet.model.topic
+   factsheet.model.types_model

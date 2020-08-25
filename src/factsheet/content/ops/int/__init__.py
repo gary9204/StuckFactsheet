@@ -6,15 +6,17 @@ from pathlib import Path
 
 from factsheet.content import spec as XSPEC
 from factsheet.content import heading as XHEADING
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+from factsheet.view import types_view as VTYPES
 from . import plusmodn_spec as XSPEC_PLUS_N
 from . import plusmodn_topic as XPLUS_N
 
 
-def new_templates(
-       p_new_view_topic: UI.NewViewOutlineTopics) -> UI.OutlineTemplates:
+def new_templates(p_new_view_topic: VTYPES.NewViewOutlineTopics
+                  ) -> MTYPES.OutlineTemplates:
     """Return outline of integer operation templates."""
-    templates = UI.FACTORY_SHEET.new_model_outline_templates()
+    templates = MTYPES.OutlineTemplates()
 
     heading_int = XHEADING.Heading(
         p_name='<i>Integer</i>',

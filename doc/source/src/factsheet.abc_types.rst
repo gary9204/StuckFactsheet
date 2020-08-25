@@ -12,7 +12,6 @@ Submodules
 .. toctree::
 
    factsheet.abc_types.abc_fact
-   factsheet.abc_types.abc_factory
    factsheet.abc_types.abc_infoid
    factsheet.abc_types.abc_outline
    factsheet.abc_types.abc_sheet

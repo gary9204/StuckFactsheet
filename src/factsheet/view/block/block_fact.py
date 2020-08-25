@@ -305,3 +305,47 @@ class SelectorName:
         """
         if p_name is not None:
             self._selector_gtk.set_active_id(p_name)
+
+
+class FactoryBlockFact:
+    """TBD"""
+
+    def __init__(self):
+        self._fact_to_block: typing.MutableMapping[
+            typing.Type[ABC_FACT.AbstractFact],
+            typing.Type[ABC_FACT.InterfaceBlockFact]] = dict()
+        self._block_default = BlockFact
+
+    def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
+                       ) -> typing.Type[ABC_FACT.InterfaceBlockFact]:
+        """Return new fact block class suited to display given fact.
+
+        :param p_fact: fact to display.
+        """
+        class_block = self._fact_to_block.get(
+            type(p_fact), self._block_default)
+        assert class_block is not None
+        return class_block
+
+    def register_block(
+            self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
+            p_class_block: typing.Type[ABC_FACT.InterfaceBlockFact]) -> None:
+        """Associate block class with fact class.
+
+        Method logs a warning when called with distince block classes
+        and a common fact class.
+
+        Method :meth:`.new_block_fact` uses the association from fact
+        classes to block classes when creating block instances.
+
+        :param p_class_fact: target fact class.
+        :param p_class_block: block class for fact class.
+        """
+        class_block = self._fact_to_block.setdefault(
+            p_class_fact, p_class_block)
+        if class_block is not p_class_block:
+            logger.warning(
+                'Fact class assigned duplicate block class:\n\t{} <- {} '
+                '({}.{}).'.format(
+                    p_class_fact.__name__, p_class_block.__name__,
+                    self.__class__.__name__, self.register_block.__name__))

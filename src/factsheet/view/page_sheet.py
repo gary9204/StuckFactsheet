@@ -15,6 +15,7 @@ from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import scenes as VSCENES
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import pane_topic as VTOPIC
+from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -60,7 +61,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._context_summary = get_object('ui_context_summary')
         self._flip_summary = get_object('ui_flip_summary')
 
-        self._view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        self._view_topics = VTYPES.ViewOutlineTopics()
         self._view_topics.scope_search = ~ASHEET.FieldsTopic.VOID
         self._view_topics.gtk_view.set_reorderable(True)
         context_view_topics = get_object('ui_context_topics')
@@ -213,7 +214,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._close_window = True
         self._window.close()
 
-    def close_topic(self, p_id: UI.IdTopic) -> None:
+    def close_topic(self, p_id: VTYPES.IdTopic) -> None:
         """Close topic pane in response to notice from model.
 
         Closing a topic pane removes the pane from the factsheet page.
@@ -242,7 +243,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         """
         pm_control.attach_page(pm_page)
         pm_page._control = pm_control
-        query_view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        query_view_topics = VTYPES.ViewOutlineTopics()
         pm_page._control.attach_view_topics(query_view_topics)
         pm_page._query_place = QPLACE.QueryPlace(
             pm_page._window, query_view_topics)
@@ -297,9 +298,9 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         PageSheet.link_factsheet(page, control)
         return page
 
-    def new_view_topics(self) -> UI.ViewOutlineTopics:
+    def new_view_topics(self) -> VTYPES.ViewOutlineTopics:
         """Return new, unattached view of topics outline. """
-        view_topics_new = UI.FACTORY_SHEET.new_view_outline_topics()
+        view_topics_new = VTYPES.ViewOutlineTopics()
         assert self._control is not None
         self._control.attach_view_topics(view_topics_new)
         return view_topics_new

@@ -6,7 +6,7 @@ See :mod:`.view.ui`.
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_factory as AFACTORY
+# from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -24,25 +24,25 @@ class TestTypes:
         # Test
         assert UI.KWArgs is not None
 
-    def test_types_sheet(self):
-        """Confirm types defined for sheet components."""
-        # Setup
-        # Test
-        assert UI.IndexOutline is AFACTORY.IndexOutline
-        assert UI.OutlineTemplates is AFACTORY.OutlineTemplates
-        assert UI.OutlineTopics is AFACTORY.OutlineTopics
-        assert UI.ViewOutlineTemplates is AFACTORY.ViewOutlineTemplates
-        assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
-        # assert UI.NewViewOutlineTopics is not None  # Not testable at
-        #     runtime [misc]
+    # def test_types_sheet(self):
+    #     """Confirm types defined for sheet components."""
+    #     # Setup
+    #     # Test
+    #     assert UI.IndexOutline is AFACTORY.IndexOutline
+    #     assert UI.OutlineTemplates is AFACTORY.OutlineTemplates
+    #     assert UI.OutlineTopics is AFACTORY.OutlineTopics
+    #     assert UI.ViewOutlineTemplates is AFACTORY.ViewOutlineTemplates
+    #     assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
+    #     # assert UI.NewViewOutlineTopics is not None  # Not testable at
+    #     #     runtime [misc]
 
-    def test_types_topic(self):
-        """Confirm types defined for topic components."""
-        # Setup
-        # Test
-        assert UI.IdTopic is AFACTORY.IdTopic
-        assert UI.OutlineFacts is AFACTORY.OutlineFacts
-        assert UI.ViewOutlineFacts is AFACTORY.ViewOutlineFacts
+    # def test_types_topic(self):
+    #     """Confirm types defined for topic components."""
+    #     # Setup
+    #     # Test
+    #     assert UI.IdTopic is AFACTORY.IdTopic
+    #     assert UI.OutlineFacts is AFACTORY.OutlineFacts
+    #     assert UI.ViewOutlineFacts is AFACTORY.ViewOutlineFacts
 
 
 class TestUiActions:

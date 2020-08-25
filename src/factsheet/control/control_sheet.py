@@ -19,7 +19,9 @@ from factsheet.control import pool as CPOOL
 from factsheet.control import control_topic as CTOPIC
 from factsheet.model import sheet as MSHEET
 from factsheet.model import topic as MTOPIC
-from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+from factsheet.view import types_view as VTYPES
+# from factsheet.view import ui as UI
 
 logger = logging.getLogger('Main.CSHEET')
 
@@ -40,7 +42,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         self._sheets_active = pm_sheets_active
         self._sheets_active.add(self)
         self._controls_topic: typing.Dict[
-            UI.IdTopic, CTOPIC.ControlTopic] = dict()
+            MTYPES.IdTopic, CTOPIC.ControlTopic] = dict()
 
     def _add_new_control_topic(self, px_topic: MTOPIC.Topic
                                ) -> CTOPIC.ControlTopic:
@@ -62,7 +64,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         self._model.attach_page(pm_page)
         self.new_name()
 
-    def attach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+    def attach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
         """Add view of topics outline to model.
 
         :param p_view: topics outline view to add.
@@ -122,7 +124,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
 
         return ABC_SHEET.EffectSafe.NO_EFFECT
 
-    def detach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+    def detach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
         """Remove view of topics outline from model.
 
         :param p_view: topics outline view to remove.
@@ -130,7 +132,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         assert self._model is not None
         self._model.detach_view_topics(p_view)
 
-    def extract_topic(self, px_i: UI.IndexOutline) -> None:
+    def extract_topic(self, px_i: MTYPES.IndexOutline) -> None:
         """Requests topics outline to remove topic and all descendants.
 
         :param px_i: index of parent topic to remove along with all
@@ -152,8 +154,8 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
             return None
 
     def insert_topic_after(
-            self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
-            ) -> typing.Tuple[UI.IndexOutline, CTOPIC.ControlTopic]:
+            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexOutline
+            ) -> typing.Tuple[MTYPES.IndexOutline, CTOPIC.ControlTopic]:
         """Requests topics outline add topic after topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_after`.
@@ -168,8 +170,8 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         return index_new, control_new
 
     def insert_topic_before(
-            self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
-            ) -> typing.Tuple[UI.IndexOutline, CTOPIC.ControlTopic]:
+            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexOutline
+            ) -> typing.Tuple[MTYPES.IndexOutline, CTOPIC.ControlTopic]:
         """Requests topics outline add topic before topic at given index.
 
         See :meth:`~.model.sheet.Sheet.insert_topic_before`.
@@ -184,8 +186,8 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         return index_new, control_new
 
     def insert_topic_child(
-            self, px_topic: MTOPIC.Topic, px_i: UI.IndexOutline
-            ) -> typing.Tuple[UI.IndexOutline, CTOPIC.ControlTopic]:
+            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexOutline
+            ) -> typing.Tuple[MTYPES.IndexOutline, CTOPIC.ControlTopic]:
         """Requests topics outline add topic as child of topic at given
         index.
 

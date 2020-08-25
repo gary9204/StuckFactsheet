@@ -9,6 +9,7 @@ from factsheet import content as XCONTENT
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
+from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -43,7 +44,7 @@ class QueryTemplate:
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_template.ui')
 
     def __init__(self, p_parent: Gtk.Window,
-                 p_new_view_topics: UI.NewViewOutlineTopics) -> None:
+                 p_new_view_topics: VTYPES.NewViewOutlineTopics) -> None:
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         get_object = builder.get_object
         self._dialog = get_object('ui_dialog_select_template')
@@ -89,7 +90,8 @@ class QueryTemplate:
         _ = button_by_title.connect('toggled', self.on_toggle_search_field,
                                     ASHEET.FieldsTemplate.TITLE)
 
-        self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
+        # self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
+        self._outline = VTYPES.ViewOutlineTemplates()
         self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
         templates = XCONTENT.new_templates(p_new_view_topics)
         templates.attach_view(self._outline)

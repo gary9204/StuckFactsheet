@@ -11,8 +11,9 @@ from factsheet.content import heading as XHEADING
 from factsheet.content import spec as XSPEC
 from factsheet.content.note import note_spec as XSPEC_NOTE
 from factsheet.content.note import note_topic as XNOTE
+from factsheet.model import types_model as MTYPES
 from factsheet.view import query_template as QTEMPLATES
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -103,7 +104,7 @@ def new_outline_model():
 
 @pytest.fixture
 def patch_outline(new_outline_model):
-    outline = UI.FACTORY_SHEET.new_model_outline_templates()
+    outline = MTYPES.OutlineTemplates()
     outline._gtk_model = new_outline_model()
     return outline
 

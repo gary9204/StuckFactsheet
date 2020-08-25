@@ -7,7 +7,8 @@ import pytest   # type: ignore[import]
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.view import query_place as QPLACE
-from factsheet.view import ui as UI
+from factsheet.view import types_view as VTYPES
+# from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -16,7 +17,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 @pytest.fixture
 def patch_view_topics(new_outline_topics):
     """Pytest fixture returns view of topic outline."""
-    outline = UI.FACTORY_SHEET.new_view_outline_topics()
+    outline = VTYPES.ViewOutlineTopics()
     topics = new_outline_topics()
     gtk_model = topics._gtk_model
     outline.gtk_view.set_model(gtk_model)

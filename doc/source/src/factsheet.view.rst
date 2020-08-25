@@ -27,5 +27,6 @@ Submodules
    factsheet.view.scene_int
    factsheet.view.scene_table
    factsheet.view.scene_value
+   factsheet.view.types_view
    factsheet.view.ui
    factsheet.view.view_infoid

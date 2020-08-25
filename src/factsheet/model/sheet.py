@@ -14,7 +14,9 @@ from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.model import infoid as MINFOID
-from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+from factsheet.view import types_view as VTYPES
+# from factsheet.view import ui as UI
 
 logger = logging.getLogger('Main.model.sheet')
 
@@ -69,7 +71,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
                  p_title: str = '') -> None:
         self._infoid = MINFOID.InfoId(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
-        self._topics = UI.FACTORY_SHEET.new_model_outline_topics()
+        self._topics = MTYPES.OutlineTopics()
         self._state_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
@@ -106,7 +108,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         self.attach_view_topics(pm_page.get_view_topics())
         self._pages[id(pm_page)] = pm_page
 
-    def attach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+    def attach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
         """Add view to update dialpay when topics outline changes.
 
         :param p_view: topics outline view to add.
@@ -155,14 +157,14 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
 
         self._detach_attribute_views(pm_page)
 
-    def detach_view_topics(self, p_view: UI.ViewOutlineTopics) -> None:
+    def detach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
         """Remove topics outline view.
 
         :param p_view: topics outline view to remove.
         """
         self._topics.detach_view(p_view)
 
-    def extract_topic(self, px_i: UI.IndexOutline) -> None:
+    def extract_topic(self, px_i: MTYPES.IndexOutline) -> None:
         """Remove topic and all its descendants from topic outline.
 
         :param px_i: index of parent topic to remove along with all
@@ -173,7 +175,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             self._close_topic(px_i)
             self._topics.extract_section(px_i)
 
-    def _close_topic(self, px_i: UI.IndexOutline) -> None:
+    def _close_topic(self, px_i: MTYPES.IndexOutline) -> None:
         """Signal all pages to close panes for a topic and all its descendants.
 
         :parm px_i: index of parent topic to close pane along with all
@@ -187,7 +189,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
                 page.close_topic(id_topic)
 
     def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> UI.IndexOutline:
+                           px_i: MTYPES.IndexOutline) -> MTYPES.IndexOutline:
         """Adds topic to topics outline after topic at given index.
 
         If index is None, adds topic at beginning of outline.
@@ -200,7 +202,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         return self._topics.insert_after(px_topic, px_i)
 
     def insert_topic_before(self, px_topic: ABC_TOPIC.AbstractTopic,
-                            px_i: UI.IndexOutline) -> UI.IndexOutline:
+                            px_i: MTYPES.IndexOutline) -> MTYPES.IndexOutline:
         """Adds topic to topics outline before topic at given index.
 
         If index is None, adds topic at end of outline.
@@ -213,7 +215,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         return self._topics.insert_before(px_topic, px_i)
 
     def insert_topic_child(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> UI.IndexOutline:
+                           px_i: MTYPES.IndexOutline) -> MTYPES.IndexOutline:
         """Adds topic to topic outline as child of topic at given index.
 
         Method adds topic after all existing children.  If index is
@@ -275,7 +277,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """Mark factsheet in memory changed from file contents."""
         self._stale = True
 
-    def topics(self, px_index: UI.IndexOutline = None
+    def topics(self, px_index: MTYPES.IndexOutline = None
                ) -> typing.Iterator[ABC_TOPIC.AbstractTopic]:
         """Return iterator over topics in topics outline.
 

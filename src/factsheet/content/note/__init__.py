@@ -11,15 +11,17 @@ from factsheet.content import spec as XSPEC
 from factsheet.content.note import note_spec as XNOTE_SPEC
 from factsheet.content.note import note_topic as XNOTE
 from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+from factsheet.view import types_view as VTYPES
 
 
-def new_templates(
-       p_new_view_topic: UI.NewViewOutlineTopics) -> UI.OutlineTemplates:
+def new_templates(p_new_view_topic: VTYPES.NewViewOutlineTopics
+                  ) -> MTYPES.OutlineTemplates:
     """Return outline containing note template.
 
     :param p_new_view_topics: funcion that returns current topics outline.
     """
-    templates = UI.FACTORY_SHEET.new_model_outline_templates()
+    templates = MTYPES.OutlineTemplates()
 
     note_spec = XNOTE_SPEC.SpecNote(
         p_name='Note',

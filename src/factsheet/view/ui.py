@@ -173,7 +173,7 @@ import typing
 from pathlib import Path
 
 import factsheet as FS
-from factsheet.adapt_gtk import adapt_factory as AFACTORY
+# from factsheet.adapt_gtk import adapt_factory as AFACTORY
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -184,8 +184,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 CLOSE_GTK = False
 CANCEL_GTK = not CLOSE_GTK
 DIR_UI = Path(__file__).parent / 'ui'
-FACTORY_INFOID = AFACTORY.FactoryInfoId()
-FACTORY_SHEET = AFACTORY.FactorySheet()
+# FACTORY_INFOID = AFACTORY.FactoryInfoId()
+# FACTORY_SHEET = AFACTORY.FactorySheet()
 
 # Application/Sheet dialogs
 NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')
@@ -206,16 +206,16 @@ del builder_guide_sheet
 del get_object_guide_sheet
 
 # Sheet Types
-IndexOutline = AFACTORY.IndexOutline
 KWArgs = typing.Mapping[str, typing.Any]
-OutlineTemplates = AFACTORY.OutlineTemplates
-OutlineTopics = AFACTORY.OutlineTopics
-ViewOutlineTemplates = AFACTORY.ViewOutlineTemplates
-ViewOutlineTopics = AFACTORY.ViewOutlineTopics
-NewViewOutlineTopics = typing.Callable[[], ViewOutlineTopics]
+# IndexOutline = AFACTORY.IndexOutline
+# OutlineTemplates = AFACTORY.OutlineTemplates
+# OutlineTopics = AFACTORY.OutlineTopics
+# ViewOutlineTemplates = AFACTORY.ViewOutlineTemplates
+# ViewOutlineTopics = AFACTORY.ViewOutlineTopics
+# NewViewOutlineTopics = typing.Callable[[], ViewOutlineTopics]
 
 # Topic-level definitions
-FACTORY_TOPIC = AFACTORY.FactoryTopic()
+# FACTORY_TOPIC = AFACTORY.FactoryTopic()
 
 # Topic-level guidance dialogs
 NAME_FILE_GUIDE_TOPIC_UI = str(DIR_UI / 'guide_topic.ui')
@@ -229,12 +229,12 @@ del builder_guide_topic
 del get_object_guide_topic
 
 # Topic Types
-IdTopic = AFACTORY.IdTopic
-OutlineFacts = AFACTORY.OutlineFacts
-ViewOutlineFacts = AFACTORY.ViewOutlineFacts
+# IdTopic = AFACTORY.IdTopic
+# OutlineFacts = AFACTORY.OutlineFacts
+# ViewOutlineFacts = AFACTORY.ViewOutlineFacts
 
 # Fact-level definitions
-FACTORY_FACT = AFACTORY.FactoryFact()
+# FACTORY_FACT = AFACTORY.FactoryFact()
 
 # Fact dialogs
 NAME_FILE_GUIDE_FACT_UI = str(DIR_UI / 'guide_fact.ui')

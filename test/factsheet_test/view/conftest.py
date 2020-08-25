@@ -10,7 +10,8 @@ import pytest   # type: ignore[import]
 # from factsheet.model import setindexed as MSET
 # from factsheet.model import table as MTABLE
 from factsheet.model import topic as MTOPIC
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
 
 gi.require_version('Gtk', '3.0')
 # from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -34,7 +35,7 @@ def new_outline_topics():
         |         name_112 | title_112 | summary_112
     """
     def new_model():
-        model = UI.FACTORY_SHEET.new_model_outline_topics()
+        model = MTYPES.OutlineTopics()
         gtk_model = model._gtk_model
 
         item = MTOPIC.Topic(

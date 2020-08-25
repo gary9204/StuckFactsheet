@@ -9,6 +9,7 @@ import math
 import pytest   # type: ignore[import]
 import typing
 
+from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import fact as MFACT
 from factsheet.control import control_fact as CFACT
 from factsheet.view import scenes as VSCENES
@@ -60,6 +61,62 @@ def patch_control_fact(patch_args_infoid):
     fact = MFACT.Fact(**DC.asdict(ARGS))
     control = CFACT.ControlFact(p_fact=fact)
     return control
+
+
+class PatchClassFact(ABC_FACT.AbstractFact):
+    """Defines test stub for :class:`.AbstractFact`."""
+
+    def id_fact(self):
+        return ABC_FACT.IdFact(id(self))
+
+    @property
+    def name(self):
+        return 'No name.'
+
+    @property
+    def status(self):
+        return ABC_FACT.StatusOfFact.BLOCKED
+
+    @property
+    def summary(self):
+        return 'No summary.'
+
+    @property
+    def title(self):
+        return 'No title.'
+
+    def is_fresh(self):
+        return False
+
+    def is_stale(self):
+        return False
+
+    def set_fresh(self):
+        pass
+
+    def set_stale(self):
+        pass
+
+
+@pytest.fixture
+def patch_pairs_class():
+    CLASS_FACT = PatchClassFact
+
+    class CLASS_FACT_1(CLASS_FACT):
+        pass
+
+    class CLASS_FACT_2(CLASS_FACT):
+        pass
+
+    # CLASS_BLOCK = PatchClassBlockFact
+
+    class CLASS_BLOCK_1(VFACT.BlockFact):
+        pass
+
+    pairs = [(CLASS_FACT, VFACT.BlockFact),
+             (CLASS_FACT_1, CLASS_BLOCK_1),
+             (CLASS_FACT_2, VFACT.BlockFact), ]
+    return pairs
 
 
 # class TestAspectValue:
@@ -544,3 +601,88 @@ class TestSelectorName:
         # Test
         target.select(NAME_NEW)
         assert name_init == target._selector_gtk.get_active_id()
+
+
+class TestFactoryFact:
+    """Unit tests for :class:`..FactoryBlockFact`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        # Test
+        target = VFACT.FactoryBlockFact()
+        assert target is not None
+        assert isinstance(target._fact_to_block, dict)
+        assert target._block_default is VFACT.BlockFact
+
+    def test_new_block_fact(self, patch_pairs_class, patch_control_fact):
+        """| Confirm block class returned.
+        | Case: block class registered for fact class.
+        """
+        # Setup
+        PAIRS = patch_pairs_class
+        I_FACT = 0
+        I_BLOCK = 1
+        target = VFACT.FactoryBlockFact()
+        for c_fact, c_block in PAIRS:
+            target.register_block(c_fact, c_block)
+
+        I_TARGET = 1
+        class_fact = PAIRS[I_TARGET][I_FACT]
+        fact = class_fact()
+        class_block = PAIRS[I_TARGET][I_BLOCK]
+        # Test
+        assert target.new_block_fact(p_fact=fact) is class_block
+
+    def test_new_block_fact_default(self, patch_pairs_class):
+        """| Confirm block class returned.
+        | Case: no block class registered for fact class.
+        """
+        # Setup
+        PAIRS = patch_pairs_class
+        target = VFACT.FactoryBlockFact()
+        for c_fact, c_block in PAIRS:
+            target.register_block(c_fact, c_block)
+
+        class ClassMissing(PatchClassFact):
+            pass
+        fact = ClassMissing()
+        # Test
+        assert target.new_block_fact(fact) is target._block_default
+
+    def test_register_block(self, patch_pairs_class):
+        """Confirm association from fact class to view class."""
+        PAIRS = patch_pairs_class
+        target = VFACT.FactoryBlockFact()
+        # Test
+        for class_fact, class_block in PAIRS:
+            target.register_block(class_fact, class_block)
+            assert target._fact_to_block[class_fact] is class_block
+
+    def test_register_block_warn(
+            self, PatchLogger, monkeypatch, patch_pairs_class):
+        """Confirm association from fact class to view class."""
+        # Setup
+        PAIRS = patch_pairs_class
+        I_FACT = 0
+        I_BLOCK = 1
+        target = VFACT.FactoryBlockFact()
+        for c_fact, c_block in PAIRS:
+            target.register_block(c_fact, c_block)
+
+        I_DUP = 2
+        class_fact_dup = PAIRS[I_DUP][I_FACT]
+        I_NEW = 1
+        class_block_new = PAIRS[I_NEW][I_BLOCK]
+
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Fact class assigned duplicate block class:\n\t{} <- {} '
+            '(FactoryBlockFact.register_block).'
+            ''.format(class_fact_dup.__name__, class_block_new.__name__))
+        # Test
+        target.register_block(class_fact_dup, class_block_new)
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message

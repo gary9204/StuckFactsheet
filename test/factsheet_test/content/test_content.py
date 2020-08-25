@@ -4,7 +4,8 @@ Unit tests for initialization of Factsheet content.  See
 """
 from factsheet import content as XCONTENT
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.view import types_view as VTYPES
 
 
 class TestContent:
@@ -13,7 +14,7 @@ class TestContent:
     def test_new_templates(self):
         """Confirm templates outline initialization."""
         # Setup
-        VIEW_TOPICS = UI.FACTORY_SHEET.new_view_outline_topics()
+        VIEW_TOPICS = VTYPES.ViewOutlineTopics()
         N_HEADINGS = 3
         # Test
         target = XCONTENT.new_templates(lambda: VIEW_TOPICS)

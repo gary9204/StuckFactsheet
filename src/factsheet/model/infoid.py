@@ -7,7 +7,8 @@ import typing
 
 from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+# from factsheet.view import ui as UI
 
 
 class InfoId(ABC_STALE.InterfaceStaleFile):
@@ -35,9 +36,9 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
                  p_title: str = '') -> None:
         self._id_model = id(self)
         self._stale = False
-        self._name = UI.FACTORY_INFOID.new_model_name(p_name)
-        self._summary = UI.FACTORY_INFOID.new_model_summary(p_summary)
-        self._title = UI.FACTORY_INFOID.new_model_title(p_title)
+        self._name = MTYPES.ModelName(p_name)
+        self._summary = MTYPES.ModelSummary(p_summary)
+        self._title = MTYPES.ModelTitle(p_title)
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same name, summary, and title.

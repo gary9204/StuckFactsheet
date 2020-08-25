@@ -5,7 +5,8 @@ Unit tests for integer subsection of sets content.  See
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.content.sets import int as XINTEGER
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.view import types_view as VTYPES
 
 
 class TestInteger:
@@ -14,7 +15,7 @@ class TestInteger:
     def test_new_templates(self):
         """Confirm template outline initialization."""
         # Setup
-        VIEW_TOPICS = UI.FACTORY_SHEET.new_view_outline_topics()
+        VIEW_TOPICS = VTYPES.ViewOutlineTopics()
         N_HEADINGS = 1
         NAME = '<i>Integer</i>'
         N_CHILDREN = 1

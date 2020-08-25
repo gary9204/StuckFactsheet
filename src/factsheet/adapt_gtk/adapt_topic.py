@@ -11,10 +11,13 @@ import typing
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.abc_types import abc_fact as ABC_FACT
+from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+IdTopic = ABC_TOPIC.IdTopic
 
 
 class AdaptTreeStoreFact(

@@ -18,7 +18,9 @@ from factsheet.content.ops.int import plusmodn_topic as XPLUS_N
 from factsheet.content.sets.int import segint_topic as XSEG_INT
 from factsheet.content.sets.int import setint_topic as XSET_INT
 from factsheet.model import setindexed as MSET
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+from factsheet.view import types_view as VTYPES
 
 gi.require_version('Gtk', '3.0')
 # from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -40,7 +42,7 @@ class ITopics:
 @pytest.fixture
 def patch_model_topics():
     """Pytest fixture returns sample topics outline for testing."""
-    model_topics = UI.FACTORY_SHEET.new_model_outline_topics()
+    model_topics = MTYPES.OutlineTopics()
 
     i_none = model_topics.insert_after(None, None)
     heading = XHEADING.Heading(
@@ -68,7 +70,7 @@ class ArgsSpec:
     p_title: str
     p_class_topic: typing.Type[XPLUS_N.PlusModN]
     p_path_assist: XSPEC.StrAssist
-    p_new_view_topics: typing.Optional[UI.NewViewOutlineTopics]
+    p_new_view_topics: typing.Optional[VTYPES.NewViewOutlineTopics]
 
 
 @pytest.fixture
@@ -76,7 +78,7 @@ def patch_args_spec(patch_model_topics):
     """Pytest fixture returns set of argument values to construct
     a stock :class:`.SpecPlusModN` object."""
     model_topics, _indexes = patch_model_topics
-    view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+    view_topics = VTYPES.ViewOutlineTopics()
     model_topics.attach_view(view_topics)
 
     def NEW_VIEW_TOPICS(): return view_topics
@@ -96,7 +98,7 @@ def patch_args_spec(patch_model_topics):
 def patch_ui_confirm(patch_model_topics):
     """Pytest fixture returns user interface objects for page Confirm."""
     model_topics, indexes = patch_model_topics
-    view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+    view_topics = VTYPES.ViewOutlineTopics()
     model_topics.attach_view(view_topics)
     cursor = view_topics.gtk_view.get_selection()
     cursor.select_iter(indexes.segment)
@@ -219,7 +221,7 @@ class TestSpecPlusModN:
         """
         target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
         model_topics, indexes = patch_model_topics
-        view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        view_topics = VTYPES.ViewOutlineTopics()
         model_topics.attach_view(view_topics)
         INDEX = getattr(indexes, NAME_ITER)
         topic = model_topics.get_item(INDEX)
@@ -248,7 +250,7 @@ class TestSpecPlusModN:
         # Setup
         target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
         model_topics, indexes = patch_model_topics
-        view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        view_topics = VTYPES.ViewOutlineTopics()
         model_topics.attach_view(view_topics)
         cursor = view_topics.gtk_view.get_selection()
         cursor.select_iter(indexes.none)
@@ -275,7 +277,7 @@ class TestSpecPlusModN:
         # Setup
         target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
         model_topics, _indexes = patch_model_topics
-        view_topics = UI.FACTORY_SHEET.new_view_outline_topics()
+        view_topics = VTYPES.ViewOutlineTopics()
         model_topics.attach_view(view_topics)
         cursor = view_topics.gtk_view.get_selection()
         cursor.unselect_all()

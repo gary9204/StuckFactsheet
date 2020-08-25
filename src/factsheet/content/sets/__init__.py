@@ -3,14 +3,16 @@ Defines sets section of Factsheet content.
 See :mod:`~.factsheet.content`.
 """
 from factsheet.content import heading as XHEADING
-from factsheet.view import ui as UI
+# from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
+from factsheet.view import types_view as VTYPES
 from . import int as XINT
 
 
-def new_templates(
-       p_new_view_topic: UI.NewViewOutlineTopics) -> UI.OutlineTemplates:
+def new_templates(p_new_view_topic: VTYPES.NewViewOutlineTopics
+                  ) -> MTYPES.OutlineTemplates:
     """Return outline of set templates."""
-    templates = UI.FACTORY_SHEET.new_model_outline_templates()
+    templates = MTYPES.OutlineTemplates()
 
     heading_sets = XHEADING.Heading(
         p_name='<i>Sets</i>',

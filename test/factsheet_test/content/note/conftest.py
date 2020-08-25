@@ -6,8 +6,8 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_infoid as AINFOID
-from factsheet.view import ui as UI
-
+# from factsheet.view import ui as UI
+from factsheet.model import types_model as MTYPES
 
 # @pytest.fixture
 # def patch_args_infoid():
@@ -32,13 +32,16 @@ def interface_view_infoid(patch_args_infoid):
 
         def __init__(self):
             ARGS = patch_args_infoid
-            self._name = UI.FACTORY_INFOID.new_view_name()
+            # self._name = UI.FACTORY_INFOID.new_view_name()
+            self._name = MTYPES.ModelName()
             self._name.set_text(ARGS.p_name)
-            self._summary = UI.FACTORY_INFOID.new_view_summary()
+            # self._summary = UI.FACTORY_INFOID.new_view_summary()
+            self._summary = MTYPES.ModelSummary()
             buffer_summary = self._summary.get_buffer()
             buffer_summary.set_text(
                 ARGS.p_summary, self.ALL_TEXT)
-            self._title = UI.FACTORY_INFOID.new_view_title()
+            # self._title = UI.FACTORY_INFOID.new_view_title()
+            self._title = MTYPES.ModelTitle()
             self._title.set_text(ARGS.p_title)
 
         def get_view_name(self): return self._name

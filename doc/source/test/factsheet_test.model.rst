@@ -19,3 +19,4 @@ Submodules
    factsheet_test.model.test_setindexed
    factsheet_test.model.test_sheet
    factsheet_test.model.test_topic
+   factsheet_test.model.test_types_model
