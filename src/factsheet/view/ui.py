@@ -73,10 +73,6 @@ implementation-specific details.
     Type hint for index to item in an outline in a :class:`.Sheet` or
     :class:`.Topic`.
 
-.. data:: KWArgs
-
-    Type hint for method keyword arguments.
-
 .. data:: NewViewOutlineTopics
 
     Type hint for signature of constructor for a topic.
@@ -206,7 +202,7 @@ del builder_guide_sheet
 del get_object_guide_sheet
 
 # Sheet Types
-KWArgs = typing.Mapping[str, typing.Any]
+# KWArgs = typing.Mapping[str, typing.Any]
 # IndexOutline = AFACTORY.IndexOutline
 # OutlineTemplates = AFACTORY.OutlineTemplates
 # OutlineTopics = AFACTORY.OutlineTopics

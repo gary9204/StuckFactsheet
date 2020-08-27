@@ -10,7 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    factsheet.abc_types
    factsheet.adapt_gtk
@@ -23,6 +23,6 @@ Submodules
 ----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    factsheet.app

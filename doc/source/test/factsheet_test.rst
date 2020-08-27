@@ -10,7 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    factsheet_test.abc_types
    factsheet_test.adapt_gtk
@@ -23,7 +23,7 @@ Submodules
 ----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    factsheet_test.conftest
    factsheet_test.test_app

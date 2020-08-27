@@ -9,8 +9,11 @@ import pytest   # type: ignore[import]
 import typing
 
 from factsheet.content import spec as XSPEC
+from factsheet.content.sets import set_facts as XFACTS_SET
+from factsheet.content.sets.int import segint_facts as XFACTS_SEGINT
 from factsheet.content.sets.int import segint_spec as XSPEC_SEGINT
 from factsheet.content.sets.int import segint_topic as XSEGINT
+from factsheet.view.block import block_fact as VFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -63,6 +66,21 @@ def patch_ui_args():
 
 class TestSpecSegInt:
     """Unit tests for :class:`.SpecSegInt`."""
+
+    def test_init(self, patch_args_spec):
+        """Confirm initialization."""
+        # Setup
+        ARGS = patch_args_spec
+        MAP = {
+            XFACTS_SET.ElementsSet: VFACT.BlockFact,
+            XFACTS_SET.SearchSet: VFACT.BlockFactStr,
+            XFACTS_SET.SizeSet: VFACT.BlockFactInt,
+            XFACTS_SEGINT.BoundSegInt: VFACT.BlockFactInt,
+            }
+        # Test
+        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
+        for fact in MAP.keys():
+            assert target._fact_to_block._mapping[fact] is MAP[fact]
 
     def test_call_apply(self, patch_args_spec, monkeypatch):
         """| Confirm call method specifies segment topic.

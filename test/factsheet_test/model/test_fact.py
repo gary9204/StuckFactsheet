@@ -7,6 +7,7 @@ from pathlib import Path
 import pickle
 import pytest   # type: ignore[import]
 
+from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import infoid as MINFOID
 from factsheet.model import fact as MFACT
 
@@ -14,21 +15,21 @@ from factsheet.model import fact as MFACT
 class TestFact:
     """Unit tests for :class:`~.Fact`."""
 
-    @pytest.mark.parametrize('STATE, EXPECT_NONE', [
-        (MFACT.StatusOfFact.UNCHECKED, True),
-        (MFACT.StatusOfFact.UNDEFINED, True),
-        (MFACT.StatusOfFact.DEFINED, False),
+    @pytest.mark.parametrize('STATUS', [
+        MFACT.StatusOfFact.BLOCKED,
+        MFACT.StatusOfFact.UNCHECKED,
+        MFACT.StatusOfFact.UNDEFINED,
+        MFACT.StatusOfFact.DEFINED,
         ])
-    def test_call(self, patch_args_infoid, STATE, EXPECT_NONE):
+    def test_call(self, patch_args_infoid, STATUS):
         """Confirm call result for each fact check state."""
         # Setup
         ARGS = patch_args_infoid
         target = MFACT.Fact[int](**DC.asdict(ARGS))
         target._value = 'Shropshire Blue'
-        target._status = STATE
-        expect = None if EXPECT_NONE else target._value
+        target._status = STATUS
         # Test
-        assert target() is expect
+        assert target() is target._value
 
     @pytest.mark.skip(reason='Implementation in progress.')
     def test_eq(self):
@@ -157,34 +158,6 @@ class TestFact:
         # Test: no delete
         assert target_prop.fdel is None
 
-    def test_check(self, patch_args_infoid):
-        """Confirm default check."""
-        # Setup
-        ARGS = patch_args_infoid
-        target = MFACT.Fact(**DC.asdict(ARGS))
-        value_pre = target._value
-        target.set_fresh()
-        # Test
-        result = target.check()
-        assert target._value is value_pre
-        assert target._status is MFACT.StatusOfFact.UNDEFINED
-        assert target.is_stale()
-        assert result is MFACT.StatusOfFact.UNDEFINED
-
-    def test_clear(self, patch_args_infoid):
-        """Confirm default check."""
-        # Setup
-        ARGS = patch_args_infoid
-        target = MFACT.Fact(**DC.asdict(ARGS))
-        target._value = 'Something completely different.'
-        target._status = MFACT.StatusOfFact.DEFINED
-        target.set_fresh()
-        # Test
-        target.clear()
-        assert target._value is MFACT.StatusOfFact.UNCHECKED
-        assert target._status is MFACT.StatusOfFact.UNCHECKED
-        assert target.is_stale()
-
     def test_attach_block(self, patch_class_block_fact):
         """Confirm fact block addition.
         Case: block not attached initially
@@ -197,7 +170,7 @@ class TestFact:
         N_VIEWS = 3
         blocks = [PatchBlockFact() for _ in range(N_VIEWS)]
         assert blocks[0].get_infoid().title != target._infoid.title
-        # # Test
+        # Test
         for block in blocks:
             target.attach_block(block)
             assert target._infoid.title == block.get_infoid().title
@@ -236,6 +209,47 @@ class TestFact:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+
+    def test_check(self, patch_args_infoid, patch_class_block_fact):
+        """Confirm default check."""
+        # Setup
+        ARGS = patch_args_infoid
+        target = MFACT.Fact(**DC.asdict(ARGS))
+        VALUE = 'Something completely different.'
+        target._value = VALUE
+        STATUS = MFACT.StatusOfFact.UNCHECKED
+        target._status = STATUS
+        PatchBlockFact = patch_class_block_fact
+        block = PatchBlockFact()
+        target.attach_block(block)
+        target.set_fresh()
+        # Test
+        result = target.check()
+        assert target.is_stale()
+        assert VALUE == target._value
+        assert target._status is STATUS
+        assert block.called_update
+        assert result is STATUS
+
+    def test_clear(self, patch_args_infoid, patch_class_block_fact):
+        """Confirm default check."""
+        # Setup
+        ARGS = patch_args_infoid
+        target = MFACT.Fact(**DC.asdict(ARGS))
+        VALUE = 'Something completely different.'
+        target._value = VALUE
+        STATUS = MFACT.StatusOfFact.DEFINED
+        target._status = STATUS
+        PatchBlockFact = patch_class_block_fact
+        block = PatchBlockFact()
+        target.attach_block(block)
+        target.set_fresh()
+        # Test
+        target.clear()
+        assert VALUE == target._value
+        assert target._status is STATUS
+        assert target.is_stale()
+        assert block.called_update
 
     def test_detach_all(self, monkeypatch, patch_class_block_fact):
         """Confirm removals."""
@@ -488,3 +502,39 @@ class TestFact:
         target.set_stale()
         assert target._stale
         assert target._infoid.is_stale()
+
+    def test_update_blocks(self, patch_class_block_fact):
+        """Confirm update notification."""
+        # Setup
+        TITLE_MODEL = 'Something completely different.'
+        target = MFACT.Fact(p_title=TITLE_MODEL)
+        VALUE = 'Norwegian Blue'
+        target._value = VALUE
+        STATUS = MFACT.StatusOfFact.DEFINED
+        target._status = STATUS
+
+        PatchBlockFact = patch_class_block_fact
+        N_VIEWS = 3
+        blocks = [PatchBlockFact() for _ in range(N_VIEWS)]
+        assert blocks[0].get_infoid().title != target._infoid.title
+        for block in blocks:
+            target.attach_block(block)
+        assert len(blocks) == len(target._blocks)
+        # Test
+        target._update_blocks()
+        for block in blocks:
+            assert block.called_update
+            assert block.update_status is STATUS
+            assert VALUE is block.update_value
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.fact`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert MFACT.IdFact is ABC_FACT.IdFact
+        assert MFACT.StatusOfFact is ABC_FACT.StatusOfFact
+        assert MFACT.ValueOfFact is ABC_FACT.ValueOfFact

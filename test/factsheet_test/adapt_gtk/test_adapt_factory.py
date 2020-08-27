@@ -102,7 +102,7 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         assert isinstance(target._fact_to_block, dict)
 #         assert target._block_default is VFACT.BlockFact
 
-#     def test_new_block_fact(self, patch_pairs_class):
+#     def test_new_block(self, patch_pairs_class):
 #         """| Confirm block class returned.
 #         | Case: block class registered for fact class.
 #         """
@@ -112,18 +112,18 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         I_BLOCK = 1
 #         target = AFACTORY.FactoryFact()
 #         for c_fact, c_block in PAIRS:
-#             target.register_block(c_fact, c_block)
+#             target.register(c_fact, c_block)
 
 #         I_TARGET = 1
 #         class_fact = PAIRS[I_TARGET][I_FACT]
 #         fact = class_fact()
 #         class_block = PAIRS[I_TARGET][I_BLOCK]
 #         # Test
-#         result = target.new_block_fact(fact)
+#         result = target.new_block(fact)
 #         assert isinstance(result, class_block)
 
 #     @pytest.mark.skip(reason='Pending resolution of circular import.')
-#     def test_new_block_fact_default(self, patch_pairs_class):
+#     def test_new_block_default(self, patch_pairs_class):
 #         """| Confirm block class returned.
 #         | Case: no block class registered for fact class.
 #         """
@@ -131,25 +131,25 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         PAIRS = patch_pairs_class
 #         target = AFACTORY.FactoryFact()
 #         for c_fact, c_block in PAIRS:
-#             target.register_block(c_fact, c_block)
+#             target.register(c_fact, c_block)
 
 #         class ClassMissing(PatchClassFact):
 #             pass
 #         fact = ClassMissing()
 #         # Test
-#         result = target.new_block_fact(fact)
+#         result = target.new_block(fact)
 #         assert isinstance(result, target._block_default)
 
-#     def test_register_block(self, patch_pairs_class):
+#     def test_register(self, patch_pairs_class):
 #         """Confirm association from fact class to view class."""
 #         PAIRS = patch_pairs_class
 #         target = AFACTORY.FactoryFact()
 #         # Test
 #         for class_fact, class_block in PAIRS:
-#             target.register_block(class_fact, class_block)
+#             target.register(class_fact, class_block)
 #             assert target._fact_to_block[class_fact] is class_block
 
-#     def test_register_block_warn(
+#     def test_register_warn(
 #             self, PatchLogger, monkeypatch, patch_pairs_class):
 #         """Confirm association from fact class to view class."""
 #         # Setup
@@ -158,7 +158,7 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         I_BLOCK = 1
 #         target = AFACTORY.FactoryFact()
 #         for c_fact, c_block in PAIRS:
-#             target.register_block(c_fact, c_block)
+#             target.register(c_fact, c_block)
 
 #         I_DUP = 2
 #         class_fact_dup = PAIRS[I_DUP][I_FACT]
@@ -169,10 +169,10 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
 #         log_message = (
 #             'Fact class assigned duplicate block class:\n\t{} <- {} '
-#             '(FactoryFact.register_block).'
+#             '(FactoryFact.register).'
 #             ''.format(class_fact_dup.__name__, class_block_new.__name__))
 #         # Test
-#         target.register_block(class_fact_dup, class_block_new)
+#         target.register(class_fact_dup, class_block_new)
 #         assert patch_logger.called
 #         assert PatchLogger.T_WARNING == patch_logger.level
 #         assert log_message == patch_logger.message

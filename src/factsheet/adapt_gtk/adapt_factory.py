@@ -42,7 +42,7 @@ Defines GTK-based classes that implement abstract factories in
 #         # ERROR: Circular import
 #         self._block_default = None  # VFACT.BlockFact
 
-#     def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
+#     def new_block(self, p_fact: ABC_FACT.AbstractFact
 #                        ) -> ABC_FACT.InterfaceBlockFact:
 #         """Return new fact block instance suited to display given fact.
 
@@ -53,7 +53,7 @@ Defines GTK-based classes that implement abstract factories in
 #         assert class_block is not None
 #         return class_block()
 
-#     def register_block(
+#     def register(
 #             self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
 #             p_class_block: typing.Type[ABC_FACT.InterfaceBlockFact]) -> None:
 #         """Associate block class with fact class.
@@ -61,7 +61,7 @@ Defines GTK-based classes that implement abstract factories in
 #         Method logs a warning when called with distince block classes
 #         and a common fact class.
 
-#         Method :meth:`.new_block_fact` uses the association from fact
+#         Method :meth:`.new_block` uses the association from fact
 #         classes to block classes when creating block instances.
 
 #         :param p_class_fact: target fact class.
@@ -75,7 +75,7 @@ Defines GTK-based classes that implement abstract factories in
 #                 'Fact class assigned duplicate block class:\n\t{} <- {} '
 #                 '({}.{}).'.format(
 #                     p_class_fact.__name__, p_class_block.__name__,
-#                     self.__class__.__name__, self.register_block.__name__))
+#                     self.__class__.__name__, self.register.__name__))
 
 
 # class FactoryInfoId(ABC_FACTORY.FactoryInfoId):

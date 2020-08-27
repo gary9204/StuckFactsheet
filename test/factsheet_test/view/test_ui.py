@@ -18,12 +18,6 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class TestTypes:
     """Unit tests for type definitions in :mod:`.ui`."""
 
-    def test_types_misc(self):
-        """Confirm types defined for miscellaneous components."""
-        # Setup
-        # Test
-        assert UI.KWArgs is not None
-
     # def test_types_sheet(self):
     #     """Confirm types defined for sheet components."""
     #     # Setup

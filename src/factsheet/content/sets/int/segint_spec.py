@@ -6,8 +6,13 @@ import dataclasses as DC
 import gi   # type: ignore[import]
 import typing
 
+from factsheet.abc_types import abc_topic as ABC_TOPIC
+from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import spec as XSPEC
+from factsheet.content.sets import set_facts as XFACTS_SET
+from factsheet.content.sets.int import segint_facts as XFACTS_SEGINT
 from factsheet.content.sets.int import segint_topic as XSEGINT
+from factsheet.view.block import block_fact as VFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -33,6 +38,26 @@ class SpecSegInt(XSPEC.Spec):
 
     See also :class:`.SegInt`.
     """
+
+    def __init__(
+            self, *, p_name: str, p_summary: str, p_title: str,
+            p_class_topic: typing.Type[ABC_TOPIC.AbstractTopic],
+            p_path_assist: typing.Optional[XSPEC.StrAssist],
+            p_new_view_topics: typing.Callable[[], ASHEET.AdaptTreeViewTopic]
+            ) -> None:
+        super().__init__(
+            p_name=p_name, p_summary=p_summary, p_title=p_title,
+            p_class_topic=p_class_topic, p_path_assist=p_path_assist,
+            p_new_view_topics=p_new_view_topics)
+
+        self._fact_to_block.register(
+            XFACTS_SET.ElementsSet, VFACT.BlockFact)
+        self._fact_to_block.register(
+            XFACTS_SET.SearchSet, VFACT.BlockFactStr)
+        self._fact_to_block.register(
+            XFACTS_SET.SizeSet, VFACT.BlockFactInt)
+        self._fact_to_block.register(
+            XFACTS_SEGINT.BoundSegInt, VFACT.BlockFactInt)
 
     def __call__(self) -> typing.Optional[XSEGINT.SegInt]:
         """Return topic based on user's input or None when user cancels."""

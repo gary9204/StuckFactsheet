@@ -20,7 +20,7 @@ component classes of :class:`.InfoId`.
 #     """
 
 #     @abc.abstractmethod
-#     def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
+#     def new_block(self, p_fact: ABC_FACT.AbstractFact
 #                        ) -> ABC_FACT.InterfaceBlockFact:
 #         """Return new block to display given fact.
 
@@ -29,12 +29,12 @@ component classes of :class:`.InfoId`.
 #         raise NotImplementedError
 
 #     @abc.abstractmethod
-#     def register_block(
+#     def register(
 #             self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
 #             p_class_type: typing.Type[ABC_FACT.InterfaceBlockFact]) -> None:
 #         """Associate block class with fact class.
 
-#         Method :meth:`.new_block_fact` uses the association from fact
+#         Method :meth:`.new_block` uses the association from fact
 #         classes to block classes when creating block instances.
 
 #         :param p_class_fact: target fact class.

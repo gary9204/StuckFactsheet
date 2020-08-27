@@ -44,7 +44,7 @@ class Factsheet(Gtk.Application):
     :param kwargs: superclass keyword parameters
     """
 
-    def __init__(self, *args: typing.Tuple, **kwargs: typing.Dict):
+    def __init__(self, *args: typing.Tuple, **kwargs: typing.Any):
         """Register application with GTK."""
         super().__init__(application_id='com.novafolks.g2alpha',
                          flags=Gio.ApplicationFlags.FLAGS_NONE,

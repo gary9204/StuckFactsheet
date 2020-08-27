@@ -18,4 +18,5 @@ Submodules
 
 .. toctree::
 
+   factsheet.content.sets.set_facts
    factsheet.content.sets.set_topic

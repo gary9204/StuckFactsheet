@@ -187,7 +187,8 @@ class TestBlockFact:
         # Test
         assert VFACT.BlockFact.NAME_FILE_FACT_UI is not None
         target = VFACT.BlockFact(p_control=CONTROL)
-        assert target._value is VFACT.StatusOfFact.BLOCKED
+        assert target._status == VFACT.StatusOfFact.UNCHECKED
+        assert target._value is None
         assert target._control is CONTROL
 
         assert isinstance(target._infoid, VINFOID.ViewInfoId)
@@ -371,10 +372,12 @@ class TestBlockFact:
         target = VFACT.BlockFact(p_control=CONTROL)
         target._aspects.add_scene(target.plain(), 'Plain')
         target._names.select(NAME_CURRENT)
+        STATUS_NEW = ABC_FACT.StatusOfFact.DEFINED
         VALUE_NEW = 'Something completely different'
         N_ASPECTS = 1
         # Test
-        target.update_value(VALUE_NEW)
+        target.update(p_status=STATUS_NEW, p_value=VALUE_NEW)
+        assert target._status is STATUS_NEW
         assert VALUE_NEW == target._value
         assert N_ASPECTS == len(target._aspects._stack_gtk)
         assert target._name_default == target._aspects.get_scene_visible()
@@ -604,18 +607,18 @@ class TestSelectorName:
 
 
 class TestFactoryFact:
-    """Unit tests for :class:`..FactoryBlockFact`."""
+    """Unit tests for :class:`..MapFactToBlock`."""
 
     def test_init(self):
         """Confirm initialization."""
         # Setup
         # Test
-        target = VFACT.FactoryBlockFact()
+        target = VFACT.MapFactToBlock()
         assert target is not None
-        assert isinstance(target._fact_to_block, dict)
+        assert isinstance(target._mapping, dict)
         assert target._block_default is VFACT.BlockFact
 
-    def test_new_block_fact(self, patch_pairs_class, patch_control_fact):
+    def test_call(self, patch_pairs_class, patch_control_fact):
         """| Confirm block class returned.
         | Case: block class registered for fact class.
         """
@@ -623,52 +626,52 @@ class TestFactoryFact:
         PAIRS = patch_pairs_class
         I_FACT = 0
         I_BLOCK = 1
-        target = VFACT.FactoryBlockFact()
+        target = VFACT.MapFactToBlock()
         for c_fact, c_block in PAIRS:
-            target.register_block(c_fact, c_block)
+            target.register(c_fact, c_block)
 
         I_TARGET = 1
         class_fact = PAIRS[I_TARGET][I_FACT]
         fact = class_fact()
         class_block = PAIRS[I_TARGET][I_BLOCK]
         # Test
-        assert target.new_block_fact(p_fact=fact) is class_block
+        assert target(p_fact=fact) is class_block
 
-    def test_new_block_fact_default(self, patch_pairs_class):
+    def test_call_default(self, patch_pairs_class):
         """| Confirm block class returned.
         | Case: no block class registered for fact class.
         """
         # Setup
         PAIRS = patch_pairs_class
-        target = VFACT.FactoryBlockFact()
+        target = VFACT.MapFactToBlock()
         for c_fact, c_block in PAIRS:
-            target.register_block(c_fact, c_block)
+            target.register(c_fact, c_block)
 
         class ClassMissing(PatchClassFact):
             pass
         fact = ClassMissing()
         # Test
-        assert target.new_block_fact(fact) is target._block_default
+        assert target(fact) is target._block_default
 
-    def test_register_block(self, patch_pairs_class):
+    def test_register(self, patch_pairs_class):
         """Confirm association from fact class to view class."""
         PAIRS = patch_pairs_class
-        target = VFACT.FactoryBlockFact()
+        target = VFACT.MapFactToBlock()
         # Test
         for class_fact, class_block in PAIRS:
-            target.register_block(class_fact, class_block)
-            assert target._fact_to_block[class_fact] is class_block
+            target.register(class_fact, class_block)
+            assert target._mapping[class_fact] is class_block
 
-    def test_register_block_warn(
+    def test_register_warn(
             self, PatchLogger, monkeypatch, patch_pairs_class):
         """Confirm association from fact class to view class."""
         # Setup
         PAIRS = patch_pairs_class
         I_FACT = 0
         I_BLOCK = 1
-        target = VFACT.FactoryBlockFact()
+        target = VFACT.MapFactToBlock()
         for c_fact, c_block in PAIRS:
-            target.register_block(c_fact, c_block)
+            target.register(c_fact, c_block)
 
         I_DUP = 2
         class_fact_dup = PAIRS[I_DUP][I_FACT]
@@ -679,10 +682,21 @@ class TestFactoryFact:
         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
         log_message = (
             'Fact class assigned duplicate block class:\n\t{} <- {} '
-            '(FactoryBlockFact.register_block).'
+            '(MapFactToBlock.register).'
             ''.format(class_fact_dup.__name__, class_block_new.__name__))
         # Test
-        target.register_block(class_fact_dup, class_block_new)
+        target.register(class_fact_dup, class_block_new)
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.fact`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert VFACT.StatusOfFact is ABC_FACT.StatusOfFact
+        assert VFACT.ValueOfFact is ABC_FACT.ValueOfFact

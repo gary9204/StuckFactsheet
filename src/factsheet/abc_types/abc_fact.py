@@ -15,13 +15,15 @@ encapsulation.
 
     Type for name of presentation style for a fact value.
 
-.. data:: ValueAny
+..
+    data:: ValueAny
 
     Generic type for fact value without fact status.
 
-.. data:: ValueOfFact
+..
+    data:: ValueOfFact
 
-    Type for fact value including fact status.
+    Generic type for fact value.
 """
 import enum
 import abc
@@ -32,24 +34,24 @@ from factsheet.abc_types import abc_stalefile as ABC_STALE
 
 
 class StatusOfFact(enum.Enum):
-    """Indicates whether user has update_value fact and outcome of check.
+    """Indicates whether user has checked fact and outcome of check.
 
     .. attribute:: BLOCKED
 
-        Fact cannot be update_value because, for example, prerequisite
+        Fact cannot be checked because, for example, prerequisite
         information is unavailable.
 
     .. attribute:: DEFINED
 
-        User update_value fact and its value is defined.
+        User checked fact and its value is defined.
 
     .. attribute:: UNCHECKED
 
-        User has not update_value fact and its value is unknown.
+        User has not checked fact and its value is unknown.
 
     .. attribute:: UNDEFINED
 
-        User update_value fact but its value is not defined.
+        User checked fact but its value is not defined.
     """
     BLOCKED = enum.auto()
     UNCHECKED = enum.auto()
@@ -59,8 +61,9 @@ class StatusOfFact(enum.Enum):
 
 IdFact = typing.NewType('IdFact', int)
 NameScene = typing.NewType('NameScene', str)
-ValueAny = typing.TypeVar('ValueAny')
-ValueOfFact = typing.Union[StatusOfFact, ValueAny]
+# ValueAny = typing.TypeVar('ValueAny')
+# ValueOfFact = typing.Union[StatusOfFact, ValueAny]
+ValueOfFact = typing.TypeVar('ValueOfFact')
 
 
 class AbstractFact(ABC_STALE.InterfaceStaleFile):
@@ -97,16 +100,17 @@ class AbstractFact(ABC_STALE.InterfaceStaleFile):
         raise NotImplementedError
 
 
-class InterfaceBlockFact(abc.ABC, typing.Generic[ValueAny]):
+class InterfaceBlockFact(abc.ABC, typing.Generic[ValueOfFact]):
     """Defines interface for :class:`~.Fact` model to signal
     :class:`~.BlockFact`.
     """
 
     @abc.abstractmethod
-    def update_value(self, p_value: ValueOfFact) -> None:
-        """Update view with new fact value.
+    def update(self, p_status: StatusOfFact, p_value: ValueOfFact) -> None:
+        """Update view with new fact status and value.
 
-        :param p_value: new fact value.
+        :param p_status: new status of fact.
+        :param p_value: new value of fact.
         """
         raise NotImplementedError
 

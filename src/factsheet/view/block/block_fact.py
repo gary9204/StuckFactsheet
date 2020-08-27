@@ -12,11 +12,15 @@ from factsheet.view import scenes as VSCENES
 from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
 
+from factsheet.abc_types.abc_fact import StatusOfFact
+from factsheet.abc_types.abc_fact import ValueOfFact
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango  # type: ignore[import]  # noqa:E402
+
 
 logger = logging.getLogger('Main.block_fact')
 
@@ -49,10 +53,6 @@ Aspect = typing.TypeVar('Aspect')
 #         return self._aspect_gtk
 
 
-StatusOfFact = ABC_FACT.StatusOfFact
-ValueOfFact = ABC_FACT.ValueOfFact
-
-
 class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
     """Displays fact and translates user actions.
 
@@ -70,7 +70,8 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
     NAME_FILE_FACT_UI = str(UI.DIR_UI / 'fact.ui')
 
     def __init__(self, p_control: CFACT.ControlFact) -> None:
-        self._value: ValueOfFact = StatusOfFact.BLOCKED
+        self._status = StatusOfFact.UNCHECKED
+        self._value: typing.Optional[ValueOfFact] = None
         self._control = p_control
 
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_FACT_UI)
@@ -221,17 +222,31 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
         aspect.add(label)
         return aspect
 
-    def update_value(self, p_value: ValueOfFact) -> None:
+    def update(self, p_status: StatusOfFact, p_value: ValueOfFact) -> None:
         """Update value and clear aspects then change to synopsis aspect.
 
-        :param p_value: new fact falue
+        :param p status: new status of fact.
+        :param p_value: new value of fact.
         """
+        self._status = p_status
         self._value = p_value
         self._aspects.clear()
         if self._name_default == self._names.get_name():
             self.select_aspect(self._name_default)
         else:
             self._names.select(self._name_default)
+
+
+class BlockFactInt(BlockFact[int]):
+    """Stub for development testing."""
+
+    pass
+
+
+class BlockFactStr(BlockFact[str]):
+    """Stub for development testing."""
+
+    pass
 
 
 class SelectorName:
@@ -307,45 +322,43 @@ class SelectorName:
             self._selector_gtk.set_active_id(p_name)
 
 
-class FactoryBlockFact:
-    """TBD"""
+class MapFactToBlock:
+    """Records correspondence from fact classs to fact block classs."""
 
     def __init__(self):
-        self._fact_to_block: typing.MutableMapping[
+        self._mapping: typing.MutableMapping[
             typing.Type[ABC_FACT.AbstractFact],
             typing.Type[ABC_FACT.InterfaceBlockFact]] = dict()
         self._block_default = BlockFact
 
-    def new_block_fact(self, p_fact: ABC_FACT.AbstractFact
-                       ) -> typing.Type[ABC_FACT.InterfaceBlockFact]:
+    def __call__(self, p_fact: ABC_FACT.AbstractFact
+                 ) -> typing.Type[ABC_FACT.InterfaceBlockFact]:
         """Return new fact block class suited to display given fact.
 
         :param p_fact: fact to display.
         """
-        class_block = self._fact_to_block.get(
-            type(p_fact), self._block_default)
+        class_block = self._mapping.get(type(p_fact), self._block_default)
         assert class_block is not None
         return class_block
 
-    def register_block(
-            self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
-            p_class_block: typing.Type[ABC_FACT.InterfaceBlockFact]) -> None:
+    def register(self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
+                 p_class_block: typing.Type[ABC_FACT.InterfaceBlockFact]
+                 ) -> None:
         """Associate block class with fact class.
 
         Method logs a warning when called with distince block classes
         and a common fact class.
 
-        Method :meth:`.new_block_fact` uses the association from fact
+        Method :meth:`.new_block` uses the association from fact
         classes to block classes when creating block instances.
 
         :param p_class_fact: target fact class.
         :param p_class_block: block class for fact class.
         """
-        class_block = self._fact_to_block.setdefault(
-            p_class_fact, p_class_block)
+        class_block = self._mapping.setdefault(p_class_fact, p_class_block)
         if class_block is not p_class_block:
             logger.warning(
                 'Fact class assigned duplicate block class:\n\t{} <- {} '
                 '({}.{}).'.format(
                     p_class_fact.__name__, p_class_block.__name__,
-                    self.__class__.__name__, self.register_block.__name__))
+                    self.__class__.__name__, self.register.__name__))

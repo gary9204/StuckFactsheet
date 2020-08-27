@@ -20,19 +20,19 @@ class TestFactoryFact:
     #         _ = ABC_FACTORY.FactoryFact()
 
     # @pytest.mark.parametrize('NAME_METHOD', [
-    #     'new_block_fact',
-    #     'register_block',
+    #     'new_block',
+    #     'register',
     #     ])
     # def test_must_override(self, NAME_METHOD):
     #     """Confirm each method must be overridden."""
     #     # Setup
     #     class PatchFactory(ABC_FACTORY.FactoryFact):
 
-    #         def new_block_fact(self):
-    #             super().new_block_fact(None)
+    #         def new_block(self):
+    #             super().new_block(None)
 
-    #         def register_block(self):
-    #             super().register_block(None, None)
+    #         def register(self):
+    #             super().register(None, None)
 
     #     target = PatchFactory()
     #     # Test

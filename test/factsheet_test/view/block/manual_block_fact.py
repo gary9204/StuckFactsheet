@@ -3,6 +3,7 @@ Defines application for manually testing view of table value.
 """
 import gi   # type: ignore[import]
 import sys
+import typing
 
 from factsheet.control import control_fact as CFACT
 from factsheet.model import fact as MFACT
@@ -18,19 +19,20 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class SampleFact:
     """Sample presenting a Boolean Fact"""
 
-    def __init__(self, p_parent, p_value_check, p_value_clear) -> None:
+    def __init__(self, p_parent, p_status_check, p_value_check) -> None:
         self.window_gtk = p_parent
+        self.status_check = p_status_check
         self.value_check = p_value_check
-        self.value_clear = p_value_clear
         self.control = self.make_control()
-        self.block_fact = VFACT.BlockFact(self.control)
+        self.block_fact = VFACT.BlockFact[typing.Any](self.control)
         self.dialog_gtk = self.make_dialog(self.block_fact.block_gtk)
 
     def on_check(self, _button) -> None:
-        self.block_fact.update_value(self.value_check)
+        self.block_fact.update(self.status_check, self.value_check)
 
     def on_clear(self, _button) -> None:
-        self.block_fact.update_value(self.value_clear)
+        default = 'You have not checked this fact.'
+        self.block_fact.update(MFACT.StatusOfFact.UNCHECKED, default)
 
     def make_control(self) -> CFACT.ControlFact:
         type_value = type(self.value_check).__name__
@@ -90,15 +92,15 @@ class WinDispatch:
         button = Gtk.Button(label='Demo Boolean Fact')
         box_gtk.pack_start(button, NO_EXPAND, NO_FILL, PADDING)
         sample_bool = SampleFact(p_parent=self.window_gtk,
-                                 p_value_check=True,
-                                 p_value_clear=MFACT.StatusOfFact.DEFINED)
+                                 p_status_check=MFACT.StatusOfFact.DEFINED,
+                                 p_value_check=True)
         button.connect('clicked', self.on_clicked, sample_bool)
 
         button = Gtk.Button(label='Demo Integer Fact')
         box_gtk.pack_start(button, NO_EXPAND, NO_FILL, PADDING)
         sample_int = SampleFact(p_parent=self.window_gtk,
-                                p_value_check=42,
-                                p_value_clear=MFACT.StatusOfFact.UNCHECKED)
+                                p_status_check=MFACT.StatusOfFact.DEFINED,
+                                p_value_check=42)
         button.connect('clicked', self.on_clicked, sample_int)
 
         button = Gtk.Button(label='Demo Text Fact')
@@ -112,8 +114,8 @@ class WinDispatch:
             '-- Cassius from <i>Julius Caeser</i>'
             )
         sample_text = SampleFact(p_parent=self.window_gtk,
-                                 p_value_check=text,
-                                 p_value_clear=MFACT.StatusOfFact.UNDEFINED)
+                                 p_status_check=MFACT.StatusOfFact.DEFINED,
+                                 p_value_check=text)
         button.connect('clicked', self.on_clicked, sample_text)
 
         filler = Gtk.Label()

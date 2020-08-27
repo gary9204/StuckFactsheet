@@ -22,8 +22,7 @@ class TestTypes:
         assert Status.DEFINED
         assert Status.UNCHECKED
         assert Status.UNDEFINED
-        assert ABC_FACT.ValueAny
-        # assert ABC_FACT.ValueOfFact  # Not testable at runtime [misc]
+        assert ABC_FACT.ValueOfFact
 
 
 class TestAbstractFact:
@@ -83,14 +82,14 @@ class TestInterfaceBlockFact:
             _ = ABC_FACT.InterfaceBlockFact()
 
     @pytest.mark.parametrize('NAME_METHOD', [
-        'update_value',
+        'update',
         'get_infoid',
         ])
     def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
         class PatchBlockFact(ABC_FACT.InterfaceBlockFact):
-            def update_value(self): super().update_value(None)
+            def update(self): super().update(None, None)
 
             def get_infoid(self): super().get_infoid()
 

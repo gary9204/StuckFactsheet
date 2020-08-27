@@ -7,7 +7,8 @@ from factsheet.model import element as MELEMENT
 from factsheet.model import setindexed as MSET
 from factsheet.model import topic as MTOPIC
 
-MemberGeneric = typing.TypeVar('MemberGeneric')
+from factsheet.model.setindexed import MemberGeneric
+# MemberGeneric = typing.TypeVar('MemberGeneric')
 
 
 class Set(MTOPIC.Topic, typing.Generic[MemberGeneric]):
@@ -56,7 +57,7 @@ class Set(MTOPIC.Topic, typing.Generic[MemberGeneric]):
     def __init__(
             self, *, p_name: str = '', p_summary: str = '', p_title: str = '',
             p_members: typing.Optional[typing.Iterable[MemberGeneric]] = None,
-            **kwargs: typing.Dict) -> None:
+            **kwargs: typing.Any) -> None:
         super().__init__(
             p_name=p_name, p_summary=p_summary, p_title=p_title, **kwargs)
         members = p_members if p_members is not None else list()

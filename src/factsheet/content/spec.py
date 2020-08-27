@@ -13,6 +13,7 @@ import typing
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
+from factsheet.view.block import block_fact as VFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -46,6 +47,7 @@ class Spec(ABC_SHEET.AbstractTemplate):
         self._path_assist = p_path_assist
         self._new_view_topics = p_new_view_topics
 
+        self._fact_to_block = VFACT.MapFactToBlock()
         self._response: typing.Optional[Gtk.ResponseType] = None
 
     def __call__(self) -> typing.Optional[ABC_TOPIC.AbstractTopic]:
@@ -77,7 +79,7 @@ class Spec(ABC_SHEET.AbstractTemplate):
         self._response = Gtk.ResponseType.CANCEL
 
         # def on_prepare(self, p_assistant: Gtk.Assistant, p_page: Gtk.Widget,
-        #                **kwargs: typing.Mapping) -> None:
+        #                **kwargs: typing.Any) -> None:
         #     """Update assistant pages based on user's actions.
         #
         #     Ancestor method is a no-op.

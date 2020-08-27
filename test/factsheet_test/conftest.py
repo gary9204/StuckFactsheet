@@ -5,6 +5,9 @@ import dataclasses as DC
 import pytest   # type: ignore[import]
 import typing
 
+from factsheet.abc_types import abc_fact as ABC_FACT
+from factsheet.abc_types import abc_infoid as ABC_INFOID
+from factsheet.adapt_gtk import adapt_infoid as AINFOID
 from factsheet.model import element as MELEMENT
 from factsheet.model import setindexed as MSET
 from factsheet.model import table as MTABLE
@@ -14,6 +17,68 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+@pytest.fixture
+def interface_view_infoid(patch_args_infoid):
+    """Pytest fixture returns stub class implementing
+    :class:`.InterfaceViewInfoId`.
+     """
+    class PatchViewInfoId(ABC_INFOID.InterfaceViewInfoId):
+        ALL_TEXT = -1
+        INCLUDE_HIDDEN = True
+
+        def __init__(self):
+            ARGS = patch_args_infoid
+            # self._name = UI.FACTORY_INFOID.new_view_name()
+            self._name = AINFOID.AdaptEntry()
+            self._name.set_text(ARGS.p_name)
+            # self._summary = UI.FACTORY_INFOID.new_view_summary()
+            self._summary = AINFOID.AdaptTextView()
+            buffer_summary = self._summary.get_buffer()
+            buffer_summary.set_text(
+                ARGS.p_summary, self.ALL_TEXT)
+            # self._title = UI.FACTORY_INFOID.new_view_title()
+            self._title = AINFOID.AdaptEntry()
+            self._title.set_text(ARGS.p_title)
+
+        def get_view_name(self): return self._name
+
+        def get_view_summary(self): return self._summary
+
+        def get_view_title(self): return self._title
+
+        @property
+        def name(self): return self._name.get_text()
+
+        @property
+        def summary(self):
+            text = AINFOID.str_adapt_textview(self.get_view_summary())
+            return text
+
+        @property
+        def title(self): return self._title.get_text()
+
+    return PatchViewInfoId
+
+
+@pytest.fixture
+def patch_class_block_fact(interface_view_infoid):
+    """Pytest fixture returns stub class for :class:`.InterfaceBlockFact`.
+    """
+    class PatchClassBlockFact(ABC_FACT.InterfaceBlockFact):
+        def __init__(self):
+            self._infoid = interface_view_infoid()
+            self.called_update = False
+
+        def get_infoid(self): return self._infoid
+
+        def update(self, p_status, p_value) -> None:
+            self.called_update = True
+            self.update_status = p_status
+            self.update_value = p_value
+
+    return PatchClassBlockFact
 
 
 @pytest.fixture

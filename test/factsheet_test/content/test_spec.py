@@ -9,6 +9,7 @@ import typing
 
 from factsheet.content import spec as XSPEC
 from factsheet.model import topic as MTOPIC
+from factsheet.view.block import block_fact as VFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -71,6 +72,7 @@ class TestSpec:
         assert target._path_assist == ARGS.p_path_assist
         assert target._new_view_topics is ARGS.p_new_view_topics
 
+        assert isinstance(target._fact_to_block, VFACT.MapFactToBlock)
         assert target._response is None
 
     def test_call(self, patch_args_spec):

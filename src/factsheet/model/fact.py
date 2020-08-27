@@ -13,15 +13,15 @@ import typing   # noqa
 from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import infoid as MINFOID
 
+from factsheet.abc_types.abc_fact import IdFact
+from factsheet.abc_types.abc_fact import StatusOfFact
+from factsheet.abc_types.abc_fact import ValueOfFact
+
 logger = logging.getLogger('Main.model.fact')
 
-StatusOfFact = ABC_FACT.StatusOfFact
-ValueAny = typing.TypeVar('ValueAny')
-ValueOfFact = ABC_FACT.ValueOfFact
 
-
-class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
-    """Fact component of Factsheet :mod:`~factsheet.model`.
+class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
+    """Fact component of Factsheet :mod:`~.factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a
     Factsheet. A model fact consists of value along with identification
@@ -43,14 +43,11 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
     """
 
     def __call__(self) -> typing.Optional[ValueOfFact]:
-        """Return fact value or None.
+        """Return fact value.
 
-        Return None when the the user has not checked the fact or the
-        fact value is not defined.
+        If the user has not checked the fact or the fact value is not
+        defined, return None.
         """
-        if self._status is not ABC_FACT.StatusOfFact.DEFINED:
-            return None
-
         return self._value
 
     def __eq__(self, px_other: typing.Any) -> bool:
@@ -78,11 +75,11 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
         return state
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '', **_kwargs: typing.Dict) -> None:
+                 p_title: str = '', **_kwargs: typing.Any) -> None:
         self._infoid = MINFOID.InfoId(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._value: typing.Optional[ValueOfFact] = None
-        self._status = ABC_FACT.StatusOfFact.BLOCKED
+        self._status = StatusOfFact.BLOCKED
         self._set_transient()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
@@ -118,18 +115,28 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
         self._infoid.attach_view(p_block.get_infoid())
         self._blocks[id_block] = p_block
 
-    def check(self, **_kwargs: typing.Mapping[str, typing.Any]
-              ) -> ABC_FACT.StatusOfFact:
-        """Set fact value and set corresponding state of fact check."""
-        self._status = ABC_FACT.StatusOfFact.UNDEFINED
+    def check(self, **_kwargs: typing.Any) -> StatusOfFact:
+        """Set fact value and set corresponding state of fact check.
+
+        Base class marks change in fact and notifies attached fact
+        blocks.  Base class does not change fact status or value.
+        """
         self.set_stale()
+        # self._value = None
+        # self._status = StatusOfFact.UNDEFINED
+        self._update_blocks()
         return self._status
 
-    def clear(self, **_kwargs: typing.Mapping[str, typing.Any]) -> None:
-        """Clear fact value and set state of fact check to unchecked."""
-        self._value = ABC_FACT.StatusOfFact.UNCHECKED
-        self._status = ABC_FACT.StatusOfFact.UNCHECKED
+    def clear(self, **_kwargs: typing.Any) -> None:
+        """Clear fact value and set corresponding state of fact check.
+
+        Base class marks change in fact and notifies attached fact
+        blocks.  Base class does not change fact status or value.
+        """
         self.set_stale()
+        # self._value = None
+        # self._status = StatusOfFact.UNCHECKED
+        self._update_blocks()
 
     def detach_all(self) -> None:
         """Detach all fact blocks from fact."""
@@ -167,9 +174,9 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
     #     self._infoid.detach_view(p_block.get_infoid())
 
     @property
-    def id_fact(self) -> ABC_FACT.IdFact:
+    def id_fact(self) -> IdFact:
         """Return fact identifier. """
-        return ABC_FACT.IdFact(self._infoid.id_model)
+        return IdFact(self._infoid.id_model)
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to fact."""
@@ -189,7 +196,7 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
         return False
 
     @property
-    def status(self) -> ABC_FACT.StatusOfFact:
+    def status(self) -> StatusOfFact:
         """Return status of fact check."""
         return self._status
 
@@ -222,3 +229,8 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueAny]):
     def title(self) -> str:
         """Return fact title."""
         return self._infoid.title
+
+    def _update_blocks(self) -> None:
+        """Notifiy all fact blocks of new status and value."""
+        for block in self._blocks.values():
+            block.update(self._status, self._value)

@@ -59,7 +59,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         return state
 
     def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '', **_kwargs: typing.Dict) -> None:
+                 p_title: str = '', **_kwargs: typing.Any) -> None:
         self._infoid = MINFOID.InfoId(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._state_transient()
