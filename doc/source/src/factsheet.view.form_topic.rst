@@ -1,13 +1,13 @@
-``pane_topic`` View Module
+``form_topic`` View Module
 ==========================
 
-.. automodule:: factsheet.view.pane_topic
+.. automodule:: factsheet.view.form_topic
    :members:
-   :exclude-members: PaneTopic
+   :exclude-members: FormTopic
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: PaneTopic
+.. autoclass:: FormTopic
    :members:
    :exclude-members: NAME_FILE_TOPIC_UI
    :undoc-members:

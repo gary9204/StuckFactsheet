@@ -10,22 +10,21 @@ import gi   # type: ignore[import]
 import typing
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.abc_types import abc_fact as ABC_FACT
-from factsheet.abc_types import abc_topic as ABC_TOPIC
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
+import factsheet.abc_types.abc_fact as ABC_FACT
+import factsheet.adapt_gtk.adapt_outline as AOUTLINE
+
+from factsheet.adapt_gtk.adapt_outline import IndexGtk as IndexFact
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-
-IdTopic = ABC_TOPIC.IdTopic
 
 
 class AdaptTreeStoreFact(
         AOUTLINE.AdaptTreeStore[ABC_FACT.AbstractFact]):
     """Specializes :class:`.AdaptTreeStore` with :class:`.Fact` items."""
 
-    def find_name(self, p_target: str, p_i_after: AOUTLINE.AdaptIndex = None
-                  ) -> typing.Optional[AOUTLINE.AdaptIndex]:
+    def find_name(self, p_target: str, p_i_after: IndexFact = None
+                  ) -> typing.Optional[IndexFact]:
         """Return index of first fact where the target value equals the
         fact name or None if no match.
 
@@ -42,8 +41,8 @@ class AdaptTreeStoreFact(
             p_target, p_i_after, lambda fact: fact.name)
 
     def find_title(self, p_target: str,
-                   p_i_after: AOUTLINE.AdaptIndex = None
-                   ) -> AOUTLINE.AdaptIndex:
+                   p_i_after: IndexFact = None
+                   ) -> IndexFact:
         """Return index of first fact where the target value equals the
         fact title or None if no match.
 
@@ -106,7 +105,7 @@ class AdaptTreeViewFact(AOUTLINE.AdaptTreeView):
 
     def _fill_name(self, _column: Gtk.TreeViewColumn,
                    p_render: Gtk.CellRenderer, p_store: Gtk.TreeStore,
-                   p_i_row: AOUTLINE.AdaptIndex) -> None:
+                   p_i_row: IndexFact) -> None:
         """Adapter to diaplay fact name in a `Gtk.TreeIter`_ column.
 
         :param p_render: cell renderer to display fact name.
@@ -119,7 +118,7 @@ class AdaptTreeViewFact(AOUTLINE.AdaptTreeView):
 
     def _fill_status(self, _column: Gtk.TreeViewColumn,
                      p_render: Gtk.CellRenderer, p_store: Gtk.TreeStore,
-                     p_i_row: AOUTLINE.AdaptIndex) -> None:
+                     p_i_row: IndexFact) -> None:
         """Adapter to display fact title in a `Gtk.TreeIter`_ column.
 
         :param p_render: cell renderer to display fact name.
@@ -132,7 +131,7 @@ class AdaptTreeViewFact(AOUTLINE.AdaptTreeView):
 
     def _fill_title(self, _column: Gtk.TreeViewColumn,
                     p_render: Gtk.CellRenderer, p_store: Gtk.TreeStore,
-                    p_i_row: AOUTLINE.AdaptIndex) -> None:
+                    p_i_row: IndexFact) -> None:
         """Adapter to display fact title in a `Gtk.TreeIter`_ column.
 
         :param p_render: cell renderer to display fact name.

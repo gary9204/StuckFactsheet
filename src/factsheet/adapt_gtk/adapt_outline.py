@@ -5,7 +5,7 @@ classes.  See :mod:`.abc_outline`.
 Other classes specialize :class:`.AdaptTreeStore` and
 :class:`.AdaptTreeView` for template, topic, form, and fact content.
 
-.. data:: AdaptIndex
+.. data:: IndexGtk
 
     GTK type for index of an item within an outline.
     See `Gtk.TreeIter`_.
@@ -13,7 +13,7 @@ Other classes specialize :class:`.AdaptTreeStore` and
 .. _`Gtk.TreeIter`:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeIter.html
 
-.. data:: GenericItem
+.. data:: ItemOpaque
 
     Generic type for an item within an outline.
 """
@@ -23,7 +23,9 @@ import itertools as IT
 import logging
 import typing
 
-from factsheet.abc_types import abc_outline as ABC_OUTLINE
+import factsheet.abc_types.abc_outline as ABC_OUTLINE
+
+from factsheet.abc_types.abc_outline import ItemOpaque
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -31,11 +33,11 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.adapt.outline')
 
-AdaptIndex = typing.Union[Gtk.TreeIter]
-GenericItem = typing.TypeVar('GenericItem')
+IndexGtk = typing.Union[Gtk.TreeIter]
+# ItemOpaque = typing.TypeVar('ItemOpaque')
 
 
-class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
+class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[IndexGtk]):
     """Implements abstract :class:`.AbstractViewOutline`.
 
     ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
@@ -52,7 +54,7 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
         self._selection = self._gtk_view.get_selection()
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
-    def get_selected(self) -> typing.Optional[AdaptIndex]:
+    def get_selected(self) -> typing.Optional[IndexGtk]:
         """Return the index of the selected item or None when no item
         selected.
         """
@@ -64,7 +66,7 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
         """Return underlying presentation element."""
         return self._gtk_view
 
-    def select(self, px_i: AdaptIndex = None) -> None:
+    def select(self, px_i: IndexGtk = None) -> None:
         """Select the item at the given index.
 
         :param px_i: index of new selection.  If None, then no item is
@@ -81,7 +83,7 @@ class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
 
 
 class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
-        AdaptIndex, GenericItem, 'AdaptTreeStore', AdaptTreeView]):
+        IndexGtk, ItemOpaque, 'AdaptTreeStore', AdaptTreeView]):
     """Implements abstract :class:`.AbstractOutline` with generic item.
 
     ``AdaptTreeStore`` implements a generic outline using
@@ -222,7 +224,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
                     hex(id_view_outline),
                     self.__class__.__name__, self.detach_view.__name__))
 
-    def extract_section(self, px_i: AdaptIndex) -> None:
+    def extract_section(self, px_i: IndexGtk) -> None:
         """Remove section from outline.
 
         :param px_i: index of parent item to remove along with all
@@ -231,9 +233,9 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         if px_i is not None:
             _ = self._gtk_model.remove(px_i)
 
-    def find_next(self, px_target: typing.Any, px_i_after: AdaptIndex = None,
+    def find_next(self, px_target: typing.Any, px_i_after: IndexGtk = None,
                   px_derive: typing.Callable[[typing.Any], typing.Any] = (
-                      lambda v: v)) -> AdaptIndex:
+                      lambda v: v)) -> IndexGtk:
         """Return index of next item where the target value equals value
         derived from item's content in given field or None if no match.
 
@@ -266,7 +268,7 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
 
         return None
 
-    def get_item(self, px_i: AdaptIndex) -> typing.Optional[GenericItem]:
+    def get_item(self, px_i: IndexGtk) -> typing.Optional[ItemOpaque]:
         """Return item at given index or None when no item at index.
 
         Logs warning when no item at index.
@@ -275,8 +277,8 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         """
         return get_item_gtk(self._gtk_model, px_i)
 
-    def indices(self, px_index: AdaptIndex = None
-                ) -> typing.Iterator[AdaptIndex]:
+    def indices(self, px_index: IndexGtk = None
+                ) -> typing.Iterator[IndexGtk]:
         """Return iterator over indices of items in a section.
 
         The iterator is recursive (that is, includes items from sections
@@ -294,8 +296,8 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
             yield from self.indices(index)
             index = self._gtk_model.iter_next(index)
 
-    def insert_after(self, px_item: GenericItem,
-                     px_i: AdaptIndex) -> AdaptIndex:
+    def insert_after(self, px_item: ItemOpaque,
+                     px_i: IndexGtk) -> IndexGtk:
         """Adds item to outline after item at given index.
 
         If index is None, adds item at beginning of outline.
@@ -307,8 +309,8 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         PARENT = None
         return self._gtk_model.insert_after(PARENT, px_i, [px_item])
 
-    def insert_before(self, px_item: GenericItem,
-                      px_i: AdaptIndex) -> AdaptIndex:
+    def insert_before(self, px_item: ItemOpaque,
+                      px_i: IndexGtk) -> IndexGtk:
         """Adds item to outline before item at given index.
 
         If index is None, adds item at end of outline.
@@ -320,8 +322,8 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         PARENT = None
         return self._gtk_model.insert_before(PARENT, px_i, [px_item])
 
-    def insert_child(self, px_item: GenericItem,
-                     px_i: AdaptIndex) -> AdaptIndex:
+    def insert_child(self, px_item: ItemOpaque,
+                     px_i: IndexGtk) -> IndexGtk:
         """Adds item to outline as child of item at given index.
 
         Method adds item after all existing children.  If index is None,
@@ -334,8 +336,8 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
         return self._gtk_model.append(px_i, [px_item])
 
     def insert_section(self, px_source: 'AdaptTreeStore',
-                       px_i_source: AdaptIndex = None,
-                       px_i_target: AdaptIndex = None) -> None:
+                       px_i_source: IndexGtk = None,
+                       px_i_target: IndexGtk = None) -> None:
         """Copy section of another outline under given item.
 
         Method ``insert_section`` copies the section after all
@@ -365,8 +367,8 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
             i_from = px_source._gtk_model.iter_next(i_from)
 
 
-def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
-                 ) -> typing.Optional[GenericItem]:
+def get_item_gtk(px_model: Gtk.TreeModel, px_i: IndexGtk
+                 ) -> typing.Optional[ItemOpaque]:
     """Return item at given index in GTK-model of outline model or None.
 
     Return None when no item at index and logs warning.
@@ -389,7 +391,7 @@ def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
     return item
 
 
-# class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[AdaptIndex]):
+# class AdaptTreeView(ABC_OUTLINE.AbstractViewOutline[IndexGtk]):
 #     """Implements abstract :class:`.AbstractViewOutline`.
 
 #     ``AdaptTreeView`` implements a outline view using `Gtk.TreeView`_
@@ -406,7 +408,7 @@ def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
 #         self._selection = self._gtk_view.get_selection()
 #         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
-#     def get_selected(self) -> typing.Optional[AdaptIndex]:
+#     def get_selected(self) -> typing.Optional[IndexGtk]:
 #         """Return the index of the selected item or None when no item
 #         selected.
 #         """
@@ -418,7 +420,7 @@ def get_item_gtk(px_model: Gtk.TreeModel, px_i: AdaptIndex
 #         """Return underlying presentation element."""
 #         return self._gtk_view
 
-#     def select(self, px_i: AdaptIndex = None) -> None:
+#     def select(self, px_i: IndexGtk = None) -> None:
 #         """Select the item at the given index.
 
 #         :param px_i: index of new selection.  If None, then no item is

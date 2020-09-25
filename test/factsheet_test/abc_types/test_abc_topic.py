@@ -3,17 +3,8 @@ Unit tests for topic abstract interfaces.  See :mod:`.abc_topic`.
 """
 import pytest   # type: ignore[import]
 
+import factsheet.abc_types.abc_outline as ABC_OUTLINE
 import factsheet.abc_types.abc_topic as ABC_TOPIC
-
-
-class TestTypes:
-    """Unit tests for type definitions in :mod:`.abc_topic`."""
-
-    def test_types(self):
-        """Confirm types defined."""
-        # Setup
-        # Test
-        assert ABC_TOPIC.IdTopic is not None
 
 
 class TestAbstractTopic:
@@ -27,20 +18,27 @@ class TestAbstractTopic:
             _ = ABC_TOPIC.AbstractTopic()
 
     @pytest.mark.parametrize('name_method', [
-        'id_topic',
-        'name',
-        'summary',
-        'title',
+        'check_fact',
+        'clear_all',
+        'clear_fact',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchTopic(ABC_TOPIC.AbstractTopic):
-            def id_topic(self): return super().id_topic
+            def check_fact(self): return super().check_fact(None)
+
+            def clear_all(self): return super().clear_all()
+
+            def clear_fact(self): return super().clear_fact(None)
+
+            def init_identity(self): return super().init_identity()
 
             def name(self): return super().name
 
             def summary(self): return super().summary
+
+            def tag(self): return super().id_topic
 
             def title(self): return super().title
 
@@ -76,13 +74,24 @@ class TestInterfaceFormTopic:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchPaneTopic(ABC_TOPIC.InterfaceFormTopic):
+        class PatchFormTopic(ABC_TOPIC.InterfaceFormTopic):
             def get_infoid(self): super().get_infoid()
 
             def get_view_facts(self): super().get_view_facts()
 
-        target = PatchPaneTopic()
+        target = PatchFormTopic()
         # Test
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)
             method()
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.abc_topic`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert ABC_TOPIC.IndexOpaque is ABC_OUTLINE.IndexOpaque
+        assert ABC_TOPIC.TagTopic is not None

@@ -9,6 +9,44 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_infoid as ABC_INFOID
 
 
+class TestAbstractIdentity:
+    """Unit tests for :class:`.InterfaceViewInfoId`."""
+
+    def test_abstract(self):
+        """Confirm class is abstract."""
+        # No Setup
+        # Test
+        with pytest.raises(TypeError):
+            _target = ABC_INFOID.AbstractIdentity()
+
+    @pytest.mark.parametrize('name_method', [
+        'init_identity',
+        'name',
+        'summary',
+        'tag',
+        'title',
+        ])
+    def test_must_override(self, name_method):
+        """Confirm each method must be overridden."""
+        # Setup
+        class PatchInterface(ABC_INFOID.AbstractIdentity):
+            def init_identity(self): super().init_identity()
+
+            def name(self): super().name
+
+            def summary(self): super().summary
+
+            def tag(self): super().tag
+
+            def title(self): super().title
+
+        target = PatchInterface()
+        # Test
+        with pytest.raises(NotImplementedError):
+            method = getattr(target, name_method)
+            method()
+
+
 class TestAbstractTextModel:
     """Unit tests for interfaces common to model text attributes.
     See :class:`.AbstractTextModel`."""
@@ -106,9 +144,6 @@ class TestInterfaceViewInfoId:
         'get_view_name',
         'get_view_summary',
         'get_view_title',
-        # 'name',
-        # 'summary',
-        # 'title',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
@@ -125,3 +160,14 @@ class TestInterfaceViewInfoId:
         with pytest.raises(NotImplementedError):
             method = getattr(target, name_method)
             method()
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.abc_infoid`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert ABC_INFOID.TagOpaque is not None
+        assert ABC_INFOID.TextViewOpaque is not None

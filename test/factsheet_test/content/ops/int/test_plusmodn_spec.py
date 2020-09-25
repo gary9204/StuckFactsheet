@@ -48,13 +48,16 @@ def patch_model_topics():
     heading = XHEADING.Heading(
         p_name='Heading', p_summary='Heading summary', p_title='Heading Title')
     i_heading = model_topics.insert_after(heading, i_none)
-    note = XNOTE.Note(p_name='Note')
+    note = XNOTE.Note()
+    note.init_identity(p_name='Note')
     i_note = model_topics.insert_after(note, i_heading)
-    segment = XSEG_INT.SegInt(p_name='Segment', p_title='Initial Segment')
+    segment = XSEG_INT.SegInt()
+    segment.init_identity(p_name='Segment', p_title='Initial Segment')
     i_segment = model_topics.insert_after(segment, i_note)
     MODULUS = 6
     SET = MSET.SetIndexed(list(range(MODULUS)))
-    plus_n = XPLUS_N.PlusModN(p_name='PlusModN', p_set=SET, p_modulus=MODULUS)
+    plus_n = XPLUS_N.PlusModN(p_set=SET, p_modulus=MODULUS)
+    plus_n.init_identity(p_name='PlusModN')
     i_plus_n = model_topics.insert_after(plus_n, i_segment)
     indexes = ITopics(i_none, i_heading, i_note, i_segment, i_plus_n)
     return model_topics, indexes
@@ -68,9 +71,8 @@ class ArgsSpec:
     p_name: str
     p_summary: str
     p_title: str
-    p_class_topic: typing.Type[XPLUS_N.PlusModN]
     p_path_assist: XSPEC.StrAssist
-    p_new_view_topics: typing.Optional[VTYPES.NewViewOutlineTopics]
+    p_attach_view_topics: typing.Optional[VTYPES.AttachViewTopics]
 
 
 @pytest.fixture
@@ -81,16 +83,15 @@ def patch_args_spec(patch_model_topics):
     view_topics = VTYPES.ViewOutlineTopics()
     model_topics.attach_view(view_topics)
 
-    def NEW_VIEW_TOPICS(): return view_topics
+    def NEW_VIEW_TOPICS(_view): pass
 
     return ArgsSpec(
         p_name='Inquisition',
         p_summary='No one expects the Spanish Inquisition!',
         p_title='The Spanish Inquisition',
-        p_class_topic=XPLUS_N.PlusModN,
         p_path_assist=XSPEC.StrAssist(
             str(Path(XSPEC_PLUS_N.__file__).parent / 'plusmodn_spec.ui')),
-        p_new_view_topics=NEW_VIEW_TOPICS
+        p_attach_view_topics=NEW_VIEW_TOPICS
         )
 
 
@@ -153,7 +154,9 @@ class TestSpecPlusModN:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         # Sync identification information with plusmodn_spec.ui.
         NAME = ''
         SUMMARY = ''
@@ -192,7 +195,9 @@ class TestSpecPlusModN:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
 
         class PatchMainIteration:
             def __init__(self, p_target):
@@ -219,7 +224,10 @@ class TestSpecPlusModN:
         """| Confirm updates when current topic changes.
         | Case: change to topic.
         """
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
+        ARGS = patch_args_spec
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         model_topics, indexes = patch_model_topics
         view_topics = VTYPES.ViewOutlineTopics()
         model_topics.attach_view(view_topics)
@@ -248,7 +256,10 @@ class TestSpecPlusModN:
         | Case: change to topic None.
         """
         # Setup
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
+        ARGS = patch_args_spec
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         model_topics, indexes = patch_model_topics
         view_topics = VTYPES.ViewOutlineTopics()
         model_topics.attach_view(view_topics)
@@ -275,7 +286,10 @@ class TestSpecPlusModN:
         | Case: change to no current topic.
         """
         # Setup
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
+        ARGS = patch_args_spec
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         model_topics, _indexes = patch_model_topics
         view_topics = VTYPES.ViewOutlineTopics()
         model_topics.attach_view(view_topics)
@@ -311,7 +325,10 @@ class TestSpecPlusModN:
         monkeypatch.setattr(
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
+        ARGS = patch_args_spec
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)
@@ -331,7 +348,9 @@ class TestSpecPlusModN:
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
         ARGS = patch_args_spec
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)
@@ -360,7 +379,9 @@ class TestSpecPlusModN:
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
         ARGS = patch_args_spec
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)
@@ -396,7 +417,9 @@ class TestSpecPlusModN:
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
         ARGS = patch_args_spec
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)
@@ -419,7 +442,10 @@ class TestSpecPlusModN:
         | Case: button inactive
         """
         # Setup
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
+        ARGS = patch_args_spec
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         SEARCH_ALL = ASHEET.FieldsTemplate.VOID
         view_topics, _indexes = patch_model_topics
         view_topics.scope_search = SEARCH_ALL
@@ -436,7 +462,10 @@ class TestSpecPlusModN:
         | Case: button inactive
         """
         # Setup
-        target = XSPEC_PLUS_N.SpecPlusModN(**DC.asdict(patch_args_spec))
+        ARGS = patch_args_spec
+        PROTOTOPIC = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
+        target = XSPEC_PLUS_N.SpecPlusModN(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         SEARCH_ALL = ~ASHEET.FieldsTemplate.VOID
         view_topics, _indexes = patch_model_topics
         view_topics.scope_search = SEARCH_ALL

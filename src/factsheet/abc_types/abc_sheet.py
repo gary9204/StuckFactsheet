@@ -82,7 +82,7 @@ class InterfaceControlSheet(abc.ABC):
 
 
 class InterfacePageSheet(
-        abc.ABC, typing.Generic[ABC_OUTLINE.GenericViewOutline]):
+        abc.ABC, typing.Generic[ABC_OUTLINE.ViewOutlineOpaque]):
     """Defines interface for :class:`~.model.sheet.Sheet` model to
     signal :class:`~.view.page_sheet.PageSheet`.
     """
@@ -93,12 +93,12 @@ class InterfacePageSheet(
         raise NotImplementedError
 
     @abc.abstractmethod
-    def close_topic(self, p_id: ABC_TOPIC.IdTopic) -> None:
-        """Close topic pane in response to notice from model.
+    def close_topic(self, p_id: ABC_TOPIC.TagTopic) -> None:
+        """Close topic form in response to notice from model.
 
-        Closing a topic pane removes the pane from the factsheet page.
+        Closing a topic form removes the form from the factsheet page.
 
-        :param p_id: identity of topic pane to close.
+        :param p_id: identity of topic form to close.
         """
         raise NotImplementedError
 
@@ -108,7 +108,7 @@ class InterfacePageSheet(
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_view_topics(self) -> ABC_OUTLINE.GenericViewOutline:
+    def get_view_topics(self) -> ABC_OUTLINE.ViewOutlineOpaque:
         """Return view of factsheet's topic outline."""
         raise NotImplementedError
 

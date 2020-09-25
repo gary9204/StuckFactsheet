@@ -14,20 +14,20 @@ item is partitioned into fields.  The meaning of a field's content
 depends on the outline. An outline has the same number of fields for
 each of its items.
 
-.. data:: GenericIndex
+.. data:: IndexOpaque
 
     Generic type for an index of an item within an outline.
 
-.. data:: GenericItem
+.. data:: ItemOpaque
 
     Generic type for an item within an outline.
 
-.. data:: GenericOutline
+.. data:: OutlineOpaque
 
     Generic type for an outline.  Serves as an outline placeholder for
     derived adapter classes.
 
-.. data:: GenericViewOutline
+.. data:: ViewOutlineOpaque
 
     Generic type for view of an outline.  Serves as an outline view
     placeholder for derived adapter classes.
@@ -35,14 +35,14 @@ each of its items.
 import abc
 import typing
 
-GenericIndex = typing.TypeVar('GenericIndex')
-GenericItem = typing.TypeVar('GenericItem')
-GenericOutline = typing.TypeVar('GenericOutline')
-GenericViewOutline = typing.TypeVar('GenericViewOutline')
+IndexOpaque = typing.TypeVar('IndexOpaque')
+ItemOpaque = typing.TypeVar('ItemOpaque')
+OutlineOpaque = typing.TypeVar('OutlineOpaque')
+ViewOutlineOpaque = typing.TypeVar('ViewOutlineOpaque')
 
 
 class AbstractOutline(abc.ABC, typing.Generic[
-        GenericIndex, GenericItem, GenericOutline, GenericViewOutline]):
+        IndexOpaque, ItemOpaque, OutlineOpaque, ViewOutlineOpaque]):
     """Defines interfaces common to outlines of model components.
 
     .. admonition:: About Equality
@@ -72,7 +72,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def attach_view(self, pm_view_outline: GenericViewOutline):
+    def attach_view(self, pm_view_outline: ViewOutlineOpaque):
         """Add view to update display when outline changes.
 
         :param pm_view_outline: view to add.
@@ -80,7 +80,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def detach_view(self, pm_view_outline: GenericViewOutline):
+    def detach_view(self, pm_view_outline: ViewOutlineOpaque):
         """Remove view of changes to outline.
 
         :param pm_view_outline: view to remove.
@@ -88,7 +88,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def extract_section(self, px_i: GenericIndex) -> None:
+    def extract_section(self, px_i: IndexOpaque) -> None:
         """Remove section from outline.
 
         :param px_i: index of parent item to remove along with all
@@ -98,9 +98,9 @@ class AbstractOutline(abc.ABC, typing.Generic[
 
     @abc.abstractmethod
     def find_next(
-            self, px_target: typing.Any, px_i_after: GenericIndex = None,
+            self, px_target: typing.Any, px_i_after: IndexOpaque = None,
             px_derive: typing.Callable[[typing.Any], typing.Any] = (
-                lambda v: v)) -> GenericIndex:
+                lambda v: v)) -> IndexOpaque:
         """Return index of next item where the target value equals value
         derived from item's content in given field or None if no match.
 
@@ -116,7 +116,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_item(self, px_i: GenericIndex) -> typing.Optional[GenericItem]:
+    def get_item(self, px_i: IndexOpaque) -> typing.Optional[ItemOpaque]:
         """Return item at given index or None when no item at index.
 
         :param px_i: index of desired item.
@@ -124,8 +124,8 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def indices(self, px_i: GenericIndex = None
-                ) -> typing.Iterator[GenericIndex]:
+    def indices(self, px_i: IndexOpaque = None
+                ) -> typing.Iterator[IndexOpaque]:
         """Return iterator over indices of items in a section.
 
         The iterator is recursive (that is, includes items from sections
@@ -137,8 +137,8 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def insert_after(self, px_item: GenericItem,
-                     px_i: GenericIndex) -> GenericIndex:
+    def insert_after(self, px_item: ItemOpaque,
+                     px_i: IndexOpaque) -> IndexOpaque:
         """Adds item to outline after item at given index.
 
         If index is None, adds item at beginning of outline.
@@ -149,8 +149,8 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def insert_before(self, px_item: GenericItem,
-                      px_i: GenericIndex) -> GenericIndex:
+    def insert_before(self, px_item: ItemOpaque,
+                      px_i: IndexOpaque) -> IndexOpaque:
         """Adds item to outline before item at given index.
 
         If index is None, adds item at end of outline.
@@ -161,8 +161,8 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def insert_child(self, px_item: GenericItem,
-                     px_i: GenericIndex) -> GenericIndex:
+    def insert_child(self, px_item: ItemOpaque,
+                     px_i: IndexOpaque) -> IndexOpaque:
         """Adds item to outline as child of item at given index.
 
         Method adds item after all existing children.  If index is None,
@@ -174,9 +174,9 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
     @abc.abstractmethod
-    def insert_section(self, pm_source: GenericOutline,
-                       px_i_source: GenericIndex = None,
-                       px_i_target: GenericIndex = None) -> None:
+    def insert_section(self, pm_source: OutlineOpaque,
+                       px_i_source: IndexOpaque = None,
+                       px_i_target: IndexOpaque = None) -> None:
         """Copy section of another outline under given item.
 
         :param pm_source: outline that contains section to copy.
@@ -188,7 +188,7 @@ class AbstractOutline(abc.ABC, typing.Generic[
         raise NotImplementedError
 
 
-class AbstractViewOutline(abc.ABC, typing.Generic[GenericIndex]):
+class AbstractViewOutline(abc.ABC, typing.Generic[IndexOpaque]):
     """Defines interfaces common to views of outlines.
 
     A view of an outline may have one distinguished item.  The
@@ -198,14 +198,14 @@ class AbstractViewOutline(abc.ABC, typing.Generic[GenericIndex]):
     """
 
     @abc.abstractmethod
-    def get_selected(self) -> typing.Optional[GenericIndex]:
+    def get_selected(self) -> typing.Optional[IndexOpaque]:
         """Return the index of the selected item or None when no item
         selected.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def select(self, px_i: GenericIndex = None) -> None:
+    def select(self, px_i: IndexOpaque = None) -> None:
         """Select the item at the given index.
 
         :param px_i: index of new selection.  If None, then no item is

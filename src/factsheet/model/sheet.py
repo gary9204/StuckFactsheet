@@ -69,7 +69,8 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
 
     def __init__(self, *, p_name: str = 'Unnamed', p_summary: str = '',
                  p_title: str = '') -> None:
-        self._infoid = MINFOID.InfoId(
+        self._infoid = MINFOID.InfoId()
+        self._infoid.init_identity(
             p_name=p_name, p_summary=p_summary, p_title=p_title)
         self._topics = MTYPES.OutlineTopics()
         self._state_transient()
@@ -178,13 +179,13 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
     def _close_topic(self, px_i: MTYPES.IndexOutline) -> None:
         """Signal all pages to close panes for a topic and all its descendants.
 
-        :parm px_i: index of parent topic to close pane along with all
+        :parm px_i: index of parent topic to close form along with all
             descendants.  If index is None, close all topic panes.
         """
         for index in self._topics.indices(px_i):
             topic = self._topics.get_item(index)
             assert topic is not None
-            id_topic = topic.id_topic
+            id_topic = topic.tag
             for page in self._pages.values():
                 page.close_topic(id_topic)
 
@@ -300,7 +301,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
 
         :param p_subtitle_base: common part of all subtitles.
         """
-        id_model = self._infoid.id_model
+        id_model = self._infoid.tag
         text_model = hex(id_model)[-3:].upper()
         for id_page, page in self._pages.items():
             text_page = hex(id_page)[-3:].upper()

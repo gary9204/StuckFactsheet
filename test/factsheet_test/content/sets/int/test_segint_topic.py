@@ -1,10 +1,12 @@
 """
-Unit tests for class defining initial segment of natural numbers topics.
+Unit tests for class defining initial segment of natural numbers topic.
 See :mod:`~.segint_topic`.
 """
 import pytest   # type: ignore[import]
 
-from factsheet.content.sets.int import segint_topic as XSEG_INT
+import factsheet.model.setindexed as MSET
+import factsheet.content.sets.int.segint_topic as XSEGINT
+import factsheet.content.sets.int.setint_topic as XSETINT
 
 
 class TestSegInt:
@@ -21,116 +23,37 @@ class TestSegInt:
         | Case: indexed set checks.
         """
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'This parrot is no more.'
-        TITLE = 'Parrot Sketch'
-        target_left = XSEG_INT.SegInt(
-            p_name=NAME, p_summary=SUMMARY, p_title=TITLE, p_bound=BOUND_L)
-        target_right = XSEG_INT.SegInt(
-            p_name=NAME, p_summary=SUMMARY, p_title=TITLE, p_bound=BOUND_R)
+        target_left = XSEGINT.SegInt(p_bound=BOUND_L)
+        target_right = XSEGINT.SegInt(p_bound=BOUND_R)
         # Test
         assert (target_left == target_right) is RESULT
 
-    def test_eq_info(self):
-        """| Confirm equality comparison.
-        | Case: identification information check.
-        """
-        # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'This parrot is no more.'
-        TITLE_MATCH = 'Parrot Sketch'
-        TITLE_DIFFER = 'Something completely different.'
-        BOUND = 5
-        reference = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
-                                    p_title=TITLE_MATCH, p_bound=BOUND)
-        target_match = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
-                                       p_title=TITLE_MATCH, p_bound=BOUND)
-        target_differ = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
-                                        p_title=TITLE_DIFFER, p_bound=BOUND)
-        # Test
-        assert reference.__eq__(target_match)
-        assert not reference.__eq__(target_differ)
-
-    def test_eq_type(self):
-        """| Confirm equality comparson.
-        | Case: type check.
-        """
-        # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'This parrot is no more.'
-        TITLE = 'Parrot Sketch'
-        BOUND = 5
-        reference = XSEG_INT.SegInt(p_name=NAME, p_summary=SUMMARY,
-                                    p_title=TITLE, p_bound=BOUND)
-        OTHER = 'Something completely different.'
-        # Test
-        assert not reference.__eq__(OTHER)
-
     def test_init(self):
         """| Confirm initialization.
-        | Case: explicit arguments with positive bound.
+        | Case: positive bound with check of elements.
         """
         # Setup
-        NAME = 'SegInt'
-        SUMMARY = 'This topic represents a set of integers.'
-        TITLE = 'Integer Set'
         BOUND = 5
+        ELEMENTS = MSET.SetIndexed[int](p_members=range(BOUND))
         # Test
-        target = XSEG_INT.SegInt(
-            p_name=NAME, p_summary=SUMMARY, p_title=TITLE, p_bound=BOUND)
-        assert not target._stale
-        assert isinstance(target._views, dict)
-        assert not target._views
-        assert NAME == target.name
-        assert SUMMARY == target.summary
-        assert TITLE == target.title
-        assert BOUND == len(target._elements)
+        target = XSEGINT.SegInt(p_bound=BOUND)
+        assert isinstance(target, XSETINT.SetInt)
+        assert ELEMENTS == target.elements
 
-    def test_init_default(self):
-        """| Confirm initialization.
-        | Case: default arguments.
-        """
-        # Setup
-        NAME_DEFAULT = ''
-        SUMMARY_DEFAULT = ''
-        TITLE_DEFAULT = ''
-        BOUND_DEFAULT = 1
-        # Test
-        target = XSEG_INT.SegInt()
-        assert NAME_DEFAULT == target.name
-        assert SUMMARY_DEFAULT == target.summary
-        assert TITLE_DEFAULT == target.title
-        assert BOUND_DEFAULT == len(target._elements)
-
-    def test_init_guard(self):
-        """| Confirm initialization.
-        | Case: default arguments except negative bound.
-        """
-        # Setup
-        BOUND = -42
-        SIZE = 1
-        # Test
-        target = XSEG_INT.SegInt(p_bound=BOUND)
-        assert SIZE == len(target._elements)
-
-    @pytest.mark.parametrize('BOUND_R, TITLE_R, BOUND_N, TITLE_N', [
-        (5, 'N(5)', 5, 'N(5)'),
-        (1, 'N(1)', 1, 'N(1)'),
-        (3.14159, 'N(Pi)', 3, 'N(Pi)'),
-        (0, 'Oops 0', 1,
-         'N(1) - given bound was not a positive integer.'),
-        (-1, 'Oops -1', 1,
-         'N(1) - given bound was not a positive integer.'),
-        ('3.14159', 'Oops str', 1,
-         'N(1) - given bound was not a positive integer.'),
-        (None, 'Oops None', 1,
-         'N(1) - given bound was not a positive integer.'),
+    @pytest.mark.parametrize('BOUND_RAW, BOUND', [
+        (5, 5),
+        (1, 1),
+        (3.14159, 3),
+        (0, 1),
+        (-1, 1),
+        ('3.14159', 1),
+        (None, 1),
         ])
-    def test_guard_bound(self, BOUND_R, TITLE_R, BOUND_N, TITLE_N):
-        """Confirm bound check."""
+    def test_init_bound(self, BOUND_RAW, BOUND):
+        """| Confirm initialization.
+        | Case: bound checks.
+        """
         # Setup
-        target = XSEG_INT.SegInt()
         # Test
-        bound_new, title_new = target.guard_bound(BOUND_R, TITLE_R)
-        assert BOUND_N == bound_new
-        assert TITLE_N == title_new
+        target = XSEGINT.SegInt(p_bound=BOUND_RAW)
+        assert BOUND == len(target.elements)

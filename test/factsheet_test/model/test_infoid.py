@@ -25,21 +25,22 @@ class TestInfoId:
         """
         # Setup
         ARGS = patch_args_infoid
-        source = MINFOID.InfoId(**DC.asdict(ARGS))
+        source = MINFOID.InfoId()
+        source.init_identity(**DC.asdict(ARGS))
+        TEXT = 'Something completely different.'
         # Test: type difference.
-        assert not source.__eq__('Something completely different')
+        assert not source.__eq__(TEXT)
         # Test: name difference.
         target = copy.deepcopy(source)
-        target._name._buffer.set_text('Something completely different', -1)
+        target._name._buffer.set_text(TEXT, -1)
         assert not source.__eq__(target)
         # Test: summary difference.
         target = copy.deepcopy(source)
-        target._summary._buffer.set_text(
-            'Something completely different', -1)
+        target._summary._buffer.set_text(TEXT, -1)
         assert not source.__eq__(target)
         # Test: title difference.
         target = copy.deepcopy(source)
-        target._title._buffer.set_text('Something completely different', -1)
+        target._title._buffer.set_text(TEXT, -1)
         assert not source.__eq__(target)
         # Test: equivalent
         target = copy.deepcopy(source)
@@ -50,15 +51,26 @@ class TestInfoId:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_init(self, patch_args_infoid):
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        BLANK = ''
+        # Test
+        target = MINFOID.InfoId()
+
+        assert BLANK == str(target._name)
+        assert BLANK == str(target._summary)
+        assert id(target) == target._tag
+        assert BLANK == str(target._title)
+        assert not target._stale
+
+    def test_init_identity(self, patch_args_infoid):
         """Confirm initialization."""
         # Setup
         ARGS = patch_args_infoid
+        target = MINFOID.InfoId()
         # Test
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
-
-        assert id(target) == target._id_model
-        assert not target._stale
+        target.init_identity(**DC.asdict(ARGS))
 
         assert isinstance(target._name, ABC_INFOID.AbstractTextModel)
         assert ARGS.p_name == str(target._name)
@@ -69,21 +81,28 @@ class TestInfoId:
         assert isinstance(target._title, ABC_INFOID.AbstractTextModel)
         assert ARGS.p_title == str(target._title)
 
-    def test_init_default(self):
+    def test_init_identity_default(self):
         """Confirm initialization with default arguments."""
         # Setup
-        # Test
+        BLANK = ''
+        TEXT = 'Something completely different.'
         target = MINFOID.InfoId()
-        assert '' == str(target._name)
-        assert '' == str(target._summary)
-        assert '' == str(target._title)
+        target._name._buffer.set_text(TEXT, -1)
+        target._summary._buffer.set_text(TEXT, -1)
+        target._title._buffer.set_text(TEXT, -1)
+        # Test
+        target.init_identity()
+        assert BLANK == str(target._name)
+        assert BLANK == str(target._summary)
+        assert BLANK == str(target._title)
 
     def test_attach_view(self, interface_view_infoid, patch_args_infoid):
         """Confirm view addition."""
         # Setup
         patch_view = interface_view_infoid()
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         # Test
         target.attach_view(patch_view)
         assert patch_view.name == str(target._name)
@@ -95,7 +114,8 @@ class TestInfoId:
         # Setup
         patch_view = interface_view_infoid()
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         target.attach_view(patch_view)
         patch_view._name.set_visible(True)
         assert patch_view.summary == str(target._summary)
@@ -117,7 +137,8 @@ class TestInfoId:
         """
         # Setup
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         # Test: InfoId stale, name and title fresh
         target._stale = True
         target._name.set_fresh()
@@ -165,7 +186,8 @@ class TestInfoId:
         """
         # Setup
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         # Test: InfoId stale, name, summary, and title fresh
         target._stale = True
         target._name.set_fresh()
@@ -203,9 +225,9 @@ class TestInfoId:
         assert not target._stale
 
     @pytest.mark.parametrize('name_attr, name_prop', [
-        ['_id_model', 'id_model'],
         ['_name', 'name'],
         ['_summary', 'summary'],
+        ['_tag', 'tag'],
         ['_title', 'title'],
         ])
     def test_property(self, patch_args_infoid, name_attr, name_prop):
@@ -217,7 +239,8 @@ class TestInfoId:
         """
         # Setup
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         value_attr = getattr(target, name_attr)
         target_prop = getattr(MINFOID.InfoId, name_prop)
         value_prop = getattr(target, name_prop)
@@ -237,7 +260,8 @@ class TestInfoId:
          """
         # Setup
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         # Test: InfoId fresh, name and title stale
         target._stale = False
         target._name.set_stale()
@@ -269,7 +293,8 @@ class TestInfoId:
          """
         # Setup
         ARGS = patch_args_infoid
-        target = MINFOID.InfoId(**DC.asdict(ARGS))
+        target = MINFOID.InfoId()
+        target.init_identity(**DC.asdict(ARGS))
         # Test: InfoId fresh, name, summary, and title fresh
         target._stale = False
         target._name.set_fresh()
@@ -310,3 +335,13 @@ class TestInfoId:
         assert target._name.is_stale()
         assert target._summary.is_stale()
         assert target._title.is_stale()
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.infoid`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert MINFOID.TagInfoId is not None

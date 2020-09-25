@@ -3,24 +3,19 @@ Defines ancestor class for set topics.  See :mod:`.topic`.
 """
 import typing
 
-from factsheet.model import element as MELEMENT
-from factsheet.model import setindexed as MSET
-from factsheet.model import topic as MTOPIC
+import factsheet.model.setindexed as MSET
+import factsheet.model.topic as MTOPIC
 
-from factsheet.model.setindexed import MemberGeneric
-# MemberGeneric = typing.TypeVar('MemberGeneric')
+from factsheet.model.setindexed import MemberOpaque
 
 
-class Set(MTOPIC.Topic, typing.Generic[MemberGeneric]):
-    """Defines ancestor class for set topics.
+class Set(MTOPIC.Topic, typing.Generic[MemberOpaque]):
+    """Defines ancestor for set topics.
 
     Class ``Set`` serves as a common ancestor class for topics that
     represent sets.  The class augments class :class:`~.Topic` with
     class :class:`~.SetIndexed`.
 
-    :param p_name: name of set topic.
-    :param p_summary: summary of set topic.
-    :param p_title: title of set topic.
     :param p_members: members for topic's set.
     :param kwargs: keyword arguments for superclass.
 
@@ -43,7 +38,8 @@ class Set(MTOPIC.Topic, typing.Generic[MemberGeneric]):
 
         :param p_other: object to test for equality.
         """
-        if not isinstance(p_other, Set):
+        # if not isinstance(p_other, Set):
+        if not isinstance(p_other, type(self)):
             return False
 
         if not super().__eq__(p_other):
@@ -55,15 +51,19 @@ class Set(MTOPIC.Topic, typing.Generic[MemberGeneric]):
         return True
 
     def __init__(
-            self, *, p_name: str = '', p_summary: str = '', p_title: str = '',
-            p_members: typing.Optional[typing.Iterable[MemberGeneric]] = None,
+            self, *,
+            p_members: typing.Optional[typing.Iterable[MemberOpaque]] = None,
             **kwargs: typing.Any) -> None:
-        super().__init__(
-            p_name=p_name, p_summary=p_summary, p_title=p_title, **kwargs)
         members = p_members if p_members is not None else list()
-        self._elements = MSET.SetIndexed[MemberGeneric](p_members=members)
+        self._elements = MSET.SetIndexed[MemberOpaque](p_members=members)
+        super().__init__(**kwargs)
 
     def __iter__(self) -> typing.Iterator[
-            MELEMENT.ElementGeneric[MemberGeneric]]:
+            MSET.ElementOpaque[MemberOpaque]]:
         """Return iterator over indexed elements in set topic."""
         return iter(self._elements)
+
+    @property
+    def elements(self) -> MSET.SetIndexed:
+        """Return elements of set."""
+        return self._elements

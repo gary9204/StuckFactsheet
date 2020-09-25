@@ -65,14 +65,14 @@ def interface_view_infoid(patch_args_infoid):
 
 
 @pytest.fixture
-def interface_pane_topic(interface_view_infoid):
+def interface_form_topic(interface_view_infoid):
     """Pytest fixture returns stub class implementing
     :class:`.InterfaceFormTopic`.
     """
-    class PatchPaneTopic(ABC_TOPIC.InterfaceFormTopic):
+    class PatchFormTopic(ABC_TOPIC.InterfaceFormTopic):
         def __init__(self):
             self._infoid = interface_view_infoid()
 
         def get_infoid(self): return self._infoid
 
-    return PatchPaneTopic
+    return PatchFormTopic

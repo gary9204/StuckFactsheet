@@ -5,9 +5,10 @@ See :mod:`.adapt_topic`.
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_topic as ATOPIC
-from factsheet.model import fact as MFACT
+import factsheet.abc_types.abc_topic as ABC_TOPIC
+import factsheet.adapt_gtk.adapt_outline as AOUTLINE
+import factsheet.adapt_gtk.adapt_topic as ATOPIC
+import factsheet.model.fact as MFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
@@ -36,44 +37,55 @@ class PatchOutlineModel():
 
     def __init__(self, p_tag='Target'):
         self.model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+        TOPIC = None
 
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_0xx', p_title='title_0xx', p_summary=p_tag)
         item._status = MFACT.StatusOfFact.DEFINED
         i_0xx = self.model.append(None, [item])
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_00x', p_title='title_00x', p_summary=p_tag)
         item._status = MFACT.StatusOfFact.UNDEFINED
         i_00x = self.model.append(i_0xx, [item])
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_000', p_title='title_000', p_summary=p_tag)
         item._status = MFACT.StatusOfFact.BLOCKED
         _i_000 = self.model.append(i_00x, [item])
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_01x', p_title='title_01x', p_summary=p_tag)
         _i_01x = self.model.append(i_0xx, [item])
         item._status = MFACT.StatusOfFact.UNCHECKED
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_1xx', p_title='title_1xx', p_summary=p_tag)
         i_1xx = self.model.append(None, [item])
         item._status = MFACT.StatusOfFact.UNDEFINED
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_10x', p_title='title_10x', p_summary=p_tag)
         _i_10x = self.model.append(i_1xx, [item])
         item._status = MFACT.StatusOfFact.DEFINED
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_11x', p_title='title_11x', p_summary=p_tag)
         i_11x = self.model.append(i_1xx, [item])
         item._status = MFACT.StatusOfFact.BLOCKED
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_110', p_title='title_110', p_summary=p_tag)
         _i_110 = self.model.append(i_11x, [item])
         item._status = MFACT.StatusOfFact.DEFINED
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_111', p_title='title_111', p_summary=p_tag)
         _i_111 = self.model.append(i_11x, [item])
         item._status = MFACT.StatusOfFact.UNCHECKED
-        item = MFACT.Fact(
+        item = MFACT.Fact(p_topic=TOPIC)
+        item.init_identity(
             p_name='name_112', p_title='title_112', p_summary=p_tag)
         _i_112 = self.model.append(i_11x, [item])
         item._status = MFACT.StatusOfFact.UNDEFINED
@@ -97,13 +109,15 @@ class TestAdaptTreeStoreFact:
         """Confirm initialization."""
         # Setup
         INDEX = None
-        fact = MFACT.Fact(p_name='Parrot', p_title='The Parrot Sketch')
+        TOPIC = None
+        fact = MFACT.Fact(p_topic=TOPIC)
+        fact.init_identity(p_name='Parrot', p_title='The Parrot Sketch')
         # Test
         target = ATOPIC.AdaptTreeStoreFact()
         assert target is not None
         index_new = target.insert_before(fact, INDEX)
         assert index_new is not None
-        assert isinstance(index_new, AOUTLINE.AdaptIndex)
+        assert isinstance(index_new, AOUTLINE.IndexGtk)
 
     def test_find_name(self):
         """| Confirm search by fact name.
@@ -351,3 +365,13 @@ class TestFieldsFact:
         assert ATOPIC.FieldsFact.NAME
         assert ATOPIC.FieldsFact.STATUS
         assert ATOPIC.FieldsFact.TITLE
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.adapt_topic`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert ATOPIC.IndexFact is AOUTLINE.IndexGtk

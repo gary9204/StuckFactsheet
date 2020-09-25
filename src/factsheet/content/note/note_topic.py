@@ -13,12 +13,6 @@ class Note(MTOPIC.Topic):
     A user can record notes in the summary field and label the notes
     with a name and title.  Also, a user may group topics within the
     topics outline by adding or moving the topics underneath a note.
-
-    :param p_name: name of note.
-    :param p_summary: content of note.
-    :param p_title: title of note.
     """
 
-    def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '') -> None:
-        super().__init__(p_name=p_name, p_summary=p_summary, p_title=p_title)
+    pass

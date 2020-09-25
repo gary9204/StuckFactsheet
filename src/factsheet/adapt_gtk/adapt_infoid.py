@@ -46,7 +46,7 @@ def str_adapt_textview(px_view: AdaptTextView) -> str:
     return text
 
 
-class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
+class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel[AdaptEntry]):
     """Implements model text attribute :class:`.AbstractTextModel`
     using `Gtk.EntryBuffer`_.
 
@@ -73,7 +73,7 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         self._buffer = Gtk.EntryBuffer(text=p_text)
         self._state_transient()
 
-    def __setstate__(self, px_state: typing.Dict) -> None:
+    def __setstate__(self, px_state: typing.MutableMapping) -> None:
         """Reconstruct model text attribute from state pickle loads.
 
         Reconstructed attribute is marked fresh and has no views.
@@ -94,7 +94,7 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         _ = self._buffer.connect(
             'inserted-text', lambda *_a: self.set_stale())
         self._stale = False
-        self._views: typing.Dict[int, AdaptEntry] = dict()
+        self._views: typing.MutableMapping[int, AdaptEntry] = dict()
 
     def __str__(self) -> str:
         """Return buffer contents as text."""
@@ -149,7 +149,7 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel):
         self._stale = True
 
 
-class AdaptTextBuffer(ABC_INFOID.AbstractTextModel):
+class AdaptTextBuffer(ABC_INFOID.AbstractTextModel[AdaptTextView]):
     """Implements model text attribute :class:`.AbstractTextModel`
     using `Gtk.TextBuffer`_.
 
@@ -177,7 +177,7 @@ class AdaptTextBuffer(ABC_INFOID.AbstractTextModel):
         self._buffer = Gtk.TextBuffer(text=p_text)
         self._state_transient()
 
-    def __setstate__(self, px_state: typing.Dict) -> None:
+    def __setstate__(self, px_state: typing.MutableMapping) -> None:
         """Reconstruct model text attribute from state pickle loads.
 
         Reconstructed attribute is marked fresh and has no views.
@@ -195,7 +195,7 @@ class AdaptTextBuffer(ABC_INFOID.AbstractTextModel):
         assert hasattr(self, '_buffer')
         _ = self._buffer.connect('changed', lambda *_a: self.set_stale())
         self._stale = False
-        self._views: typing.Dict[int, AdaptTextView] = dict()
+        self._views: typing.MutableMapping[int, AdaptTextView] = dict()
 
     def __str__(self) -> str:
         """Return buffer contents as text."""

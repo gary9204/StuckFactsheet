@@ -42,7 +42,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         self._sheets_active = pm_sheets_active
         self._sheets_active.add(self)
         self._controls_topic: typing.Dict[
-            MTYPES.IdTopic, CTOPIC.ControlTopic] = dict()
+            MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
 
     def _add_new_control_topic(self, px_topic: MTOPIC.Topic
                                ) -> CTOPIC.ControlTopic:
@@ -51,7 +51,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         :param px_topic: topic model for new control.
         """
         control_new = CTOPIC.ControlTopic(px_topic)
-        id_topic = px_topic.id_topic
+        id_topic = px_topic.tag
         self._controls_topic[id_topic] = control_new
         return control_new
 
@@ -147,7 +147,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
 
         :param px_topic: topic corresponding to desired control.
         """
-        id_control = px_topic.id_topic
+        id_control = px_topic.tag
         try:
             return self._controls_topic[id_control]
         except KeyError:

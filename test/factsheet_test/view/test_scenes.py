@@ -144,7 +144,7 @@ class TestScenes:
             scenes[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_scene(scenes[i], hex(i))
 
-        ID_VISIBLE = VTYPES.IdTopic(1)
+        ID_VISIBLE = VTYPES.TagTopic(1)
         name_visible = hex(ID_VISIBLE)
         scene_visible = scenes[ID_VISIBLE]
         target._stack_gtk.set_visible_child(scene_visible)

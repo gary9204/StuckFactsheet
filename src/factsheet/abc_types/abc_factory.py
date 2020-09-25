@@ -92,7 +92,7 @@ component classes of :class:`.InfoId`.
 
 # class FactoryTopic(abc.ABC):
 #     """Defines abstract factory to produce components for
-#     :class:`.Topic` and :class:`.PaneTopic`.
+#     :class:`.Topic` and :class:`.FormTopic`.
 #     """
 
 #     @abc.abstractmethod
@@ -105,6 +105,6 @@ component classes of :class:`.InfoId`.
 #     @abc.abstractmethod
 #     def new_view_outline_facts(self) -> ABC_OUTLINE.AbstractViewOutline:
 #         """Return new instance of facts outline view class for
-#         :class:`.PaneTopic`.
+#         :class:`.FormTopic`.
 #         """
 #         raise NotImplementedError

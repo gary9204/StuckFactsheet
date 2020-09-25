@@ -225,7 +225,7 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         """Confirm alias definitions for type hints."""
 #         # Setup
 #         # Test
-#         assert AFACTORY.IndexOutline is AOUTLINE.AdaptIndex
+#         assert AFACTORY.IndexOutline is AOUTLINE.IndexGtk
 #         assert AFACTORY.OutlineTemplates is ASHEET.AdaptTreeStoreTemplate
 #         assert AFACTORY.OutlineTopics is ASHEET.AdaptTreeStoreTopic
 #         assert AFACTORY.ViewOutlineTemplates is ASHEET.AdaptTreeViewTemplate
@@ -255,6 +255,6 @@ Unit tests for GTK-based factories.  See :mod:`.adapt_factory`.
 #         """Confirm types defined."""
 #         # Setup
 #         # Test
-#         assert AFACTORY.IdTopic is ABC_TOPIC.IdTopic
+#         assert AFACTORY.TagTopic is ABC_TOPIC.TagTopic
 #         assert AFACTORY.OutlineFacts is ATOPIC.AdaptTreeStoreFact
 #         assert AFACTORY.ViewOutlineFacts is ATOPIC.AdaptTreeViewFact

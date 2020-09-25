@@ -1,14 +1,13 @@
 """
-Unit tests for class to display topic in a factsheet window pane.
-
-See :mod:`.pane_topic`.
+Unit tests for class to display topic form in a factsheet window pane.
+See :mod:`.form_topic`.
 """
 import dataclasses as DC
 import pytest   # type: ignore[import]
 
 from factsheet.control import control_topic as CTOPIC
 from factsheet.model import topic as MTOPIC
-from factsheet.view import pane_topic as VTOPIC
+from factsheet.view import form_topic as VTOPIC
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
 
@@ -24,12 +23,12 @@ def patch_control_topic(patch_args_infoid):
     """Pytest fixture returns a stock :class:`.ControlTopic`."""
     ARGS = patch_args_infoid
     model = MTOPIC.Topic(**DC.asdict(ARGS))
-    control = CTOPIC.ControlTopic(pm_model=model)
+    control = CTOPIC.ControlTopic(p_model=model)
     return control
 
 
-class TestPaneTopic:
-    """Unit tests for :class:`.PaneTopic`."""
+class TestFormTopic:
+    """Unit tests for :class:`.FormTopic`."""
 
     def test_init(self, patch_control_topic):
         """Confirm initialization.
@@ -40,10 +39,10 @@ class TestPaneTopic:
         CONTROL = patch_control_topic
         model = CONTROL._model
         # Test
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
         assert target._control is CONTROL
         assert isinstance(target._gtk_pane, Gtk.Box)
-        assert target in model._views.values()
+        assert target in model._forms.values()
         assert target._gtk_pane.is_visible()
         actions_topic = target._gtk_pane.get_action_group('topic')
         assert isinstance(actions_topic, Gio.SimpleActionGroup)
@@ -83,7 +82,7 @@ class TestPaneTopic:
         delete_signal = GO.signal_lookup('activate', entry_gtype)
         CONTROL = patch_control_topic
         # Test
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
         entry = target._infoid.get_view_name()
         activate_id = GO.signal_handler_find(
             entry, GO.SignalMatchType.ID, delete_signal,
@@ -105,9 +104,9 @@ class TestPaneTopic:
         """
         # Setup
         CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
         value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(VTOPIC.PaneTopic, NAME_PROP)
+        target_prop = getattr(VTOPIC.FormTopic, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None
@@ -121,7 +120,7 @@ class TestPaneTopic:
         """Confirm returns :class:`.InfoId` attribute."""
         # Setup
         CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
         # Test
         assert target._infoid is target.get_infoid()
         # Teardown
@@ -132,7 +131,7 @@ class TestPaneTopic:
         """Confirm name popover becomes visible."""
         # Setup
         CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
         target._context_name.hide()
         target._infoid.get_view_name().set_text('The Confy Chair!')
         # Test
@@ -147,7 +146,7 @@ class TestPaneTopic:
         """Confirm name reset in popover."""
         # Setup
         CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
         name = target._infoid.get_view_name()
         name.set_text('The Spanish Inquisition!')
         target._name_former = 'Oh no!'
@@ -159,11 +158,9 @@ class TestPaneTopic:
         del target._gtk_pane
 
     def test_on_show_dialog(self, patch_control_topic, monkeypatch):
-        """Confirm handler runs dialog.
-
-        Case: topic pane in top-level window.
-
-        See manual tests for dialog content checks.
+        """| Confirm handler runs dialog.
+        | Case: topic form in top-level window.
+        | See manual tests for dialog content checks.
         """
         # Setup
         class DialogPatch:
@@ -175,7 +172,7 @@ class TestPaneTopic:
         monkeypatch.setattr(Gtk.Dialog, 'run', patch.run)
 
         CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
 
         window = Gtk.ApplicationWindow()
         monkeypatch.setattr(
@@ -192,9 +189,8 @@ class TestPaneTopic:
         del target._gtk_pane
 
     def test_on_show_dialog_no_top(self, patch_control_topic, monkeypatch):
-        """Confirm handler runs dialog.
-
-        Case: topic pane not in top-level window.
+        """| Confirm handler runs dialog.
+        | Case: topic form not in top-level window.
         """
         # Setup
         class DialogPatch:
@@ -206,7 +202,7 @@ class TestPaneTopic:
         monkeypatch.setattr(Gtk.Dialog, 'run', patch.run)
 
         CONTROL = patch_control_topic
-        target = VTOPIC.PaneTopic(pm_control=CONTROL)
+        target = VTOPIC.FormTopic(p_control=CONTROL)
 
         monkeypatch.setattr(
             Gtk.Widget, 'get_toplevel', lambda *_args: target._gtk_pane)

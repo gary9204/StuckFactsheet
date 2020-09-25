@@ -8,15 +8,18 @@ import collections as COL
 # import dataclasses as DC
 import typing
 
-from factsheet.model import element as MELEMENT
+# from factsheet.model import element as MELEMENT
 
 # IndexElement = typing.NewType('IndexElement', int)
-MemberGeneric = typing.TypeVar('MemberGeneric')
-Element = MELEMENT.ElementGeneric[MemberGeneric]
+# MemberOpaque = typing.TypeVar('MemberOpaque')
+from factsheet.model.element import ElementOpaque
+from factsheet.model.element import IndexElement
+from factsheet.model.element import MemberOpaque
+# Element = ElementOpaque[MemberOpaque]
 
 
 # @DC.dataclass(frozen=True)
-# class ElementGeneric(typing.Generic[MemberGeneric]):
+# class ElementOpaque(typing.Generic[MemberOpaque]):
 #     """Defines an indexed element.
 
 #     An indexed element represents a member of a set with a label (index)
@@ -26,11 +29,11 @@ Element = MELEMENT.ElementGeneric[MemberGeneric]
 #     :param member: value of element.
 #     :param index: label of element.
 #     """
-#     member: MemberGeneric
+#     member: MemberOpaque
 #     index: MELEMENT.IndexElement
 
 
-class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
+class SetIndexed(COL.abc.Set, typing.Generic[MemberOpaque]):
     """Set-like collection with indexed elements.
 
     Indexed set methods preclude the following:
@@ -103,9 +106,8 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
         return self._elements == p_other._elements
 
     def __init__(
-            self, p_members: typing.Iterable[MemberGeneric] = None) -> None:
-        self._elements: typing.Dict[
-            MELEMENT.IndexElement, MemberGeneric] = dict()
+            self, p_members: typing.Iterable[MemberOpaque] = None) -> None:
+        self._elements: typing.Dict[IndexElement, MemberOpaque] = dict()
         if p_members is None:
             return
 
@@ -115,13 +117,13 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
                 continue
             if member in self._elements.values():
                 continue
-            self._elements[MELEMENT.IndexElement(index_next)] = member
+            self._elements[IndexElement(index_next)] = member
             index_next += 1
 
-    def __iter__(self) -> typing.Iterator[Element]:
+    def __iter__(self) -> typing.Iterator[ElementOpaque]:
         """Return iterator over indexed elements in set."""
         for i, m in self._elements.items():
-            element = Element(p_member=m, p_index=i)
+            element = ElementOpaque[MemberOpaque](p_member=m, p_index=i)
             yield element
 
     def __len__(self) -> int:
@@ -137,9 +139,9 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
 #         for i in self._elements.keys():
 #             yield i
 
-    def find_element(self, *, p_index: MELEMENT.IndexElement = None,
-                     p_member: MemberGeneric = None
-                     ) -> typing.Optional[Element]:
+    def find_element(self, *, p_index: IndexElement = None,
+                     p_member: MemberOpaque = None
+                     ) -> typing.Optional[ElementOpaque[MemberOpaque]]:
         """Return element matching given information or None.
 
         Return None when no element matches all given information.
@@ -153,7 +155,8 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
 
             for index, member in self._elements.items():
                 if member == p_member:
-                    element = Element(p_member=member, p_index=index)
+                    element = ElementOpaque[MemberOpaque](
+                        p_member=member, p_index=index)
                     return element
 
             return None
@@ -163,7 +166,8 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
         except KeyError:
             return None
 
-        element = Element(p_member=member, p_index=p_index)
+        element = ElementOpaque[MemberOpaque](
+            p_member=member, p_index=p_index)
         if p_member is None:
             return element
 
@@ -173,8 +177,9 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
         return None
 
     @classmethod
-    def new_from_elements(cls, p_elements: typing.Iterable[Element] = []
-                          ) -> 'SetIndexed[MemberGeneric]':
+    def new_from_elements(cls, p_elements: typing.Iterable[
+            ElementOpaque[MemberOpaque]] = []
+                          ) -> 'SetIndexed[MemberOpaque]':
         """Return set containing given indexed elements.
 
         Method ``new_from_elements`` enforces the restrictions listed in
@@ -183,7 +188,7 @@ class SetIndexed(COL.abc.Set, typing.Generic[MemberGeneric]):
 
         :param p_elements: collection of indexed elements for the set.
         """
-        new_set = SetIndexed[MemberGeneric]()
+        new_set = SetIndexed[MemberOpaque]()
         for element in p_elements:
             index = element.index
             member = element.member

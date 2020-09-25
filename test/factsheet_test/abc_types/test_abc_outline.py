@@ -4,7 +4,7 @@ Unit tests for abstract classes for outlines. See
 """
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_outline as ABC_OUTLINE
+import factsheet.abc_types.abc_outline as ABC_OUTLINE
 
 
 class TestAbstractTypes:
@@ -14,8 +14,8 @@ class TestAbstractTypes:
         """Confirm supporting types defined."""
         # Setup
         # Test
-        assert ABC_OUTLINE.GenericIndex is not None
-        assert ABC_OUTLINE.GenericItem is not None
+        assert ABC_OUTLINE.IndexOpaque is not None
+        assert ABC_OUTLINE.ItemOpaque is not None
 
 
 class TestAbstractOutline:

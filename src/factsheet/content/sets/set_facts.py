@@ -1,127 +1,118 @@
 """
 Defines fact classes for a generic set.  See :mod:`.set_topic`.
 
-.. attribute:: StatusOfFact
+.. data:: ElementOpaque
 
-Indicates whether user has checked fact and outcome of check.  See
-:mod:`.abc_fact`.
+    Generic type for element of set.  See :mod:`.setindexed`.
 
-..
-    data:: IdFact
+.. data:: IndexOpaque
 
-    Type for fact identifiers.  Defined in :mod:`.abc_fact`.
-
-.. data:: MemberGeneric
-
-    Generic type for member component of set element.  Defined in
+    Generic type for index component of set element.  See
     :mod:`.setindexed`.
 
-.. data:: StatusOfFact
+.. data:: MemberOpaque
 
-    Indicates whether user has checked fact and outcome of check.
-    Defined in :mod:`.abc_fact`.
-
-..
-    data:: ValueOfFact
-
-    Type for fact value including fact status.  Defined in
-    :mod:`.abc_fact`.
+    Generic type for member component of set element.  See
+    :mod:`.setindexed`.
 """
 import typing
 
-from factsheet.model import fact as MFACT
-from factsheet.model import setindexed as MSET
+import factsheet.model.fact as MFACT
+import factsheet.model.setindexed as MSET
+import factsheet.content.sets.set_topic as SET
+
+from factsheet.model.setindexed import ElementOpaque
+from factsheet.model.setindexed import MemberOpaque
 
 
-# from factsheet.model.fact import IdFact
-from factsheet.abc_types.abc_fact import StatusOfFact
-from factsheet.content.sets import set_topic as XSET
-from factsheet.model.element import IndexElement
-from factsheet.model.setindexed import MemberGeneric
-ValueAny = typing.TypeVar('ValueAny')
-# from factsheet.model.fact import ValueOfFact
-
-
-class ElementsSet(MFACT.Fact, typing.Generic[MemberGeneric, ValueAny]):
+class ElementsSet(MFACT.Fact[SET.Set[MemberOpaque],
+                             MSET.SetIndexed[MemberOpaque]]):
     """Fact that provides elements of a set topic.
 
     :param p_topic: set topic for fact.
     """
 
-    def __init__(self, *, p_topic: XSET.Set) -> None:
+    def __init__(self, *, p_topic: SET.Set[MemberOpaque]) -> None:
         NAME = 'Elements'
         SUMMARY = ('{} provides the elements of set {}.'
                    ''.format(NAME, p_topic.name))
         TITLE = 'Set Elements'
-        super().__init__(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        super().__init__(p_topic=p_topic)
+        self.init_identity(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # STUB: pending topic revision
-        self._elements = p_topic._elements
 
-    def check(self, **_kwargs: typing.Any) -> MFACT.StatusOfFact:
+    def check(self) -> MFACT.StatusOfFact:
         """Set fact value and set corresponding state of fact check."""
-        self._value = str(self._elements)
-        self._status = StatusOfFact.DEFINED
+        self._value = self._topic.elements
+        self._status = MFACT.StatusOfFact.DEFINED
         return super().check()
 
-    def clear(self, **_kwargs: typing.Any) -> None:
+    def clear(self) -> None:
         """Clear fact value and set state of fact check to unchecked."""
         self._value = None
-        self._status = StatusOfFact.UNCHECKED
+        self._status = MFACT.StatusOfFact.UNCHECKED
         super().clear()
 
 
-class SearchSet(MFACT.Fact, typing.Generic[MemberGeneric, ValueAny]):
-    """Fact that provides element of a set topic corresponding to given
-    object.
+class SearchSet(
+        MFACT.Fact[SET.Set[MemberOpaque], typing.Callable[[MemberOpaque],
+                   typing.Optional[ElementOpaque[MemberOpaque]]]]):
+    """Fact that provides function that returns element of a set topic
+    given an object object.  The function returns None when the object
+    is not a member of the set.
 
     :param p_topic: set topic for fact.
     """
 
-    def __init__(self, *, p_topic: XSET.Set) -> None:
+    def __init__(self, *, p_topic: SET.Set[MemberOpaque]) -> None:
         NAME = 'Search'
         SUMMARY = ('{} provides function to find element of set {} '
                    'coresponding to given item.'.format(NAME, p_topic.name))
         TITLE = 'Find Element'
-        super().__init__(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        super().__init__(p_topic=p_topic)
+        self.init_identity(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # STUB: pending topic revision
-        self._elements = p_topic._elements
 
-    def check(self, **_kwargs: typing.Any) -> MFACT.StatusOfFact:
+    def check(self) -> MFACT.StatusOfFact:
         """Set fact value and set corresponding state of fact check."""
-        self._value = self._elements.find_element(p_index=IndexElement(0))
-        self._status = StatusOfFact.DEFINED
+        def search(p_member: MemberOpaque
+                   ) -> typing.Optional[ElementOpaque[MemberOpaque]]:
+            return self._topic.elements.find_element(p_member=p_member)
+
+        self._value = search
+        self._status = MFACT.StatusOfFact.DEFINED
         return super().check()
 
-    def clear(self, **_kwargs: typing.Any) -> None:
+    def clear(self: typing.Any) -> None:
         """Clear fact value and set state of fact check to unchecked."""
         self._value = None
-        self._status = StatusOfFact.UNCHECKED
+        self._status = MFACT.StatusOfFact.UNCHECKED
         super().clear()
 
 
-class SizeSet(MFACT.Fact, typing.Generic[MemberGeneric, ValueAny]):
+class SizeSet(MFACT.Fact[SET.Set[MemberOpaque], int]):
     """Fact that provides size of set topic .
 
     :param p_topic: set topic for fact.
     """
 
-    def __init__(self, *, p_topic: XSET.Set) -> None:
+    def __init__(self, *, p_topic: SET.Set[MemberOpaque]) -> None:
         NAME = 'Size'
         SUMMARY = ('{} provides cardinality of set {}.'
                    ''.format(NAME, p_topic.name))
         TITLE = 'Set Size'
-        super().__init__(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        super().__init__(p_topic=p_topic)
+        self.init_identity(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # STUB: pending topic revision
-        self._elements = p_topic._elements
 
-    def check(self, **_kwargs: typing.Any) -> MFACT.StatusOfFact:
+    def check(self) -> MFACT.StatusOfFact:
         """Set fact value and set corresponding state of fact check."""
-        self._value = len(self._elements)
-        self._status = StatusOfFact.DEFINED
+        self._value = len(self._topic.elements)
+        self._status = MFACT.StatusOfFact.DEFINED
         return super().check()
 
-    def clear(self, **_kwargs: typing.Any) -> None:
+    def clear(self) -> None:
         """Clear fact value and set state of fact check to unchecked."""
         self._value = None
-        self._status = StatusOfFact.UNCHECKED
+        self._status = MFACT.StatusOfFact.UNCHECKED
         super().clear()

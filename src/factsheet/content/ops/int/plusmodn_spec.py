@@ -6,11 +6,12 @@ import dataclasses as DC
 import gi   # type: ignore[import]
 import typing
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content import spec as XSPEC
-from factsheet.content.ops.int import plusmodn_topic as XPLUS_N
-from factsheet.content.sets.int import setint_topic as XSET_INT
+import factsheet.adapt_gtk.adapt_outline as AOUTLINE
+import factsheet.adapt_gtk.adapt_sheet as ASHEET
+import factsheet.content.spec as XSPEC
+import factsheet.content.ops.int.plusmodn_topic as XPLUS_N
+import factsheet.content.sets.int.setint_topic as XSET_INT
+import factsheet.view.types_view as VTYPES
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -65,7 +66,8 @@ class SpecPlusModN(XSPEC.Spec):
         get_ui = builder.get_object
 
         assistant = get_ui('ui_assistant')
-        outline_topics = self._new_view_topics()
+        outline_topics = VTYPES.ViewOutlineTopics()
+        self._attach_view_topics(outline_topics)
         gtk_outline = outline_topics.gtk_view
         ui_search_entry = get_ui('ui_search_entry')
         gtk_outline.set_search_entry(ui_search_entry)
@@ -123,9 +125,8 @@ class SpecPlusModN(XSPEC.Spec):
             model, index = cursor.get_selected()
             set_int = AOUTLINE.get_item_gtk(model, index)
             modulus = ui_modulus.get_value_as_int()
-            topic = self._class_topic(
-                p_name=name, p_summary=summary, p_title=title,
-                p_set=set_int, p_modulus=modulus)
+            topic = self._prototopic(p_set=set_int, p_modulus=modulus)
+            topic.init_identity(p_name=name, p_summary=summary, p_title=title)
         return topic
 
     def on_changed_cursor(

@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import pickle
 import pytest   # type: ignore[import]
+import typing
 
 from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import infoid as MINFOID
@@ -24,42 +25,58 @@ class TestFact:
     def test_call(self, patch_args_infoid, STATUS):
         """Confirm call result for each fact check state."""
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         ARGS = patch_args_infoid
-        target = MFACT.Fact[int](**DC.asdict(ARGS))
+        target.init_identity(**DC.asdict(ARGS))
         target._value = 'Shropshire Blue'
         target._status = STATUS
         # Test
         assert target() is target._value
 
-    @pytest.mark.skip(reason='Implementation in progress.')
     def test_eq(self):
         """Confirm equivalence operator
 
         #. Case: type difference
         #. Case: InfoId difference
+        #. Case: Topic difference
         #. Case: Equivalence
         """
         # Setup
-        # TITLE_SOURCE = 'The Parrot Sketch'
-        # source = MFACT.Fact(p_title=TITLE_SOURCE)
-        # # Test: type difference
-        # assert not source.__eq__(TITLE_SOURCE)
-        # # Test: InfoId difference
-        # TITLE_TARGET = 'Something completely different.'
-        # target = MFACT.Fact(p_title=TITLE_TARGET)
-        # assert not source.__eq__(target)
-        # # Test: Equivalence
-        # target = MFACT.Fact(p_title=TITLE_SOURCE)
-        # assert source.__eq__(target)
-        # assert not source.__ne__(target)
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC_SOURCE = None
+        source = Fact(p_topic=TOPIC_SOURCE)
+        TITLE_SOURCE = 'The Parrot Sketch'
+        source.init_identity(p_title=TITLE_SOURCE)
+        # Test: type difference
+        assert not source.__eq__(TITLE_SOURCE)
+        # Test: InfoId difference
+        target = Fact(p_topic=TOPIC_SOURCE)
+        TITLE_TARGET = 'Something completely different.'
+        target.init_identity(p_title=TITLE_TARGET)
+        assert not source.__eq__(target)
+        # Test: Topic difference
+        TOPIC_TARGET = 'Something completely different.'
+        target = Fact(p_topic=TOPIC_TARGET)
+        target.init_identity(p_title=TITLE_SOURCE)
+        assert not source.__eq__(target)
+        # Test: Equivalence
+        target = Fact(p_topic=TOPIC_SOURCE)
+        target.init_identity(p_title=TITLE_SOURCE)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
 
     def test_get_set_state(self, tmp_path, patch_class_block_fact):
         """Confirm conversion to and from pickle format."""
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
 
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        source = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        source = MFACT.Fact(p_title=TITLE_MODEL)
+        source.init_identity(p_title=TITLE_MODEL)
         source._stale = True
 
         PatchBlockFact = patch_class_block_fact
@@ -79,37 +96,62 @@ class TestFact:
         assert not target._stale
         assert source._infoid == target._infoid
 
-    def test_init(self, patch_args_infoid):
+    def test_init(self):
         """Confirm initialization."""
         # Setup
-        ARGS = patch_args_infoid
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        BLANK = ''
         # Test
-        target = MFACT.Fact[int](**DC.asdict(ARGS))
+        target = Fact(p_topic=TOPIC)
+        assert target._topic is TOPIC
         assert isinstance(target._infoid, MINFOID.InfoId)
-        assert ARGS.p_name == target._infoid.name
-        assert ARGS.p_summary == target._infoid.summary
-        assert ARGS.p_title == target._infoid.title
+        assert BLANK == target._infoid.name
+        assert BLANK == target._infoid.summary
+        assert BLANK == target._infoid.title
+        assert id(target) == target._tag
         assert target._value is None
         assert target._status is MFACT.StatusOfFact.BLOCKED
         assert not target._stale
         assert isinstance(target._blocks, dict)
         assert not target._blocks
 
-    def test_init_default(self):
-        """Confirm initialization with default arguments."""
+    def test_init_identity(self, patch_args_infoid):
+        """| Confirm Identification initialization.
+        | Case: explicit arguments.
+        """
         # Setup
-        NAME_DEFAULT = ''
-        SUMMARY_DEFAULT = ''
-        TITLE_DEFAULT = ''
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        ARGS = patch_args_infoid
         # Test
-        target = MFACT.Fact()
-        assert NAME_DEFAULT == target._infoid.name
-        assert SUMMARY_DEFAULT == target._infoid.summary
-        assert TITLE_DEFAULT == target._infoid.title
+        target.init_identity(**DC.asdict(ARGS))
+        assert ARGS.p_name == target._infoid.name
+        assert ARGS.p_summary == target._infoid.summary
+        assert ARGS.p_title == target._infoid.title
+
+    def test_init_identity_default(self):
+        """Confirm Identification initialization.
+        | Case: default arguments."""
+        # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        TEXT = 'Something completely different.'
+        target._infoid.init_identity(
+            p_name=TEXT, p_summary=TEXT, p_title=TEXT)
+        BLANK = ''
+        # Test
+        target.init_identity()
+        assert BLANK == target._infoid.name
+        assert BLANK == target._infoid.summary
+        assert BLANK == target._infoid.title
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ('_status', 'status'),
         # ('_note', 'note'),
+        ('_tag', 'tag'),
         ])
     def test_property(self, patch_args_infoid, NAME_ATTR, NAME_PROP):
         """Confirm properties are get-only.
@@ -119,8 +161,11 @@ class TestFact:
         #. Case: no delete
         """
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         ARGS = patch_args_infoid
-        target = MFACT.Fact(**DC.asdict(ARGS))
+        target.init_identity(**DC.asdict(ARGS))
         value_attr = getattr(target, NAME_ATTR)
         target_prop = getattr(MFACT.Fact, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
@@ -145,8 +190,11 @@ class TestFact:
         #. Case: no delete
         """
         # Setup
-        target = MFACT.Fact(p_name='Parrot', p_summary='Norwegian Blue',
-                            p_title='Parrot Sketch')
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        target.init_identity(p_name='Parrot', p_summary='Norwegian Blue',
+                             p_title='Parrot Sketch')
         value_attr = getattr(target._infoid, NAME_PROP)
         target_prop = getattr(MFACT.Fact, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
@@ -163,8 +211,11 @@ class TestFact:
         Case: block not attached initially
         """
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        target = MFACT.Fact(p_title=TITLE_MODEL)
+        target.init_identity(p_title=TITLE_MODEL)
 
         PatchBlockFact = patch_class_block_fact
         N_VIEWS = 3
@@ -183,8 +234,11 @@ class TestFact:
         Case: block attached initially
         """
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        target = MFACT.Fact(p_title=TITLE_MODEL)
+        target.init_identity(p_title=TITLE_MODEL)
 
         PatchBlockFact = patch_class_block_fact
         N_BLOCKS = 3
@@ -213,12 +267,16 @@ class TestFact:
     def test_check(self, patch_args_infoid, patch_class_block_fact):
         """Confirm default check."""
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         ARGS = patch_args_infoid
-        target = MFACT.Fact(**DC.asdict(ARGS))
+        target.init_identity(**DC.asdict(ARGS))
         VALUE = 'Something completely different.'
         target._value = VALUE
         STATUS = MFACT.StatusOfFact.UNCHECKED
         target._status = STATUS
+
         PatchBlockFact = patch_class_block_fact
         block = PatchBlockFact()
         target.attach_block(block)
@@ -232,10 +290,13 @@ class TestFact:
         assert result is STATUS
 
     def test_clear(self, patch_args_infoid, patch_class_block_fact):
-        """Confirm default check."""
+        """Confirm default clear."""
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         ARGS = patch_args_infoid
-        target = MFACT.Fact(**DC.asdict(ARGS))
+        target.init_identity(**DC.asdict(ARGS))
         VALUE = 'Something completely different.'
         target._value = VALUE
         STATUS = MFACT.StatusOfFact.DEFINED
@@ -263,8 +324,11 @@ class TestFact:
         monkeypatch.setattr(
             MINFOID.InfoId, 'detach_view', patch_detach.detach_view)
 
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        target = MFACT.Fact(p_title=TITLE_MODEL)
+        target.init_identity(p_title=TITLE_MODEL)
 
         PatchBlockFact = patch_class_block_fact
         N_BLOCKS = 3
@@ -313,8 +377,11 @@ class TestFact:
         monkeypatch.setattr(
             MINFOID.InfoId, 'detach_view', patch_infoid.detach_view)
 
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        target = MFACT.Fact(p_title=TITLE_MODEL)
+        target.init_identity(p_title=TITLE_MODEL)
 
         PatchBlockFact = patch_class_block_fact
         N_BLOCKS = 3
@@ -337,8 +404,11 @@ class TestFact:
         Case: block not attached initially
         """
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        target = MFACT.Fact(p_title=TITLE_MODEL)
+        target.init_identity(p_title=TITLE_MODEL)
 
         PatchBlockFact = patch_class_block_fact
         N_BLOCKS = 3
@@ -364,19 +434,22 @@ class TestFact:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_id_fact(self):
-        """Confirm return is accurate"""
-        # Setup
-        TEXT_TITLE = 'Something completely different'
-        target = MFACT.Fact(p_title=TEXT_TITLE)
-        # Test: read
-        target_prop = getattr(MFACT.Fact, 'id_fact')
-        assert target_prop.fget is not None
-        assert target._infoid.id_model == target.id_fact
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
+    # def test_id_fact(self):
+    #     """Confirm return is accurate"""
+    #     # Setup
+    #     Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+    #     TOPIC = None
+    #     target = Fact(p_topic=TOPIC)
+    #     TITLE_MODEL = 'Something completely different.'
+    #     target.init_identity(p_title=TITLE_MODEL)
+    #     # Test: read
+    #     target_prop = getattr(MFACT.Fact, 'id_fact')
+    #     assert target_prop.fget is not None
+    #     assert target._infoid.id_model == target.id_fact
+    #     # Test: no replace
+    #     assert target_prop.fset is None
+    #     # Test: no delete
+    #     assert target_prop.fdel is None
 
     def test_is_fresh(self):
         """Confirm return is accurate.
@@ -386,8 +459,11 @@ class TestFact:
         #. Case: Fact fresh, identification information fresh
         """
         # Setup
-        TEXT_TITLE = 'Something completely different'
-        target = MFACT.Fact(p_title=TEXT_TITLE)
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        TITLE_MODEL = 'Something completely different.'
+        target.init_identity(p_title=TITLE_MODEL)
         # Test: InfoId stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -413,8 +489,11 @@ class TestFact:
         #. Case: Fact fresh, identification information fresh
         """
         # Setup
-        TEXT_TITLE = 'Something completely different'
-        target = MFACT.Fact(p_title=TEXT_TITLE)
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        TITLE_MODEL = 'Something completely different.'
+        target.init_identity(p_title=TITLE_MODEL)
         # Test: Fact stale, identification information fresh
         target._stale = True
         target._infoid.set_fresh()
@@ -440,8 +519,11 @@ class TestFact:
         #. Case: Fact stale, identification information stale
          """
         # Setup
-        TEXT_TITLE = 'Something completely different'
-        target = MFACT.Fact(p_title=TEXT_TITLE)
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        TITLE_MODEL = 'Something completely different.'
+        target.init_identity(p_title=TITLE_MODEL)
         # Test: Fact fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
@@ -476,8 +558,11 @@ class TestFact:
         #. Case: Fact stale, identification information stale
          """
         # Setup
-        TEXT_TITLE = 'Something completely different'
-        target = MFACT.Fact(p_title=TEXT_TITLE)
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
+        TITLE_MODEL = 'Something completely different.'
+        target.init_identity(p_title=TITLE_MODEL)
         # Test: Fact fresh, identification information fresh
         target._stale = False
         target._infoid.set_fresh()
@@ -506,8 +591,11 @@ class TestFact:
     def test_update_blocks(self, patch_class_block_fact):
         """Confirm update notification."""
         # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = None
+        target = Fact(p_topic=TOPIC)
         TITLE_MODEL = 'Something completely different.'
-        target = MFACT.Fact(p_title=TITLE_MODEL)
+        target.init_identity(p_title=TITLE_MODEL)
         VALUE = 'Norwegian Blue'
         target._value = VALUE
         STATUS = MFACT.StatusOfFact.DEFINED
@@ -535,6 +623,7 @@ class TestTypes:
         """Confirm types defined."""
         # Setup
         # Test
-        assert MFACT.IdFact is ABC_FACT.IdFact
+        assert MFACT.TagFact is ABC_FACT.TagFact
         assert MFACT.StatusOfFact is ABC_FACT.StatusOfFact
-        assert MFACT.ValueOfFact is ABC_FACT.ValueOfFact
+        assert MFACT.TopicOpaque is ABC_FACT.TopicOpaque
+        assert MFACT.ValueOpaque is ABC_FACT.ValueOpaque

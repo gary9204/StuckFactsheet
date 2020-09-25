@@ -9,7 +9,7 @@ import pytest   # type: ignore[import]
 import typing
 
 from factsheet.content import spec as XSPEC
-from factsheet.content.note import note_spec as XNOTE_SPEC
+from factsheet.content.note import note_spec as XSPEC_NOTE
 from factsheet.content.note import note_topic as XNOTE
 
 gi.require_version('Gtk', '3.0')
@@ -26,7 +26,7 @@ class ArgsSpec:
     p_title: str
     p_class_topic: typing.Type[XNOTE.Note]
     p_path_assist: XSPEC.StrAssist
-    p_new_view_topics: typing.Optional[typing.Callable]
+    p_attach_view_topics: typing.Optional[typing.Callable]
 
 
 @pytest.fixture
@@ -40,8 +40,8 @@ def patch_args_spec():
         p_title='The Spanish Inquisition',
         p_class_topic=XNOTE.Note,
         p_path_assist=XSPEC.StrAssist(
-            str(Path(XNOTE_SPEC.__file__).parent / 'note_spec.ui')),
-        p_new_view_topics=None
+            str(Path(XSPEC_NOTE.__file__).parent / 'note_spec.ui')),
+        p_attach_view_topics=None
         )
 
 
@@ -53,7 +53,7 @@ class TestSpecNote:
 #         # Setup
 #         ARGS = patch_args_spec
 #         # Test
-#         target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+#         target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
 #         assert ARGS.p_name == target._name_template
 #         assert ARGS.p_summary == target._summary_template
 #         assert ARGS.p_title == target._title_template
@@ -77,7 +77,7 @@ class TestSpecNote:
 #         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
 #         ARGS = patch_args_spec
 #         # Test
-#         target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+#         target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
 
 #         attribute = getattr(target, NAME_ATTRIBUTE)
 #         n_handlers = 0
@@ -99,7 +99,7 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
         assistant = Gtk.Assistant()
         assistant.show()
         # Test
@@ -115,7 +115,7 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
         assistant = Gtk.Assistant()
         assistant.show()
         # Test
@@ -129,7 +129,7 @@ class TestSpecNote:
         #     """Confirm no-op handler exists."""
         #     # Setup
         #     ARGS = patch_args_spec
-        #     target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+        #     target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
         #     assistant = Gtk.Assistant()
         #     assistant.show()
         #     # Test
@@ -151,9 +151,9 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
         value_attr = getattr(target, name_attr)
-        target_prop = getattr(XNOTE_SPEC.SpecNote, name_prop)
+        target_prop = getattr(XSPEC_NOTE.SpecNote, name_prop)
         value_prop = getattr(target, name_prop)
         # Test: read
         assert target_prop.fget is not None
@@ -170,7 +170,7 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
         # Sync identification information with note_spec.ui.
         NAME = ''
         SUMMARY = ''
@@ -200,7 +200,7 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XNOTE_SPEC.SpecNote(**DC.asdict(ARGS))
+        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
 
         class PatchMainIteration:
             def __init__(self, px_target):

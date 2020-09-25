@@ -13,14 +13,15 @@ import typing   # noqa
 from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import infoid as MINFOID
 
-from factsheet.abc_types.abc_fact import IdFact
+from factsheet.abc_types.abc_fact import TagFact
 from factsheet.abc_types.abc_fact import StatusOfFact
-from factsheet.abc_types.abc_fact import ValueOfFact
+from factsheet.abc_types.abc_fact import TopicOpaque
+from factsheet.abc_types.abc_fact import ValueOpaque
 
 logger = logging.getLogger('Main.model.fact')
 
 
-class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
+class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
     """Fact component of Factsheet :mod:`~.factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a
@@ -42,7 +43,7 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
         the facts (like views) are not compared and may be different.
     """
 
-    def __call__(self) -> typing.Optional[ValueOfFact]:
+    def __call__(self) -> typing.Optional[ValueOpaque]:
         """Return fact value.
 
         If the user has not checked the fact or the fact value is not
@@ -55,14 +56,16 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
 
         :param px_other: object to compare with self.
         """
-        raise NotImplementedError
-        # if not isinstance(px_other, Topic):
-        #     return False
+        if not isinstance(px_other, Fact):
+            return False
 
-        # if self._infoid != px_other._infoid:
-        #    return False
+        if self._infoid != px_other._infoid:
+            return False
 
-        # return True
+        if self._topic is not px_other._topic:
+            return False
+
+        return True
 
     def __getstate__(self) -> typing.Dict:
         """Return fact model in form pickle can persist.
@@ -74,13 +77,18 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
         del state['_stale']
         return state
 
-    def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '', **_kwargs: typing.Any) -> None:
-        self._infoid = MINFOID.InfoId(
-            p_name=p_name, p_summary=p_summary, p_title=p_title)
-        self._value: typing.Optional[ValueOfFact] = None
+    def __init__(self, *, p_topic: TopicOpaque) -> None:
+        self._topic = p_topic
+        self._infoid = MINFOID.InfoId()
+        self._tag = TagFact(id(self))
+        self._value: typing.Optional[ValueOpaque] = None
         self._status = StatusOfFact.BLOCKED
         self._set_transient()
+
+    def init_identity(self, *, p_name: str = '', p_summary: str = '',
+                      p_title: str = '') -> None:
+        self._infoid.init_identity(
+            p_name=p_name, p_summary=p_summary, p_title=p_title)
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct fact model from state pickle loads.
@@ -115,27 +123,23 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
         self._infoid.attach_view(p_block.get_infoid())
         self._blocks[id_block] = p_block
 
-    def check(self, **_kwargs: typing.Any) -> StatusOfFact:
+    def check(self) -> StatusOfFact:
         """Set fact value and set corresponding state of fact check.
 
         Base class marks change in fact and notifies attached fact
         blocks.  Base class does not change fact status or value.
         """
         self.set_stale()
-        # self._value = None
-        # self._status = StatusOfFact.UNDEFINED
         self._update_blocks()
         return self._status
 
-    def clear(self, **_kwargs: typing.Any) -> None:
+    def clear(self) -> None:
         """Clear fact value and set corresponding state of fact check.
 
         Base class marks change in fact and notifies attached fact
         blocks.  Base class does not change fact status or value.
         """
         self.set_stale()
-        # self._value = None
-        # self._status = StatusOfFact.UNCHECKED
         self._update_blocks()
 
     def detach_all(self) -> None:
@@ -172,11 +176,6 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
     #     :param pm_view: view of topic as a whole.
     #     """
     #     self._infoid.detach_view(p_block.get_infoid())
-
-    @property
-    def id_fact(self) -> IdFact:
-        """Return fact identifier. """
-        return IdFact(self._infoid.id_model)
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to fact."""
@@ -224,6 +223,11 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[ValueOfFact]):
     def summary(self) -> str:
         """Return fact summary."""
         return self._infoid.summary
+
+    @property
+    def tag(self) -> TagFact:
+        """Return fact identifier. """
+        return self._tag
 
     @property
     def title(self) -> str:

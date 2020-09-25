@@ -142,34 +142,34 @@ class WinTemp:
         p_column.set_visible(True)
 
     def style_index(self, p_element: typing.Optional[
-            MELEMENT.ElementGeneric[int]]) -> str:
+            MELEMENT.ElementOpaque[int]]) -> str:
         text = '--'
         if p_element is not None:
             text = str(p_element.index)
         return text
 
-    def style_plain(self, p_element: MELEMENT.ElementGeneric[int]) -> str:
+    def style_plain(self, p_element: MELEMENT.ElementOpaque[int]) -> str:
         text = '--'
         if p_element is not None:
             text = ''.join(
                 [str(p_element.index), ': ', str(p_element.member)])
         return text
 
-    def style_label(self, p_element: MELEMENT.ElementGeneric[int]) -> str:
+    def style_label(self, p_element: MELEMENT.ElementOpaque[int]) -> str:
         text = '--'
         if p_element is not None:
             text = ''.join(
                 ['<i>a</i><sub>', str(p_element.index), '</sub>'])
         return text
 
-    def style_element(self, p_element: MELEMENT.ElementGeneric[int]) -> str:
+    def style_element(self, p_element: MELEMENT.ElementOpaque[int]) -> str:
         text = '--'
         if p_element is not None:
             text = ''.join(['<i>a</i><sub>', str(p_element.index),
                            '</sub> = ', str(p_element.member)])
         return text
 
-    def style_member(self, p_element: MELEMENT.ElementGeneric[int]) -> str:
+    def style_member(self, p_element: MELEMENT.ElementOpaque[int]) -> str:
         text = '--'
         if p_element is not None:
             text = str(p_element.member)

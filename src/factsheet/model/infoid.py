@@ -10,20 +10,12 @@ from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.model import types_model as MTYPES
 # from factsheet.view import ui as UI
 
+TagInfoId = typing.NewType('TagInfoId', int)
 
-class InfoId(ABC_STALE.InterfaceStaleFile):
+
+class InfoId(ABC_INFOID.AbstractIdentity[TagInfoId],
+             ABC_STALE.InterfaceStaleFile):
     """Defines identification information common to Factsheet components.
-
-    The Factsheet model includes components for factsheets, topics, and
-    facts.  These components have identification information in common.
-    The information represented by ``InfoId`` is as follows.
-
-     * *ID:* identifier that is unique for lifetime of the component.
-     * *Name:* short, editable identifier (suitable, for example, as
-       label).
-     * *Summary:* editable description of component, which adds detail
-       to title.
-     * *Title:* one-line, editable description of component contents.
 
     .. admonition:: About Equality
 
@@ -32,13 +24,12 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         (like views) are not compared and may be different.
     """
 
-    def __init__(self, *, p_name: str = '', p_summary: str = '',
-                 p_title: str = '') -> None:
-        self._id_model = id(self)
+    def __init__(self) -> None:
+        self._name = MTYPES.ModelName(p_text='')
+        self._summary = MTYPES.ModelSummary(p_text='')
+        self._tag = TagInfoId(id(self))
+        self._title = MTYPES.ModelTitle(p_text='')
         self._stale = False
-        self._name = MTYPES.ModelName(p_name)
-        self._summary = MTYPES.ModelSummary(p_summary)
-        self._title = MTYPES.ModelTitle(p_title)
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same name, summary, and title.
@@ -79,9 +70,21 @@ class InfoId(ABC_STALE.InterfaceStaleFile):
         self._title.detach_view(pm_view.get_view_title())
 
     @property
-    def id_model(self) -> int:
+    def tag(self) -> TagInfoId:
         """Return component identifier."""
-        return self._id_model
+        return self._tag
+
+    def init_identity(self, *, p_name: str = '', p_summary: str = '',
+                      p_title: str = '') -> None:
+        """Assign initial name, title, and summary for a model component.
+
+        :param p_name: name for component.
+        :param p_summary: summary for component.
+        :param p_title: title for component.
+        """
+        self._name = MTYPES.ModelName(p_name)
+        self._summary = MTYPES.ModelSummary(p_summary)
+        self._title = MTYPES.ModelTitle(p_title)
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to

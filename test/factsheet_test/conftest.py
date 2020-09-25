@@ -141,7 +141,7 @@ def patch_args_array():
     :class:`.Array` object.
     """
     Set = MSET.SetIndexed[int]
-    Element = MELEMENT.ElementGeneric[int]
+    Element = MELEMENT.ElementOpaque[int]
     N_ROWS = 3
     N_COLUMNS = 4
     size = N_ROWS * N_COLUMNS
@@ -190,9 +190,9 @@ def patch_args_table():
     """
     set_int = MSET.SetIndexed[int]([0, 2, 4, 6, 8])
     set_str = MSET.SetIndexed[str](['a', 'e', 'i', 'o', 'u'])
-    list_mix = [MELEMENT.ElementGeneric('x', 0), None,
-                MELEMENT.ElementGeneric('y', 1), None,
-                MELEMENT.ElementGeneric('z', 2)]
+    list_mix = [MELEMENT.ElementOpaque('x', 0), None,
+                MELEMENT.ElementOpaque('y', 1), None,
+                MELEMENT.ElementOpaque('z', 2)]
     rows = Gtk.ListStore(GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT)
     for e_int, e_str, e_mix in zip(set_int, set_str, list_mix):
         rows.append([e_int, e_str, e_mix])

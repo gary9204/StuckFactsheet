@@ -8,7 +8,8 @@ import logging
 import pickle
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
+import factsheet.abc_types.abc_outline as ABC_OUTLINE
+import factsheet.adapt_gtk.adapt_outline as AOUTLINE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -80,15 +81,16 @@ def new_outline_model():
     return new_model
 
 
-class TestAdaptIndex:
+class TestTypes:
     """Unit tests for supporting abstract types."""
 
     def test_types(self):
         """Confirm supporting types defined."""
         # Setup
         # Test
-        assert AOUTLINE.AdaptIndex is not None
-        assert issubclass(Gtk.TreeIter, AOUTLINE.AdaptIndex)
+        assert AOUTLINE.IndexGtk is not None
+        assert issubclass(Gtk.TreeIter, AOUTLINE.IndexGtk)
+        assert AOUTLINE.ItemOpaque is ABC_OUTLINE.ItemOpaque
 
 
 class TestAdaptTreeStore:

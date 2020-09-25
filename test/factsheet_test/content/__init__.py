@@ -1,4 +1,4 @@
 """
-Unit tests for definition of Factsheet content.  See
-:mod:`~factsheet.content`.
+Unit tests for definitions of Factsheet content.  See
+:mod:`~.factsheet.content`.
 """

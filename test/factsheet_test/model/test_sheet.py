@@ -192,7 +192,7 @@ class TestSheet:
             parent = target.insert_topic_child(topic, parent)
 
         N_REMOVE = 5
-        ids_extracted = [t.id_topic for t in topics]
+        ids_extracted = [t.tag for t in topics]
         target.set_fresh()
         # Test
         target.clear()
@@ -369,7 +369,7 @@ class TestSheet:
         i_start = gtk_model.get_iter_first()
         for _ in range(N_START):
             i_start = gtk_model.iter_children(i_start)
-        ids_extracted = [t.id_topic for t in topics[N_START:]]
+        ids_extracted = [t.tag for t in topics[N_START:]]
         target.set_fresh()
         # Test
         target.extract_topic(i_start)

@@ -20,7 +20,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 class TestAdaptEntry:
     """Unit tests for :data:`.AdaptEntry` implementation of
-    :data:`.AbstractTextView`.
+    :data:`.TextViewOpaque`.
     """
 
     def test_adapt_entry(self):
@@ -568,7 +568,7 @@ class TestAdaptTextBuffer:
 
 class TestAdaptTextView:
     """Unit tests for :data:`.AdaptTextView` implementation of
-    :data:`.AbstractTextView`.
+    :data:`.TextViewOpaque`.
     """
 
     def test_adapt_textview(self):

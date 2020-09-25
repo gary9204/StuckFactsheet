@@ -51,6 +51,6 @@ class SpecNote(XSPEC.Spec):
             name = name_topic.get_text()
             summary = XSPEC.textbuffer_get_text(summary_topic)
             title = title_topic.get_text()
-            topic = self._class_topic(
+            topic = self._prototopic(
                 p_name=name, p_summary=summary, p_title=title)
         return topic

@@ -1,5 +1,5 @@
 """
-Unit tests for class to display fact in topic pane.  See
+Unit tests for class to display fact in topic form.  See
 :mod:`.block_fact`.
 """
 import dataclasses as DC
@@ -699,4 +699,4 @@ class TestTypes:
         # Setup
         # Test
         assert VFACT.StatusOfFact is ABC_FACT.StatusOfFact
-        assert VFACT.ValueOfFact is ABC_FACT.ValueOfFact
+        assert VFACT.ValueOpaque is ABC_FACT.ValueOpaque

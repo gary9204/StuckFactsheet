@@ -1,4 +1,4 @@
 """
-Defines unit tests for outline templates.  See
-:mod:`~factsheet.content.note`.
+Unit tests for topics outline sections.  See
+:mod:`~.factsheet.content.note`.
 """

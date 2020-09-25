@@ -19,7 +19,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 #     styles: typing.Sequence[str]
 
 
-Entry = MELEMENT.ElementGeneric[MELEMENT.MemberGeneric]
+Entry = MELEMENT.ElementOpaque[MELEMENT.MemberOpaque]
 IdStyle = MELEMENT.IdStyle
 Style = MELEMENT.Style
 

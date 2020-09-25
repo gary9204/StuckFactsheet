@@ -1,15 +1,16 @@
 """
 Defines class for set of integers topics.  See :mod:`.set_topic`.
 """
-from factsheet.content.sets import set_topic as XSET
-from factsheet.model import element as MELEMENT
+import factsheet.content.sets .set_topic as XSET
+
+from factsheet.model.element import ElementOpaque
 
 
-ElementInt = MELEMENT.ElementGeneric[int]
+ElementInt = ElementOpaque[int]
 
 
 class SetInt(XSET.Set[int]):
-    """Defines class for set of integers topics.
+    """Defines set of integers topic.
 
     Class ``SetInt`` serves as a common ancestor for classes that
     represent sets of integers.  The class specializes :class:`~.Set` to
@@ -17,3 +18,10 @@ class SetInt(XSET.Set[int]):
     """
 
     pass
+
+    # def __init__(self, **kwargs: typing.Any) -> None:
+    #     super().__init__(**kwargs)
+    #     NAME = 'SetInt'
+    #     SUMMARY = 'This topic represents a set of integers.'
+    #     TITLE = 'Integer Set'
+    #     self.init_identity(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)

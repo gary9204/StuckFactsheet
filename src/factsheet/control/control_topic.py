@@ -1,6 +1,6 @@
 """
 Defines class that mediates topic-level interaction from
-:class:`~.PaneTopic` to :class:`~.Topic`.
+:class:`~.FormTopic` to :class:`~.Topic`.
 
 :doc:`../guide/devel_notes` explains how application Factsheet is based
 on a Model-View-Controller (MVC) design.  The design is partitioned into
@@ -17,26 +17,26 @@ logger = logging.getLogger('Main.control_fact')
 
 
 class ControlTopic:
-    """Translates user requests in topic pane to updates in topic model.
+    """Translates user requests in topic form to updates in topic model.
 
-    :param pm_topic: topic model.
+    :param p_topic: topic model.
     """
 
-    def __init__(self, pm_model: MTOPIC.Topic) -> None:
-        self._model = pm_model
+    def __init__(self, p_model: MTOPIC.Topic) -> None:
+        self._model = p_model
 
-    def attach_view(self, pm_view: ABC_TOPIC.InterfaceFormTopic) -> None:
-        """Add view to model.
+    def attach_form(self, p_form: ABC_TOPIC.InterfaceFormTopic) -> None:
+        """Add topic form to model.
 
-        :param pm_view: view to add.
+        :param p_form: form to add.
         """
         assert self._model is not None
-        self._model.attach_view(pm_view)
+        self._model.attach_form(p_form)
 
-    def detach_view(self, px_view: ABC_TOPIC.InterfaceFormTopic) -> None:
-        """Remove view from model.
+    def detach_form(self, p_form: ABC_TOPIC.InterfaceFormTopic) -> None:
+        """Remove topic form from model.
 
-        :param px_view: view to remove.
+        :param p_form: form to remove.
         """
         assert self._model is not None
-        self._model.detach_view(px_view)
+        self._model.detach_form(p_form)

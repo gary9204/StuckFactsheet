@@ -125,7 +125,7 @@ class TestAdaptTreeStoreTemplate:
         assert target is not None
         index_new = target.insert_before(patch_template, INDEX)
         assert index_new is not None
-        assert isinstance(index_new, AOUTLINE.AdaptIndex)
+        assert isinstance(index_new, AOUTLINE.IndexGtk)
 
     def test_find_name(self, new_outline_model):
         """| Confirm search by template name.
@@ -198,7 +198,7 @@ class TestAdaptTreeStoreTopic:
         assert target is not None
         index_new = target.insert_before(topic, INDEX)
         assert index_new is not None
-        assert isinstance(index_new, AOUTLINE.AdaptIndex)
+        assert isinstance(index_new, AOUTLINE.IndexGtk)
 
     def test_find_name(self, new_outline_model):
         """| Confirm search by topic name.

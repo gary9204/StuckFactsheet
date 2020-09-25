@@ -21,8 +21,8 @@ Submodules
 
    factsheet_test.view.conftest
    factsheet_test.view.manual_scene_table
+   factsheet_test.view.test_form_topic
    factsheet_test.view.test_page_sheet
-   factsheet_test.view.test_pane_topic
    factsheet_test.view.test_query_place
    factsheet_test.view.test_query_template
    factsheet_test.view.test_scenes

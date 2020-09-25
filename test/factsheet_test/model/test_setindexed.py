@@ -27,7 +27,7 @@ class TestSetIndexed:
         | Case: indexed elements in and not in set.
         """
         # Setup
-        Element = MELEMENT.ElementGeneric[str]
+        Element = MELEMENT.ElementOpaque[str]
         Set = MSET.SetIndexed[str]
         target = Set(patch_members)
         element = Element(p_member=MEMBER, p_index=INDEX)
@@ -232,7 +232,7 @@ class TestSetIndexed:
         | Case: elements with duplicate index.
         """
         # Setup
-        Element = MELEMENT.ElementGeneric[str]
+        Element = MELEMENT.ElementOpaque[str]
         Set = MSET.SetIndexed[str]
         reference = Set(patch_members)
         source = list(reference)
@@ -246,7 +246,7 @@ class TestSetIndexed:
         | Case: elements with duplicate member.
         """
         # Setup
-        Element = MELEMENT.ElementGeneric[str]
+        Element = MELEMENT.ElementOpaque[str]
         Set = MSET.SetIndexed[str]
         reference = Set(patch_members)
         source = list(reference)
@@ -342,16 +342,16 @@ class TestTypes:
         # Setup
         # Test
         assert MELEMENT.IndexElement is not None
-        assert MELEMENT.MemberGeneric is not None
+        assert MELEMENT.MemberOpaque is not None
 
 
-# class TestElementGeneric:
-#     """Unit test fors :class:`.ElementGeneric`."""
+# class TestElementOpaque:
+#     """Unit test fors :class:`.ElementOpaque`."""
 
 #     def test_defined(self):
 #         """Confirm class definition."""
 #         # Setup
-#         Element = MELEMENT.ElementGeneric[str]
+#         Element = MELEMENT.ElementOpaque[str]
 #         INDEX = MELEMENT.IndexElement(42)
 #         MEMBER = 'Parrot'
 #         target = Element(p_member=MEMBER, p_index=INDEX)

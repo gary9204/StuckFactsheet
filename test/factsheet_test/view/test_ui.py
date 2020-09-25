@@ -27,14 +27,14 @@ class TestTypes:
     #     assert UI.OutlineTopics is AFACTORY.OutlineTopics
     #     assert UI.ViewOutlineTemplates is AFACTORY.ViewOutlineTemplates
     #     assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
-    #     # assert UI.NewViewOutlineTopics is not None  # Not testable at
+    #     # assert UI.AttachViewTopics is not None  # Not testable at
     #     #     runtime [misc]
 
     # def test_types_topic(self):
     #     """Confirm types defined for topic components."""
     #     # Setup
     #     # Test
-    #     assert UI.IdTopic is AFACTORY.IdTopic
+    #     assert UI.TagTopic is AFACTORY.TagTopic
     #     assert UI.OutlineFacts is AFACTORY.OutlineFacts
     #     assert UI.ViewOutlineFacts is AFACTORY.ViewOutlineFacts
 

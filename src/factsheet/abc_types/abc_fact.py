@@ -21,7 +21,7 @@ encapsulation.
     Generic type for fact value without fact status.
 
 ..
-    data:: ValueOfFact
+    data:: ValueOpaque
 
     Generic type for fact value.
 """
@@ -59,26 +59,24 @@ class StatusOfFact(enum.Enum):
     DEFINED = enum.auto()
 
 
-IdFact = typing.NewType('IdFact', int)
+TagFact = typing.NewType('TagFact', int)
 NameScene = typing.NewType('NameScene', str)
-# ValueAny = typing.TypeVar('ValueAny')
-# ValueOfFact = typing.Union[StatusOfFact, ValueAny]
-ValueOfFact = typing.TypeVar('ValueOfFact')
+TopicOpaque = typing.TypeVar('TopicOpaque')
+ValueOpaque = typing.TypeVar('ValueOpaque')
 
 
-class AbstractFact(ABC_STALE.InterfaceStaleFile):
+class AbstractFact(
+        ABC_INFOID.AbstractIdentity[TagFact], ABC_STALE.InterfaceStaleFile):
     """Defines interfaces common to fact model components."""
 
-    @property
     @abc.abstractmethod
-    def id_fact(self) -> IdFact:
-        """Return fact identifier."""
+    def check(self) -> StatusOfFact:
+        """Return status of fact check after setting fact value and status."""
         raise NotImplementedError
 
-    @property
     @abc.abstractmethod
-    def name(self) -> str:
-        """Return fact name. """
+    def clear(self) -> None:
+        """Clear fact value and status of fact."""
         raise NotImplementedError
 
     @property
@@ -87,26 +85,14 @@ class AbstractFact(ABC_STALE.InterfaceStaleFile):
         """Return status of fact. """
         raise NotImplementedError
 
-    @property
-    @abc.abstractmethod
-    def summary(self) -> str:
-        """Return fact summary. """
-        raise NotImplementedError
 
-    @property
-    @abc.abstractmethod
-    def title(self) -> str:
-        """Return fact title. """
-        raise NotImplementedError
-
-
-class InterfaceBlockFact(abc.ABC, typing.Generic[ValueOfFact]):
+class InterfaceBlockFact(abc.ABC, typing.Generic[ValueOpaque]):
     """Defines interface for :class:`~.Fact` model to signal
     :class:`~.BlockFact`.
     """
 
     @abc.abstractmethod
-    def update(self, p_status: StatusOfFact, p_value: ValueOfFact) -> None:
+    def update(self, p_status: StatusOfFact, p_value: ValueOpaque) -> None:
         """Update view with new fact status and value.
 
         :param p_status: new status of fact.

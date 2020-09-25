@@ -307,13 +307,13 @@ class TestControlSheet:
         topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
                   for i in range(N_TOPICS)]
         for topic in topics:
-            control_topic = CTOPIC.ControlTopic(pm_model=topic)
-            key_topic = topic.id_topic
+            control_topic = CTOPIC.ControlTopic(p_model=topic)
+            key_topic = topic.tag
             target._controls_topic[key_topic] = control_topic
 
         N_EXPECT = 1
         topic_expect = topics[N_EXPECT]
-        id_expect = topic_expect.id_topic
+        id_expect = topic_expect.tag
         # Test
         control_actual = target.get_control_topic(topic_expect)
         assert control_actual is target._controls_topic[id_expect]
@@ -330,8 +330,8 @@ class TestControlSheet:
         topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
                   for i in range(N_TOPICS)]
         for topic in topics:
-            control_topic = CTOPIC.ControlTopic(pm_model=topic)
-            key_topic = topic.id_topic
+            control_topic = CTOPIC.ControlTopic(p_model=topic)
+            key_topic = topic.tag
             target._controls_topic[key_topic] = control_topic
 
         topic_absent = MTOPIC.Topic(p_title="Spanish Inquisition")
@@ -363,7 +363,7 @@ class TestControlSheet:
 
         TITLE = 'Something completely different.'
         TOPIC = MTOPIC.Topic(pm_title=TITLE)
-        id_topic = TOPIC.id_topic
+        id_topic = TOPIC.tag
         I_TOPIC = 'Parrot'
         # Test
         index_new, control_new = method(TOPIC, I_TOPIC)

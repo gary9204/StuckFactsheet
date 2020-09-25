@@ -70,7 +70,7 @@ class TestLabelColumn:
         INDEX = 0
         MEMBER = 'x'
         SYMBOL = 'g'
-        element = MELEMENT.ElementGeneric[str](
+        element = MELEMENT.ElementOpaque[str](
             p_member=MEMBER, p_index=MELEMENT.IndexElement(INDEX))
         ID_STYLE = MELEMENT.IdStyle('Element')
         style = MELEMENT.Style(p_name=ID_STYLE)
@@ -100,7 +100,7 @@ class TestLabelColumn:
         INDEX = 0
         MEMBER = 'x'
         SYMBOL = 'g'
-        element = MELEMENT.ElementGeneric[str](
+        element = MELEMENT.ElementOpaque[str](
             p_member=MEMBER, p_index=MELEMENT.IndexElement(INDEX))
         ID_STYLE = MELEMENT.IdStyle('Element')
         style = MELEMENT.Style(p_name=ID_STYLE)
@@ -123,7 +123,7 @@ class TestLabelColumn:
         INDEX = 0
         MEMBER = 'x'
         SYMBOL = 'g'
-        element = MELEMENT.ElementGeneric[str](
+        element = MELEMENT.ElementOpaque[str](
             p_member=MEMBER, p_index=MELEMENT.IndexElement(INDEX))
         STYLE_BEFORE = MELEMENT.IdStyle('Plain')
         style = MELEMENT.Style(p_name=STYLE_BEFORE)
@@ -250,7 +250,7 @@ class TestLabelArray:
         style = STYLES[I_STYLE]
         target = VVALUE.LabelArray(
             p_title=TITLE, p_style=style, p_styles=STYLES)
-        ELEMENT = MELEMENT.ElementGeneric[str](p_member='x', p_index=0)
+        ELEMENT = MELEMENT.ElementOpaque[str](p_member='x', p_index=0)
         style = target._style
         SYMBOL = 'g'
         N_CLIENTS = 5

@@ -13,7 +13,7 @@ the abstract set the object represents along with an index.
 
     Type for labeling members of an abstract set.
 
-.. data:: MemberGeneric
+.. data:: MemberOpaque
 
     Generic type for abstract set member.
 """
@@ -21,7 +21,7 @@ import typing
 
 IdStyle = typing.NewType('IdStyle', str)
 IndexElement = typing.NewType('IndexElement', int)
-MemberGeneric = typing.TypeVar('MemberGeneric')
+MemberOpaque = typing.TypeVar('MemberOpaque')
 
 
 class Style:
@@ -51,7 +51,7 @@ class Style:
         self.name = p_name
 
 
-class ElementGeneric(typing.Generic[MemberGeneric]):
+class ElementOpaque(typing.Generic[MemberOpaque]):
     """Defines an indexed element.
 
     An element of a :class:`.SetIndexed` object
@@ -85,7 +85,7 @@ class ElementGeneric(typing.Generic[MemberGeneric]):
         return True
 
     def __init__(
-            self, p_member: MemberGeneric, p_index: IndexElement) -> None:
+            self, p_member: MemberOpaque, p_index: IndexElement) -> None:
         self._member = p_member
         self._index = p_index
         self._apply_style: typing.Mapping[str, typing.Callable[[str], str]] = {

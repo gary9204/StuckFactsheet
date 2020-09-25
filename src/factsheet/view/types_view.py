@@ -11,5 +11,5 @@ ViewOutlineTemplates = ASHEET.AdaptTreeViewTemplate
 ViewOutlineTopics = ASHEET.AdaptTreeViewTopic
 NewViewOutlineTopics = typing.Callable[[], ViewOutlineTopics]
 
-IdTopic = ATOPIC.IdTopic
+from ATOPIC import TagTopic
 ViewOutlineFacts = ATOPIC.AdaptTreeViewFact

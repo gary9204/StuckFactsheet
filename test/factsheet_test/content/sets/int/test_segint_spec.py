@@ -8,12 +8,12 @@ from pathlib import Path
 import pytest   # type: ignore[import]
 import typing
 
-from factsheet.content import spec as XSPEC
-from factsheet.content.sets import set_facts as XFACTS_SET
-from factsheet.content.sets.int import segint_facts as XFACTS_SEGINT
-from factsheet.content.sets.int import segint_spec as XSPEC_SEGINT
-from factsheet.content.sets.int import segint_topic as XSEGINT
-from factsheet.view.block import block_fact as VFACT
+import factsheet.content.spec as XSPEC
+import factsheet.content.sets.set_facts as XFACTS_SET
+import factsheet.content.sets.int.segint_facts as XFACTS_SEGINT
+import factsheet.content.sets.int.segint_spec as XSPEC_SEGINT
+import factsheet.content.sets.int.segint_topic as XSEGINT
+import factsheet.view.block.block_fact as VFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -27,23 +27,21 @@ class ArgsSpec:
     p_name: str
     p_summary: str
     p_title: str
-    p_class_topic: typing.Type[XSEGINT.SegInt]
     p_path_assist: XSPEC.StrAssist
-    p_new_view_topics: typing.Optional[typing.Callable]
+    p_attach_view_topics: typing.Optional[typing.Callable]
 
 
 @pytest.fixture
 def patch_args_spec():
     """Pytest fixture returns set of argument values to construct
     a stock :class:`.SpecSegInt` object."""
+    path_assist = str(Path(XSPEC_SEGINT.__file__).parent / 'segint_spec.ui')
     return ArgsSpec(
         p_name='Inquisition',
         p_summary='No one expects the Spanish Inquisition!',
         p_title='The Spanish Inquisition',
-        p_class_topic=XSEGINT.SegInt,
-        p_path_assist=XSPEC.StrAssist(
-            str(Path(XSPEC_SEGINT.__file__).parent / 'segint_spec.ui')),
-        p_new_view_topics=None
+        p_path_assist=XSPEC.StrAssist(path_assist),
+        p_attach_view_topics=None,
         )
 
 
@@ -67,20 +65,16 @@ def patch_ui_args():
 class TestSpecSegInt:
     """Unit tests for :class:`.SpecSegInt`."""
 
-    def test_init(self, patch_args_spec):
-        """Confirm initialization."""
-        # Setup
-        ARGS = patch_args_spec
-        MAP = {
-            XFACTS_SET.ElementsSet: VFACT.BlockFact,
-            XFACTS_SET.SearchSet: VFACT.BlockFactStr,
-            XFACTS_SET.SizeSet: VFACT.BlockFactInt,
-            XFACTS_SEGINT.BoundSegInt: VFACT.BlockFactInt,
-            }
-        # Test
-        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
-        for fact in MAP.keys():
-            assert target._fact_to_block._mapping[fact] is MAP[fact]
+    # def test_init(self, patch_args_spec):
+    #     """Confirm initialization."""
+    #     # Setup
+    #     ARGS = patch_args_spec
+    #     PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XSEGINT.SegInt)
+    #     # Test
+    #     target = XSPEC_SEGINT.SpecSegInt(
+    #         **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
+    #     for fact in MAP.keys():
+    #         assert target._fact_to_block._mapping[fact] is MAP[fact]
 
     def test_call_apply(self, patch_args_spec, monkeypatch):
         """| Confirm call method specifies segment topic.
@@ -88,7 +82,9 @@ class TestSpecSegInt:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XSEGINT.SegInt)
+        target = XSPEC_SEGINT.SpecSegInt(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         # Sync identification information with segint_spec.ui.
         NAME = ''
         SUMMARY = 'This topic is an initial segment of natural numbers.'
@@ -119,7 +115,9 @@ class TestSpecSegInt:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XSEGINT.SegInt)
+        target = XSPEC_SEGINT.SpecSegInt(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
 
         class PatchMainIteration:
             def __init__(self, p_target):
@@ -150,7 +148,9 @@ class TestSpecSegInt:
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
         ARGS = patch_args_spec
-        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XSEGINT.SegInt)
+        target = XSPEC_SEGINT.SpecSegInt(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)
@@ -174,7 +174,9 @@ class TestSpecSegInt:
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
         ARGS = patch_args_spec
-        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XSEGINT.SegInt)
+        target = XSPEC_SEGINT.SpecSegInt(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)
@@ -208,7 +210,9 @@ class TestSpecSegInt:
             Gtk.Assistant, 'get_page_title', lambda _self, _page: TITLE_PAGE)
 
         ARGS = patch_args_spec
-        target = XSPEC_SEGINT.SpecSegInt(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XSEGINT.SegInt)
+        target = XSPEC_SEGINT.SpecSegInt(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         page = Gtk.Label()
         assistant.append_page(page)

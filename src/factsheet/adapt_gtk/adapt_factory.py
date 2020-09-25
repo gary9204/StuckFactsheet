@@ -97,7 +97,7 @@ Defines GTK-based classes that implement abstract factories in
 #         return AINFOID.AdaptEntryBuffer(p_text=p_text)
 
 
-# IndexOutline = AOUTLINE.AdaptIndex
+# IndexOutline = AOUTLINE.IndexGtk
 # OutlineTemplates = ASHEET.AdaptTreeStoreTemplate
 # OutlineTopics = ASHEET.AdaptTreeStoreTopic
 # ViewOutlineTemplates = ASHEET.AdaptTreeViewTemplate
@@ -117,7 +117,7 @@ Defines GTK-based classes that implement abstract factories in
 #         return OutlineTopics()
 
 
-# IdTopic = ABC_TOPIC.IdTopic
+# TagTopic = ABC_TOPIC.TagTopic
 # OutlineFacts = ATOPIC.AdaptTreeStoreFact
 # ViewOutlineFacts = ATOPIC.AdaptTreeViewFact
 

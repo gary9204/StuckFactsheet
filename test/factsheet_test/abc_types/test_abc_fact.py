@@ -7,24 +7,6 @@ import pytest   # type: ignore[import]
 import factsheet.abc_types.abc_fact as ABC_FACT
 
 
-class TestTypes:
-    """Unit tests for type definitions in :mod:`.abc_fact`."""
-
-    def test_types(self):
-        """Confirm types defined."""
-        # Setup
-        # Test
-        assert ABC_FACT.IdFact
-        assert ABC_FACT.NameScene
-        Status = ABC_FACT.StatusOfFact
-        assert issubclass(Status, enum.Enum)
-        assert Status.BLOCKED
-        assert Status.DEFINED
-        assert Status.UNCHECKED
-        assert Status.UNDEFINED
-        assert ABC_FACT.ValueOfFact
-
-
 class TestAbstractFact:
     """Unit tests for interface :class:`.AbstractFact`."""
 
@@ -36,25 +18,33 @@ class TestAbstractFact:
             _ = ABC_FACT.AbstractFact()
 
     @pytest.mark.parametrize('NAME_METHOD', [
-        'id_fact',
-        'status',
+        'check',
+        'clear',
         'name',
+        'status',
         'summary',
+        'tag',
         'title',
         ])
     def test_must_override(self, NAME_METHOD):
         """Confirm each method must be overridden."""
         # Setup
         class PatchFact(ABC_FACT.AbstractFact):
-            def id_fact(self): return super().id_fact
+            def check(self): return super().check()
 
-            def status(self): return super().status
+            def clear(self): return super().clear()
 
             def name(self): return super().name
 
+            def status(self): return super().status
+
             def summary(self): return super().summary
 
+            def tag(self): return super().tag
+
             def title(self): return super().title
+
+            def init_identity(self): return super().init_identity()
 
             def is_fresh(self): super().is_fresh()
 
@@ -98,3 +88,22 @@ class TestInterfaceBlockFact:
         with pytest.raises(NotImplementedError):
             method = getattr(target, NAME_METHOD)
             method()
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.abc_fact`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert ABC_FACT.TagFact
+        assert ABC_FACT.NameScene
+        Status = ABC_FACT.StatusOfFact
+        assert issubclass(Status, enum.Enum)
+        assert Status.BLOCKED
+        assert Status.DEFINED
+        assert Status.UNCHECKED
+        assert Status.UNDEFINED
+        assert ABC_FACT.TopicOpaque
+        assert ABC_FACT.ValueOpaque

@@ -9,7 +9,7 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.note import note_spec as XNOTE_SPEC
+from factsheet.content.note import note_spec as XSPEC_NOTE
 from factsheet.control import pool as CPOOL
 from factsheet.control import control_sheet as CSHEET
 from factsheet.model import sheet as MSHEET
@@ -18,7 +18,7 @@ from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import page_sheet as VSHEET
 from factsheet.view import scenes as VSCENES
-from factsheet.view import pane_topic as VTOPIC
+from factsheet.view import form_topic as VTOPIC
 from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI
 from factsheet.view import view_infoid as VINFOID
@@ -143,7 +143,7 @@ class TestPageSheet:
         assert isinstance(target._scenes_topic, VSCENES.Scenes)
         assert isinstance(target._dialog_data_loss, Gtk.Dialog)
         assert target._query_place is None
-        assert isinstance(target._query_template, QTEMPLATE.QueryTemplate)
+        assert target._query_template is None
         assert target._name_former is None
         assert isinstance(target._warning_data_loss, Gtk.Label)
 
@@ -297,7 +297,7 @@ class TestPageSheet:
         del factsheet
 
     def test_close_topic(self, patch_factsheet, capfd, new_outline_topics):
-        """Confirm pane removed from scenes and closed"""
+        """Confirm topic form removed from scenes and closed."""
         # Setup
         factsheet = patch_factsheet()
         target = VSHEET.PageSheet(px_app=factsheet)
@@ -319,15 +319,15 @@ class TestPageSheet:
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
             control = target._control._add_new_control_topic(topic)
-            pane = VTOPIC.PaneTopic(pm_control=control)
+            form = VTOPIC.FormTopic(p_control=control)
             target._scenes_topic.add_scene(
-                pane.gtk_pane, hex(topic.id_topic))
+                form.gtk_pane, hex(topic.tag))
 
         target._cursor_topics.unselect_all()
         PATH_CURRENT = '0:0:0'
         i_remove = topics.get_iter_from_string(PATH_CURRENT)
         topic_remove = AOUTLINE.get_item_gtk(topics, i_remove)
-        id_remove = topic_remove.id_topic
+        id_remove = topic_remove.tag
         NAME_DEFAULT = 'Default'
         # Test
         target.close_topic(id_remove)
@@ -395,8 +395,10 @@ class TestPageSheet:
         model = page._view_topics.gtk_view.get_model()
         assert model is not None
         assert page._query_place is not None
+        assert isinstance(page._query_place, QPLACE.QueryPlace)
         query_view_topics = page._query_place._view_topics
         assert query_view_topics.gtk_view.get_model() is model
+        assert isinstance(page._query_template, QTEMPLATE.QueryTemplate)
         # Teardown
         page._window.destroy()
         del page._window
@@ -465,28 +467,28 @@ class TestPageSheet:
         del target._window
         del factsheet
 
-    def test_new_view_topics(self, patch_factsheet, capfd):
-        """ """
-        # Setup
-        factsheet = patch_factsheet()
-        target = VSHEET.PageSheet(px_app=factsheet)
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert not snapshot.out
-        assert 'Gtk-CRITICAL' in snapshot.err
-        assert 'GApplication::startup signal' in snapshot.err
-        # target._window.set_skip_pager_hint(True)
-        # target._window.set_skip_taskbar_hint(True)
-        target._window.set_transient_for(WINDOW_ANCHOR)
-        sheets_active = CPOOL.PoolSheets()
-        control = CSHEET.ControlSheet.new(sheets_active)
-        target.link_factsheet(target, control)
+    # def test_new_view_topics(self, patch_factsheet, capfd):
+    #     """ """
+    #     # Setup
+    #     factsheet = patch_factsheet()
+    #     target = VSHEET.PageSheet(px_app=factsheet)
+    #     snapshot = capfd.readouterr()   # Resets the internal buffer
+    #     assert not snapshot.out
+    #     assert 'Gtk-CRITICAL' in snapshot.err
+    #     assert 'GApplication::startup signal' in snapshot.err
+    #     # target._window.set_skip_pager_hint(True)
+    #     # target._window.set_skip_taskbar_hint(True)
+    #     target._window.set_transient_for(WINDOW_ANCHOR)
+    #     sheets_active = CPOOL.PoolSheets()
+    #     control = CSHEET.ControlSheet.new(sheets_active)
+    #     target.link_factsheet(target, control)
 
-        # Test
-        view_new = target.new_view_topics()
-        assert isinstance(view_new, VTYPES.ViewOutlineTopics)
-        model = target._view_topics.gtk_view.get_model()
-        assert view_new.gtk_view.get_model() is model
-        # Teardown
+    #     # Test
+    #     view_new = target.new_view_topics()
+    #     assert isinstance(view_new, VTYPES.ViewOutlineTopics)
+    #     model = target._view_topics.gtk_view.get_model()
+    #     assert view_new.gtk_view.get_model() is model
+    #     # Teardown
 
     def test_on_changed_cursor(
             self, patch_factsheet, capfd, new_outline_topics):
@@ -514,9 +516,9 @@ class TestPageSheet:
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
             control = target._control._add_new_control_topic(topic)
-            pane = VTOPIC.PaneTopic(pm_control=control)
+            form = VTOPIC.FormTopic(p_control=control)
             target._scenes_topic.add_scene(
-                pane.gtk_pane, hex(topic.id_topic))
+                form.gtk_pane, hex(topic.tag))
 
         view.expand_all()
         PATH_CURRENT = '0:0:0'
@@ -525,7 +527,7 @@ class TestPageSheet:
         # Test
         target._cursor_topics.select_iter(i_current)
         id_visible = target._scenes_topic.get_scene_visible()
-        assert id_visible == hex(topic_current.id_topic)
+        assert id_visible == hex(topic_current.tag)
         # Teardown
         target._window.destroy()
         del target._window
@@ -557,19 +559,19 @@ class TestPageSheet:
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
             control = target._control._add_new_control_topic(topic)
-            pane = VTOPIC.PaneTopic(pm_control=control)
+            form = VTOPIC.FormTopic(p_control=control)
             target._scenes_topic.add_scene(
-                pane.gtk_pane, hex(topic.id_topic))
+                form.gtk_pane, hex(topic.tag))
 
         view.expand_all()
         PATH_CURRENT = '0:0:0'
         i_current = topics.get_iter_from_string(PATH_CURRENT)
         topic_current = AOUTLINE.get_item_gtk(topics, i_current)
-        target._scenes_topic.remove_scene(hex(topic_current.id_topic))
+        target._scenes_topic.remove_scene(hex(topic_current.tag))
         # Test
         target._cursor_topics.select_iter(i_current)
         topic_visible = target._scenes_topic.get_scene_visible()
-        assert topic_visible == hex(topic_current.id_topic)
+        assert topic_visible == hex(topic_current.tag)
         # Teardown
         target._window.destroy()
         del target._window
@@ -601,9 +603,9 @@ class TestPageSheet:
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
             control = target._control._add_new_control_topic(topic)
-            pane = VTOPIC.PaneTopic(pm_control=control)
+            form = VTOPIC.FormTopic(p_control=control)
             target._scenes_topic.add_scene(
-                pane.gtk_pane, hex(topic.id_topic))
+                form.gtk_pane, hex(topic.tag))
 
         monkeypatch.setattr(
             CSHEET.ControlSheet, 'get_control_topic', lambda _s, _t: None)
@@ -616,7 +618,7 @@ class TestPageSheet:
         PATH_CURRENT = '0:0:0'
         i_current = topics.get_iter_from_string(PATH_CURRENT)
         topic_current = AOUTLINE.get_item_gtk(topics, i_current)
-        target._scenes_topic.remove_scene(hex(topic_current.id_topic))
+        target._scenes_topic.remove_scene(hex(topic_current.tag))
         NAME_DEFAULT = 'Default'
         # Test
         target._cursor_topics.select_iter(i_current)
@@ -653,11 +655,11 @@ class TestPageSheet:
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
             control = target._control._add_new_control_topic(topic)
-            pane = VTOPIC.PaneTopic(pm_control=control)
+            form = VTOPIC.FormTopic(p_control=control)
             target._scenes_topic.add_scene(
-                pane.gtk_pane, hex(topic.id_topic))
+                form.gtk_pane, hex(topic.tag))
 
-        # pane_none = Gtk.Label(label='No pane')
+        # pane_none = Gtk.Label(label='No form')
         # target._scenes_topic.add_scene(
         #     pane_none, target._scenes_topic.ID_NONE)
 
@@ -698,9 +700,9 @@ class TestPageSheet:
         for index in outline_topics.indices():
             topic = outline_topics.get_item(index)
             control = target._control._add_new_control_topic(topic)
-            pane = VTOPIC.PaneTopic(pm_control=control)
+            form = VTOPIC.FormTopic(p_control=control)
             target._scenes_topic.add_scene(
-                pane.gtk_pane, hex(topic.id_topic))
+                form.gtk_pane, hex(topic.tag))
 
         view.expand_all()
         PATH_CURRENT = '0:0:0'
@@ -1401,14 +1403,14 @@ class TestPageSheet:
 
         patch_template = PatchCall(topic)
         monkeypatch.setattr(
-            XNOTE_SPEC.SpecNote, '__call__', patch_template.__call__)
+            XSPEC_NOTE.SpecNote, '__call__', patch_template.__call__)
         # Test
         target.on_new_topic(None, None)
         assert patch_place.called
         assert patch_query_template.called
         assert patch_template.called
-        id_visible = target._scenes_topic.show_scene(hex(topic.id_topic))
-        assert id_visible == hex(topic.id_topic)
+        id_visible = target._scenes_topic.show_scene(hex(topic.tag))
+        assert id_visible == hex(topic.tag)
         topics, i_new = target._cursor_topics.get_selected()
         assert PATH_EXPECT == gtk_model.get_string_from_iter(i_new)
         topic_new = AOUTLINE.get_item_gtk(topics, i_new)
@@ -1527,7 +1529,7 @@ class TestPageSheet:
 
         patch_template = PatchCall(None)
         monkeypatch.setattr(
-            XNOTE_SPEC.SpecNote, '__call__', patch_template.__call__)
+            XSPEC_NOTE.SpecNote, '__call__', patch_template.__call__)
 
         class PatchInsert:
             def __init__(self): self.called = False

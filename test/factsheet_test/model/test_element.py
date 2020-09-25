@@ -11,7 +11,7 @@ from factsheet.model import element as MELEMENT
 @DC.dataclass
 class ArgsElement:
     """Convenience class assembles arguments to
-    :meth:`.ElementGeneric.__init__` for pytest fixture.
+    :meth:`.ElementOpaque.__init__` for pytest fixture.
     """
     p_member: int
     p_index: MELEMENT.IndexElement
@@ -68,11 +68,11 @@ class TestTypes:
         # Test
         assert MELEMENT.IdStyle is not None
         assert MELEMENT.IndexElement is not None
-        assert MELEMENT.MemberGeneric is not None
+        assert MELEMENT.MemberOpaque is not None
 
 
-class TestElementGeneric:
-    """Unit tests for :class:`.ElementGeneric`."""
+class TestElementOpaque:
+    """Unit tests for :class:`.ElementOpaque`."""
 
     def test_eq(self, patch_args_element):
         """Confirm equivalence operator
@@ -88,7 +88,7 @@ class TestElementGeneric:
             pass
 
         ARGS = patch_args_element
-        target = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        target = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         # Test: type difference - no index
         other = Other()
         assert not target.__eq__(other)
@@ -97,15 +97,15 @@ class TestElementGeneric:
         other.index = "Something completely different"
         assert not target.__eq__(other)
         # Test: index difference - no mbmber
-        other = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        other = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         other._index = MELEMENT.IndexElement(3)
         assert not target.__eq__(other)
         # Test: member difference
-        other = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        other = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         other._member = 21
         assert not target.__eq__(other)
         # Test: equivalence
-        other = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        other = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         assert not target.__ne__(other)
         assert target.__eq__(other)
 
@@ -114,7 +114,7 @@ class TestElementGeneric:
         # Setup
         ARGS = patch_args_element
         # Test
-        target = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        target = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         assert ARGS.p_member == target._member
         assert ARGS.p_index == target._index
 
@@ -131,9 +131,9 @@ class TestElementGeneric:
         """
         # Setup
         ARGS = patch_args_element
-        target = MELEMENT.ElementGeneric(**DC.asdict(ARGS))
+        target = MELEMENT.ElementOpaque(**DC.asdict(ARGS))
         value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(MELEMENT.ElementGeneric, NAME_PROP)
+        target_prop = getattr(MELEMENT.ElementOpaque, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None
@@ -157,7 +157,7 @@ class TestElementGeneric:
         """
         # Setup
         ARGS = patch_args_element
-        target = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        target = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         # Test
         actual = target.format(p_id_style=ID_STYLE, p_symbol=SYMBOL)
         assert EXPECT == actual
@@ -176,7 +176,7 @@ class TestElementGeneric:
         """
         # Setup
         ARGS = patch_args_element
-        target = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        target = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         # Test
         actual = target.format(p_id_style=ID_STYLE)
         assert EXPECT == actual
@@ -186,7 +186,7 @@ class TestElementGeneric:
         # Setup
         IDS = ['Label', 'Element', 'Index', 'Member', 'Plain']
         ARGS = patch_args_element
-        target = MELEMENT.ElementGeneric[int](**DC.asdict(ARGS))
+        target = MELEMENT.ElementOpaque[int](**DC.asdict(ARGS))
         # Test
         result = target.ids_style()
         assert isinstance(result, ABC_COL.Iterator)

@@ -4,48 +4,48 @@ Defines abstract interfaces for topics.
 :doc:`../guide/devel_notes` describes the use of abstract classes to
 break ``import`` cycles and to encapsulate dependencies of
 :mod:`~factsheet.model` on a user interface widget toolkit.  Module
-``abc_topic`` defines interface for topic view (:class:`.PaneTopic`) for
+``abc_topic`` defines interface for topic view (:class:`.FormTopic`) for
 encapsulation.
 
-.. data:: IdTopic
+.. data:: TagTopic
 
     Type for topic identifiers.
 """
 import abc
 import typing
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.abc_types import abc_stalefile as ABC_STALE
+import factsheet.abc_types.abc_infoid as ABC_INFOID
+import factsheet.abc_types.abc_stalefile as ABC_STALE
+
+from factsheet.abc_types.abc_outline import IndexOpaque
 
 
-IdTopic = typing.NewType('IdTopic', int)
+TagTopic = typing.NewType('TagTopic', int)
 
 
-class AbstractTopic(ABC_STALE.InterfaceStaleFile):
+class AbstractTopic(
+        ABC_INFOID.AbstractIdentity[TagTopic], ABC_STALE.InterfaceStaleFile):
     """Defines interfaces common to topic model components."""
 
-    @property
     @abc.abstractmethod
-    def id_topic(self) -> IdTopic:
-        """Return topic identifier. """
+    def check_fact(self, p_tag_fact: IndexOpaque) -> None:
+        """Check a fact.
+
+        :param p_tag_fact: determines which fact to check.
+        """
         raise NotImplementedError
 
-    @property
     @abc.abstractmethod
-    def name(self) -> str:
-        """Return topic name. """
+    def clear_all(self) -> None:
+        """Clear all of topic's facts. """
         raise NotImplementedError
 
-    @property
     @abc.abstractmethod
-    def summary(self) -> str:
-        """Return topic summary. """
-        raise NotImplementedError
+    def clear_fact(self, p_tag_fact: IndexOpaque) -> None:
+        """Clear a fact.
 
-    @property
-    @abc.abstractmethod
-    def title(self) -> str:
-        """Return topic title. """
+        :param p_tag_fact: determines which fact to clear.
+        """
         raise NotImplementedError
 
 
