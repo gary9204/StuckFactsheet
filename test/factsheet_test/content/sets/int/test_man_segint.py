@@ -1,10 +1,10 @@
 """
-Unit tests for manifest function of integer subsection of sets section.
-See :mod:`.man_setint`.
+Unit tests for manifest function of initial segment of natural numbers
+topic.  See :mod:`.man_segint`.
 """
 import factsheet.adapt_gtk.adapt_sheet as ASHEET
-import factsheet.content.heading as XHEADING
-import factsheet.content.sets.int.man_setint as XMAN_SETINT
+import factsheet.content.sets.int.man_segint as XMAN_SEGINT
+import factsheet.content.sets.int.segint_spec as XSPEC_SEGINT
 import factsheet.view.types_view as VTYPES
 
 
@@ -15,16 +15,16 @@ class TestInteger:
         """Confirm template outline initialization."""
         # Setup
         VIEW_TOPICS = VTYPES.ViewOutlineTopics()
-        N_HEADINGS = 1
-        NAME = '<i>Integer</i>'
-        N_CHILDREN = 1
+        N_TOPICS = 1
+        NAME = 'Segment'
+        N_CLASSES_FACT = 4
         # Test
-        target = XMAN_SETINT.new_templates(lambda: VIEW_TOPICS)
+        target = XMAN_SEGINT.new_templates(lambda: VIEW_TOPICS)
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
         model = target._gtk_model
-        assert N_HEADINGS == len(model)
+        assert N_TOPICS == len(model)
         i_first = model.get_iter_first()
-        heading = target.get_item(i_first)
-        assert isinstance(heading, XHEADING.Heading)
-        assert NAME == heading.name
-        assert N_CHILDREN == model.iter_n_children(i_first)
+        spec = target.get_item(i_first)
+        assert isinstance(spec, XSPEC_SEGINT.SpecSegInt)
+        assert NAME == spec.name
+        assert N_CLASSES_FACT == len(spec._protofacts)

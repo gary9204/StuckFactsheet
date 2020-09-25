@@ -6,10 +6,10 @@ import typing
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.adapt_gtk import adapt_topic as ATOPIC
 
+from factsheet.abc_types.abc_topic import TagTopic  # noqa (non-local use)
 
 ViewOutlineTemplates = ASHEET.AdaptTreeViewTemplate
 ViewOutlineTopics = ASHEET.AdaptTreeViewTopic
-NewViewOutlineTopics = typing.Callable[[], ViewOutlineTopics]
+AttachViewTopics = typing.Callable[[ViewOutlineTopics], None]
 
-from ATOPIC import TagTopic
 ViewOutlineFacts = ATOPIC.AdaptTreeViewFact

@@ -9,11 +9,8 @@ import pytest   # type: ignore[import]
 import typing
 
 import factsheet.content.spec as XSPEC
-import factsheet.content.sets.set_facts as XFACTS_SET
-import factsheet.content.sets.int.segint_facts as XFACTS_SEGINT
 import factsheet.content.sets.int.segint_spec as XSPEC_SEGINT
 import factsheet.content.sets.int.segint_topic as XSEGINT
-import factsheet.view.block.block_fact as VFACT
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402

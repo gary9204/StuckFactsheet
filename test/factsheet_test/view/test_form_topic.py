@@ -22,7 +22,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 def patch_control_topic(patch_args_infoid):
     """Pytest fixture returns a stock :class:`.ControlTopic`."""
     ARGS = patch_args_infoid
-    model = MTOPIC.Topic(**DC.asdict(ARGS))
+    model = MTOPIC.Topic()
+    model.init_identity(**DC.asdict(ARGS))
     control = CTOPIC.ControlTopic(p_model=model)
     return control
 

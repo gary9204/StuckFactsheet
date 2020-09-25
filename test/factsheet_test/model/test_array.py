@@ -1,18 +1,9 @@
 """
 Unit tests for stub array classes.  See :mod:`.array`.
 """
-import dataclasses as DC
-import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
-import typing
 
 from factsheet.model import array as MARRAY
-from factsheet.model import element as MELEMENT
-from factsheet.model import setindexed as MSET
-
-gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class TestArray:

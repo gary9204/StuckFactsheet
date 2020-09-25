@@ -24,7 +24,6 @@ class ArgsSpec:
     p_name: str
     p_summary: str
     p_title: str
-    p_class_topic: typing.Type[XNOTE.Note]
     p_path_assist: XSPEC.StrAssist
     p_attach_view_topics: typing.Optional[typing.Callable]
 
@@ -38,7 +37,6 @@ def patch_args_spec():
         p_name='Inquisition',
         p_summary='No one expects the Spanish Inquisition!',
         p_title='The Spanish Inquisition',
-        p_class_topic=XNOTE.Note,
         p_path_assist=XSPEC.StrAssist(
             str(Path(XSPEC_NOTE.__file__).parent / 'note_spec.ui')),
         p_attach_view_topics=None
@@ -99,7 +97,9 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XNOTE.Note)
+        target = XSPEC_NOTE.SpecNote(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         assistant.show()
         # Test
@@ -115,7 +115,9 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XNOTE.Note)
+        target = XSPEC_NOTE.SpecNote(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         assistant = Gtk.Assistant()
         assistant.show()
         # Test
@@ -151,7 +153,9 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XNOTE.Note)
+        target = XSPEC_NOTE.SpecNote(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         value_attr = getattr(target, name_attr)
         target_prop = getattr(XSPEC_NOTE.SpecNote, name_prop)
         value_prop = getattr(target, name_prop)
@@ -170,7 +174,9 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XNOTE.Note)
+        target = XSPEC_NOTE.SpecNote(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
         # Sync identification information with note_spec.ui.
         NAME = ''
         SUMMARY = ''
@@ -200,7 +206,9 @@ class TestSpecNote:
         """
         # Setup
         ARGS = patch_args_spec
-        target = XSPEC_NOTE.SpecNote(**DC.asdict(ARGS))
+        PROTOTOPIC = XSPEC.ProtoTopic(class_topic=XNOTE.Note)
+        target = XSPEC_NOTE.SpecNote(
+            **DC.asdict(ARGS), p_prototopic=PROTOTOPIC)
 
         class PatchMainIteration:
             def __init__(self, px_target):

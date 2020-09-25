@@ -17,10 +17,10 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
+class FormTopic(ABC_TOPIC.InterfaceFormTopic):
     """Display topic and translate user actions.
 
-    Class ``PaneTopic`` maintains presentation of a topic in a pane of a
+    Class ``FormTopic`` maintains presentation of a topic in a pane of a
     Factsheet window.  The class displays the content of a topic model.
     It translates a user's actions at the user interface into requests
     to update the model and its presentation.
@@ -31,14 +31,14 @@ class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
     """
     NAME_FILE_TOPIC_UI = str(UI.DIR_UI / 'topic.ui')
 
-    def __init__(self, *, pm_control: CTOPIC.ControlTopic) -> None:
-        self._control = pm_control
+    def __init__(self, *, p_control: CTOPIC.ControlTopic) -> None:
+        self._control = p_control
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_TOPIC_UI)
         get_object = builder.get_object
 
         # Components
         actions_topic = Gio.SimpleActionGroup()
-        self._gtk_pane = get_object('ui_pane_topic')
+        self._gtk_pane = get_object('ui_form_topic')
         self._gtk_pane.insert_action_group('topic', actions_topic)
         self._context_name = get_object('ui_context_name')
 
@@ -46,7 +46,7 @@ class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
         self._infoid = VINFOID.ViewInfoId(get_object)
 
         self._gtk_pane.show_all()
-        self._control.attach_view(self)
+        self._control.attach_form(self)
 
         # Signals
         view_name = self._infoid.get_view_name()
@@ -98,11 +98,11 @@ class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
             'active', exp_related_topics, 'visible',
             GO.BindingFlags.BIDIRECTIONAL)
 
-    def _init_flip(self, px_get: 'gi.FunctionInfo', p_id_button: str,
+    def _init_flip(self, p_get: 'gi.FunctionInfo', p_id_button: str,
                    p_id_view: str) -> None:
         """Initialize menu button to flip visibility of view.
 
-        :param px_get:
+        :param p_get:
         """
         pass
 
@@ -134,11 +134,11 @@ class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
         view_name.set_text(self._name_former)
 
     def on_show_dialog(self, _action: Gio.SimpleAction,
-                       _target: GLib.Variant, px_dialog: Gtk.Dialog
+                       _target: GLib.Variant, p_dialog: Gtk.Dialog
                        ) -> None:
         """Display informational dialog.
 
-        :param px_dialog: informational dialog.
+        :param p_dialog: informational dialog.
 
         .. note:: **Enhancement opportunity**
 
@@ -153,10 +153,10 @@ class PaneTopic(ABC_TOPIC.InterfaceFormTopic):
         .. _GtkWidget.get_toplevel: https://lazka.github.io/pgi-docs/
            #Gtk-3.0/classes/Widget.html#Gtk.Widget.get_toplevel
         """
-        px_dialog.set_transient_for(None)
+        p_dialog.set_transient_for(None)
         window_top = self._gtk_pane.get_toplevel()
         if isinstance(window_top, Gtk.Window):
             if window_top.get_window_type() is Gtk.WindowType.TOPLEVEL:
-                px_dialog.set_transient_for(window_top)
-        _ = px_dialog.run()
-        px_dialog.hide()
+                p_dialog.set_transient_for(window_top)
+        _ = p_dialog.run()
+        p_dialog.hide()

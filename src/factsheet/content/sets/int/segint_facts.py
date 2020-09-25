@@ -1,8 +1,6 @@
 """
 Defines fact classes for a generic set.  See :mod:`.set_topic`.
 """
-import typing
-
 import factsheet.content.sets.int.segint_topic as XSEGINT
 import factsheet.model.fact as MFACT
 
@@ -23,13 +21,13 @@ class BoundSegInt(MFACT.Fact[XSEGINT.SegInt, int]):
         self.init_identity(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # STUB: pending topic revision
 
-    def check(self, **_kwargs: typing.Any) -> MFACT.StatusOfFact:
+    def check(self) -> MFACT.StatusOfFact:
         """Set fact value and set corresponding state of fact check."""
         self._value = self._bound
         self._status = MFACT.StatusOfFact.DEFINED
         return super().check()
 
-    def clear(self, **_kwargs: typing.Any) -> None:
+    def clear(self) -> None:
         """Clear fact value and set state of fact check to unchecked."""
         self._value = None
         self._status = MFACT.StatusOfFact.UNCHECKED

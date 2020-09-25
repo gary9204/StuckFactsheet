@@ -5,7 +5,6 @@ See :mod:`.adapt_topic`.
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 
-import factsheet.abc_types.abc_topic as ABC_TOPIC
 import factsheet.adapt_gtk.adapt_outline as AOUTLINE
 import factsheet.adapt_gtk.adapt_topic as ATOPIC
 import factsheet.model.fact as MFACT

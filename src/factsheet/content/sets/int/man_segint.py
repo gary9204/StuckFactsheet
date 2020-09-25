@@ -1,6 +1,6 @@
 """
-Defines manifest function for integer subsection of sets section.
-See :mod:`~.factsheet.content.sets`.
+Defines manifest function for initial segment of natural numbers topic.
+See :mod:`~.factsheet.content.sets.int.setint`.
 """
 from pathlib import Path
 
@@ -10,9 +10,9 @@ import factsheet.view.block.block_fact as VFACT
 import factsheet.view.types_view as VTYPES
 
 from . import segint_facts as XFACTS_SEGINT
+from . import setint_facts as XFACTS_SETINT
 from . import segint_spec as XSPEC_SEGINT
 from . import segint_topic as XSEGINT
-from . import setint_facts as XFACTS_SETINT
 
 
 def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
@@ -38,8 +38,13 @@ def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
     proto = XSPEC.ProtoFact(XFACTS_SETINT.ElementsSetInt, VFACT.BlockFact)
     spec_segint.add_protofact(proto)
 
-#         XFACTS_SETINT.SearchSetInt,
-#         XFACTS_SETINT.SizeSet,
-#         XFACTS_SEGINT.BoundSegInt
+    proto = XSPEC.ProtoFact(XFACTS_SETINT.SearchSetInt, VFACT.BlockFact)
+    spec_segint.add_protofact(proto)
+
+    proto = XSPEC.ProtoFact(XFACTS_SETINT.SizeSet, VFACT.BlockFactInt)
+    spec_segint.add_protofact(proto)
+
+    proto = XSPEC.ProtoFact(XFACTS_SEGINT.BoundSegInt, VFACT.BlockFactInt)
+    spec_segint.add_protofact(proto)
 
     return templates

@@ -1,5 +1,5 @@
 """
-Defines class to display fact in a topic pane.  See :mod:`.pane_topic`.
+Defines class to display fact in a topic pane.  See :mod:`.form_topic`.
 """
 import gi   # type: ignore[import]
 import logging
@@ -13,7 +13,7 @@ from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
 
 from factsheet.abc_types.abc_fact import StatusOfFact
-from factsheet.abc_types.abc_fact import ValueOfFact
+from factsheet.abc_types.abc_fact import ValueOpaque
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
@@ -53,7 +53,7 @@ Aspect = typing.TypeVar('Aspect')
 #         return self._aspect_gtk
 
 
-class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
+class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOpaque]):
     """Displays fact and translates user actions.
 
     Class ``BlockFact`` displays a fact in a component of a topic pane.
@@ -71,7 +71,7 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
 
     def __init__(self, p_control: CFACT.ControlFact) -> None:
         self._status = StatusOfFact.UNCHECKED
-        self._value: typing.Optional[ValueOfFact] = None
+        self._value: typing.Optional[ValueOpaque] = None
         self._control = p_control
 
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_FACT_UI)
@@ -222,7 +222,7 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOfFact]):
         aspect.add(label)
         return aspect
 
-    def update(self, p_status: StatusOfFact, p_value: ValueOfFact) -> None:
+    def update(self, p_status: StatusOfFact, p_value: ValueOpaque) -> None:
         """Update value and clear aspects then change to synopsis aspect.
 
         :param p status: new status of fact.

@@ -645,16 +645,17 @@ class TestSceneTableauArray:
         assert len(ARGS.p_cols)+1 == target_gtk.get_n_columns()
         assert target_gtk.get_reorderable()
 
+    @pytest.mark.skip
     def test_init_default(self, patch_args_array):
         """| Confirm initialization.
         | Case: default arguments.
         """
         # Setup
-        ARGS = patch_args_array
-        TABLE = MARRAY.Array(
-            p_rows=ARGS.p_rows, p_cols=ARGS.p_cols, p_styles=ARGS.p_styles)
+        # ARGS = patch_args_array
+        # TABLE = MARRAY.Array(
+        #     p_rows=ARGS.p_rows, p_cols=ARGS.p_cols, p_styles=ARGS.p_styles)
         # Test
-        target = VVALUE.SceneTableauArray(p_value=TABLE)
+        # target = VVALUE.SceneTableauArray(p_value=TABLE)
         # target_gtk = target._scene_gtk.get_child()
         # assert isinstance(target_gtk, Gtk.TreeView)
         # assert target_gtk.get_model() is ARGS.rows

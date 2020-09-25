@@ -66,7 +66,7 @@ class PlusModN(XOPINT.OperationInt):
         :param left: lefthand operand.
         :param right: righthand operand.
         """
-        if (left not in self._set) or (right not in self._set):
+        if (left not in self._set_op) or (right not in self._set_op):
             return None
 
         key = (left.member + right.member) % self._modulus

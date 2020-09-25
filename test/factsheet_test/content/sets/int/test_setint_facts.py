@@ -2,12 +2,7 @@
 Defines unit tests for fact classes for a set of integers.  See
 :mod:`.setint_facts`.
 """
-import pytest   # type: ignore[import]
-# import typing
-
-
 import factsheet.content.sets.int.setint_facts as XFACTS_SETINT
-import factsheet.content.sets.int.setint_topic as XSETINT
 import factsheet.content.sets.set_facts as XFACTS_SET
 
 

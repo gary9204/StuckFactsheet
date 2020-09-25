@@ -5,7 +5,7 @@ import gi   # type: ignore[import]
 # from pathlib import Path
 import typing
 
-from factsheet import content as XCONTENT
+import factsheet.content.man_content as XMAN_CONTENT
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
@@ -93,7 +93,7 @@ class QueryTemplate:
         # self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         self._outline = VTYPES.ViewOutlineTemplates()
         self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
-        templates = XCONTENT.new_templates(p_attach_view_topics)
+        templates = XMAN_CONTENT.new_templates(p_attach_view_topics)
         templates.attach_view(self._outline)
         view = self._outline.gtk_view
         view.show_all()

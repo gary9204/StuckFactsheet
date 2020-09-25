@@ -6,14 +6,8 @@ import dataclasses as DC
 import gi   # type: ignore[import]
 import typing
 
-# import factsheet.abc_types.abc_topic as ABC_TOPIC
-# import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.spec as XSPEC
-# import factsheet.content.sets.set_facts as XFACTS_SET
-# import factsheet.content.sets.int.segint_facts as XFACTS_SEGINT
 import factsheet.content.sets.int.segint_topic as XSEGINT
-# import factsheet.view.block.block_fact as VFACT
-import factsheet.view.types_view as VTYPES
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402

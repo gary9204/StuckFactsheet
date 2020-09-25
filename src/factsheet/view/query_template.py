@@ -5,7 +5,7 @@ import gi   # type: ignore[import]
 # from pathlib import Path
 import typing
 
-from factsheet import content as XCONTENT
+import factsheet.content.man_content as XMAN_CONTENT
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
@@ -44,7 +44,7 @@ class QueryTemplate:
     NAME_FILE_QUERY_UI = str(UI.DIR_UI / 'query_template.ui')
 
     def __init__(self, p_parent: Gtk.Window,
-                 p_new_view_topics: VTYPES.NewViewOutlineTopics) -> None:
+                 p_new_view_topics: VTYPES.AttachViewTopics) -> None:
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         get_object = builder.get_object
         self._dialog = get_object('ui_dialog_select_template')
@@ -93,7 +93,7 @@ class QueryTemplate:
         # self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         self._outline = VTYPES.ViewOutlineTemplates()
         self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
-        templates = XCONTENT.new_templates(p_new_view_topics)
+        templates = XMAN_CONTENT.new_templates(p_new_view_topics)
         templates.attach_view(self._outline)
         view = self._outline.gtk_view
         view.show_all()

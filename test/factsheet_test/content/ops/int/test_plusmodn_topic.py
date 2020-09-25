@@ -117,8 +117,8 @@ class TestPlusModN:
         assert not target._stale
         assert isinstance(target._forms, dict)
         assert not target._forms
-        assert SET == target._set
-        assert target._set is SET
+        assert SET == target._set_op
+        assert target._set_op is SET
         assert target._op is not None
         assert MODULUS == target._modulus
         assert target._reps is not None

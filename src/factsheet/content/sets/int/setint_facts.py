@@ -2,7 +2,6 @@
 Defines fact classes for a set of integers.  See :mod:`.setint_topic`.
 """
 import factsheet.content.sets.set_facts as XFACTS_SET
-import factsheet.content.sets.int.setint_topic as SETINT
 
 
 class ElementsSetInt(XFACTS_SET.ElementsSet[int]):

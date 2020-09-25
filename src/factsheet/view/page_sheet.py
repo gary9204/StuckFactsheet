@@ -14,7 +14,7 @@ from factsheet.view import query_place as QPLACE
 from factsheet.view import query_template as QTEMPLATE
 from factsheet.view import scenes as VSCENES
 from factsheet.view import view_infoid as VINFOID
-from factsheet.view import pane_topic as VTOPIC
+from factsheet.view import form_topic as VTOPIC
 from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI
 
@@ -75,8 +75,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._dialog_data_loss, self._warning_data_loss = (
             self._init_dialog_warn())
         self._query_place: typing.Optional[QPLACE.QueryPlace] = None
-        self._query_template = QTEMPLATE.QueryTemplate(
-            self._window, self.new_view_topics)
+        self._query_template: typing.Optional[QTEMPLATE.QueryTemplate] = None
         self._name_former: typing.Optional[str] = None
         self._infoid = VINFOID.ViewInfoId(get_object)
 
@@ -214,7 +213,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         self._close_window = True
         self._window.close()
 
-    def close_topic(self, p_id: VTYPES.IdTopic) -> None:
+    def close_topic(self, p_id: VTYPES.TagTopic) -> None:
         """Close topic pane in response to notice from model.
 
         Closing a topic pane removes the pane from the factsheet page.
@@ -247,6 +246,8 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         pm_page._control.attach_view_topics(query_view_topics)
         pm_page._query_place = QPLACE.QueryPlace(
             pm_page._window, query_view_topics)
+        pm_page._query_template = QTEMPLATE.QueryTemplate(
+            pm_page._window, pm_page._control.attach_view_topics)
 
     def _make_dialog_file(self, p_action: Gtk.FileChooserAction
                           ) -> Gtk.FileChooserDialog:
@@ -298,12 +299,12 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         PageSheet.link_factsheet(page, control)
         return page
 
-    def new_view_topics(self) -> VTYPES.ViewOutlineTopics:
-        """Return new, unattached view of topics outline. """
-        view_topics_new = VTYPES.ViewOutlineTopics()
-        assert self._control is not None
-        self._control.attach_view_topics(view_topics_new)
-        return view_topics_new
+    # def new_view_topics(self) -> VTYPES.ViewOutlineTopics:
+    #     """Return new, unattached view of topics outline. """
+    #     view_topics_new = VTYPES.ViewOutlineTopics()
+    #     assert self._control is not None
+    #     self._control.attach_view_topics(view_topics_new)
+    #     return view_topics_new
 
     def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
         """Changes topic scene to match current topic.
@@ -331,7 +332,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
             _ = self._scenes_topic.show_scene(None)
             return
 
-        pane = VTOPIC.PaneTopic(pm_control=control)
+        pane = VTOPIC.FormTopic(pm_control=control)
         self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
         _ = self._scenes_topic.show_scene(name_topic)
 
@@ -487,7 +488,7 @@ class PageSheet(ABC_SHEET.InterfacePageSheet):
         else:
             raise NotImplementedError
 
-        pane = VTOPIC.PaneTopic(pm_control=control)
+        pane = VTOPIC.FormTopic(pm_control=control)
         name_topic = hex(topic.id_topic)
         self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
         path = gtk_model.get_path(index)
