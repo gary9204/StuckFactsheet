@@ -4,7 +4,7 @@ topic.  See :mod:`.man_segint`.
 """
 import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.sets.int.man_segint as XMAN_SEGINT
-import factsheet.content.sets.int.segint_spec as XSPEC_SEGINT
+import factsheet.content.sets.int.spec_segint as XSPEC_SEGINT
 import factsheet.view.types_view as VTYPES
 
 

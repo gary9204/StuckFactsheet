@@ -11,5 +11,6 @@ Submodules
 
 .. toctree::
 
-   factsheet.content.note.note_topic
-   factsheet.content.note.note_spec
+   factsheet.content.note.man_note
+   factsheet.content.note.spec_note
+   factsheet.content.note.topic_note

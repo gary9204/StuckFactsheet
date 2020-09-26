@@ -9,7 +9,7 @@ from factsheet.abc_types import abc_outline as ABC_OUTLINE
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.note import note_spec as XSPEC_NOTE
+from factsheet.content.note import spec_note as XSPEC_NOTE
 from factsheet.control import pool as CPOOL
 from factsheet.control import control_sheet as CSHEET
 from factsheet.model import sheet as MSHEET

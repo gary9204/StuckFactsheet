@@ -18,5 +18,6 @@ Submodules
 
 .. toctree::
 
-   factsheet.content.sets.set_facts
-   factsheet.content.sets.set_topic
+   factsheet.content.sets.facts_set
+   factsheet.content.sets.man_sets
+   factsheet.content.sets.topic_set

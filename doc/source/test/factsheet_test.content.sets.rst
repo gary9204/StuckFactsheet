@@ -19,6 +19,6 @@ Submodules
 
 .. toctree::
 
-   factsheet_test.content.sets.test_sets
-   factsheet_test.content.sets.test_set_facts
-   factsheet_test.content.sets.test_set_topic
+   factsheet_test.content.sets.test_man_sets
+   factsheet_test.content.sets.test_facts_set
+   factsheet_test.content.sets.test_topic_set

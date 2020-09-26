@@ -9,10 +9,10 @@ import factsheet.model.types_model as MTYPES
 import factsheet.view.block.block_fact as VFACT
 import factsheet.view.types_view as VTYPES
 
-from . import segint_facts as XFACTS_SEGINT
-from . import setint_facts as XFACTS_SETINT
-from . import segint_spec as XSPEC_SEGINT
-from . import segint_topic as XSEGINT
+from . import facts_segint as XFACTS_SEGINT
+from . import facts_setint as XFACTS_SETINT
+from . import spec_segint as XSPEC_SEGINT
+from . import topic_segint as XSEGINT
 
 
 def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
@@ -21,7 +21,7 @@ def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
     templates = MTYPES.OutlineTemplates()
 
     prototopic_segint = XSPEC.ProtoTopic(XSEGINT.SegInt)
-    path_segint = str(Path(XSPEC_SEGINT.__file__).parent / 'segint_spec.ui')
+    path_segint = str(Path(XSPEC_SEGINT.__file__).parent / 'spec_segint.ui')
     spec_segint = XSPEC_SEGINT.SpecSegInt(
         p_name='Segment',
         p_summary=(

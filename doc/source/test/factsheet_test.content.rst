@@ -10,7 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    factsheet_test.content.note
    factsheet_test.content.ops
@@ -20,6 +20,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 1
 
    factsheet_test.content.test_content
    factsheet_test.content.test_heading

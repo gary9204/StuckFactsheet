@@ -9,8 +9,8 @@ import factsheet.content.heading as XHEADING
 import factsheet.model.types_model as MTYPES
 import factsheet.view.types_view as VTYPES
 
-from . import plusmodn_spec as XSPEC_PLUS_N
-from . import plusmodn_topic as XPLUS_N
+from . import spec_plusmodn as XSPEC_PLUS_N
+from . import topic_plusmodn as XPLUS_N
 
 
 def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
@@ -31,7 +31,7 @@ def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
 
     prototopic_plusn = XSPEC.ProtoTopic(XPLUS_N.PlusModN)
     path_plusn = XSPEC.StrAssist(
-        str(Path(XSPEC_PLUS_N.__file__).parent / 'plusmodn_spec.ui'))
+        str(Path(XSPEC_PLUS_N.__file__).parent / 'spec_plusmodn.ui'))
     spec_plusmodn = XSPEC_PLUS_N.SpecPlusModN(
         p_name='Plus mod n',
         p_summary=(

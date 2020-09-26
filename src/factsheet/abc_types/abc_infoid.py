@@ -29,7 +29,7 @@ TextViewOpaque = typing.TypeVar('TextViewOpaque')
 class AbstractIdentity(abc.ABC, typing.Generic[TagOpaque]):
     """Defines interfaces for identification information of Factsheet
     model components :class:`.Sheet`, :class:`.Topic`, and
-    :class:`.Fact.
+    :class:`.Fact`.
 
     The Factsheet model includes components for factsheets, topics, and
     facts.  These components have identification information in common.

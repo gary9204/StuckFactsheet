@@ -4,7 +4,7 @@ Unit tests for manifest function of section template.  See
 """
 import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.note.man_note as XMAN_NOTE
-import factsheet.content.note.note_spec as XSPEC_NOTE
+import factsheet.content.note.spec_note as XSPEC_NOTE
 import factsheet.view.types_view as VTYPES
 
 

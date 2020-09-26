@@ -18,4 +18,6 @@ Submodules
 
 .. toctree::
 
-   factsheet.content.ops.op_topic
+   factsheet.content.ops.facts_op
+   factsheet.content.ops.man_ops
+   factsheet.content.ops.topic_op

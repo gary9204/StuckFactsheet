@@ -1,12 +1,12 @@
 """
-Defines fact classes for a generic operation.  See :mod:`.op_topic`.
+Defines fact classes for a generic operation.  See :mod:`.topic_op`.
 
 .. data:: MemberOpaque
 
     Generic type for member component of set element.  See
     :mod:`.setindexed`.
 """
-import factsheet.content.ops.op_topic as OP
+import factsheet.content.ops.topic_op as OP
 import factsheet.model.fact as MFACT
 
 from factsheet.model.setindexed import MemberOpaque

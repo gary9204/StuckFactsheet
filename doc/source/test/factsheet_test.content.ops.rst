@@ -19,5 +19,6 @@ Submodules
 
 .. toctree::
 
-   factsheet_test.content.ops.test_ops
-   factsheet_test.content.ops.test_op_topic
+   factsheet_test.content.ops.test_facts_op
+   factsheet_test.content.ops.test_man_ops
+   factsheet_test.content.ops.test_topic_op

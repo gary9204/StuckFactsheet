@@ -9,8 +9,8 @@ from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.content import spec as XSPEC
-from factsheet.content.note import note_spec as XSPEC_NOTE
-from factsheet.content.note import note_topic as XNOTE
+from factsheet.content.note import spec_note as XSPEC_NOTE
+from factsheet.content.note import topic_note as XNOTE
 from factsheet.model import types_model as MTYPES
 from factsheet.view import query_template as QTEMPLATES
 # from factsheet.view import ui as UI
@@ -39,7 +39,7 @@ def new_outline_model():
     def new_model():
         CLASS_TOPIC = XNOTE.Note
         PATH_ASSIST = XSPEC.StrAssist(
-            str(Path(XSPEC_NOTE.__file__).parent / 'note_spec.ui'))
+            str(Path(XSPEC_NOTE.__file__).parent / 'spec_note.ui'))
         # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
 
         def ATTACH_VIEW_TOPICS(_view): pass

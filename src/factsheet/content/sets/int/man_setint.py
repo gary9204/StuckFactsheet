@@ -5,13 +5,10 @@ See :mod:`~.factsheet.content.sets`.
 # from pathlib import Path
 
 import factsheet.content.heading as XHEADING
-# import factsheet.content.spec as XSPEC
 import factsheet.model.types_model as MTYPES
 import factsheet.view.types_view as VTYPES
 
 from . import man_segint as XMAN_SEGINT
-# from . import segint_spec as XSPEC_SEGINT
-# from . import segint_topic as XSEGINT
 
 
 def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
@@ -37,7 +34,7 @@ def new_templates(p_attach_view_topics: VTYPES.AttachViewTopics
     templates.insert_section(spec_segint, px_i_target=i_heading)
 
     # prototopic_segint = XSPEC.ProtoTopic(XSEGINT.SegInt)
-    # path_segint = str(Path(XSPEC_SEGINT.__file__).parent / 'segint_spec.ui')
+    # path_segint = str(Path(XSPEC_SEGINT.__file__).parent / 'spec_segint.ui')
     # spec_segint = XSPEC_SEGINT.SpecSegInt(
     #     p_name='Segment',
     #     p_summary=(

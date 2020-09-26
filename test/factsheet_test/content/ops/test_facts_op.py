@@ -4,9 +4,9 @@ Defines unit tests for fact classes for a generic set.  See
 """
 import pytest   # type: ignore[import]
 
-from factsheet.content.ops import op_topic as XOP
+from factsheet.content.ops import topic_op as XOP
 from factsheet.content.ops import facts_op as XFACTS_OP
-from factsheet.content.sets import set_topic as XSET
+from factsheet.content.sets import topic_set as XSET
 from factsheet.model import fact as MFACT
 from factsheet.model import infoid as MINFOID
 

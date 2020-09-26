@@ -8,7 +8,7 @@ import pytest   # type: ignore[import]
 from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.adapt_gtk import adapt_outline as AOUTLINE
 from factsheet.adapt_gtk import adapt_sheet as ASHEET
-from factsheet.content.note import note_topic as XNOTE
+from factsheet.content.note import topic_note as XNOTE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402

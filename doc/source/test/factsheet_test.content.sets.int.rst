@@ -11,8 +11,10 @@ Submodules
 
 .. toctree::
 
-   factsheet_test.content.sets.int.test_int
-   factsheet_test.content.sets.int.test_segint_facts
-   factsheet_test.content.sets.int.test_segint_spec
-   factsheet_test.content.sets.int.test_segint_topic
-   factsheet_test.content.sets.int.test_setint_topic
+   factsheet_test.content.sets.int.test_man_segint
+   factsheet_test.content.sets.int.test_man_setint
+   factsheet_test.content.sets.int.test_facts_segint
+   factsheet_test.content.sets.int.test_facts_setint
+   factsheet_test.content.sets.int.test_spec_segint
+   factsheet_test.content.sets.int.test_topic_segint
+   factsheet_test.content.sets.int.test_topic_setint
