@@ -56,14 +56,14 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
 
         :param px_other: object to compare with self.
         """
-        if not isinstance(px_other, Fact):
+        if not isinstance(px_other, type(self)):
             return False
 
         if self._infoid != px_other._infoid:
             return False
 
-        if self._topic is not px_other._topic:
-            return False
+        # if self._topic is not px_other._topic:
+        #     return False
 
         return True
 

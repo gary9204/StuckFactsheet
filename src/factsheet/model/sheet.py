@@ -165,7 +165,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """
         self._topics.detach_view(p_view)
 
-    def extract_topic(self, px_i: MTYPES.IndexOutline) -> None:
+    def extract_topic(self, px_i: MTYPES.IndexTopic) -> None:
         """Remove topic and all its descendants from topic outline.
 
         :param px_i: index of parent topic to remove along with all
@@ -176,7 +176,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
             self._close_topic(px_i)
             self._topics.extract_section(px_i)
 
-    def _close_topic(self, px_i: MTYPES.IndexOutline) -> None:
+    def _close_topic(self, px_i: MTYPES.IndexTopic) -> None:
         """Signal all pages to close panes for a topic and all its descendants.
 
         :parm px_i: index of parent topic to close form along with all
@@ -190,7 +190,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
                 page.close_topic(id_topic)
 
     def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: MTYPES.IndexOutline) -> MTYPES.IndexOutline:
+                           px_i: MTYPES.IndexTopic) -> MTYPES.IndexTopic:
         """Adds topic to topics outline after topic at given index.
 
         If index is None, adds topic at beginning of outline.
@@ -203,7 +203,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         return self._topics.insert_after(px_topic, px_i)
 
     def insert_topic_before(self, px_topic: ABC_TOPIC.AbstractTopic,
-                            px_i: MTYPES.IndexOutline) -> MTYPES.IndexOutline:
+                            px_i: MTYPES.IndexTopic) -> MTYPES.IndexTopic:
         """Adds topic to topics outline before topic at given index.
 
         If index is None, adds topic at end of outline.
@@ -216,7 +216,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         return self._topics.insert_before(px_topic, px_i)
 
     def insert_topic_child(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: MTYPES.IndexOutline) -> MTYPES.IndexOutline:
+                           px_i: MTYPES.IndexTopic) -> MTYPES.IndexTopic:
         """Adds topic to topic outline as child of topic at given index.
 
         Method adds topic after all existing children.  If index is
@@ -278,7 +278,7 @@ class Sheet(ABC_STALE.InterfaceStaleFile):
         """Mark factsheet in memory changed from file contents."""
         self._stale = True
 
-    def topics(self, px_index: MTYPES.IndexOutline = None
+    def topics(self, px_index: MTYPES.IndexTopic = None
                ) -> typing.Iterator[ABC_TOPIC.AbstractTopic]:
         """Return iterator over topics in topics outline.
 

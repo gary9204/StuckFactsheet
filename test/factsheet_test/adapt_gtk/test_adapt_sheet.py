@@ -44,7 +44,62 @@ class PatchTemplate(ABC_SHEET.AbstractTemplate):
 
 
 @pytest.fixture
-def new_outline_model():
+def new_model_templates():
+    """Pytest fixture returns templates outline model factory.
+    Parameter p_tag labels each item in summary.  The structure of each
+    model is as follows.
+
+        | name_0xx | title_0xx
+        |     name_00x | title_00x
+        |         name_000 | title_000
+        |     name_01x | title_01x
+        | name_1xx | title_1xx
+        |     name_10x | title_10x
+        |     name_11x | title_11x
+        |         name_110 | title_110
+        |         name_111 | title_111
+        |         name_112 | title_112
+    """
+    def new_model(p_tag='Target'):
+        model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+
+        item = PatchTemplate(
+            p_name='name_0xx', p_title='title_0xx', p_summary=p_tag)
+        i_0xx = model.append(None, [item])
+        item = PatchTemplate(
+            p_name='name_00x', p_title='title_00x', p_summary=p_tag)
+        i_00x = model.append(i_0xx, [item])
+        item = PatchTemplate(
+            p_name='name_000', p_title='title_000', p_summary=p_tag)
+        _i_000 = model.append(i_00x, [item])
+        item = PatchTemplate(
+            p_name='name_01x', p_title='title_01x', p_summary=p_tag)
+        i_0xx = model.append(i_0xx, [item])
+        item = PatchTemplate(
+            p_name='name_1xx', p_title='title_1xx', p_summary=p_tag)
+        i_1xx = model.append(None, [item])
+        item = PatchTemplate(
+            p_name='name_10x', p_title='title_10x', p_summary=p_tag)
+        _i_10x = model.append(i_1xx, [item])
+        item = PatchTemplate(
+            p_name='name_11x', p_title='title_11x', p_summary=p_tag)
+        i_11x = model.append(i_1xx, [item])
+        item = PatchTemplate(
+            p_name='name_110', p_title='title_110', p_summary=p_tag)
+        _i_110 = model.append(i_11x, [item])
+        item = PatchTemplate(
+            p_name='name_111', p_title='title_111', p_summary=p_tag)
+        _i_111 = model.append(i_11x, [item])
+        item = PatchTemplate(
+            p_name='name_112', p_title='title_112', p_summary=p_tag)
+        _i_112 = model.append(i_11x, [item])
+        return model
+
+    return new_model
+
+
+@pytest.fixture
+def new_model_topics():
     """Pytest fixture returns outline model factory.  Parameter p_tag
     labels each item in summary.  The structure of each model is as
     follows.
@@ -60,37 +115,47 @@ def new_outline_model():
         |         name_111 | title_111
         |         name_112 | title_112
     """
-    def new_model(px_class_item=PatchTemplate, p_tag='Target'):
+    def new_model(p_tag='Target'):
         model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
 
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_0xx', p_title='title_0xx', p_summary=p_tag)
         i_0xx = model.append(None, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_00x', p_title='title_00x', p_summary=p_tag)
         i_00x = model.append(i_0xx, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_000', p_title='title_000', p_summary=p_tag)
         _i_000 = model.append(i_00x, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_01x', p_title='title_01x', p_summary=p_tag)
         i_0xx = model.append(i_0xx, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_1xx', p_title='title_1xx', p_summary=p_tag)
         i_1xx = model.append(None, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_10x', p_title='title_10x', p_summary=p_tag)
         _i_10x = model.append(i_1xx, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_11x', p_title='title_11x', p_summary=p_tag)
         i_11x = model.append(i_1xx, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_110', p_title='title_110', p_summary=p_tag)
         _i_110 = model.append(i_11x, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_111', p_title='title_111', p_summary=p_tag)
         _i_111 = model.append(i_11x, [item])
-        item = px_class_item(
+        item = XNOTE.Note()
+        item.init_identity(
             p_name='name_112', p_title='title_112', p_summary=p_tag)
         _i_112 = model.append(i_11x, [item])
         return model
@@ -99,17 +164,25 @@ def new_outline_model():
 
 
 @pytest.fixture
-def new_outline(new_outline_model):
+def new_templates(new_model_templates):
     """Pytext fixture returns stub outline."""
-    def new_outline_by_class(px_class_store=ASHEET.AdaptTreeStoreTemplate,
-                             px_class_item=PatchTemplate,
-                             p_tag='Stub outline.'):
-        outline = px_class_store()
-        outline._gtk_model = new_outline_model(
-            px_class_item=px_class_item, p_tag=p_tag)
+    def new_outline_templates(p_tag='Stub templates_outline.'):
+        outline = ASHEET.AdaptTreeStoreTemplate()
+        outline._gtk_model = new_model_templates(p_tag=p_tag)
         return outline
 
-    return new_outline_by_class
+    return new_outline_templates
+
+
+@pytest.fixture
+def new_topics(new_model_topics):
+    """Pytext fixture returns stub outline."""
+    def new_outline_topics(p_tag='Stub topics outline.'):
+        outline = ASHEET.AdaptTreeStoreTopic()
+        outline._gtk_model = new_model_topics(p_tag=p_tag)
+        return outline
+
+    return new_outline_topics
 
 
 class TestAdaptTreeStoreTemplate:
@@ -127,13 +200,13 @@ class TestAdaptTreeStoreTemplate:
         assert index_new is not None
         assert isinstance(index_new, AOUTLINE.IndexGtk)
 
-    def test_find_name(self, new_outline_model):
+    def test_find_name(self, new_model_templates):
         """| Confirm search by template name.
         | Case: matching template in outline.
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._gtk_model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_model_templates(p_tag='Target')
         PATH_VALUE = '1:1:1'
         i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         assert i_value
@@ -144,25 +217,25 @@ class TestAdaptTreeStoreTemplate:
         i_match = target.find_name(value, i_after)
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
-    def test_find_name_absent(self, new_outline_model):
+    def test_find_name_absent(self, new_model_templates):
         """| Confirm search by template name.
         | Case: no matching template in outline.
         """
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._gtk_model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_model_templates(p_tag='Target')
         # Test
         i_match = target.find_name(VALUE)
         assert i_match is None
 
-    def test_find_title(self, new_outline_model):
+    def test_find_title(self, new_model_templates):
         """| Confirm search by template title.
         | Case: matching template in outline.
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._gtk_model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_model_templates(p_tag='Target')
         PATH_VALUE = '0:1'
         i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).title
@@ -172,14 +245,14 @@ class TestAdaptTreeStoreTemplate:
         i_match = target.find_title(value, i_after)
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
-    def test_find_title_absent(self, new_outline_model):
+    def test_find_title_absent(self, new_model_templates):
         """| Confirm search by template title.
         | Case: no matching template in outline.
         """
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTemplate()
-        target._gtk_model = new_outline_model(p_tag='Target')
+        target._gtk_model = new_model_templates(p_tag='Target')
         # Test
         i_match = target.find_title(VALUE)
         assert i_match is None
@@ -192,7 +265,8 @@ class TestAdaptTreeStoreTopic:
         """Confirm initialization."""
         # Setup
         INDEX = None
-        topic = XNOTE.Note(p_name='Parrot', p_title='The Parrot Sketch')
+        topic = XNOTE.Note()
+        topic.init_identity(p_name='Parrot', p_title='The Parrot Sketch')
         # Test
         target = ASHEET.AdaptTreeStoreTopic()
         assert target is not None
@@ -200,14 +274,13 @@ class TestAdaptTreeStoreTopic:
         assert index_new is not None
         assert isinstance(index_new, AOUTLINE.IndexGtk)
 
-    def test_find_name(self, new_outline_model):
+    def test_find_name(self, new_model_topics):
         """| Confirm search by topic name.
         | Case: matching topic in outline.
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTopic()
-        target._gtk_model = new_outline_model(
-            px_class_item=XNOTE.Note, p_tag='Target')
+        target._gtk_model = new_model_topics(p_tag='Target')
         PATH_VALUE = '1:1:1'
         i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).name
@@ -217,27 +290,25 @@ class TestAdaptTreeStoreTopic:
         i_match = target.find_name(value, i_after)
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
-    def test_find_name_absent(self, new_outline_model):
+    def test_find_name_absent(self, new_model_topics):
         """| Confirm search by topic name.
         | Case: no matching topic in outline.
         """
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTopic()
-        target._gtk_model = new_outline_model(
-            px_class_item=XNOTE.Note, p_tag='Target')
+        target._gtk_model = new_model_topics(p_tag='Target')
         # Test
         i_match = target.find_name(VALUE)
         assert i_match is None
 
-    def test_find_title(self, new_outline_model):
+    def test_find_title(self, new_model_topics):
         """| Confirm search by topic title.
         | Case: matching topic in outline.
         """
         # Setup
         target = ASHEET.AdaptTreeStoreTopic()
-        target._gtk_model = new_outline_model(
-            px_class_item=XNOTE.Note, p_tag='Target')
+        target._gtk_model = new_model_topics(p_tag='Target')
         PATH_VALUE = '0:1'
         i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).title
@@ -247,15 +318,14 @@ class TestAdaptTreeStoreTopic:
         i_match = target.find_title(value, i_after)
         assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
 
-    def test_find_title_absent(self, new_outline_model):
+    def test_find_title_absent(self, new_model_topics):
         """| Confirm search by topic title.
         | Case: no matching topic in outline.
         """
         # Setup
         VALUE = 'Something completely different'
         target = ASHEET.AdaptTreeStoreTopic()
-        target._gtk_model = new_outline_model(
-            px_class_item=XNOTE.Note, p_tag='Target')
+        target._gtk_model = new_model_topics(p_tag='Target')
         # Test
         i_match = target.find_title(VALUE)
         assert i_match is None
@@ -307,10 +377,10 @@ class TestAdaptTreeViewTemplate:
         assert pad_column is not None
         assert pad_column.get_expand()
 
-    def test_name_cell_data(self, new_outline):
+    def test_name_cell_data(self, new_templates):
         """Confirm renderer property is set."""
         # Setup
-        OUTLINE = new_outline()
+        OUTLINE = new_templates()
         PATH_ITEM = '1'
         i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)
@@ -339,7 +409,7 @@ class TestAdaptTreeViewTemplate:
             (None, '1:0', 'title_01x', True, False),
         ])
     def test_test_field_eq(self, monkeypatch, SEARCH, PATH_ITEM, VALUE,
-                           EXPECT, EXPANDED, new_outline):
+                           EXPECT, EXPANDED, new_templates):
         """Confirm results of Gtk.TreeView search equal function."""
         # Setup
         class PatchExpand:
@@ -355,7 +425,7 @@ class TestAdaptTreeViewTemplate:
         monkeypatch.setattr(
             Gtk.TreeView, 'expand_row', patch_expand.expand_row)
 
-        OUTLINE = new_outline()
+        OUTLINE = new_templates()
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTemplate()
         OUTLINE.attach_view(target)
@@ -369,10 +439,10 @@ class TestAdaptTreeViewTemplate:
         if EXPANDED:
             assert PATH_ITEM == patch_expand.path.to_string()
 
-    def test_title_cell_data(self, new_outline):
+    def test_title_cell_data(self, new_templates):
         """Confirm renderer property is set."""
         # Setup
-        OUTLINE = new_outline()
+        OUTLINE = new_templates()
         PATH_ITEM = '0:0'
         i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)
@@ -459,12 +529,10 @@ class TestAdaptTreeViewTopic:
         assert pad_column is not None
         assert pad_column.get_expand()
 
-    def test_name_cell_data(self, new_outline):
+    def test_name_cell_data(self, new_topics):
         """Confirm renderer property is set."""
         # Setup
-        OUTLINE = new_outline(
-            px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XNOTE.Note)
+        OUTLINE = new_topics()
         PATH_ITEM = '0'
         i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         topic = OUTLINE.get_item(i_target)
@@ -491,7 +559,7 @@ class TestAdaptTreeViewTopic:
             (ASHEET.FieldsTopic.TITLE, '1:1', 'tiX', True, True),
             ])
     def test_test_field_eq(self, monkeypatch, SEARCH, PATH_ITEM, VALUE,
-                           EXPECT, EXPANDED, new_outline):
+                           EXPECT, EXPANDED, new_topics):
         """Confirm results of Gtk.TreeView search equal function."""
         # Setup
         class PatchExpand:
@@ -507,9 +575,7 @@ class TestAdaptTreeViewTopic:
         monkeypatch.setattr(
             Gtk.TreeView, 'expand_row', patch_expand.expand_row)
 
-        OUTLINE = new_outline(
-            px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XNOTE.Note)
+        OUTLINE = new_topics()
         i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         target = ASHEET.AdaptTreeViewTopic()
         OUTLINE.attach_view(target)
@@ -523,12 +589,10 @@ class TestAdaptTreeViewTopic:
         if EXPANDED:
             assert PATH_ITEM == patch_expand.path.to_string()
 
-    def test_title_cell_data(self, new_outline):
+    def test_title_cell_data(self, new_topics):
         """Confirm renderer property is set."""
         # Setup
-        OUTLINE = new_outline(
-            px_class_store=ASHEET.AdaptTreeStoreTopic,
-            px_class_item=XNOTE.Note)
+        OUTLINE = new_topics()
         PATH_ITEM = '0:0'
         i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
         template = OUTLINE.get_item(i_target)
@@ -602,3 +666,14 @@ class TestFieldsTopic:
         assert not bool(ASHEET.FieldsTopic.VOID)
         assert ASHEET.FieldsTopic.NAME
         assert ASHEET.FieldsTopic.TITLE
+
+
+class TestTypes:
+    """Unit tests for type definitions in :mod:`.adapt_sheet`."""
+
+    def test_types(self):
+        """Confirm types defined."""
+        # Setup
+        # Test
+        assert ASHEET.IndexTemplate is AOUTLINE.IndexGtk
+        assert ASHEET.IndexTopic is AOUTLINE.IndexGtk

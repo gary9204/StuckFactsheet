@@ -11,9 +11,12 @@ import enum
 import gi   # type: ignore[import]
 import typing
 
-from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.abc_types import abc_topic as ABC_TOPIC
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
+import factsheet.abc_types.abc_sheet as ABC_SHEET
+import factsheet.abc_types.abc_topic as ABC_TOPIC
+import factsheet.adapt_gtk.adapt_outline as AOUTLINE
+
+from factsheet.adapt_gtk.adapt_outline import IndexGtk as IndexTemplate
+from factsheet.adapt_gtk.adapt_outline import IndexGtk as IndexTopic
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -25,9 +28,8 @@ class AdaptTreeStoreTemplate(
     :class:`.AbstractTemplate` items.
     """
 
-    def find_name(self, px_target: str,
-                  px_i_after: AOUTLINE.IndexGtk = None
-                  ) -> AOUTLINE.IndexGtk:
+    def find_name(self, px_target: str, px_i_after: IndexTemplate = None
+                  ) -> IndexTemplate:
         """Return index of first template where the target value equals
         the template name or None if no match.
 
@@ -43,9 +45,8 @@ class AdaptTreeStoreTemplate(
         return self.find_next(
             px_target, px_i_after, lambda item: item.name)
 
-    def find_title(self, px_target: str,
-                   px_i_after: AOUTLINE.IndexGtk = None
-                   ) -> AOUTLINE.IndexGtk:
+    def find_title(self, px_target: str, px_i_after: IndexTemplate = None
+                   ) -> IndexTemplate:
         """Return index of first template where the target value equals
         the template title or None if no match.
 
@@ -66,9 +67,8 @@ class AdaptTreeStoreTopic(
         AOUTLINE.AdaptTreeStore[ABC_TOPIC.AbstractTopic]):
     """Specializes :class:`.AdaptTreeStore` with :class:`.Topic` items."""
 
-    def find_name(self, px_target: str,
-                  px_i_after: AOUTLINE.IndexGtk = None
-                  ) -> AOUTLINE.IndexGtk:
+    def find_name(self, px_target: str, px_i_after: IndexTopic = None
+                  ) -> IndexTopic:
         """Return index of first topic where the target value equals the
         topic name or None if no match.
 
@@ -84,9 +84,8 @@ class AdaptTreeStoreTopic(
         return self.find_next(
             px_target, px_i_after, lambda topic: topic.name)
 
-    def find_title(self, px_target: str,
-                   px_i_after: AOUTLINE.IndexGtk = None
-                   ) -> AOUTLINE.IndexGtk:
+    def find_title(self, px_target: str, px_i_after: IndexTopic = None
+                   ) -> IndexTopic:
         """Return index of first topic where the target value equals the
         topic title or None if no match.
 
@@ -141,7 +140,7 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
     def _name_cell_data(self, _column: Gtk.TreeViewColumn,
                         pm_renderer: Gtk.CellRenderer,
                         px_store: Gtk.TreeStore,
-                        px_index: AOUTLINE.IndexGtk,
+                        px_index: IndexTemplate,
                         _data: typing.Any = None) -> None:
         """Adapter to diaplay template name in a `Gtk.TreeIter`_ column.
 
@@ -188,7 +187,7 @@ class AdaptTreeViewTemplate(AOUTLINE.AdaptTreeView):
     def _title_cell_data(self, _column: Gtk.TreeViewColumn,
                          pm_renderer: Gtk.CellRenderer,
                          px_store: Gtk.TreeStore,
-                         px_index: AOUTLINE.IndexGtk,
+                         px_index: IndexTemplate,
                          _data: typing.Any = None) -> None:
         """Adapter to display template title in a `Gtk.TreeIter`_
         column.
@@ -258,7 +257,7 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
     def _name_cell_data(self, _column: Gtk.TreeViewColumn,
                         pm_renderer: Gtk.CellRenderer,
                         px_store: Gtk.TreeStore,
-                        px_index: AOUTLINE.IndexGtk,
+                        px_index: IndexTopic,
                         _data: typing.Any = None) -> None:
         """Adapter to diaplay topic name in a `Gtk.TreeIter`_ column.
 
@@ -305,7 +304,7 @@ class AdaptTreeViewTopic(AOUTLINE.AdaptTreeView):
     def _title_cell_data(self, _column: Gtk.TreeViewColumn,
                          pm_renderer: Gtk.CellRenderer,
                          px_store: Gtk.TreeStore,
-                         px_index: AOUTLINE.IndexGtk,
+                         px_index: IndexTopic,
                          _data: typing.Any = None) -> None:
         """Adapter to display topic title in a `Gtk.TreeIter`_ column.
 

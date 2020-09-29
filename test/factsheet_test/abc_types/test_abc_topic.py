@@ -69,7 +69,7 @@ class TestInterfaceFormTopic:
 
     @pytest.mark.parametrize('name_method', [
         'get_infoid',
-        # 'get_view_facts',
+        'get_view_facts',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""

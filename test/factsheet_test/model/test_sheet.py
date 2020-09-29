@@ -35,7 +35,8 @@ class TestSheet:
         assert not source.__eq__(target)
         # Test: topic outline difference
         target = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        topic = MTOPIC.Topic(p_name='Killer Rabbit')
+        topic = MTOPIC.Topic()
+        topic.init_identity(p_name='Killer Rabbit')
         _index = target._topics.insert_child(topic, None)
 
         assert not source.__eq__(target)
@@ -53,7 +54,8 @@ class TestSheet:
         source = MSHEET.Sheet(p_title=TITLE_MODEL)
         source._stale = True
 
-        topic = MTOPIC.Topic(p_name='Killer Rabbit')
+        topic = MTOPIC.Topic()
+        topic.init_identity(p_name='Killer Rabbit')
         _index = source._topics.insert_child(topic, None)
 
         N_PAGES = 3
@@ -499,13 +501,15 @@ class TestSheet:
 
         N_TOPICS = 3
         for i in range(N_TOPICS):
-            topic = MTOPIC.Topic(p_name='Topic {}'.format(i))
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name='Topic {}'.format(i))
             target.insert_topic_before(topic, None)
         N_DESCEND = 2
         parent = target._topics._gtk_model.get_iter_first()
         for j in range(N_DESCEND):
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-            topic = MTOPIC.Topic(p_name=name)
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name=name)
             parent = target.insert_topic_child(topic, parent)
         I_LEAF = 2
         I_LAST = 4
@@ -602,13 +606,15 @@ class TestSheet:
 
         N_TOPICS = 3
         for i in range(N_TOPICS):
-            topic = MTOPIC.Topic(p_name='Topic {}'.format(i))
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name='Topic {}'.format(i))
             target.insert_topic_before(topic, None)
         N_DESCEND = 2
         parent = target._topics._gtk_model.get_iter_first()
         for j in range(N_DESCEND):
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-            topic = MTOPIC.Topic(p_name=name)
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name=name)
             parent = target.insert_topic_child(topic, parent)
         # Test: Sheet fresh, identification information fresh
         target._stale = False
@@ -635,7 +641,7 @@ class TestSheet:
         assert not target._stale
         assert target._infoid.is_fresh()
         # Test: Sheet fresh, topics stale
-        target._false = True
+        target._stale = False
         target._infoid.set_stale()
         for i, index in enumerate(target._topics.indices()):
             topic = target._topics.get_item(index)
@@ -668,41 +674,54 @@ class TestSheet:
     def test_set_stale(self):
         """Confirm all attributes set.
 
-        #. Case: Sheet fresh, identification information fresh
-        #. Case: Sheet stale, identification information fresh
-        #. Case: Sheet fresh, identification information stale
-        #. Case: Sheet stale, identification information stale
+        #. Case: Sheet fresh, ID info fresh, no topics.
+        #. Case: Sheet stale, ID info fresh, no topics.
+        #. Case: Sheet fresh, ID info stale, no topics.
+        #. Case: Sheet stale, ID info stale, no topics.
         #. Case: Sheet fresh, ID info fresh, topics fresh
          """
         # Setup
         TEXT_TITLE = 'Something completely different'
         target = MSHEET.Sheet(p_title=TEXT_TITLE)
-        # Test: Sheet fresh, identification information fresh
+
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name='Topic {}'.format(i))
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        parent = target._topics._gtk_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name=name)
+            parent = target.insert_topic_child(topic, parent)
+        # Test: Sheet fresh, ID info fresh, no topics.
         target._stale = False
         target._infoid.set_fresh()
         target.set_stale()
         assert target._stale
         assert target._infoid.is_fresh()
-        # Test: Sheet stale, identification information fresh
+        # Test: Sheet stale, ID info fresh, no topics.
         target._stale = True
         target._infoid.set_fresh()
         target.set_stale()
         assert target._stale
         assert target._infoid.is_fresh()
-        # Test: Sheet fresh, identification information stale
+        # Test: Sheet fresh, ID info stale, no topics.
         target._stale = False
         target._infoid.set_stale()
         target.set_stale()
         assert target._stale
         assert target._infoid.is_stale()
-        # Test: Sheet stale, identification information stale
+        # Test: Sheet stale, ID info stale, no topics.
         target._stale = True
         target._infoid.set_stale()
         target.set_stale()
         assert target._stale
         assert target._infoid.is_stale()
-        # Test: Sheet fresh, ID info fresh, topics fresh
-        target._stale = True
+        # Test: Sheet fresh, ID info fresh, topics fresh.
+        target._stale = False
         target._infoid.set_fresh()
         for index in target._topics.indices():
             topic = target._topics.get_item(index)
@@ -720,8 +739,10 @@ class TestSheet:
         TEXT_TITLE = 'Something completely different'
         target = MSHEET.Sheet(p_title=TEXT_TITLE)
         N_TOPICS = 3
-        TOPICS = [MTOPIC.Topic(p_name='Topic {}'.format(i))
-                  for i in range(N_TOPICS)]
+        TOPICS = list()
+        for i in range(N_TOPICS):
+            topic = MTOPIC.Topic()
+            topic.init_identity(p_name='Topic {}'.format(i))
         parent = None
         for topic in TOPICS:
             parent = target.insert_topic_child(topic, parent)

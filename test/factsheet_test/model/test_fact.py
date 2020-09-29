@@ -56,11 +56,11 @@ class TestFact:
         TITLE_TARGET = 'Something completely different.'
         target.init_identity(p_title=TITLE_TARGET)
         assert not source.__eq__(target)
-        # Test: Topic difference
-        TOPIC_TARGET = 'Something completely different.'
-        target = Fact(p_topic=TOPIC_TARGET)
-        target.init_identity(p_title=TITLE_SOURCE)
-        assert not source.__eq__(target)
+        # # Test: Topic difference
+        # TOPIC_TARGET = 'Something completely different.'
+        # target = Fact(p_topic=TOPIC_TARGET)
+        # target.init_identity(p_title=TITLE_SOURCE)
+        # assert not source.__eq__(target)
         # Test: Equivalence
         target = Fact(p_topic=TOPIC_SOURCE)
         target.init_identity(p_title=TITLE_SOURCE)

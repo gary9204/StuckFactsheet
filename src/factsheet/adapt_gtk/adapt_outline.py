@@ -340,9 +340,9 @@ class AdaptTreeStore(ABC_OUTLINE.AbstractOutline[
                        px_i_target: IndexGtk = None) -> None:
         """Copy section of another outline under given item.
 
-        Method ``insert_section`` copies the section after all
-        existing children.  If index is None, it copies section at end
-        of outline.  The method makes a shallow copy of the section and
+        Method ``insert_section`` copies the section after all existing
+        children.  If px_i_target is None, it copies section at end of
+        outline.  The method makes a shallow copy of the section and
         each of its descendants.
 
         .. note:: This method makes a shallow copy.  The outlines share

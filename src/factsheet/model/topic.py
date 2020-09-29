@@ -10,16 +10,14 @@ specialize the model for sets, operations, and so on.
 import logging
 import typing   # noqa
 
+import factsheet.abc_types.abc_fact as ABC_FACT
 import factsheet.abc_types.abc_topic as ABC_TOPIC
-import factsheet.model.fact as MFACT
 import factsheet.model.infoid as MINFOID
 import factsheet.model.types_model as MTYPES
 
 from factsheet.abc_types.abc_topic import TagTopic
 
 logger = logging.getLogger('Main.model.topic')
-
-ClassesFact = typing.Iterable[typing.Type[MFACT.Fact]]
 
 
 class Topic(ABC_TOPIC.AbstractTopic):
@@ -32,13 +30,14 @@ class Topic(ABC_TOPIC.AbstractTopic):
 
     .. admonition:: About Equality
 
-        Two topics are equivalent when they have the same fact outlines
-        and identification information. Transient aspects of the topics
-        (like topic forms) are not compared and may be different.
+        Two topics are equivalent when they have the equal facts
+        outlines and identification information. Transient aspects of
+        the topics (like topic forms) are not compared and may be
+        different.
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:
-        """Return True when p_other has same topic information.
+        """Return True when p_other has same facts and topic information.
 
         :param p_other: object to compare with self.
         """
@@ -116,25 +115,31 @@ class Topic(ABC_TOPIC.AbstractTopic):
             return
 
         self._infoid.attach_view(p_form.get_infoid())
+        self._facts.attach_view(p_form.get_view_facts())
         self._forms[id_form] = p_form
 
-    def check_fact(self, p_i: ABC_TOPIC.IndexOpaque) -> None:
+    def check_fact(self, p_i: MTYPES.IndexFact) -> None:
         """Check a fact.
 
         :param p_i: index of fact to check.
         """
-        raise NotImplementedError
+        fact = self._facts.get_item(p_i)
+        assert fact is not None
+        fact.check()
 
     def clear_all(self) -> None:
         """Clear all of topic's facts. """
-        raise NotImplementedError
+        for index in self._facts.indices():
+            self.clear_fact(index)
 
-    def clear_fact(self, p_i: ABC_TOPIC.IndexOpaque) -> None:
+    def clear_fact(self, p_i: MTYPES.IndexFact) -> None:
         """Clear a fact.
 
         :param p_i: index of fact to clear.
         """
-        raise NotImplementedError
+        fact = self._facts.get_item(p_i)
+        assert fact is not None
+        fact.clear()
 
     def detach_all(self) -> None:
         """Detach all forms from topic."""
@@ -169,17 +174,81 @@ class Topic(ABC_TOPIC.AbstractTopic):
         :param p_form: topic form as a whole.
         """
         self._infoid.detach_view(p_form.get_infoid())
+        self._facts.detach_view(p_form.get_view_facts())
+
+    def facts(self, p_index: MTYPES.IndexTopic = None
+              ) -> typing.Iterator[ABC_FACT.AbstractFact]:
+        """Return iterator over facts in facts outline.
+
+        The iterator is recursive (that is, includes fact at given
+        index along with all its descendants).
+
+        :param p_index: index of parent item of section.  Default
+            iterates over entire facts outline.
+        """
+        for index in self._facts.indices(p_index):
+            fact = self._facts.get_item(index)
+            assert fact is not None
+            yield fact
+
+    def insert_fact_after(self, p_fact: ABC_FACT.AbstractFact,
+                          p_i: MTYPES.IndexFact) -> MTYPES.IndexFact:
+        """Adds fact to facts outline after fact at given index.
+
+        If index is None, adds topic at beginning of outline.
+
+        :param p_fact: new fact to add.
+        :param p_i: index of fact to precede new fact.
+        :returns: index of newly-added topic.
+        """
+        self.set_stale()
+        return self._facts.insert_after(p_fact, p_i)
+
+    def insert_fact_before(self, p_fact: ABC_FACT.AbstractFact,
+                           p_i: MTYPES.IndexFact) -> MTYPES.IndexFact:
+        """Adds fact to facts outline before fact at given index.
+
+        If index is None, adds topic at end of outline.
+
+        :param p_fact: new fact to add.
+        :param p_i: index of fact to follow new fact.
+        :returns: index of newly-added topic.
+        """
+        self.set_stale()
+        return self._facts.insert_before(p_fact, p_i)
+
+    def insert_fact_child(self, p_fact: ABC_FACT.AbstractFact,
+                          p_i: MTYPES.IndexFact) -> MTYPES.IndexFact:
+        """Adds fact to fact outline as child of fact at given index.
+
+        Method adds fact after all existing children.  If index is
+        None, it adds fact at end of outline.
+
+        :param p_fact: new fact to add.
+        :param px_i: index of parent fact for new fact.
+        :returns: index of newly-added fact.
+        """
+        self.set_stale()
+        return self._facts.insert_child(p_fact, p_i)
+
+    def insert_facts_section(self, p_source: MTYPES.OutlineFacts,
+                             p_i: MTYPES.IndexFact = None) -> None:
+        """Copy another facts outline under given fact.
+
+        .. note:: This method makes a shallow copy.  The outlines share
+            the facts after the copy.
+
+        :param p_source: facts outline to copy.
+        :param p_i: index to copy section under.  Default is top level
+            after existing top-level items.
+        """
+        self.set_stale()
+        COPY_ALL = None
+        return self._facts.insert_section(p_source, COPY_ALL, p_i)
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to topic."""
-        if self._stale:
-            return False
-
-        if self._infoid.is_stale():
-            self._stale = True
-            return False
-
-        return True
+        return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
@@ -192,6 +261,11 @@ class Topic(ABC_TOPIC.AbstractTopic):
             self._stale = True
             return True
 
+        for fact in self.facts():
+            if fact.is_stale():
+                self._stale = True
+                return True
+
         return False
 
     @property
@@ -203,6 +277,8 @@ class Topic(ABC_TOPIC.AbstractTopic):
         """Mark topic in memory consistent with file contents."""
         self._stale = False
         self._infoid.set_fresh()
+        for fact in self.facts():
+            fact.set_fresh()
 
     def set_stale(self) -> None:
         """Mark topic in memory changed from file contents."""

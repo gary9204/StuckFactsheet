@@ -18,8 +18,11 @@ def interface_form_topic(interface_view_infoid):
     class PatchFormTopic(ABC_TOPIC.InterfaceFormTopic):
         def __init__(self):
             self._infoid = interface_view_infoid()
+            self._facts = VTYPES.ViewOutlineFacts()
 
         def get_infoid(self): return self._infoid
+
+        def get_view_facts(self): return self._facts
 
     return PatchFormTopic
 

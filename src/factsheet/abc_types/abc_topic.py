@@ -18,7 +18,7 @@ import factsheet.abc_types.abc_infoid as ABC_INFOID
 import factsheet.abc_types.abc_stalefile as ABC_STALE
 
 from factsheet.abc_types.abc_outline import IndexOpaque
-
+from factsheet.abc_types.abc_outline import ViewOutlineOpaque
 
 TagTopic = typing.NewType('TagTopic', int)
 
@@ -55,4 +55,9 @@ class InterfaceFormTopic(abc.ABC):
     @abc.abstractmethod
     def get_infoid(self) -> ABC_INFOID.InterfaceViewInfoId:
         """Return view of topic identification information."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_view_facts(self) -> ViewOutlineOpaque:
+        """Return view of topic's facts outline."""
         raise NotImplementedError
