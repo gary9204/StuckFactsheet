@@ -1,11 +1,10 @@
 """
-Unit tests for interface to track file against model.
-
-See :mod:`.abc_stalefile`.
+Unit tests for interface to track file against model.  See
+:mod:`.ABC_STALE`.
 """
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_stalefile as ABC_STALEFILE
+import factsheet.abc_types.abc_stalefile as ABC_STALE
 
 
 class TestInterfaceStaleFile:
@@ -17,7 +16,7 @@ class TestInterfaceStaleFile:
         # Setup
         # Test
         with pytest.raises(TypeError):
-            _ = ABC_STALEFILE.InterfaceStaleFile()
+            _ = ABC_STALE.InterfaceStaleFile()
 
     @pytest.mark.parametrize('name_method', [
         'is_fresh',
@@ -28,7 +27,7 @@ class TestInterfaceStaleFile:
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
-        class PatchInterface(ABC_STALEFILE.InterfaceStaleFile):
+        class PatchInterface(ABC_STALE.InterfaceStaleFile):
             def is_fresh(self): super().is_fresh()
 
             def is_stale(self): super().is_stale()

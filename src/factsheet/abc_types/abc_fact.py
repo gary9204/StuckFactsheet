@@ -66,8 +66,19 @@ ValueOpaque = typing.TypeVar('ValueOpaque')
 
 
 class AbstractFact(
-        ABC_INFOID.AbstractIdentity[TagFact], ABC_STALE.InterfaceStaleFile):
+        ABC_INFOID.InterfaceIdentity[TagFact], ABC_STALE.InterfaceStaleFile):
     """Defines interfaces common to fact model components."""
+
+    # @abc.abstractmethod
+    # def attach_block(self, p_block: InterfaceBlockFact[ValueOpaque]
+    #                  ) -> None:
+    #     """Add fact block to show fact identification, status, and value.
+    #
+    #     Log warning when requested block is already attached.
+    #
+    #     :param p_block: fact block to add.
+    #     """
+    #     raise NotImplementedError
 
     @abc.abstractmethod
     def check(self) -> StatusOfFact:
@@ -78,6 +89,16 @@ class AbstractFact(
     def clear(self) -> None:
         """Clear fact value and status of fact."""
         raise NotImplementedError
+
+    # @abc.abstractmethod
+    # def detach_block(self, p_block: InterfaceBlockFact[ValueOpaque]) -> None:
+    #     """Remove a fact block from fact.
+    #
+    #     Log warning when requested block is not attached.
+    #
+    #     :param p_block: fact block to remove.
+    #     """
+    #     raise NotImplementedError
 
     @property
     @abc.abstractmethod

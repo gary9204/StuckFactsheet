@@ -18,19 +18,25 @@ class TestAbstractTopic:
             _ = ABC_TOPIC.AbstractTopic()
 
     @pytest.mark.parametrize('name_method', [
+        'attach_form',
         'check_fact',
         'clear_all',
         'clear_fact',
+        'detach_form',
         ])
     def test_must_override(self, name_method):
         """Confirm each method must be overridden."""
         # Setup
         class PatchTopic(ABC_TOPIC.AbstractTopic):
+            def attach_form(self): return super().attach_form(None)
+
             def check_fact(self): return super().check_fact(None)
 
             def clear_all(self): return super().clear_all()
 
             def clear_fact(self): return super().clear_fact(None)
+
+            def detach_form(self): return super().detach_form(None)
 
             def init_identity(self): return super().init_identity()
 

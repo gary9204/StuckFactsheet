@@ -9,9 +9,9 @@ import enum
 import gi   # type: ignore[import]
 import typing
 
-# from factsheet.abc_types import abc_sheet as ABC_SHEET
 import factsheet.abc_types.abc_fact as ABC_FACT
 import factsheet.adapt_gtk.adapt_outline as AOUTLINE
+# import factsheet.model.fact as MFACT
 
 from factsheet.adapt_gtk.adapt_outline import IndexGtk as IndexFact
 

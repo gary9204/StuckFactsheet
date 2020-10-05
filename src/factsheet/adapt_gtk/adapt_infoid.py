@@ -1,60 +1,197 @@
 """
-Defines GTK-based classes implementing abstract identification
-information classes.
+Defines GTK-based interfaces and adapters for Factsheet component
+identification information.  See :mod:`.abc_infoid`.
 
-See :mod:`.abc_infoid`.
+.. data:: TextFormat
 
-.. data:: AdaptEntry
+    Type hint for GTK element to store :data:`ViewTextFormat`.  See
+    `Gtk.TextBuffer`_.
 
-   Adapts `Gtk.Entry`_ widget to display a text attribute.
+.. _Gtk.TextBuffer:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 
-.. _Gtk.Entry:
-   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
-   Entry.html#Gtk.Entry
+.. data:: TextMarkup
 
-.. data:: AdaptTextView
+    Type hint for GTK element to store :data:`ViewTextMarkup`.  See
+    `Gtk.EntryBuffer`_.
 
-   Adapts `Gtk.TextView`_ widget to display a text attribute.
+.. _Gtk.EntryBuffer:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
+
+.. data:: TextStatic
+
+    Type alias for ``str``. Used to store content for
+    :data:`ViewTextStatic`.
+
+.. data:: ViewTextFormat
+
+    Type hint for GTK element to display a text attribute.  The element
+    is editable and supports rich formatting.  See `Gtk.TextView`_.
 
 .. _Gtk.TextView:
-   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
-   TextView.html#Gtk.TextView
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
+
+.. data:: ViewTextMarkup
+
+    Type hint for GTK element to display a text attribute.  The element
+    is editable and supports markup.  See `Gtk.Entry`_.
+
+.. _Gtk.Entry:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html
+
+.. data:: ViewTextOpaque
+
+    Type hint for placeholder GTK element to display a text attribute.
+
+.. data:: ViewTextStatic
+
+    Type hint for GTK element to display a text attribute.  The element
+    supports markup but is not editable.  See `Gtk.Label`_.
+
+.. _Gtk.Label:
+    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
 """
+import abc
 import gi   # type: ignore[import]
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
+import factsheet.abc_types.abc_stalefile as ABC_STALE
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
-AdaptEntry = typing.Union[Gtk.Entry]
-AdaptTextView = typing.Union[Gtk.TextView]
+TextFormat = Gtk.TextBuffer
+TextMarkup = Gtk.EntryBuffer
+TextStatic = str
+ViewTextFormat = typing.Union[Gtk.TextView]
+ViewTextMarkup = typing.Union[Gtk.Entry]
+ViewTextOpaque = typing.TypeVar('ViewTextOpaque')
+ViewTextStatic = typing.Union[Gtk.Label]
 
-logger = logging.getLogger('Main.adapt_text')
+logger = logging.getLogger('Main.adapt_infoid')
 
 
-def str_adapt_textview(px_view: AdaptTextView) -> str:
-    """Return AdaptTextView contents as a text.
+class AdaptText(typing.Generic[ViewTextOpaque],
+                ABC_STALE.InterfaceStaleFile):
+    """Common ancestor of model text attributes.
 
-    :param px_view: target view.
+    Text attributes have tranisient data for attached views in addition
+    to persistant text content.
     """
-    buffer = px_view.get_buffer()
-    start, end = buffer.get_bounds()
-    text = buffer.get_text(start, end, AdaptTextBuffer.INCLUDE_HIDDEN)
-    return text
+
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when other is equivalent text attribute.
+
+        :param p_other: object to test for equality.
+        """
+        if not isinstance(p_other, AdaptText):  # Accept descemdemts
+            return False
+
+        if self.text != p_other.text:
+            return False
+
+        return True
+
+    def __getstate__(self) -> typing.Dict:
+        """Return model text attribute in form pickle can persist.
+
+        Persistent form of text attribute consists of text only.
+        """
+        state = self.__dict__.copy()
+        del state['_stale']
+        del state['_views']
+        return state
+
+    def __init__(self) -> None:
+        self.__init_transient()
+
+    def __init_transient(self) -> None:
+        """Local helper initializes content common to __init__ and
+        __setstate__.
+        """
+        self._stale = False
+        self._views: typing.MutableMapping[int, ViewTextOpaque] = dict()
+
+    def __setstate__(self, p_state: typing.MutableMapping) -> None:
+        """Reconstruct model text attribute from state pickle loads.
+
+        Reconstructed attribute is marked fresh and has no views.
+
+        :param p_state: unpickled state of stored text attribute.
+        """
+        self.__dict__.update(p_state)
+        self.__init_transient()
+
+    def __str__(self) -> str:
+        """Return attribute content."""
+        return self.text
+
+    @abc.abstractmethod
+    def attach_view(self, p_view: ViewTextOpaque):
+        """Add GTK display element to show content.
+
+        :param p_view: view to add.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def detach_view(self, p_view: ViewTextOpaque):
+        """Remove GTK display element.
+
+        :param p_view: view to removes.
+        """
+        raise NotImplementedError
+        # TODO
+
+    def is_fresh(self) -> bool:
+        """Return True when there are no unsaved changes to content."""
+        return not self.is_stale()
+
+    def is_stale(self) -> bool:
+        """Return True when there is at least one unsaved change to
+        content.
+        """
+        return self._stale
+
+    def set_fresh(self) -> None:
+        """Mark attribute in memory consistent with file."""
+        self._stale = False
+
+    def set_stale(self) -> None:
+        """Mark attribute in memory changed from file."""
+        self._stale = True
+
+    @property
+    @abc.abstractmethod
+    def text(self) -> str:
+        """Return attribute content."""
+        raise NotImplementedError
+
+    @text.setter
+    def text(self, p_text: str) -> None:
+        """Set attribute content.
+
+        :param p_text: new content for attribute.
+        """
+        raise NotImplementedError
 
 
-class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel[AdaptEntry]):
-    """Implements model text attribute :class:`.AbstractTextModel`
-    using `Gtk.EntryBuffer`_.
+class AdaptTextMarkup(AdaptText[ViewTextMarkup]):
+    """Implements editable model text attribute with support for markup.
+    See `Gtk.EntryBuffer`_.
+
+    Text attributes have tranisient data for attached views in addition
+    to persistant text content.
+
+    .. admonition:: About Equality
+
+        Two text attributes are equivalent when they have the equal
+        content.  Transient aspects of the attributes are not compared
+        and may be different.
 
     .. _Gtk.EntryBuffer:
-       https://lazka.github.io/pgi-docs/#Gtk-3.0/
-       classes/EntryBuffer.html#Gtk.EntryBuffer
-
-    :param p_text: initial buffer contents (default: empty)
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
     """
 
     def __getstate__(self) -> typing.Dict:
@@ -62,190 +199,249 @@ class AdaptEntryBuffer(ABC_INFOID.AbstractTextModel[AdaptEntry]):
 
         Persistent form of text attribute consists of text only.
         """
-        state = self.__dict__.copy()
-        state['ex_text'] = str(self._buffer.get_text())
-        del state['_buffer']
-        del state['_stale']
-        del state['_views']
+        state = super().__getstate__()
+        state['ex_text'] = self.text
+        del state['_text_gtk']
         return state
 
-    def __init__(self, p_text: str = '') -> None:
-        self._buffer = Gtk.EntryBuffer(text=p_text)
-        self._state_transient()
+    def __init__(self) -> None:
+        super().__init__()
+        self._text_gtk = TextMarkup()
+        self.__init_transient()
 
-    def __setstate__(self, px_state: typing.MutableMapping) -> None:
+    def __init_transient(self) -> None:
+        """Local helper initializes content common to __init__ and
+        __setstate__.
+        """
+        assert hasattr(self, '_text_gtk')
+        _ = self._text_gtk.connect('deleted-text',
+                                   lambda *_a: self.set_stale())
+        _ = self._text_gtk.connect('inserted-text',
+                                   lambda *_a: self.set_stale())
+
+    def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct model text attribute from state pickle loads.
 
         Reconstructed attribute is marked fresh and has no views.
 
-        :param px_state: unpickled state of stored text attribute.
+        :param p_state: unpickled state of stored text attribute.
         """
-        self.__dict__.update(px_state)
-        self._buffer = Gtk.EntryBuffer(
+        super().__setstate__(p_state)
+        self._text_gtk = TextMarkup(
             text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
-        self._state_transient()
+        self.__init_transient()
 
-    def _state_transient(self) -> None:
-        """Helper ensures __init__ and __setstate__ are consistent."""
-        assert hasattr(self, '_buffer')
-        _ = self._buffer.connect(
-            'deleted-text', lambda *_a: self.set_stale())
-        _ = self._buffer.connect(
-            'inserted-text', lambda *_a: self.set_stale())
-        self._stale = False
-        self._views: typing.MutableMapping[int, AdaptEntry] = dict()
+    def attach_view(self, p_view: ViewTextMarkup) -> None:
+        """Add GTK display element to show content.
 
-    def __str__(self) -> str:
-        """Return buffer contents as text."""
-        return str(self._buffer.get_text())
-
-    def attach_view(self, pm_view: AdaptEntry) -> None:
-        """Add view to update display when text changes.
-
-        :param pm_view: view to add.
+        :param p_view: view to add.
         """
-        id_view = id(pm_view)
+        id_view = id(p_view)
         if id_view in self._views:
-            logger.warning(
-                'Duplicate view: {} ({}.{})'.format(
-                    hex(id_view),
-                    self.__class__.__name__, self.attach_view.__name__))
+            logger.warning('Duplicate view: {} ({}.{})'
+                           ''.format(hex(id_view), type(self).__name__,
+                                     self.attach_view.__name__))
             return
 
-        pm_view.set_buffer(self._buffer)
-        self._views[id_view] = pm_view
+        p_view.set_buffer(self._text_gtk)
+        self._views[id_view] = p_view
 
-    def detach_view(self, pm_view: AdaptEntry) -> None:
-        """Remove view of changes to text.
+    def detach_view(self, p_view: ViewTextMarkup) -> None:
+        """Remove GTK display element element.
 
-        :param pm_view: view to remove
+        :param p_view: view to removes.
         """
-        id_view = id(pm_view)
+        id_view = id(p_view)
         try:
-            _view = self._views.pop(id_view)
+            view_detached = self._views.pop(id_view)
             # See Factsheet Project Issue #29 on GitHub
-            pm_view.hide()
+            view_detached.hide()
         except KeyError:
-            logger.warning(
-                'Missing view: {} ({}.{})'.format(
-                    hex(id_view),
-                    self.__class__.__name__, self.detach_view.__name__))
+            logger.warning('Missing view: {} ({}.{})'
+                           ''.format(hex(id_view), type(self).__name__,
+                                     self.detach_view.__name__))
 
-    def is_fresh(self) -> bool:
-        """Return True when there are no unsaved changes to buffer."""
-        return not self._stale
+    @property
+    def text(self) -> str:
+        """Return attribute content."""
+        return self._text_gtk.get_text()
 
-    def is_stale(self) -> bool:
-        """Return True when there is at least one unsaved change to buffer."""
-        return self._stale
+    @text.setter
+    def text(self, p_text: str) -> None:
+        """Set attribute content.
 
-    def set_fresh(self) -> None:
-        """Mark buffer in memory consistent with file contents."""
-        self._stale = False
-
-    def set_stale(self) -> None:
-        """Mark buffer in memory changed from file contents."""
-        self._stale = True
+        :param p_text: new content for attribute.
+        """
+        ALL = -1
+        self._text_gtk.set_text(p_text, ALL)
+        self.set_stale()
 
 
-class AdaptTextBuffer(ABC_INFOID.AbstractTextModel[AdaptTextView]):
-    """Implements model text attribute :class:`.AbstractTextModel`
-    using `Gtk.TextBuffer`_.
+class AdaptTextFormat(AdaptText[ViewTextFormat]):
+    """Implements editable model text attribute with support for markup.
+    See `Gtk.EntryBuffer`_.
 
-    .. _Gtk.TextBuffer:
-       https://lazka.github.io/pgi-docs/#Gtk-3.0/
-       classes/TextBuffer.html#Gtk.TextBuffer
+    Text attributes have tranisient data for attached views in addition
+    to persistant text content.
 
-    :param p_text: initial buffer contents (default: empty)
+    .. admonition:: About Equality
+
+        Two text attributes are equivalent when they have the equal
+        content.  Transient aspects of the attributes are not compared
+        and may be different.
+
+    .. _Gtk.EntryBuffer:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
     """
-    INCLUDE_HIDDEN = True
 
     def __getstate__(self) -> typing.Dict:
         """Return model text attribute in form pickle can persist.
 
         Persistent form of text attribute consists of text only.
         """
-        state = self.__dict__.copy()
-        state['ex_text'] = str(self)
-        del state['_buffer']
-        del state['_stale']
-        del state['_views']
+        state = super().__getstate__()
+        state['ex_text'] = self.text
+        del state['_text_gtk']
         return state
 
-    def __init__(self, p_text: str = '') -> None:
-        self._buffer = Gtk.TextBuffer(text=p_text)
-        self._state_transient()
+    def __init__(self) -> None:
+        super().__init__()
+        self._text_gtk = TextFormat()
+        self.__init_transient()
 
-    def __setstate__(self, px_state: typing.MutableMapping) -> None:
+    def __init_transient(self) -> None:
+        """Local helper initializes content common to __init__ and
+        __setstate__.
+        """
+        assert hasattr(self, '_text_gtk')
+        _ = self._text_gtk.connect('changed', lambda *_a: self.set_stale())
+
+    def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct model text attribute from state pickle loads.
 
         Reconstructed attribute is marked fresh and has no views.
 
-        :param px_state: unpickled state of stored text attribute.
+        :param p_state: unpickled state of stored text attribute.
         """
-        self.__dict__.update(px_state)
-        self._buffer = Gtk.TextBuffer(
-            text=self.ex_text)  # type: ignore[attr-defined]
+        super().__setstate__(p_state)
+        self._text_gtk = TextFormat(
+            text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
-        self._state_transient()
+        self.__init_transient()
 
-    def _state_transient(self) -> None:
-        """Helper ensures __init__ and __setstate__ are consistent."""
-        assert hasattr(self, '_buffer')
-        _ = self._buffer.connect('changed', lambda *_a: self.set_stale())
-        self._stale = False
-        self._views: typing.MutableMapping[int, AdaptTextView] = dict()
+    def attach_view(self, p_view: ViewTextMarkup) -> None:
+        """Add GTK display element to show content.
 
-    def __str__(self) -> str:
-        """Return buffer contents as text."""
-        start, end = self._buffer.get_bounds()
-        text = str(self._buffer.get_text(start, end, self.INCLUDE_HIDDEN))
-        return text
-
-    def attach_view(self, pm_view: AdaptEntry) -> None:
-        """Add view to update display when text changes.
-
-        :param pm_view: view to add.
+        :param p_view: view to add.
         """
-        id_view = id(pm_view)
+        id_view = id(p_view)
         if id_view in self._views:
-            logger.warning(
-                'Duplicate view: {} ({}.{})'.format(
-                    hex(id_view),
-                    self.__class__.__name__, self.attach_view.__name__))
+            logger.warning('Duplicate view: {} ({}.{})'
+                           ''.format(hex(id_view), type(self).__name__,
+                                     self.attach_view.__name__))
             return
 
-        pm_view.set_buffer(self._buffer)
-        self._views[id_view] = pm_view
+        p_view.set_buffer(self._text_gtk)
+        self._views[id_view] = p_view
 
-    def detach_view(self, pm_view: AdaptEntry) -> None:
-        """Remove view of changes to text.
+    def detach_view(self, p_view: ViewTextMarkup) -> None:
+        """Remove GTK display element element.
 
-        :param pm_view: view to remove
+        :param p_view: view to removes.
         """
-        id_view = id(pm_view)
+        id_view = id(p_view)
         try:
-            _view = self._views.pop(id_view)
-            pm_view.set_buffer(Gtk.TextBuffer())
+            view_detached = self._views.pop(id_view)
+            # See Factsheet Project Issue #29 on GitHub
+            view_detached.hide()
         except KeyError:
-            logger.warning(
-                'Missing view: {} ({}.{})'.format(
-                    hex(id_view),
-                    self.__class__.__name__, self.detach_view.__name__))
+            logger.warning('Missing view: {} ({}.{})'
+                           ''.format(hex(id_view), type(self).__name__,
+                                     self.detach_view.__name__))
 
-    def is_fresh(self) -> bool:
-        """Return True when there are no unsaved changes to buffer."""
-        return not self._stale
+    @property
+    def text(self) -> str:
+        """Return attribute content."""
+        NO_HIDDEN = False
+        start, end = self._text_gtk.get_bounds()
+        return self._text_gtk.get_text(start, end, NO_HIDDEN)
 
-    def is_stale(self) -> bool:
-        """Return True when there is at least one unsaved change to buffer."""
-        return self._stale
+    @text.setter
+    def text(self, p_text: str) -> None:
+        """Set attribute content.
 
-    def set_fresh(self) -> None:
-        """Mark buffer in memory consistent with file contents."""
-        self._stale = False
+        :param p_text: new content for attribute.
+        """
+        ALL = -1
+        self._text_gtk.set_text(p_text, ALL)
+        self.set_stale()
 
-    def set_stale(self) -> None:
-        """Mark buffer in memory changed from file contents."""
-        self._stale = True
+
+class AdaptTextStatic(AdaptText[ViewTextStatic]):
+    """Implements model text attribute with support for markup.
+    See `Gtk.Label`_.
+
+    The text attribute content cannot be changed through the user
+    interface.
+
+    Text attributes have tranisient data for attached views in addition
+    to persistant text content.
+
+    .. admonition:: About Equality
+
+        Two text attributes are equivalent when they have the equal
+        content.  Transient aspects of the attributes are not compared
+        and may be different.
+
+    .. _Gtk.Label:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._text_gtk = ''
+
+    def attach_view(self, p_view: ViewTextMarkup) -> None:
+        """Add GTK display element to show content.
+
+        :param p_view: view to add.
+        """
+        id_view = id(p_view)
+        if id_view in self._views:
+            logger.warning('Duplicate view: {} ({}.{})'
+                           ''.format(hex(id_view), type(self).__name__,
+                                     self.attach_view.__name__))
+            return
+
+        p_view.set_markup(self._text_gtk)
+        self._views[id_view] = p_view
+
+    def detach_view(self, p_view: ViewTextMarkup) -> None:
+        """Remove GTK display element element.
+
+        :param p_view: view to removes.
+        """
+        id_view = id(p_view)
+        try:
+            view_detached = self._views.pop(id_view)
+            # See Factsheet Project Issue #29 on GitHub
+            view_detached.hide()
+        except KeyError:
+            logger.warning('Missing view: {} ({}.{})'
+                           ''.format(hex(id_view), type(self).__name__,
+                                     self.detach_view.__name__))
+
+    @property
+    def text(self) -> str:
+        """Return attribute content."""
+        return self._text_gtk
+
+    @text.setter
+    def text(self, p_text: str) -> None:
+        """Set attribute content.
+
+        :param p_text: new content for attribute.
+        """
+        self._text_gtk = p_text
+        self.set_stale()

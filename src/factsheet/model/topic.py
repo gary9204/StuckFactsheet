@@ -16,11 +16,14 @@ import factsheet.model.infoid as MINFOID
 import factsheet.model.types_model as MTYPES
 
 from factsheet.abc_types.abc_topic import TagTopic
+from factsheet.model.types_model import IndexTopic
+from factsheet.model.types_model import IndexFact
+from factsheet.view.types_view import ViewOutlineFacts
 
 logger = logging.getLogger('Main.model.topic')
 
 
-class Topic(ABC_TOPIC.AbstractTopic):
+class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Topic`` represents a specific subject within a Factsheet.
@@ -98,13 +101,14 @@ class Topic(ABC_TOPIC.AbstractTopic):
         self._forms: typing.MutableMapping[
             int, ABC_TOPIC.InterfaceFormTopic] = dict()
 
-    def attach_form(self, p_form: ABC_TOPIC.InterfaceFormTopic) -> None:
+    def attach_form(
+            self, p_form: ABC_TOPIC.InterfaceFormTopic[ViewOutlineFacts]
+            ) -> None:
         """Add topic form to update display when topic changes.
 
         Log warning when requested form is already attached.
 
         :param p_form: form to add.
-
         """
         id_form = id(p_form)
         if id_form in self._forms.keys():
@@ -118,7 +122,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         self._facts.attach_view(p_form.get_view_facts())
         self._forms[id_form] = p_form
 
-    def check_fact(self, p_i: MTYPES.IndexFact) -> None:
+    def check_fact(self, p_i: IndexFact) -> None:
         """Check a fact.
 
         :param p_i: index of fact to check.
@@ -132,7 +136,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         for index in self._facts.indices():
             self.clear_fact(index)
 
-    def clear_fact(self, p_i: MTYPES.IndexFact) -> None:
+    def clear_fact(self, p_i: IndexFact) -> None:
         """Clear a fact.
 
         :param p_i: index of fact to clear.
@@ -147,8 +151,10 @@ class Topic(ABC_TOPIC.AbstractTopic):
             _id_form, form = self._forms.popitem()
             self._detach_attribute_views(form)
 
-    def detach_form(self, p_form: ABC_TOPIC.InterfaceFormTopic) -> None:
-        """Remove one topic form from topic.
+    def detach_form(
+            self, p_form: ABC_TOPIC.InterfaceFormTopic[ViewOutlineFacts]
+            ) -> None:
+        """Remove a topic form from topic.
 
         Log warning when requested form is not attached.
 
@@ -176,7 +182,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         self._infoid.detach_view(p_form.get_infoid())
         self._facts.detach_view(p_form.get_view_facts())
 
-    def facts(self, p_index: MTYPES.IndexTopic = None
+    def facts(self, p_index: IndexTopic = None
               ) -> typing.Iterator[ABC_FACT.AbstractFact]:
         """Return iterator over facts in facts outline.
 
@@ -192,7 +198,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
             yield fact
 
     def insert_fact_after(self, p_fact: ABC_FACT.AbstractFact,
-                          p_i: MTYPES.IndexFact) -> MTYPES.IndexFact:
+                          p_i: IndexFact) -> IndexFact:
         """Adds fact to facts outline after fact at given index.
 
         If index is None, adds topic at beginning of outline.
@@ -205,7 +211,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         return self._facts.insert_after(p_fact, p_i)
 
     def insert_fact_before(self, p_fact: ABC_FACT.AbstractFact,
-                           p_i: MTYPES.IndexFact) -> MTYPES.IndexFact:
+                           p_i: IndexFact) -> IndexFact:
         """Adds fact to facts outline before fact at given index.
 
         If index is None, adds topic at end of outline.
@@ -218,7 +224,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         return self._facts.insert_before(p_fact, p_i)
 
     def insert_fact_child(self, p_fact: ABC_FACT.AbstractFact,
-                          p_i: MTYPES.IndexFact) -> MTYPES.IndexFact:
+                          p_i: IndexFact) -> IndexFact:
         """Adds fact to fact outline as child of fact at given index.
 
         Method adds fact after all existing children.  If index is
@@ -232,7 +238,7 @@ class Topic(ABC_TOPIC.AbstractTopic):
         return self._facts.insert_child(p_fact, p_i)
 
     def insert_facts_section(self, p_source: MTYPES.OutlineFacts,
-                             p_i: MTYPES.IndexFact = None) -> None:
+                             p_i: IndexFact = None) -> None:
         """Copy another facts outline under given fact.
 
         .. note:: This method makes a shallow copy.  The outlines share

@@ -132,7 +132,7 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         assert self._model is not None
         self._model.detach_view_topics(p_view)
 
-    def extract_topic(self, px_i: MTYPES.IndexOutline) -> None:
+    def extract_topic(self, px_i: MTYPES.IndexTopic) -> None:
         """Requests topics outline to remove topic and all descendants.
 
         :param px_i: index of parent topic to remove along with all
@@ -154,15 +154,15 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
             return None
 
     def insert_topic_after(
-            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexOutline
-            ) -> typing.Tuple[MTYPES.IndexOutline, CTOPIC.ControlTopic]:
-        """Requests topics outline add topic after topic at given index.
+            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
+            ) -> typing.Tuple[MTYPES.IndexTopic, CTOPIC.ControlTopic]:
+        """Request topics outline add topic after topic at given index.
 
-        See :meth:`~.model.sheet.Sheet.insert_topic_after`.
+        See :meth:`.Sheet.insert_topic_after`.
 
         :param px_topic: new topic to add.
         :param px_i: index of topic to precede new topic.
-        :returns: index of newly-added topic.
+        :returns: index of and control for newly-added topic.
         """
         assert self._model is not None
         index_new = self._model.insert_topic_after(px_topic, px_i)
@@ -170,11 +170,11 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         return index_new, control_new
 
     def insert_topic_before(
-            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexOutline
-            ) -> typing.Tuple[MTYPES.IndexOutline, CTOPIC.ControlTopic]:
-        """Requests topics outline add topic before topic at given index.
+            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
+            ) -> typing.Tuple[MTYPES.IndexTopic, CTOPIC.ControlTopic]:
+        """Request topics outline add topic before topic at given index.
 
-        See :meth:`~.model.sheet.Sheet.insert_topic_before`.
+        See :meth:`.Sheet.insert_topic_before`.
 
         :param px_topic: new topic to add.
         :param px_i: index of topic to follow new topic.
@@ -186,16 +186,16 @@ class ControlSheet(ABC_SHEET.InterfaceControlSheet):
         return index_new, control_new
 
     def insert_topic_child(
-            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexOutline
-            ) -> typing.Tuple[MTYPES.IndexOutline, CTOPIC.ControlTopic]:
-        """Requests topics outline add topic as child of topic at given
+            self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
+            ) -> typing.Tuple[MTYPES.IndexTopic, CTOPIC.ControlTopic]:
+        """Request topics outline add topic as child of topic at given
         index.
 
-        See :meth:`~.model.sheet.Sheet.insert_topic_child`.
+        See :meth:`.Sheet.insert_topic_child`.
 
         :param px_topic: new topic to add.
         :param px_i: index of parent topic for new topic.
-        :returns: index of newly-added topic.
+        :returns: index of and control for newly-added topic.
         """
         assert self._model is not None
         index_new = self._model.insert_topic_child(px_topic, px_i)

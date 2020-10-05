@@ -10,13 +10,15 @@ class representing the control of a fact.
 import logging
 import typing   # noqa
 
-from factsheet.abc_types import abc_fact as ABC_FACT
-from factsheet.model import fact as MFACT
+import factsheet.abc_types.abc_fact as ABC_FACT
+import factsheet.model.fact as MFACT
+
+from factsheet.abc_types.abc_fact import ValueOpaque
 
 logger = logging.getLogger('Main.control_fact')
 
 
-class ControlFact:
+class ControlFact(typing.Generic[ValueOpaque]):
     """Translates user requests in fact block to updates in fact model.
 
     :param p_fact: fact model.
@@ -25,14 +27,16 @@ class ControlFact:
     def __init__(self, p_fact: MFACT.Fact) -> None:
         self._fact = p_fact
 
-    def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact) -> None:
+    def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
+                     ) -> None:
         """Add fact block to fact model.
 
         :param p_block: block to add.
         """
         self._fact.attach_block(p_block)
 
-    def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact) -> None:
+    def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
+                     ) -> None:
         """Remove fact block from fact model.
 
         :param p_block: block to remove.

@@ -1,20 +1,96 @@
 """
 Defines type aliases for model components that depend on GTK.
+
+.. data:: IdName
+
+    Type hint for name attribute of a model component.  A view for this
+    attribute is editable.
+
+.. data:: IdNameStatic
+
+    Type hint for name attribute of a model component.  A view for this
+    attribute is not editable.
+
+.. data:: IdSummary
+
+    Type hint for summary attribute of a model component.  A view for
+    this attribute is editable.
+
+.. data:: IdSummaryStatic
+
+    Type hint for summary attribute of a model component.  A view for
+    this attribute is not editable.
+
+.. data:: IdTitle
+
+    Type hint for title attribute of a model component.  A view for this
+    attribute is editable.
+
+.. data:: IdTitleStatic
+
+    Type hint for title attribute of a model component.  A view for this
+    attribute is not editable.
+
+.. data:: ViewIdName
+
+    Type hint for view of model component name attribute.  A user can
+    edit the name in this view.
+
+.. data:: ViewIdNameStatic
+
+    Type hint for view of model component name attribute.  A user cannot
+    edit the name in this view.
+
+.. data:: ViewIdSummary
+
+    Type hint for view of model component summary attribute.  A user can
+    edit the summary in this view.
+
+.. data:: ViewIdSummaryStatic
+
+    Type hint for view of model component summary attribute.  A user
+    cannot edit the summary in this view.
+
+.. data:: ViewIdTitle
+
+    Type hint for view of model component title attribute.  A user can
+    edit the title in this view.
+
+.. data:: ViewIdTitleStatic
+
+    Type hint for view of model component title attribute.  A user
+    cannot edit the title in this view.
 """
 import factsheet.adapt_gtk.adapt_infoid as AINFOID
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
-import factsheet.adapt_gtk.adapt_topic as ATOPIC
+# import factsheet.adapt_gtk.adapt_sheet as ASHEET
+# import factsheet.adapt_gtk.adapt_topic as ATOPIC
 
-from factsheet.adapt_gtk.adapt_sheet import IndexTemplate  # noqa
-from factsheet.adapt_gtk.adapt_sheet import IndexTopic  # noqa (non-local use)
-from factsheet.adapt_gtk.adapt_topic import IndexFact  # noqa (non-local use)
-from factsheet.abc_types.abc_topic import TagTopic  # noqa (non-local use)
+# from factsheet.adapt_gtk.adapt_sheet import IndexTemplate  # noqa
+# from factsheet.adapt_gtk.adapt_sheet import IndexTopic  # noqa (non-local use)
+# from factsheet.abc_types.abc_topic import TagTopic  # noqa (non-local use)
 
-ModelName = AINFOID.AdaptEntryBuffer
-ModelSummary = AINFOID.AdaptTextBuffer
-ModelTitle = AINFOID.AdaptEntryBuffer
+# from factsheet.adapt_gtk.adapt_topic import IndexFact  # noqa (non-local use)
+# from factsheet.abc_types.abc_fact import TagFact  # noqa (non-local use)
 
-OutlineTemplates = ASHEET.AdaptTreeStoreTemplate
-OutlineTopics = ASHEET.AdaptTreeStoreTopic
+# ModelName = AINFOID.AdaptEntryBuffer
+# ModelSummary = AINFOID.AdaptTextBuffer
+# ModelTitle = AINFOID.AdaptEntryBuffer
 
-OutlineFacts = ATOPIC.AdaptTreeStoreFact
+# OutlineTemplates = ASHEET.AdaptTreeStoreTemplate
+# OutlineTopics = ASHEET.AdaptTreeStoreTopic
+
+# OutlineFacts = ATOPIC.AdaptTreeStoreFact
+
+IdName = AINFOID.AdaptTextMarkup
+IdNameStatic = AINFOID.AdaptTextStatic
+IdSummary = AINFOID.AdaptTextFormat
+IdSummaryStatic = AINFOID.AdaptTextStatic
+IdTitle = AINFOID.AdaptTextMarkup
+IdTitleStatic = AINFOID.AdaptTextStatic
+
+ViewIdName = AINFOID.ViewTextMarkup
+ViewIdNameStatic = AINFOID.ViewTextStatic
+ViewIdSummary = AINFOID.ViewTextFormat
+ViewIdSummaryStatic = AINFOID.ViewTextStatic
+ViewIdTitle = AINFOID.ViewTextMarkup
+ViewIdTitleStatic = AINFOID.ViewTextStatic

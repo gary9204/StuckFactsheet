@@ -15,55 +15,10 @@ import factsheet.model.topic as MTOPIC
 import factsheet.model.types_model as MTYPES
 
 
-class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):
-    """Stub class with check and clear methods."""
-
-    VALUE = 42
-
-    def check(self) -> MFACT.StatusOfFact:
-        """Set fact value and set corresponding state of fact check."""
-        self._value = 42
-        self._status = MFACT.StatusOfFact.DEFINED
-        return super().check()
-
-    def clear(self) -> None:
-        """Clear fact value and set corresponding state of fact check."""
-        self._value = None
-        self._status = MFACT.StatusOfFact.UNCHECKED
-        super().clear()
-
-
-@pytest.fixture
-def factory_topic():
-    """Pytest fixture returns factory for topics with facts outline.
-
-    :param p_top_facts: number of top-level facts.
-    :param p_depth_facts: number of outline levels below top level.
-    """
-    def new_topic(*, p_top_facts=3, p_depth_facts=2):
-        TITLE_MODEL = 'Something completely different.'
-        topic = MTOPIC.Topic()
-        topic.init_identity(p_title=TITLE_MODEL)
-
-        for i in range(p_top_facts):
-            fact = PatchFact(p_topic=topic)
-            fact.init_identity(p_name='Fact {}'.format(i))
-            topic.insert_fact_before(fact, None)
-        parent = topic._facts._gtk_model.get_iter_first()
-        for j in range(p_depth_facts):
-            name = '\t'*(j+1) + 'Fact {}'.format(j + p_top_facts)
-            fact = PatchFact(p_topic=topic)
-            fact.init_identity(p_name=name)
-            parent = topic.insert_fact_child(fact, parent)
-        return topic
-
-    return new_topic
-
-
 class TestTopic:
     """Unit tests for :class:`.Topic`."""
 
-    def test_eq(self, factory_topic):
+    def test_eq(self, patch_class_fact, factory_topic):
         """Confirm equivalence operator
 
         #. Case: type difference
@@ -72,9 +27,7 @@ class TestTopic:
         #. Case: Equivalence
         """
         # Setup
-        # TITLE_MODEL = 'The Parrot Sketch'
-        # reference = MTOPIC.Topic()
-        # reference.init_identity(p_title=TITLE_MODEL)
+        PatchFact = patch_class_fact
         reference = factory_topic()
         TEXT = 'Something completely different'
         # Test: type difference
@@ -257,9 +210,10 @@ class TestTopic:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_check_fact(self, factory_topic):
+    def test_check_fact(self, patch_class_fact, factory_topic):
         """Confirm fact check."""
         # Setup
+        PatchFact = patch_class_fact
         target = factory_topic()
         I_LEAF = 2
         index = list(target._facts.indices())[I_LEAF]
@@ -753,7 +707,7 @@ class TestTopic:
 
 
 class TestTypes:
-    """Unit tests for type definitions in :mod:`.topic`."""
+    """Unit tests for type definitions in :mod:`.Topic`."""
 
     def test_types(self):
         """Confirm types defined."""

@@ -18,8 +18,10 @@ class TestAbstractFact:
             _ = ABC_FACT.AbstractFact()
 
     @pytest.mark.parametrize('NAME_METHOD', [
+        # 'attach_block',
         'check',
         'clear',
+        # 'detach_block',
         'name',
         'status',
         'summary',
@@ -30,9 +32,13 @@ class TestAbstractFact:
         """Confirm each method must be overridden."""
         # Setup
         class PatchFact(ABC_FACT.AbstractFact):
+            # def attach_block(self): return super().attach_block(None)
+
             def check(self): return super().check()
 
             def clear(self): return super().clear()
+
+            # def detach_block(self): return super().detach_block(None)
 
             def name(self): return super().name
 

@@ -1,12 +1,12 @@
 """
-Defines Interface to track factsheet file contents against in-memory
+Defines interface to track factsheet file contents against in-memory
 model.
 """
 import abc
 
 
 class InterfaceStaleFile(abc.ABC):
-    """Defines interfaces to detect when a stored model is out of date."""
+    """Interface to detect when a stored model is out of date."""
 
     @abc.abstractmethod
     def is_fresh(self) -> bool:

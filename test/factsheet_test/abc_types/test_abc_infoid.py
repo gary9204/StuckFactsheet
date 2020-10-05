@@ -6,168 +6,72 @@ See :mod:`.abc_infoid`.
 """
 import pytest   # type: ignore[import]
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
+import factsheet.abc_types.abc_infoid as ABC_INFOID
 
 
-class TestAbstractIdentity:
-    """Unit tests for :class:`.InterfaceViewInfoId`."""
-
-    def test_abstract(self):
-        """Confirm class is abstract."""
-        # No Setup
-        # Test
-        with pytest.raises(TypeError):
-            _target = ABC_INFOID.AbstractIdentity()
-
-    @pytest.mark.parametrize('name_method', [
-        'init_identity',
-        'name',
-        'summary',
-        'tag',
-        'title',
-        ])
-    def test_must_override(self, name_method):
-        """Confirm each method must be overridden."""
-        # Setup
-        class PatchInterface(ABC_INFOID.AbstractIdentity):
-            def init_identity(self): super().init_identity()
-
-            def name(self): super().name
-
-            def summary(self): super().summary
-
-            def tag(self): super().tag
-
-            def title(self): super().title
-
-        target = PatchInterface()
-        # Test
-        with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
-            method()
-
-
-class TestAbstractTextModel:
-    """Unit tests for interfaces common to model text attributes.
-    See :class:`.AbstractTextModel`."""
+class TestInterfaceIdentity:
+    """Unit tests for :class:`.InterfaceIdentity`."""
 
     def test_abstract(self):
         """Confirm class is abstract."""
         # No Setup
         # Test
         with pytest.raises(TypeError):
-            _target = ABC_INFOID.AbstractTextModel()
+            _target = ABC_INFOID.InterfaceIdentity()
 
-    def test_eq(self):
-        """Confirm equivalence comparison.
-
-        #. Case: different type
-        #. Case: different text
-        #. Case: same text
-        #. Case: confirm not-equal defined
-        """
-        # Setup
-        class PatchTextModel(ABC_INFOID.AbstractTextModel):
-            def __init__(self, p_text): self.text = p_text
-
-            def __str__(self): return self.text
-
-            def attach_view(self, _v): pass
-
-            def detach_view(self, _v): pass
-
-            def is_fresh(self): super().is_fresh()
-
-            def is_stale(self): super().is_stale()
-
-            def set_fresh(self): super().set_fresh()
-
-            def set_stale(self): super().set_stale()
-
-        text = 'The Spanish Inquisition'
-        source = PatchTextModel(text)
-        # Test: different type
-        target = text
-        assert not source.__eq__(target)
-        # Test: different text
-        target = PatchTextModel('Something completely different')
-        assert not source.__eq__(target)
-        # Test: same text
-        target = PatchTextModel(text)
-        assert source.__eq__(target)
-        # Test: confirm not-equal defined
-        assert not source.__ne__(target)
-
-    @pytest.mark.parametrize('name_method', [
-        '__str__',
-        'attach_view',
-        'detach_view',
+    @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
+        ('name', False),
+        ('summary', False),
+        ('tag', False),
+        ('title', False),
         ])
-    def test_must_override(self, name_method):
-        """Confirm each method must be overridden."""
+    def test_property_abstract(self, NAME_PROP, HAS_SETTER):
+        """Confirm access limits of each abstract property."""
         # Setup
-        class PatchTextModel(ABC_INFOID.AbstractTextModel):
-            def __eq__(self, _o): return False
 
-            def __str__(self): super().__str__()
+        class PatchInterface(ABC_INFOID.InterfaceIdentity):
 
-            def attach_view(self): super().attach_view(None)
+            @property
+            def name(self):
+                prop = getattr(ABC_INFOID.InterfaceIdentity, NAME_PROP)
+                prop.fget(self)
 
-            def detach_view(self): super().detach_view(None)
+            @property
+            def summary(self):
+                prop = getattr(ABC_INFOID.InterfaceIdentity, NAME_PROP)
+                prop.fget(self)
 
-            def is_fresh(self): super().is_fresh()
+            @property
+            def tag(self):
+                prop = getattr(ABC_INFOID.InterfaceIdentity, NAME_PROP)
+                prop.fget(self)
 
-            def is_stale(self): super().is_stale()
+            @property
+            def title(self):
+                prop = getattr(ABC_INFOID.InterfaceIdentity, NAME_PROP)
+                prop.fget(self)
 
-            def set_fresh(self): super().set_fresh()
-
-            def set_stale(self): super().set_stale()
-
-        target = PatchTextModel()
+        _target = PatchInterface()  # Confirms abstract method override.
         # Test
+        prop = getattr(PatchInterface, NAME_PROP)
         with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
-            method()
-
-
-class TestInterfaceViewInfoId:
-    """Unit tests for :class:`.InterfaceViewInfoId`."""
-
-    def test_abstract(self):
-        """Confirm class is abstract."""
-        # No Setup
-        # Test
-        with pytest.raises(TypeError):
-            _target = ABC_INFOID.InterfaceViewInfoId()
-
-    @pytest.mark.parametrize('name_method', [
-        'get_view_name',
-        'get_view_summary',
-        'get_view_title',
-        ])
-    def test_must_override(self, name_method):
-        """Confirm each method must be overridden."""
-        # Setup
-        class PatchInterface(ABC_INFOID.InterfaceViewInfoId):
-            def get_view_name(self): super().get_view_name()
-
-            def get_view_summary(self): super().get_view_summary()
-
-            def get_view_title(self): super().get_view_title()
-
-        target = PatchInterface()
-        # Test
-        with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
-            method()
+            prop.fget(self)
+        if HAS_SETTER:
+            with pytest.raises(NotImplementedError):
+                prop.fset(self, 'Oops!')
+        else:
+            assert prop.fset is None
+        assert prop.fdel is None
 
 
 class TestTypes:
     """Unit tests for type definitions in :mod:`.abc_infoid`."""
 
     def test_types(self):
-        """Confirm types defined."""
+        """Confirm type hint definitions."""
         # Setup
         # Test
+        assert ABC_INFOID.IdNameOpaque is not None
+        assert ABC_INFOID.IdSummaryOpaque is not None
         assert ABC_INFOID.TagOpaque is not None
-        assert ABC_INFOID.TextViewOpaque is not None
+        assert ABC_INFOID.IdTitleOpaque is not None

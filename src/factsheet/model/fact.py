@@ -8,7 +8,7 @@ the base class representing the model of a fact.  Additional classes
 specialize the model for facts about sets, operations, and so on.
 """
 import logging
-import typing   # noqa
+import typing
 
 from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import infoid as MINFOID
@@ -106,7 +106,8 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
         self._blocks: typing.MutableMapping[
             int, ABC_FACT.InterfaceBlockFact] = dict()
 
-    def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact) -> None:
+    def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
+                     ) -> None:
         """Add fact block to show fact identification, status, and value.
 
         Log warning when requested block is already attached.
@@ -149,7 +150,8 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
             self._infoid.detach_view(block.get_infoid())
         #     self._detach_attribute_views(view)
 
-    def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact) -> None:
+    def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
+                     ) -> None:
         """Remove one fact block from fact.
 
         Log warning when requested block is not attached.
@@ -167,15 +169,6 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
 
         # self._detach_attribute_blocks(p_block)
         self._infoid.detach_view(p_block.get_infoid())
-
-    # def _detach_attribute_views(self, p_block: ABC_FACT.InterfaceBlockFact
-    #                             ) -> None:
-    #     """For each fact attribute with a distinct view, remove the
-    #     view from the block.
-    #
-    #     :param pm_view: view of topic as a whole.
-    #     """
-    #     self._infoid.detach_view(p_block.get_infoid())
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to fact."""

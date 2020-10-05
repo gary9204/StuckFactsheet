@@ -1,148 +1,78 @@
 """
-Defines abstract classes and interfaces for identification information.
+Defines interface for information to identify model components.
 
-:doc:`../guide/devel_notes` describes the use of abstract classes to
+:doc:`../guide/devel_notes` describes the use of interface classes to
 encapsulate dependencies of :mod:`~factsheet.model` on a user interface
-widget toolkit.  Module ``abc_infoid`` defines abstract text attribute
-classes for :class:`.InfoId` and :class:`.ViewInfoId`.
+widget toolkit.  Module ``abc_infoid`` defines an interface for model
+text attribute classes.  See :mod:`.adapt_infoid` for an implementation
+of the interface with GTK.
 
-See :class:`.InfoId`, :class:`.ViewInfoId`, and derived classes.
+.. data:: IdNameOpaque
+
+    Type hint for generic name of a model component.
+
+.. data:: IdSummaryOpaque
+
+    Type hint for generic summary of a model component.
+
+.. data:: IdTitleOpaque
+
+    Type hint for generic title of a model component.
 
 .. data:: TagOpaque
 
     Type hint for generic tag to identify a model component.
-
-.. data:: TextViewOpaque
-
-    Type hint for generic presentation element of a text attribute such
-    as a factsheet name or summary.
 """
 import abc
 import typing
 
-from factsheet.abc_types import abc_stalefile as ABC_STALE
-
+IdNameOpaque = typing.TypeVar('IdNameOpaque')
+IdSummaryOpaque = typing.TypeVar('IdSummaryOpaque')
+IdTitleOpaque = typing.TypeVar('IdTitleOpaque')
 TagOpaque = typing.TypeVar('TagOpaque')
-TextViewOpaque = typing.TypeVar('TextViewOpaque')
 
 
-class AbstractIdentity(abc.ABC, typing.Generic[TagOpaque]):
-    """Defines interfaces for identification information of Factsheet
-    model components :class:`.Sheet`, :class:`.Topic`, and
-    :class:`.Fact`.
-
-    The Factsheet model includes components for factsheets, topics, and
-    facts.  These components have identification information in common.
-    The information consists of the following.
-
-    .. attribute:: name
-
-        Short, editable identifier (suitable, for example, as label).
-
-    .. attribute:: summary
-
-        Editable description of component, which adds detail to title.
-
-    .. attribute:: tag
-
-        Identifier that is unique for lifetime of the component.
-
-    .. attribute:: title
-
-        One-line, editable description of component contents.
+class InterfaceIdentity(abc.ABC, typing.Generic[
+        IdNameOpaque, IdSummaryOpaque, IdTitleOpaque, TagOpaque]):
+    """Identification information of Factsheet model components
+    :class:`.Sheet`, :class:`.Topic`, and :class:`.Fact`.
     """
 
+    @property
     @abc.abstractmethod
-    def init_identity(self, *, p_name: str = '', p_summary: str = '',
-                      p_title: str = '') -> None:
-        """Assign initial name, title, and summary for a model component.
+    def name(self) -> IdNameOpaque:
+        """Return component name.
 
-        :param p_name: name for component.
-        :param p_summary: summary for component.
-        :param p_title: title for component.
+        Name is a short, editable identifier (suitable, for example, as
+        label).
         """
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
-    def name(self) -> str:
-        """Return component name."""
-        raise NotImplementedError
+    def summary(self) -> IdSummaryOpaque:
+        """Return component summary.
 
-    @property
-    @abc.abstractmethod
-    def summary(self) -> str:
-        """Return component summary."""
+        Summary is an editable description of component, which adds
+        detail to title.
+        """
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def tag(self) -> TagOpaque:
-        """Return tag identifing component."""
+        """Return component tag.
+
+        Tag is identifies a component. A tag is unique for lifetime of
+        the component.
+        """
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
-    def title(self) -> str:
-        """Return component title."""
-        raise NotImplementedError
+    def title(self) -> IdTitleOpaque:
+        """Return component title.
 
-
-class AbstractTextModel(
-        ABC_STALE.InterfaceStaleFile, typing.Generic[TextViewOpaque]):
-    """Defines interfaces common to model text attributes.
-
-    .. tip:: Two text attributes are equivalent when their string
-       representations are the same.
-    """
-
-    def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when other is text attribute with same string
-        representation.
+        Title is a one-line, editable description of component contents.
         """
-        if not isinstance(px_other, AbstractTextModel):
-            return False
-
-        return str(self) == str(px_other)
-
-    @abc.abstractmethod
-    def __str__(self) -> str:
-        """Return attribute contents as text."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def attach_view(self, pm_view: TextViewOpaque):
-        """Add view to update display when text changes.
-
-        :param pm_view: view to add.
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def detach_view(self, pm_view: TextViewOpaque):
-        """Remove view of changes to text.
-
-        :param pm_view: view to removes.
-        """
-        raise NotImplementedError
-
-
-class InterfaceViewInfoId(abc.ABC, typing.Generic[TextViewOpaque]):
-    """Defines interface to attach identification information view
-    (:class:`.ViewInfoId`) to the model (:class:`.InfoId`).
-    """
-
-    @abc.abstractmethod
-    def get_view_name(self) -> TextViewOpaque:
-        """Return view's name display element."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_view_summary(self) -> TextViewOpaque:
-        """Return view's summary display element."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_view_title(self) -> TextViewOpaque:
-        """Return view's title display element."""
         raise NotImplementedError

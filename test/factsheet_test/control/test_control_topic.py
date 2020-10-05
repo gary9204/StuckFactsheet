@@ -10,16 +10,20 @@ from factsheet.model import topic as MTOPIC
 class TestTopic:
     """Unit tests for :class:`~.control_topic.ControlTopic`."""
 
-    def test_init(self):
+    def test_init(self, factory_topic):
         """Confirm initialization."""
         # Setup
-        NAME = 'Parrot'
-        MODEL = MTOPIC.Topic(p_name=NAME)
+        TOPIC = factory_topic()
+        facts = list(TOPIC.facts())
         # Test
-        target = CTOPIC.ControlTopic(MODEL)
-        assert target._model is MODEL
+        target = CTOPIC.ControlTopic(TOPIC)
+        assert target._topic is TOPIC
+        assert isinstance(target._controls_fact, dict)
+        assert len(facts) == len(target._controls_fact)
+        for fact in facts:
+            assert target._controls_fact[fact.tag]._fact is fact
 
-    def test_attach_form(self, monkeypatch):
+    def test_attach_form(self, monkeypatch, factory_topic):
         """Confirm topic form addition."""
         # Setup
         class PatchModel:
@@ -33,14 +37,13 @@ class TestTopic:
         monkeypatch.setattr(
             MTOPIC.Topic, 'attach_form', patch_model.attach_form)
 
-        NAME = 'Parrot'
-        MODEL = MTOPIC.Topic(p_name=NAME)
-        target = CTOPIC.ControlTopic(MODEL)
+        TOPIC = factory_topic()
+        target = CTOPIC.ControlTopic(TOPIC)
         # Test
         target.attach_form(None)
         assert patch_model.called_attach_form
 
-    def test_detach_form(self, monkeypatch):
+    def test_detach_form(self, monkeypatch, factory_topic):
         """Confirm topic form removal."""
         # Setup
         class PatchModel:
@@ -54,27 +57,8 @@ class TestTopic:
         monkeypatch.setattr(
             MTOPIC.Topic, 'detach_form', patch_model.detach_form)
 
-        NAME = 'Parrot'
-        MODEL = MTOPIC.Topic(p_name=NAME)
-        target = CTOPIC.ControlTopic(MODEL)
+        TOPIC = factory_topic()
+        target = CTOPIC.ControlTopic(TOPIC)
         # Test
         target.detach_form(None)
         assert patch_model.called_detach_form
-
-#     def test_new(self):
-#         """Confirm control creation with default model."""
-#         # Setup
-#         # Test
-#         target = CTOPIC.ControlTopic.new()
-#         assert isinstance(target, CTOPIC.ControlTopic)
-#         assert isinstance(target._model, MTOPIC.Topic)
-
-#     def test_open(self):
-#         """Confirm control creation with model."""
-#         # Setup
-#         TITLE = 'Parrot Sketch'
-#         model = MTOPIC.Topic(p_title=TITLE)
-#         # Test
-#         target = CTOPIC.ControlTopic.open(p_model=model)
-#         assert isinstance(target, CTOPIC.ControlTopic)
-#         assert target._model is model
