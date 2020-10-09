@@ -2,7 +2,7 @@
 Defines GTK-based interfaces and adapters for Factsheet component
 identification information.  See :mod:`.abc_infoid`.
 
-.. data:: TextFormat
+.. data:: TextFormatGtk
 
     Type hint for GTK element to store :data:`ViewTextFormat`.  See
     `Gtk.TextBuffer`_.
@@ -10,7 +10,7 @@ identification information.  See :mod:`.abc_infoid`.
 .. _Gtk.TextBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 
-.. data:: TextMarkup
+.. data:: TextMarkupGtk
 
     Type hint for GTK element to store :data:`ViewTextMarkup`.  See
     `Gtk.EntryBuffer`_.
@@ -18,7 +18,7 @@ identification information.  See :mod:`.abc_infoid`.
 .. _Gtk.EntryBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
 
-.. data:: TextStatic
+.. data:: TextStaticGtk
 
     Type alias for ``str``. Used to store content for
     :data:`ViewTextStatic`.
@@ -61,9 +61,9 @@ import factsheet.abc_types.abc_stalefile as ABC_STALE
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
-TextFormat = Gtk.TextBuffer
-TextMarkup = Gtk.EntryBuffer
-TextStatic = str
+TextFormatGtk = Gtk.TextBuffer
+TextMarkupGtk = Gtk.EntryBuffer
+TextStaticGtk = str
 ViewTextFormat = typing.Union[Gtk.TextView]
 ViewTextMarkup = typing.Union[Gtk.Entry]
 ViewTextOpaque = typing.TypeVar('ViewTextOpaque')
@@ -76,7 +76,7 @@ class AdaptText(typing.Generic[ViewTextOpaque],
                 ABC_STALE.InterfaceStaleFile):
     """Common ancestor of model text attributes.
 
-    Text attributes have tranisient data for attached views in addition
+    Text attributes have transient data for attached views in addition
     to persistant text content.
     """
 
@@ -128,7 +128,7 @@ class AdaptText(typing.Generic[ViewTextOpaque],
         return self.text
 
     @abc.abstractmethod
-    def attach_view(self, p_view: ViewTextOpaque):
+    def attach_view(self, p_view: ViewTextOpaque) -> None:
         """Add GTK display element to show content.
 
         :param p_view: view to add.
@@ -136,13 +136,12 @@ class AdaptText(typing.Generic[ViewTextOpaque],
         raise NotImplementedError
 
     @abc.abstractmethod
-    def detach_view(self, p_view: ViewTextOpaque):
+    def detach_view(self, p_view: ViewTextOpaque) -> None:
         """Remove GTK display element.
 
         :param p_view: view to removes.
         """
         raise NotImplementedError
-        # TODO
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to content."""
@@ -181,7 +180,7 @@ class AdaptTextMarkup(AdaptText[ViewTextMarkup]):
     """Implements editable model text attribute with support for markup.
     See `Gtk.EntryBuffer`_.
 
-    Text attributes have tranisient data for attached views in addition
+    Text attributes have transient data for attached views in addition
     to persistant text content.
 
     .. admonition:: About Equality
@@ -206,7 +205,7 @@ class AdaptTextMarkup(AdaptText[ViewTextMarkup]):
 
     def __init__(self) -> None:
         super().__init__()
-        self._text_gtk = TextMarkup()
+        self._text_gtk = TextMarkupGtk()
         self.__init_transient()
 
     def __init_transient(self) -> None:
@@ -227,13 +226,13 @@ class AdaptTextMarkup(AdaptText[ViewTextMarkup]):
         :param p_state: unpickled state of stored text attribute.
         """
         super().__setstate__(p_state)
-        self._text_gtk = TextMarkup(
+        self._text_gtk = TextMarkupGtk(
             text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
         self.__init_transient()
 
     def attach_view(self, p_view: ViewTextMarkup) -> None:
-        """Add GTK display element to show content.
+        """Add view to display content.
 
         :param p_view: view to add.
         """
@@ -282,7 +281,7 @@ class AdaptTextFormat(AdaptText[ViewTextFormat]):
     """Implements editable model text attribute with support for markup.
     See `Gtk.EntryBuffer`_.
 
-    Text attributes have tranisient data for attached views in addition
+    Text attributes have transient data for attached views in addition
     to persistant text content.
 
     .. admonition:: About Equality
@@ -307,7 +306,7 @@ class AdaptTextFormat(AdaptText[ViewTextFormat]):
 
     def __init__(self) -> None:
         super().__init__()
-        self._text_gtk = TextFormat()
+        self._text_gtk = TextFormatGtk()
         self.__init_transient()
 
     def __init_transient(self) -> None:
@@ -325,13 +324,13 @@ class AdaptTextFormat(AdaptText[ViewTextFormat]):
         :param p_state: unpickled state of stored text attribute.
         """
         super().__setstate__(p_state)
-        self._text_gtk = TextFormat(
+        self._text_gtk = TextFormatGtk(
             text=self.ex_text)   # type: ignore[attr-defined]
         del self.ex_text       # type: ignore[attr-defined]
         self.__init_transient()
 
     def attach_view(self, p_view: ViewTextMarkup) -> None:
-        """Add GTK display element to show content.
+        """Add view to display content.
 
         :param p_view: view to add.
         """
@@ -385,7 +384,7 @@ class AdaptTextStatic(AdaptText[ViewTextStatic]):
     The text attribute content cannot be changed through the user
     interface.
 
-    Text attributes have tranisient data for attached views in addition
+    Text attributes have transient data for attached views in addition
     to persistant text content.
 
     .. admonition:: About Equality
@@ -402,8 +401,8 @@ class AdaptTextStatic(AdaptText[ViewTextStatic]):
         super().__init__()
         self._text_gtk = ''
 
-    def attach_view(self, p_view: ViewTextMarkup) -> None:
-        """Add GTK display element to show content.
+    def attach_view(self, p_view: ViewTextStatic) -> None:
+        """Add view to display content.
 
         :param p_view: view to add.
         """
@@ -414,10 +413,10 @@ class AdaptTextStatic(AdaptText[ViewTextStatic]):
                                      self.attach_view.__name__))
             return
 
-        p_view.set_markup(self._text_gtk)
+        p_view.set_label(self._text_gtk)
         self._views[id_view] = p_view
 
-    def detach_view(self, p_view: ViewTextMarkup) -> None:
+    def detach_view(self, p_view: ViewTextStatic) -> None:
         """Remove GTK display element element.
 
         :param p_view: view to removes.
@@ -425,7 +424,6 @@ class AdaptTextStatic(AdaptText[ViewTextStatic]):
         id_view = id(p_view)
         try:
             view_detached = self._views.pop(id_view)
-            # See Factsheet Project Issue #29 on GitHub
             view_detached.hide()
         except KeyError:
             logger.warning('Missing view: {} ({}.{})'

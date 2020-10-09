@@ -63,8 +63,8 @@ def patch_control_fact(patch_args_infoid):
     return control
 
 
-class PatchClassFact(ABC_FACT.AbstractFact):
-    """Defines test stub for :class:`.AbstractFact`."""
+class PatchClassFact(ABC_FACT.InterfaceFact):
+    """Defines test stub for :class:`.InterfaceFact`."""
 
     def id_fact(self):
         return ABC_FACT.IdFact(id(self))

@@ -327,11 +327,11 @@ class MapFactToBlock:
 
     def __init__(self):
         self._mapping: typing.MutableMapping[
-            typing.Type[ABC_FACT.AbstractFact],
+            typing.Type[ABC_FACT.InterfaceFact],
             typing.Type[ABC_FACT.InterfaceBlockFact]] = dict()
         self._block_default = BlockFact
 
-    def __call__(self, p_fact: ABC_FACT.AbstractFact
+    def __call__(self, p_fact: ABC_FACT.InterfaceFact
                  ) -> typing.Type[ABC_FACT.InterfaceBlockFact]:
         """Return new fact block class suited to display given fact.
 
@@ -341,7 +341,7 @@ class MapFactToBlock:
         assert class_block is not None
         return class_block
 
-    def register(self, p_class_fact: typing.Type[ABC_FACT.AbstractFact],
+    def register(self, p_class_fact: typing.Type[ABC_FACT.InterfaceFact],
                  p_class_block: typing.Type[ABC_FACT.InterfaceBlockFact]
                  ) -> None:
         """Associate block class with fact class.

@@ -20,7 +20,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class AdaptTreeStoreFact(
-        AOUTLINE.AdaptTreeStore[ABC_FACT.AbstractFact]):
+        AOUTLINE.AdaptTreeStore[ABC_FACT.InterfaceFact]):
     """Specializes :class:`.AdaptTreeStore` with :class:`.Fact` items."""
 
     def find_name(self, p_target: str, p_i_after: IndexFact = None
@@ -61,7 +61,7 @@ class AdaptTreeStoreFact(
 
 class AdaptTreeViewFact(AOUTLINE.AdaptTreeView):
     """Specializes :class:`.AdaptTreeView` with name, title, and status
-    columns for :class:`.AbstractFact` items.
+    columns for :class:`.InterfaceFact` items.
     """
 
     def __init__(self):

@@ -1,43 +1,13 @@
 """
 Unit tests for interface to track file against model.  See
-:mod:`.ABC_STALE`.
+:mod:`.abc_stale`.
 """
-import pytest   # type: ignore[import]
-
-import factsheet.abc_types.abc_stalefile as ABC_STALE
-
-
 class TestInterfaceStaleFile:
     """Unit tests for interfaces to detect out-of-date model.
-    See :class:`.InterfaceStaleFile`."""
+    See :class:`.InterfaceStaleFile`.
 
-    def test_abstract_class(self):
-        """Confirm the interface class is abstract."""
-        # Setup
-        # Test
-        with pytest.raises(TypeError):
-            _ = ABC_STALE.InterfaceStaleFile()
+    See :mod:`.abc_common` for  tests to confirm method and
+    property definitions of :class:`.InterfaceStalefile`.
+    """
 
-    @pytest.mark.parametrize('name_method', [
-        'is_fresh',
-        'is_stale',
-        'set_fresh',
-        'set_stale',
-        ])
-    def test_must_override(self, name_method):
-        """Confirm each method must be overridden."""
-        # Setup
-        class PatchInterface(ABC_STALE.InterfaceStaleFile):
-            def is_fresh(self): super().is_fresh()
-
-            def is_stale(self): super().is_stale()
-
-            def set_fresh(self): super().set_fresh()
-
-            def set_stale(self): super().set_stale()
-
-        target = PatchInterface()
-        # Test
-        with pytest.raises(NotImplementedError):
-            method = getattr(target, name_method)
-            method()
+    pass

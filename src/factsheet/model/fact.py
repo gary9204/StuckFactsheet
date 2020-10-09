@@ -7,21 +7,52 @@ factsheet, topic, and fact layers.  Module ``fact`` defines
 the base class representing the model of a fact.  Additional classes
 specialize the model for facts about sets, operations, and so on.
 """
+import enum
 import logging
 import typing
 
-from factsheet.abc_types import abc_fact as ABC_FACT
-from factsheet.model import infoid as MINFOID
+# from factsheet.abc_types import abc_fact as ABC_FACT
+# from factsheet.model import infoid as MINFOID
 
-from factsheet.abc_types.abc_fact import TagFact
-from factsheet.abc_types.abc_fact import StatusOfFact
-from factsheet.abc_types.abc_fact import TopicOpaque
-from factsheet.abc_types.abc_fact import ValueOpaque
+import factsheet.abc_types.abc_stalefile as ABC_STALE
+
+from factsheet.adapt_gtk.adapt import ValueOpaque
+
+TagFact = typing.NewType('TagFact', int)
+TopicOpaque = typing.TypeVar('TopicOpaque')
+
 
 logger = logging.getLogger('Main.model.fact')
 
 
-class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
+class StatusOfFact(enum.Enum):
+    """Indicates whether user has checked fact and outcome of check.
+
+    .. attribute:: BLOCKED
+
+        Fact cannot be checked because, for example, prerequisite
+        information is unavailable.
+
+    .. attribute:: DEFINED
+
+        User checked fact and its value is defined.
+
+    .. attribute:: UNCHECKED
+
+        User has not checked fact and its value is unknown.
+
+    .. attribute:: UNDEFINED
+
+        User checked fact but its value is not defined.
+    """
+    BLOCKED = enum.auto()
+    UNCHECKED = enum.auto()
+    UNDEFINED = enum.auto()
+    DEFINED = enum.auto()
+
+
+class Fact(typing.Generic[TopicOpaque, ValueOpaque],
+           ABC_STALE.InterfaceStaleFile):
     """Fact component of Factsheet :mod:`~.factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a
@@ -43,86 +74,87 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
         the facts (like views) are not compared and may be different.
     """
 
-    def __call__(self) -> typing.Optional[ValueOpaque]:
-        """Return fact value.
+    # def __call__(self) -> typing.Optional[ValueOpaque]:
+    #     """Return fact value.
 
-        If the user has not checked the fact or the fact value is not
-        defined, return None.
-        """
-        return self._value
+    #     If the user has not checked the fact or the fact value is not
+    #     defined, return None.
+    #     """
+    #     return self._value
 
     def __eq__(self, px_other: typing.Any) -> bool:
         """Return True when px_other has same fact information.
 
         :param px_other: object to compare with self.
         """
-        if not isinstance(px_other, type(self)):
-            return False
+        # if not isinstance(px_other, type(self)):
+        #     return False
 
-        if self._infoid != px_other._infoid:
-            return False
+        # if self._infoid != px_other._infoid:
+        #     return False
 
         # if self._topic is not px_other._topic:
         #     return False
 
-        return True
+        # return True
 
-    def __getstate__(self) -> typing.Dict:
-        """Return fact model in form pickle can persist.
+    # def __getstate__(self) -> typing.Dict:
+    #     """Return fact model in form pickle can persist.
 
-        Persistent form of fact excludes run-time information.
-        """
-        state = self.__dict__.copy()
-        del state['_blocks']
-        del state['_stale']
-        return state
+    #     Persistent form of fact excludes run-time information.
+    #     """
+    #     state = self.__dict__.copy()
+    #     del state['_blocks']
+    #     del state['_stale']
+    #     return state
 
     def __init__(self, *, p_topic: TopicOpaque) -> None:
-        self._topic = p_topic
-        self._infoid = MINFOID.InfoId()
-        self._tag = TagFact(id(self))
-        self._value: typing.Optional[ValueOpaque] = None
-        self._status = StatusOfFact.BLOCKED
-        self._set_transient()
+        pass
+        # self._topic = p_topic
+        # self._infoid = MINFOID.InfoId()
+        # self._tag = TagFact(id(self))
+        # self._value: typing.Optional[ValueOpaque] = None
+        # self._status = StatusOfFact.BLOCKED
+        # self._set_transient()
 
-    def init_identity(self, *, p_name: str = '', p_summary: str = '',
-                      p_title: str = '') -> None:
-        self._infoid.init_identity(
-            p_name=p_name, p_summary=p_summary, p_title=p_title)
+    # def init_identity(self, *, p_name: str = '', p_summary: str = '',
+    #                   p_title: str = '') -> None:
+    #     self._infoid.init_identity(
+    #     p_name=p_name, p_summary=p_summary, p_title=p_title)
 
-    def __setstate__(self, px_state: typing.Dict) -> None:
-        """Reconstruct fact model from state pickle loads.
+        # def __setstate__(self, px_state: typing.Dict) -> None:
+        #     """Reconstruct fact model from state pickle loads.
 
-        Reconstructed attribute is marked fresh and has no views.
+        #     Reconstructed attribute is marked fresh and has no views.
 
-        :param px_state: unpickled state of stored fact model.
-        """
-        self.__dict__.update(px_state)
-        self._set_transient()
+        #     :param px_state: unpickled state of stored fact model.
+        #     """
+        #     self.__dict__.update(px_state)
+        #     self._set_transient()
 
-    def _set_transient(self) -> None:
-        """Helper ensures __init__ and __setstate__ are consistent."""
-        self._stale = False
-        self._blocks: typing.MutableMapping[
-            int, ABC_FACT.InterfaceBlockFact] = dict()
+    # def _set_transient(self) -> None:
+    #     """Helper ensures __init__ and __setstate__ are consistent."""
+    #     self._stale = False
+    #     self._blocks: typing.MutableMapping[
+    #         int, ABC_FACT.InterfaceBlockFact] = dict()
 
-    def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
-                     ) -> None:
-        """Add fact block to show fact identification, status, and value.
+    # def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
+    #                  ) -> None:
+    #     """Add fact block to show fact identification, status, and value.
 
-        Log warning when requested block is already attached.
+    #     Log warning when requested block is already attached.
 
-        :param p_block: block to add.
-        """
-        id_block = id(p_block)
-        if id_block in self._blocks.keys():
-            logger.warning('Duplicate fact block: {} ({}.{})'
-                           ''.format(hex(id_block), self.__class__.__name__,
-                                     self.attach_block.__name__))
-            return
+    #     :param p_block: block to add.
+    #     """
+    #     id_block = id(p_block)
+    #     if id_block in self._blocks.keys():
+    #         logger.warning('Duplicate fact block: {} ({}.{})'
+    #                        ''.format(hex(id_block), self.__class__.__name__,
+    #                                  self.attach_block.__name__))
+    #         return
 
-        self._infoid.attach_view(p_block.get_infoid())
-        self._blocks[id_block] = p_block
+    #     self._infoid.attach_view(p_block.get_infoid())
+    #     self._blocks[id_block] = p_block
 
     def check(self) -> StatusOfFact:
         """Set fact value and set corresponding state of fact check.
@@ -130,9 +162,10 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
         Base class marks change in fact and notifies attached fact
         blocks.  Base class does not change fact status or value.
         """
-        self.set_stale()
-        self._update_blocks()
-        return self._status
+        raise NotImplementedError
+        # self.set_stale()
+        # self._update_blocks()
+        # return self._status
 
     def clear(self) -> None:
         """Clear fact value and set corresponding state of fact check.
@@ -140,62 +173,67 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
         Base class marks change in fact and notifies attached fact
         blocks.  Base class does not change fact status or value.
         """
-        self.set_stale()
-        self._update_blocks()
+        raise NotImplementedError
+        # self.set_stale()
+        # self._update_blocks()
 
-    def detach_all(self) -> None:
-        """Detach all fact blocks from fact."""
-        while self._blocks:
-            _id_block, block = self._blocks.popitem()
-            self._infoid.detach_view(block.get_infoid())
-        #     self._detach_attribute_views(view)
+    # def detach_all(self) -> None:
+    #     """Detach all fact blocks from fact."""
+    #     while self._blocks:
+    #         _id_block, block = self._blocks.popitem()
+    #         self._infoid.detach_view(block.get_infoid())
+    #     #     self._detach_attribute_views(view)
 
-    def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
-                     ) -> None:
-        """Remove one fact block from fact.
+    # def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
+    #                  ) -> None:
+    #     """Remove one fact block from fact.
 
-        Log warning when requested block is not attached.
+    #     Log warning when requested block is not attached.
 
-        :param p_block: block to remove.
-        """
-        id_block = id(p_block)
-        try:
-            _ = self._blocks.pop(id_block)
-        except KeyError:
-            logger.warning('Missing fact block: {} ({}.{})'
-                           ''.format(hex(id_block), self.__class__.__name__,
-                                     self.detach_block.__name__))
-            return
+    #     :param p_block: block to remove.
+    #     """
+    #     id_block = id(p_block)
+    #     try:
+    #         _ = self._blocks.pop(id_block)
+    #     except KeyError:
+    #         logger.warning('Missing fact block: {} ({}.{})'
+    #                        ''.format(hex(id_block), self.__class__.__name__,
+    #                                  self.detach_block.__name__))
+    #         return
 
-        # self._detach_attribute_blocks(p_block)
-        self._infoid.detach_view(p_block.get_infoid())
+    #     # self._detach_attribute_blocks(p_block)
+    #     self._infoid.detach_view(p_block.get_infoid())
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to fact."""
-        return not self.is_stale()
+        raise NotImplementedError
+        # return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         fact.
         """
-        if self._stale:
-            return True
+        raise NotImplementedError
+        # if self._stale:
+        #     return True
 
-        if self._infoid.is_stale():
-            self._stale = True
-            return True
+        # if self._infoid.is_stale():
+        #     self._stale = True
+        #     return True
 
-        return False
+        # return False
 
     @property
     def status(self) -> StatusOfFact:
         """Return status of fact check."""
-        return self._status
+        raise NotImplementedError
+        # return self._status
 
     @property
     def name(self) -> str:
         """Return fact name."""
-        return self._infoid.name
+        raise NotImplementedError
+        # return self._infoid.name
 
     # @property
     def note(self) -> str:
@@ -205,29 +243,46 @@ class Fact(ABC_FACT.AbstractFact, typing.Generic[TopicOpaque, ValueOpaque]):
 
     def set_fresh(self) -> None:
         """Mark fact in memory consistent with file contents."""
-        self._stale = False
-        self._infoid.set_fresh()
+        raise NotImplementedError
+        # self._stale = False
+        # self._infoid.set_fresh()
 
     def set_stale(self) -> None:
         """Mark fact in memory changed from file contents."""
-        self._stale = True
+        raise NotImplementedError
+        # self._stale = True
 
     @property
     def summary(self) -> str:
         """Return fact summary."""
-        return self._infoid.summary
+        raise NotImplementedError
+        # return self._infoid.summary
 
     @property
     def tag(self) -> TagFact:
         """Return fact identifier. """
-        return self._tag
+        raise NotImplementedError
+        # return self._tag
+
+    @property
+    def text(self) -> str:
+        """Return fact title."""
+        raise NotImplementedError
+        # return self._infoid.title
 
     @property
     def title(self) -> str:
         """Return fact title."""
-        return self._infoid.title
+        raise NotImplementedError
+        # return self._infoid.title
 
-    def _update_blocks(self) -> None:
-        """Notifiy all fact blocks of new status and value."""
-        for block in self._blocks.values():
-            block.update(self._status, self._value)
+    @property
+    def value(self) -> str:
+        """Return fact title."""
+        raise NotImplementedError
+        # return self._infoid.title
+
+    # def _update_blocks(self) -> None:
+    #     """Notifiy all fact blocks of new status and value."""
+    #     for block in self._blocks.values():
+    #         block.update(self._status, self._value)

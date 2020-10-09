@@ -1,8 +1,6 @@
 """
 Unit tests for GTK-based classes that implement abstract identification
-information classes.
-
-See :mod:`.adapt_infoid`.
+information classes.  See :mod:`.adapt_text`.
 """
 import gi   # type: ignore[import]
 import logging
@@ -12,21 +10,17 @@ import typing
 
 from pathlib import Path
 
-import factsheet.adapt_gtk.adapt_infoid as AINFOID
+import factsheet.adapt_gtk.adapt_text as ATEXT
 
-from factsheet.adapt_gtk.adapt_infoid import TextFormat
-from factsheet.adapt_gtk.adapt_infoid import TextMarkup
-from factsheet.adapt_gtk.adapt_infoid import TextStatic
-from factsheet.adapt_gtk.adapt_infoid import ViewTextFormat
-from factsheet.adapt_gtk.adapt_infoid import ViewTextMarkup
-from factsheet.adapt_gtk.adapt_infoid import ViewTextStatic
+from factsheet.adapt_gtk.adapt_text import TextStaticGtk
+from factsheet.adapt_gtk.adapt_text import ViewTextStatic
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchAdaptText(AINFOID.AdaptText[typing.Any]):
+class PatchAdaptText(ATEXT.AdaptText[typing.Any]):
     """Class with stub for methods abstract in :class:`.AdaptText`."""
 
     def __init__(self):
@@ -45,7 +39,11 @@ class PatchAdaptText(AINFOID.AdaptText[typing.Any]):
 
 
 class TestAdaptText:
-    """Unit tests for :class:`.AdaptText`."""
+    """Unit tests for :class:`.AdaptText`.
+
+    See :mod:`.abc_common` for additional tests to confirm method and
+    property definitions of :class:`.AdaptText`.
+    """
 
     def test_eq(self):
         """Confirm equality comparison.
@@ -78,7 +76,7 @@ class TestAdaptText:
         source = PatchAdaptText()
         source._stale = True
         I_ENTRY = 0
-        source._views[I_ENTRY] = TextMarkup()
+        source._views[I_ENTRY] = TextStaticGtk()
         # Test
         with PATH.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
@@ -95,7 +93,7 @@ class TestAdaptText:
         target = PatchAdaptText()
         assert target._stale is not None
         assert isinstance(target._views, dict)
-        assert target._views is not None
+        assert not target._views
 
     def test_str(self):
         """Confirm return is attribute content. """
@@ -105,77 +103,6 @@ class TestAdaptText:
         target._text = TEXT
         # Test
         assert TEXT == str(target)
-
-    @pytest.mark.parametrize('NAME_METHOD', [
-        'attach_view',
-        'detach_view'
-        ])
-    def test_method_abstract(self, NAME_METHOD):
-        """Confirm each abstract method is defined."""
-        # Setup
-        class PatchInterface(AINFOID.AdaptText):
-
-            def attach_view(self): super().attach_view(None)
-
-            def detach_view(self): super().detach_view(None)
-
-            def text(self): pass
-
-            def is_fresh(self): pass
-
-            def is_stale(self): pass
-
-            def set_fresh(self): pass
-
-            def set_stale(self): pass
-
-        target = PatchInterface()
-        method = getattr(target, NAME_METHOD)
-        # Test
-        with pytest.raises(NotImplementedError):
-            method()
-
-    @pytest.mark.parametrize('NAME_METHOD, HAS_SETTER', [
-        ('text', True),
-        ])
-    def test_property_abstract(self, NAME_METHOD, HAS_SETTER):
-        """Confirm access limits of each abstract property."""
-        # Setup
-        class PatchInterface(AINFOID.AdaptText):
-
-            def attach_view(self): pass
-
-            def detach_view(self): pass
-
-            @property
-            def text(self):
-                prop = getattr(AINFOID.AdaptText, NAME_METHOD)
-                prop.fget(self)
-
-            @text.setter
-            def text(self, value):
-                prop = getattr(AINFOID.AdaptText, NAME_METHOD)
-                prop.fset(self, value)
-
-            def is_fresh(self): pass
-
-            def is_stale(self): pass
-
-            def set_fresh(self): pass
-
-            def set_stale(self): pass
-
-        _target = PatchInterface()  # Confirms abstract method override
-        # Test
-        prop = getattr(PatchInterface, NAME_METHOD)
-        with pytest.raises(NotImplementedError):
-            prop.fget(self)
-        if HAS_SETTER:
-            with pytest.raises(NotImplementedError):
-                prop.fset(self, 'Oops!')
-        else:
-            assert prop.fset is None
-        assert prop.fdel is None
 
     def test_is_fresh(self):
         """Confirm return matches state. """
@@ -217,16 +144,16 @@ class TestAdaptText:
 
 
 class TestAdaptTextCommon:
-    """Unit tests common for descendants of :class:`.AdaptText`.
+    """Unit tests common common to descendants of :class:`.AdaptText`.
 
-    Parameters specialize the tests for each descendant class.  Some
-    descendants may need individualized tests (for example,
-    :class:`TestAdaptTextStatic`).
+    Parameters specialize the tests for each class.  Some descendants
+    may need individualized tests (for example,
+    :class:`.AdaptTextStatic`).
     """
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-            (AINFOID.AdaptTextFormat, ViewTextFormat),
-            (AINFOID.AdaptTextMarkup, ViewTextMarkup),
+            (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
+            (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
         ])
     def test_get_set_state(self, tmp_path, CLASS_ADAPT, CLASS_VIEW):
         """Confirm conversion to and from pickle format."""
@@ -250,9 +177,9 @@ class TestAdaptTextCommon:
 
     @pytest.mark.parametrize(
         'CLASS_ADAPT, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (AINFOID.AdaptTextFormat, TextFormat, 'changed', 0),
-            (AINFOID.AdaptTextMarkup, TextMarkup, 'inserted-text', 0),
-            (AINFOID.AdaptTextMarkup, TextMarkup, 'inserted-text', 0),
+            (ATEXT.AdaptTextFormat, ATEXT.TextFormatGtk, 'changed', 0),
+            (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk, 'inserted-text', 0),
+            (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk, 'inserted-text', 0),
         ])
     def test_get_set_signals(self, tmp_path, CLASS_ADAPT, CLASS_TEXT,
                              NAME_SIGNAL, N_DEFAULT):
@@ -288,12 +215,12 @@ class TestAdaptTextCommon:
         assert (N_DEFAULT + 1) == n_handlers
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_TEXT', [
-            (AINFOID.AdaptTextFormat, TextFormat),
-            (AINFOID.AdaptTextMarkup, TextMarkup),
-            (AINFOID.AdaptTextStatic, TextStatic),
+            (ATEXT.AdaptTextFormat, ATEXT.TextFormatGtk),
+            (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk),
+            (ATEXT.AdaptTextStatic, ATEXT.TextStaticGtk),
         ])
     def test_init(self, CLASS_ADAPT, CLASS_TEXT):
-        """Confirm initialization with arguments. """
+        """Confirm initialization. """
         # Setup
         # Test
         target = CLASS_ADAPT()
@@ -304,9 +231,9 @@ class TestAdaptTextCommon:
 
     @pytest.mark.parametrize(
         'CLASS_ADAPT, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (AINFOID.AdaptTextFormat, TextFormat, 'changed', 0),
-            (AINFOID.AdaptTextMarkup, TextMarkup, 'deleted-text', 0),
-            (AINFOID.AdaptTextMarkup, TextMarkup, 'inserted-text', 0),
+            (ATEXT.AdaptTextFormat, ATEXT.TextFormatGtk, 'changed', 0),
+            (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk, 'deleted-text', 0),
+            (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk, 'inserted-text', 0),
         ])
     def test_init_signals(
             self, CLASS_ADAPT, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT):
@@ -329,8 +256,8 @@ class TestAdaptTextCommon:
         assert (N_DEFAULT + 1) == n_handlers
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (AINFOID.AdaptTextFormat, ViewTextFormat),
-        (AINFOID.AdaptTextMarkup, ViewTextMarkup),
+        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
+        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
         ])
     def test_attach_view(self, CLASS_ADAPT, CLASS_VIEW):
         """| Confirm addition of view.
@@ -349,8 +276,8 @@ class TestAdaptTextCommon:
             assert target._views[id(view)] is view
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (AINFOID.AdaptTextFormat, ViewTextFormat),
-        (AINFOID.AdaptTextMarkup, ViewTextMarkup),
+        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
+        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
         ])
     def test_attach_view_warn(
             self, CLASS_ADAPT, CLASS_VIEW, monkeypatch, PatchLogger):
@@ -380,7 +307,7 @@ class TestAdaptTextCommon:
 
         patch_set = PatchSetBuffer()
         monkeypatch.setattr(
-            ViewTextMarkup, 'set_buffer', patch_set.set_buffer)
+            ATEXT.ViewTextMarkup, 'set_buffer', patch_set.set_buffer)
         # Test
         target.attach_view(view_dup)
         assert len(views) == len(target._views)
@@ -390,8 +317,8 @@ class TestAdaptTextCommon:
         assert log_message == patch_logger.message
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (AINFOID.AdaptTextFormat, ViewTextFormat),
-        (AINFOID.AdaptTextMarkup, ViewTextMarkup),
+        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
+        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
         ])
     def test_detach_view(self, CLASS_ADAPT, CLASS_VIEW):
         """| Confirm removal of view.
@@ -416,8 +343,8 @@ class TestAdaptTextCommon:
             assert target._views[id(view)] is view
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (AINFOID.AdaptTextFormat, ViewTextFormat),
-        (AINFOID.AdaptTextMarkup, ViewTextMarkup),
+        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
+        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
         ])
     def test_detach_view_warn(
             self, CLASS_ADAPT, CLASS_VIEW, monkeypatch, PatchLogger):
@@ -448,41 +375,6 @@ class TestAdaptTextCommon:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
-
-    @pytest.mark.parametrize('CLASS_ADAPT', [
-        AINFOID.AdaptTextFormat,
-        AINFOID.AdaptTextMarkup,
-        ])
-    def test_text(self, CLASS_ADAPT):
-        """Confirm property access and freshness update.
-
-        #. Case: get with fresh
-        #. Case: get with stale
-        #. Case: set with fresh
-        #. Case: no delete
-        """
-        # Setup
-        target = CLASS_ADAPT()
-        TEXT = 'The Parrot Sketch'
-        ALL = -1
-        target._text_gtk.set_text(TEXT, ALL)
-        target.set_fresh()
-        # Test: get with fresh
-        assert TEXT == target.text
-        assert target.is_fresh()
-        # Test: get with stale
-        target.set_stale()
-        assert TEXT == target.text
-        assert target.is_stale()
-        # Test: set with fresh
-        target.set_fresh()
-        TEXT_NEW = 'Something <i>completely </i>different!'
-        target.text = TEXT_NEW
-        assert TEXT_NEW == target.text
-        assert target.is_stale()
-        # Test: no delete
-        prop = getattr(AINFOID.AdaptTextFormat, 'text')
-        assert prop.fdel is None
 
 
 class TestAdaptTextMarkup:
@@ -517,7 +409,7 @@ class TestAdaptTextStatic:
         """
         # Setup
         TEXT = 'Something <i>completely </i>different.'
-        target = AINFOID.AdaptTextStatic()
+        target = ATEXT.AdaptTextStatic()
         target.text = TEXT
         N_VIEWS = 3
         views = [ViewTextStatic() for _ in range(N_VIEWS)]
@@ -534,12 +426,12 @@ class TestAdaptTextStatic:
         | Case: view attached initially
         """
         # Setup
-        class PatchSetBuffer:
+        class PatchSetLabel:
             def __init__(self): self.called = False
 
-            def set_buffer(self, _buffer): self.called = True
+            def set_label(self, _str): self.called = True
 
-        target = AINFOID.AdaptTextStatic()
+        target = ATEXT.AdaptTextStatic()
         N_VIEWS = 3
         views = [ViewTextStatic() for _ in range(N_VIEWS)]
         for view in views:
@@ -554,9 +446,9 @@ class TestAdaptTextStatic:
             'Duplicate view: {} ({}.attach_view)'
             ''.format(hex(id(view_dup)), type(target).__name__))
 
-        patch_set = PatchSetBuffer()
+        patch_set = PatchSetLabel()
         monkeypatch.setattr(
-            ViewTextMarkup, 'set_buffer', patch_set.set_buffer)
+            ViewTextStatic, 'set_label', patch_set.set_label)
         # Test
         target.attach_view(view_dup)
         assert len(views) == len(target._views)
@@ -570,7 +462,7 @@ class TestAdaptTextStatic:
         | Case: view attached initially
         """
         # Setup
-        target = AINFOID.AdaptTextStatic()
+        target = ATEXT.AdaptTextStatic()
 
         N_VIEWS = 3
         views = [ViewTextStatic() for _ in range(N_VIEWS)]
@@ -592,7 +484,7 @@ class TestAdaptTextStatic:
         | Case: view not attached initially
         """
         # Setup
-        target = AINFOID.AdaptTextStatic()
+        target = ATEXT.AdaptTextStatic()
 
         N_VIEWS = 3
         views = [ViewTextStatic() for _ in range(N_VIEWS)]
@@ -625,7 +517,7 @@ class TestAdaptTextStatic:
         #. Case: no delete
         """
         # Setup
-        target = AINFOID.AdaptTextStatic()
+        target = ATEXT.AdaptTextStatic()
         TEXT = 'The Parrot Sketch'
         target._text_gtk = TEXT
         target.set_fresh()
@@ -643,21 +535,24 @@ class TestAdaptTextStatic:
         assert TEXT_NEW == target.text
         assert target.is_stale()
         # Test: no delete
-        prop = getattr(AINFOID.AdaptTextFormat, 'text')
+        prop = getattr(ATEXT.AdaptTextFormat, 'text')
         assert prop.fdel is None
 
 
 class TestTypes:
-    """Unit tests for type definitions in :mod:`.adapt_infoid`."""
+    """Unit tests for type hint definitions in :mod:`.adapt_text`."""
 
-    def test_types(self):
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+        (ATEXT.TextFormatGtk, Gtk.TextBuffer),
+        (ATEXT.TextMarkupGtk, Gtk.EntryBuffer),
+        (ATEXT.TextStaticGtk, str),
+        (ATEXT.ViewTextFormat, Gtk.TextView),
+        (ATEXT.ViewTextMarkup, Gtk.Entry),
+        (type(ATEXT.ViewTextOpaque), typing.TypeVar),
+        (ATEXT.ViewTextStatic, Gtk.Label),
+        ])
+    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
         # Setup
         # Test
-        assert AINFOID.TextFormat is Gtk.TextBuffer
-        assert AINFOID.TextMarkup is Gtk.EntryBuffer
-        assert AINFOID.TextStatic is str
-        assert AINFOID.ViewTextFormat is Gtk.TextView
-        assert AINFOID.ViewTextMarkup is Gtk.Entry
-        assert AINFOID.ViewTextOpaque is not None
-        assert AINFOID.ViewTextStatic is Gtk.Label
+        assert TYPE_TARGET is TYPE_SOURCE

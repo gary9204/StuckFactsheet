@@ -183,7 +183,7 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         self._facts.detach_view(p_form.get_view_facts())
 
     def facts(self, p_index: IndexTopic = None
-              ) -> typing.Iterator[ABC_FACT.AbstractFact]:
+              ) -> typing.Iterator[ABC_FACT.InterfaceFact]:
         """Return iterator over facts in facts outline.
 
         The iterator is recursive (that is, includes fact at given
@@ -197,7 +197,7 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
             assert fact is not None
             yield fact
 
-    def insert_fact_after(self, p_fact: ABC_FACT.AbstractFact,
+    def insert_fact_after(self, p_fact: ABC_FACT.InterfaceFact,
                           p_i: IndexFact) -> IndexFact:
         """Adds fact to facts outline after fact at given index.
 
@@ -210,7 +210,7 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         self.set_stale()
         return self._facts.insert_after(p_fact, p_i)
 
-    def insert_fact_before(self, p_fact: ABC_FACT.AbstractFact,
+    def insert_fact_before(self, p_fact: ABC_FACT.InterfaceFact,
                            p_i: IndexFact) -> IndexFact:
         """Adds fact to facts outline before fact at given index.
 
@@ -223,7 +223,7 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         self.set_stale()
         return self._facts.insert_before(p_fact, p_i)
 
-    def insert_fact_child(self, p_fact: ABC_FACT.AbstractFact,
+    def insert_fact_child(self, p_fact: ABC_FACT.InterfaceFact,
                           p_i: IndexFact) -> IndexFact:
         """Adds fact to fact outline as child of fact at given index.
 

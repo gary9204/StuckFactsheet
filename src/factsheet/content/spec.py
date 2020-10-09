@@ -33,7 +33,7 @@ class ProtoFact:
     :param class_block: class that defines display block of fact.
     :param prereqs: names of prerequisite facts.
     """
-    class_fact: typing.Type[ABC_FACT.AbstractFact]  # noqa
+    class_fact: typing.Type[ABC_FACT.InterfaceFact]  # noqa
     class_block: typing.Type[VFACT.BlockFact]   # noqa
     prereqs: typing.Iterable[str] = DC.field(default_factory=list)
 

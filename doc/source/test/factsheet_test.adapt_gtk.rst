@@ -11,7 +11,8 @@ Submodules
 
 .. toctree::
 
-   factsheet_test.adapt_gtk.test_adapt_infoid
    factsheet_test.adapt_gtk.test_adapt_outline
    factsheet_test.adapt_gtk.test_adapt_sheet
+   factsheet_test.adapt_gtk.test_adapt_text
    factsheet_test.adapt_gtk.test_adapt_topic
+   factsheet_test.adapt_gtk.test_adapt_value

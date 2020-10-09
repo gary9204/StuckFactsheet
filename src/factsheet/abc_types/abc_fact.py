@@ -1,5 +1,5 @@
 """
-Defines abstract interfaces for facts.
+Defines interfaces for facts.
 
 :doc:`../guide/devel_notes` describes the use of abstract classes to
 break ``import`` cycles and to encapsulate dependencies of
@@ -7,30 +7,29 @@ break ``import`` cycles and to encapsulate dependencies of
 ``abc_fact`` defines interface for fact view (:class:`.BlockFact`) for
 encapsulation.
 
-.. data:: IdFact
+.. data:: TagFact
 
-    Type for fact identifiers.
+    Type hint for tag to identify a fact.
 
-.. data:: NameScene
+.. data:: ValueOpaque
 
-    Type for name of presentation style for a fact value.
-
-..
-    data:: ValueAny
-
-    Generic type for fact value without fact status.
-
-..
-    data:: ValueOpaque
-
-    Generic type for fact value.
+    Type hint for generic fact value.
 """
 import enum
 import abc
 import typing
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.abc_types import abc_stalefile as ABC_STALE
+import factsheet.abc_types.abc_infoid as ABC_INFOID
+import factsheet.abc_types.abc_stalefile as ABC_STALE
+
+from factsheet.abc_types.abc_infoid import IdNameOpaque
+from factsheet.abc_types.abc_infoid import IdSummaryOpaque
+from factsheet.abc_types.abc_infoid import IdTitleOpaque
+
+
+TagFact = typing.NewType('TagFact', int)
+TopicOpaque = typing.TypeVar('TopicOpaque')
+ValueOpaque = typing.TypeVar('ValueOpaque')
 
 
 class StatusOfFact(enum.Enum):
@@ -59,54 +58,6 @@ class StatusOfFact(enum.Enum):
     DEFINED = enum.auto()
 
 
-TagFact = typing.NewType('TagFact', int)
-NameScene = typing.NewType('NameScene', str)
-TopicOpaque = typing.TypeVar('TopicOpaque')
-ValueOpaque = typing.TypeVar('ValueOpaque')
-
-
-class AbstractFact(
-        ABC_INFOID.InterfaceIdentity[TagFact], ABC_STALE.InterfaceStaleFile):
-    """Defines interfaces common to fact model components."""
-
-    # @abc.abstractmethod
-    # def attach_block(self, p_block: InterfaceBlockFact[ValueOpaque]
-    #                  ) -> None:
-    #     """Add fact block to show fact identification, status, and value.
-    #
-    #     Log warning when requested block is already attached.
-    #
-    #     :param p_block: fact block to add.
-    #     """
-    #     raise NotImplementedError
-
-    @abc.abstractmethod
-    def check(self) -> StatusOfFact:
-        """Return status of fact check after setting fact value and status."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def clear(self) -> None:
-        """Clear fact value and status of fact."""
-        raise NotImplementedError
-
-    # @abc.abstractmethod
-    # def detach_block(self, p_block: InterfaceBlockFact[ValueOpaque]) -> None:
-    #     """Remove a fact block from fact.
-    #
-    #     Log warning when requested block is not attached.
-    #
-    #     :param p_block: fact block to remove.
-    #     """
-    #     raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
-    def status(self) -> StatusOfFact:
-        """Return status of fact. """
-        raise NotImplementedError
-
-
 class InterfaceBlockFact(abc.ABC, typing.Generic[ValueOpaque]):
     """Defines interface for :class:`~.Fact` model to signal
     :class:`~.BlockFact`.
@@ -121,7 +72,38 @@ class InterfaceBlockFact(abc.ABC, typing.Generic[ValueOpaque]):
         """
         raise NotImplementedError
 
+
+class InterfaceFact(typing.Generic[
+        IdNameOpaque, IdSummaryOpaque, IdTitleOpaque, ValueOpaque],
+        ABC_INFOID.InterfaceIdentity[
+            IdNameOpaque, IdSummaryOpaque, IdTitleOpaque, TagFact],
+        ABC_STALE.InterfaceStaleFile):
+    """Defines interfaces common to fact model components."""
+
     @abc.abstractmethod
-    def get_infoid(self) -> ABC_INFOID.InterfaceViewInfoId:
-        """Return view of fact identification information."""
+    def check(self) -> StatusOfFact:
+        """Return status of fact check after setting fact value and status."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def clear(self) -> None:
+        """Clear fact value and status of fact."""
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def note(self) -> str:
+        """Return status of fact. """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def status(self) -> StatusOfFact:
+        """Return status of fact. """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def value(self) -> ValueOpaque:
+        """Return status of fact. """
         raise NotImplementedError
