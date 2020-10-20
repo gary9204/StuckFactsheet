@@ -14,7 +14,7 @@ Submodules
    factsheet.model.array
    factsheet.model.element
    factsheet.model.fact
-   factsheet.model.infoid
+   factsheet.model.idcore
    factsheet.model.setindexed
    factsheet.model.sheet
    factsheet.model.topic

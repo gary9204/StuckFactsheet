@@ -12,7 +12,7 @@ import factsheet.adapt_gtk.adapt as ADAPT
 class PatchAdaptText(ADAPT.AdaptText[typing.Any]):
     """Class with stub for methods abstract in :class:`.AdaptText`."""
 
-    def __init__(self): super().__init__()
+    # def __init__(self): super().__init__()
 
     def attach_view(self): super().attach_view(None)
 
@@ -113,4 +113,4 @@ class TestAdaptTypes:
         """Confirm API definitions."""
         # Setup
         # Test
-        assert TYPE_TARGET is TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_SOURCE

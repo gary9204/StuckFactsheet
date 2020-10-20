@@ -1,25 +1,119 @@
 """
 Test fixtures for Factsheet as a whole.
 """
-import dataclasses as DC
 import pytest   # type: ignore[import]
 import typing
 
+import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.model.idcore as MIDCORE
 # import factsheet.abc_types.abc_fact as ABC_FACT
 # import factsheet.abc_types.abc_infoid as ABC_INFOID
-# import factsheet.adapt_gtk.adapt_infoid as AINFOID
 # import factsheet.model.element as MELEMENT
 # import factsheet.model.fact as MFACT
 # import factsheet.model.setindexed as MSET
 # import factsheet.model.table as MTABLE
 # import factsheet.model.topic as MTOPIC
 
-import gi   # type: ignore[import]
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gio   # type: ignore[import]    # noqa: E402
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+# import gi   # type: ignore[import]
+# gi.require_version('Gtk', '3.0')
+# from gi.repository import Gio   # type: ignore[import]    # noqa: E402
+# from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
+# from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
+
+class PatchAdaptText(ADAPT.AdaptText[typing.Any]):
+    """:class:`.AdaptText` subclass with stub text property."""
+
+    def __init__(self):
+        super().__init__()
+        self.attached = []
+        self.detached = []
+        self._text = 'Oops! no text assigned.'
+
+    def attach_view(self, p_view):
+        self.attached.append(p_view)
+
+    def detach_view(self, p_view):
+        self.detached.append(p_view)
+
+    @property
+    def text(self): return self._text
+
+    @text.setter
+    def text(self, p_text): self._text = p_text
+
+
+@pytest.fixture
+def patch_adapt_text():
+    """Pytest fixture: return :class:`.AdaptText` subclass with stub
+    text property.
+    """
+    return PatchAdaptText
+
+
+class PatchIdCore(MIDCORE.IdCore):
+    """:class:`.IdCore` subclass with stubs for properties."""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._name = PatchAdaptText()
+        self._summary = PatchAdaptText()
+        self._title = PatchAdaptText()
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def summary(self):
+        return self._summary
+
+    @property
+    def title(self):
+        return self._title
+
+
+@pytest.fixture
+def patch_idcore():
+    """Pytest fixture: return :class:`.IdCore` subclass with stub
+    identity properties.
+    """
+    return PatchIdCore
+
+
+class PatchIdCoreAbstract(MIDCORE.IdCore):
+    """:class:`.IdCore` subclass with pass-through stubs for abstract
+    properties.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._name = PatchAdaptText()
+        self._summary = PatchAdaptText()
+        self._title = PatchAdaptText()
+
+    @property
+    def name(self):
+        prop = getattr(MIDCORE.IdCore, 'name')
+        prop.fget(self)
+
+    @property
+    def summary(self):
+        prop = getattr(MIDCORE.IdCore, 'summary')
+        prop.fget(self)
+
+    @property
+    def title(self):
+        prop = getattr(MIDCORE.IdCore, 'title')
+        prop.fget(self)
+
+
+@pytest.fixture
+def patch_idcore_abstract():
+    """Pytest fixture: return :class:`.IdCore` subclass with
+    pass-through stubs for abstract properties.
+    """
+    return PatchIdCoreAbstract
 
 # @pytest.fixture
 # def interface_view_infoid(patch_args_infoid):

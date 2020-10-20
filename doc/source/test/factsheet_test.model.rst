@@ -15,7 +15,7 @@ Submodules
    factsheet_test.model.test_array
    factsheet_test.model.test_element
    factsheet_test.model.test_fact
-   factsheet_test.model.test_infoid
+   factsheet_test.model.test_idcore
    factsheet_test.model.test_setindexed
    factsheet_test.model.test_sheet
    factsheet_test.model.test_topic

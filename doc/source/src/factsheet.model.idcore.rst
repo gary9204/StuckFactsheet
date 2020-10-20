@@ -1,7 +1,7 @@
-``infoid`` Model Module
+``idcore`` Model Module
 =======================
 
-.. automodule:: factsheet.model.infoid
+.. automodule:: factsheet.model.idcore
    :members:
    :undoc-members:
    :show-inheritance:

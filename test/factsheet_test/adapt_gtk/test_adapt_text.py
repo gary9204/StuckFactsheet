@@ -20,22 +20,22 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchAdaptText(ATEXT.AdaptText[typing.Any]):
-    """Class with stub for methods abstract in :class:`.AdaptText`."""
+# class PatchAdaptText(ATEXT.AdaptText[typing.Any]):
+#     """Class with stub for methods abstract in :class:`.AdaptText`."""
 
-    def __init__(self):
-        super().__init__()
-        self._text = 'Oops! no text assigned.'
+#     def __init__(self):
+#         super().__init__()
+#         self._text = 'Oops! no text assigned.'
 
-    def attach_view(self, _view): pass
+#     # def attach_view(self, _view): pass
 
-    def detach_view(self, _view): pass
+#     # def detach_view(self, _view): pass
 
-    @property
-    def text(self): return self._text
+#     @property
+#     def text(self): return self._text
 
-    @text.setter
-    def text(self, p_text): self._text = p_text
+#     @text.setter
+#     def text(self, p_text): self._text = p_text
 
 
 class TestAdaptText:
@@ -45,7 +45,7 @@ class TestAdaptText:
     property definitions of :class:`.AdaptText`.
     """
 
-    def test_eq(self):
+    def test_eq(self, patch_adapt_text):
         """Confirm equality comparison.
 
         #. Case: not a text attribute.
@@ -54,26 +54,26 @@ class TestAdaptText:
         """
         # Setup
         TEXT = 'The Parrot Sketch'
-        source = PatchAdaptText()
+        source = patch_adapt_text()
         source.text = TEXT
         # Test: not a text attribute.
         assert not source.__eq__(TEXT)
         # Test: different content.
         TEXT_DIFFER = 'Something completely different.'
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target.text = TEXT_DIFFER
         assert not source.__eq__(target)
         # Test: equal
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target.text = TEXT
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_get_set_state(self, tmp_path):
+    def test_get_set_state(self, tmp_path, patch_adapt_text):
         """Confirm conversion to and from pickle format."""
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = PatchAdaptText()
+        source = patch_adapt_text()
         source._stale = True
         I_ENTRY = 0
         source._views[I_ENTRY] = TextStaticGtk()
@@ -86,57 +86,57 @@ class TestAdaptText:
         assert isinstance(target._views, dict)
         assert not target._views
 
-    def test_init(self):
+    def test_init(self, patch_adapt_text):
         """Confirm initialization."""
         # Setup
         # Test
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         assert target._stale is not None
         assert isinstance(target._views, dict)
         assert not target._views
 
-    def test_str(self):
+    def test_str(self, patch_adapt_text):
         """Confirm return is attribute content. """
         # Setup
         TEXT = 'The Parrot Sketch'
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target._text = TEXT
         # Test
         assert TEXT == str(target)
 
-    def test_is_fresh(self):
+    def test_is_fresh(self, patch_adapt_text):
         """Confirm return matches state. """
         # Setup
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target._stale = False
         # Test
         assert target.is_fresh()
         target._stale = True
         assert not target.is_fresh()
 
-    def test_is_stale(self):
+    def test_is_stale(self, patch_adapt_text):
         """Confirm return matches state. """
         # Setup
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target._stale = False
         # Test
         assert not target.is_stale()
         target._stale = True
         assert target.is_stale()
 
-    def test_set_freah(self):
+    def test_set_freah(self, patch_adapt_text):
         """Confirm attribute marked fresh. """
         # Setup
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target._stale = True
         # Test
         target.set_fresh()
         assert not target._stale
 
-    def test_set_stale(self):
+    def test_set_stale(self, patch_adapt_text):
         """Confirm attribute marked stale. """
         # Setup
-        target = PatchAdaptText()
+        target = patch_adapt_text()
         target._stale = False
         # Test
         target.set_stale()
@@ -549,10 +549,11 @@ class TestTypes:
         (ATEXT.ViewTextFormat, Gtk.TextView),
         (ATEXT.ViewTextMarkup, Gtk.Entry),
         (type(ATEXT.ViewTextOpaque), typing.TypeVar),
+        (ATEXT.ViewTextOpaque.__constraints__, ()),
         (ATEXT.ViewTextStatic, Gtk.Label),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
         # Setup
         # Test
-        assert TYPE_TARGET is TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_SOURCE

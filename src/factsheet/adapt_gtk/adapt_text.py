@@ -73,7 +73,7 @@ logger = logging.getLogger('Main.adapt_infoid')
 
 
 class AdaptText(typing.Generic[ViewTextOpaque],
-                ABC_STALE.InterfaceStaleFile):
+                ABC_STALE.InterfaceStaleFile, abc.ABC):
     """Common ancestor of model text attributes.
 
     Text attributes have transient data for attached views in addition

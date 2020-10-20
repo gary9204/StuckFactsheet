@@ -51,7 +51,8 @@ class TestAdaptValue:
 
     def test_init(self):
         """| Confirm initialization.
-        | Case: nominal."""
+        | Case: nominal.
+        """
         # Setup
         # Test
         target = PatchAdaptValue()
@@ -230,12 +231,14 @@ class TestTypes:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (AVALUE.ValueAny, typing.Any),
         (type(AVALUE.ValueOpaque), typing.TypeVar),
+        (AVALUE.ValueOpaque.__constraints__, ()),
         (AVALUE.ValueTextGtk, str),
         (type(AspectValueOpaque), typing.TypeVar),
+        (AVALUE.AspectValueOpaque.__constraints__, ()),
         (AspectValueText, Gtk.Label),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
         # Setup
         # Test
-        assert TYPE_TARGET is TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_SOURCE
