@@ -12,9 +12,11 @@ AdaptText = ATEXT.AdaptText
 AdaptTextFormat = ATEXT.AdaptTextFormat
 AdaptTextMarkup = ATEXT.AdaptTextMarkup
 AdaptTextStatic = ATEXT.AdaptTextStatic
-AdaptValue = AVALUE.AdaptValue
 
-AspectValueText = AVALUE.AspectValueText
+FormatValue = AVALUE.FormatValue
+FormatValuePlain = AVALUE.FormatValuePlain
+
+AspectValuePlain = AVALUE.AspectValuePlain
 
 ValueAny = AVALUE.ValueAny
 

@@ -29,14 +29,18 @@ class PatchAdaptText(ADAPT.AdaptText[typing.Any]):
         prop.fset(self, value)
 
 
-class PatchAdaptValue(ADAPT.AdaptValue[typing.Any]):
-    """Class with stub for methods abstract in :class:`.AdaptValue`."""
+class PatchFormatValue(ADAPT.FormatValue[typing.Any, typing.Any]):
+    """Class with stub for methods abstract in :class:`.FormatValue`."""
 
-    def __init__(self): super().__init__()
+    def __init__(self): pass
 
     def attach_aspect(self): super().attach_aspect(None)
 
+    def clear(self): super().clear()
+
     def detach_aspect(self): super().detach_aspect(None)
+
+    def set(self): super().set(None)
 
 
 class TestAdaptAbstract:
@@ -47,7 +51,7 @@ class TestAdaptAbstract:
 
     @pytest.mark.parametrize('CLASS, ARGS', [
         (ADAPT.AdaptText, dict()),
-        (ADAPT.AdaptValue, dict(p_value=None)),
+        (ADAPT.FormatValue, dict(p_value=None)),
         ])
     def test_abstract_class(self, CLASS, ARGS):
         """Confirm the interface class is abstract."""
@@ -59,8 +63,10 @@ class TestAdaptAbstract:
     @pytest.mark.parametrize('PATCH_CLASS, NAME_METHOD', [
         (PatchAdaptText, 'attach_view'),
         (PatchAdaptText, 'detach_view'),
-        (PatchAdaptValue, 'attach_aspect'),
-        (PatchAdaptValue, 'detach_aspect'),
+        (PatchFormatValue, 'attach_aspect'),
+        (PatchFormatValue, 'detach_aspect'),
+        (PatchFormatValue, 'clear'),
+        (PatchFormatValue, 'set'),
         ])
     def test_method_abstract(self, PATCH_CLASS, NAME_METHOD):
         """Confirm each abstract method is defined."""
@@ -104,9 +110,10 @@ class TestAdaptTypes:
         (ADAPT.ViewTextMarkup, ATEXT.ViewTextMarkup),
         (ADAPT.ViewTextStatic, ATEXT.ViewTextStatic),
 
-        (ADAPT.AdaptValue, AVALUE.AdaptValue),
+        (ADAPT.FormatValue, AVALUE.FormatValue),
+        (ADAPT.FormatValuePlain, AVALUE.FormatValuePlain),
         (ADAPT.AspectValueOpaque, AVALUE.AspectValueOpaque),
-        (ADAPT.AspectValueText, AVALUE.AspectValueText),
+        (ADAPT.AspectValuePlain, AVALUE.AspectValuePlain),
         (ADAPT.ValueOpaque, AVALUE.ValueOpaque),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):

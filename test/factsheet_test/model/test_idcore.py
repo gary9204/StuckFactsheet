@@ -2,6 +2,8 @@
 Unit tests for identity attributes common to Factsheet model components.
 See :class:`~.IdCore`."""
 import copy
+from pathlib import Path
+import pickle
 import pytest   # type: ignore[import]
 import re
 import typing
@@ -57,6 +59,27 @@ class TestIdCore:
         target._stale = True
         assert source.__eq__(target)
         assert not source.__ne__(target)
+
+    def test_get_set_state(self, tmp_path, patch_idcore):
+        """Confirm conversion to and from pickle format."""
+        # Setup
+        path = Path(str(tmp_path / 'get_set.fsg'))
+        source = patch_idcore()
+        NAME = 'Parrot'
+        source.name.text = NAME
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        source.summary.text = SUMMARY
+        TITLE = 'The Parrot Sketch'
+        source.title.text = TITLE
+        source._stale = True
+        # Test
+        with path.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with path.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert not target._stale
+        source._stale = False
+        assert source == target
 
     def test_init(self, patch_idcore):
         """| Confirm initialization.

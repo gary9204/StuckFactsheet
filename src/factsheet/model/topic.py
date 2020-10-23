@@ -96,7 +96,7 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         self._state_transient()
 
     def _state_transient(self) -> None:
-        """Helper ensures __init__ and __setstate__ are consistent."""
+        """Helper ensures initialization and pickling are consistent."""
         self._stale = False
         self._forms: typing.MutableMapping[
             int, ABC_TOPIC.InterfaceFormTopic] = dict()

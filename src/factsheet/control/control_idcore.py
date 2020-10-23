@@ -2,6 +2,7 @@
 Defines generic control to add and remove views of :class:`~.IdCore`
 identity attributes.
 """
+import abc
 import typing   # noqa
 
 import factsheet.adapt_gtk.adapt as ADAPT
@@ -15,57 +16,54 @@ ViewTitleAdapt = typing.TypeVar('ViewTitleAdapt', ADAPT.ViewTextFormat,
                                 ADAPT.ViewTextMarkup, ADAPT.ViewTextStatic)
 
 
-class ControlIdCore(
-        typing.Generic[ViewNameAdapt, ViewSummaryAdapt, ViewTitleAdapt]):
-    """Provides addition and removal of views of identity attributes.
-
-    :param p_model: add and remove views of this model component.
-    """
-
-    def __init__(self, p_model: MIDCORE.IdCore, **kwargs: typing.Any) -> None:
-        if kwargs:
-            raise TypeError('{}.__init__() called with extra argument(s): '
-                            '{}'.format(type(self).__name__, kwargs))
-        self._model = p_model
+class ControlIdCore(typing.Generic[
+        ViewNameAdapt, ViewSummaryAdapt, ViewTitleAdapt], abc.ABC):
+    """Mediates addition and removal of views of identity attributes."""
 
     def attach_name(self, p_view: ViewNameAdapt) -> None:
-        """Add view to model component name.
+        """Ask model component name to add view.
 
-        :param p_view: to add.
+        :param p_view: view to add.
         """
-        self._model.name.attach_view(p_view)
-
-    def detach_name(self, p_view: ViewNameAdapt) -> None:
-        """Remove view from model component name.
-
-        :param p_view: view to remove.
-        """
-        self._model.name.detach_view(p_view)
+        self.idcore.name.attach_view(p_view)
 
     def attach_summary(self, p_view: ViewSummaryAdapt) -> None:
-        """Add view to model component summary.
+        """Ask model component summary to add view.
 
-        :param p_view: to add.
+        :param p_view: view to add.
         """
-        self._model.summary.attach_view(p_view)
-
-    def detach_summary(self, p_view: ViewSummaryAdapt) -> None:
-        """Remove view from model component summary.
-
-        :param p_view: view to remove.
-        """
-        self._model.summary.detach_view(p_view)
+        self.idcore.summary.attach_view(p_view)
 
     def attach_title(self, p_view: ViewTitleAdapt) -> None:
-        """Add view to model component title.
+        """Ask model component title to add view.
 
-        :param p_view: to add.
+        :param p_view: view to add.
         """
-        self._model.title.attach_view(p_view)
+        self.idcore.title.attach_view(p_view)
 
-    def detach_title(self, p_view: ViewTitleAdapt) -> None:
-        """Remove view from model component title.
+    def detach_name(self, p_view: ViewNameAdapt) -> None:
+        """Ask model component name to remove view.
 
         :param p_view: view to remove.
         """
-        self._model.title.detach_view(p_view)
+        self.idcore.name.detach_view(p_view)
+
+    def detach_summary(self, p_view: ViewSummaryAdapt) -> None:
+        """Ask model component summary to remove view.
+
+        :param p_view: view to remove.
+        """
+        self.idcore.summary.detach_view(p_view)
+
+    def detach_title(self, p_view: ViewTitleAdapt) -> None:
+        """Ask model component summary to remove view.
+
+        :param p_view: view to remove.
+        """
+        self.idcore.title.detach_view(p_view)
+
+    @property
+    @abc.abstractmethod
+    def idcore(self) -> MIDCORE.IdCore:
+        """Return component identity."""
+        raise NotImplementedError

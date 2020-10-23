@@ -58,10 +58,29 @@ class IdCore(typing.Generic[NameAdapt, SummaryAdapt, TitleAdapt],
 
         return True
 
+    def __getstate__(self) -> typing.Dict:
+        """Return identity in form pickle can persist.
+
+        Persistent form of fact excludes run-time information.
+        """
+        state = self.__dict__.copy()
+        del state['_stale']
+        return state
+
     def __init__(self, **kwargs: typing.Any) -> None:
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
                             '{}'.format(type(self).__name__, kwargs))
+        self._stale = False
+
+    def __setstate__(self, px_state: typing.Dict) -> None:
+        """Reconstruct identity from state pickle loads.
+
+        Reconstructed identity is marked fresh.
+
+        :param px_state: unpickled state of stored identity.
+        """
+        self.__dict__.update(px_state)
         self._stale = False
 
     def is_fresh(self) -> bool:

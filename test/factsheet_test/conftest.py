@@ -372,6 +372,7 @@ def PatchLogger():
     class Logger:
         T_CRITICAL = 'critical'
         T_DEBUG = 'debug'
+        T_ERROR = 'error'
         T_NONE = 'none'
         T_WARNING = 'warning'
 
@@ -380,19 +381,24 @@ def PatchLogger():
             self.level = self.T_NONE
             self.message = "No log call"
 
+        def critical(self, p_message, *_args, **_kwargs):
+            self.called = True
+            self.level = self.T_CRITICAL
+            self.message = p_message
+
         def debug(self, p_message, *_args, **_kwargs):
             self.called = True
             self.level = self.T_DEBUG
             self.message = p_message
 
+        def error(self, p_message, *_args, **_kwargs):
+            self.called = True
+            self.level = self.T_ERROR
+            self.message = p_message
+
         def warning(self, p_message, *_args, **_kwargs):
             self.called = True
             self.level = self.T_WARNING
-            self.message = p_message
-
-        def critical(self, p_message, *_args, **_kwargs):
-            self.called = True
-            self.level = self.T_CRITICAL
             self.message = p_message
 
     return Logger

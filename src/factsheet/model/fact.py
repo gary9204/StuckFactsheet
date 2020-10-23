@@ -11,13 +11,16 @@ import enum
 import logging
 import typing
 
-# from factsheet.abc_types import abc_fact as ABC_FACT
-# from factsheet.model import infoid as MINFOID
+import factsheet.model.idcore as MIDCORE
 
-import factsheet.abc_types.abc_stalefile as ABC_STALE
+import factsheet.adapt_gtk.adapt as ADAPT
 
 from factsheet.adapt_gtk.adapt import ValueOpaque
 
+NameFact = ADAPT.AdaptTextMarkup
+NoteFact = ADAPT.AdaptTextFormat
+SummaryFact = ADAPT.AdaptTextFormat
+TitleFact = ADAPT.AdaptTextMarkup
 TagFact = typing.NewType('TagFact', int)
 TopicOpaque = typing.TypeVar('TopicOpaque')
 
@@ -46,217 +49,163 @@ class StatusOfFact(enum.Enum):
         User checked fact but its value is not defined.
     """
     BLOCKED = enum.auto()
+    DEFINED = enum.auto()
     UNCHECKED = enum.auto()
     UNDEFINED = enum.auto()
-    DEFINED = enum.auto()
 
 
 class Fact(typing.Generic[TopicOpaque, ValueOpaque],
-           ABC_STALE.InterfaceStaleFile):
+           MIDCORE.IdCore[NameFact, SummaryFact, TitleFact]
+           ):
     """Fact component of Factsheet :mod:`~.factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a
-    Factsheet. A model fact consists of value along with identification
-    information (see :class:`.InfoId`.) A fact's value may be unknown or
+    Factsheet. A model fact consists of value along with identity
+    information (see :class:`.IdCore`.) A fact's value may be unknown or
     undefined.  A fact value that is both known and defined depends on
-    the fact in context of its topic (for example, True for associateive
+    the fact in context of its topic (for example, True for associative
     property of modular addition, 0 for the size of the empty set, or
     the elements in a set).
 
-    :param p_name: name of fact.
-    :param p_summary: summary of fact.
-    :param p_title: title of fact.
-
     .. admonition:: About Equality
 
-        Two facts are equivalent when they have the same value
-        attributes and identification information. Transient aspects of
-        the facts (like views) are not compared and may be different.
+        Two facts are equivalent when they have the same status, value,
+        formats, note, and identity attributes.  Transient aspects of
+        the facts (like tags and views) are not compared and may be
+        different.
     """
 
-    # def __call__(self) -> typing.Optional[ValueOpaque]:
-    #     """Return fact value.
-
-    #     If the user has not checked the fact or the fact value is not
-    #     defined, return None.
-    #     """
-    #     return self._value
-
     def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when px_other has same fact information.
+        """Return True when px_other has same status, value, formats,
+        and identity.
 
         :param px_other: object to compare with self.
         """
-        # if not isinstance(px_other, type(self)):
-        #     return False
+        if not super().__eq__(px_other):
+            return False
 
-        # if self._infoid != px_other._infoid:
-        #     return False
+        if not self._formats == px_other._formats:
+            return False
 
-        # if self._topic is not px_other._topic:
-        #     return False
+        if self.note != px_other.note:
+            return False
 
-        # return True
+        if self.status != px_other.status:
+            return False
 
-    # def __getstate__(self) -> typing.Dict:
-    #     """Return fact model in form pickle can persist.
+        if self.value != px_other.value:
+            return False
 
-    #     Persistent form of fact excludes run-time information.
-    #     """
-    #     state = self.__dict__.copy()
-    #     del state['_blocks']
-    #     del state['_stale']
-    #     return state
+        return True
 
-    def __init__(self, *, p_topic: TopicOpaque) -> None:
-        pass
-        # self._topic = p_topic
-        # self._infoid = MINFOID.InfoId()
-        # self._tag = TagFact(id(self))
-        # self._value: typing.Optional[ValueOpaque] = None
-        # self._status = StatusOfFact.BLOCKED
-        # self._set_transient()
+    def __getstate__(self) -> typing.Dict:
+        """Return identity in form pickle can persist.
 
-    # def init_identity(self, *, p_name: str = '', p_summary: str = '',
-    #                   p_title: str = '') -> None:
-    #     self._infoid.init_identity(
-    #     p_name=p_name, p_summary=p_summary, p_title=p_title)
+        Persistent form of fact excludes run-time information.
+        """
+        state = super().__getstate__()
+        del state['_tag']
+        return state
 
-        # def __setstate__(self, px_state: typing.Dict) -> None:
-        #     """Reconstruct fact model from state pickle loads.
+    def __init__(self, *, p_topic: TopicOpaque, **kwargs: typing.Any
+                 ) -> None:
+        super().__init__(**kwargs)
+        _ = p_topic  # Needed in every descendant but not base.
+        self._formats: typing.Dict[str, ADAPT.FormatValue] = dict(
+            Plain=ADAPT.FormatValuePlain())
+        self._names_formats = None
+        self._name = NameFact()
+        self._note = NoteFact()
+        self._status = StatusOfFact.BLOCKED
+        self._summary = SummaryFact()
+        self._tag = TagFact(id(self))
+        self._title = TitleFact()
+        self._value: typing.Optional[ValueOpaque] = None
 
-        #     Reconstructed attribute is marked fresh and has no views.
+    def __setstate__(self, px_state: typing.Dict) -> None:
+        """Reconstruct identity from state pickle loads.
 
-        #     :param px_state: unpickled state of stored fact model.
-        #     """
-        #     self.__dict__.update(px_state)
-        #     self._set_transient()
+        Reconstructed identity is marked fresh.
 
-    # def _set_transient(self) -> None:
-    #     """Helper ensures __init__ and __setstate__ are consistent."""
-    #     self._stale = False
-    #     self._blocks: typing.MutableMapping[
-    #         int, ABC_FACT.InterfaceBlockFact] = dict()
-
-    # def attach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
-    #                  ) -> None:
-    #     """Add fact block to show fact identification, status, and value.
-
-    #     Log warning when requested block is already attached.
-
-    #     :param p_block: block to add.
-    #     """
-    #     id_block = id(p_block)
-    #     if id_block in self._blocks.keys():
-    #         logger.warning('Duplicate fact block: {} ({}.{})'
-    #                        ''.format(hex(id_block), self.__class__.__name__,
-    #                                  self.attach_block.__name__))
-    #         return
-
-    #     self._infoid.attach_view(p_block.get_infoid())
-    #     self._blocks[id_block] = p_block
+        :param px_state: unpickled state of stored identity.
+        """
+        super().__setstate__(px_state)
+        self._tag = TagFact(id(self))
 
     def check(self) -> StatusOfFact:
-        """Set fact value and set corresponding state of fact check.
+        """Determine fact value, if possible, and set corresponding status.
 
-        Base class marks change in fact and notifies attached fact
-        blocks.  Base class does not change fact status or value.
+        Subclasses must extend :meth:`~.Fact.check` method.  A subclass
+        should set fact status and value and then call base class
+        method.  Base class marks change in fact and sets fact formats
+        to current value.
         """
-        raise NotImplementedError
-        # self.set_stale()
-        # self._update_blocks()
-        # return self._status
+        self.set_stale()
+        for fmt in self._formats.values():
+            fmt.set(self._value)
+        return self._status
 
     def clear(self) -> None:
-        """Clear fact value and set corresponding state of fact check.
+        """Clear fact status and value.
 
-        Base class marks change in fact and notifies attached fact
-        blocks.  Base class does not change fact status or value.
+        Subclasses must extend :meth:`~.Fact.check` method.  A subclass
+        should set fact status and value and then call base class
+        method.  Base class marks change in fact and sets fact formats
+        to current value.
         """
-        raise NotImplementedError
-        # self.set_stale()
-        # self._update_blocks()
+        self.set_stale()
+        for fmt in self._formats.values():
+            fmt.clear()
 
-    # def detach_all(self) -> None:
-    #     """Detach all fact blocks from fact."""
-    #     while self._blocks:
-    #         _id_block, block = self._blocks.popitem()
-    #         self._infoid.detach_view(block.get_infoid())
-    #     #     self._detach_attribute_views(view)
+    def get_format(self, p_name: str) -> typing.Optional[ADAPT.FormatValue]:
+        """Return format with given name or None if format not supported..
 
-    # def detach_block(self, p_block: ABC_FACT.InterfaceBlockFact[ValueOpaque]
-    #                  ) -> None:
-    #     """Remove one fact block from fact.
-
-    #     Log warning when requested block is not attached.
-
-    #     :param p_block: block to remove.
-    #     """
-    #     id_block = id(p_block)
-    #     try:
-    #         _ = self._blocks.pop(id_block)
-    #     except KeyError:
-    #         logger.warning('Missing fact block: {} ({}.{})'
-    #                        ''.format(hex(id_block), self.__class__.__name__,
-    #                                  self.detach_block.__name__))
-    #         return
-
-    #     # self._detach_attribute_blocks(p_block)
-    #     self._infoid.detach_view(p_block.get_infoid())
-
-    def is_fresh(self) -> bool:
-        """Return True when there are no unsaved changes to fact."""
-        raise NotImplementedError
-        # return not self.is_stale()
+        :param p_name: name of desired format.
+        """
+        return self._formats.get(p_name)
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         fact.
         """
-        raise NotImplementedError
-        # if self._stale:
-        #     return True
+        if super().is_stale():
+            return True
 
-        # if self._infoid.is_stale():
-        #     self._stale = True
-        #     return True
+        if self.note.is_stale():
+            self._stale = True
+            return True
 
-        # return False
+        return False
+
+    @property
+    def name(self) -> NameFact:
+        """Return fact name."""
+        return self._name
+
+    @property
+    def names_formats(self) -> None:
+        """Return names of formats that the fact provides."""
+        return self._names_formats
+
+    @property
+    def note(self) -> NoteFact:
+        """Return user note for fact."""
+        return self._note
+
+    def set_fresh(self) -> None:
+        """Mark fact in memory consistent with file contents."""
+        super().set_fresh()
+        self._note.set_fresh()
 
     @property
     def status(self) -> StatusOfFact:
         """Return status of fact check."""
-        raise NotImplementedError
-        # return self._status
+        return self._status
 
     @property
-    def name(self) -> str:
-        """Return fact name."""
-        raise NotImplementedError
-        # return self._infoid.name
-
-    # @property
-    def note(self) -> str:
-        """Return user note for fact."""
-        raise NotImplementedError
-        # return self._note
-
-    def set_fresh(self) -> None:
-        """Mark fact in memory consistent with file contents."""
-        raise NotImplementedError
-        # self._stale = False
-        # self._infoid.set_fresh()
-
-    def set_stale(self) -> None:
-        """Mark fact in memory changed from file contents."""
-        raise NotImplementedError
-        # self._stale = True
-
-    @property
-    def summary(self) -> str:
+    def summary(self) -> SummaryFact:
         """Return fact summary."""
-        raise NotImplementedError
-        # return self._infoid.summary
+        return self._summary
 
     @property
     def tag(self) -> TagFact:
@@ -265,24 +214,11 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         # return self._tag
 
     @property
-    def text(self) -> str:
+    def title(self) -> TitleFact:
         """Return fact title."""
-        raise NotImplementedError
-        # return self._infoid.title
+        return self._title
 
     @property
-    def title(self) -> str:
+    def value(self) -> typing.Optional[ValueOpaque]:
         """Return fact title."""
-        raise NotImplementedError
-        # return self._infoid.title
-
-    @property
-    def value(self) -> str:
-        """Return fact title."""
-        raise NotImplementedError
-        # return self._infoid.title
-
-    # def _update_blocks(self) -> None:
-    #     """Notifiy all fact blocks of new status and value."""
-    #     for block in self._blocks.values():
-    #         block.update(self._status, self._value)
+        return self._value
