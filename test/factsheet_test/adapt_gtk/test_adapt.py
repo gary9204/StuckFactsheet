@@ -9,14 +9,16 @@ import factsheet.adapt_gtk.adapt_value as AVALUE
 import factsheet.adapt_gtk.adapt as ADAPT
 
 
-class PatchAdaptText(ADAPT.AdaptText[typing.Any]):
+class PatchAdaptText(ADAPT.AdaptText[typing.Any, typing.Any]):
     """Class with stub for methods abstract in :class:`.AdaptText`."""
 
     # def __init__(self): super().__init__()
 
-    def attach_view(self): super().attach_view(None)
+    def _bind_store(self): super()._bind_store(None)
 
-    def detach_view(self): super().detach_view(None)
+    def _loose_store(self): super()._loose_store(None)
+
+    def _new_store_gtk(self): super()._new_store_gtk()
 
     @property
     def text(self):
@@ -61,8 +63,9 @@ class TestAdaptAbstract:
             _ = CLASS(**ARGS)
 
     @pytest.mark.parametrize('PATCH_CLASS, NAME_METHOD', [
-        (PatchAdaptText, 'attach_view'),
-        (PatchAdaptText, 'detach_view'),
+        (PatchAdaptText, '_bind_store'),
+        (PatchAdaptText, '_loose_store'),
+        (PatchAdaptText, '_new_store_gtk'),
         (PatchFormatValue, 'attach_aspect'),
         (PatchFormatValue, 'detach_aspect'),
         (PatchFormatValue, 'clear'),

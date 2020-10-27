@@ -21,26 +21,28 @@ import factsheet.model.idcore as MIDCORE
 # from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchAdaptText(ADAPT.AdaptText[typing.Any]):
+class PatchAdaptText(ADAPT.AdaptText[typing.Any, typing.Any]):
     """:class:`.AdaptText` subclass with stub text property."""
 
     def __init__(self):
         super().__init__()
-        self.attached = []
-        self.detached = []
-        self._text = 'Oops! no text assigned.'
+        self.bound = []
+        self.loosed = []
 
-    def attach_view(self, p_view):
-        self.attached.append(p_view)
+    def _bind_store(self, p_view):
+        self.bound.append(p_view)
 
-    def detach_view(self, p_view):
-        self.detached.append(p_view)
+    def _loose_store(self, p_view):
+        self.loosed = [p_view]
+
+    def _new_store_gtk(self):
+        return str()
 
     @property
-    def text(self): return self._text
+    def text(self): return self._text_gtk
 
     @text.setter
-    def text(self, p_text): self._text = p_text
+    def text(self, p_text): self._text_gtk = p_text
 
 
 @pytest.fixture

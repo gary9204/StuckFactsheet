@@ -20,24 +20,6 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-# class PatchAdaptText(ATEXT.AdaptText[typing.Any]):
-#     """Class with stub for methods abstract in :class:`.AdaptText`."""
-
-#     def __init__(self):
-#         super().__init__()
-#         self._text = 'Oops! no text assigned.'
-
-#     # def attach_view(self, _view): pass
-
-#     # def detach_view(self, _view): pass
-
-#     @property
-#     def text(self): return self._text
-
-#     @text.setter
-#     def text(self, p_text): self._text = p_text
-
-
 class TestAdaptText:
     """Unit tests for :class:`.AdaptText`.
 
@@ -74,6 +56,8 @@ class TestAdaptText:
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
         source = patch_adapt_text()
+        TEXT = 'Something completely different'
+        source.text = TEXT
         source._stale = True
         I_ENTRY = 0
         source._views[I_ENTRY] = TextStaticGtk()
@@ -82,6 +66,8 @@ class TestAdaptText:
             pickle.dump(source, io_out)
         with PATH.open(mode='rb') as io_in:
             target = pickle.load(io_in)
+        assert source.text == target.text
+        assert not hasattr(target, 'ex_text')
         assert not target._stale
         assert isinstance(target._views, dict)
         assert not target._views
@@ -94,15 +80,114 @@ class TestAdaptText:
         assert target._stale is not None
         assert isinstance(target._views, dict)
         assert not target._views
+        assert isinstance(target._text_gtk, str)
+        assert not target._text_gtk
 
     def test_str(self, patch_adapt_text):
         """Confirm return is attribute content. """
         # Setup
         TEXT = 'The Parrot Sketch'
         target = patch_adapt_text()
-        target._text = TEXT
+        target._text_gtk = TEXT
         # Test
         assert TEXT == str(target)
+
+    def test_attach_view(self, patch_adapt_text):
+        """| Confirm addition of view.
+        | Case: view not attached initially
+        """
+        # Setup
+        target = patch_adapt_text()
+        N_VIEWS = 3
+        views = [ATEXT.ViewTextStatic() for _ in range(N_VIEWS)]
+        # Test
+        for view in views:
+            target.attach_view(view)
+        assert len(views) == len(target._views)
+        for view in views:
+            assert target._views[id(view)] is view
+        assert views == target.bound
+
+    def test_attach_view_warn(
+            self, patch_adapt_text, monkeypatch, PatchLogger):
+        """| Confirm addition of view.
+        | Case: view attached initially
+        """
+        # Setup
+        target = patch_adapt_text()
+        N_VIEWS = 3
+        views = [ATEXT.ViewTextStatic() for _ in range(N_VIEWS)]
+        for view in views:
+            target.attach_view(view)
+        target.bound.clear()
+        I_DUP = 1
+        view_dup = views[I_DUP]
+
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Duplicate view: {} ({}.attach_view)'
+            ''.format(hex(id(view_dup)), type(target).__name__))
+        # Test
+        target.attach_view(view_dup)
+        assert len(views) == len(target._views)
+        assert not target.bound
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
+
+    def test_detach_view(self, patch_adapt_text):
+        """| Confirm removal of view.
+        | Case: view attached initially
+        """
+        # Setup
+        target = patch_adapt_text()
+
+        N_VIEWS = 3
+        views = [ATEXT.ViewTextMarkup() for _ in range(N_VIEWS)]
+        for view in views:
+            target.attach_view(view)
+        N_REMOVE = 1
+        view_remove = views.pop(N_REMOVE)
+        # Test
+        target.detach_view(view_remove)
+        assert len(views) == len(target._views)
+        for view in views:
+            assert target._views[id(view)] is view
+        assert [view_remove] == target.loosed
+
+    def test_detach_view_warn(
+            self, patch_adapt_text, monkeypatch, PatchLogger):
+        """| Confirm removal of view.
+        | Case: view not attached initially
+        """
+        # Setup
+        target = patch_adapt_text()
+
+        N_VIEWS = 3
+        views = [ATEXT.ViewTextStatic() for _ in range(N_VIEWS)]
+        for view in views:
+            target.attach_view(view)
+        N_REMOVE = 1
+        view_remove = views.pop(N_REMOVE)
+        target.detach_view(view_remove)
+        target.loosed.clear()
+        assert len(views) == len(target._views)
+
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = (
+            'Missing view: {} ({}.detach_view)'
+            ''.format(hex(id(view_remove)), type(target).__name__))
+        # Test
+        target.detach_view(view_remove)
+        assert not target.loosed
+        assert len(views) == len(target._views)
+        assert patch_logger.called
+        assert PatchLogger.T_WARNING == patch_logger.level
+        assert log_message == patch_logger.message
 
     def test_is_fresh(self, patch_adapt_text):
         """Confirm return matches state. """
@@ -152,8 +237,8 @@ class TestAdaptTextCommon:
     """
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-            (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
-            (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
+        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
+        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
         ])
     def test_get_set_state(self, tmp_path, CLASS_ADAPT, CLASS_VIEW):
         """Confirm conversion to and from pickle format."""
@@ -185,18 +270,18 @@ class TestAdaptTextCommon:
                              NAME_SIGNAL, N_DEFAULT):
         """Confirm reconstruction of signal connections."""
         # Setup
+        source = CLASS_ADAPT()
+        source._stale = True
+        TEXT = 'The Parrot Sketch'
+        source.text = TEXT
+        I_ENTRY = 0
+        source._views[I_ENTRY] = CLASS_TEXT()
         # Warning: GO.signal_lookup fails unless there is a prior
         #    reference to CLASS_TEXT.  Reference loads GObject class.
         origin_gtype = GO.type_from_name(GO.type_name(CLASS_TEXT))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         NO_SIGNAL = 0
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        TEXT = 'The Parrot Sketch'
-        source = CLASS_ADAPT()
-        source._stale = True
-        source.text = TEXT
-        I_ENTRY = 0
-        source._views[I_ENTRY] = CLASS_TEXT()
         # Test
         with PATH.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
@@ -215,9 +300,9 @@ class TestAdaptTextCommon:
         assert (N_DEFAULT + 1) == n_handlers
 
     @pytest.mark.parametrize('CLASS_ADAPT, CLASS_TEXT', [
-            (ATEXT.AdaptTextFormat, ATEXT.TextFormatGtk),
-            (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk),
-            (ATEXT.AdaptTextStatic, ATEXT.TextStaticGtk),
+        (ATEXT.AdaptTextFormat, ATEXT.TextFormatGtk),
+        (ATEXT.AdaptTextMarkup, ATEXT.TextMarkupGtk),
+        (ATEXT.AdaptTextStatic, ATEXT.TextStaticGtk),
         ])
     def test_init(self, CLASS_ADAPT, CLASS_TEXT):
         """Confirm initialization. """
@@ -255,137 +340,6 @@ class TestAdaptTextCommon:
             GO.signal_handler_disconnect(target._text_gtk, id_signal)
         assert (N_DEFAULT + 1) == n_handlers
 
-    @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
-        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
-        ])
-    def test_attach_view(self, CLASS_ADAPT, CLASS_VIEW):
-        """| Confirm addition of view.
-        | Case: view not attached initially
-        """
-        # Setup
-        target = CLASS_ADAPT()
-        N_VIEWS = 3
-        views = [CLASS_VIEW() for _ in range(N_VIEWS)]
-        # Test
-        for view in views:
-            target.attach_view(view)
-        assert len(views) == len(target._views)
-        for view in views:
-            assert target._text_gtk is view.get_buffer()
-            assert target._views[id(view)] is view
-
-    @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
-        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
-        ])
-    def test_attach_view_warn(
-            self, CLASS_ADAPT, CLASS_VIEW, monkeypatch, PatchLogger):
-        """| Confirm addition of view.
-        | Case: view attached initially
-        """
-        # Setup
-        class PatchSetBuffer:
-            def __init__(self): self.called = False
-
-            def set_buffer(self, _buffer): self.called = True
-
-        target = CLASS_ADAPT()
-        N_VIEWS = 3
-        views = [CLASS_VIEW() for _ in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
-        I_DUP = 1
-        view_dup = views[I_DUP]
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = (
-            'Duplicate view: {} ({}.attach_view)'
-            ''.format(hex(id(view_dup)), type(target).__name__))
-
-        patch_set = PatchSetBuffer()
-        monkeypatch.setattr(
-            ATEXT.ViewTextMarkup, 'set_buffer', patch_set.set_buffer)
-        # Test
-        target.attach_view(view_dup)
-        assert len(views) == len(target._views)
-        assert not patch_set.called
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
-
-    @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
-        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
-        ])
-    def test_detach_view(self, CLASS_ADAPT, CLASS_VIEW):
-        """| Confirm removal of view.
-        | Case: view attached initially
-        """
-        # Setup
-        target = CLASS_ADAPT()
-
-        N_VIEWS = 3
-        views = [CLASS_VIEW() for _ in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
-        N_REMOVE = 1
-        view_remove = views.pop(N_REMOVE)
-        view_remove.set_visible(True)
-        # Test
-        target.detach_view(view_remove)
-        assert len(views) == len(target._views)
-        assert not view_remove.get_visible()
-        for view in views:
-            assert target._text_gtk is view.get_buffer()
-            assert target._views[id(view)] is view
-
-    @pytest.mark.parametrize('CLASS_ADAPT, CLASS_VIEW', [
-        (ATEXT.AdaptTextFormat, ATEXT.ViewTextFormat),
-        (ATEXT.AdaptTextMarkup, ATEXT.ViewTextMarkup),
-        ])
-    def test_detach_view_warn(
-            self, CLASS_ADAPT, CLASS_VIEW, monkeypatch, PatchLogger):
-        """| Confirm removal of view.
-        | Case: view not attached initially
-        """
-        # Setup
-        target = CLASS_ADAPT()
-
-        N_VIEWS = 3
-        views = [CLASS_VIEW() for _ in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
-        N_REMOVE = 1
-        view_remove = views.pop(N_REMOVE)
-        target.detach_view(view_remove)
-        assert len(views) == len(target._views)
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = (
-            'Missing view: {} ({}.detach_view)'
-            ''.format(hex(id(view_remove)), type(target).__name__))
-        # Test
-        target.detach_view(view_remove)
-        assert len(views) == len(target._views)
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
-
-
-class TestAdaptTextMarkup:
-    """Unit tests for :class:`.AdaptTextMarkup`.
-
-    :class:`.TestAdaptTextCommon` contains all unit tests for
-    :class:`.AdaptTestMarkup.
-    """
-
-    pass
-
 
 class TestAdaptTextFormat:
     """Unit tests for :class:`.AdaptTextFormat`.
@@ -394,7 +348,67 @@ class TestAdaptTextFormat:
     :class:`.AdaptTestFormat.
     """
 
-    pass
+    def test_bind_store(self):
+        """Confirm GTK binding."""
+        # Setup
+        target = ATEXT.AdaptTextFormat()
+        VIEW = ATEXT.ViewTextFormat()
+        # Test
+        target._bind_store(VIEW)
+        assert target._text_gtk is VIEW.get_buffer()
+
+    def test_loose_store(self):
+        """Confirm GTK binding."""
+        # Setup
+        target = ATEXT.AdaptTextFormat()
+        VIEW = ATEXT.ViewTextFormat()
+        target._bind_store(VIEW)
+        assert target._text_gtk is VIEW.get_buffer()
+        # Test
+        target._loose_store(VIEW)
+        assert target._text_gtk is not VIEW.get_buffer()
+
+    def test_new_store_gtk(self):
+        """Confirm storage type."""
+        # Setup
+        target = ATEXT.AdaptTextFormat()
+        # Test
+        assert isinstance(target._text_gtk, ATEXT.TextFormatGtk)
+
+
+class TestAdaptTextMarkup:
+    """Unit tests for :class:`.AdaptTextMarkup`.
+
+    :class:`.TestAdaptTextCommon` contains additional unit tests for
+    :class:`.AdaptTestMarkup.
+    """
+
+    def test_bind_store(self):
+        """Confirm GTK binding."""
+        # Setup
+        target = ATEXT.AdaptTextMarkup()
+        VIEW = ATEXT.ViewTextMarkup()
+        # Test
+        target._bind_store(VIEW)
+        assert target._text_gtk is VIEW.get_buffer()
+
+    def test_loose_store(self):
+        """Confirm GTK binding."""
+        # Setup
+        target = ATEXT.AdaptTextMarkup()
+        VIEW = ATEXT.ViewTextMarkup()
+        target._bind_store(VIEW)
+        assert target._text_gtk is VIEW.get_buffer()
+        # Test
+        target._loose_store(VIEW)
+        assert target._text_gtk is not VIEW.get_buffer()
+
+    def test_new_store_gtk(self):
+        """Confirm storage type."""
+        # Setup
+        target = ATEXT.AdaptTextMarkup()
+        # Test
+        assert isinstance(target._text_gtk, ATEXT.TextMarkupGtk)
 
 
 class TestAdaptTextStatic:
@@ -403,6 +417,38 @@ class TestAdaptTextStatic:
     See :class:`.TestAdaptTextCommon` for additional unit tests for
     :class:`.AdaptTestStatic.
     """
+
+    def test_bind_store(self):
+        """Confirm GTK binding."""
+        # Setup
+        target = ATEXT.AdaptTextStatic()
+        TEXT = 'Something <i>completely </i>different!'
+        target.text = TEXT
+        VIEW = ATEXT.ViewTextStatic()
+        # Test
+        target._bind_store(VIEW)
+        assert TEXT == VIEW.get_label()
+
+    def test_loose_store(self):
+        """Confirm GTK binding."""
+        # Setup
+        target = ATEXT.AdaptTextStatic()
+        VIEW = ATEXT.ViewTextStatic()
+        TEXT = 'Something <i>completely </i>different!'
+        VIEW.set_label(TEXT)
+        BLANK = ''
+        # Test
+        target._loose_store(VIEW)
+        target._bind_store(VIEW)
+        assert BLANK == VIEW.get_label()
+
+    def test_new_store_gtk(self):
+        """Confirm storage type."""
+        # Setup
+        target = ATEXT.AdaptTextStatic()
+        # Test
+        assert isinstance(target._text_gtk, ATEXT.TextStaticGtk)
+
     def test_attach_view(self):
         """| Confirm addition of view.
         | Case: view not attached initially
@@ -470,10 +516,8 @@ class TestAdaptTextStatic:
             target.attach_view(view)
         N_REMOVE = 1
         view_remove = views.pop(N_REMOVE)
-        view_remove.set_visible(True)
         # Test
         target.detach_view(view_remove)
-        assert len(views) == len(target._views)
         assert not view_remove.get_visible()
         for view in views:
             assert target._text_gtk == view.get_label()
@@ -520,19 +564,29 @@ class TestAdaptTextStatic:
         target = ATEXT.AdaptTextStatic()
         TEXT = 'The Parrot Sketch'
         target._text_gtk = TEXT
+        N_VIEWS = 3
+        views = [ATEXT.ViewTextStatic() for _ in range(N_VIEWS)]
+        for view in views:
+            target.attach_view(view)
         target.set_fresh()
         # Test: get with fresh
         assert TEXT == target.text
+        for view in views:
+            assert TEXT == view.get_label()
         assert target.is_fresh()
         # Test: get with stale
         target.set_stale()
         assert TEXT == target.text
+        for view in views:
+            assert TEXT == view.get_label()
         assert target.is_stale()
         # Test: set with fresh
         target.set_fresh()
         TEXT_NEW = 'Something <i>completely </i>different!'
         target.text = TEXT_NEW
         assert TEXT_NEW == target.text
+        for view in views:
+            assert TEXT_NEW == view.get_label()
         assert target.is_stale()
         # Test: no delete
         prop = getattr(ATEXT.AdaptTextFormat, 'text')
@@ -543,6 +597,7 @@ class TestTypes:
     """Unit tests for type hint definitions in :mod:`.adapt_text`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+        (type(ATEXT.TextOpaqueGtk), typing.TypeVar),
         (ATEXT.TextFormatGtk, Gtk.TextBuffer),
         (ATEXT.TextMarkupGtk, Gtk.EntryBuffer),
         (ATEXT.TextStaticGtk, str),
