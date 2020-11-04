@@ -3,22 +3,22 @@ Defines base for model classes that encapsulate widget toolkit classes.
 
 .. data:: ModelOpaque
 
-    Placeholder type hint for storage element of toolkit.  A GTK example
-    is Gtk.TextBuffer_.
+    Placeholder type hint for a model component.  A GTK example is
+    `Gtk.TextBuffer`_.
 
 .. _Gtk.TextBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 
 .. data:: PersistOpaque
 
-    Placeholder type hint for representation of storage element suitable
+    Placeholder type hint for model representation suitable
     for persistent storage.  A GTK example is the string representation
-    of a Gtk.TextBuffer_.
+    of a `Gtk.TextBuffer`_.
 
 .. data:: ViewOpaque
 
-    Placeholder type hint for view element of a toolkit.  A GTK example
-    is Gtk.TextView_.
+    Placeholder type hint for a view element.  A GTK example is
+    `Gtk.TextView`_.
 
 .. _Gtk.TextView:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
