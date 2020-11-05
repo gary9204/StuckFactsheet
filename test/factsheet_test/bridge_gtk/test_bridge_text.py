@@ -17,28 +17,28 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
-    """:class:`.BridgeText` subclass with stub text property."""
-
-    def __init__(self):
-        super().__init__()
-        self.bound = []
-        self.loosed = []
-
-    def _bind(self, p_view):
-        self.bound.append(p_view)
-
-    def _get_persist(self):
-        return self._model
-
-    def _loose(self, p_view):
-        self.loosed = [p_view]
-
-    def _new_model(self):
-        return str()
-
-    def _set_persist(self, p_persist):
-        self._model = str(p_persist)
+# class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
+#     """:class:`.BridgeText` subclass with stub text property."""
+# 
+#     def __init__(self):
+#         super().__init__()
+#         self.bound = []
+#         self.loosed = []
+# 
+#     def _bind(self, p_view):
+#         self.bound.append(p_view)
+# 
+#     def _get_persist(self):
+#         return self._model
+# 
+#     def _loose(self, p_view):
+#         self.loosed = [p_view]
+# 
+#     def _new_model(self):
+#         return str()
+# 
+#     def _set_persist(self, p_persist):
+#         self._model = str(p_persist)
 
 
 class TestBridgeText:
@@ -62,7 +62,7 @@ class TestBridgeText:
         assert hasattr(CLASS, '__abstractmethods__')
         assert NAME_METHOD in CLASS.__abstractmethods__
 
-    def test_eq(self):
+    def test_eq(self, patch_bridge_text):
         """Confirm equality comparison.
 
         #. Case: not a text attribute.
@@ -71,26 +71,26 @@ class TestBridgeText:
         """
         # Setup
         TEXT = 'The Parrot Sketch'
-        source = PatchBridgeText()
+        source = patch_bridge_text()
         source._set_persist(TEXT)
         # Test: not a text attribute.
         assert not source.__eq__(TEXT)
         # Test: different content.
         TEXT_DIFFER = 'Something completely different.'
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._set_persist(TEXT_DIFFER)
         assert not source.__eq__(target)
         # Test: equal
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._set_persist(TEXT)
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_get_set_state(self, tmp_path):
+    def test_get_set_state(self, tmp_path, patch_bridge_text):
         """Confirm conversion to and from pickle format."""
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = PatchBridgeText()
+        source = patch_bridge_text()
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         source._stale = True
@@ -106,11 +106,11 @@ class TestBridgeText:
         assert not target._views
         assert not target._stale
 
-    def test_init(self):
+    def test_init(self, patch_bridge_text):
         """Confirm initialization."""
         # Setup
         # Test
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         assert isinstance(target._views, dict)
         assert not target._views
         assert isinstance(target._model, str)
@@ -118,22 +118,22 @@ class TestBridgeText:
         assert target._stale is not None
         assert not target._stale
 
-    def test_str(self):
+    def test_str(self, patch_bridge_text):
         """Confirm return is attribute content. """
         # Setup
         TEXT = 'The Parrot Sketch'
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._model = TEXT
-        expect = '<PatchBridgeText: {}>'.format(TEXT)
+        expect = '<{}: {}>'.format(type(target).__name__, TEXT)
         # Test
         assert expect == str(target)
 
-    def test_attach_view(self):
+    def test_attach_view(self, patch_bridge_text):
         """| Confirm addition of view.
         | Case: view not attached initially
         """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         N_VIEWS = 3
         views = [BTEXT.ViewTextStatic() for _ in range(N_VIEWS)]
         # Test
@@ -145,12 +145,12 @@ class TestBridgeText:
         assert views == target.bound
 
     def test_attach_view_warn(
-            self, monkeypatch, PatchLogger):
+            self, patch_bridge_text, monkeypatch, PatchLogger):
         """| Confirm addition of view.
         | Case: view attached initially
         """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         N_VIEWS = 3
         views = [BTEXT.ViewTextStatic() for _ in range(N_VIEWS)]
         for view in views:
@@ -173,12 +173,12 @@ class TestBridgeText:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_detach_view(self):
+    def test_detach_view(self, patch_bridge_text):
         """| Confirm removal of view.
         | Case: view attached initially
         """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
 
         N_VIEWS = 3
         views = [BTEXT.ViewTextMarkup() for _ in range(N_VIEWS)]
@@ -194,12 +194,12 @@ class TestBridgeText:
         assert [view_remove] == target.loosed
 
     def test_detach_view_warn(
-            self, monkeypatch, PatchLogger):
+            self, patch_bridge_text, monkeypatch, PatchLogger):
         """| Confirm removal of view.
         | Case: view not attached initially
         """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
 
         N_VIEWS = 3
         views = [BTEXT.ViewTextStatic() for _ in range(N_VIEWS)]
@@ -225,58 +225,59 @@ class TestBridgeText:
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    def test_is_fresh(self):
+    def test_is_fresh(self, patch_bridge_text):
         """Confirm return matches state. """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._stale = False
         # Test
         assert target.is_fresh()
         target._stale = True
         assert not target.is_fresh()
 
-    def test_is_stale(self):
+    def test_is_stale(self, patch_bridge_text):
         """Confirm return matches state. """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._stale = False
         # Test
         assert not target.is_stale()
         target._stale = True
         assert target.is_stale()
 
-    def test_set_freah(self):
+    def test_set_freah(self, patch_bridge_text):
         """Confirm attribute marked fresh. """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._stale = True
         # Test
         target.set_fresh()
         assert not target._stale
 
-    def test_set_stale(self):
+    def test_set_stale(self, patch_bridge_text):
         """Confirm attribute marked stale. """
         # Setup
-        target = PatchBridgeText()
+        target = patch_bridge_text()
         target._stale = False
         # Test
         target.set_stale()
         assert target._stale
 
-    def test_text(self):
+    def test_text(self, patch_bridge_text):
         """Confirm access limits of each concrete property."""
         # Setup
-        target = PatchBridgeText()
+        target_class = patch_bridge_text
+        target = target_class()
         TEXT = 'The Parrot Sketch'
         target._set_persist(TEXT)
         TEXT_NEW = 'Something completely different.'
         # Test
-        assert PatchBridgeText.text.fget is not None
+        assert target_class.text.fget is not None
         assert TEXT == target.text
-        assert PatchBridgeText.text.fset is not None
+        assert target_class.text.fset is not None
         target.text = TEXT_NEW
         assert TEXT_NEW == target._get_persist()
-        assert PatchBridgeText.text.fdel is None
+        assert target_class.text.fdel is None
 
 
 class TestBridgeTextCommon:

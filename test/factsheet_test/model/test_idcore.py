@@ -8,7 +8,7 @@ import pytest   # type: ignore[import]
 import re
 import typing
 
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.model.idcore as MIDCORE
 
 
@@ -107,7 +107,7 @@ class TestIdCore:
         False,
         ])
     def test_is_fresh(self, IS_STALE, monkeypatch, patch_idcore):
-        """Confirm negation of :meth:`~.AdaptText.is_stale."""
+        """Confirm negation of :meth:`~.BridgeText.is_stale."""
         # Setup
         class PatchIsStale:
             def __init__(self, p_result):
@@ -209,7 +209,7 @@ class TestIdCore:
                 self.called = True
 
         patch = PatchAttrSetStale()
-        monkeypatch.setattr(ADAPT.AdaptText, 'set_stale', patch.set_stale)
+        monkeypatch.setattr(BTEXT.BridgeText, 'set_stale', patch.set_stale)
         target = patch_idcore()
         target._stale = False
         # Test
@@ -254,18 +254,18 @@ class TestIdCoreTypes:
     """Unit tests for type hint definitions in :mod:`.idcore`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (type(MIDCORE.NameAdapt), typing.TypeVar),
-        (MIDCORE.NameAdapt.__constraints__, (ADAPT.AdaptTextFormat,
-                                             ADAPT.AdaptTextMarkup,
-                                             ADAPT.AdaptTextStatic)),
-        (type(MIDCORE.SummaryAdapt), typing.TypeVar),
-        (MIDCORE.SummaryAdapt.__constraints__, (ADAPT.AdaptTextFormat,
-                                                ADAPT.AdaptTextMarkup,
-                                                ADAPT.AdaptTextStatic)),
-        (type(MIDCORE.TitleAdapt), typing.TypeVar),
-        (MIDCORE.TitleAdapt.__constraints__, (ADAPT.AdaptTextFormat,
-                                              ADAPT.AdaptTextMarkup,
-                                              ADAPT.AdaptTextStatic)),
+        (type(MIDCORE.BridgeName), typing.TypeVar),
+        (MIDCORE.BridgeName.__constraints__, (BTEXT.BridgeTextFormat,
+                                              BTEXT.BridgeTextMarkup,
+                                              BTEXT.BridgeTextStatic)),
+        (type(MIDCORE.BridgeSummary), typing.TypeVar),
+        (MIDCORE.BridgeSummary.__constraints__, (BTEXT.BridgeTextFormat,
+                                                 BTEXT.BridgeTextMarkup,
+                                                 BTEXT.BridgeTextStatic)),
+        (type(MIDCORE.BridgeTitle), typing.TypeVar),
+        (MIDCORE.BridgeTitle.__constraints__, (BTEXT.BridgeTextFormat,
+                                               BTEXT.BridgeTextMarkup,
+                                               BTEXT.BridgeTextStatic)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

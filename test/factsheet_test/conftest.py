@@ -5,6 +5,7 @@ import pytest   # type: ignore[import]
 import typing
 
 import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.model.idcore as MIDCORE
 # import factsheet.abc_types.abc_fact as ABC_FACT
 # import factsheet.abc_types.abc_infoid as ABC_INFOID
@@ -19,6 +20,38 @@ import factsheet.model.idcore as MIDCORE
 # from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 # from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 # from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
+    """:class:`.BridgeText` subclass with stub text property."""
+
+    def __init__(self):
+        super().__init__()
+        self.bound = []
+        self.loosed = []
+
+    def _bind(self, p_view):
+        self.bound.append(p_view)
+
+    def _get_persist(self):
+        return self._model
+
+    def _loose(self, p_view):
+        self.loosed = [p_view]
+
+    def _new_model(self):
+        return str()
+
+    def _set_persist(self, p_persist):
+        self._model = str(p_persist)
+
+
+@pytest.fixture
+def patch_bridge_text():
+    """Pytest fixture: return :class:`.BridgeText` subclass with stub
+    text property.
+    """
+    return PatchBridgeText
 
 
 class PatchAdaptText(ADAPT.AdaptText[typing.Any, typing.Any]):
@@ -58,9 +91,9 @@ class PatchIdCore(MIDCORE.IdCore):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._name = PatchAdaptText()
-        self._summary = PatchAdaptText()
-        self._title = PatchAdaptText()
+        self._name = PatchBridgeText()
+        self._summary = PatchBridgeText()
+        self._title = PatchBridgeText()
 
     @property
     def name(self):

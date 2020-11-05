@@ -2,15 +2,15 @@
 Defines identity attributes common to Factsheet model components.
 See :mod:`~factsheet.model`
 
-.. data:: NameAdapt
+.. data:: BridgeName
 
     Type hint for text adpter for name attribute of model component.
 
-.. data:: SummaryAdapt
+.. data:: BridgeSummary
 
     Type hint for text adpter for summary attribute of model component.
 
-.. data:: TitleAdapt
+.. data:: BridgeTitle
 
     Type hint for text adpter for title attribute of model component.
 """
@@ -18,18 +18,18 @@ import abc
 import typing
 
 import factsheet.abc_types.abc_stalefile as ABC_STALE
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_ui as BUI
 
-NameAdapt = typing.TypeVar('NameAdapt', ADAPT.AdaptTextFormat,
-                           ADAPT.AdaptTextMarkup, ADAPT.AdaptTextStatic)
-SummaryAdapt = typing.TypeVar('SummaryAdapt', ADAPT.AdaptTextFormat,
-                              ADAPT.AdaptTextMarkup, ADAPT.AdaptTextStatic)
-TitleAdapt = typing.TypeVar('TitleAdapt', ADAPT.AdaptTextFormat,
-                            ADAPT.AdaptTextMarkup, ADAPT.AdaptTextStatic)
+BridgeName = typing.TypeVar('BridgeName', BUI.BridgeTextFormat,
+                            BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
+BridgeSummary = typing.TypeVar('BridgeSummary', BUI.BridgeTextFormat,
+                               BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
+BridgeTitle = typing.TypeVar('BridgeTitle', BUI.BridgeTextFormat,
+                             BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
 
 
-class IdCore(typing.Generic[NameAdapt, SummaryAdapt, TitleAdapt],
-             ABC_STALE.InterfaceStaleFile, abc.ABC):
+class IdCore(ABC_STALE.InterfaceStaleFile,
+             typing.Generic[BridgeName, BridgeSummary, BridgeTitle]):
     """Defines identity attributes common to Factsheet model components.
 
     .. admonition:: About Equality
@@ -110,7 +110,7 @@ class IdCore(typing.Generic[NameAdapt, SummaryAdapt, TitleAdapt],
 
     @property
     @abc.abstractmethod
-    def name(self) -> NameAdapt:
+    def name(self) -> BridgeName:
         """Return component name adapter."""
         raise NotImplementedError
 
@@ -127,12 +127,12 @@ class IdCore(typing.Generic[NameAdapt, SummaryAdapt, TitleAdapt],
 
     @property
     @abc.abstractmethod
-    def summary(self) -> SummaryAdapt:
+    def summary(self) -> BridgeSummary:
         """Return component summary adapter."""
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
-    def title(self) -> TitleAdapt:
+    def title(self) -> BridgeTitle:
         """Return component title adapter."""
         raise NotImplementedError

@@ -16,10 +16,9 @@ LineOutline = BOUTLINE.LineOutline
 ModelOutline = BOUTLINE.ModelOutline
 ViewOutline = BOUTLINE.ViewOutline
 
-ModelTextFormat = BTEXT.ModelTextFormat
-ModelTextMarkup = BTEXT.ModelTextMarkup
-ModelTextStatic = BTEXT.ModelTextStatic
-PersistText = BTEXT.PersistText
+BridgeTextFormat = BTEXT.BridgeTextFormat
+BridgeTextMarkup = BTEXT.BridgeTextMarkup
+BridgeTextStatic = BTEXT.BridgeTextStatic
 ViewTextFormat = BTEXT.ViewTextFormat
 ViewTextMarkup = BTEXT.ViewTextMarkup
 ViewTextStatic = BTEXT.ViewTextStatic
