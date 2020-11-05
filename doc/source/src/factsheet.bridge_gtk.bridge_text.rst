@@ -1,0 +1,7 @@
+``bridge_text`` GTK Bridge Module
+=================================
+
+.. automodule:: factsheet.bridge_gtk.bridge_text
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -89,8 +89,8 @@ PersistOutline = typing.MutableMapping[str, ItemOpaque]
 ViewOutline = typing.Union[Gtk.ComboBox, Gtk.TreeView]
 
 
-class InterfaceOutline(
-        typing.Generic[ItemOpaque, LineOpaque], abc.ABC):
+class InterfaceOutline(abc.ABC, typing.Generic[
+        ItemOpaque, LineOpaque]):
     """Specifies methods of model clases that encapsulate toolkit
     storage elements for single-level outlines.
     """
@@ -151,8 +151,8 @@ class InterfaceOutline(
         raise NotImplementedError
 
 
-class InterfaceOutlineMulti(
-        typing.Generic[ItemOpaque, LineOpaque, OutlineOpaque], abc.ABC):
+class InterfaceOutlineMulti(abc.ABC, typing.Generic[
+        ItemOpaque, LineOpaque, OutlineOpaque]):
     """Specifies methods of model clases that encapsulate toolkit
     storage elements for multi-level outlines.
     """
@@ -222,10 +222,10 @@ class InterfaceOutlineMulti(
         raise NotImplementedError
 
 
-class BridgeOutline(
-        typing.Generic[ItemOpaque],
-        BBASE.BridgeBase[ModelOutlineSingle, PersistOutline, ViewOutline],
-        InterfaceOutline[ItemOpaque, LineOutline]):
+class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
+                    BBASE.BridgeBase[
+                        ModelOutlineSingle, PersistOutline, ViewOutline],
+                    typing.Generic[ItemOpaque]):
     """
     Encapsulate widget toolkit class for a single-level outline.
 
@@ -336,9 +336,9 @@ class BridgeOutline(
             self._model.insert(position, [item])
 
 
-class BridgeOutlineMulti(
-        typing.Generic[ItemOpaque, OutlineOpaque], BridgeOutline,
-        InterfaceOutlineMulti[ItemOpaque, LineOutline, 'BridgeOutlineMulti']):
+class BridgeOutlineMulti(InterfaceOutlineMulti[
+        ItemOpaque, LineOutline, 'BridgeOutlineMulti'],
+        BridgeOutline, typing.Generic[ItemOpaque, OutlineOpaque]):
     """
     Encapsulate widget toolkit class for a single-level outline.
 

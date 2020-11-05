@@ -34,8 +34,8 @@ PersistOpaque = typing.TypeVar('PersistOpaque')
 ViewOpaque = typing.TypeVar('ViewOpaque')
 
 
-class BridgeBase(
-        typing.Generic[ModelOpaque, PersistOpaque, ViewOpaque], abc.ABC):
+class BridgeBase(abc.ABC,
+                 typing.Generic[ModelOpaque, PersistOpaque, ViewOpaque],):
     """Common ancestor of model classes that encapsulate storage
     elements of toolkit.
 
@@ -75,10 +75,6 @@ class BridgeBase(
         self._model = self._new_model()
         self._init_transients()
 
-    def __str__(self) -> str:
-        """Return storage element as string."""
-        return '<{}: {}>'.format(type(self).__name__, self._get_persist())
-
     def _init_transients(self) -> None:
         """Set storage element content for initialization and pickling."""
         self._views: typing.MutableMapping[int, ViewOpaque] = dict()
@@ -101,6 +97,10 @@ class BridgeBase(
         self._set_persist(self.ex_model)   # type: ignore[attr-defined]
         del self.ex_model       # type: ignore[attr-defined]
         self._init_transients()
+
+    def __str__(self) -> str:
+        """Return storage element as string."""
+        return '<{}: {}>'.format(type(self).__name__, self._get_persist())
 
     def attach_view(self, p_view: ViewOpaque) -> None:
         """Associate view element with storage element.

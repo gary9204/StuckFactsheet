@@ -8,6 +8,7 @@ import typing
 
 import factsheet.bridge_gtk.bridge_base as BBASE
 import factsheet.bridge_gtk.bridge_outline as BOUTLINE
+import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.bridge_ui as BUI
 
 gi.require_version('Gtk', '3.0')
@@ -31,6 +32,13 @@ class TestBridgeTypes:
         (BUI.LineOutline, BOUTLINE.LineOutline),
         (BUI.ModelOutline, BOUTLINE.ModelOutline),
         (ViewOutline.__args__, (Gtk.ComboBox, Gtk.TreeView)),
+        (BUI.ModelTextFormat, BTEXT.ModelTextFormat),
+        (BUI.ModelTextMarkup, BTEXT.ModelTextMarkup),
+        (BUI.ModelTextStatic, BTEXT.ModelTextStatic),
+        (BUI.PersistText, BTEXT.PersistText),
+        (BUI.ViewTextFormat, BTEXT.ViewTextFormat),
+        (BUI.ViewTextMarkup, BTEXT.ViewTextMarkup),
+        (BUI.ViewTextStatic, BTEXT.ViewTextStatic),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm API definitions."""
