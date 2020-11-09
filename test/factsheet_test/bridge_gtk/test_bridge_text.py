@@ -17,30 +17,6 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-# class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
-#     """:class:`.BridgeText` subclass with stub text property."""
-# 
-#     def __init__(self):
-#         super().__init__()
-#         self.bound = []
-#         self.loosed = []
-# 
-#     def _bind(self, p_view):
-#         self.bound.append(p_view)
-# 
-#     def _get_persist(self):
-#         return self._model
-# 
-#     def _loose(self, p_view):
-#         self.loosed = [p_view]
-# 
-#     def _new_model(self):
-#         return str()
-# 
-#     def _set_persist(self, p_persist):
-#         self._model = str(p_persist)
-
-
 class TestBridgeText:
     """Unit tests for :class:`.BridgeText`.
 

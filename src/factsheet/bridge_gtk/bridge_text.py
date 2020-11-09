@@ -1,6 +1,5 @@
 """
-Defines model bridge classes that encapsulate widget toolkit text
-classes.
+Defines bridge classes that encapsulate widget toolkit text classes.
 
 .. data:: ModelTextFormat
 
@@ -78,7 +77,7 @@ logger = logging.getLogger('Main.bridge_text')
 
 class BridgeText(
         ABC_STALE.InterfaceStaleFile,
-        BBASE.BridgeBase,
+        BBASE.BridgeBase[ModelTextOpaque, PersistText, ViewTextOpaque],
         typing.Generic[ModelTextOpaque, ViewTextOpaque],):
     """Common ancestor of bridge classes for text.
 
