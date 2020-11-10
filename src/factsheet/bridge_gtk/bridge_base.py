@@ -102,22 +102,12 @@ class BridgeBase(abc.ABC,
         """Return storage element as string."""
         return '<{}: {}>'.format(type(self).__name__, self._get_persist())
 
-    def attach_view(self, p_view: ViewOpaque) -> None:
-        """Associate view element with storage element.
-
-        Log a warning when the view element already is associated with
-        the storage element.
-
-        :param p_view: view to associate.
-        """
-        id_view = id(p_view)
-        if id_view in self._views:
-            logger.warning('Duplicate view: {} ({}.{})'.format(
-                hex(id_view), type(self).__name__, self.attach_view.__name__))
-            return
-
-        self._views[id_view] = p_view
-        self._bind(p_view=p_view)
+    def attach_view(self) -> ViewOpaque:
+        """Return new view element associated with storage element."""
+        view = self._new_view()
+        self._bind(view)
+        self._views[id(view)] = view
+        return view
 
     @abc.abstractmethod
     def _bind(self, p_view: ViewOpaque):
@@ -171,6 +161,11 @@ class BridgeBase(abc.ABC,
     @abc.abstractmethod
     def _new_model(self) -> ModelOpaque:
         """Return toolkit-specific storage element."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _new_view(self) -> ViewOpaque:
+        """Return toolkit-specific view element."""
         raise NotImplementedError
 
     @abc.abstractmethod

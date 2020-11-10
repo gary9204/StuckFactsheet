@@ -2,7 +2,7 @@
 Defines bridge classes to encapsulate widget toolkit outline classes.
 
 An outline is an ordered list analogous to a bulleted list in a print
-document.  An outline contains lines, each of wihich identifies an item.
+document.  An outline contains lines, each of which identifies an item.
 Lines and items are analogous to bullets and text in a bulleted list.
 Like a bulleted list, an outline may be either single-level or multi-
 level.
@@ -56,16 +56,26 @@ level.
     Type hint for outline representation suitable for persistent
     storage.
 
-.. data:: ViewOutline
+.. data:: ViewOutlineColumnar
 
-    Type hint for GTK element to view an outline.  See `Gtk.ComboBox`_
-    and `Gtk.TreeView`_.
-
-.. _`Gtk.ComboBox`:
-    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ComboBox.html
+    Type hint for GTK element to view an outline in columnar format.
+    See `Gtk.TreeView`_.
 
 .. _`Gtk.TreeView`:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeView.html
+
+.. data:: ViewOutlineOpaque
+
+    Type hint for GTK element to view an outline.  See
+    :data:`ViewOutlineColumnar` and :data:`ViewOutlineSelect`.
+
+.. data:: ViewOutlineSelect
+
+    Type hint for GTK element to view an outline as a selection.
+    See `Gtk.ComboBox`_.
+
+.. _`Gtk.ComboBox`:
+    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ComboBox.html
     """
 import abc
 import gi   # type: ignore[import]
@@ -86,7 +96,10 @@ ModelOutline = typing.Union[Gtk.TreeModel]
 ModelOutlineMulti = typing.Union[Gtk.TreeStore]
 ModelOutlineSingle = typing.Union[Gtk.ListStore]
 PersistOutline = typing.MutableMapping[str, ItemOpaque]
-ViewOutline = typing.Union[Gtk.ComboBox, Gtk.TreeView]
+ViewOutlineColumnar = typing.Union[Gtk.TreeView]
+ViewOutlineSelect = typing.Union[Gtk.ComboBox]
+ViewOutlineOpaque = typing.TypeVar(
+    'ViewOutlineOpaque', ViewOutlineColumnar, ViewOutlineSelect)
 
 
 class InterfaceOutline(abc.ABC, typing.Generic[
@@ -150,6 +163,15 @@ class InterfaceOutline(abc.ABC, typing.Generic[
         """Return iterator over lines in outline."""
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def remove(self, p_line: typing.Optional[LineOpaque]) -> None:
+        """Remove item at given line from outline.
+
+        :param p_line: line to remove along with all descendants.  If
+            line is None, remove no items.
+        """
+        raise NotImplementedError
+
 
 class InterfaceOutlineMulti(abc.ABC, typing.Generic[
         ItemOpaque, LineOpaque, OutlineOpaque]):
@@ -211,21 +233,11 @@ class InterfaceOutlineMulti(abc.ABC, typing.Generic[
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
-    def remove_section(self,
-                       p_line: typing.Optional[LineOpaque]) -> None:
-        """Remove section from outline.
-
-        :param p_line: line to remove along with all descendants.  If
-            line is None, remove no items.
-        """
-        raise NotImplementedError
-
 
 class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
-                    BBASE.BridgeBase[
-                        ModelOutlineSingle, PersistOutline, ViewOutline],
-                    typing.Generic[ItemOpaque]):
+                    BBASE.BridgeBase[ModelOutlineSingle, PersistOutline,
+                                     ViewOutlineOpaque],
+                    typing.Generic[ItemOpaque, ViewOutlineOpaque]):
     """
     Encapsulate widget toolkit class for a single-level outline.
 
@@ -239,7 +251,7 @@ class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
 
     _C_ITEM = 0
 
-    def _bind(self, p_view: ViewOutline):
+    def _bind(self, p_view: ViewOutlineOpaque):
         """Form toolkit-specific connection between outline view and
         storage elements.
 
@@ -313,7 +325,7 @@ class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
             yield line
             line = self._model.iter_next(line)
 
-    def _loose(self, p_view: ViewOutline):
+    def _loose(self, p_view: ViewOutlineOpaque):
         """Break toolkit-specific connection between outline view and
         storage elements.
 
@@ -326,6 +338,15 @@ class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
         return ModelOutlineSingle(GO.TYPE_PYOBJECT)
         # return Gtk.ListStore(GO.TYPE_PYOBJECT)
 
+    def remove(self, p_line: typing.Optional[LineOutline]) -> None:
+        """Remove item at given line from outline.
+
+        :param p_line: line to remove along with all descendants.  If
+            line is None, remove no items.
+        """
+        if p_line is not None:
+            _ = self._model.remove(p_line)
+
     def _set_persist(self, p_persist: PersistOutline) -> None:
         """Set outline storage element from content in persistent form.
 
@@ -336,11 +357,34 @@ class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
             self._model.insert(position, [item])
 
 
+class BridgeOutlineColumnar(BridgeOutline[
+        ItemOpaque, ViewOutlineColumnar], typing.Generic[ItemOpaque]):
+    """Encapsulate widget toolkit classes for columnar view of a
+    single-level outline.
+    """
+
+    def _new_view(self) -> ViewOutlineColumnar:
+        """Return toolkit-specific columnar view element."""
+        return ViewOutlineColumnar()
+
+
+class BridgeOutlineSelect(BridgeOutline[
+        ItemOpaque, ViewOutlineSelect], typing.Generic[ItemOpaque]):
+    """Encapsulate widget toolkit classes for selection view of a
+    single-level outline.
+    """
+
+    def _new_view(self) -> ViewOutlineSelect:
+        """Return toolkit-specific selection element."""
+        return ViewOutlineSelect()
+
+
 class BridgeOutlineMulti(InterfaceOutlineMulti[
         ItemOpaque, LineOutline, 'BridgeOutlineMulti'],
-        BridgeOutline, typing.Generic[ItemOpaque, OutlineOpaque]):
+        BridgeOutline[ItemOpaque, ViewOutlineOpaque],
+        typing.Generic[ItemOpaque, ViewOutlineOpaque]):
     """
-    Encapsulate widget toolkit class for a single-level outline.
+    Encapsulate widget toolkit class for a multi-level outline.
 
     .. admonition:: About Equality
 
@@ -455,16 +499,6 @@ class BridgeOutlineMulti(InterfaceOutlineMulti[
         """Return toolkit-specific outline storage element."""
         return ModelOutlineMulti(GO.TYPE_PYOBJECT)
 
-    def remove_section(self,
-                       p_line: typing.Optional[LineOutline]) -> None:
-        """Remove section from outline.
-
-        :param p_line: line to remove along with all descendants.  If
-            line is None, remove no items.
-        """
-        if p_line is not None:
-            _ = self._model.remove(p_line)
-
     def _set_persist(self, p_persist: PersistOutline) -> None:
         """Set outline storage element from content in persistent form.
 
@@ -479,3 +513,25 @@ class BridgeOutlineMulti(InterfaceOutlineMulti[
                 _ = path.up()
                 i_parent = self._model.get_iter(path)
             self._model.append(i_parent, [item])
+
+
+class BridgeOutlineMultiColumnar(BridgeOutlineMulti[
+        ItemOpaque, ViewOutlineColumnar], typing.Generic[ItemOpaque]):
+    """Encapsulate widget toolkit classes for a columnal view of a
+    multi-level outline.
+    """
+
+    def _new_view(self) -> ViewOutlineColumnar:
+        """Return toolkit-specific columnar element."""
+        return ViewOutlineColumnar()
+
+
+class BridgeOutlineMultiSelect(BridgeOutlineMulti[
+        ItemOpaque, ViewOutlineSelect], typing.Generic[ItemOpaque]):
+    """Encapsulate widget toolkit classes for a selction view of a
+    multi-level outline.
+    """
+
+    def _new_view(self) -> ViewOutlineSelect:
+        """Return toolkit-specific selection element."""
+        return ViewOutlineSelect()

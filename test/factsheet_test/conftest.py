@@ -42,6 +42,9 @@ class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
     def _new_model(self):
         return str()
 
+    def _new_view(self):
+        return str()
+
     def _set_persist(self, p_persist):
         self._model = str(p_persist)
 

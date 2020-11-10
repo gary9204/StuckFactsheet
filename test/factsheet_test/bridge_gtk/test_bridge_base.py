@@ -27,6 +27,8 @@ class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any, str]):
 
     def _new_model(self): return str()
 
+    def _new_view(self): return dict()
+
     def _set_persist(self, p_persist): self._model = p_persist
 
 
@@ -45,9 +47,8 @@ class TestBridgeBase:
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            source.attach_view(view)
+        for _ in range(N_VIEWS):
+            _ = source.attach_view()
         source.bound.clear()
         # Test: type difference.
         assert not source.__eq__(TEXT)
@@ -70,9 +71,8 @@ class TestBridgeBase:
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            source.attach_view(view)
+        for _ in range(N_VIEWS):
+            _ = source.attach_view()
         source.bound.clear()
         # Test
         with PATH.open(mode='wb') as io_out:
@@ -101,9 +101,7 @@ class TestBridgeBase:
         TEXT = 'Something completely different'
         target._set_persist(TEXT)
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
+        views = [target.attach_view() for _ in range(N_VIEWS)]
         target.bound.clear()
         # Test
         assert views == list(target)
@@ -115,9 +113,8 @@ class TestBridgeBase:
         TEXT = 'Something completely different'
         target._set_persist(TEXT)
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
+        for _ in range(N_VIEWS):
+            _ = target.attach_view()
         target.bound.clear()
         expect = '<PatchBridgeBase: {}>'.format(TEXT)
         # Test
@@ -128,6 +125,7 @@ class TestBridgeBase:
         (BBASE.BridgeBase, '_get_persist'),
         (BBASE.BridgeBase, '_loose'),
         (BBASE.BridgeBase, '_new_model'),
+        (BBASE.BridgeBase, '_new_view'),
         (BBASE.BridgeBase, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
@@ -144,51 +142,47 @@ class TestBridgeBase:
         # Setup
         target = PatchBridgeBase()
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
         # Test
-        for view in views:
-            target.attach_view(view)
+        views = [target.attach_view() for _ in range(N_VIEWS)]
         assert len(views) == len(target._views)
         for view in views:
             assert target._views[id(view)] is view
         assert views == target.bound
 
-    def test_attach_view_warn(self, monkeypatch, PatchLogger):
-        """| Confirm view element association.
-        | Case: view assocaited initially
-        """
-        # Setup
-        target = PatchBridgeBase()
-        N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
-        target.bound.clear()
-        I_DUP = 1
-        view_dup = views[I_DUP]
+    # def test_attach_view_warn(self, monkeypatch, PatchLogger):
+    #     """| Confirm view element association.
+    #     | Case: view assocaited initially
+    #     """
+    #     # Setup
+    #     target = PatchBridgeBase()
+    #     N_VIEWS = 3
+    #     views = [[i] for i in range(N_VIEWS)]
+    #     for view in views:
+    #         target.attach_view(view)
+    #     target.bound.clear()
+    #     I_DUP = 1
+    #     view_dup = views[I_DUP]
 
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = (
-            'Duplicate view: {} ({}.attach_view)'
-            ''.format(hex(id(view_dup)), type(target).__name__))
-        # Test
-        target.attach_view(view_dup)
-        assert len(views) == len(target._views)
-        assert not target.bound
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
+    #     patch_logger = PatchLogger()
+    #     monkeypatch.setattr(
+    #         logging.Logger, 'warning', patch_logger.warning)
+    #     log_message = (
+    #         'Duplicate view: {} ({}.attach_view)'
+    #         ''.format(hex(id(view_dup)), type(target).__name__))
+    #     # Test
+    #     target.attach_view(view_dup)
+    #     assert len(views) == len(target._views)
+    #     assert not target.bound
+    #     assert patch_logger.called
+    #     assert PatchLogger.T_WARNING == patch_logger.level
+    #     assert log_message == patch_logger.message
 
     def test_detach_all(self):
         """Confirm separation of all view elements."""
         # Setup
         target = PatchBridgeBase()
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
+        views = [target.attach_view() for _ in range(N_VIEWS)]
         target.bound.clear()
         # Test
         target.detach_all()
@@ -202,9 +196,7 @@ class TestBridgeBase:
         # Setup
         target = PatchBridgeBase()
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
+        views = [target.attach_view() for _ in range(N_VIEWS)]
         target.bound.clear()
         N_REMOVE = 1
         view_remove = views.pop(N_REMOVE)
@@ -222,9 +214,7 @@ class TestBridgeBase:
         # Setup
         target = PatchBridgeBase()
         N_VIEWS = 3
-        views = [[i] for i in range(N_VIEWS)]
-        for view in views:
-            target.attach_view(view)
+        views = [target.attach_view() for _ in range(N_VIEWS)]
         target.bound.clear()
         N_REMOVE = 1
         view_remove = views.pop(N_REMOVE)

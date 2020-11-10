@@ -10,11 +10,11 @@ import factsheet.bridge_gtk.bridge_text as BTEXT
 ModelOpaque = typing.Union[BBASE.ModelOpaque]
 ViewOpaque = typing.Union[BBASE.ViewOpaque]
 
-BridgeOutline = BOUTLINE.BridgeOutline
-BridgeOutlineMulti = BOUTLINE.BridgeOutlineMulti
+BridgeOutlineColumnar = BOUTLINE.BridgeOutlineColumnar
+BridgeOutlineMultiColumnar = BOUTLINE.BridgeOutlineMultiColumnar
+BridgeOutlineMultiSelect = BOUTLINE.BridgeOutlineMultiSelect
+BridgeOutlineSelect = BOUTLINE.BridgeOutlineSelect
 LineOutline = BOUTLINE.LineOutline
-ModelOutline = BOUTLINE.ModelOutline
-ViewOutline = BOUTLINE.ViewOutline
 
 BridgeTextFormat = BTEXT.BridgeTextFormat
 BridgeTextMarkup = BTEXT.BridgeTextMarkup

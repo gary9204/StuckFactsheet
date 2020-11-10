@@ -153,7 +153,7 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         super()._init_transients()
         _ = self._model.connect('changed', lambda *_a: self.set_stale())
 
-    def _bind(self, p_view: ViewTextMarkup):
+    def _bind(self, p_view: ViewTextFormat):
         """Form toolkit-specific connection between text view element and
         text storage element.
 
@@ -169,7 +169,7 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         start, end = self._model.get_bounds()
         return self._model.get_text(start, end, NO_HIDDEN)
 
-    def _loose(self, p_view: ViewTextMarkup):
+    def _loose(self, p_view: ViewTextFormat):
         """Break toolkit-specific connection between text view element
         and text storage element.
 
@@ -177,9 +177,13 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         """
         p_view.set_buffer(None)
 
-    def _new_model(self) -> ModelTextMarkup:
+    def _new_model(self) -> ModelTextFormat:
         """Return toolkit-specific object to store text."""
         return ModelTextFormat()
+
+    def _new_view(self) -> ViewTextFormat:
+        """Return toolkit-specific object to display text."""
+        return ViewTextFormat()
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -245,6 +249,10 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
         """Return toolkit-specific object to store text."""
         return ModelTextMarkup()
 
+    def _new_view(self) -> ViewTextMarkup:
+        """Return toolkit-specific object to display text."""
+        return ViewTextMarkup()
+
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
 
@@ -300,9 +308,13 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
         """
         p_view.set_label('')
 
-    def _new_model(self) -> ModelTextMarkup:
+    def _new_model(self) -> ModelTextStatic:
         """Return toolkit-specific object to store text."""
         return ModelTextStatic()
+
+    def _new_view(self) -> ViewTextStatic:
+        """Return toolkit-specific object to display text."""
+        return ViewTextStatic()
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
