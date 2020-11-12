@@ -3,7 +3,6 @@ Unit tests for GTK-based classes that implement abstract identification
 information classes.  See :mod:`.bridge_text`.
 """
 import gi   # type: ignore[import]
-import logging
 import pickle
 import pytest   # type: ignore[import]
 import typing
@@ -427,7 +426,7 @@ class TestBridgeTextMarkup:
     """
 
     def test_bind(self):
-        """Confirm GTK binding."""
+        """Confirm widget association."""
         # Setup
         target = BTEXT.BridgeTextMarkup()
         VIEW = BTEXT.ViewTextMarkup()
@@ -446,7 +445,7 @@ class TestBridgeTextMarkup:
         assert TEXT == target._get_persist()
 
     def test_loose(self):
-        """Confirm GTK binding."""
+        """Confirm widget disassociation."""
         # Setup
         target = BTEXT.BridgeTextMarkup()
         VIEW = BTEXT.ViewTextMarkup()
@@ -494,7 +493,7 @@ class TestBridgeTextStatic:
     """
 
     def test_bind(self):
-        """Confirm GTK binding."""
+        """Confirm widget association."""
         # Setupsht
         target = BTEXT.BridgeTextStatic()
         TEXT = 'The <b>Parrot </b>Sketch'
@@ -514,7 +513,7 @@ class TestBridgeTextStatic:
         assert TEXT == target._get_persist()
 
     def test_loose(self):
-        """Confirm GTK binding."""
+        """Confirm widget disassociation."""
         # Setup
         target = BTEXT.BridgeTextStatic()
         VIEW = BTEXT.ViewTextStatic()
@@ -523,7 +522,6 @@ class TestBridgeTextStatic:
         BLANK = ''
         # Test
         target._loose(VIEW)
-        target._bind(VIEW)
         assert BLANK == VIEW.get_label()
 
     def test_new_model(self):

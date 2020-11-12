@@ -1,6 +1,6 @@
 """
-Unit tests for base of model classes that encapsulate widget toolkit
-classes.  See :mod:`~.bridge_base`.
+Unit tests for base of classes that encapsulate widget toolkit classes.
+See :mod:`~.bridge_base`.
 """
 import logging
 from pathlib import Path

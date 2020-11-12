@@ -1,13 +1,9 @@
 """
-Unit tests adapters and type hints for fact values and aspects.  See
-:mod:`~.bridge_aspect`.
+Unit tests for GTK-based classes that encapsulate fact aspect classes.
+See :mod:`~.bridge_aspect`.
 """
-# import logging
-from pathlib import Path
-import pickle
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
-# import re
 import typing
 
 import factsheet.bridge_gtk.bridge_aspect as BASPECT
@@ -18,15 +14,48 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class TestAspect:
-    """Unit tests for :class:`~.Aspect`."""
+class PatchBridgeAspect(BASPECT.BridgeAspect[
+        typing.Any, typing.Any, typing.Any, typing.Any]):
+    """Class with test stubs for abstract :class:`~.BridgeAbxtract` methods."""
+
+    def _bind(self, p_view):
+        p_view.set_label(self._model)
+
+    def _get_persist(self):
+        return self._model
+
+    def _loose(self, p_view):
+        p_view.set_label('')
+
+    def _new_model(self):
+        return str()
+
+    def _new_view(self):
+        return BASPECT.ViewAspectPlain()
+
+    def _set_persist(self, p_persist):
+        self._model = p_persist
+        for view in self._views.values():
+            view.set_label(self._model)
+
+    def transcribe(self, p_source):
+        persist = ''
+        if p_source is not None:
+            persist = str(p_source)
+        return persist
+
+
+class TestBridgeAspect:
+    """Unit tests for :class:`~.BridgeAspect`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BASPECT.BridgeAspect, '_bind'),
         (BASPECT.BridgeAspect, '_get_persist'),
         (BASPECT.BridgeAspect, '_loose'),
         (BASPECT.BridgeAspect, '_new_model'),
+        (BASPECT.BridgeAspect, '_new_view'),
         (BASPECT.BridgeAspect, '_set_persist'),
+        (BASPECT.BridgeAspect, 'transcribe'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""
@@ -35,88 +64,162 @@ class TestAspect:
         assert hasattr(CLASS, '__abstractmethods__')
         assert NAME_METHOD in CLASS.__abstractmethods__
 
+    def test_refresh(self):
+        """| Confirm storage and view elements are set from source.
+        | Case: source is not None.
+        """
+        # Setup
+        target = PatchBridgeAspect()
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 42
+        model = str(SOURCE)
+        # Test
+        target.refresh(SOURCE)
+        assert model == target._model
+        for view in views:
+            assert target._views[id(view)] is view
+            assert model == view.get_label()
 
-class TestAspectPlain:
+    def test_refresh_none(self):
+        """| Confirm storage and view elements are set from source.
+        | Case: source is not None.
+        """
+        # Setup
+        target = PatchBridgeAspect()
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 42
+        target.refresh(SOURCE)
+        BLANK = ''
+        # Test
+        target.refresh(None)
+        assert BLANK == target._model
+        for view in views:
+            assert target._views[id(view)] is view
+            assert BLANK == view.get_label()
+
+
+class TestBridgeAspectPlain:
     """Unit tests for :class:`.AspectPlain`.
 
     See :class:`.TestAspectCommon` for additional unit tests for
     :class:`.AspectPlain.
     """
 
-    @pytest.mark.skip
-    def test_get_set_state(self, tmp_path):
-        """Confirm conversion to and from pickle aspect."""
-        # Setup
-        path = Path(str(tmp_path / 'get_set.fsg'))
-
-        source = PatchAspect()
-        N_ASPECTS = 3
-        for i in range(N_ASPECTS):
-            source._aspects[i] = 'Aspect {}'.aspect(i)
-        # Test
-        with path.open(mode='wb') as io_out:
-            pickle.dump(source, io_out)
-
-        with path.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-
-        assert isinstance(target._aspects, dict)
-        assert not target._aspects
-
-    # @pytest.mark.skip
-    # def test_init(self):
-    #     """| Confirm initialization.
-    #     | Case: nominal.
-    #     """
-    #     # Setup
-    #     # Test
-    #     target = PatchAspect()
-    #     assert target.called_clear
-    #     assert isinstance(target._aspects, dict)
-    #     assert not target._aspects
-
-    @pytest.mark.skip
     def test_init(self):
         """Confirm initialization."""
         # Setup
         BLANK = ''
         # Test
-        target = BASPECT.AspectPlain()
-        assert isinstance(target._aspects, dict)
-        assert not target._aspects
-        assert BLANK == target._value_gtk
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        assert BLANK == target._model
 
-    @pytest.mark.skip
-    def test_set(self):
-        """Confirm aspect and aspects are set."""
+    def test_bind(self):
+        """Confirm widget association."""
+        # Setupsht
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        TEXT = 'The <b>Parrot </b>Sketch'
+        target._set_persist(TEXT)
+        VIEW = BASPECT.ViewAspectPlain()
+        # Test
+        target._bind(VIEW)
+        assert TEXT == VIEW.get_label()
+
+    def test_get_persist(self):
+        """Confirm export to persistent form."""
         # Setup
-        # target = BASPECT.AspectPlain()  # p_value=None)
-        # N_ASPECTS = 3
-        # aspects = [ViewAspectPlain() for _ in range(N_ASPECTS)]
-        # for aspect in aspects:
-        #     target.attach_aspect(aspect)
-        # assert len(aspects) == len(target._aspects)
-        # VALUE = 42
-        # text = '<b>{}</b>'.aspect(VALUE)
-        # # Test
-        # target.set(text)
-        # assert text == target._value_gtk
-        # for aspect in aspects:
-        #     assert text == aspect.get_text()
-        #     assert text == aspect.get_label()
-        #     assert target._aspects[id(aspect)] is aspect
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        TEXT = 'The <b>Parrot </b>Sketch'
+        target._model = TEXT
+        # Test
+        assert TEXT == target._get_persist()
+
+    def test_loose(self):
+        """Confirm widget disassociation."""
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        VIEW = BASPECT.ViewAspectPlain()
+        TEXT = 'The <b>Parrot </b>Sketch'
+        VIEW.set_label(TEXT)
+        BLANK = ''
+        # Test
+        target._loose(VIEW)
+        assert BLANK == VIEW.get_label()
+
+    def test_new_model(self):
+        """Confirm storage element."""
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        # Test
+        model = target._new_model()
+        assert isinstance(model, BASPECT.ModelAspectPlain)
+
+    def test_new_view(self):
+        """Confirm view element."""
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        # Test
+        view = target._new_view()
+        assert isinstance(view, BASPECT.ViewAspectPlain)
+
+    def test_set_persist(self):
+        """Confirm import from persistent form."""
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        TEXT = 'The <b>Parrot </b>Sketch.'
+        target._model = TEXT
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        TEXT_NEW = 'Something <i>completely </i>different.'
+        # Test
+        target._set_persist(TEXT_NEW)
+        assert TEXT_NEW == target._get_persist()
+        for view in views:
+            assert TEXT_NEW == view.get_label()
+
+    def test_transcribe(self):
+        """| Confirm transcription from source to persist form.
+        | Case: source is not None.
+        """
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        N_VIEWS = 3
+        _views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 42
+        text = str(SOURCE)
+        # Test
+        assert text == target.transcribe(SOURCE)
+
+    def test_transcribe_none(self):
+        """| Confirm transcription from source to persist form.
+        | Case: source is None.
+        """
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        N_VIEWS = 3
+        _views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = None
+        BLANK = ''
+        # Test
+        assert BLANK == target.transcribe(SOURCE)
 
 
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.bridge_aspect`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        # (BASPECT.ModelAspectPlain, typing.Any),
-        # (type(BASPECT.ModelAspectOpaque), typing.TypeVar),
-        # (BASPECT.ModelAspectOpaque.__constraints__, ()),
-        # (type(ViewAspectOpaque), typing.TypeVar),
-        # (BASPECT.ViewAspectOpaque.__constraints__, ()),
-        # (BASPECT.ViewAspectPlain, Gtk.Label),
+        (type(BASPECT.ModelAspectOpaque), typing.TypeVar),
+        (BASPECT.ModelAspectOpaque.__constraints__, ()),
+        (BASPECT.ModelAspectPlain, str),
+        (type(BASPECT.PersistAspectOpaque), typing.TypeVar),
+        (BASPECT.PersistAspectOpaque.__constraints__, ()),
+        (BASPECT.PersistAspectPlain, str),
+        (type(BASPECT.SourceOpaque), typing.TypeVar),
+        (BASPECT.SourceOpaque.__constraints__, ()),
+        (type(ViewAspectOpaque), typing.TypeVar),
+        (BASPECT.ViewAspectOpaque.__constraints__, ()),
+        (BASPECT.ViewAspectPlain, Gtk.Label),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

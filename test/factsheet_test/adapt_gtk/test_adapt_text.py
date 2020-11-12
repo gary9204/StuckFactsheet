@@ -349,7 +349,7 @@ class TestAdaptTextFormat:
     """
 
     def test_bind_store(self):
-        """Confirm GTK binding."""
+        """Confirm widget association."""
         # Setup
         target = ATEXT.AdaptTextFormat()
         VIEW = ATEXT.ViewTextFormat()
@@ -358,7 +358,7 @@ class TestAdaptTextFormat:
         assert target._text_gtk is VIEW.get_buffer()
 
     def test_loose_store(self):
-        """Confirm GTK binding."""
+        """Confirm widget disassociation."""
         # Setup
         target = ATEXT.AdaptTextFormat()
         VIEW = ATEXT.ViewTextFormat()
@@ -384,7 +384,7 @@ class TestAdaptTextMarkup:
     """
 
     def test_bind_store(self):
-        """Confirm GTK binding."""
+        """Confirm widget association."""
         # Setup
         target = ATEXT.AdaptTextMarkup()
         VIEW = ATEXT.ViewTextMarkup()
@@ -393,7 +393,7 @@ class TestAdaptTextMarkup:
         assert target._text_gtk is VIEW.get_buffer()
 
     def test_loose_store(self):
-        """Confirm GTK binding."""
+        """Confirm widget disassociation."""
         # Setup
         target = ATEXT.AdaptTextMarkup()
         VIEW = ATEXT.ViewTextMarkup()
@@ -419,7 +419,7 @@ class TestAdaptTextStatic:
     """
 
     def test_bind_store(self):
-        """Confirm GTK binding."""
+        """Confirm widget association."""
         # Setup
         target = ATEXT.AdaptTextStatic()
         TEXT = 'Something <i>completely </i>different!'
@@ -430,7 +430,7 @@ class TestAdaptTextStatic:
         assert TEXT == VIEW.get_label()
 
     def test_loose_store(self):
-        """Confirm GTK binding."""
+        """Confirm widget disassociation."""
         # Setup
         target = ATEXT.AdaptTextStatic()
         VIEW = ATEXT.ViewTextStatic()
