@@ -104,103 +104,6 @@ class TestBridgeText:
         # Test
         assert expect == str(target)
 
-    # def test_attach_view(self, patch_bridge_text):
-    #     """| Confirm addition of view.
-    #     | Case: view not attached initially
-    #     """
-    #     # Setup
-    #     target = patch_bridge_text()
-    #     N_VIEWS = 3
-    #     views = [BTEXT.ViewTextStatic() for _ in range(N_VIEWS)]
-    #     # Test
-    #     for view in views:
-    #         target.attach_view(view)
-    #     assert len(views) == len(target._views)
-    #     for view in views:
-    #         assert target._views[id(view)] is view
-    #     assert views == target.bound
-
-    # def test_attach_view_warn(
-    #         self, patch_bridge_text, monkeypatch, PatchLogger):
-    #     """| Confirm addition of view.
-    #     | Case: view attached initially
-    #     """
-    #     # Setup
-    #     target = patch_bridge_text()
-    #     N_VIEWS = 3
-    #     views = [BTEXT.ViewTextStatic() for _ in range(N_VIEWS)]
-    #     for view in views:
-    #         target.attach_view(view)
-    #     target.bound.clear()
-    #     I_DUP = 1
-    #     view_dup = views[I_DUP]
-
-    #     patch_logger = PatchLogger()
-    #     monkeypatch.setattr(
-    #         logging.Logger, 'warning', patch_logger.warning)
-    #     log_message = (
-    #         'Duplicate view: {} ({}.attach_view)'
-    #         ''.format(hex(id(view_dup)), type(target).__name__))
-    #     # Test
-    #     target.attach_view(view_dup)
-    #     assert len(views) == len(target._views)
-    #     assert not target.bound
-    #     assert patch_logger.called
-    #     assert PatchLogger.T_WARNING == patch_logger.level
-    #     assert log_message == patch_logger.message
-
-    # def test_detach_view(self, patch_bridge_text):
-    #     """| Confirm removal of view.
-    #     | Case: view attached initially
-    #     """
-    #     # Setup
-    #     target = patch_bridge_text()
-    # 
-    #     N_VIEWS = 3
-    #     views = [BTEXT.ViewTextMarkup() for _ in range(N_VIEWS)]
-    #     for view in views:
-    #         target.attach_view(view)
-    #     N_REMOVE = 1
-    #     view_remove = views.pop(N_REMOVE)
-    #     # Test
-    #     target.detach_view(view_remove)
-    #     assert len(views) == len(target._views)
-    #     for view in views:
-    #         assert target._views[id(view)] is view
-    #     assert [view_remove] == target.loosed
-
-    # def test_detach_view_warn(
-    #         self, patch_bridge_text, monkeypatch, PatchLogger):
-    #     """| Confirm removal of view.
-    #     | Case: view not attached initially
-    #     """
-    #     # Setup
-    #     target = patch_bridge_text()
-    # 
-    #     N_VIEWS = 3
-    #     views = [BTEXT.ViewTextStatic() for _ in range(N_VIEWS)]
-    #     for view in views:
-    #         target.attach_view(view)
-    #     N_REMOVE = 1
-    #     view_remove = views.pop(N_REMOVE)
-    #     target.detach_view(view_remove)
-    #     target.loosed.clear()
-    #     assert len(views) == len(target._views)
-    # 
-    #     patch_logger = PatchLogger()
-    #     monkeypatch.setattr(
-    #         logging.Logger, 'warning', patch_logger.warning)
-    #     log_message = (
-    #         'Missing view: {} ({}.detach_view)'
-    #         ''.format(hex(id(view_remove)), type(target).__name__))
-    #     # Test
-    #     target.detach_view(view_remove)
-    #     assert not target.loosed
-    #     assert len(views) == len(target._views)
-    #     assert patch_logger.called
-    #     assert PatchLogger.T_WARNING == patch_logger.level
-    #     assert log_message == patch_logger.message
-
     def test_is_fresh(self, patch_bridge_text):
         """Confirm return matches state. """
         # Setup
@@ -239,10 +142,19 @@ class TestBridgeText:
         target.set_stale()
         assert target._stale
 
-    def test_text(self, patch_bridge_text):
+    def test_text(self, monkeypatch, patch_bridge_text):
         """Confirm access limits of each concrete property."""
         # Setup
+        class PatchUpdate:
+            def __init__(self): self.called = False
+
+            def _update_views(self): self.called = True
+
         target_class = patch_bridge_text
+        patch_update = PatchUpdate()
+        monkeypatch.setattr(
+            target_class, '_update_views', patch_update._update_views)
+
         target = target_class()
         TEXT = 'The Parrot Sketch'
         target._set_persist(TEXT)
@@ -254,6 +166,7 @@ class TestBridgeText:
         target.text = TEXT_NEW
         assert TEXT_NEW == target._get_persist()
         assert target_class.text.fdel is None
+        assert patch_update.called
 
 
 class TestBridgeTextCommon:
@@ -547,12 +460,26 @@ class TestBridgeTextStatic:
         target._model = TEXT
         target._stale = False
         N_VIEWS = 3
-        views = [target.attach_view() for _ in range(N_VIEWS)]
+        _views = [target.attach_view() for _ in range(N_VIEWS)]
         TEXT_NEW = 'Something <i>completely </i>different.'
         # Test
         target._set_persist(TEXT_NEW)
         assert target._stale
         assert TEXT_NEW == target._get_persist()
+
+    def test_update_views(self):
+        """Confirm views match persistent form."""
+        # Setup
+        target = BTEXT.BridgeTextStatic()
+        TEXT = 'The <b>Parrot </b>Sketch.'
+        target._model = TEXT
+        target._stale = False
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        TEXT_NEW = 'Something <i>completely </i>different.'
+        target._set_persist(TEXT_NEW)
+        # Test
+        target._update_views()
         for view in views:
             assert TEXT_NEW == view.get_label()
 

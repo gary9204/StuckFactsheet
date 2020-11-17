@@ -1,16 +1,38 @@
 """
 Unit tests for fact-level model. See :mod:`~.fact`.
 """
-# import dataclasses as DC
-# import logging
 import enum
 from pathlib import Path
 import pickle
 import pytest   # type: ignore[import]
 import typing
 
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_ui as BUI
 import factsheet.model.fact as MFACT
+
+
+class TestAspectStatus:
+    """Unit tests for :class:`~.AspectStatus`."""
+
+    @pytest.mark.parametrize('STATUS', MFACT.StatusOfFact)
+    def test_transcribe(self, STATUS):
+        """| Confirm peersistent form of status.
+        | Case: status is not None.
+        """
+        # Setup
+        target = MFACT.AspectStatus()
+        # Test
+        assert STATUS.name == target.transcribe(STATUS)
+
+    def test_transcribe_none(self):
+        """| Confirm peersistent form of status.
+        | Case: status is None.
+        """
+        # Setup
+        target = MFACT.AspectStatus()
+        STATUS = MFACT.StatusOfFact.UNCHECKED
+        # Test
+        assert STATUS.name == target.transcribe(None)
 
 
 class TestFact:
@@ -46,7 +68,7 @@ class TestFact:
         target = Fact(p_topic=None)
         target.title.text = TITLE
         target.note.text = NOTE
-        target._formats['Oops'] = None
+        target._aspects['Oops'] = None
         assert not source.__eq__(target)
         # Test: note difference
         target = Fact(p_topic=None)
@@ -93,16 +115,16 @@ class TestFact:
         assert source == target
 
     def test_init(self):
-        """Confirm initialization."""
+        """| Confirm initialization.
+        | Case: attributes except aspects.
+        """
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
-        KEY = 'Plain'
         # Test
         target = Fact(p_topic=None)
         assert not target._stale
-        assert isinstance(target._formats, dict)
-        assert isinstance(target._formats[KEY], ADAPT.FormatValuePlain)
-        assert target._names_formats is None
+        assert isinstance(target._aspects, dict)
+        assert isinstance(target._names_aspect, type(MFACT.NamesAspect()))
         assert isinstance(target._name, MFACT.NameFact)
         assert isinstance(target._note, MFACT.NoteFact)
         assert target._status is MFACT.StatusOfFact.BLOCKED
@@ -111,34 +133,42 @@ class TestFact:
         assert isinstance(target._title, MFACT.TitleFact)
         assert target._value is None
 
+    @pytest.mark.parametrize('KEY, ASPECT', [
+        ('Plain', type(MFACT.AspectValuePlain())),
+        ('Status', MFACT.AspectStatus),
+        ])
+    def test_init_aspects(self, KEY, ASPECT):
+        """| Confirm initialization.
+        | Case: aspects and aspect names attributes.
+        """
+        # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        # Test
+        target = Fact(p_topic=None)
+        assert isinstance(target._aspects[KEY], ASPECT)
+        assert set(target._names_aspect.items()) == target._aspects.keys()
+
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ('_names_formats', 'names_formats'),
+        ('_names_aspect', 'names_aspect'),
         ('_name', 'name'),
         ('_note', 'note'),
-        ('_status', 'status'),
+        ('_status', 'status',),
         ('_summary', 'summary'),
+        ('_tag', 'tag'),
         ('_title', 'title'),
         ('_value', 'value'),
         ])
     def test_property(self, NAME_ATTR, NAME_PROP):
-        """Confirm properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-        """
+        """Confirm values and access limits of properties."""
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
         target = Fact(p_topic=None)
-        value_attr = getattr(target, NAME_ATTR)
         target_prop = getattr(MFACT.Fact, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: read
+        value_attr = getattr(target, NAME_ATTR)
+        # Test
         assert target_prop.fget is not None
-        assert value_attr is value_prop
-        # Test: no replace
+        assert value_attr is target_prop.fget(target)
         assert target_prop.fset is None
-        # Test: no delete
         assert target_prop.fdel is None
 
     def test_check(self):
@@ -151,52 +181,53 @@ class TestFact:
         VALUE = 'Something completely different.'
         target._value = VALUE
         target.set_fresh()
-        KEY = 'Plain'
         # Test
         result = target.check()
         assert result is STATUS
         assert target.is_stale()
-        assert VALUE == target._formats[KEY]._value_gtk
+        assert VALUE == target._aspects['Plain']._model
+        assert STATUS.name == target._aspects['Status']._model
 
     def test_clear(self):
         """Confirm default clear."""
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
         target = Fact(p_topic=None)
-        STATUS = MFACT.StatusOfFact.UNCHECKED
+        STATUS = MFACT.StatusOfFact.UNDEFINED
         target._status = STATUS
         VALUE = 'Something completely different.'
         target._value = VALUE
         _ = target.check()
         target.set_fresh()
-        KEY = 'Plain'
         BLANK = ''
+        STATUS_NEW = MFACT.StatusOfFact.UNCHECKED
         # Test
         target.clear()
         assert target.is_stale()
-        assert BLANK == target._formats[KEY]._value_gtk
+        assert BLANK == target._aspects['Plain']._model
+        assert STATUS_NEW.name == target._aspects['Status']._model
 
-    def test_get_format(self):
-        """| Confirm format matches name.
-        | Case: format supported by fact.
+    def test_get_aspect(self):
+        """| Confirm aspect matches name.
+        | Case: fact has given aspect.
         """
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
         target = Fact(p_topic=None)
         NAME = 'Plain'
         # Test
-        assert target.get_format(NAME) is target._formats[NAME]
+        assert target.get_aspect(NAME) is target._aspects[NAME]
 
-    def test_get_format_missing(self):
-        """| Confirm format matches name.
-        | Case: format not supported by fact.
+    def test_get_aspect_missing(self):
+        """| Confirm aspect matches name.
+        | Case: fact does not have given aspect.
         """
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
         target = Fact(p_topic=None)
-        NAME = 'Oops!'
+        NAME = 'Dinsdale?'
         # Test
-        assert target.get_format(NAME) is None
+        assert target.get_aspect(NAME) is None
 
     def test_is_stale(self):
         """Confirm return is accurate.
@@ -228,15 +259,6 @@ class TestFact:
         target.set_fresh()
         assert not target.is_stale()
         assert not target._stale
-
-    @pytest.mark.skip(reason='replacing with property')
-    def test_names_format(self):
-        """Confirm format names."""
-        # Setup
-        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
-        target = Fact(p_topic=None)
-        # Test
-        assert target.names_format() == target._formats.keys()
 
     def test_set_fresh(self):
         """Confirm instance marked fresh."""
@@ -286,13 +308,19 @@ class TestTypes:
     """Unit tests for type hit definitions in :mod:`.fact`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (MFACT.NameFact, ADAPT.AdaptTextMarkup),
-        (MFACT.NoteFact, ADAPT.AdaptTextFormat),
-        (MFACT.SummaryFact, ADAPT.AdaptTextFormat),
+        (MFACT.Aspect, BUI.BridgeAspect),
+        (MFACT.AspectValuePlain, BUI.BridgeAspectPlain[typing.Any]),
+        (MFACT.NameFact, BUI.BridgeTextMarkup),
+        (MFACT.NamesAspect, BUI.BridgeOutlineSelect[str]),
+        (MFACT.NoteFact, BUI.BridgeTextFormat),
+        (MFACT.PersistAspectStatus, BUI.PersistAspectPlain),
+        (MFACT.SummaryFact, BUI.BridgeTextFormat),
         (MFACT.TagFact.__supertype__, int),  # type: ignore[attr-defined]
-        (MFACT.TitleFact, ADAPT.AdaptTextMarkup),
+        (MFACT.TitleFact, BUI.BridgeTextMarkup),
         (type(MFACT.TopicOpaque), typing.TypeVar),
-        (MFACT.ValueOpaque, ADAPT.ValueOpaque),
+        (MFACT.TopicOpaque.__constraints__, ()),
+        (type(MFACT.ValueOpaque), typing.TypeVar),
+        (MFACT.ValueOpaque.__constraints__, ()),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

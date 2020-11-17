@@ -13,16 +13,19 @@ import typing
 
 import factsheet.model.idcore as MIDCORE
 
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_ui as BUI
 
-from factsheet.adapt_gtk.adapt import ValueOpaque
-
-NameFact = ADAPT.AdaptTextMarkup
-NoteFact = ADAPT.AdaptTextFormat
-SummaryFact = ADAPT.AdaptTextFormat
-TitleFact = ADAPT.AdaptTextMarkup
+Aspect = BUI.BridgeAspect
+AspectValuePlain = BUI.BridgeAspectPlain[typing.Any]
+NamesAspect = BUI.BridgeOutlineSelect[str]
+NameFact = BUI.BridgeTextMarkup
+NoteFact = BUI.BridgeTextFormat
+PersistAspectStatus = BUI.PersistAspectPlain
+SummaryFact = BUI.BridgeTextFormat
+TitleFact = BUI.BridgeTextMarkup
 TagFact = typing.NewType('TagFact', int)
 TopicOpaque = typing.TypeVar('TopicOpaque')
+ValueOpaque = typing.TypeVar('ValueOpaque')
 
 
 logger = logging.getLogger('Main.model.fact')
@@ -54,6 +57,23 @@ class StatusOfFact(enum.Enum):
     UNDEFINED = enum.auto()
 
 
+class AspectStatus(BUI.BridgeAspectPlain[StatusOfFact]):
+    """Plain text aspect for status of fact."""
+
+    def transcribe(self, p_source: typing.Optional[StatusOfFact]
+                   ) -> PersistAspectStatus:
+        """Return persistent representation of status.
+
+        When source is None, return empty plain text.
+
+        :param p_source: status metadata for aspect.
+        """
+        persist = StatusOfFact.UNCHECKED.name
+        if p_source is not None:
+            persist = p_source.name
+        return persist
+
+
 class Fact(typing.Generic[TopicOpaque, ValueOpaque],
            MIDCORE.IdCore[NameFact, SummaryFact, TitleFact]
            ):
@@ -70,13 +90,13 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
     .. admonition:: About Equality
 
         Two facts are equivalent when they have the same status, value,
-        formats, note, and identity attributes.  Transient aspects of
+        aspects, note, and identity attributes.  Transient aspects of
         the facts (like tags and views) are not compared and may be
         different.
     """
 
     def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when px_other has same status, value, formats,
+        """Return True when px_other has same status, value, aspects,
         and identity.
 
         :param px_other: object to compare with self.
@@ -84,7 +104,7 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         if not super().__eq__(px_other):
             return False
 
-        if not self._formats == px_other._formats:
+        if not self._aspects == px_other._aspects:
             return False
 
         if self.note != px_other.note:
@@ -99,7 +119,7 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         return True
 
     def __getstate__(self) -> typing.Dict:
-        """Return identity in form pickle can persist.
+        """Return fact in form pickle can persist.
 
         Persistent form of fact excludes run-time information.
         """
@@ -111,23 +131,30 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
                  ) -> None:
         super().__init__(**kwargs)
         _ = p_topic  # Needed in every descendant but not base.
-        self._formats: typing.Dict[str, ADAPT.FormatValue] = dict(
-            Plain=ADAPT.FormatValuePlain())
-        self._names_formats = None
+        self._aspects: typing.Dict[str, Aspect] = dict()
         self._name = NameFact()
+        self._names_aspect = NamesAspect()
         self._note = NoteFact()
         self._status = StatusOfFact.BLOCKED
         self._summary = SummaryFact()
         self._tag = TagFact(id(self))
         self._title = TitleFact()
         self._value: typing.Optional[ValueOpaque] = None
+        self._init_aspects()
+
+    def _init_aspects(self) -> None:
+        """Populate fact's aspects and aspect names."""
+        self._aspects['Plain'] = AspectValuePlain()
+        self._names_aspect.insert_before('Plain', None)
+        self._aspects['Status'] = AspectStatus()
+        self._names_aspect.insert_before('Status', None)
 
     def __setstate__(self, px_state: typing.Dict) -> None:
-        """Reconstruct identity from state pickle loads.
+        """Reconstruct fact from state pickle loads.
 
-        Reconstructed identity is marked fresh.
+        Reconstructed fact is marked fresh.
 
-        :param px_state: unpickled state of stored identity.
+        :param px_state: unpickled state of stored fact.
         """
         super().__setstate__(px_state)
         self._tag = TagFact(id(self))
@@ -137,12 +164,12 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
 
         Subclasses must extend :meth:`~.Fact.check` method.  A subclass
         should set fact status and value and then call base class
-        method.  Base class marks change in fact and sets fact formats
+        method.  Base class marks change in fact and sets fact aspects
         to current value.
         """
         self.set_stale()
-        for fmt in self._formats.values():
-            fmt.set(self._value)
+        self._aspects['Plain'].refresh(self._value)
+        self._aspects['Status'].refresh(self._status)
         return self._status
 
     def clear(self) -> None:
@@ -150,19 +177,19 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
 
         Subclasses must extend :meth:`~.Fact.check` method.  A subclass
         should set fact status and value and then call base class
-        method.  Base class marks change in fact and sets fact formats
+        method.  Base class marks change in fact and sets fact aspects
         to current value.
         """
         self.set_stale()
-        for fmt in self._formats.values():
-            fmt.clear()
+        self._aspects['Plain'].refresh(None)
+        self._aspects['Status'].refresh(None)
 
-    def get_format(self, p_name: str) -> typing.Optional[ADAPT.FormatValue]:
-        """Return format with given name or None if format not supported..
+    def get_aspect(self, p_name: str) -> typing.Optional[Aspect]:
+        """Return aspect with given name or placeholder for missing aspect.
 
-        :param p_name: name of desired format.
+        :param p_name: name of desired aspect.
         """
-        return self._formats.get(p_name)
+        return self._aspects.get(p_name, None)
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
@@ -183,9 +210,9 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         return self._name
 
     @property
-    def names_formats(self) -> None:
-        """Return names of formats that the fact provides."""
-        return self._names_formats
+    def names_aspect(self) -> NamesAspect:
+        """Return names of fact's aspects."""
+        return self._names_aspect
 
     @property
     def note(self) -> NoteFact:
@@ -210,8 +237,7 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
     @property
     def tag(self) -> TagFact:
         """Return fact identifier. """
-        raise NotImplementedError
-        # return self._tag
+        return self._tag
 
     @property
     def title(self) -> TitleFact:
@@ -220,5 +246,5 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
 
     @property
     def value(self) -> typing.Optional[ValueOpaque]:
-        """Return fact title."""
+        """Return fact value."""
         return self._value

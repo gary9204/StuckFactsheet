@@ -149,34 +149,6 @@ class TestBridgeBase:
             assert target._views[id(view)] is view
         assert views == target.bound
 
-    # def test_attach_view_warn(self, monkeypatch, PatchLogger):
-    #     """| Confirm view element association.
-    #     | Case: view assocaited initially
-    #     """
-    #     # Setup
-    #     target = PatchBridgeBase()
-    #     N_VIEWS = 3
-    #     views = [[i] for i in range(N_VIEWS)]
-    #     for view in views:
-    #         target.attach_view(view)
-    #     target.bound.clear()
-    #     I_DUP = 1
-    #     view_dup = views[I_DUP]
-
-    #     patch_logger = PatchLogger()
-    #     monkeypatch.setattr(
-    #         logging.Logger, 'warning', patch_logger.warning)
-    #     log_message = (
-    #         'Duplicate view: {} ({}.attach_view)'
-    #         ''.format(hex(id(view_dup)), type(target).__name__))
-    #     # Test
-    #     target.attach_view(view_dup)
-    #     assert len(views) == len(target._views)
-    #     assert not target.bound
-    #     assert patch_logger.called
-    #     assert PatchLogger.T_WARNING == patch_logger.level
-    #     assert log_message == patch_logger.message
-
     def test_detach_all(self):
         """Confirm separation of all view elements."""
         # Setup
@@ -235,6 +207,13 @@ class TestBridgeBase:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
+
+    def test_update_views(self):
+        """Confirm hook for manual update of views."""
+        # Setup
+        target = PatchBridgeBase()
+        # Test - method is a noop so successful call is sufficient.
+        assert target._update_views() is None
 
 
 class TestBridgeTypes:

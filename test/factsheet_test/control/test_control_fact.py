@@ -2,11 +2,10 @@
 Unit test for control to add and remove views of :class:`~.Fact'
 attributes.  See :mod:`~.control_fact`.
 """
-import logging
 import pytest  # type: ignore[import]
 import typing
 
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_ui as BUI
 import factsheet.control.control_fact as CFACT
 import factsheet.model.fact as MFACT
 
@@ -27,17 +26,16 @@ class TestControlFact:
         ('_fact', 'idcore', False),
         ])
     def test_property(self, NAME_ATTR, NAME_PROP, HAS_SETTER):
-        """Confirm access limits of each concrete property."""
+        """Confirm values and access limits of properties."""
         # Setup
         FACT = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
         target = CFACT.ControlFact(p_fact=FACT)
         target_prop = getattr(CFACT.ControlFact, NAME_PROP)
+        value_attr = getattr(target, NAME_ATTR)
         REPLACE = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
         # Test
-        value_prop = getattr(target, NAME_PROP)
         assert target_prop.fget is not None
-        value_attr = getattr(target, NAME_ATTR)
-        assert value_prop == value_attr
+        assert value_attr is target_prop.fget(target)
         if HAS_SETTER:
             target_prop.fset(target, REPLACE)
             value_attr = getattr(target, NAME_ATTR)
@@ -46,101 +44,106 @@ class TestControlFact:
             assert target_prop.fset is None
         assert target_prop.fdel is None
 
-    @pytest.mark.skip(reason='Pending update of Outline classes for Fact')
-    def test_missing_cases(self):
-        'Reminder of incomplete testing'
-        'attach_names_formats'
-        'detach_names_formats'
-        pass
-
-    @pytest.mark.parametrize('ATTACH, DETACH, ATTR, VIEW', [
-        ('attach_note', 'detach_note', 'note', CFACT.ViewNoteFact()),
+    @pytest.mark.parametrize('ATTACH, ATTR, GET_STORE', [
+        ('attach_note', 'note', 'get_buffer'),
+        ('attach_names_aspect', 'names_aspect', 'get_model'),
         ])
-    def test_attach_detach_view(self, ATTACH, DETACH, ATTR, VIEW):
-        """Confirm control relays requests to fact."""
+    def test_attach(self, ATTACH, ATTR, GET_STORE):
+        """Confirm view associated with attribute of fact."""
         # Setup
         FACT = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
         target = CFACT.ControlFact(p_fact=FACT)
         attach = getattr(target, ATTACH)
+        attr = getattr(FACT, ATTR)
+        # Test
+        view = attach()
+        get_store = getattr(view, GET_STORE)
+        assert get_store() is attr._model
+
+    @pytest.mark.parametrize('ATTACH, DETACH, ATTR, GET_STORE', [
+        ('attach_note', 'detach_note', 'note', 'get_buffer'),
+        ('attach_names_aspect', 'detach_names_aspect', 'names_aspect',
+            'get_model'),
+        ])
+    def test_detach(self, ATTACH, DETACH, ATTR, GET_STORE):
+        """Confirm view disassociated from attribute of fact."""
+        # Setup
+        FACT = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
+        target = CFACT.ControlFact(p_fact=FACT)
+        attach = getattr(target, ATTACH)
+        view = attach()
+        get_store = getattr(view, GET_STORE)
         detach = getattr(target, DETACH)
         attr = getattr(FACT, ATTR)
-        id_view = id(VIEW)
         # Test
-        attach(VIEW)
-        assert attr._views[id_view] is VIEW
-        detach(VIEW)
-        with pytest.raises(KeyError):
-            _ = attr._views[id_view]
+        detach(view)
+        assert get_store() is not attr._model
 
-    @pytest.mark.skip
-    @pytest.mark.parametrize('ATTACH, DETACH, FORMAT, ASPECT', [
-        ('attach_format_plain', 'detach_format_plain',
-         'Plain', ADAPT.AspectValuePlain()),
+    @pytest.mark.parametrize('NAME', [
+        'Plain',
+        'Status',
         ])
-    def test_attach_detach_aspect(self, ATTACH, DETACH, FORMAT, ASPECT):
-        """Confirm control relays requests to fact formats."""
+    def test_attach_detach_aspect(self, NAME):
+        """Confirm view association/disassociation with aspect of fact."""
         # Setup
         FACT = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
         target = CFACT.ControlFact(p_fact=FACT)
-        attach = getattr(target, ATTACH)
-        detach = getattr(target, DETACH)
-        format_value = FACT._formats[FORMAT]
-        id_aspect = id(ASPECT)
+        # NAME = 'Plain'
+        aspect = FACT._aspects[NAME]
+        TYPE_VIEW = BUI.ViewAspectAny
         # Test
-        attach(ASPECT)
-        assert format_value._aspects[id_aspect] is ASPECT
-        detach(ASPECT)
+        view = target.attach_aspect(NAME)
+        assert isinstance(view, TYPE_VIEW)
+        id_view = id(view)
+        assert aspect._views[id_view] is view
+        target.detach_aspect(NAME, view)
         with pytest.raises(KeyError):
-            _ = format_value._aspects[id_aspect]
+            _ = aspect._views[id_view]
 
-    @pytest.mark.parametrize('METHOD', [
-        'attach_format_plain',
-        'detach_format_plain',
-        ])
-    def test_format_missing(self, monkeypatch, PatchLogger, METHOD):
-        """Confirm logging of requests to missing fact formats."""
+    def test_attach_aspect_missing(self):
+        """Confirm view returned for missing aspect of fact."""
         # Setup
-        class PatchFormat:
+        FACT = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
+        target = CFACT.ControlFact(p_fact=FACT)
+        NAME = 'Dinsdale?'
+        WARNING = ('Aspect \'{}\' not found. Please report omission.'
+                   ''.format(NAME))
+        # Test
+        view = target.attach_aspect(NAME)
+        assert isinstance(view, CFACT.ViewAspectMissing)
+        assert WARNING == view.get_text()
+
+    def test_detach_aspect_missing(self, monkeypatch):
+        """Confirm noop for missing aspect of fact."""
+        # Setup
+        class PatchAspect:
             def __init__(self): self.called = False
 
-            def attach_aspect(self, _aspect): self.called = True
+            def detach_view(self, _view): self.called = True
 
-            def detach_aspect(self, _aspect): self.called = True
-
-        patch_format = PatchFormat()
-        monkeypatch.setattr(ADAPT.FormatValuePlain, 'attach_aspect',
-                            patch_format.attach_aspect)
-        monkeypatch.setattr(ADAPT.FormatValuePlain, 'detach_aspect',
-                            patch_format.detach_aspect)
+        patch_aspect = PatchAspect()
+        monkeypatch.setattr(
+            BUI.BridgeAspect, 'detach_view', patch_aspect.detach_view)
 
         FACT = MFACT.Fact[typing.Any, MFACT.ValueOpaque](p_topic=None)
-        monkeypatch.setattr(
-            MFACT.Fact, 'get_format', lambda _self, _name: None)
         target = CFACT.ControlFact(p_fact=FACT)
-        method = getattr(target, METHOD)
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'error', patch_logger.error)
-        log_message = ('Format missing for {}.{}'
-                       ''.format(type(target).__name__, METHOD))
+        NAME = 'Dinsdale?'
+        VIEW = None
         # Test
-        method(None)
-        assert not patch_format.called
-        assert patch_logger.called
-        assert PatchLogger.T_ERROR == patch_logger.level
-        assert log_message == patch_logger.message
+        target.detach_aspect(NAME, VIEW)
+        assert not patch_aspect.called
 
 
 class TestTypes:
     """Unit tests for type definitions in :mod:`.control_fact`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (CFACT.ViewNameFact, ADAPT.ViewTextMarkup),
-        # (CFACT.ViewNameFact, ADAPT.ViewTextMarkup),
-        (CFACT.ViewNoteFact, ADAPT.ViewTextFormat),
-        (CFACT.ViewSummaryFact, ADAPT.ViewTextFormat),
-        (CFACT.ViewTitleFact, ADAPT.ViewTextMarkup),
+        (CFACT.ViewAspectMissing, BUI.ViewAspectMissing),
+        (CFACT.ViewAspect, BUI.ViewAspectAny),
+        (CFACT.ViewNameFact, BUI.ViewTextMarkup),
+        (CFACT.ViewNoteFact, BUI.ViewTextFormat),
+        (CFACT.ViewSummaryFact, BUI.ViewTextFormat),
+        (CFACT.ViewTitleFact, BUI.ViewTextMarkup),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

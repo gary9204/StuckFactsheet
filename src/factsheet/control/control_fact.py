@@ -6,21 +6,20 @@ on a Model-View-Controller (MVC) design.  The design is partitioned into
 factsheet, topic, and fact layers.  This module defines the control
 class for the fact layer.
 """
-import logging
 import typing   # noqa
 
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_ui as BUI
 import factsheet.control.control_idcore as CIDCORE
 import factsheet.model.fact as MFACT
 import factsheet.model.idcore as MIDCORE
 
-logger = logging.getLogger('Main.control_fact')
-
-ViewNameFact = ADAPT.ViewTextMarkup
-ViewNamesFormats = typing.TypeVar('ViewNamesFormats')
-ViewNoteFact = ADAPT.ViewTextFormat
-ViewSummaryFact = ADAPT.ViewTextFormat
-ViewTitleFact = ADAPT.ViewTextMarkup
+ViewAspect = BUI.ViewAspectAny
+ViewAspectMissing = BUI.ViewAspectMissing
+ViewNameFact = BUI.ViewTextMarkup
+ViewNamesAspect = BUI.ViewOutlineSelect
+ViewNoteFact = BUI.ViewTextFormat
+ViewSummaryFact = BUI.ViewTextFormat
+ViewTitleFact = BUI.ViewTextMarkup
 
 
 class ControlFact(
@@ -33,62 +32,47 @@ class ControlFact(
     def __init__(self, p_fact: MFACT.Fact) -> None:
         self._fact = p_fact
 
-    def attach_format_plain(self, p_aspect: ADAPT.AspectValuePlain) -> None:
-        """Ask fact to add aspect to plain format.
+    def attach_aspect(self, p_name: str) -> ViewAspect:
+        """Return view associated with named fact aspect.
 
-        :param p_aspect: aspect to add.
+        If no aspect matches name, return a warning view.
+
+        :param p_name: name of aspect to associate.
         """
-        NAME = 'Plain'
-        format_value = self._fact.get_format(NAME)
-        if format_value is None:
-            logger.error('Format missing for {}.{}'.format(
-                type(self).__name__, self.attach_format_plain.__name__))
-            return
+        aspect = self._fact.get_aspect(p_name)
+        if aspect is not None:
+            view = aspect.attach_view()
+        else:
+            view = ViewAspectMissing()
+            warning = ('Aspect \'{}\' not found. Please report omission.'
+                       ''.format(p_name))
+            view.set_text(warning)
+        return view
 
-        format_value.attach_aspect(p_aspect)
+    def attach_names_aspect(self) -> ViewNamesAspect:
+        """Return view of names of fact's aspects."""
+        return self.fact.names_aspect.attach_view()
 
-    def attach_names_formats(self, p_view: ViewNamesFormats) -> None:
-        """Ask fact to add view to names of formats.
+    def attach_note(self) -> ViewNoteFact:
+        """Return view of fact's note."""
+        return self.fact.note.attach_view()
 
-        :param p_view: view to add.
+    def detach_aspect(self, p_name: str, p_view: ViewAspect) -> None:
+        """Disassociate view from named fact aspect.
+
+        :param p_name: name of aspect to disassociate.
+        :param p_view: view to disassociate.
         """
-        raise NotImplementedError
-        # self.fact.names_format.attach_view(p_view)
+        aspect = self._fact.get_aspect(p_name)
+        if aspect is not None:
+            aspect.detach_view(p_view)
 
-    def attach_note(self, p_view: ViewNoteFact) -> None:
-        """Ask fact to add view to note.
-
-        :param p_view: to add.
-        """
-        self.fact.note.attach_view(p_view)
-
-    def detach_format_plain(self, p_aspect: ADAPT.AspectValuePlain) -> None:
-        """Ask fact to remove aspect from plain format.
-
-        :param p_aspect: aspect to remove.
-        """
-        NAME = 'Plain'
-        format_value = self._fact.get_format(NAME)
-        if format_value is None:
-            logger.error('Format missing for {}.{}'.format(
-                type(self).__name__, self.detach_format_plain.__name__))
-            return
-
-        format_value.detach_aspect(p_aspect)
-
-    def detach_names_formats(self, p_view) -> None:
-        """Ask fact to remove view from names of formats.
-
-        :param p_view: view to remove.
-        """
-        raise NotImplementedError
-        # self.fact.names_format.attach_view(p_view)
+    def detach_names_aspect(self, p_view: ViewNamesAspect) -> None:
+        """Disassociate view from names of fact's aspects."""
+        self.fact.names_aspect.detach_view(p_view)
 
     def detach_note(self, p_view: ViewNoteFact) -> None:
-        """Ask fact to remove view from note.
-
-        :param p_view: view to remove.
-        """
+        """Disassociate view from fact's note."""
         self.fact.note.detach_view(p_view)
 
     @property

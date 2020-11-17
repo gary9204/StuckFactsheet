@@ -6,7 +6,7 @@ import pytest   # type: ignore[import]
 # import re
 import typing
 
-import factsheet.adapt_gtk.adapt as ADAPT
+import factsheet.bridge_ui as BUI
 import factsheet.control.control_idcore as CIDCORE
 
 
@@ -24,29 +24,24 @@ class PatchControlIdCore(CIDCORE.ControlIdCore):
 class TestControlIdCore:
     """Unit tests for :class:`.ControlIdCore`."""
 
-    def test_abstract_class(self):
-        """Confirm the interface class is abstract."""
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (CIDCORE.ControlIdCore, 'idcore'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified."""
         # Setup
         # Test
-        with pytest.raises(TypeError):
-            _ = CIDCORE.ControlIdCore()
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
 
     @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
         ('idcore', False),
         ])
-    def test_property_abstract(self, NAME_PROP, HAS_SETTER):
-        """Confirm access limits of each abstract property."""
+    def test_property_access(self, NAME_PROP, HAS_SETTER):
+        """Confirm access limits of each property."""
         # Setup
-        class PatchAbstract(CIDCORE.ControlIdCore):
-
-            @property
-            def idcore(self):
-                prop = getattr(CIDCORE.ControlIdCore, 'idcore')
-                prop.fget(self)
-
-        _ = PatchAbstract()  # Confirms abstract method override.
         # Test
-        target = getattr(PatchAbstract, NAME_PROP)
+        target = getattr(CIDCORE.ControlIdCore, NAME_PROP)
         with pytest.raises(NotImplementedError):
             target.fget(self)
         if HAS_SETTER:
@@ -56,49 +51,54 @@ class TestControlIdCore:
             assert target.fset is None
         assert target.fdel is None
 
-    @pytest.mark.parametrize('METHOD, ATTR_TARGET, ATTRS_OTHER, MARKER', [
-        ('attach_name', 'name', ['summary', 'title'], 'attached'),
-        ('detach_name', 'name', ['summary', 'title'], 'detached'),
-        ('attach_summary', 'summary', ['name', 'title'], 'attached'),
-        ('detach_summary', 'summary', ['name', 'title'], 'detached'),
-        ('attach_title', 'title', ['name', 'summary'], 'attached'),
-        ('detach_title', 'title', ['name', 'summary'], 'detached'),
+    @pytest.mark.parametrize('ATTACH, ATTR', [
+        ('attach_name', 'name'),
+        ('attach_summary', 'summary'),
+        ('attach_title', 'title'),
         ])
-    def test_attach_detach(
-            self, patch_idcore, METHOD, ATTR_TARGET, ATTRS_OTHER, MARKER):
+    def test_attach(self, patch_idcore, ATTACH, ATTR):
         """Confirm control relays requests to identity."""
         # Setup
         IDCORE = patch_idcore()
         target = PatchControlIdCore(p_idcore=IDCORE)
-        method = getattr(target, METHOD)
-        attr_t = getattr(IDCORE, ATTR_TARGET)
-        marks_t = getattr(attr_t, MARKER)
-        attrs_o = [getattr(IDCORE, attr) for attr in ATTRS_OTHER]
-        marks_o = [getattr(attr, MARKER) for attr in attrs_o]
-        VIEW = 'A shrubbery'
+        attach = getattr(target, ATTACH)
+        attr = getattr(IDCORE, ATTR)
         # Test
-        method(VIEW)
-        for mark in marks_o:
-            assert not mark
-        assert [VIEW] == marks_t
+        view = attach()
+        assert view.get_buffer() is attr._model
+
+    @pytest.mark.parametrize('ATTACH, DETACH, ATTR', [
+        ('attach_name', 'detach_name', 'name'),
+        ('attach_summary', 'detach_summary', 'summary'),
+        ('attach_title', 'detach_title', 'title'),
+        ])
+    def test_detach(self, patch_idcore, ATTACH, DETACH, ATTR):
+        """Confirm control relays requests to identity."""
+        # Setup
+        IDCORE = patch_idcore()
+        target = PatchControlIdCore(p_idcore=IDCORE)
+        attach = getattr(target, ATTACH)
+        view = attach()
+        detach = getattr(target, DETACH)
+        attr = getattr(IDCORE, ATTR)
+        # Test
+        detach(view)
+        assert view.get_buffer() is not attr._model
 
 
 class TestTypes:
     """Unit tests for type definitions in :mod:`.control_idcore`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (type(CIDCORE.ViewNameAdapt), typing.TypeVar),
-        (CIDCORE.ViewNameAdapt.__constraints__, (ADAPT.ViewTextFormat,
-                                                 ADAPT.ViewTextMarkup,
-                                                 ADAPT.ViewTextStatic)),
-        (type(CIDCORE.ViewSummaryAdapt), typing.TypeVar),
-        (CIDCORE.ViewSummaryAdapt.__constraints__, (ADAPT.ViewTextFormat,
-                                                    ADAPT.ViewTextMarkup,
-                                                    ADAPT.ViewTextStatic)),
-        (type(CIDCORE.ViewTitleAdapt), typing.TypeVar),
-        (CIDCORE.ViewTitleAdapt.__constraints__, (ADAPT.ViewTextFormat,
-                                                  ADAPT.ViewTextMarkup,
-                                                  ADAPT.ViewTextStatic)),
+        (type(CIDCORE.ViewName), typing.TypeVar),
+        (CIDCORE.ViewName.__constraints__, (
+            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+        (type(CIDCORE.ViewSummary), typing.TypeVar),
+        (CIDCORE.ViewSummary.__constraints__, (
+            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+        (type(CIDCORE.ViewTitle), typing.TypeVar),
+        (CIDCORE.ViewTitle.__constraints__, (
+            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

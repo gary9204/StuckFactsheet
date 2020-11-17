@@ -75,10 +75,6 @@ class BridgeBase(abc.ABC,
         self._model = self._new_model()
         self._init_transients()
 
-    def _init_transients(self) -> None:
-        """Set storage element content for initialization and pickling."""
-        self._views: typing.MutableMapping[int, ViewOpaque] = dict()
-
     def __iter__(self) -> typing.Iterator[ViewOpaque]:
         """Return iterator over view elements associated with storage
         element.
@@ -149,6 +145,10 @@ class BridgeBase(abc.ABC,
         """Return storage element in form suitable for persistent storage."""
         raise NotImplementedError
 
+    def _init_transients(self) -> None:
+        """Set transient content for initialization and pickling."""
+        self._views: typing.MutableMapping[int, ViewOpaque] = dict()
+
     @abc.abstractmethod
     def _loose(self, p_view: ViewOpaque):
         """Break toolkit-specific connection between view element and
@@ -175,3 +175,12 @@ class BridgeBase(abc.ABC,
         :param p_persist: persistent form for storage element content.
         """
         raise NotImplementedError
+
+    def _update_views(self) -> None:
+        """Update attached views to match persistent content.
+
+        Typically, a widget toolkit storage element element updates
+        attached view elements automatically.  This method provides a
+        hook for elements that need to be updated manually.
+        """
+        pass

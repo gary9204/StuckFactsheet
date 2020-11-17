@@ -37,6 +37,8 @@ ModelAspectPlain = str
 PersistAspectOpaque = typing.TypeVar('PersistAspectOpaque')
 PersistAspectPlain = str
 SourceOpaque = typing.TypeVar('SourceOpaque')
+ViewAspectAny = typing.Union[Gtk.Widget]
+ViewAspectMissing = typing.Union[Gtk.Label]
 ViewAspectOpaque = typing.TypeVar('ViewAspectOpaque')
 ViewAspectPlain = typing.Union[Gtk.Label]
 
@@ -78,6 +80,7 @@ class BridgeAspect(BBASE.BridgeBase[
         """
         persist = self.transcribe(p_source)
         self._set_persist(persist)
+        self._update_views()
 
 
 class BridgeAspectPlain(BridgeAspect[
@@ -114,6 +117,13 @@ class BridgeAspectPlain(BridgeAspect[
         """Return toolkit-specific view element."""
         return ViewAspectPlain()
 
+    def _set_persist(self, p_persist: PersistAspectPlain) -> None:
+        """Update representation elements from persistent form of aspect.
+
+        :param p_persist: persistent form of plain text aspect.
+        """
+        self._model = p_persist
+
     def transcribe(self, p_source: typing.Optional[SourceOpaque]
                    ) -> PersistAspectPlain:
         """Return plain text representation of source.
@@ -127,11 +137,28 @@ class BridgeAspectPlain(BridgeAspect[
             persist = str(p_source)
         return persist
 
-    def _set_persist(self, p_persist: PersistAspectPlain) -> None:
-        """Update representation elements from persistent form of aspect.
+    def _update_views(self) -> None:
+        """Update attached views to match persistent content.
 
-        :param p_persist: persistent form of plain text aspect.
+        Typically, a widget toolkit storage element element updates
+        attached view elements automatically.  However, views of
+        :class:`str`` text need to be updated manually, which this
+        method does.
         """
-        self._model = p_persist
+        super()._update_views()
         for view in self._views.values():
             view.set_label(self._model)
+
+
+class BridgeAspectMissing(BridgeAspectPlain[str]):
+    """Plain text aspect for a fact."""
+
+    def transcribe(self, p_source: typing.Optional[str]
+                   ) -> PersistAspectPlain:
+        """Return plain text representation of source.
+
+        :param p_source: aspect.
+        """
+        persist = ('Aspect \'{}\' not found. Please report omission.'
+                   ''.format(p_source))
+        return persist

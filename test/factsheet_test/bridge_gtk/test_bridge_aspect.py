@@ -114,6 +114,7 @@ class TestBridgeAspectPlain:
         # Test
         target = BASPECT.BridgeAspectPlain[typing.Any]()
         assert BLANK == target._model
+        assert isinstance(target._views, dict)
 
     def test_bind(self):
         """Confirm widget association."""
@@ -163,6 +164,41 @@ class TestBridgeAspectPlain:
         view = target._new_view()
         assert isinstance(view, BASPECT.ViewAspectPlain)
 
+    def test_refresh(self):
+        """| Confirm storage and view elements are set from source.
+        | Case: source is not None.
+        """
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 42
+        model = str(SOURCE)
+        # Test
+        target.refresh(SOURCE)
+        assert model == target._model
+        for view in views:
+            assert target._views[id(view)] is view
+            assert model == view.get_label()
+
+    def test_refresh_none(self):
+        """| Confirm storage and view elements are set from source.
+        | Case: source is not None.
+        """
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 42
+        target.refresh(SOURCE)
+        BLANK = ''
+        # Test
+        target.refresh(None)
+        assert BLANK == target._model
+        for view in views:
+            assert target._views[id(view)] is view
+            assert BLANK == view.get_label()
+
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
@@ -176,7 +212,7 @@ class TestBridgeAspectPlain:
         target._set_persist(TEXT_NEW)
         assert TEXT_NEW == target._get_persist()
         for view in views:
-            assert TEXT_NEW == view.get_label()
+            assert TEXT == view.get_label()
 
     def test_transcribe(self):
         """| Confirm transcription from source to persist form.
@@ -204,6 +240,37 @@ class TestBridgeAspectPlain:
         # Test
         assert BLANK == target.transcribe(SOURCE)
 
+    def test_update_views(self):
+        """Confirm manual update of views."""
+        # Setup
+        target = BASPECT.BridgeAspectPlain[typing.Any]()
+        N_VIEWS = 3
+        views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 42
+        model = str(SOURCE)
+        target._model = model
+        # Test
+        target._update_views()
+        for view in views:
+            assert target._views[id(view)] is view
+            assert model == view.get_label()
+
+
+class TestBridgeAspectMissing:
+    """Unit tests for :class:`~.BridgeAspectMissing`."""
+
+    def test_transcribe(self):
+        """Confirm warning for missing aspect."""
+        # Setup
+        target = BASPECT.BridgeAspectMissing()
+        N_VIEWS = 3
+        _views = [target.attach_view() for _ in range(N_VIEWS)]
+        SOURCE = 'Dinsdale'
+        text = ('Aspect \'{}\' not found. Please report omission.'
+                ''.format(SOURCE))
+        # Test
+        assert text == target.transcribe(SOURCE)
+
 
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.bridge_aspect`."""
@@ -217,6 +284,8 @@ class TestTypes:
         (BASPECT.PersistAspectPlain, str),
         (type(BASPECT.SourceOpaque), typing.TypeVar),
         (BASPECT.SourceOpaque.__constraints__, ()),
+        (BASPECT.ViewAspectAny, Gtk.Widget),
+        (BASPECT.ViewAspectMissing, Gtk.Label),
         (type(ViewAspectOpaque), typing.TypeVar),
         (BASPECT.ViewAspectOpaque.__constraints__, ()),
         (BASPECT.ViewAspectPlain, Gtk.Label),

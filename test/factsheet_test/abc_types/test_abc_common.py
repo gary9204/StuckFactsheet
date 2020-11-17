@@ -176,7 +176,7 @@ class TestInterface:
         (PatchInterfaceIdentity, 'tag', False),
         (PatchInterfaceIdentity, 'title', False),
         ])
-    def test_property_abstract(self, PATCH_CLASS, NAME_PROP, HAS_SETTER):
+    def test_property_access(self, PATCH_CLASS, NAME_PROP, HAS_SETTER):
         """Confirm access limits of each abstract property."""
         # Setup
         _ = PATCH_CLASS()  # Confirms abstract method override.

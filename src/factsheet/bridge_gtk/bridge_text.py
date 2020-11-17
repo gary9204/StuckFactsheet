@@ -129,6 +129,7 @@ class BridgeText(
         :param p_text: new content for attribute.
         """
         self._set_persist(p_text)
+        self._update_views()
 
 
 class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
@@ -324,5 +325,18 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
         """
         self._model = p_persist
         self.set_stale()
+        # for view in self._views.values():
+        #     view.set_label(self._model)
+
+    def _update_views(self) -> None:
+        """Update attached views to match persistent content.
+
+        Typically, a widget toolkit storage element element updates
+        attached view elements automatically.  However, views of
+        :class:`str`` text need to be updated manually, which this
+        method does.
+        """
+        # self._model = p_persist
+        # self.set_stale()
         for view in self._views.values():
             view.set_label(self._model)

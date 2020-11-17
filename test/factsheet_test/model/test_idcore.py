@@ -102,6 +102,37 @@ class TestIdCore:
         with pytest.raises(TypeError, match=ERROR):
             _ = patch_idcore(extra='Oops!')
 
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (MIDCORE.IdCore, 'name'),
+        (MIDCORE.IdCore, 'summary'),
+        (MIDCORE.IdCore, 'title'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified."""
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+    @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
+        ('name', False),
+        ('summary', False),
+        ('title', False),
+        ])
+    def test_property_access(self, NAME_PROP, HAS_SETTER):
+        """Confirm access limits of each property."""
+        # Setup
+        # Test
+        target = getattr(MIDCORE.IdCore, NAME_PROP)
+        with pytest.raises(NotImplementedError):
+            target.fget(None)
+        if HAS_SETTER:
+            with pytest.raises(NotImplementedError):
+                target.fset(None, 'Oops!')
+        else:
+            assert target.fset is None
+        assert target.fdel is None
+
     @pytest.mark.parametrize('IS_STALE', [
         True,
         False,
@@ -216,38 +247,6 @@ class TestIdCore:
         target.set_stale()
         assert not patch.called
         assert target._stale
-
-
-class TestIdCoreAbstract:
-    """Unit tests for abstract properties of :class:`.IdCore`."""
-
-    def test_abstract_class(self):
-        """Confirm  class is abstract."""
-        # Setup
-        # Test
-        with pytest.raises(TypeError):
-            _ = MIDCORE.IdCore()
-
-    @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
-        ('name', False),
-        ('summary', False),
-        ('title', False),
-        ])
-    def test_property_abstract(
-            self, patch_idcore_abstract, NAME_PROP, HAS_SETTER):
-        """Confirm access limits of each abstract property."""
-        # Setup
-        _ = patch_idcore_abstract()  # Confirms abstract method override.
-        # Test
-        target = getattr(patch_idcore_abstract, NAME_PROP)
-        with pytest.raises(NotImplementedError):
-            target.fget(None)
-        if HAS_SETTER:
-            with pytest.raises(NotImplementedError):
-                target.fset(None, 'Oops!')
-        else:
-            assert target.fset is None
-        assert target.fdel is None
 
 
 class TestIdCoreTypes:

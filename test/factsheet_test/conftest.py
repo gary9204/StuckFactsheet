@@ -4,7 +4,6 @@ Test fixtures for Factsheet as a whole.
 import pytest   # type: ignore[import]
 import typing
 
-import factsheet.adapt_gtk.adapt as ADAPT
 import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.model.idcore as MIDCORE
 # import factsheet.abc_types.abc_fact as ABC_FACT
@@ -57,46 +56,14 @@ def patch_bridge_text():
     return PatchBridgeText
 
 
-class PatchAdaptText(ADAPT.AdaptText[typing.Any, typing.Any]):
-    """:class:`.AdaptText` subclass with stub text property."""
-
-    def __init__(self):
-        super().__init__()
-        self.bound = []
-        self.loosed = []
-
-    def _bind_store(self, p_view):
-        self.bound.append(p_view)
-
-    def _loose_store(self, p_view):
-        self.loosed = [p_view]
-
-    def _new_store_gtk(self):
-        return str()
-
-    @property
-    def text(self): return self._text_gtk
-
-    @text.setter
-    def text(self, p_text): self._text_gtk = p_text
-
-
-@pytest.fixture
-def patch_adapt_text():
-    """Pytest fixture: return :class:`.AdaptText` subclass with stub
-    text property.
-    """
-    return PatchAdaptText
-
-
 class PatchIdCore(MIDCORE.IdCore):
     """:class:`.IdCore` subclass with stubs for properties."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._name = PatchBridgeText()
-        self._summary = PatchBridgeText()
-        self._title = PatchBridgeText()
+        self._name = BTEXT.BridgeTextMarkup()
+        self._summary = BTEXT.BridgeTextFormat()
+        self._title = BTEXT.BridgeTextMarkup()
 
     @property
     def name(self):
@@ -118,82 +85,6 @@ def patch_idcore():
     """
     return PatchIdCore
 
-
-class PatchIdCoreAbstract(MIDCORE.IdCore):
-    """:class:`.IdCore` subclass with pass-through stubs for abstract
-    properties.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self._name = PatchAdaptText()
-        self._summary = PatchAdaptText()
-        self._title = PatchAdaptText()
-
-    @property
-    def name(self):
-        prop = getattr(MIDCORE.IdCore, 'name')
-        prop.fget(self)
-
-    @property
-    def summary(self):
-        prop = getattr(MIDCORE.IdCore, 'summary')
-        prop.fget(self)
-
-    @property
-    def title(self):
-        prop = getattr(MIDCORE.IdCore, 'title')
-        prop.fget(self)
-
-
-@pytest.fixture
-def patch_idcore_abstract():
-    """Pytest fixture: return :class:`.IdCore` subclass with
-    pass-through stubs for abstract properties.
-    """
-    return PatchIdCoreAbstract
-
-# @pytest.fixture
-# def interface_view_infoid(patch_args_infoid):
-#     """Pytest fixture: return stub class implementing
-#     :class:`.InterfaceViewInfoId`.
-#      """
-#     class PatchViewInfoId(ABC_INFOID.InterfaceViewInfoId):
-#         ALL_TEXT = -1
-#         INCLUDE_HIDDEN = True
-# 
-#         def __init__(self):
-#             ARGS = patch_args_infoid
-#             # self._name = UI.FACTORY_INFOID.new_view_name()
-#             self._name = AINFOID.AdaptEntry()
-#             self._name.set_text(ARGS.p_name)
-#             # self._summary = UI.FACTORY_INFOID.new_view_summary()
-#             self._summary = AINFOID.AdaptTextView()
-#             buffer_summary = self._summary.get_buffer()
-#             buffer_summary.set_text(
-#                 ARGS.p_summary, self.ALL_TEXT)
-#             # self._title = UI.FACTORY_INFOID.new_view_title()
-#             self._title = AINFOID.AdaptEntry()
-#             self._title.set_text(ARGS.p_title)
-# 
-#         def get_view_name(self): return self._name
-# 
-#         def get_view_summary(self): return self._summary
-# 
-#         def get_view_title(self): return self._title
-# 
-#         @property
-#         def name(self): return self._name.get_text()
-# 
-#         @property
-#         def summary(self):
-#             text = AINFOID.str_adapt_textview(self.get_view_summary())
-#             return text
-# 
-#         @property
-#         def title(self): return self._title.get_text()
-# 
-#     return PatchViewInfoId
 
 
 # @pytest.fixture
