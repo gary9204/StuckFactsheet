@@ -7,23 +7,18 @@ factsheet, topic, and fact layers.  Module ``topic`` defines
 the base class representing the model of a topic.  Additional classes
 specialize the model for sets, operations, and so on.
 """
-import logging
 import typing   # noqa
 
-import factsheet.abc_types.abc_fact as ABC_FACT
-import factsheet.abc_types.abc_topic as ABC_TOPIC
-import factsheet.model.infoid as MINFOID
-import factsheet.model.types_model as MTYPES
+import factsheet.bridge_ui as BUI
+import factsheet.model.idcore as MIDCORE
 
-from factsheet.abc_types.abc_topic import TagTopic
-from factsheet.model.types_model import IndexTopic
-from factsheet.model.types_model import IndexFact
-from factsheet.view.types_view import ViewOutlineFacts
-
-logger = logging.getLogger('Main.model.topic')
+NameTopic = BUI.BridgeTextMarkup
+SummaryTopic = BUI.BridgeTextFormat
+TitleTopic = BUI.BridgeTextMarkup
+TagTopic = typing.NewType('TagTopic', int)
 
 
-class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
+class Topic(MIDCORE.IdCore[NameTopic, SummaryTopic, TitleTopic]):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Topic`` represents a specific subject within a Factsheet.
@@ -44,14 +39,11 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
 
         :param p_other: object to compare with self.
         """
-        if not isinstance(p_other, type(self)):
+        if not super().__eq__(p_other):
             return False
 
-        if self._infoid != p_other._infoid:
-            return False
-
-        if self._facts != p_other._facts:
-            return False
+        # if self._facts != p_other._facts:
+        #     return False
 
         return True
 
@@ -60,30 +52,16 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
 
         Persistent form of topic excludes run-time information.
         """
-        state = self.__dict__.copy()
-        del state['_forms']
-        del state['_stale']
+        state = super().__getstate__()
+        del state['_tag']
         return state
 
     def __init__(self, **kwargs: typing.Any) -> None:
-        if kwargs:
-            raise TypeError("Topic.__init__() called with extra argument(s): "
-                            "{}".format(kwargs))
-        self._infoid = MINFOID.InfoId()
+        super().__init__(**kwargs)
+        self._name = NameTopic()
+        self._summary = SummaryTopic()
+        self._title = TitleTopic()
         self._tag = TagTopic(id(self))
-        self._facts = MTYPES.OutlineFacts()
-        self._state_transient()
-
-    def init_identity(self, *, p_name: str = '', p_summary: str = '',
-                      p_title: str = '') -> None:
-        """Assign initial name, title, and summary for topic.
-
-        :param p_name: name for component.
-        :param p_summary: summary for component.
-        :param p_title: title for component.
-        """
-        self._infoid.init_identity(
-            p_name=p_name, p_summary=p_summary, p_title=p_title)
 
     def __setstate__(self, p_state: typing.Dict) -> None:
         """Reconstruct topic model from state pickle loads.
@@ -92,98 +70,36 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
 
         :param p_state: unpickled state of stored topic model.
         """
-        self.__dict__.update(p_state)
-        self._state_transient()
+        super().__setstate__(p_state)
+        self._tag = TagTopic(id(self))
 
-    def _state_transient(self) -> None:
-        """Helper ensures initialization and pickling are consistent."""
-        self._stale = False
-        self._forms: typing.MutableMapping[
-            int, ABC_TOPIC.InterfaceFormTopic] = dict()
-
-    def attach_form(
-            self, p_form: ABC_TOPIC.InterfaceFormTopic[ViewOutlineFacts]
-            ) -> None:
-        """Add topic form to update display when topic changes.
-
-        Log warning when requested form is already attached.
-
-        :param p_form: form to add.
-        """
-        id_form = id(p_form)
-        if id_form in self._forms.keys():
-            logger.warning(
-                'Duplicate form: {} ({}.{})'.format(
-                    hex(id_form),
-                    self.__class__.__name__, self.attach_form.__name__))
-            return
-
-        self._infoid.attach_view(p_form.get_infoid())
-        self._facts.attach_view(p_form.get_view_facts())
-        self._forms[id_form] = p_form
-
-    def check_fact(self, p_i: IndexFact) -> None:
+    def check_fact(self, p_i: int) -> None:
         """Check a fact.
 
         :param p_i: index of fact to check.
         """
-        fact = self._facts.get_item(p_i)
-        assert fact is not None
-        fact.check()
+        raise NotImplementedError
+        # fact = self._facts.get_item(p_i)
+        # assert fact is not None
+        # fact.check()
 
     def clear_all(self) -> None:
         """Clear all of topic's facts. """
-        for index in self._facts.indices():
-            self.clear_fact(index)
+        raise NotImplementedError
+        # for index in self._facts.indices():
+        #     self.clear_fact(index)
 
-    def clear_fact(self, p_i: IndexFact) -> None:
+    def clear_fact(self, p_i: int) -> None:
         """Clear a fact.
 
         :param p_i: index of fact to clear.
         """
-        fact = self._facts.get_item(p_i)
-        assert fact is not None
-        fact.clear()
+        raise NotImplementedError
+        # fact = self._facts.get_item(p_i)
+        # assert fact is not None
+        # fact.clear()
 
-    def detach_all(self) -> None:
-        """Detach all forms from topic."""
-        while self._forms:
-            _id_form, form = self._forms.popitem()
-            self._detach_attribute_views(form)
-
-    def detach_form(
-            self, p_form: ABC_TOPIC.InterfaceFormTopic[ViewOutlineFacts]
-            ) -> None:
-        """Remove a topic form from topic.
-
-        Log warning when requested form is not attached.
-
-        :param p_form: form to remove.
-        """
-        id_form = id(p_form)
-        try:
-            self._forms.pop(id_form)
-        except KeyError:
-            logger.warning(
-                'Missing form: {} ({}.{})'.format(
-                    hex(id_form),
-                    self.__class__.__name__, self.detach_form.__name__))
-            return
-
-        self._detach_attribute_views(p_form)
-
-    def _detach_attribute_views(
-            self, p_form: ABC_TOPIC.InterfaceFormTopic) -> None:
-        """For each topic attribute with a distinct view, remove the
-        view for the attribute.
-
-        :param p_form: topic form as a whole.
-        """
-        self._infoid.detach_view(p_form.get_infoid())
-        self._facts.detach_view(p_form.get_view_facts())
-
-    def facts(self, p_index: IndexTopic = None
-              ) -> typing.Iterator[ABC_FACT.InterfaceFact]:
+    def facts(self, p_index: int = None) -> str:
         """Return iterator over facts in facts outline.
 
         The iterator is recursive (that is, includes fact at given
@@ -192,13 +108,13 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         :param p_index: index of parent item of section.  Default
             iterates over entire facts outline.
         """
-        for index in self._facts.indices(p_index):
-            fact = self._facts.get_item(index)
-            assert fact is not None
-            yield fact
+        raise NotImplementedError
+        # for index in self._facts.indices(p_index):
+        #     fact = self._facts.get_item(index)
+        #     assert fact is not None
+        #     yield fact
 
-    def insert_fact_after(self, p_fact: ABC_FACT.InterfaceFact,
-                          p_i: IndexFact) -> IndexFact:
+    def insert_fact_after(self, p_fact: str, p_i: int) -> int:
         """Adds fact to facts outline after fact at given index.
 
         If index is None, adds topic at beginning of outline.
@@ -207,11 +123,11 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         :param p_i: index of fact to precede new fact.
         :returns: index of newly-added topic.
         """
-        self.set_stale()
-        return self._facts.insert_after(p_fact, p_i)
+        raise NotImplementedError
+        # self.set_stale()
+        # return self._facts.insert_after(p_fact, p_i)
 
-    def insert_fact_before(self, p_fact: ABC_FACT.InterfaceFact,
-                           p_i: IndexFact) -> IndexFact:
+    def insert_fact_before(self, p_fact: str, p_i: int) -> int:
         """Adds fact to facts outline before fact at given index.
 
         If index is None, adds topic at end of outline.
@@ -220,11 +136,11 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         :param p_i: index of fact to follow new fact.
         :returns: index of newly-added topic.
         """
-        self.set_stale()
-        return self._facts.insert_before(p_fact, p_i)
+        raise NotImplementedError
+        # self.set_stale()
+        # return self._facts.insert_before(p_fact, p_i)
 
-    def insert_fact_child(self, p_fact: ABC_FACT.InterfaceFact,
-                          p_i: IndexFact) -> IndexFact:
+    def insert_fact_child(self, p_fact: str, p_i: int) -> int:
         """Adds fact to fact outline as child of fact at given index.
 
         Method adds fact after all existing children.  If index is
@@ -234,11 +150,11 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         :param px_i: index of parent fact for new fact.
         :returns: index of newly-added fact.
         """
-        self.set_stale()
-        return self._facts.insert_child(p_fact, p_i)
+        raise NotImplementedError
+        # self.set_stale()
+        # return self._facts.insert_child(p_fact, p_i)
 
-    def insert_facts_section(self, p_source: MTYPES.OutlineFacts,
-                             p_i: IndexFact = None) -> None:
+    def insert_facts_section(self, p_source: int, p_i: int = None) -> None:
         """Copy another facts outline under given fact.
 
         .. note:: This method makes a shallow copy.  The outlines share
@@ -248,52 +164,52 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         :param p_i: index to copy section under.  Default is top level
             after existing top-level items.
         """
-        self.set_stale()
-        COPY_ALL = None
-        return self._facts.insert_section(p_source, COPY_ALL, p_i)
+        raise NotImplementedError
+        # self.set_stale()
+        # COPY_ALL = None
+        # return self._facts.insert_section(p_source, COPY_ALL, p_i)
 
-    def is_fresh(self) -> bool:
-        """Return True when there are no unsaved changes to topic."""
-        return not self.is_stale()
+    # def is_fresh(self) -> bool:
+    #     """Return True when there are no unsaved changes to topic."""
+    #     raise NotImplementedError
+    #     # return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         topic.
         """
-        if self._stale:
-            return True
+        raise NotImplementedError
+        # if super().is_stale():
+        #     return True
 
-        if self._infoid.is_stale():
-            self._stale = True
-            return True
+        # for fact in self.facts():
+        #     if fact.is_stale():
+        #         self._stale = True
+        #         return True
 
-        for fact in self.facts():
-            if fact.is_stale():
-                self._stale = True
-                return True
-
-        return False
+        # return False
 
     @property
-    def name(self) -> str:
+    def name(self) -> NameTopic:
         """Return topic name."""
-        return self._infoid.name
+        return self._name
 
     def set_fresh(self) -> None:
         """Mark topic in memory consistent with file contents."""
-        self._stale = False
-        self._infoid.set_fresh()
-        for fact in self.facts():
-            fact.set_fresh()
+        raise NotImplementedError
+        # super().set_fresh()
+        # for fact in self.facts():
+        #     fact.set_fresh()
 
-    def set_stale(self) -> None:
-        """Mark topic in memory changed from file contents."""
-        self._stale = True
+    # def set_stale(self) -> None:
+    #     """Mark topic in memory changed from file contents."""
+    #     raise NotImplementedError
+    #     # self._stale = True
 
     @property
-    def summary(self) -> str:
+    def summary(self) -> SummaryTopic:
         """Return topic summary."""
-        return self._infoid.summary
+        return self._summary
 
     @property
     def tag(self) -> TagTopic:
@@ -301,6 +217,6 @@ class Topic(ABC_TOPIC.AbstractTopic[IndexFact, ViewOutlineFacts]):
         return self._tag
 
     @property
-    def title(self) -> str:
+    def title(self) -> TitleTopic:
         """Return topic title."""
-        return self._infoid.title
+        return self._title

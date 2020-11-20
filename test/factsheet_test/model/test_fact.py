@@ -39,15 +39,15 @@ class TestFact:
     """Unit tests for :class:`~.Fact`."""
 
     def test_eq(self):
-        """Confirm equivalence operator
+        """Confirm equivalence operator.
 
-        #. Case: type difference
-        #. Case: identity difference
-        #. Case: formats difference
-        #. Case: note difference
-        #. Case: status difference
-        #. Case: value difference
-        #. Case: Equivalence
+        #. Case: type difference.
+        #. Case: identity difference.
+        #. Case: aspects difference.
+        #. Case: note difference.
+        #. Case: status difference.
+        #. Case: value difference.
+        #. Case: Equivalence.
         """
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
@@ -64,7 +64,7 @@ class TestFact:
         target.title.text = TEXT
         target.note.text = NOTE
         assert not source.__eq__(target)
-        # Test: formats difference
+        # Test: aspects difference
         target = Fact(p_topic=None)
         target.title.text = TITLE
         target.note.text = NOTE
@@ -106,12 +106,14 @@ class TestFact:
         source.summary.text = SUMMARY
         TITLE = 'The Parrot Sketch'
         source.title.text = TITLE
+        source._stale = True
         # Test
         with path.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
         with path.open(mode='rb') as io_in:
             target = pickle.load(io_in)
         assert source._tag != target._tag
+        assert not target._stale
         assert source == target
 
     def test_init(self):
@@ -305,7 +307,7 @@ class TestStatusOfFact:
 
 
 class TestTypes:
-    """Unit tests for type hit definitions in :mod:`.fact`."""
+    """Unit tests for type hint definitions in :mod:`.fact`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (MFACT.Aspect, BUI.BridgeAspect),

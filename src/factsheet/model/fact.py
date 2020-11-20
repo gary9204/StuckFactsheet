@@ -95,25 +95,25 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         different.
     """
 
-    def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when px_other has same status, value, aspects,
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when p_other has same status, value, aspects,
         and identity.
 
-        :param px_other: object to compare with self.
+        :param p_other: object to compare with self.
         """
-        if not super().__eq__(px_other):
+        if not super().__eq__(p_other):
             return False
 
-        if not self._aspects == px_other._aspects:
+        if not self._aspects == p_other._aspects:
             return False
 
-        if self.note != px_other.note:
+        if self.note != p_other.note:
             return False
 
-        if self.status != px_other.status:
+        if self.status != p_other.status:
             return False
 
-        if self.value != px_other.value:
+        if self.value != p_other.value:
             return False
 
         return True
@@ -149,14 +149,14 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         self._aspects['Status'] = AspectStatus()
         self._names_aspect.insert_before('Status', None)
 
-    def __setstate__(self, px_state: typing.Dict) -> None:
+    def __setstate__(self, p_state: typing.Dict) -> None:
         """Reconstruct fact from state pickle loads.
 
         Reconstructed fact is marked fresh.
 
-        :param px_state: unpickled state of stored fact.
+        :param p_state: unpickled state of stored fact.
         """
-        super().__setstate__(px_state)
+        super().__setstate__(p_state)
         self._tag = TagFact(id(self))
 
     def check(self) -> StatusOfFact:
