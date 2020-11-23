@@ -9,6 +9,29 @@ import typing
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.fact as MFACT
+import factsheet.model.idcore as MIDCORE
+
+
+class PatchTopic(MIDCORE.IdCore[
+        MFACT.NameTopic, MFACT.SummaryTopic, MFACT.TitleTopic]):
+
+    def __init__(self):
+        self._name = MFACT.NameTopic
+        self._summary = MFACT.SummaryTopic
+        self._title = MFACT.TitleTopic
+        self._tag = MFACT.TagTopic(id(self))
+
+    @property
+    def name(self): return self._name
+
+    @property
+    def summary(self): return self._summary
+
+    @property
+    def title(self): return self._title
+
+    @property
+    def tag(self): return self._tag
 
 
 class TestAspectStatus:
@@ -122,8 +145,9 @@ class TestFact:
         """
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = PatchTopic()
         # Test
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         assert not target._stale
         assert isinstance(target._aspects, dict)
         assert isinstance(target._names_aspect, type(MFACT.NamesAspect()))
@@ -133,6 +157,7 @@ class TestFact:
         assert isinstance(target._summary, MFACT.SummaryFact)
         assert id(target) == target._tag
         assert isinstance(target._title, MFACT.TitleFact)
+        assert target._topic is TOPIC
         assert target._value is None
 
     @pytest.mark.parametrize('KEY, ASPECT', [
@@ -172,6 +197,57 @@ class TestFact:
         assert value_attr is target_prop.fget(target)
         assert target_prop.fset is None
         assert target_prop.fdel is None
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ('name', 'name_topic'),
+        ('summary', 'summary_topic'),
+        ('tag', 'tag_topic'),
+        ('title', 'title_topic'),
+        ])
+    def test_property_topic(self, NAME_ATTR, NAME_PROP):
+        """Confirm values and access limits of topic properties."""
+        # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        TOPIC = PatchTopic()
+        target = Fact(p_topic=TOPIC)
+        target_prop = getattr(MFACT.Fact, NAME_PROP)
+        value_attr = getattr(target._topic, NAME_ATTR)
+        # Test
+        assert target_prop.fget is not None
+        assert value_attr is target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+    @pytest.mark.parametrize('NAME_PROP', [
+        'name_topic',
+        'summary_topic',
+        'title_topic',
+        ])
+    def test_property_topic_except(self, NAME_PROP):
+        """| Confirm property exceptions for malformed topic.
+        | Case: not tag property
+        """
+        # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        ERROR = 'Malformed topic! please report.'
+        target = Fact(p_topic=None)
+        target_prop = getattr(MFACT.Fact, NAME_PROP)
+        # Test
+        result = target_prop.fget(target)
+        assert ERROR == result.text
+
+    def test_property_tag_except(self):
+        """| Confirm property exceptions for malformed topic.
+        | Case: tag property
+        """
+        # Setup
+        Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
+        ERROR = -1
+        target = Fact(p_topic=None)
+        target_prop = getattr(MFACT.Fact, 'tag_topic')
+        # Test
+        result = target_prop.fget(target)
+        assert ERROR == result
 
     def test_check(self):
         """Confirm default check."""
@@ -314,11 +390,15 @@ class TestTypes:
         (MFACT.AspectValuePlain, BUI.BridgeAspectPlain[typing.Any]),
         (MFACT.NameFact, BUI.BridgeTextMarkup),
         (MFACT.NamesAspect, BUI.BridgeOutlineSelect[str]),
+        (MFACT.NameTopic, BUI.BridgeTextMarkup),
         (MFACT.NoteFact, BUI.BridgeTextFormat),
         (MFACT.PersistAspectStatus, BUI.PersistAspectPlain),
         (MFACT.SummaryFact, BUI.BridgeTextFormat),
+        (MFACT.SummaryTopic, BUI.BridgeTextFormat),
         (MFACT.TagFact.__supertype__, int),  # type: ignore[attr-defined]
+        (MFACT.TagTopic.__supertype__, int),  # type: ignore[attr-defined]
         (MFACT.TitleFact, BUI.BridgeTextMarkup),
+        (MFACT.TitleTopic, BUI.BridgeTextMarkup),
         (type(MFACT.TopicOpaque), typing.TypeVar),
         (MFACT.TopicOpaque.__constraints__, ()),
         (type(MFACT.ValueOpaque), typing.TypeVar),

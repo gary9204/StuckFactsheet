@@ -8,7 +8,6 @@ the base class representing the model of a fact.  Additional classes
 specialize the model for facts about sets, operations, and so on.
 """
 import enum
-import logging
 import typing
 
 import factsheet.model.idcore as MIDCORE
@@ -19,16 +18,17 @@ Aspect = BUI.BridgeAspect
 AspectValuePlain = BUI.BridgeAspectPlain[typing.Any]
 NamesAspect = BUI.BridgeOutlineSelect[str]
 NameFact = BUI.BridgeTextMarkup
+NameTopic = BUI.BridgeTextMarkup
 NoteFact = BUI.BridgeTextFormat
 PersistAspectStatus = BUI.PersistAspectPlain
 SummaryFact = BUI.BridgeTextFormat
-TitleFact = BUI.BridgeTextMarkup
+SummaryTopic = BUI.BridgeTextFormat
 TagFact = typing.NewType('TagFact', int)
+TagTopic = typing.NewType('TagTopic', int)
+TitleFact = BUI.BridgeTextMarkup
+TitleTopic = BUI.BridgeTextMarkup
 TopicOpaque = typing.TypeVar('TopicOpaque')
 ValueOpaque = typing.TypeVar('ValueOpaque')
-
-
-logger = logging.getLogger('Main.model.fact')
 
 
 class StatusOfFact(enum.Enum):
@@ -130,7 +130,6 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
     def __init__(self, *, p_topic: TopicOpaque, **kwargs: typing.Any
                  ) -> None:
         super().__init__(**kwargs)
-        _ = p_topic  # Needed in every descendant but not base.
         self._aspects: typing.Dict[str, Aspect] = dict()
         self._name = NameFact()
         self._names_aspect = NamesAspect()
@@ -139,6 +138,7 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         self._summary = SummaryFact()
         self._tag = TagFact(id(self))
         self._title = TitleFact()
+        self._topic = p_topic
         self._value: typing.Optional[ValueOpaque] = None
         self._init_aspects()
 
@@ -215,6 +215,16 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         return self._names_aspect
 
     @property
+    def name_topic(self) -> NameTopic:
+        """Return topic name."""
+        try:
+            name = getattr(self._topic, 'name')
+        except AttributeError:
+            name = NameTopic()
+            name.text = 'Malformed topic! please report.'
+        return name
+
+    @property
     def note(self) -> NoteFact:
         """Return user note for fact."""
         return self._note
@@ -235,14 +245,44 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         return self._summary
 
     @property
+    def summary_topic(self) -> SummaryTopic:
+        """Return topic summary."""
+        try:
+            summary = getattr(self._topic, 'summary')
+        except AttributeError:
+            summary = SummaryTopic()
+            summary.text = 'Malformed topic! please report.'
+        return summary
+
+    @property
     def tag(self) -> TagFact:
         """Return fact identifier. """
         return self._tag
 
     @property
+    def tag_topic(self) -> TagTopic:
+        """Return topic tag."""
+        try:
+            tag = getattr(self._topic, 'tag')
+        except AttributeError:
+            TAG_MISSING = -1
+            tag = TagTopic(TAG_MISSING)
+        return tag
+
+    @property
     def title(self) -> TitleFact:
         """Return fact title."""
         return self._title
+
+    @property
+    def title_topic(self) -> TitleTopic:
+        """Return topic title."""
+        try:
+            title = getattr(self._topic, 'title')
+        except AttributeError:
+            title = TitleTopic()
+            title.text = 'Malformed topic! please report.'
+        return title
 
     @property
     def value(self) -> typing.Optional[ValueOpaque]:
