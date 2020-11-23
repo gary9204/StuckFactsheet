@@ -10,12 +10,59 @@ specialize the model for sets, operations, and so on.
 import typing   # noqa
 
 import factsheet.bridge_ui as BUI
+import factsheet.model.fact as MFACT
 import factsheet.model.idcore as MIDCORE
 
 NameTopic = BUI.BridgeTextMarkup
 SummaryTopic = BUI.BridgeTextFormat
 TitleTopic = BUI.BridgeTextMarkup
 TagTopic = typing.NewType('TagTopic', int)
+
+
+class BadgeFact:
+    """Representation to identify and distinguish a fact.
+
+    The representation includes topic information to place a fact in
+    context.
+
+    :param p_fact: fact to identify.
+    :param p_topic: topic containing fact.
+    """
+
+    def __init__(self, p_topic: 'Topic',
+                 p_fact: MFACT.Fact['Topic', MFACT.ValueOpaque]) -> None:
+        self._fact = p_fact
+        self._topic = p_topic
+
+    @property
+    def name_fact(self) -> str:
+        """***** stopped ***** """
+        return self._fact.name.text
+
+    # @property
+    def name_topic(self) -> str:
+        """ """
+        raise NotImplementedError
+
+    # @property
+    def tag_fact(self) -> MFACT.TagFact:
+        """ """
+        raise NotImplementedError
+
+    # @property
+    def tag_topic(self) -> TagTopic:
+        """ """
+        raise NotImplementedError
+
+    # @property
+    def title_fact(self) -> str:
+        """ """
+        raise NotImplementedError
+
+    # @property
+    def title_topic(self) -> str:
+        """ """
+        raise NotImplementedError
 
 
 class Topic(MIDCORE.IdCore[NameTopic, SummaryTopic, TitleTopic]):

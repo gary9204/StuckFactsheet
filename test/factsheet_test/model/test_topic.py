@@ -9,8 +9,57 @@ import pytest   # type: ignore[import]
 # import re as RE
 
 import factsheet.bridge_ui as BUI
-# import factsheet.model.fact as MFACT
+import factsheet.model.fact as MFACT
 import factsheet.model.topic as MTOPIC
+
+
+class TestBadgeFact:
+    """ """
+
+    def test_init(self):
+        """ """
+        # Setup
+        topic = MTOPIC.Topic()
+        fact = MFACT.Fact(p_topic=topic)
+        # Test
+        target = MTOPIC.BadgeFact(p_topic=topic, p_fact=fact)
+        assert target._fact is fact
+        assert target._topic is topic
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_ATTR_PROP, NAME_PROP', [
+        ('_fact', 'name', 'name_fact'),
+        # ('_name_topic', 'name_topic'),
+        # ('_tag_name', 'tag_name'),
+        # ('_tag_topic', 'tag_topic'),
+        # ('_title_fact', 'title_fact'),
+        # ('_title_topic', 'title_topic'),
+        ])
+    def test_property_text(self, NAME_ATTR, NAME_ATTR_PROP, NAME_PROP):
+        """Confirm values and access limits of properties."""
+        # Setup
+        topic = MTOPIC.Topic()
+        topic.name.text = 'The Holy Grail'
+        topic.title.text = 'Monty Python and the Holy Grail'
+        fact = MFACT.Fact(p_topic=topic)
+        fact.name.text = 'King Arthur'
+        fact.title.text = 'Arthur, King of the Britons'
+        target = MTOPIC.BadgeFact(p_topic=topic, p_fact=fact)
+        target_prop = getattr(MTOPIC.BadgeFact, NAME_PROP)
+        attr = getattr(target, NAME_ATTR)
+        print('attr target:  {}'.format(target._fact))
+        print('attr extract: {}'.format(attr))
+        prop = getattr(attr, NAME_ATTR_PROP)
+        print('attr target:  {}'.format(target._fact.name))
+        print('attr extract: {}'.format(prop))
+        text_prop = getattr(BUI.BridgeTextMarkup, 'text')
+        text_value = text_prop.fget(prop)
+        print('text target:  {}'.format(target._fact.name.text))
+        print('text extract: {}'.format(text_value))
+        # Test
+        assert target_prop.fget is not None
+        assert text_value == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
 
 
 class TestTopic:
