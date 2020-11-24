@@ -9,10 +9,10 @@ import factsheet.model.idcore as MIDCORE
 # import factsheet.abc_types.abc_fact as ABC_FACT
 # import factsheet.abc_types.abc_infoid as ABC_INFOID
 # import factsheet.model.element as MELEMENT
-# import factsheet.model.fact as MFACT
+import factsheet.model.fact as MFACT
 # import factsheet.model.setindexed as MSET
 # import factsheet.model.table as MTABLE
-# import factsheet.model.topic as MTOPIC
+import factsheet.model.topic as MTOPIC
 
 # import gi   # type: ignore[import]
 # gi.require_version('Gtk', '3.0')
@@ -86,7 +86,6 @@ def patch_idcore():
     return PatchIdCore
 
 
-
 # @pytest.fixture
 # def patch_class_block_fact(interface_view_infoid):
 #     """Pytest fixture: return stub :class:`.InterfaceBlockFact` class.
@@ -106,30 +105,33 @@ def patch_idcore():
 #     return PatchClassBlockFact
 
 
-# class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):
-#     """Stub :class:`.Fact` class with complete check and clear methods."""
-# 
-#     VALUE = 42
-# 
-#     def check(self) -> MFACT.StatusOfFact:
-#         """Set fact value and set corresponding state of fact check."""
-#         self._value = 42
-#         self._status = MFACT.StatusOfFact.DEFINED
-#         return super().check()
-# 
-#     def clear(self) -> None:
-#         """Clear fact value and set corresponding state of fact check."""
-#         self._value = None
-#         self._status = MFACT.StatusOfFact.UNCHECKED
-#         super().clear()
+class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):
+    """Stub :class:`.Fact` class with complete check and clear methods."""
+
+    STATUS_CHECKED = MFACT.StatusOfFact.DEFINED
+    STATUS_CLEARED = MFACT.StatusOfFact.UNCHECKED
+    VALUE_CHECKED = 42
+    VALUE_CLEARED = None
+
+    def check(self) -> MFACT.StatusOfFact:
+        """Set fact value and set corresponding state of fact check."""
+        self._value = PatchFact.VALUE_CHECKED
+        self._status = PatchFact.STATUS_CHECKED
+        return super().check()
+
+    def clear(self) -> None:
+        """Clear fact value and set corresponding state of fact check."""
+        self._value = PatchFact.VALUE_CLEARED
+        self._status = PatchFact.STATUS_CLEARED
+        super().clear()
 
 
-# @pytest.fixture
-# def patch_class_fact():
-#     """Pytest fixture: return stub :class:`.Fact` class with complete
-#     check and clear methods.
-#     """
-#     return PatchFact
+@pytest.fixture
+def patch_class_fact():
+    """Pytest fixture: return stub :class:`.Fact` class with complete
+    check and clear methods.
+    """
+    return PatchFact
 
 
 # @pytest.fixture

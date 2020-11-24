@@ -1,77 +1,86 @@
 """
 Unit tests for topic-level model. See :mod:`~.topic`.
 """
-# import dataclasses as DC
-# import logging
 from pathlib import Path
+import itertools as IT
 import pickle
 import pytest   # type: ignore[import]
-# import re as RE
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.fact as MFACT
 import factsheet.model.topic as MTOPIC
 
 
-class TestBadgeFact:
-    """ """
+@pytest.fixture
+def new_target_topic(patch_class_fact):
+    """Pytest fixture: Return factory for topic with non-empty facts
+    outline.
+    """
+    def new_target(n_facts):
+        PatchFact = patch_class_fact
+        target = MTOPIC.Topic()
+        for i in range(n_facts):
+            fact = PatchFact(p_topic=target)
+            fact.name.text = 'Fact {:02}'.format(i)
+            target.append_fact(fact)
+        target.set_fresh()
+        return target
 
-    def test_init(self):
-        """ """
-        # Setup
-        topic = MTOPIC.Topic()
-        fact = MFACT.Fact(p_topic=topic)
-        # Test
-        target = MTOPIC.BadgeFact(p_topic=topic, p_fact=fact)
-        assert target._fact is fact
-        assert target._topic is topic
-
-    @pytest.mark.parametrize('NAME_ATTR, NAME_ATTR_PROP, NAME_PROP', [
-        ('_fact', 'name', 'name_fact'),
-        # ('_name_topic', 'name_topic'),
-        # ('_tag_name', 'tag_name'),
-        # ('_tag_topic', 'tag_topic'),
-        # ('_title_fact', 'title_fact'),
-        # ('_title_topic', 'title_topic'),
-        ])
-    def test_property_text(self, NAME_ATTR, NAME_ATTR_PROP, NAME_PROP):
-        """Confirm values and access limits of properties."""
-        # Setup
-        topic = MTOPIC.Topic()
-        topic.name.text = 'The Holy Grail'
-        topic.title.text = 'Monty Python and the Holy Grail'
-        fact = MFACT.Fact(p_topic=topic)
-        fact.name.text = 'King Arthur'
-        fact.title.text = 'Arthur, King of the Britons'
-        target = MTOPIC.BadgeFact(p_topic=topic, p_fact=fact)
-        target_prop = getattr(MTOPIC.BadgeFact, NAME_PROP)
-        attr = getattr(target, NAME_ATTR)
-        print('attr target:  {}'.format(target._fact))
-        print('attr extract: {}'.format(attr))
-        prop = getattr(attr, NAME_ATTR_PROP)
-        print('attr target:  {}'.format(target._fact.name))
-        print('attr extract: {}'.format(prop))
-        text_prop = getattr(BUI.BridgeTextMarkup, 'text')
-        text_value = text_prop.fget(prop)
-        print('text target:  {}'.format(target._fact.name.text))
-        print('text extract: {}'.format(text_value))
-        # Test
-        assert target_prop.fget is not None
-        assert text_value == target_prop.fget(target)
-        assert target_prop.fset is None
-        assert target_prop.fdel is None
+    return new_target
 
 
 class TestTopic:
-    pass
     """Unit tests for :class:`.Topic`."""
+
+    def test_contains_in(self):
+        """| Confirm check for fact in facts outline.
+        | Case: fact in facts outline
+        """
+        # Setup
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts:
+            _ = target._facts.insert_before(fact)
+        I_FACT_TEST = 2
+        fact_test = facts[I_FACT_TEST]
+        # Test
+        assert fact_test in target
+
+    def test_contains_not_in(self):
+        """| Confirm check for fact in facts outline.
+        | Case: fact not in facts outline
+        """
+        # Setup
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts:
+            _ = target._facts.insert_before(fact)
+        fact_test = MFACT.Fact(p_topic=target)
+        # Test
+        assert fact_test not in target
+
+    def test_contains_none(self):
+        """| Confirm check for fact in facts outline.
+        | Case: item is None
+        """
+        # Setup
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts:
+            _ = target._facts.insert_before(fact)
+        item_test = None
+        # Test
+        assert item_test not in target
 
     def test_eq(self):
         """Confirm equivalence operator.
 
         #. Case: type difference.
         #. Case: identity difference.
-        #. Case: Fact collection diffrence.
+        #. Case: facts outline diffrence.
         #. Case: Equivalence
         """
         # Setup
@@ -79,21 +88,29 @@ class TestTopic:
         TITLE = 'The Parrot Sketch'
         source.title.text = TITLE
         TEXT = 'Something completely different'
+        N_FACTS = 5
+        facts_source = [MFACT.Fact(p_topic=source) for _ in range(N_FACTS)]
+        for fact in facts_source:
+            _ = source._facts.insert_before(fact)
         # Test: type difference
         assert not source.__eq__(TITLE)
         # Test: identity difference
         target = MTOPIC.Topic()
         target.title.text = TEXT
         assert not source.__eq__(target)
-        # # Test: Fact collection diffrence
-        # target = factory_topic()
-        # fact = PatchFact(p_topic=target)
-        # target.insert_fact_before(fact, None)
-        # assert not source.__eq__(target)
+        # Test: Facts outline diffrence
+        target = MTOPIC.Topic()
+        target.title.text = TITLE
+        facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts_target:
+            _ = target._facts.insert_before(fact)
+        assert not source.__eq__(target)
         # Test: Equivalence
         target = MTOPIC.Topic()
         target._stale = True
         target.title.text = TITLE
+        for fact in facts_source:
+            _ = target._facts.insert_before(fact)
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
@@ -108,6 +125,11 @@ class TestTopic:
         source.summary.text = SUMMARY
         TITLE = 'The Parrot Sketch'
         source.title.text = TITLE
+        N_FACTS = 5
+        for i in range(N_FACTS):
+            fact = MFACT.Fact(p_topic=source)
+            fact.name.text = 'Fact {:02}'.format(i)
+            _ = source._facts.insert_before(fact)
         source._stale = True
         # Test
         with path.open(mode='wb') as io_out:
@@ -116,7 +138,12 @@ class TestTopic:
             target = pickle.load(io_in)
         assert not target._stale
         assert source._tag != target._tag
-        assert source == target
+        assert source.name.text == target.name.text
+        assert source.summary.text == target.summary.text
+        assert source.title.text == target.title.text
+        for fact_s, fact_t in IT.zip_longest(
+                source._facts.items(), target._facts.items()):
+            assert fact_s.name.text == fact_t.name.text
 
     def test_init(self):
         """| Confirm initialization.
@@ -131,12 +158,44 @@ class TestTopic:
         assert isinstance(target._tag, int)
         assert id(target) == target._tag
         assert isinstance(target._title, MTOPIC.TitleTopic)
-    #     assert isinstance(target._facts, MTYPES.OutlineFacts)
-    #     target_facts = [target._facts.get_item(i)
-    #                     for i in target._facts.indices()]
-    #     assert not target_facts
+        assert target._facts.__orig_class__ is MTOPIC.OutlineFacts
+        with pytest.raises(StopIteration):
+            next(iter(target._facts))
+
+    def test_iter(self):
+        """| Confirm iterator over facts outline.
+        | Case: no lines with None.
+        """
+        # Setup
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts:
+            _ = target._facts.insert_before(fact)
+        # Test
+        for fact, fact_target in IT.zip_longest(facts, target):
+            assert fact is fact_target
+
+    def test_iter_blank(self):
+        """| Confirm iterator over facts outline.
+        | Case: lines with None.
+        """
+        # Setup
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        I_BLANKS = [1, 3]
+        facts_blank = list(facts)
+        for i in I_BLANKS:
+            facts_blank.insert(i, None)
+        for item in facts_blank:
+            target._facts.insert_before(item)
+        # Test
+        for fact, fact_target in IT.zip_longest(facts, target):
+            assert fact is fact_target
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ('_facts', 'facts'),
         ('_name', 'name'),
         ('_summary', 'summary'),
         ('_tag', 'tag'),
@@ -154,407 +213,284 @@ class TestTopic:
         assert target_prop.fset is None
         assert target_prop.fdel is None
 
-    @pytest.mark.skip
-    def test_check_fact(self, patch_class_fact, factory_topic):
-        """Confirm fact check."""
-        # Setup
-        pass
-    #     PatchFact = patch_class_fact
-    #     target = factory_topic()
-    #     I_LEAF = 2
-    #     index = list(target._facts.indices())[I_LEAF]
-    #     fact = target._facts.get_item(index)
-    #     target.set_fresh()
-    #     # Test
-    #     target.check_fact(index)
-    #     assert target.is_stale()
-    #     assert PatchFact.VALUE == fact()
-    #     assert fact.status is MFACT.StatusOfFact.DEFINED
-
-    @pytest.mark.skip
-    def test_clear_all(self, factory_topic):
-        """Confirm fact check."""
-        # Setup
-        pass
-    #     target = factory_topic()
-    #     for index in target._facts.indices():
-    #         fact = target._facts.get_item(index)
-    #         _ = fact.check()
-    #     target.set_fresh()
-    #     # Test
-    #     target.clear_all()
-    #     assert target.is_stale()
-    #     for index in target._facts.indices():
-    #         fact = target._facts.get_item(index)
-    #         assert fact() is None
-    #         assert fact.status is MFACT.StatusOfFact.UNCHECKED
-
-    @pytest.mark.skip
-    def test_clear_fact(self, factory_topic):
-        """Confirm fact clear."""
-        # Setup
-        pass
-    #     target = factory_topic()
-    #     I_LEAF = 2
-    #     index = list(target._facts.indices())[I_LEAF]
-    #     fact = target._facts.get_item(index)
-    #     _ = fact.check()
-    #     target.set_fresh()
-    #     # Test
-    #     target.clear_fact(index)
-    #     assert target.is_stale()
-    #     assert fact() is None
-    #     assert fact.status is MFACT.StatusOfFact.UNCHECKED
-
-    @pytest.mark.skip
-    def test_facts(self, factory_topic):
-        """Confirm iterator over fact."""
-        # Setup
-        pass
-    #     target = factory_topic()
-    #     # Test
-    #     for fact, index in zip(target.facts(), target._facts.indices()):
-    #         assert fact is target._facts.get_item(index)
-
-    @pytest.mark.skip
-    def test_insert_fact_after(self, monkeypatch):
-        """Confirm method passes request to facts outline."""
-        # Setup
-        pass
-    #     class PatchInsertAfter:
-    #         def __init__(self): self.called = False
-
-    #         def insert_after(self, _item, _index): self.called = True
-
-    #     patch_outline = PatchInsertAfter()
-    #     monkeypatch.setattr(ATOPIC.AdaptTreeStoreFact,
-    #                         'insert_after', patch_outline.insert_after)
-    #     TITLE_MODEL = 'Something completely different.'
-    #     target = MTOPIC.Topic()
-    #     target.init_identity(p_title=TITLE_MODEL)
-    #     target.set_fresh()
-    #     # Test
-    #     _ = target.insert_fact_after(None, None)
-    #     assert patch_outline.called
-    #     assert target.is_stale()
-
-    @pytest.mark.skip
-    def test_insert_fact_before(self, monkeypatch):
-        """Confirm method passes request to facts outline."""
-        # Setup
-        pass
-    #     class PatchInsertBefore:
-    #         def __init__(self): self.called = False
-
-    #         def insert_before(self, _item, _index): self.called = True
-
-    #     patch_outline = PatchInsertBefore()
-    #     monkeypatch.setattr(ATOPIC.AdaptTreeStoreFact,
-    #                         'insert_before', patch_outline.insert_before)
-    #     TITLE_MODEL = 'Something completely different.'
-    #     target = MTOPIC.Topic()
-    #     target.init_identity(p_title=TITLE_MODEL)
-    #     target.set_fresh()
-    #     # Test
-    #     _ = target.insert_fact_before(None, None)
-    #     assert patch_outline.called
-    #     assert target.is_stale()
-
-    @pytest.mark.skip
-    def test_insert_fact_child(self, monkeypatch):
-        """Confirm method passes request to facts outline."""
-        # Setup
-        pass
-    #     class PatchInsertChild:
-    #         def __init__(self): self.called = False
-
-    #         def insert_child(self, _item, _index): self.called = True
-
-    #     patch_outline = PatchInsertChild()
-    #     monkeypatch.setattr(ATOPIC.AdaptTreeStoreFact,
-    #                         'insert_child', patch_outline.insert_child)
-    #     TITLE_MODEL = 'Something completely different.'
-    #     target = MTOPIC.Topic()
-    #     target.init_identity(p_title=TITLE_MODEL)
-    #     target.set_fresh()
-    #     # Test
-    #     _ = target.insert_fact_child(None, None)
-    #     assert patch_outline.called
-    #     assert target.is_stale()
-
-    @pytest.mark.skip
-    def test_insert_facts_section(self, monkeypatch):
-        """Confirm method passes request to facts outline."""
-        # Setup
-        pass
-    #     class PatchInsertSection:
-    #         def __init__(self): self.called = False
-
-    #         def insert_section(self, _source, _i_from, _i_to):
-    #             self.called = True
-
-    #     patch_outline = PatchInsertSection()
-    #     monkeypatch.setattr(ATOPIC.AdaptTreeStoreFact,
-    #                         'insert_section', patch_outline.insert_section)
-    #     TITLE_MODEL = 'Something completely different.'
-    #     target = MTOPIC.Topic()
-    #     target.init_identity(p_title=TITLE_MODEL)
-    #     target.set_fresh()
-    #     # Test
-    #     _ = target.insert_facts_section(None, None)
-    #     assert patch_outline.called
-    #     assert target.is_stale()
-
-    @pytest.mark.skip
-    def test_is_fresh(self, factory_topic):
-        """Confirm return is accurate.
-
-        #. Case: Topic stale, ID info fresh, no facts.
-        #. Case: Topic fresh, ID info stale, no facts.
-        #. Case: Topic fresh, ID info fresh, no facts.
+    def test_append_fact(self):
+        """| Confirm fact appended to facts outline.
+        | Case: no duplicate facts.
         """
         # Setup
-        pass
-    #     target = factory_topic()
-    #     I_LEAF = 2
-    #     I_LAST = 4
-    #     # Test: InfoId stale, ID info fresh, no facts.
-    #     target._stale = True
-    #     target._infoid.set_fresh()
-    #     assert not target.is_fresh()
-    #     assert target._stale
-    #     # Test: InfoId fresh, ID info fresh, no stale.
-    #     target._stale = False
-    #     target._infoid.set_stale()
-    #     assert not target.is_fresh()
-    #     assert target._stale
-    #     # Test: InfoId fresh, ID info fresh, no facts.
-    #     assert not target.is_fresh()
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     assert target.is_fresh()
-    #     assert not target._stale
-    #     # Test: Topic fresh, ID info fresh, leaf fact stale
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         if i == I_LEAF:
-    #             fact.set_stale()
-    #         else:
-    #             fact.set_fresh()
-    #     assert not target.is_fresh()
-    #     assert target._stale
-    #     # Test: Topic fresh, ID info fresh, last fact stale
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         if i == I_LAST:
-    #             fact.set_stale()
-    #         else:
-    #             fact.set_fresh()
-    #     assert not target.is_fresh()
-    #     assert target._stale
-    #     # Test: Sheet fresh, ID info fresh, facts fresh
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         fact.set_fresh()
-    #     assert target.is_fresh()
-    #     assert not target._stale
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        # Test
+        for fact in facts:
+            target.append_fact(fact)
+        assert target.is_stale()
+        for fact, fact_target in IT.zip_longest(facts, target):
+            assert fact is fact_target
 
-    @pytest.mark.skip
-    def test_is_stale(self, factory_topic):
-        """Confirm return is accurate.
-
-        #. Case: Topic stale, ID info fresh, no facts.
-        #. Case: Topic fresh, ID info stale, no facts.
-        #. Case: Topic fresh, ID info fresh, no facts.
-        #. Case: Topic fresh, ID info fresh, leaf fact stale.
-        #. Case: Topic fresh, ID info fresh, last fact stale.
-        #. Case: Sheet fresh, ID info fresh, facts fresh.
+    def test_append_fact_dup(self):
+        """| Confirm fact appended to facts outline.
+        | Case: duplicate facts.
         """
         # Setup
-        pass
-    #     target = factory_topic()
-    #     I_LEAF = 2
-    #     I_LAST = 4
-    #     # Test: Topic stale, ID info fresh, no facts.
-    #     target._stale = True
-    #     target._infoid.set_fresh()
-    #     assert target.is_stale()
-    #     assert target._stale
-    #     # Test: Topic fresh, ID info stale, no facts.
-    #     target._stale = False
-    #     target._infoid.set_stale()
-    #     assert target.is_stale()
-    #     assert target._stale
-    #     # Test: Topic fresh, ID info fresh, no facts.
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     assert not target.is_stale()
-    #     assert not target._stale
-    #     # Test: Topic fresh, ID info fresh, leaf fact stale.
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         if i == I_LEAF:
-    #             fact.set_stale()
-    #         else:
-    #             fact.set_fresh()
-    #     assert target.is_stale()
-    #     assert target._stale
-    #     # Test: Topic fresh, ID info fresh, last fact stale.
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         if i == I_LAST:
-    #             fact.set_stale()
-    #         else:
-    #             fact.set_fresh()
-    #     assert target.is_stale()
-    #     assert target._stale
-    #     # Test: Sheet fresh, ID info fresh, facts fresh.
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         fact.set_fresh()
-    #     assert not target.is_stale()
-    #     assert not target._stale
+        target = MTOPIC.Topic()
+        N_FACTS = 5
+        facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts:
+            _ = target.append_fact(fact)
+        target.set_fresh()
+        # Test
+        for fact in facts:
+            target.append_fact(fact)
+        assert target.is_fresh()
+        for fact, fact_target in IT.zip_longest(facts, target):
+            assert fact is fact_target
 
-    @pytest.mark.skip
-    def test_set_fresh(self, factory_topic):
-        """Confirm all attributes set.
-
-        #. Case: Topic fresh, ID info fresh, no facts.
-        #. Case: Topic stale, ID info fresh, no facts.
-        #. Case: Topic fresh, ID info stale, no facts.
-        #. Case: Topic stale, ID info stale, no facts.
-        #. Case: Sheet fresh, ID info fresh, topics stale
-        #. Case: Sheet stale, ID info stale, topics stale
+    def test_append_outline_fact(self):
+        """| Confirm facts outline appended to facts outline.
+        | Case: no duplicate facts.
         """
         # Setup
-        pass
-    #     target = factory_topic()
-    #     # Test: Topic fresh, ID info fresh, no facts.
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     target.set_fresh()
-    #     assert not target._stale
-    #     assert target._infoid.is_fresh()
-    #     # Test: Topic stale, ID info fresh, no facts.
-    #     target._stale = True
-    #     target._infoid.set_fresh()
-    #     target.set_fresh()
-    #     assert not target._stale
-    #     assert target._infoid.is_fresh()
-    #     # Test: Topic fresh, ID info stale, no facts.
-    #     target._stale = False
-    #     target._infoid.set_stale()
-    #     target.set_fresh()
-    #     assert not target._stale
-    #     assert target._infoid.is_fresh()
-    #     # Test: Topic stale, ID info stale, no facts.
-    #     target._stale = True
-    #     target._infoid.set_stale()
-    #     target.set_fresh()
-    #     assert not target._stale
-    #     assert target._infoid.is_fresh()
-    #     # Test: Sheet fresh, ID info stale, facts stale.
-    #     target._stale = False
-    #     target._infoid.set_stale()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         if i % 2:
-    #             fact.set_stale()
-    #         else:
-    #             fact.set_fresh()
-    #     target.set_fresh()
-    #     assert not target._stale
-    #     assert target._infoid.is_fresh()
-    #     for index in target._facts.indices():
-    #         fact = target._facts.get_item(index)
-    #         assert fact.is_fresh()
-    #     # Test: Sheet stale, ID info stale, facts stale.
-    #     target._stale = True
-    #     target._infoid.set_stale()
-    #     for i, index in enumerate(target._facts.indices()):
-    #         fact = target._facts.get_item(index)
-    #         if not i % 2:
-    #             fact.set_stale()
-    #         else:
-    #             fact.set_fresh()
-    #     target.set_fresh()
-    #     assert not target._stale
-    #     assert target._infoid.is_fresh()
-    #     for index in target._facts.indices():
-    #         fact = target._facts.get_item(index)
-    #         assert fact.is_fresh()
+        N_FACTS = 5
+        target = MTOPIC.Topic()
+        facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts_target:
+            target.append_fact(fact)
+        target.set_fresh()
+        source = MTOPIC.Topic()
+        facts_source = [MFACT.Fact(p_topic=source) for _ in range(N_FACTS)]
+        for fact in facts_source:
+            source.append_fact(fact)
+        facts = facts_target + facts_source
+        # Test
+        target.append_outline_facts(source)
+        target.is_stale()
+        for fact, fact_target in IT.zip_longest(facts, target):
+            assert fact is fact_target
 
-    @pytest.mark.skip
-    def test_set_stale(self, factory_topic):
-        """Confirm all attributes set.
-
-        #. Case: Topic fresh, ID info fresh, no facts.
-        #. Case: Topic stale, ID info fresh, no facts.
-        #. Case: Topic fresh, ID info fresh, no facts.
-        #. Case: Topic stale, ID info fresh, no facts.
-        #. Case: Topic fresh, ID info fresh, facts fresh.
-         """
+    def test_append_outline_fact_dup(self):
+        """| Confirm facts outline appended to facts outline.
+        | Case: duplicate facts.
+        """
         # Setup
-        pass
-    #     target = factory_topic()
-    #     # Test: Topic fresh, ID info fresh, no facts.
-    #     target._stale = False
-    #     target._infoid.set_fresh()
-    #     target.set_stale()
-    #     assert target._stale
-    #     assert target._infoid.is_fresh()
-    #     # Test: Topic stale, ID info fresh, no facts.
-    #     target._stale = True
-    #     target._infoid.set_fresh()
-    #     target.set_stale()
-    #     assert target._stale
-    #     assert target._infoid.is_fresh()
-    #     # Test: Topic fresh, ID info stale, no facts.
-    #     target._stale = False
-    #     target._infoid.set_stale()
-    #     target.set_stale()
-    #     assert target._stale
-    #     assert target._infoid.is_stale()
-    #     # Test: Topic stale, ID info stale, no facts.
-    #     target._stale = True
-    #     target._infoid.set_stale()
-    #     target.set_stale()
-    #     assert target._stale
-    #     assert target._infoid.is_stale()
-    #     # Test: Topic fresh, ID info fresh, facts fresh.
-    #     target._stale = True
-    #     target._infoid.set_fresh()
-    #     for index in target._facts.indices():
-    #         fact = target._facts.get_item(index)
-    #         fact.set_fresh()
-    #     target.set_stale()
-    #     assert target._stale
-    #     assert target._infoid.is_fresh()
-    #     for index in target._facts.indices():
-    #         fact = target._facts.get_item(index)
-    #         assert fact.is_fresh()
+        N_FACTS = 5
+        target = MTOPIC.Topic()
+        facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts_target:
+            target.append_fact(fact)
+        target.set_fresh()
+        source = MTOPIC.Topic()
+        for fact in reversed(facts_target):
+            source.append_fact(fact)
+        facts = facts_target
+        # Test
+        target.append_outline_facts(source)
+        target.is_fresh()
+        for fact, fact_target in IT.zip_longest(facts, target):
+            assert fact is fact_target
+
+    def test_check_fact(self, new_target_topic, patch_class_fact):
+        """Confirm fact checked."""
+        # Setup
+        PatchFact = patch_class_fact
+        N_FACTS = 5
+        target = new_target_topic(N_FACTS)
+        I_FACT = 2
+        line_fact = list(target._facts.lines())[I_FACT]
+        fact = target._facts.get_item(line_fact)
+        # Test
+        target.check_fact(line_fact)
+        assert PatchFact.VALUE_CHECKED == fact.value
+        assert fact.status is PatchFact.STATUS_CHECKED
+        assert target.is_stale()
+
+    def test_clear(self, new_target_topic, patch_class_fact):
+        """Confirm all facts cleared."""
+        # Setup
+        PatchFact = patch_class_fact
+        N_FACTS = 5
+        target = new_target_topic(N_FACTS)
+        # Test
+        target.clear()
+        for fact in target:
+            assert PatchFact.VALUE_CLEARED == fact.value
+            assert fact.status is PatchFact.STATUS_CLEARED
+        assert target.is_stale()
+
+    def test_clear_fact(self, new_target_topic, patch_class_fact):
+        """Confirm fact cleared."""
+        # Setup
+        PatchFact = patch_class_fact
+        N_FACTS = 5
+        target = new_target_topic(N_FACTS)
+        I_FACT = 2
+        line_fact = list(target._facts.lines())[I_FACT]
+        fact = target._facts.get_item(line_fact)
+        target.check_fact(line_fact)
+        # Test
+        target.clear_fact(line_fact)
+        assert PatchFact.VALUE_CLEARED == fact.value
+        assert fact.status is PatchFact.STATUS_CLEARED
+        assert target.is_stale()
+
+    def test_is_stale(self, new_target_topic):
+        """Confirm fresh/stale check with facts.
+
+        #. Case: Topic stale, identity fresh, facts fresh.
+        #. Case: Topic fresh, identity stale, facts fresh.
+        #. Case: Sheet fresh, identity fresh, facts fresh.
+        #. Case: Topic fresh, identity fresh, a fact stale.
+        """
+        # Setup
+        N_FACTS = 5
+        target = new_target_topic(N_FACTS)
+        # Test: Topic stale, identity fresh, facts fresh.
+        target._stale = True
+        target.summary.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        assert not target.is_fresh()
+        # Test: Topic fresh, identity stale, facts fresh.
+        target._stale = False
+        target.summary.set_stale()
+        assert target.is_stale()
+        assert target._stale
+        assert not target.is_fresh()
+        # Test: Topic fresh, identity fresh, facts fresh.
+        target._stale = False
+        target.summary.set_fresh()
+        assert not target.is_stale()
+        assert not target._stale
+        assert target.is_fresh()
+        # Test: Topic fresh, identity fresh, a fact stale.
+        LINE_STALE = 2
+        target._stale = False
+        target.summary.set_fresh()
+        for i, line in enumerate(target._facts.lines()):
+            fact = target._facts.get_item(line)
+            if i == LINE_STALE:
+                fact.set_stale()
+            else:
+                fact.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        assert not target.is_fresh()
+
+    def test_is_stale_no_facts(self, new_target_topic):
+        """Confirm fresh/stale check without facts.
+
+        #. Case: Topic stale, identity fresh, no facts.
+        #. Case: Topic fresh, identity stale, no facts.
+        #. Case: Topic fresh, identity fresh, no facts.
+        """
+        # Setup
+        N_FACTS = 5
+        target = new_target_topic(N_FACTS)
+        # Test: Topic stale, identity fresh, no facts.
+        target._stale = True
+        target.summary.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        assert not target.is_fresh()
+        # Test: Topic fresh, identity stale, no facts.
+        target._stale = False
+        target.summary.set_stale()
+        assert target.is_stale()
+        assert target._stale
+        assert not target.is_fresh()
+        # Test: Topic fresh, identity fresh, no facts.
+        target._stale = False
+        target.summary.set_fresh()
+        assert not target.is_stale()
+        assert not target._stale
+        assert target.is_fresh()
+
+    def test_set_fresh(self):
+        """Confirm frest set at all levels.
+
+        #. Case: Topic fresh, identity fresh, facts fresh.
+        #. Case: Topic stale, identity fresh, facts fresh.
+        #. Case: Topic fresh, identity stale, facts fresh.
+        #. Case: Topic fresh, identity fresh, facts stale.
+        #. Case: Sheet stale, identity stale, facts stale
+        """
+        # Setup
+        N_FACTS = 5
+        target = MTOPIC.Topic()
+        facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
+        for fact in facts_target:
+            target.append_fact(fact)
+        # Test: Topic fresh, identity fresh, facts fresh.
+        target._stale = False
+        target.summary.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target.is_fresh()
+        assert target.summary.is_fresh()
+        for fact in facts_target:
+            assert fact.is_fresh()
+        # Test: Topic stale, identity fresh, facts fresh.
+        target._stale = True
+        target.summary.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target.is_fresh()
+        assert target.summary.is_fresh()
+        for fact in facts_target:
+            assert fact.is_fresh()
+        # Test: Topic fresh, identity stale, facts fresh.
+        target._stale = False
+        target.summary.set_stale()
+        target.set_fresh()
+        assert not target._stale
+        assert target.is_fresh()
+        assert target.summary.is_fresh()
+        for fact in facts_target:
+            assert fact.is_fresh()
+        # Test: Topic fresh, identity fresh, facts stale.
+        LINE_STALE = 1
+        target._stale = False
+        target.summary.set_fresh()
+        for i, line in enumerate(target._facts.lines()):
+            fact = target._facts.get_item(line)
+            if i == LINE_STALE:
+                fact.set_stale()
+            else:
+                fact.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target.is_fresh()
+        assert target.summary.is_fresh()
+        for fact in facts_target:
+            assert fact.is_fresh()
+        # Test: Sheet stale, identity stale, facts stale
+        LINE_STALE = 4
+        target._stale = True
+        target.summary.set_stale()
+        for i, line in enumerate(target._facts.lines()):
+            fact = target._facts.get_item(line)
+            if i == LINE_STALE:
+                fact.set_stale()
+            else:
+                fact.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target.is_fresh()
+        assert target.summary.is_fresh()
+        for fact in facts_target:
+            assert fact.is_fresh()
 
 
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.topic`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (MTOPIC.NameTopic, BUI.BridgeTextMarkup),
-        (MTOPIC.SummaryTopic, BUI.BridgeTextFormat),
-        (MTOPIC.TitleTopic, BUI.BridgeTextMarkup),
-        (MTOPIC.TagTopic.__supertype__, int),  # type: ignore[attr-defined]
+        (MTOPIC.LineOutline, BUI.LineOutline),
+        (MTOPIC.NameTopic, MFACT.NameTopic),
+        (MTOPIC.OutlineFacts, BUI.BridgeOutlineColumnar[MFACT.Fact]),
+        (MTOPIC.SummaryTopic, MFACT.SummaryTopic),
+        (MTOPIC.TitleTopic, MFACT.TitleTopic),
+        (MTOPIC.TagTopic, MFACT.TagTopic),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

@@ -104,6 +104,9 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         if not super().__eq__(p_other):
             return False
 
+        if self.tag_topic != p_other.tag_topic:
+            return False
+
         if not self._aspects == p_other._aspects:
             return False
 

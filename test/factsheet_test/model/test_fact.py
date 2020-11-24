@@ -16,6 +16,7 @@ class PatchTopic(MIDCORE.IdCore[
         MFACT.NameTopic, MFACT.SummaryTopic, MFACT.TitleTopic]):
 
     def __init__(self):
+        self._stale = False
         self._name = MFACT.NameTopic
         self._summary = MFACT.SummaryTopic
         self._title = MFACT.TitleTopic
@@ -65,6 +66,7 @@ class TestFact:
         """Confirm equivalence operator.
 
         #. Case: type difference.
+        #. Case: topic tag difference
         #. Case: identity difference.
         #. Case: aspects difference.
         #. Case: note difference.
@@ -74,7 +76,8 @@ class TestFact:
         """
         # Setup
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
-        source = Fact(p_topic=None)
+        TOPIC = PatchTopic()
+        source = Fact(p_topic=TOPIC)
         TITLE = 'The Parrot Sketch'
         source.title.text = TITLE
         NOTE = 'A Norwegian Blue.'
@@ -82,36 +85,41 @@ class TestFact:
         TEXT = 'Something completely different'
         # Test: type difference
         assert not source.__eq__(TITLE)
+        # Test: topic tag difference
+        target = Fact(p_topic=PatchTopic())
+        target.title.text = TITLE
+        target.note.text = NOTE
+        assert not source.__eq__(target)
         # Test: identity difference
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         target.title.text = TEXT
         target.note.text = NOTE
         assert not source.__eq__(target)
         # Test: aspects difference
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         target.title.text = TITLE
         target.note.text = NOTE
         target._aspects['Oops'] = None
         assert not source.__eq__(target)
         # Test: note difference
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         target.title.text = TITLE
         target.note.text = TEXT
         assert not source.__eq__(target)
         # Test: status difference
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         target.title.text = TITLE
         target.note.text = NOTE
         target._status = MFACT.StatusOfFact.DEFINED
         assert not source.__eq__(target)
         # Test: value difference
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         target.title.text = TITLE
         target.note.text = NOTE
         target._value = TEXT
         assert not source.__eq__(target)
         # Test: Equivalence
-        target = Fact(p_topic=None)
+        target = Fact(p_topic=TOPIC)
         target.title.text = TITLE
         target.note.text = NOTE
         assert source.__eq__(target)
@@ -122,7 +130,8 @@ class TestFact:
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
         Fact = MFACT.Fact[typing.Any, MFACT.ValueOpaque]
-        source = Fact(p_topic=None)
+        TOPIC = PatchTopic()
+        source = Fact(p_topic=TOPIC)
         NAME = 'Parrot'
         source.name.text = NAME
         SUMMARY = 'The parrot is a Norwegian Blue.'
