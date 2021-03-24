@@ -68,18 +68,16 @@ class BridgeBase(abc.ABC,
         state = self.__dict__.copy()
         state['ex_model'] = self._get_persist()
         del state['_model']
-        del state['_views']
+        # del state['_views']
         return state
 
     def __init__(self) -> None:
         self._model = self._new_model()
         self._init_transients()
 
-    def __iter__(self) -> typing.Iterator[ViewOpaque]:
-        """Return iterator over view elements associated with storage
-        element.
-        """
-        return iter(self._views.values())
+    def _init_transients(self) -> None:
+        """Set transient content for initialization and pickling."""
+        pass
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct storage element from content that pickle loads.
@@ -98,64 +96,9 @@ class BridgeBase(abc.ABC,
         """Return storage element as string."""
         return '<{}: {}>'.format(type(self).__name__, self._get_persist())
 
-    def attach_view(self) -> ViewOpaque:
-        """Return new view element associated with storage element."""
-        view = self._new_view()
-        self._bind(view)
-        self._views[id(view)] = view
-        return view
-
-    @abc.abstractmethod
-    def _bind(self, p_view: ViewOpaque):
-        """Form toolkit-specific connection between view element and
-        storage element.
-
-        :param p_view: view to bind.
-        """
-        raise NotImplementedError
-
-    def detach_all(self) -> None:
-        """Disassociate all view elements from storage element."""
-        views = self._views.values()
-        while views:
-            view = next(iter(views))
-            self.detach_view(view)
-
-    def detach_view(self, p_view: ViewOpaque) -> None:
-        """Disassociate view element from storaage element.
-
-        Log a warning when the view element is not associated with the
-        storage element.
-
-        :param p_view: view to disassociate.
-        """
-        id_view = id(p_view)
-        try:
-            view_detached = self._views.pop(id_view)
-        except KeyError:
-            logger.warning('Missing view: {} ({}.{})'
-                           ''.format(hex(id_view), type(self).__name__,
-                                     self.detach_view.__name__))
-            return
-
-        self._loose(p_view=view_detached)
-
     @abc.abstractmethod
     def _get_persist(self) -> PersistOpaque:
         """Return storage element in form suitable for persistent storage."""
-        raise NotImplementedError
-
-    def _init_transients(self) -> None:
-        """Set transient content for initialization and pickling."""
-        self._views: typing.MutableMapping[int, ViewOpaque] = dict()
-
-    @abc.abstractmethod
-    def _loose(self, p_view: ViewOpaque):
-        """Break toolkit-specific connection between view element and
-        storage element.
-
-        :param p_view: view to loose.
-        """
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -164,7 +107,7 @@ class BridgeBase(abc.ABC,
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _new_view(self) -> ViewOpaque:
+    def new_view(self) -> ViewOpaque:
         """Return toolkit-specific view element."""
         raise NotImplementedError
 
@@ -175,12 +118,3 @@ class BridgeBase(abc.ABC,
         :param p_persist: persistent form for storage element content.
         """
         raise NotImplementedError
-
-    def _update_views(self) -> None:
-        """Update attached views to match persistent content.
-
-        Typically, a widget toolkit storage element element updates
-        attached view elements automatically.  This method provides a
-        hook for elements that need to be updated manually.
-        """
-        pass

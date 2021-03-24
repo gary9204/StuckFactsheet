@@ -39,7 +39,7 @@ class PatchOutline(
         BOUTLINE.BridgeOutline[PatchItem, BOUTLINE.ViewOutlineSelect]):
     """Stub class for single-level outline tests unrelated to view."""
 
-    def _new_view(self):
+    def new_view(self):
         return BOUTLINE.ViewOutlineSelect()
 
 
@@ -47,7 +47,7 @@ class PatchOutlineMulti(
         BOUTLINE.BridgeOutlineMulti[PatchItem, BOUTLINE.ViewOutlineColumnar]):
     """Stub class for multi-level outline tests unrelated to view."""
 
-    def _new_view(self):
+    def new_view(self):
         return BOUTLINE.ViewOutlineColumnar()
 
 
@@ -170,7 +170,7 @@ class TestBridgeOutline:
         assert C_ITEM == patch_class_outline._C_ITEM
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BOUTLINE.BridgeOutline, '_new_view'),
+        (BOUTLINE.BridgeOutline, 'new_view'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""
@@ -437,7 +437,7 @@ class TestBridgeOutlineColumnar:
         # Setup
         target = BOUTLINE.BridgeOutlineColumnar()
         # Test
-        view = target._new_view()
+        view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
 
 
@@ -449,7 +449,7 @@ class TestBridgeOutlineSelect:
         # Setup
         target = BOUTLINE.BridgeOutlineSelect()
         # Test
-        view = target._new_view()
+        view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
 
 
@@ -457,7 +457,7 @@ class TestBridgeOutlineMulti:
     """Unit tests for :class:`~.BridgeOutlineMulti`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BOUTLINE.BridgeOutlineMulti, '_new_view'),
+        (BOUTLINE.BridgeOutlineMulti, 'new_view'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""
@@ -922,7 +922,7 @@ class TestBridgeOutlineMultiColumnar:
         # Setup
         target = BOUTLINE.BridgeOutlineMultiColumnar()
         # Test
-        view = target._new_view()
+        view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
 
 
@@ -934,7 +934,7 @@ class TestBridgeOutlineMultiSelect:
         # Setup
         target = BOUTLINE.BridgeOutlineMultiSelect()
         # Test
-        view = target._new_view()
+        view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
 
 

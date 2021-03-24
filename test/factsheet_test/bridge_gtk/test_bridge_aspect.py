@@ -30,7 +30,7 @@ class PatchBridgeAspect(BASPECT.BridgeAspect[
     def _new_model(self):
         return str()
 
-    def _new_view(self):
+    def new_view(self):
         return BASPECT.ViewAspectPlain()
 
     def _set_persist(self, p_persist):
@@ -53,7 +53,7 @@ class TestBridgeAspect:
         (BASPECT.BridgeAspect, '_get_persist'),
         (BASPECT.BridgeAspect, '_loose'),
         (BASPECT.BridgeAspect, '_new_model'),
-        (BASPECT.BridgeAspect, '_new_view'),
+        (BASPECT.BridgeAspect, 'new_view'),
         (BASPECT.BridgeAspect, '_set_persist'),
         (BASPECT.BridgeAspect, 'transcribe'),
         ])
@@ -161,7 +161,7 @@ class TestBridgeAspectPlain:
         # Setup
         target = BASPECT.BridgeAspectPlain[typing.Any]()
         # Test
-        view = target._new_view()
+        view = target.new_view()
         assert isinstance(view, BASPECT.ViewAspectPlain)
 
     def test_refresh(self):

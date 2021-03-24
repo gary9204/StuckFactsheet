@@ -21,39 +21,39 @@ import factsheet.model.topic as MTOPIC
 # from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
-    """:class:`.BridgeText` subclass with stub text property."""
+# class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
+#     """:class:`.BridgeText` subclass with stub text property."""
 
-    def __init__(self):
-        super().__init__()
-        self.bound = []
-        self.loosed = []
+#     def __init__(self):
+#         super().__init__()
+#         self.bound = []
+#         self.loosed = []
 
-    def _bind(self, p_view):
-        self.bound.append(p_view)
+#     # def _bind(self, p_view):
+#     #     self.bound.append(p_view)
 
-    def _get_persist(self):
-        return self._model
+#     def _get_persist(self):
+#         return self._model
 
-    def _loose(self, p_view):
-        self.loosed = [p_view]
+#     # def _loose(self, p_view):
+#     #     self.loosed = [p_view]
 
-    def _new_model(self):
-        return str()
+#     def _new_model(self):
+#         return str()
 
-    def _new_view(self):
-        return str()
+#     def new_view(self):
+#         return str()
 
-    def _set_persist(self, p_persist):
-        self._model = str(p_persist)
+#     def _set_persist(self, p_persist):
+#         self._model = str(p_persist)
 
 
-@pytest.fixture
-def patch_bridge_text():
-    """Pytest fixture: return :class:`.BridgeText` subclass with stub
-    text property.
-    """
-    return PatchBridgeText
+# @pytest.fixture
+# def patch_bridge_text():
+#     """Pytest fixture: return :class:`.BridgeText` subclass with stub
+#     text property.
+#     """
+#     return PatchBridgeText
 
 
 class PatchIdCore(MIDCORE.IdCore):

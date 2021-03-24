@@ -113,7 +113,7 @@ class BridgeAspectPlain(BridgeAspect[
         """Return toolkit-specific storage element."""
         return ModelAspectPlain()
 
-    def _new_view(self) -> ViewAspectPlain:
+    def new_view(self) -> ViewAspectPlain:
         """Return toolkit-specific view element."""
         return ViewAspectPlain()
 

@@ -363,7 +363,7 @@ class BridgeOutlineColumnar(BridgeOutline[
     single-level outline.
     """
 
-    def _new_view(self) -> ViewOutlineColumnar:
+    def new_view(self) -> ViewOutlineColumnar:
         """Return toolkit-specific columnar view element."""
         return ViewOutlineColumnar()
 
@@ -374,7 +374,7 @@ class BridgeOutlineSelect(BridgeOutline[
     single-level outline.
     """
 
-    def _new_view(self) -> ViewOutlineSelect:
+    def new_view(self) -> ViewOutlineSelect:
         """Return toolkit-specific selection element."""
         return ViewOutlineSelect()
 
@@ -521,7 +521,7 @@ class BridgeOutlineMultiColumnar(BridgeOutlineMulti[
     multi-level outline.
     """
 
-    def _new_view(self) -> ViewOutlineColumnar:
+    def new_view(self) -> ViewOutlineColumnar:
         """Return toolkit-specific columnar element."""
         return ViewOutlineColumnar()
 
@@ -532,6 +532,6 @@ class BridgeOutlineMultiSelect(BridgeOutlineMulti[
     multi-level outline.
     """
 
-    def _new_view(self) -> ViewOutlineSelect:
+    def new_view(self) -> ViewOutlineSelect:
         """Return toolkit-specific selection element."""
         return ViewOutlineSelect()
