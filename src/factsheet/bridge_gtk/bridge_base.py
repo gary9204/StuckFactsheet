@@ -68,7 +68,6 @@ class BridgeBase(abc.ABC,
         state = self.__dict__.copy()
         state['ex_model'] = self._get_persist()
         del state['_model']
-        # del state['_views']
         return state
 
     def __init__(self) -> None:
@@ -88,9 +87,9 @@ class BridgeBase(abc.ABC,
         """
         self.__dict__.update(p_state)
         self._model = self._new_model()
+        self._init_transients()
         self._set_persist(self.ex_model)   # type: ignore[attr-defined]
         del self.ex_model       # type: ignore[attr-defined]
-        self._init_transients()
 
     def __str__(self) -> str:
         """Return storage element as string."""

@@ -17,6 +17,10 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 .. _Gtk.EntryBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
 
+.. data:: ModelTextOpaque
+
+    Type hint for placeholder GTK element to store a text attribute.
+
 .. data:: ModelTextStatic
 
     Type alias for ``str``. Used to store content for
@@ -50,7 +54,6 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 .. _Gtk.Label:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
 """
-import abc
 import gi   # type: ignore[import]
 import logging
 import typing   # noqa
@@ -61,9 +64,9 @@ import factsheet.bridge_gtk.bridge_base as BBASE
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
-ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
 ModelTextFormat = typing.Union[Gtk.TextBuffer]
 ModelTextMarkup = typing.Union[Gtk.EntryBuffer]
+ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
 ModelTextStatic = str
 
 PersistText = str
@@ -114,18 +117,6 @@ class BridgeText(
         """Mark attribute in memory consistent with file."""
         self._stale = False
 
-    @abc.abstractmethod
-    def _set_persist(self, p_persist: PersistText) -> None:
-        """Mark model as stale.
-
-        Extend in child classes to set text bridge model from content
-        in persistent form.
-
-        :param p_persist: persistent form for text bridge model.
-        """
-        self.set_stale()
-        _ = p_persist  # unused in base class.
-
     def set_stale(self) -> None:
         """Mark attribute in memory changed from file."""
         self._stale = True
@@ -142,6 +133,7 @@ class BridgeText(
         :param p_text: new content for model.
         """
         self._set_persist(p_text)
+        self.set_stale()
 
 
 class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
@@ -153,7 +145,7 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
 
     .. admonition:: About Equality
 
-        Two text bridge objects are equivalent when they have the equal
+        Two text bridge objects are equivalent when they have equal
         text.  Transient aspects of the attributes are not compared
         and may be different.
 
@@ -166,14 +158,6 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         super()._init_transients()
         _ = self._model.connect('changed', lambda *_a: self.set_stale())
 
-    # def _bind(self, p_view: ViewTextFormat):
-    #     """Form toolkit-specific connection between text view element and
-    #     text storage element.
-    #
-    #     :param p_view: view to bind.
-    #     """
-    #     p_view.set_buffer(self._model)
-
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
@@ -181,14 +165,6 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         NO_HIDDEN = False
         start, end = self._model.get_bounds()
         return self._model.get_text(start, end, NO_HIDDEN)
-
-    # def _loose(self, p_view: ViewTextFormat):
-    #     """Break toolkit-specific connection between text view element
-    #     and text storage element.
-    #
-    #     :param p_view: view to separate.
-    #     """
-    #     p_view.set_buffer(None)
 
     def _new_model(self) -> ModelTextFormat:
         """Return toolkit-specific object to store text."""
@@ -206,7 +182,6 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         """
         ALL = -1
         self._model.set_text(p_persist, ALL)
-        # self.set_stale()
 
 
 class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
@@ -222,8 +197,8 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
     .. admonition:: About Equality
 
         Two text bridge objects are equivalent when they have the equal
-        text    .  Transient aspects of the attributes are not compared
-        and may be different.
+        text.  Transient aspects of the attributes are not compared and
+        may be different.
 
     .. _Gtk.EntryBuffer:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
@@ -235,28 +210,11 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
         _ = self._model.connect('deleted-text', lambda *_a: self.set_stale())
         _ = self._model.connect('inserted-text', lambda *_a: self.set_stale())
 
-    # def _bind(self, p_view: ViewTextMarkup):
-    #     """Form toolkit-specific connection between text view element and
-    #     text storage element.
-    #
-    #     :param p_view: view to bind.
-    #     """
-    #     p_view.set_buffer(self._model)
-
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
         """
         return self._model.get_text()
-
-    # def _loose(self, p_view: ViewTextMarkup):
-    #     """Break toolkit-specific connection between text view element
-    #     and text storage element.
-    #
-    #     :param p_view: view to separate.
-    #     """
-    #     store_empty = ModelTextMarkup()
-    #     p_view.set_buffer(store_empty)
 
     def _new_model(self) -> ModelTextMarkup:
         """Return toolkit-specific object to store text."""
@@ -274,7 +232,6 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
         """
         ALL = -1
         self._model.set_text(p_persist, ALL)
-        # self.set_stale()
 
 
 class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
@@ -301,7 +258,14 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
 
         :param p_view: view being destroyed.
         """
-        pass
+        id_view = id(p_view)
+        try:
+            _ = self._views.pop(id_view)
+        except KeyError:
+            logger.warning(
+                'Missing view: {} ({}.{})'.format(
+                    hex(id_view),
+                    self.__class__.__name__, self._destroy_view.__name__))
 
     def __getstate__(self) -> typing.Dict:
         """Return content of storage element in form pickle can store.
@@ -317,30 +281,11 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
         super()._init_transients()
         self._views: typing.MutableMapping[int, ViewTextStatic] = dict()
 
-    # def _bind(self, p_view: ViewTextStatic):
-    #     """Form toolkit-specific connection between text view element and
-    #     text storage element.
-    # 
-    #     The text bridge updates each bound view manually.  See also
-    #     :meth:`~.BridgeTextStatic._set_persist`.
-    # 
-    #     :param p_view: view to bind.
-    #     """
-    #     p_view.set_label(self._model)
-
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
         """
         return self._model
-
-    # def _loose(self, p_view: ViewTextStatic):
-    #     """Break toolkit-specific connection between text view element
-    #     and text storage element.
-    # 
-    #     :param p_view: view to separate.
-    #     """
-    #     p_view.set_label('')
 
     def _new_model(self) -> ModelTextStatic:
         """Return toolkit-specific object to store text."""
@@ -349,7 +294,7 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
     def new_view(self) -> ViewTextStatic:
         """Return toolkit-specific object to display text."""
         view = ViewTextStatic(label=self._model)
-        view.connect('destroy', self._destroy_view)
+        _ = view.connect('destroy', self._destroy_view)
         self._views[id(view)] = view
         return view
 
@@ -360,29 +305,5 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
             content.
         """
         self._model = p_persist
-        # self.set_stale()
-        # for view in self._views.values():
-        #     view.set_label(self._model)
-
-    @BridgeText.text.setter  # type: ignore[attr-defined]
-    def text(self, p_text: str) -> None:
-        """Set attribute content.
-
-        :param p_text: new content for attribute.
-        """
-        BridgeText.text.fset(self, p_text)
         for view in self._views.values():
             view.set_label(self._model)
-
-    # def _update_views(self) -> None:
-    #     """Update attached views to match persistent content.
-    #
-    #     Typically, a widget toolkit storage element element updates
-    #     attached view elements automatically.  However, views of
-    #     :class:`str`` text need to be updated manually, which this
-    #     method does.
-    #     """
-    #     # self._model = p_persist
-    #     # self.set_stale()
-    #     for view in self._views.values():
-    #         view.set_label(self._model)

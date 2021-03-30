@@ -42,7 +42,7 @@ class TestBridgeBase:
         """
         # Setup
         source = PatchBridgeBase()
-        TEXT = 'Something completely different'
+        TEXT = 'Parrot'
         source._set_persist(TEXT)
         N_VIEWS = 3
         for _ in range(N_VIEWS):
@@ -65,7 +65,7 @@ class TestBridgeBase:
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
         source = PatchBridgeBase()
-        TEXT = 'Something completely different'
+        TEXT = 'Parrot'
         source._set_persist(TEXT)
         N_VIEWS = 3
         for _ in range(N_VIEWS):
@@ -79,8 +79,6 @@ class TestBridgeBase:
         assert target.called_common
         assert not hasattr(target, 'ex_model')
         assert source._get_persist() == target._get_persist()
-        # assert isinstance(target._views, dict)
-        # assert not target._views
 
     def test_init(self):
         """Confirm initialization."""
@@ -90,14 +88,12 @@ class TestBridgeBase:
         assert target.called_common
         assert isinstance(target._model, str)
         assert not target._model
-        # assert isinstance(target._views, dict)
-        # assert not target._views
 
     def test_str(self):
         """Confirm string representation."""
         # Setup
         target = PatchBridgeBase()
-        TEXT = 'Something completely different'
+        TEXT = 'Parrot'
         target._set_persist(TEXT)
         N_VIEWS = 3
         for _ in range(N_VIEWS):
