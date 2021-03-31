@@ -251,14 +251,6 @@ class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
 
     _C_ITEM = 0
 
-    def _bind(self, p_view: ViewOutlineOpaque):
-        """Form toolkit-specific connection between outline view and
-        storage elements.
-
-        :param p_view: view to bind.
-        """
-        p_view.set_model(self._model)
-
     def clear(self) -> None:
         """Remove all items from outline."""
         self._model.clear()
@@ -325,18 +317,9 @@ class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
             yield line
             line = self._model.iter_next(line)
 
-    def _loose(self, p_view: ViewOutlineOpaque):
-        """Break toolkit-specific connection between outline view and
-        storage elements.
-
-        :param p_view: view to loose.
-        """
-        p_view.set_model(None)
-
     def _new_model(self) -> ModelOutlineSingle:
         """Return toolkit-specific outline storage element."""
         return ModelOutlineSingle(GO.TYPE_PYOBJECT)
-        # return Gtk.ListStore(GO.TYPE_PYOBJECT)
 
     def remove(self, p_line: typing.Optional[LineOutline]) -> None:
         """Remove item at given line from outline.
@@ -365,7 +348,9 @@ class BridgeOutlineColumnar(BridgeOutline[
 
     def new_view(self) -> ViewOutlineColumnar:
         """Return toolkit-specific columnar view element."""
-        return ViewOutlineColumnar()
+        view = ViewOutlineColumnar()
+        view.set_model(self._model)
+        return view
 
 
 class BridgeOutlineSelect(BridgeOutline[
@@ -376,7 +361,9 @@ class BridgeOutlineSelect(BridgeOutline[
 
     def new_view(self) -> ViewOutlineSelect:
         """Return toolkit-specific selection element."""
-        return ViewOutlineSelect()
+        view = ViewOutlineSelect()
+        view.set_model(self._model)
+        return view
 
 
 class BridgeOutlineMulti(InterfaceOutlineMulti[
@@ -523,7 +510,9 @@ class BridgeOutlineMultiColumnar(BridgeOutlineMulti[
 
     def new_view(self) -> ViewOutlineColumnar:
         """Return toolkit-specific columnar element."""
-        return ViewOutlineColumnar()
+        view = ViewOutlineColumnar()
+        view.set_model(self._model)
+        return view
 
 
 class BridgeOutlineMultiSelect(BridgeOutlineMulti[
@@ -534,4 +523,6 @@ class BridgeOutlineMultiSelect(BridgeOutlineMulti[
 
     def new_view(self) -> ViewOutlineSelect:
         """Return toolkit-specific selection element."""
-        return ViewOutlineSelect()
+        view = ViewOutlineSelect()
+        view.set_model(self._model)
+        return view

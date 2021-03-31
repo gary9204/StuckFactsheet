@@ -217,21 +217,7 @@ class TestBridgeOutline:
         # Setup
         # Test
         target = patch_class_outline()
-        assert isinstance(target._views, dict)
-        assert not target._views
         assert isinstance(target._model, BOUTLINE.ModelOutlineSingle)
-
-    @pytest.mark.parametrize('PATCH_CLASS, VIEW', [
-        (BOUTLINE.BridgeOutlineColumnar, BOUTLINE.ViewOutlineColumnar()),
-        (BOUTLINE.BridgeOutlineSelect, BOUTLINE.ViewOutlineSelect()),
-        ])
-    def test_bind(self, PATCH_CLASS, VIEW):
-        """Confirm toolkit element association."""
-        # Setup
-        target = PATCH_CLASS()
-        # Test
-        target._bind(VIEW)
-        assert target._model is VIEW.get_model()
 
     def test_clear(self, patch_store_single):
         """Confirm removal of all items."""
@@ -365,19 +351,6 @@ class TestBridgeOutline:
         # Test
         assert paths == [target._model.get_path(l) for l in target.lines()]
 
-    @pytest.mark.parametrize('PATCH_CLASS, VIEW', [
-        (BOUTLINE.BridgeOutlineColumnar, BOUTLINE.ViewOutlineColumnar()),
-        (BOUTLINE.BridgeOutlineSelect, BOUTLINE.ViewOutlineSelect()),
-        ])
-    def test_loose(self, PATCH_CLASS, VIEW):
-        """Confirm toolkit element disassociation."""
-        # Setup
-        target = PATCH_CLASS()
-        target._bind(VIEW)
-        # Test
-        target._loose(VIEW)
-        assert VIEW.get_model() is None
-
     def test_new_model(self):
         """Confirm storage element."""
         # Setup
@@ -439,6 +412,7 @@ class TestBridgeOutlineColumnar:
         # Test
         view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
+        assert target._model is view.get_model()
 
 
 class TestBridgeOutlineSelect:
@@ -451,6 +425,7 @@ class TestBridgeOutlineSelect:
         # Test
         view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
+        assert target._model is view.get_model()
 
 
 class TestBridgeOutlineMulti:
@@ -504,21 +479,7 @@ class TestBridgeOutlineMulti:
         # Setup
         # Test
         target = patch_class_outlinemulti()
-        assert isinstance(target._views, dict)
-        assert not target._views
         assert isinstance(target._model, BOUTLINE.ModelOutlineMulti)
-
-    @pytest.mark.parametrize('PATCH_CLASS, VIEW', [
-        (BOUTLINE.BridgeOutlineMultiColumnar, BOUTLINE.ViewOutlineColumnar()),
-        (BOUTLINE.BridgeOutlineMultiSelect, BOUTLINE.ViewOutlineSelect()),
-        ])
-    def test_bind(self, PATCH_CLASS, VIEW):
-        """Confirm toolkit element association."""
-        # Setup
-        target = PATCH_CLASS()
-        # Test
-        target._bind(VIEW)
-        assert target._model is VIEW.get_model()
 
     def test_clear(self, patch_store_multi):
         """Confirm removal of all items."""
@@ -851,19 +812,6 @@ class TestBridgeOutlineMulti:
             path_line = target._model.get_string_from_iter(line)
             assert path_model == path_line
 
-    @pytest.mark.parametrize('PATCH_CLASS, VIEW', [
-        (BOUTLINE.BridgeOutlineMultiColumnar, BOUTLINE.ViewOutlineColumnar()),
-        (BOUTLINE.BridgeOutlineMultiSelect, BOUTLINE.ViewOutlineSelect()),
-        ])
-    def test_loose(self, PATCH_CLASS, VIEW):
-        """Confirm toolkit element disassociation."""
-        # Setup
-        target = PATCH_CLASS()
-        target._bind(VIEW)
-        # Test
-        target._loose(VIEW)
-        assert VIEW.get_model() is None
-
     def test_new_model(self):
         """Confirm storage element."""
         # Setup
@@ -924,6 +872,7 @@ class TestBridgeOutlineMultiColumnar:
         # Test
         view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
+        assert target._model is view.get_model()
 
 
 class TestBridgeOutlineMultiSelect:
@@ -936,6 +885,7 @@ class TestBridgeOutlineMultiSelect:
         # Test
         view = target.new_view()
         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
+        assert target._model is view.get_model()
 
 
 class TestInterfaceOutline:
@@ -964,6 +914,8 @@ class TestInterfaceOutlineMulti:
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BOUTLINE.InterfaceOutlineMulti, 'insert_child'),
         (BOUTLINE.InterfaceOutlineMulti, 'insert_section'),
+        (BOUTLINE.InterfaceOutlineMulti, 'items_section'),
+        (BOUTLINE.InterfaceOutlineMulti, 'lines_section'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""
