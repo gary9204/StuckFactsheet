@@ -1,4 +1,9 @@
 """
+Note:  Change of Plan
+Date: 2021-04-02
+Changing Aspect from bridge class to model class.
+See: src/factsheet_test/model/test_aspect.py
+
 Unit tests for GTK-based classes that encapsulate fact aspect classes.
 See :mod:`~.bridge_aspect`.
 """
@@ -48,6 +53,7 @@ class PatchBridgeAspect(BASPECT.BridgeAspect[
 class TestBridgeAspect:
     """Unit tests for :class:`~.BridgeAspect`."""
 
+    @pytest.mark.skip(reason='Checking...')
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BASPECT.BridgeAspect, '_bind'),
         (BASPECT.BridgeAspect, '_get_persist'),
@@ -64,6 +70,7 @@ class TestBridgeAspect:
         assert hasattr(CLASS, '__abstractmethods__')
         assert NAME_METHOD in CLASS.__abstractmethods__
 
+    @pytest.mark.skip(reason='Checking...')
     def test_refresh(self):
         """| Confirm storage and view elements are set from source.
         | Case: source is not None.
@@ -81,6 +88,7 @@ class TestBridgeAspect:
             assert target._views[id(view)] is view
             assert model == view.get_label()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_refresh_none(self):
         """| Confirm storage and view elements are set from source.
         | Case: source is not None.
@@ -107,6 +115,7 @@ class TestBridgeAspectPlain:
     :class:`.AspectPlain.
     """
 
+    @pytest.mark.skip(reason='Checking...')
     def test_init(self):
         """Confirm initialization."""
         # Setup
@@ -116,6 +125,7 @@ class TestBridgeAspectPlain:
         assert BLANK == target._model
         assert isinstance(target._views, dict)
 
+    @pytest.mark.skip(reason='Checking...')
     def test_bind(self):
         """Confirm widget association."""
         # Setupsht
@@ -127,6 +137,7 @@ class TestBridgeAspectPlain:
         target._bind(VIEW)
         assert TEXT == VIEW.get_label()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_get_persist(self):
         """Confirm export to persistent form."""
         # Setup
@@ -136,6 +147,7 @@ class TestBridgeAspectPlain:
         # Test
         assert TEXT == target._get_persist()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_loose(self):
         """Confirm widget disassociation."""
         # Setup
@@ -148,6 +160,7 @@ class TestBridgeAspectPlain:
         target._loose(VIEW)
         assert BLANK == VIEW.get_label()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_new_model(self):
         """Confirm storage element."""
         # Setup
@@ -156,6 +169,7 @@ class TestBridgeAspectPlain:
         model = target._new_model()
         assert isinstance(model, BASPECT.ModelAspectPlain)
 
+    @pytest.mark.skip(reason='Checking...')
     def test_new_view(self):
         """Confirm view element."""
         # Setup
@@ -164,6 +178,7 @@ class TestBridgeAspectPlain:
         view = target.new_view()
         assert isinstance(view, BASPECT.ViewAspectPlain)
 
+    @pytest.mark.skip(reason='Checking...')
     def test_refresh(self):
         """| Confirm storage and view elements are set from source.
         | Case: source is not None.
@@ -181,6 +196,7 @@ class TestBridgeAspectPlain:
             assert target._views[id(view)] is view
             assert model == view.get_label()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_refresh_none(self):
         """| Confirm storage and view elements are set from source.
         | Case: source is not None.
@@ -199,6 +215,7 @@ class TestBridgeAspectPlain:
             assert target._views[id(view)] is view
             assert BLANK == view.get_label()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
@@ -214,6 +231,7 @@ class TestBridgeAspectPlain:
         for view in views:
             assert TEXT == view.get_label()
 
+    @pytest.mark.skip(reason='Checking...')
     def test_transcribe(self):
         """| Confirm transcription from source to persist form.
         | Case: source is not None.
@@ -227,6 +245,7 @@ class TestBridgeAspectPlain:
         # Test
         assert text == target.transcribe(SOURCE)
 
+    @pytest.mark.skip(reason='Checking...')
     def test_transcribe_none(self):
         """| Confirm transcription from source to persist form.
         | Case: source is None.
@@ -240,6 +259,7 @@ class TestBridgeAspectPlain:
         # Test
         assert BLANK == target.transcribe(SOURCE)
 
+    @pytest.mark.skip(reason='Checking...')
     def test_update_views(self):
         """Confirm manual update of views."""
         # Setup
@@ -259,6 +279,7 @@ class TestBridgeAspectPlain:
 class TestBridgeAspectMissing:
     """Unit tests for :class:`~.BridgeAspectMissing`."""
 
+    @pytest.mark.skip(reason='Checking...')
     def test_transcribe(self):
         """Confirm warning for missing aspect."""
         # Setup
@@ -275,6 +296,7 @@ class TestBridgeAspectMissing:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.bridge_aspect`."""
 
+    @pytest.mark.skip(reason='Checking...')
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (type(BASPECT.ModelAspectOpaque), typing.TypeVar),
         (BASPECT.ModelAspectOpaque.__constraints__, ()),

@@ -1,4 +1,11 @@
 """
+Note:  Change of Plan
+Date: 2021-04-02
+Changing Aspect from bridge class to model class.  Each Aspect class
+will wrap a bridge class. A bridge attribute provides content and
+methods tailor the content to a particular aspect.
+See: src/factsheet/model/aspect.py
+
 Defines bridge classes that encapsulate widget toolkit fact aspect
 classes.
 
@@ -87,13 +94,13 @@ class BridgeAspectPlain(BridgeAspect[
         ModelAspectPlain, PersistAspectPlain, ViewAspectPlain, SourceOpaque]):
     """Plain text aspect for a fact."""
 
-    def _bind(self, p_view: ViewAspectPlain):
-        """Form toolkit-specific connection between view element and
-        storage element.
-
-        :param p_view: view to bind.
-        """
-        p_view.set_label(self._model)
+    # def _bind(self, p_view: ViewAspectPlain):
+        # """Form toolkit-specific connection between view element and
+        # storage element.
+        #
+        # :param p_view: view to bind.
+        # """
+        # p_view.set_label(self._model)
 
     def _get_persist(self) -> PersistAspectPlain:
         """Return aspect representation in form suitable for persistent
@@ -101,13 +108,13 @@ class BridgeAspectPlain(BridgeAspect[
         """
         return self._model
 
-    def _loose(self, p_view: ViewAspectPlain) -> None:
-        """Break toolkit-specific connection between view element and
-        storage element.
-
-        :param p_view: view to loose.
-        """
-        p_view.set_label('')
+    # def _loose(self, p_view: ViewAspectPlain) -> None:
+        # """Break toolkit-specific connection between view element and
+        # storage element.
+        #
+        # :param p_view: view to loose.
+        # """
+        # p_view.set_label('')
 
     def _new_model(self) -> ModelAspectPlain:
         """Return toolkit-specific storage element."""
