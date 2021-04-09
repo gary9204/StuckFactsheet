@@ -3,7 +3,6 @@ Unit tests for generic control to add and remove views of
 :class:`~.IdCore` identity attributes.  See :mod:`~.control_idcore`.
 """
 import pytest   # type: ignore[import]
-# import re
 import typing
 
 import factsheet.bridge_ui as BUI
@@ -52,9 +51,9 @@ class TestControlIdCore:
         assert target.fdel is None
 
     @pytest.mark.parametrize('ATTACH, ATTR', [
-        ('attach_name', 'name'),
-        ('attach_summary', 'summary'),
-        ('attach_title', 'title'),
+        ('new_view_name', 'name'),
+        ('new_view_summary', 'summary'),
+        ('new_view_title', 'title'),
         ])
     def test_attach(self, patch_idcore, ATTACH, ATTR):
         """Confirm control relays requests to identity."""
@@ -66,24 +65,6 @@ class TestControlIdCore:
         # Test
         view = attach()
         assert view.get_buffer() is attr._model
-
-    @pytest.mark.parametrize('ATTACH, DETACH, ATTR', [
-        ('attach_name', 'detach_name', 'name'),
-        ('attach_summary', 'detach_summary', 'summary'),
-        ('attach_title', 'detach_title', 'title'),
-        ])
-    def test_detach(self, patch_idcore, ATTACH, DETACH, ATTR):
-        """Confirm control relays requests to identity."""
-        # Setup
-        IDCORE = patch_idcore()
-        target = PatchControlIdCore(p_idcore=IDCORE)
-        attach = getattr(target, ATTACH)
-        view = attach()
-        detach = getattr(target, DETACH)
-        attr = getattr(IDCORE, ATTR)
-        # Test
-        detach(view)
-        assert view.get_buffer() is not attr._model
 
 
 class TestTypes:

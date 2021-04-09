@@ -2,7 +2,6 @@
 Unit tests for fact aspect classes.  See :mod:`~.bridge_aspect`.
 """
 import pytest   # type: ignore[import]
-import typing
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.aspect as MASPECT
@@ -10,13 +9,6 @@ import factsheet.model.aspect as MASPECT
 
 class TestAspect:
     """ Unit tests for :class:`~.Aspect`."""
-
-    def test_class_abstract(self):
-        """Confirm class is abstract."""
-        # Setup
-        # Test
-        with pytest.raises(TypeError):
-            _ = MASPECT.Aspect(None)
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (MASPECT.Aspect, '__init__'),

@@ -4,15 +4,15 @@ See :mod:`~factsheet.model`
 
 .. data:: BridgeName
 
-    Type hint for text adpter for name attribute of model component.
+    Type hint for text bridge for name attribute of model.
 
 .. data:: BridgeSummary
 
-    Type hint for text adpter for summary attribute of model component.
+    Type hint for text bridge for summary attribute of model.
 
 .. data:: BridgeTitle
 
-    Type hint for text adpter for title attribute of model component.
+    Type hint for text bridge for title attribute of model.
 """
 import abc
 import typing
@@ -111,7 +111,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
     @property
     @abc.abstractmethod
     def name(self) -> BridgeName:
-        """Return component name adapter."""
+        """Return component name bridge."""
         raise NotImplementedError
 
     def set_fresh(self):
@@ -128,11 +128,11 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
     @property
     @abc.abstractmethod
     def summary(self) -> BridgeSummary:
-        """Return component summary adapter."""
+        """Return component summary bridge."""
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def title(self) -> BridgeTitle:
-        """Return component title adapter."""
+        """Return component title bridge."""
         raise NotImplementedError

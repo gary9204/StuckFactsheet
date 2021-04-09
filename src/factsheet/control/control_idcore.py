@@ -1,6 +1,18 @@
 """
 Defines generic control to add and remove views of :class:`~.IdCore`
 identity attributes.
+
+.. data:: ViewName
+
+    Type hint for view of name.
+
+.. data:: ViewSummary
+
+    Type hint for view of summary.
+
+.. data:: ViewTitle
+
+    Type hint for view of title attribute.
 """
 import abc
 import typing   # noqa
@@ -18,43 +30,22 @@ ViewTitle = typing.TypeVar(
 
 class ControlIdCore(typing.Generic[
         ViewName, ViewSummary, ViewTitle], abc.ABC):
-    """Mediates addition and removal of views of identity attributes."""
+    """Mediates addition of views of identity attributes."""
 
-    def attach_name(self) -> ViewName:
+    def new_view_name(self) -> ViewName:
         """Return view associated with model component name."""
-        return self.idcore.name.attach_view()
+        return self.idcore.name.new_view()
 
-    def attach_summary(self) -> ViewSummary:
+    def new_view_summary(self) -> ViewSummary:
         """Return view associated with model component summary."""
-        return self.idcore.summary.attach_view()
+        return self.idcore.summary.new_view()
 
-    def attach_title(self) -> ViewTitle:
+    def new_view_title(self) -> ViewTitle:
         """Return view associated with model component title."""
-        return self.idcore.title.attach_view()
-
-    def detach_name(self, p_view: ViewName) -> None:
-        """Disassociate view from model component name.
-
-        :param p_view: view to detach.
-        """
-        self.idcore.name.detach_view(p_view)
-
-    def detach_summary(self, p_view: ViewSummary) -> None:
-        """Disassociate view from model component summary.
-
-        :param p_view: view to detach.
-        """
-        self.idcore.summary.detach_view(p_view)
-
-    def detach_title(self, p_view: ViewTitle) -> None:
-        """Disassociate view from model component summary.
-
-        :param p_view: view to detach.
-        """
-        self.idcore.title.detach_view(p_view)
+        return self.idcore.title.new_view()
 
     @property
     @abc.abstractmethod
     def idcore(self) -> MIDCORE.IdCore:
-        """Return component identity."""
+        """Return identity model of component."""
         raise NotImplementedError
