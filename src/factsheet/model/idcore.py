@@ -13,7 +13,20 @@ See :mod:`~factsheet.model`
 .. data:: BridgeTitle
 
     Type hint for text bridge for title attribute of model.
+
+.. data:: ViewName
+
+    Type hint for view of name attribute of model.
+
+.. data:: ViewSummary
+
+    Type hint for view of summary attribute of model.
+
+.. data:: ViewTitle
+
+    Type hint for view of title attribute of model.
 """
+import abc
 import typing
 
 import factsheet.abc_types.abc_stalefile as ABC_STALE
@@ -25,17 +38,30 @@ BridgeSummary = typing.TypeVar('BridgeSummary', BUI.BridgeTextFormat,
                                BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
 BridgeTitle = typing.TypeVar('BridgeTitle', BUI.BridgeTextFormat,
                              BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
+ViewName = typing.TypeVar(
+    'ViewName', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
+ViewSummary = typing.TypeVar(
+    'ViewSummary', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
+ViewTitle = typing.TypeVar(
+    'ViewTitle', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
 
 
 class IdCore(ABC_STALE.InterfaceStaleFile,
-             typing.Generic[BridgeName, BridgeSummary, BridgeTitle]):
+             typing.Generic[BridgeName, BridgeSummary, BridgeTitle],
+             abc.ABC):
     """Defines identity attributes common to Factsheet model components.
+
+    A descendant class must extend :meth:`~.__init__` to define stores
+    for each identity attribute.
 
     .. admonition:: About Equality
 
-        Two `IdCore` instances are equivalent when their names, titles,
-        and summaries are the equal. Transient aspects of the instances
-        (like views) are not compared and may be different.
+        Two :class:`~.IdCore` instances are equivalent when their names,
+        titles, and summaries are the equal. Transient aspects of the
+        instances (like views) are not compared and may be different.
+
+    :param kwargs: placeholder for keyword arguments in descendants.
+        Should be empty.
     """
 
     def __eq__(self, px_other: typing.Any) -> bool:
@@ -66,6 +92,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
+    @abc.abstractmethod
     def __init__(self, **kwargs: typing.Any) -> None:
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
@@ -109,6 +136,18 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
             return True
 
         return False
+
+    def new_view_name(self) -> ViewName:
+        """Return view to display name."""
+        return self._name.new_view()
+
+    def new_view_summary(self) -> ViewSummary:
+        """Return view to display summary."""
+        return self._summary.new_view()
+
+    def new_view_title(self) -> ViewTitle:
+        """Return view to display title."""
+        return self._title.new_view()
 
     def set_fresh(self):
         """Mark identity in memory consistent with file contents."""

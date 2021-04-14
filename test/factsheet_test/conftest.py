@@ -71,28 +71,6 @@ class PatchIdCore(MIDCORE.IdCore[BTEXT.BridgeTextMarkup,
         self.set_fresh()
 
 
-# class PatchIdCore(MIDCORE.IdCore):
-#     """:class:`.IdCore` subclass with stubs for properties."""
-#
-#     def __init__(self, **kwargs):
-#         super().__init__(**kwargs)
-#         self._name = BTEXT.BridgeTextMarkup()
-#         self._summary = BTEXT.BridgeTextFormat()
-#         self._title = BTEXT.BridgeTextMarkup()
-#
-#     @property
-#     def name(self):
-#         return self._name
-#
-#     @property
-#     def summary(self):
-#         return self._summary
-#
-#     @property
-#     def title(self):
-#         return self._title
-
-
 @pytest.fixture
 def patch_idcore():
     """Pytest fixture: return :class:`.IdCore` subclass with stub

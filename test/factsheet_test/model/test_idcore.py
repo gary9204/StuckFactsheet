@@ -9,6 +9,7 @@ import re
 import typing
 
 import factsheet.bridge_gtk.bridge_text as BTEXT
+import factsheet.bridge_ui as BUI
 import factsheet.model.idcore as MIDCORE
 
 
@@ -94,11 +95,15 @@ class TestIdCore:
         | Case: extra keyword argument.
         """
         # Setup
+        class IdCore(MIDCORE.IdCore):
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs)
+
         ERROR = re.escape("IdCore.__init__() called with extra "
                           "argument(s): {'extra': 'Oops!'}")
         # Test
         with pytest.raises(TypeError, match=ERROR):
-            _ = MIDCORE.IdCore(extra='Oops!')
+            _ = IdCore(extra='Oops!')
 
     # @pytest.mark.skip(reason='Update in progress')
     # @pytest.mark.parametrize('CLASS, NAME_METHOD', [
@@ -209,6 +214,24 @@ class TestIdCore:
         assert not target.is_stale()
         assert not target._stale
 
+    @pytest.mark.parametrize('NEW_VIEW, ATTR', [
+        ('new_view_name', '_name'),
+        ('new_view_summary', '_summary'),
+        ('new_view_title', '_title'),
+        ])
+    def test_new_view(self, patch_idcore, NEW_VIEW, ATTR):
+        """Confirm control relays requests to identity."""
+        # Setup
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        new_view = getattr(target, NEW_VIEW)
+        attr = getattr(target, ATTR)
+        # Test
+        view = new_view()
+        assert view.get_buffer() is attr._model
+
     def test_set_fresh(self, patch_idcore):
         """Confirm instance marked fresh."""
         # Setup
@@ -270,17 +293,26 @@ class TestIdCoreTypes:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (type(MIDCORE.BridgeName), typing.TypeVar),
-        (MIDCORE.BridgeName.__constraints__, (BTEXT.BridgeTextFormat,
-                                              BTEXT.BridgeTextMarkup,
-                                              BTEXT.BridgeTextStatic)),
+        (MIDCORE.BridgeName.__constraints__, (BUI.BridgeTextFormat,
+                                              BUI.BridgeTextMarkup,
+                                              BUI.BridgeTextStatic)),
         (type(MIDCORE.BridgeSummary), typing.TypeVar),
-        (MIDCORE.BridgeSummary.__constraints__, (BTEXT.BridgeTextFormat,
-                                                 BTEXT.BridgeTextMarkup,
-                                                 BTEXT.BridgeTextStatic)),
+        (MIDCORE.BridgeSummary.__constraints__, (BUI.BridgeTextFormat,
+                                                 BUI.BridgeTextMarkup,
+                                                 BUI.BridgeTextStatic)),
         (type(MIDCORE.BridgeTitle), typing.TypeVar),
-        (MIDCORE.BridgeTitle.__constraints__, (BTEXT.BridgeTextFormat,
-                                               BTEXT.BridgeTextMarkup,
-                                               BTEXT.BridgeTextStatic)),
+        (MIDCORE.BridgeTitle.__constraints__, (BUI.BridgeTextFormat,
+                                               BUI.BridgeTextMarkup,
+                                               BUI.BridgeTextStatic)),
+        (type(MIDCORE.ViewName), typing.TypeVar),
+        (MIDCORE.ViewName.__constraints__, (
+            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+        (type(MIDCORE.ViewSummary), typing.TypeVar),
+        (MIDCORE.ViewSummary.__constraints__, (
+            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+        (type(MIDCORE.ViewTitle), typing.TypeVar),
+        (MIDCORE.ViewTitle.__constraints__, (
+            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
