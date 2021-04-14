@@ -15,12 +15,13 @@ import factsheet.model.idcore as MIDCORE
 class TestIdCore:
     """Unit tests for :class:`.IdCore`."""
 
-    def test_abstract_class(self):
-        """Confirm  class is abstract."""
-        # Setup
-        # Test
-        with pytest.raises(TypeError):
-            _ = MIDCORE.IdCore()
+    # @pytest.mark.skip(reason='Update in progress')
+    # def test_abstract_class(self):
+    #     """Confirm  class is abstract."""
+    #     # Setup
+    #     # Test
+    #     with pytest.raises(TypeError):
+    #         _ = MIDCORE.IdCore()
 
     def test_eq(self, patch_idcore):
         """Confirm equivalence operator.
@@ -32,27 +33,24 @@ class TestIdCore:
         #. Case: equivalent
         """
         # Setup
-        source = patch_idcore()
         NAME = 'Parrot'
-        source.name.text = NAME
         SUMMARY = 'The parrot is a Norwegian Blue.'
-        source.summary.text = SUMMARY
         TITLE = 'The Parrot Sketch'
-        source.title.text = TITLE
+        source = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         TEXT = 'Something completely different.'
         # Test: type difference.
         assert not source.__eq__(TEXT)
         # Test: name difference.
         target = copy.deepcopy(source)
-        target.name.text = TEXT
+        target._name.text = TEXT
         assert not source.__eq__(target)
         # Test: summary difference.
         target = copy.deepcopy(source)
-        target.summary.text = TEXT
+        target._summary.text = TEXT
         assert not source.__eq__(target)
         # Test: title difference.
         target = copy.deepcopy(source)
-        target.title.text = TEXT
+        target._title.text = TEXT
         assert not source.__eq__(target)
         # Test: equivalent
         target = copy.deepcopy(source)
@@ -64,13 +62,10 @@ class TestIdCore:
         """Confirm conversion to and from pickle format."""
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
-        source = patch_idcore()
         NAME = 'Parrot'
-        source.name.text = NAME
         SUMMARY = 'The parrot is a Norwegian Blue.'
-        source.summary.text = SUMMARY
         TITLE = 'The Parrot Sketch'
-        source.title.text = TITLE
+        source = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         source._stale = True
         # Test
         with path.open(mode='wb') as io_out:
@@ -86,12 +81,15 @@ class TestIdCore:
         | Case: nominal.
         """
         # Setup
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
         # Test
-        target = patch_idcore()
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         assert isinstance(target._stale, bool)
         assert not target._stale
 
-    def test_init_extra(self, patch_idcore):
+    def test_init_extra(self):
         """| Confirm initialization.
         | Case: extra keyword argument.
         """
@@ -100,38 +98,40 @@ class TestIdCore:
                           "argument(s): {'extra': 'Oops!'}")
         # Test
         with pytest.raises(TypeError, match=ERROR):
-            _ = patch_idcore(extra='Oops!')
+            _ = MIDCORE.IdCore(extra='Oops!')
 
-    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (MIDCORE.IdCore, 'name'),
-        (MIDCORE.IdCore, 'summary'),
-        (MIDCORE.IdCore, 'title'),
-        ])
-    def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
-        # Setup
-        # Test
-        assert hasattr(CLASS, '__abstractmethods__')
-        assert NAME_METHOD in CLASS.__abstractmethods__
+    # @pytest.mark.skip(reason='Update in progress')
+    # @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+    #     (MIDCORE.IdCore, 'name'),
+    #     (MIDCORE.IdCore, 'summary'),
+    #     (MIDCORE.IdCore, 'title'),
+    #     ])
+    # def test_method_abstract(self, CLASS, NAME_METHOD):
+    #     """Confirm each abstract method is specified."""
+    #     # Setup
+    #     # Test
+    #     assert hasattr(CLASS, '__abstractmethods__')
+    #     assert NAME_METHOD in CLASS.__abstractmethods__
 
-    @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
-        ('name', False),
-        ('summary', False),
-        ('title', False),
-        ])
-    def test_property_access(self, NAME_PROP, HAS_SETTER):
-        """Confirm access limits of each property."""
-        # Setup
-        # Test
-        target = getattr(MIDCORE.IdCore, NAME_PROP)
-        with pytest.raises(NotImplementedError):
-            target.fget(None)
-        if HAS_SETTER:
-            with pytest.raises(NotImplementedError):
-                target.fset(None, 'Oops!')
-        else:
-            assert target.fset is None
-        assert target.fdel is None
+    # @pytest.mark.skip(reason='Update in progress')
+    # @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
+    #     ('name', False),
+    #     ('summary', False),
+    #     ('title', False),
+    #     ])
+    # def test_property_access(self, NAME_PROP, HAS_SETTER):
+    #     """Confirm access limits of each property."""
+    #     # Setup
+    #     # Test
+    #     target = getattr(MIDCORE.IdCore, NAME_PROP)
+    #     with pytest.raises(NotImplementedError):
+    #         target.fget(None)
+    #     if HAS_SETTER:
+    #         with pytest.raises(NotImplementedError):
+    #             target.fset(None, 'Oops!')
+    #     else:
+    #         assert target.fset is None
+    #     assert target.fdel is None
 
     @pytest.mark.parametrize('IS_STALE', [
         True,
@@ -151,7 +151,10 @@ class TestIdCore:
 
         patch = PatchIsStale(IS_STALE)
         monkeypatch.setattr(MIDCORE.IdCore, 'is_stale', patch.is_stale)
-        target = patch_idcore()
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # Test
         assert target.is_fresh() is not IS_STALE
         assert patch.called
@@ -166,7 +169,10 @@ class TestIdCore:
         #. Case: IdCore fresh, name, summary, and title fresh
         """
         # Setup
-        target = patch_idcore()
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # Test: IdCore stale, name, summary, and title fresh
         target._stale = True
         target._name.set_fresh()
@@ -206,21 +212,27 @@ class TestIdCore:
     def test_set_fresh(self, patch_idcore):
         """Confirm instance marked fresh."""
         # Setup
-        target = patch_idcore()
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         target._stale = True
         # Test
         target.set_fresh()
         assert not target._stale
 
     @pytest.mark.parametrize('ATTR', [
-        'name',
-        'summary',
-        'title',
+        '_name',
+        '_summary',
+        '_title',
         ])
     def test_set_fresh_attr(self, patch_idcore, ATTR):
         """Confirm all attributes marked fresh."""
         # Setup
-        target = patch_idcore()
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         target._stale = True
         attribute = getattr(target, ATTR)
         attribute.set_stale()
@@ -239,10 +251,14 @@ class TestIdCore:
             def set_stale(self):
                 self.called = True
 
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        target._stale = False
+
         patch = PatchAttrSetStale()
         monkeypatch.setattr(BTEXT.BridgeText, 'set_stale', patch.set_stale)
-        target = patch_idcore()
-        target._stale = False
         # Test
         target.set_stale()
         assert not patch.called

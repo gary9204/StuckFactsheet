@@ -56,26 +56,41 @@ import factsheet.model.topic as MTOPIC
 #     return PatchBridgeText
 
 
-class PatchIdCore(MIDCORE.IdCore):
+class PatchIdCore(MIDCORE.IdCore[BTEXT.BridgeTextMarkup,
+                  BTEXT.BridgeTextFormat, BTEXT.BridgeTextMarkup]):
     """:class:`.IdCore` subclass with stubs for properties."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, p_name: str, p_summary: str, p_title: str, **kwargs):
         super().__init__(**kwargs)
         self._name = BTEXT.BridgeTextMarkup()
+        self._name.text = p_name
         self._summary = BTEXT.BridgeTextFormat()
+        self._summary.text = p_summary
         self._title = BTEXT.BridgeTextMarkup()
+        self._title.text = p_title
+        self.set_fresh()
 
-    @property
-    def name(self):
-        return self._name
 
-    @property
-    def summary(self):
-        return self._summary
-
-    @property
-    def title(self):
-        return self._title
+# class PatchIdCore(MIDCORE.IdCore):
+#     """:class:`.IdCore` subclass with stubs for properties."""
+#
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
+#         self._name = BTEXT.BridgeTextMarkup()
+#         self._summary = BTEXT.BridgeTextFormat()
+#         self._title = BTEXT.BridgeTextMarkup()
+#
+#     @property
+#     def name(self):
+#         return self._name
+#
+#     @property
+#     def summary(self):
+#         return self._summary
+#
+#     @property
+#     def title(self):
+#         return self._title
 
 
 @pytest.fixture

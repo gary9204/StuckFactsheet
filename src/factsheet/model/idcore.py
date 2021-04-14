@@ -14,7 +14,6 @@ See :mod:`~factsheet.model`
 
     Type hint for text bridge for title attribute of model.
 """
-import abc
 import typing
 
 import factsheet.abc_types.abc_stalefile as ABC_STALE
@@ -47,13 +46,13 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         if not isinstance(px_other, type(self)):
             return False
 
-        if self.name != px_other.name:
+        if self._name != px_other._name:
             return False
 
-        if self.summary != px_other.summary:
+        if self._summary != px_other._summary:
             return False
 
-        if self.title != px_other.title:
+        if self._title != px_other._title:
             return False
 
         return True
@@ -61,7 +60,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
     def __getstate__(self) -> typing.Dict:
         """Return identity in form pickle can persist.
 
-        Persistent form of fact excludes run-time information.
+        Persistent form of identity excludes run-time information.
         """
         state = self.__dict__.copy()
         del state['_stale']
@@ -72,6 +71,9 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
             raise TypeError('{}.__init__() called with extra argument(s): '
                             '{}'.format(type(self).__name__, kwargs))
         self._stale = False
+        self._name: BridgeName
+        self._summary: BridgeSummary
+        self._title: BridgeTitle
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct identity from state pickle loads.
@@ -94,45 +96,27 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         if self._stale:
             return True
 
-        if self.name.is_stale():
+        if self._name.is_stale():
             self._stale = True
             return True
 
-        if self.summary.is_stale():
+        if self._summary.is_stale():
             self._stale = True
             return True
 
-        if self.title.is_stale():
+        if self._title.is_stale():
             self._stale = True
             return True
 
         return False
 
-    @property
-    @abc.abstractmethod
-    def name(self) -> BridgeName:
-        """Return component name bridge."""
-        raise NotImplementedError
-
     def set_fresh(self):
         """Mark identity in memory consistent with file contents."""
         self._stale = False
-        self.name.set_fresh()
-        self.summary.set_fresh()
-        self.title.set_fresh()
+        self._name.set_fresh()
+        self._summary.set_fresh()
+        self._title.set_fresh()
 
     def set_stale(self):
         """Mark identity in memory changed from file contents."""
         self._stale = True
-
-    @property
-    @abc.abstractmethod
-    def summary(self) -> BridgeSummary:
-        """Return component summary bridge."""
-        raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
-    def title(self) -> BridgeTitle:
-        """Return component title bridge."""
-        raise NotImplementedError
