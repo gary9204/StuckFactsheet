@@ -16,13 +16,41 @@ import factsheet.model.idcore as MIDCORE
 class TestIdCore:
     """Unit tests for :class:`.IdCore`."""
 
-    # @pytest.mark.skip(reason='Update in progress')
-    # def test_abstract_class(self):
-    #     """Confirm  class is abstract."""
-    #     # Setup
-    #     # Test
-    #     with pytest.raises(TypeError):
-    #         _ = MIDCORE.IdCore()
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (MIDCORE.IdCore, '_new_model'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified."""
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR, HAS_SETTER', [
+        ('name', '_name', False),
+        ('summary', '_summary', False),
+        ('title', '_title', False),
+        ])
+    def test_property_access(
+            self, patch_idcore, NAME_PROP, NAME_ATTR, HAS_SETTER):
+        """Confirm access limits of each property."""
+        # Setup
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        attr = getattr(target, NAME_ATTR)
+        CLASS = MIDCORE.IdCore
+        target_prop = getattr(CLASS, NAME_PROP)
+        # Test
+        assert target_prop.fget is not None
+        assert attr.text == target_prop.fget(target)
+        if HAS_SETTER:
+            with pytest.raises(NotImplementedError):
+                target_prop.fset(None, 'Oops!')
+        else:
+            assert target_prop.fset is None
+        assert target_prop.fdel is None
 
     def test_eq(self, patch_idcore):
         """Confirm equivalence operator.
@@ -87,56 +115,45 @@ class TestIdCore:
         TITLE = 'The Parrot Sketch'
         # Test
         target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        assert NAME == target._name.text
+        assert SUMMARY == target._summary.text
+        assert TITLE == target._title.text
         assert isinstance(target._stale, bool)
-        assert not target._stale
+        assert target.is_fresh()
 
-    def test_init_extra(self):
+    def test_init_extra(self, patch_idcore):
         """| Confirm initialization.
         | Case: extra keyword argument.
         """
         # Setup
-        class IdCore(MIDCORE.IdCore):
-            def __init__(self, **kwargs):
-                super().__init__(**kwargs)
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
 
         ERROR = re.escape("IdCore.__init__() called with extra "
                           "argument(s): {'extra': 'Oops!'}")
         # Test
         with pytest.raises(TypeError, match=ERROR):
-            _ = IdCore(extra='Oops!')
+            _ = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE,
+                             extra='Oops!')
 
-    # @pytest.mark.skip(reason='Update in progress')
-    # @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-    #     (MIDCORE.IdCore, 'name'),
-    #     (MIDCORE.IdCore, 'summary'),
-    #     (MIDCORE.IdCore, 'title'),
+    # @pytest.mark.parametrize('GET_TEXT, ATTR', [
+    #     ('get_text_name', '_name'),
+    #     ('get_text_summary', '_summary'),
+    #     ('get_text_title', '_title'),
     #     ])
-    # def test_method_abstract(self, CLASS, NAME_METHOD):
-    #     """Confirm each abstract method is specified."""
+    # def test_get_text(self, patch_idcore, GET_TEXT, ATTR):
+    #     """Confirm control relays requests to identity."""
     #     # Setup
+    #     NAME = 'Parrot'
+    #     SUMMARY = 'The parrot is a Norwegian Blue.'
+    #     TITLE = 'The Parrot Sketch'
+    #     target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+    #     get_text = getattr(target, GET_TEXT)
+    #     attr = getattr(target, ATTR)
     #     # Test
-    #     assert hasattr(CLASS, '__abstractmethods__')
-    #     assert NAME_METHOD in CLASS.__abstractmethods__
-
-    # @pytest.mark.skip(reason='Update in progress')
-    # @pytest.mark.parametrize('NAME_PROP, HAS_SETTER', [
-    #     ('name', False),
-    #     ('summary', False),
-    #     ('title', False),
-    #     ])
-    # def test_property_access(self, NAME_PROP, HAS_SETTER):
-    #     """Confirm access limits of each property."""
-    #     # Setup
-    #     # Test
-    #     target = getattr(MIDCORE.IdCore, NAME_PROP)
-    #     with pytest.raises(NotImplementedError):
-    #         target.fget(None)
-    #     if HAS_SETTER:
-    #         with pytest.raises(NotImplementedError):
-    #             target.fset(None, 'Oops!')
-    #     else:
-    #         assert target.fset is None
-    #     assert target.fdel is None
+    #     text = get_text()
+    #     assert text == attr.text
 
     @pytest.mark.parametrize('IS_STALE', [
         True,
@@ -292,18 +309,18 @@ class TestIdCoreTypes:
     """Unit tests for type hint definitions in :mod:`.idcore`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (type(MIDCORE.BridgeName), typing.TypeVar),
-        (MIDCORE.BridgeName.__constraints__, (BUI.BridgeTextFormat,
-                                              BUI.BridgeTextMarkup,
-                                              BUI.BridgeTextStatic)),
-        (type(MIDCORE.BridgeSummary), typing.TypeVar),
-        (MIDCORE.BridgeSummary.__constraints__, (BUI.BridgeTextFormat,
-                                                 BUI.BridgeTextMarkup,
-                                                 BUI.BridgeTextStatic)),
-        (type(MIDCORE.BridgeTitle), typing.TypeVar),
-        (MIDCORE.BridgeTitle.__constraints__, (BUI.BridgeTextFormat,
-                                               BUI.BridgeTextMarkup,
-                                               BUI.BridgeTextStatic)),
+        # (type(MIDCORE.BridgeName), typing.TypeVar),
+        # (MIDCORE.BridgeName.__constraints__, (BUI.BridgeTextFormat,
+        #                                       BUI.BridgeTextMarkup,
+        #                                       BUI.BridgeTextStatic)),
+        # (type(MIDCORE.BridgeSummary), typing.TypeVar),
+        # (MIDCORE.BridgeSummary.__constraints__, (BUI.BridgeTextFormat,
+        #                                          BUI.BridgeTextMarkup,
+        #                                          BUI.BridgeTextStatic)),
+        # (type(MIDCORE.BridgeTitle), typing.TypeVar),
+        # (MIDCORE.BridgeTitle.__constraints__, (BUI.BridgeTextFormat,
+        #                                        BUI.BridgeTextMarkup,
+        #                                        BUI.BridgeTextStatic)),
         (type(MIDCORE.ViewName), typing.TypeVar),
         (MIDCORE.ViewName.__constraints__, (
             BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),

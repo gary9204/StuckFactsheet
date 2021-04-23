@@ -1,18 +1,18 @@
 """
 Defines identity attributes common to Factsheet model components.
 See :mod:`~factsheet.model`
-
-.. data:: BridgeName
-
-    Type hint for text bridge for name attribute of model.
-
-.. data:: BridgeSummary
-
-    Type hint for text bridge for summary attribute of model.
-
-.. data:: BridgeTitle
-
-    Type hint for text bridge for title attribute of model.
+#
+# .. data:: BridgeName
+#
+#     Type hint for text bridge for name attribute of model.
+#
+# .. data:: BridgeSummary
+#
+#     Type hint for text bridge for summary attribute of model.
+#
+# .. data:: BridgeTitle
+#
+#     Type hint for text bridge for title attribute of model.
 
 .. data:: ViewName
 
@@ -32,12 +32,12 @@ import typing
 import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_ui as BUI
 
-BridgeName = typing.TypeVar('BridgeName', BUI.BridgeTextFormat,
-                            BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
-BridgeSummary = typing.TypeVar('BridgeSummary', BUI.BridgeTextFormat,
-                               BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
-BridgeTitle = typing.TypeVar('BridgeTitle', BUI.BridgeTextFormat,
-                             BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
+# BridgeName = typing.TypeVar('BridgeName', BUI.BridgeTextFormat,
+#                             BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
+# BridgeSummary = typing.TypeVar('BridgeSummary', BUI.BridgeTextFormat,
+#                                BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
+# BridgeTitle = typing.TypeVar('BridgeTitle', BUI.BridgeTextFormat,
+#                              BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
 ViewName = typing.TypeVar(
     'ViewName', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
 ViewSummary = typing.TypeVar(
@@ -47,8 +47,7 @@ ViewTitle = typing.TypeVar(
 
 
 class IdCore(ABC_STALE.InterfaceStaleFile,
-             typing.Generic[BridgeName, BridgeSummary, BridgeTitle],
-             abc.ABC):
+             typing.Generic[ViewName, ViewSummary, ViewTitle], abc.ABC):
     """Defines identity attributes common to Factsheet model components.
 
     A descendant class must extend :meth:`~.__init__` to define stores
@@ -59,26 +58,23 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         Two :class:`~.IdCore` instances are equivalent when their names,
         titles, and summaries are the equal. Transient aspects of the
         instances (like views) are not compared and may be different.
-
-    :param kwargs: placeholder for keyword arguments in descendants.
-        Should be empty.
     """
 
-    def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when px_other has equal name, summary, and title.
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when p_other has equal name, summary, and title.
 
-        :param px_other: object to compare with self.
+        :param p_other: object to compare with self.
         """
-        if not isinstance(px_other, type(self)):
+        if not isinstance(p_other, type(self)):
             return False
 
-        if self._name != px_other._name:
+        if self._name != p_other._name:
             return False
 
-        if self._summary != px_other._summary:
+        if self._summary != p_other._summary:
             return False
 
-        if self._title != px_other._title:
+        if self._title != p_other._title:
             return False
 
         return True
@@ -92,15 +88,24 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
-    @abc.abstractmethod
-    def __init__(self, **kwargs: typing.Any) -> None:
+    def __init__(self, *, p_name: str, p_summary: str, p_title: str,
+                 **kwargs: typing.Any) -> None:
+        """Initialize instance.
+
+        :param p_name: short identifier for component (suitable, for
+            example, as a label).
+        :param p_summary: description of component, which adds detail to
+            title.
+        :param p_title: one-line description of component.
+        """
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
                             '{}'.format(type(self).__name__, kwargs))
-        self._stale = False
-        self._name: BridgeName
-        self._summary: BridgeSummary
-        self._title: BridgeTitle
+        self._name, self._summary, self._title = self._new_model()
+        self._name.text = p_name
+        self._summary.text = p_summary
+        self._title.text = p_title
+        self.set_fresh()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct identity from state pickle loads.
@@ -111,6 +116,18 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         """
         self.__dict__.update(px_state)
         self._stale = False
+
+    # def get_text_name(self) -> str:
+    #     """Return name as text."""
+    #     return self._name.text
+
+    # def get_text_summary(self) -> str:
+    #     """Return summary as text."""
+    #     return self._summary.text
+
+    # def get_text_title(self) -> str:
+    #     """Return title as text."""
+    #     return self._title.text
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to identity."""
@@ -137,6 +154,17 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
 
         return False
 
+    @abc.abstractmethod
+    def _new_model(self) -> typing.Tuple[
+            BUI.BridgeText, BUI.BridgeText, BUI.BridgeText]:
+        """Return (name, summary, title) store."""
+        raise NotImplementedError
+
+    @property
+    def name(self) -> str:
+        """Return component name as text."""
+        return self._name.text
+
     def new_view_name(self) -> ViewName:
         """Return view to display name."""
         return self._name.new_view()
@@ -159,3 +187,13 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
     def set_stale(self):
         """Mark identity in memory changed from file contents."""
         self._stale = True
+
+    @property
+    def summary(self) -> str:
+        """Return component summary as text."""
+        return self._summary.text
+
+    @property
+    def title(self) -> str:
+        """Return component title as text."""
+        return self._title.text
