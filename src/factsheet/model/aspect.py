@@ -16,7 +16,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 BasisAny = typing.Any
 BasisOpaque = typing.TypeVar('BasisOpaque')
-ViewAspectAny = typing.Union[Gtk.Widget]
+ViewAspect = typing.Union[Gtk.Widget]
 ViewAspectOpaque = typing.TypeVar('ViewAspectOpaque')
 ViewAspectPlain = typing.Union[Gtk.Label]
 
@@ -24,41 +24,72 @@ ViewAspectPlain = typing.Union[Gtk.Label]
 class Aspect(abc.ABC, typing.Generic[BasisOpaque, ViewAspectOpaque]):
     """Adapts a fact for a particular presentation.
 
-    A fact may have a variety of presentations such as plain text,
-    formatted text, a list, or a table.  An Aspect adapts a fact to a
-    form suitable for a particular presentation.
-
-    :param p_basis: portion of fact used for presentation.
+    A view may present differnt aspects of a fact, such as whether the
+    fact has been checked or the value of the fact.  The form of a
+    presentation may be plain text, formatted text, a list, a table,
+    etc.  Class :class:`~.Aspect` adapts fact content to a form
+    suitable for a presentation.
     """
+
+    @abc.abstractmethod
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when p_other has comparable type.
+
+        :param p_other: object to compare with self.
+        """
+        if not isinstance(p_other, type(self)):
+            return False
+
+        return True
+
     @abc.abstractmethod
     def __init__(self, p_basis: BasisOpaque) -> None:
-        raise NotImplementedError
+        """Initialize instance.
 
-    @abc.abstractmethod
-    def clear(self) -> None:
-        """Remove fact information from aspect."""
+        :param p_basis: aspect of fact to use for presentation.
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def new_view(self) -> ViewAspectOpaque:
-        """Return new view of aspect for presentation."""
+        """Return new view of fact presentation."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def refresh(self) -> None:
+        """Synchronize presentation with fact aspect."""
         raise NotImplementedError
 
 
 class AspectPlain(Aspect[BasisAny, ViewAspectPlain]):
-    """Adapts a fact for plain text presentation.
+    """Adapts a fact for plain text presentation."""
 
-    :param p_basis: portion of fact used for presentation.
-    """
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when p_other is comparable type with same text.
+
+        :param p_other: object to compare with self.
+        """
+        if not super().__eq__(p_other):
+            return False
+
+        if self._basis != p_other._basis:
+            return False
+
+        return True
+
     def __init__(self, p_basis: BasisAny) -> None:
-        self._aspect = BUI.BridgeTextStatic()
-        self._aspect.text = str(p_basis)
+        """Initialize instance.
 
-    def clear(self) -> None:
-        """Remove fact information from aspect."""
-        self._aspect.text = ''
+        :param p_basis: aspect of fact to use for presentation.
+        """
+        self._basis = p_basis
+        self._bridge = BUI.BridgeTextStatic()
+        self.refresh()
 
     def new_view(self) -> ViewAspectPlain:
-        """Return new view of aspect for presentation."""
-        view = self._aspect.new_view()
-        return view
+        """Return new view of fact presentation."""
+        return self._bridge.new_view()
+
+    def refresh(self) -> None:
+        """Set fact information in presentation."""
+        self._bridge.text = str(self._basis)

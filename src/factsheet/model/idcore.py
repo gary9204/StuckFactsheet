@@ -1,18 +1,6 @@
 """
 Defines identity attributes common to Factsheet model components.
 See :mod:`~factsheet.model`
-#
-# .. data:: BridgeName
-#
-#     Type hint for text bridge for name attribute of model.
-#
-# .. data:: BridgeSummary
-#
-#     Type hint for text bridge for summary attribute of model.
-#
-# .. data:: BridgeTitle
-#
-#     Type hint for text bridge for title attribute of model.
 
 .. data:: ViewName
 
@@ -32,12 +20,6 @@ import typing
 import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_ui as BUI
 
-# BridgeName = typing.TypeVar('BridgeName', BUI.BridgeTextFormat,
-#                             BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
-# BridgeSummary = typing.TypeVar('BridgeSummary', BUI.BridgeTextFormat,
-#                                BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
-# BridgeTitle = typing.TypeVar('BridgeTitle', BUI.BridgeTextFormat,
-#                              BUI.BridgeTextMarkup, BUI.BridgeTextStatic)
 ViewName = typing.TypeVar(
     'ViewName', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
 ViewSummary = typing.TypeVar(
@@ -116,18 +98,6 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         """
         self.__dict__.update(px_state)
         self._stale = False
-
-    # def get_text_name(self) -> str:
-    #     """Return name as text."""
-    #     return self._name.text
-
-    # def get_text_summary(self) -> str:
-    #     """Return summary as text."""
-    #     return self._summary.text
-
-    # def get_text_title(self) -> str:
-    #     """Return title as text."""
-    #     return self._title.text
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to identity."""

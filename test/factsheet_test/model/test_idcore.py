@@ -137,24 +137,6 @@ class TestIdCore:
             _ = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE,
                              extra='Oops!')
 
-    # @pytest.mark.parametrize('GET_TEXT, ATTR', [
-    #     ('get_text_name', '_name'),
-    #     ('get_text_summary', '_summary'),
-    #     ('get_text_title', '_title'),
-    #     ])
-    # def test_get_text(self, patch_idcore, GET_TEXT, ATTR):
-    #     """Confirm control relays requests to identity."""
-    #     # Setup
-    #     NAME = 'Parrot'
-    #     SUMMARY = 'The parrot is a Norwegian Blue.'
-    #     TITLE = 'The Parrot Sketch'
-    #     target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-    #     get_text = getattr(target, GET_TEXT)
-    #     attr = getattr(target, ATTR)
-    #     # Test
-    #     text = get_text()
-    #     assert text == attr.text
-
     @pytest.mark.parametrize('IS_STALE', [
         True,
         False,
@@ -309,18 +291,6 @@ class TestIdCoreTypes:
     """Unit tests for type hint definitions in :mod:`.idcore`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        # (type(MIDCORE.BridgeName), typing.TypeVar),
-        # (MIDCORE.BridgeName.__constraints__, (BUI.BridgeTextFormat,
-        #                                       BUI.BridgeTextMarkup,
-        #                                       BUI.BridgeTextStatic)),
-        # (type(MIDCORE.BridgeSummary), typing.TypeVar),
-        # (MIDCORE.BridgeSummary.__constraints__, (BUI.BridgeTextFormat,
-        #                                          BUI.BridgeTextMarkup,
-        #                                          BUI.BridgeTextStatic)),
-        # (type(MIDCORE.BridgeTitle), typing.TypeVar),
-        # (MIDCORE.BridgeTitle.__constraints__, (BUI.BridgeTextFormat,
-        #                                        BUI.BridgeTextMarkup,
-        #                                        BUI.BridgeTextStatic)),
         (type(MIDCORE.ViewName), typing.TypeVar),
         (MIDCORE.ViewName.__constraints__, (
             BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
