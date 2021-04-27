@@ -82,7 +82,7 @@ class TestBridgeAspect:
         SOURCE = 42
         model = str(SOURCE)
         # Test
-        target.refresh(SOURCE)
+        target.set_presentation(SOURCE)
         assert model == target._model
         for view in views:
             assert target._views[id(view)] is view
@@ -98,10 +98,10 @@ class TestBridgeAspect:
         N_VIEWS = 3
         views = [target.attach_view() for _ in range(N_VIEWS)]
         SOURCE = 42
-        target.refresh(SOURCE)
+        target.set_presentation(SOURCE)
         BLANK = ''
         # Test
-        target.refresh(None)
+        target.set_presentation(None)
         assert BLANK == target._model
         for view in views:
             assert target._views[id(view)] is view
@@ -190,7 +190,7 @@ class TestBridgeAspectPlain:
         SOURCE = 42
         model = str(SOURCE)
         # Test
-        target.refresh(SOURCE)
+        target.set_presentation(SOURCE)
         assert model == target._model
         for view in views:
             assert target._views[id(view)] is view
@@ -206,10 +206,10 @@ class TestBridgeAspectPlain:
         N_VIEWS = 3
         views = [target.attach_view() for _ in range(N_VIEWS)]
         SOURCE = 42
-        target.refresh(SOURCE)
+        target.set_presentation(SOURCE)
         BLANK = ''
         # Test
-        target.refresh(None)
+        target.set_presentation(None)
         assert BLANK == target._model
         for view in views:
             assert target._views[id(view)] is view

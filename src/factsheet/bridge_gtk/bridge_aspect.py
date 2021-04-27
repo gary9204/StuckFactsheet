@@ -77,7 +77,7 @@ class BridgeAspect(BBASE.BridgeBase[
         """
         raise NotImplementedError
 
-    def refresh(self, p_source: typing.Optional[SourceOpaque]) -> None:
+    def set_presentation(self, p_source: typing.Optional[SourceOpaque]) -> None:
         """Set aspect storage element and attached view elements from
         source.
 

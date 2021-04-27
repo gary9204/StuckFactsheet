@@ -13,7 +13,9 @@ BridgeAspectPlain = BASPECT.BridgeAspectPlain
 PersistAspectPlain = BASPECT.PersistAspectPlain
 ViewAspectAny = BASPECT.ViewAspectAny
 ViewAspectMissing = BASPECT.ViewAspectMissing
+ViewAspectPlain = BASPECT.ViewAspectPlain
 
+Bridge = BBASE.BridgeBase
 ModelOpaque = typing.Union[BBASE.ModelOpaque]
 ViewOpaque = typing.Union[BBASE.ViewOpaque]
 
@@ -25,6 +27,7 @@ LineOutline = BOUTLINE.LineOutline
 ViewOutlineColumnar = BOUTLINE.ViewOutlineColumnar
 ViewOutlineSelect = BOUTLINE.ViewOutlineSelect
 
+BridgeText = BTEXT.BridgeText
 BridgeTextFormat = BTEXT.BridgeTextFormat
 BridgeTextMarkup = BTEXT.BridgeTextMarkup
 BridgeTextStatic = BTEXT.BridgeTextStatic
