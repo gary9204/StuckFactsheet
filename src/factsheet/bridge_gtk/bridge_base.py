@@ -24,20 +24,25 @@ Defines base for model classes that encapsulate widget toolkit classes.
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
 """
 import abc
+import gi   # type: ignore[import]
 import logging
 import typing
+
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.bridge_base')
 
 ModelOpaque = typing.TypeVar('ModelOpaque')
 PersistOpaque = typing.TypeVar('PersistOpaque')
+ViewAny = typing.Union[Gtk.Widget]
 ViewOpaque = typing.TypeVar('ViewOpaque')
 
 
 class BridgeBase(abc.ABC,
-                 typing.Generic[ModelOpaque, PersistOpaque, ViewOpaque],):
-    """Common ancestor of model classes that encapsulate storage
-    elements of toolkit.
+                 typing.Generic[ModelOpaque, PersistOpaque, ViewOpaque]):
+    """Common ancestor of model classes that encapsulate storage and
+    view elements of toolkit.
 
     In addition to a storage element, a :class:`BridgeBase` object has
     transient content for toolkit view elements associated with the
@@ -71,23 +76,24 @@ class BridgeBase(abc.ABC,
         return state
 
     def __init__(self) -> None:
+        """Initialize instance with model."""
         self._model = self._new_model()
-        self._init_transients()
+        # self._init_transients()
 
-    def _init_transients(self) -> None:
-        """Set transient content for initialization and pickling."""
-        pass
+    # def _init_transients(self) -> None:
+    #     """Set transient content for initialization and pickling."""
+    #     pass
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct storage element from content that pickle loads.
 
-        Reconstructed model has no bound views.
+        Reconstructed model has no views.
 
         :param p_state: unpickled content.
         """
         self.__dict__.update(p_state)
         self._model = self._new_model()
-        self._init_transients()
+        # self._init_transients()
         self._set_persist(self.ex_model)   # type: ignore[attr-defined]
         del self.ex_model       # type: ignore[attr-defined]
 
@@ -102,7 +108,7 @@ class BridgeBase(abc.ABC,
 
     @abc.abstractmethod
     def _new_model(self) -> ModelOpaque:
-        """Return toolkit-specific storage element."""
+        """Return storage element."""
         raise NotImplementedError
 
     @abc.abstractmethod

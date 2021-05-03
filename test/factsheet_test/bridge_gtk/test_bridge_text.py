@@ -518,6 +518,7 @@ class TestTypes:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (type(BTEXT.ModelTextOpaque), typing.TypeVar),
+        (BTEXT.ModelTextOpaque.__constraints__, ()),
         (BTEXT.ModelTextFormat, Gtk.TextBuffer),
         (BTEXT.ModelTextMarkup, Gtk.EntryBuffer),
         (BTEXT.ModelTextStatic, str),

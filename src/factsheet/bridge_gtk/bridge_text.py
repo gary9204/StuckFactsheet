@@ -98,9 +98,19 @@ class BridgeText(
         del state['_stale']
         return state
 
-    def _init_transients(self) -> None:
-        """Helper ensures initialization and pickling are consistent."""
-        super()._init_transients()
+    def __init__(self) -> None:
+        """Extend initialization with change state."""
+        super().__init__()
+        self._stale = False
+
+    def __setstate__(self, p_state: typing.MutableMapping) -> None:
+        """Extend text bridge reconstruction with change state.
+
+        Reconstructed text bridge is marked unchanged.
+
+        :param p_state: unpickled content.
+        """
+        super().__setstate__(p_state)
         self._stale = False
 
     def is_fresh(self) -> bool:
@@ -153,11 +163,6 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
     """
 
-    def _init_transients(self) -> None:
-        """Helper ensures initialization and pickling are consistent."""
-        super()._init_transients()
-        _ = self._model.connect('changed', lambda *_a: self.set_stale())
-
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
@@ -168,7 +173,9 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
 
     def _new_model(self) -> ModelTextFormat:
         """Return toolkit-specific object to store text."""
-        return ModelTextFormat()
+        model = ModelTextFormat()
+        _ = model.connect('changed', lambda *_a: self.set_stale())
+        return model
 
     def new_view(self) -> ViewTextFormat:
         """Return toolkit-specific object to display text."""
@@ -204,12 +211,6 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
     """
 
-    def _init_transients(self) -> None:
-        """Helper ensures initialization and pickling are consistent."""
-        super()._init_transients()
-        _ = self._model.connect('deleted-text', lambda *_a: self.set_stale())
-        _ = self._model.connect('inserted-text', lambda *_a: self.set_stale())
-
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
@@ -218,7 +219,10 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
 
     def _new_model(self) -> ModelTextMarkup:
         """Return toolkit-specific object to store text."""
-        return ModelTextMarkup()
+        model = ModelTextMarkup()
+        _ = model.connect('deleted-text', lambda *_a: self.set_stale())
+        _ = model.connect('inserted-text', lambda *_a: self.set_stale())
+        return model
 
     def new_view(self) -> ViewTextMarkup:
         """Return toolkit-specific object to display text."""
@@ -254,7 +258,7 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
     """
 
     def _destroy_view(self, p_view: ViewTextStatic) -> None:
-        """Remove view that is being destroyed.
+        """Stop updating view that is being destroyed.
 
         :param p_view: view being destroyed.
         """
@@ -276,11 +280,6 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
         del state['_views']
         return state
 
-    def _init_transients(self) -> None:
-        """Helper ensures initialization and pickling are consistent."""
-        super()._init_transients()
-        self._views: typing.MutableMapping[int, ViewTextStatic] = dict()
-
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
@@ -289,7 +288,9 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
 
     def _new_model(self) -> ModelTextStatic:
         """Return toolkit-specific object to store text."""
-        return ModelTextStatic()
+        model = ModelTextStatic()
+        self._views: typing.MutableMapping[int, ViewTextStatic] = dict()
+        return model
 
     def new_view(self) -> ViewTextStatic:
         """Return toolkit-specific object to display text."""

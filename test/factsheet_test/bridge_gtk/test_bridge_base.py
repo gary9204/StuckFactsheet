@@ -2,6 +2,7 @@
 Unit tests for base of classes that encapsulate widget toolkit classes.
 See :mod:`~.bridge_base`.
 """
+import gi   # type: ignore[import]
 # import logging
 from pathlib import Path
 import pickle
@@ -9,6 +10,9 @@ import pytest  # type: ignore[import]
 import typing
 
 import factsheet.bridge_gtk.bridge_base as BBASE
+
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any, str]):
@@ -20,8 +24,8 @@ class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any, str]):
 
     def _get_persist(self): return self._model
 
-    def _init_transients(self):
-        self.called_common = True
+    # def _init_transients(self):
+    #     self.called_common = True
 
     def _new_model(self): return str()
 
@@ -70,13 +74,13 @@ class TestBridgeBase:
         N_VIEWS = 3
         for _ in range(N_VIEWS):
             _ = source.new_view()
-        source.called_common = False
+        # source.called_common = False
         # Test
         with PATH.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
         with PATH.open(mode='rb') as io_in:
             target = pickle.load(io_in)
-        assert target.called_common
+        # assert target.called_common
         assert not hasattr(target, 'ex_model')
         assert source._get_persist() == target._get_persist()
 
@@ -85,7 +89,7 @@ class TestBridgeBase:
         # Setup
         # Test
         target = PatchBridgeBase()
-        assert target.called_common
+        # assert target.called_common
         assert isinstance(target._model, str)
         assert not target._model
 
@@ -123,6 +127,7 @@ class TestBridgeTypes:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (type(BBASE.ModelOpaque), typing.TypeVar),
         (type(BBASE.PersistOpaque), typing.TypeVar),
+        (BBASE.ViewAny, Gtk.Widget),
         (type(BBASE.ViewOpaque), typing.TypeVar),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
