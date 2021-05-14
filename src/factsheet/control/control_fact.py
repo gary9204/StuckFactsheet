@@ -11,19 +11,10 @@ import typing   # noqa
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_idcore as CIDCORE
 import factsheet.model.fact as MFACT
-import factsheet.model.idcore as MIDCORE
-
-ViewAspect = BUI.ViewAspectAny
-ViewAspectMissing = BUI.ViewAspectMissing
-ViewNameFact = BUI.ViewTextMarkup
-ViewNamesAspect = BUI.ViewOutlineSelect
-ViewNoteFact = BUI.ViewTextFormat
-ViewSummaryFact = BUI.ViewTextFormat
-ViewTitleFact = BUI.ViewTextMarkup
 
 
-class ControlFact(
-        CIDCORE.ControlIdCore[ViewNameFact, ViewSummaryFact, ViewTitleFact]):
+class ControlFact(CIDCORE.ControlIdCore[
+        MFACT.ViewNameFact, MFACT.ViewSummaryFact, MFACT.ViewTitleFact]):
     """Mediates addition and removal of views of fact attributes.
 
     :param p_fact: add and remove views of this model.
@@ -32,55 +23,38 @@ class ControlFact(
     def __init__(self, p_fact: MFACT.Fact) -> None:
         self._fact = p_fact
 
-    def attach_aspect(self, p_name: str) -> ViewAspect:
-        """Return view associated with named fact aspect.
+    def new_view_aspect(self, p_name_aspect: str) -> BUI.ViewAny:
+        """Return view of aspect with given name or placeholder if name
+        not found.
 
-        If no aspect matches name, return a warning view.
-
-        :param p_name: name of aspect to associate.
+        :param p_name_aspect: name of desired aspect.
         """
-        aspect = self._fact.get_aspect(p_name)
-        if aspect is not None:
-            view = aspect.attach_view()
-        else:
-            view = ViewAspectMissing()
-            warning = ('Aspect \'{}\' not found. Please report omission.'
-                       ''.format(p_name))
-            view.set_text(warning)
-        return view
+        return self._fact.new_view_aspect(p_name_aspect)
 
-    def attach_names_aspect(self) -> ViewNamesAspect:
-        """Return view of names of fact's aspects."""
-        return self.fact.names_aspect.attach_view()
+    def new_view_names_aspects(self) -> MFACT.ViewNamesAspects:
+        """Return view of names of aspects for the fact."""
+        return self._fact.new_view_names_aspects()
 
-    def attach_note(self) -> ViewNoteFact:
+    def new_view_name(self) -> MFACT.ViewNameFact:
+        """Return view to display name."""
+        return self._fact.new_view_name()
+
+    def new_view_note(self) -> MFACT.ViewNoteFact:
         """Return view of fact's note."""
-        return self.fact.note.attach_view()
+        return self._fact.new_view_note()
 
-    def detach_aspect(self, p_name: str, p_view: ViewAspect) -> None:
-        """Disassociate view from named fact aspect.
+    def new_view_status(self):
+        """Return view of fact's status."""
+        return self._fact.new_view_status()
 
-        :param p_name: name of aspect to disassociate.
-        :param p_view: view to disassociate.
-        """
-        aspect = self._fact.get_aspect(p_name)
-        if aspect is not None:
-            aspect.detach_view(p_view)
+    def new_view_summary(self) -> MFACT.ViewSummaryFact:
+        """Return view to display summary."""
+        return self._fact.new_view_summary()
 
-    def detach_names_aspect(self, p_view: ViewNamesAspect) -> None:
-        """Disassociate view from names of fact's aspects."""
-        self.fact.names_aspect.detach_view(p_view)
+    def new_view_tag(self):
+        """Return view of fact's tag."""
+        return self._fact.new_view_tag()
 
-    def detach_note(self, p_view: ViewNoteFact) -> None:
-        """Disassociate view from fact's note."""
-        self.fact.note.detach_view(p_view)
-
-    @property
-    def fact(self) -> MFACT.Fact:
-        """Return fact."""
-        return self._fact
-
-    @property
-    def idcore(self) -> MIDCORE.IdCore:
-        """Return identity of fact."""
-        return self._fact
+    def new_view_title(self) -> MFACT.ViewTitleFact:
+        """Return view to display title."""
+        return self._fact.new_view_title()

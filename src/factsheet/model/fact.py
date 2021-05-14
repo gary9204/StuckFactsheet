@@ -10,25 +10,35 @@ specialize the model for facts about sets, operations, and so on.
 import enum
 import typing
 
+import factsheet.model.aspect as MASPECT
 import factsheet.model.idcore as MIDCORE
 
 import factsheet.bridge_ui as BUI
 
-Aspect = BUI.BridgeAspect
-AspectValuePlain = BUI.BridgeAspectPlain[typing.Any]
-NamesAspect = BUI.BridgeOutlineSelect[str]
 NameFact = BUI.BridgeTextMarkup
-NameTopic = BUI.BridgeTextMarkup
-NoteFact = BUI.BridgeTextFormat
-PersistAspectStatus = BUI.PersistAspectPlain
 SummaryFact = BUI.BridgeTextFormat
-SummaryTopic = BUI.BridgeTextFormat
-TagFact = typing.NewType('TagFact', int)
-TagTopic = typing.NewType('TagTopic', int)
 TitleFact = BUI.BridgeTextMarkup
-TitleTopic = BUI.BridgeTextMarkup
-TopicOpaque = typing.TypeVar('TopicOpaque')
+ViewNameFact = BUI.ViewTextMarkup
+ViewSummaryFact = BUI.ViewTextFormat
+ViewTitleFact = BUI.ViewTextMarkup
+
+NamesAspects = BUI.BridgeOutlineSelect[str]
+ViewNamesAspects = BUI.ViewOutlineSelect
+
+NoteFact = BUI.BridgeTextMarkup
+ViewNoteFact = BUI.ViewTextMarkup
+
+AspectStatus = MASPECT.AspectPlain
+ViewAspectStatus = MASPECT.ViewAspectPlain
+
+TagFact = typing.NewType('TagFact', int)
+AspectTagFact = MASPECT.AspectPlain
+ViewAspectTagFact = MASPECT.ViewAspectPlain
+
 ValueOpaque = typing.TypeVar('ValueOpaque')
+AspectValuePlain = MASPECT.AspectPlain
+
+TopicOpaque = typing.TypeVar('TopicOpaque')
 
 
 class StatusOfFact(enum.Enum):
@@ -57,35 +67,25 @@ class StatusOfFact(enum.Enum):
     UNDEFINED = enum.auto()
 
 
-class AspectStatus(BUI.BridgeAspectPlain[StatusOfFact]):
-    """Plain text aspect for status of fact."""
-
-    def transcribe(self, p_source: typing.Optional[StatusOfFact]
-                   ) -> PersistAspectStatus:
-        """Return persistent representation of status.
-
-        When source is None, return empty plain text.
-
-        :param p_source: status metadata for aspect.
-        """
-        persist = StatusOfFact.UNCHECKED.name
-        if p_source is not None:
-            persist = p_source.name
-        return persist
-
-
 class Fact(typing.Generic[TopicOpaque, ValueOpaque],
-           MIDCORE.IdCore[NameFact, SummaryFact, TitleFact]
-           ):
+           MIDCORE.IdCore[ViewNameFact, ViewSummaryFact, ViewTitleFact]):
     """Fact component of Factsheet :mod:`~.factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a
-    Factsheet. A model fact consists of value along with identity
-    information (see :class:`.IdCore`.) A fact's value may be unknown or
-    undefined.  A fact value that is both known and defined depends on
-    the fact in context of its topic (for example, True for associative
-    property of modular addition, 0 for the size of the empty set, or
-    the elements in a set).
+    Factsheet.  The model of a fact consists of value, status,
+    user-specified note, and tag along with identity information.
+
+    The value of a fact depends on its context, that is, its topic (for
+    example, True for associative property of modular addition, 0 for
+    the size of the empty set, or the elements in a set).  The fact's
+    status indicates whether the user has checked the fact and, if so,
+    whether the fact's value is defined.
+
+    A fact tag serves to uniquely identify the fact at run time.  See
+    :class:`.IdCore` for persistent identity information.
+
+    Each fact provides one or more aspects. An aspect presents a fact's
+    value in a particular format.
 
     .. admonition:: About Equality
 
@@ -96,27 +96,30 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:
-        """Return True when p_other has same status, value, aspects,
-        and identity.
+        """Return True when p_other has same topic, value, status, note,
+        aspects, and identity information.
 
         :param p_other: object to compare with self.
         """
         if not super().__eq__(p_other):
             return False
 
-        if self.tag_topic != p_other.tag_topic:
+        if self._topic != p_other._topic:
             return False
 
-        if not self._aspects == p_other._aspects:
+        if self._aspects != p_other._aspects:
             return False
 
-        if self.note != p_other.note:
+        if self._names_aspects != p_other._names_aspects:
             return False
 
-        if self.status != p_other.status:
+        if self._note != p_other._note:
             return False
 
-        if self.value != p_other.value:
+        if self._status != p_other._status:
+            return False
+
+        if self._value != p_other._value:
             return False
 
         return True
@@ -130,27 +133,34 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         del state['_tag']
         return state
 
-    def __init__(self, *, p_topic: TopicOpaque, **kwargs: typing.Any
+    def __init__(self, *, p_name: str, p_summary: str, p_title: str,
+                 p_topic: TopicOpaque, **kwargs: typing.Any
                  ) -> None:
-        super().__init__(**kwargs)
-        self._aspects: typing.Dict[str, Aspect] = dict()
-        self._name = NameFact()
-        self._names_aspect = NamesAspect()
+        """Initialize fact with topic and identity information.
+
+        :param p_name: short identifier for fact.
+        :param p_summary: description of fact, which adds detail to
+            title.
+        :param p_title: one-line description of fact.
+        :param p_topic: context for fact.
+        """
+        super().__init__(
+            p_name=p_name, p_summary=p_summary, p_title=p_title, **kwargs)
+        self._aspects: typing.MutableMapping[str, MASPECT.Aspect] = dict()
+        self._aspect_missing = AspectValuePlain()
+        WARNING = 'This fact does not support the aspect you requested'
+        self._aspect_missing.set_presentation(p_subject=WARNING)
+        self._names_aspects = NamesAspects()
         self._note = NoteFact()
-        self._status = StatusOfFact.BLOCKED
-        self._summary = SummaryFact()
+        self._status = StatusOfFact.UNDEFINED
+        self._aspect_status = AspectStatus()
+        self._aspect_status.set_presentation(p_subject=self._status.name)
         self._tag = TagFact(id(self))
-        self._title = TitleFact()
+        self._aspect_tag = AspectTagFact()
+        self._aspect_tag.set_presentation(p_subject=self._tag)
         self._topic = p_topic
         self._value: typing.Optional[ValueOpaque] = None
-        self._init_aspects()
-
-    def _init_aspects(self) -> None:
-        """Populate fact's aspects and aspect names."""
-        self._aspects['Plain'] = AspectValuePlain()
-        self._names_aspect.insert_before('Plain', None)
-        self._aspects['Status'] = AspectStatus()
-        self._names_aspect.insert_before('Status', None)
+        self.add_aspect_value(p_name='Plain', p_aspect=AspectValuePlain())
 
     def __setstate__(self, p_state: typing.Dict) -> None:
         """Reconstruct fact from state pickle loads.
@@ -162,42 +172,42 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         super().__setstate__(p_state)
         self._tag = TagFact(id(self))
 
+    def add_aspect_value(
+            self, p_name: str, p_aspect: MASPECT.Aspect[ValueOpaque]):
+        """Add aspect to present value.
+
+        :param p_name: name of presentation.
+        :param p_aspect: presentation to add.
+        """
+        self._aspects[p_name] = p_aspect
+        self._names_aspects.insert_before(p_item=p_name)
+
     def check(self) -> StatusOfFact:
-        """Determine fact value, if possible, and set corresponding status.
+        """Mark fact stale and sync each presentation with fact value.
 
         Subclasses must extend :meth:`~.Fact.check` method.  A subclass
-        should set fact status and value and then call base class
-        method.  Base class marks change in fact and sets fact aspects
-        to current value.
+        should determine fact value, set status accordingly, and then
+        call base class method.
         """
         self.set_stale()
-        self._aspects['Plain'].refresh(self._value)
-        self._aspects['Status'].refresh(self._status)
+        for aspect in self._aspects.values():
+            aspect.set_presentation(self._value)
         return self._status
 
-    def clear(self) -> None:
-        """Clear fact status and value.
+    def clear(self) -> StatusOfFact:
+        """Mark fact as stale and clear fact value and presentations.
 
         Subclasses must extend :meth:`~.Fact.check` method.  A subclass
-        should set fact status and value and then call base class
-        method.  Base class marks change in fact and sets fact aspects
-        to current value.
+        should set fact status and call base class method.
         """
         self.set_stale()
-        self._aspects['Plain'].refresh(None)
-        self._aspects['Status'].refresh(None)
-
-    def get_aspect(self, p_name: str) -> typing.Optional[Aspect]:
-        """Return aspect with given name or placeholder for missing aspect.
-
-        :param p_name: name of desired aspect.
-        """
-        return self._aspects.get(p_name, None)
+        self._value = None
+        for aspect in self._aspects.values():
+            aspect.clear_presentation()
+        return self._status
 
     def is_stale(self) -> bool:
-        """Return True when there is at least one unsaved change to
-        fact.
-        """
+        """Return True when there is at least one unsaved change to fact."""
         if super().is_stale():
             return True
 
@@ -207,25 +217,37 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
 
         return False
 
-    @property
-    def name(self) -> NameFact:
-        """Return fact name."""
-        return self._name
+    def _new_model(self) -> typing.Tuple[NameFact, SummaryFact, TitleFact]:
+        """Return (name, summary, title) store."""
+        name = NameFact()
+        summary = SummaryFact()
+        title = TitleFact()
+        return name, summary, title
 
-    @property
-    def names_aspect(self) -> NamesAspect:
-        """Return names of fact's aspects."""
-        return self._names_aspect
+    def new_view_aspect(self, p_name_aspect: str) -> BUI.ViewAny:
+        """Return view of aspect with given name or placeholder if name
+        not found.
 
-    @property
-    def name_topic(self) -> NameTopic:
-        """Return topic name."""
-        try:
-            name = getattr(self._topic, 'name')
-        except AttributeError:
-            name = NameTopic()
-            name.text = 'Malformed topic! please report.'
-        return name
+        :param p_name_aspect: name of desired aspect.
+        """
+        aspect = self._aspects.get(p_name_aspect, self._aspect_missing)
+        return aspect.new_view()
+
+    def new_view_names_aspects(self) -> ViewNamesAspects:
+        """Return view of names of aspects for the fact."""
+        return self._names_aspects.new_view()
+
+    def new_view_note(self) -> ViewNoteFact:
+        """Return view of fact's note."""
+        return self._note.new_view()
+
+    def new_view_status(self) -> ViewAspectStatus:
+        """Return view of fact's status."""
+        return self._aspect_status.new_view()
+
+    def new_view_tag(self) -> ViewAspectTagFact:
+        """Return view of fact's tag."""
+        return self._aspect_tag.new_view()
 
     @property
     def note(self) -> NoteFact:
@@ -243,49 +265,9 @@ class Fact(typing.Generic[TopicOpaque, ValueOpaque],
         return self._status
 
     @property
-    def summary(self) -> SummaryFact:
-        """Return fact summary."""
-        return self._summary
-
-    @property
-    def summary_topic(self) -> SummaryTopic:
-        """Return topic summary."""
-        try:
-            summary = getattr(self._topic, 'summary')
-        except AttributeError:
-            summary = SummaryTopic()
-            summary.text = 'Malformed topic! please report.'
-        return summary
-
-    @property
     def tag(self) -> TagFact:
         """Return fact identifier. """
         return self._tag
-
-    @property
-    def tag_topic(self) -> TagTopic:
-        """Return topic tag."""
-        try:
-            tag = getattr(self._topic, 'tag')
-        except AttributeError:
-            TAG_MISSING = -1
-            tag = TagTopic(TAG_MISSING)
-        return tag
-
-    @property
-    def title(self) -> TitleFact:
-        """Return fact title."""
-        return self._title
-
-    @property
-    def title_topic(self) -> TitleTopic:
-        """Return topic title."""
-        try:
-            title = getattr(self._topic, 'title')
-        except AttributeError:
-            title = TitleTopic()
-            title.text = 'Malformed topic! please report.'
-        return title
 
     @property
     def value(self) -> typing.Optional[ValueOpaque]:

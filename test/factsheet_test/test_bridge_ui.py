@@ -4,7 +4,6 @@ widget toolkit.  See :mod:`~.bridge_ui`.
 """
 import pytest  # type: ignore[import]
 
-import factsheet.bridge_gtk.bridge_aspect as BASPECT
 import factsheet.bridge_gtk.bridge_base as BBASE
 import factsheet.bridge_gtk.bridge_outline as BOUTLINE
 import factsheet.bridge_gtk.bridge_text as BTEXT
@@ -17,14 +16,9 @@ class TestBridgeTypes:
     """
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (BUI.BridgeAspect, BASPECT.BridgeAspect),
-        (BUI.BridgeAspectPlain, BASPECT.BridgeAspectPlain),
-        (BUI.PersistAspectPlain, BASPECT.PersistAspectPlain),
-        (BUI.ViewAspectAny, BASPECT.ViewAspectAny),
-        (BUI.ViewAspectMissing, BASPECT.ViewAspectMissing),
-        (BUI.ViewAspectPlain, BASPECT.ViewAspectPlain),
         (BUI.Bridge, BBASE.BridgeBase),
         (BUI.ModelOpaque, BBASE.ModelOpaque),
+        (BUI.ViewAny, BBASE.ViewAny),
         (BUI.ViewOpaque, BBASE.ViewOpaque),
         (BUI.BridgeOutlineColumnar, BOUTLINE.BridgeOutlineColumnar),
         (BUI.BridgeOutlineMultiColumnar, BOUTLINE.BridgeOutlineMultiColumnar),

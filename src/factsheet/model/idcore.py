@@ -85,9 +85,12 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
                             '{}'.format(type(self).__name__, kwargs))
         self._name, self._summary, self._title = self._new_model()
         self._name.text = p_name
+        self._name.set_fresh()
         self._summary.text = p_summary
+        self._summary.set_fresh()
         self._title.text = p_title
-        self.set_fresh()
+        self._title.set_fresh()
+        self._stale = False
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct identity from state pickle loads.
@@ -147,7 +150,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         """Return view to display title."""
         return self._title.new_view()
 
-    def set_fresh(self):
+    def set_fresh(self) -> None:
         """Mark identity in memory consistent with file contents."""
         self._stale = False
         self._name.set_fresh()

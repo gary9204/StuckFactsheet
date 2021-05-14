@@ -127,6 +127,22 @@ def patch_class_fact():
     return PatchFact
 
 
+@pytest.fixture
+def fact_sample():
+    """Fixture to return factory for sample facts."""
+    def _new_fact(p_name='Parrot', p_value=None):
+        Fact = MFACT.Fact[typing.Any, typing.Any]
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        TOPIC = None
+        sample = Fact(
+            p_name=p_name, p_summary=SUMMARY, p_title=TITLE, p_topic=TOPIC)
+        sample._value = p_value
+        return sample
+
+    return _new_fact
+
+
 # @pytest.fixture
 # def factory_topic():
 #     """Pytest fixture: return factory for :class:`Topic` with facts

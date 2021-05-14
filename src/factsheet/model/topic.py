@@ -14,14 +14,18 @@ import factsheet.model.fact as MFACT
 import factsheet.model.idcore as MIDCORE
 
 LineOutline = BUI.LineOutline
-NameTopic = MFACT.NameTopic
+# NameTopic = MFACT.NameTopic
 OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]
-SummaryTopic = MFACT.SummaryTopic
-TagTopic = MFACT.TagTopic
-TitleTopic = MFACT.TitleTopic
+# SummaryTopic = MFACT.SummaryTopic
+TagTopic = typing.NewType('TagTopic', int)  # was: MFACT.TagTopic
+# TitleTopic = MFACT.TitleTopic
+
+ViewNameTopic = BUI.ViewTextMarkup
+ViewSummaryTopic = BUI.ViewTextFormat
+ViewTitleTopic = BUI.ViewTextMarkup
 
 
-class Topic(MIDCORE.IdCore[NameTopic, SummaryTopic, TitleTopic]):
+class Topic(MIDCORE.IdCore[ViewNameTopic, ViewSummaryTopic, ViewTitleTopic]):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Topic`` represents a specific subject within a Factsheet.
@@ -67,12 +71,14 @@ class Topic(MIDCORE.IdCore[NameTopic, SummaryTopic, TitleTopic]):
         del state['_tag']
         return state
 
-    def __init__(self, **kwargs: typing.Any) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, *, p_name: str, p_summary: str, p_title: str,
+                 **kwargs: typing.Any) -> None:
+        super().__init__(p_name=p_name, p_summary=p_summary,
+                         p_title=p_title, **kwargs)
         self._facts = OutlineFacts()
-        self._name = NameTopic()
-        self._summary = SummaryTopic()
-        self._title = TitleTopic()
+        # self._name = NameTopic()
+        # self._summary = SummaryTopic()
+        # self._title = TitleTopic()
         self._tag = TagTopic(id(self))
 
     def __iter__(self) -> typing.Iterator[MFACT.Fact]:
@@ -159,10 +165,10 @@ class Topic(MIDCORE.IdCore[NameTopic, SummaryTopic, TitleTopic]):
 
         return False
 
-    @property
-    def name(self) -> NameTopic:
-        """Return topic name."""
-        return self._name
+    # @property
+    # def name(self) -> NameTopic:
+    #     """Return topic name."""
+    #     return self._name
 
     def set_fresh(self) -> None:
         """Mark topic in memory consistent with file contents."""
@@ -170,17 +176,17 @@ class Topic(MIDCORE.IdCore[NameTopic, SummaryTopic, TitleTopic]):
         for fact in self:
             fact.set_fresh()
 
-    @property
-    def summary(self) -> SummaryTopic:
-        """Return topic summary."""
-        return self._summary
+    # @property
+    # def summary(self) -> SummaryTopic:
+    #     """Return topic summary."""
+    #     return self._summary
 
     @property
     def tag(self) -> TagTopic:
         """Return topic identifier. """
         return self._tag
 
-    @property
-    def title(self) -> TitleTopic:
-        """Return topic title."""
-        return self._title
+    # @property
+    # def title(self) -> TitleTopic:
+    #     """Return topic title."""
+    #     return self._title

@@ -3,20 +3,13 @@ Encapsulates user interface classes from widget toolkit.
 """
 import typing
 
-import factsheet.bridge_gtk.bridge_aspect as BASPECT
 import factsheet.bridge_gtk.bridge_base as BBASE
 import factsheet.bridge_gtk.bridge_outline as BOUTLINE
 import factsheet.bridge_gtk.bridge_text as BTEXT
 
-BridgeAspect = BASPECT.BridgeAspect
-BridgeAspectPlain = BASPECT.BridgeAspectPlain
-PersistAspectPlain = BASPECT.PersistAspectPlain
-ViewAspectAny = BASPECT.ViewAspectAny
-ViewAspectMissing = BASPECT.ViewAspectMissing
-ViewAspectPlain = BASPECT.ViewAspectPlain
-
 Bridge = BBASE.BridgeBase
 ModelOpaque = typing.Union[BBASE.ModelOpaque]
+ViewAny = BBASE.ViewAny
 ViewOpaque = typing.Union[BBASE.ViewOpaque]
 
 BridgeOutlineColumnar = BOUTLINE.BridgeOutlineColumnar

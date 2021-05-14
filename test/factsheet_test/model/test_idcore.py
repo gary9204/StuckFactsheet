@@ -115,9 +115,13 @@ class TestIdCore:
         TITLE = 'The Parrot Sketch'
         # Test
         target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        assert not target._stale
         assert NAME == target._name.text
+        assert target._name.is_fresh()
         assert SUMMARY == target._summary.text
+        assert target._summary.is_fresh()
         assert TITLE == target._title.text
+        assert target._title.is_fresh()
         assert isinstance(target._stale, bool)
         assert target.is_fresh()
 
