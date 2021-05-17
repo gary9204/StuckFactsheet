@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../../test'))
 # -- Project information -----------------------------------------------------
 
 project = 'Factsheet'
-copyright = '2020, Gary Grainger'
+copyright = '2020, 2021 Gary Grainger'
 author = 'Gary Grainger'
 
 # The full version, including alpha/beta/rc tags
