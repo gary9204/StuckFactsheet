@@ -20,6 +20,9 @@ Factsheet is based on a model-view-controller pattern.  For an overview
 of the pattern, see Wikipedia page `Model-view-controller
 <https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_.
 
+.. warning:: The text after this point is under review. Portions of
+    the text are inaccurate and incomplete.
+
 The general flow of control is illustrated in the figure below.  A user
 takes action at the view.  The view translates an action into requests to
 a controller.  The controller updates the model based on the request.

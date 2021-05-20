@@ -12,7 +12,7 @@ Submodules
 .. toctree::
 
    factsheet_test.control.test_pool
-   factsheet_test.control.test_control_fact
-   factsheet_test.control.test_control_idcore
-   factsheet_test.control.test_control_sheet
-   factsheet_test.control.test_control_topic
+..   factsheet_test.control.test_control_fact
+..   factsheet_test.control.test_control_idcore
+..   factsheet_test.control.test_control_sheet
+..   factsheet_test.control.test_control_topic

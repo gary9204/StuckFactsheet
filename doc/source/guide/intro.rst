@@ -6,6 +6,9 @@ With Factsheet you can construct and explore small sets, operations,
 and groups.  You can view the structures you construct in a variety of
 formats and check their properties.
 
+.. warning:: The text after this point is under review. Portions of
+    the text are inaccurate and incomplete.
+
 A Factsheet application document is called a *factsheet.*  A factsheet
 consists of a hierarchy of *topics.*  Each topic includes a collection of
 *facts* about the specific subject.  The set of integers module 6 is an

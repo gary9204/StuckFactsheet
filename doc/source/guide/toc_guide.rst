@@ -4,5 +4,5 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
-..   intro
-..   devel_notes
+   intro
+   devel_notes
