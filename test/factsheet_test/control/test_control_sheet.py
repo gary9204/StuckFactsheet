@@ -13,7 +13,7 @@ import pytest   # type: ignore[import]
 # import typing
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
-# from factsheet.control import control_sheet as CSHEET
+from factsheet.control import control_sheet as CSHEET
 # from factsheet.control import control_topic as CTOPIC
 # from factsheet.control import pool as CPOOL
 # from factsheet.model import sheet as MSHEET
@@ -23,43 +23,44 @@ import pytest   # type: ignore[import]
 class TestOpenFactsheet:
     """Unit tests for :class:`.PoolSheets`."""
 
-    @pytest.mark.skip
     def test_open_factsheet_none(self):
-        """| Confirm factsheet open and return.
-        | Case: new factsheet without path
+        """| Confirm factsheet return.
+        | Case: path is None
         """
-        # # Setup
-        # CPOOL._m_factsheets.clear()
-        # # Test
-        # target = CPOOL.open_factsheet()
-        # assert isinstance(target, CPOOL.ControlSheet)
-        # assert target is CPOOL._m_factsheets[id(target)]
+        # Setup
+        CSHEET._m_factsheets.clear()
+        N_FACTSHEETS = 1
+        # Test
+        target = CSHEET.open_factsheet()
+        assert isinstance(target, CSHEET.ControlSheet)
+        assert N_FACTSHEETS == len(CSHEET._m_factsheets)
+        assert target is CSHEET._m_factsheets[id(target)]
 
     @pytest.mark.skip
-    def test_open_factsheet_new(self, tmp_path):
-        """| Confirm factsheet open and return.
-        | Case: new factsheet with path
+    def test_open_factsheet_no_match(self, tmp_path):
+        """| Confirm factsheet return.
+        | Case: path does not match an existing file
         """
         # # Setup
-        # CPOOL._m_factsheets.clear()
-        # N_CONTROLS = 5
+        # CSHEET._m_factsheets.clear()
+        # N_FACTSHEETS = 5
         # PATH_BASE = Path(tmp_path)
-        # for i in range(N_CONTROLS):
-        #     control = CPOOL.open_factsheet()
+        # for i in range(N_FACTSHEETS):
         #     path = PATH_BASE / '/factsheet{}.fsg'.format(i)
-        #     control._path = path
+        #     control = CSHEET.ControlSheet.open(path)
+        #     CSHEET._m_factsheets[id(control)] = control
         # PATH_DIFF = PATH_BASE / '/scd.fsg'
         # # Test
-        # target = CPOOL.open_factsheet(PATH_DIFF)
-        # assert isinstance(target, CPOOL.ControlSheet)
+        # target = CSHEET.open_factsheet(PATH_DIFF)
+        # assert isinstance(target, CSHEET.ControlSheet)
         # assert PATH_DIFF == target._path
-        # assert N_CONTROLS + 1 == len(CPOOL._m_factsheets)
-        # assert target is CPOOL._m_factsheets[id(target)]
+        # assert N_FACTSHEETS + 1 == len(CSHEET._m_factsheets)
+        # assert target is CSHEET._m_factsheets[id(target)]
 
     @pytest.mark.skip
-    def test_open_factsheet_existing(self, tmp_path):
-        """| Confirm factsheet open and return.
-        | Case: existing factsheet file at path
+    def test_open_factsheet_match(self, tmp_path):
+        """| Confirm factsheet return.
+        | Case: path matches an existing file
         """
         # # Setup
         # CPOOL._m_factsheets.clear()
@@ -190,15 +191,15 @@ class TestCloseFactsheet:
 class TestControlSheet:
     """Unit tests for :class:`~.ControlSheet`."""
 
-    @pytest.mark.skip
     def test_init(self):
-        """Confirm initialization."""
-        # # Setup
-        # sheets_active = CPOOL.PoolSheets()
-        # # Test
-        # target = CSHEET.ControlSheet(sheets_active)
+        """| Confirm initialization.
+        | Case: non-default argument
+        """
+        # Setup
+        # Test
+        target = CSHEET.ControlSheet()
         # assert target._model is None
-        # assert target._path is None
+        assert target._path is None
         # assert target._sheets_active is sheets_active
         # assert sheets_active._controls[id(target)] is target
         # assert isinstance(target._controls_topic, typing.Dict)
@@ -269,7 +270,8 @@ class TestControlSheet:
         #
         # patch_model = PatchModel()
         # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'detach_view_topics', patch_model.detach_view_topics)
+        #     MSHEET.Sheet, 'detach_view_topics',
+        #     patch_model.detach_view_topics)
         #
         # sheets_active = CPOOL.PoolSheets()
         # target = CSHEET.ControlSheet.new(sheets_active)
@@ -610,8 +612,8 @@ class TestControlSheet:
 
     @pytest.mark.skip
     def test_open(self, tmp_path):
-        """| Confirm control creation from file.
-        | Case: path to file with model contents
+        """| Confirm control creation.
+        | Case: file at path location constains factsheet model
         """
         # # Setup
         # PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -631,8 +633,8 @@ class TestControlSheet:
 
     @pytest.mark.skip
     def test_open_empty(self, tmp_path):
-        """| Confirm control creation from file.
-        | Case: path not to a file
+        """| Confirm control creation.
+        | Case: no file at path location
         """
         # # Setup
         # PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -652,8 +654,8 @@ class TestControlSheet:
 
     @pytest.mark.skip
     def test_open_except(self, tmp_path):
-        """| Confirm control creation from file.
-        | Case: path to file with unloadable contents
+        """| Confirm control creation.
+        | Case: file at path location does not conatain factsheet
         """
         # # Setup
         # PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -672,6 +674,18 @@ class TestControlSheet:
         # assert model._infoid.summary
         # assert TITLE == model._infoid.title
         # assert target._path is None
+
+    def test_open_none(self):
+        """| Confirm control creation.
+        | Case: no path
+        """
+        # Setup
+        PATH = None
+        # Test
+        target = CSHEET.ControlSheet.open(PATH)
+        assert isinstance(target, CSHEET.ControlSheet)
+        assert target._path is None
+        # model = target._model
 
     @pytest.mark.skip
     def test_present_factsheet(self, monkeypatch):

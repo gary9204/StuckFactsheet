@@ -1,9 +1,15 @@
 """
-Defines class that mediates factsheet-level interaction from
+Defines components to track active factsheets and to mediate
+factsheet-level interaction.
+
+Functions :func:`open_factsheet` and :func:`close_factsheet`
+maintain a singleton collection of active factsheets.
+
+Class :class:`ControlSheet` mediates factsheet-level interaction from
 :mod:`~factsheet.view` to :mod:`~factsheet.model`.
 
 :doc:`../guide/devel_notes` explains how application Factsheet is based
-on a Model-View-Controller (MVC) design.  Module ``control_sheet``
+on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`
 defines classes representing control components for a factsheet as a
 whole.
 """
@@ -29,36 +35,10 @@ logger = logging.getLogger('Main.CSHEET')
 _m_factsheets: typing.MutableMapping[int, 'ControlSheet'] = dict()
 
 
-def open_factsheet(p_path: typing.Optional[Path] = None
-                   ) -> 'ControlSheet':
-    """Return and track a new factsheet or return and present an
-    existing factsheet.
-
-    Functions :func:`open_factsheet` and :func:`close_factsheet`
-    maintain a collection of open factsheets as a singleton.
-
-    :param p_path: location of factsheet in filesystem.  If there is no
-        file at the given location, create and return a new factsheet.
-    """
-    raise NotImplementedError
-    # # for control in _m_factsheets.values():
-    # #     if control._path is not None:
-    # #         if path_absolute == control._path.resolve():
-    # #             control.present()
-    # #             return
-    # if p_path is None:
-    #     control = ControlSheet.open(None)
-    #     _m_factsheets[id(control)] = control
-    #     return control
-    # path_absolute = p_path.resolve()
-
-
 def close_factsheet(p_control: 'ControlSheet') -> None:
     """Close and stop tracking factsheet.
 
     Log a warning when the control is not in the collection.
-    Functions :func:`open_factsheet` and :func:`close_factsheet`
-    maintain a collection of open factsheets as a singleton.
 
     :param p_control: factsheet to close.
     """
@@ -72,22 +52,47 @@ def close_factsheet(p_control: 'ControlSheet') -> None:
     #         self.remove.__name__))
 
 
+def open_factsheet(p_path: typing.Optional[Path] = None
+                   ) -> 'ControlSheet':
+    """Return new or existing factsheet with given path.
+
+    If path is None or no existing factsheet has the given path, return
+    a new, empty factsheet. Otherwise, return factsheet that has the
+    given path.
+
+    :param p_path: location of file for factsheet model
+    """
+    if p_path is not None:
+        raise NotImplementedError
+    # path_absolute = p_path.resolve()
+    # for control in _m_factsheets.values():
+    #     if control._path is not None:
+    #         if path_absolute == control._path.resolve():
+    #             control.present()
+    #             return
+    control = ControlSheet.open(p_path)
+    _m_factsheets[id(control)] = control
+    return control
+
+
+# Temporary patch until factsheet model is up to date.
+ViewNameSheet = typing.Any
+ViewSummarySheet = typing.Any
+ViewTitleSheet = typing.Any
+
+
 class ControlSheet(CIDCORE.ControlIdCore):
     """Mediates user actions at view to model updates for a factsheet.
 
-    Class ``ControlSheet`` translates user requests in a factsheet page
-    into changes in the factsheet model (such as save or delete) or in
-    the collection of factsheet views (such as add or close a view).
-
-    :param pm_sheets_active: collection of open factsheet documents.
+    Class :class:`ControlSheet` translates user requests in a factsheet
+    view into changes in the factsheet model (such as save or delete) or
+    in the collection of factsheet views (such as add or close a view).
     """
 
     def __init__(self) -> None:
-        pass
+        """Initialize instance with empty attributes."""
         # self._model: typing.Optional[MSHEET.Sheet] = None
-        # self._path: typing.Optional[Path] = None
-        # self._sheets_active = pm_sheets_active
-        # self._sheets_active.add(self)
+        self._path: typing.Optional[Path] = None
         # self._controls_topic: typing.Dict[
         #     MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
 
@@ -272,16 +277,37 @@ class ControlSheet(CIDCORE.ControlIdCore):
         # assert self._model is not None
         # self._model.update_titles(subtitle_base)
 
-    @classmethod
-    def open(cls, p_path: Path) -> 'ControlSheet':
-        """Create and return control with model from file.
+    def new_view_name(self) -> ViewNameSheet:
+        """Return view to display name."""
+        raise NotImplementedError
+        # return self._model.new_view_name()
 
-        :param pm_sheets_active: collection of open factsheet documents.
-        :param p_path: location of file containing factsheet model.
+    def new_view_summary(self) -> ViewSummarySheet:
+        """Return view to display summary."""
+        raise NotImplementedError
+        # return self._model.new_view_summary()
+
+    def new_view_title(self) -> ViewTitleSheet:
+        """Return view to display title."""
+        raise NotImplementedError
+        # return self._model.new_view_title()
+
+    @classmethod
+    def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
+        """Create and return control with model.
+
+        If given path is None or there is no file at the path location,
+        then return control with a new, empty model.  If a file at the
+        path location does not contain a factsheet, then return control
+        with a new model containing a warning message.  Otherwise,
+        return control with model from the factsheet file.
+
+        :param p_path: location of file for factsheet model.
         :returns: Newly created control.
         """
-        raise NotImplementedError
-        # control = ControlSheet(pm_sheets_active)
+        if p_path is None:
+            control = ControlSheet()
+            return control
         # try:
         #     with p_path.open(mode='rb') as io_in:
         #         model = pickle.load(io_in)
@@ -296,6 +322,7 @@ class ControlSheet(CIDCORE.ControlIdCore):
         #     control._path = p_path
         #
         # return control
+        raise NotImplementedError
 
     def _open_guard(self) -> typing.BinaryIO:
         """Backup existing file when opening for save.
