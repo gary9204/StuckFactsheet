@@ -13,11 +13,11 @@ Subpackages
    :maxdepth: 1
 
    factsheet.control
+   factsheet.view
 ..   factsheet.abc_types
 ..   factsheet.adapt_gtk
 ..   factsheet.content
 ..   factsheet.model
-..   factsheet.view
 
 Submodules
 ----------

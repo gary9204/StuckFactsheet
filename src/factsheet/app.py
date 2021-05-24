@@ -53,7 +53,7 @@ class Factsheet(Gtk.Application):
     def do_activate(self):
         """Create and display an initial factsheet with default content."""
         sheets_active = CPOOL.PoolSheets()
-        _ = VSHEET.PageSheet.new_factsheet(self, sheets_active)
+        _ = VSHEET.ViewSheet.new_factsheet(self, sheets_active)
 
     def do_shutdown(self):
         """Application teardown. """
