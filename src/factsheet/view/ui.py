@@ -168,8 +168,7 @@ import typing
 
 from pathlib import Path
 
-import factsheet as FS
-# from factsheet.adapt_gtk import adapt_factory as AFACTORY
+# import factsheet as FS
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -177,72 +176,55 @@ from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 # Factshet-level Definitions
-CLOSE_GTK = False
-CANCEL_GTK = not CLOSE_GTK
+# CLOSE_GTK = False
+# CANCEL_GTK = not CLOSE_GTK
 DIR_UI = Path(__file__).parent / 'ui'
-# FACTORY_INFOID = AFACTORY.FactoryInfoId()
-# FACTORY_SHEET = AFACTORY.FactorySheet()
 
 # Application/Sheet dialogs
-NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')
-builder_guide_sheet = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_SHEET_UI)
-get_object_guide_sheet = builder_guide_sheet.get_object
+# NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')
+# builder_guide_sheet = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_SHEET_UI)
+# get_object_guide_sheet = builder_guide_sheet.get_object
 
-ABOUT_APP = get_object_guide_sheet('ui_about_app')
-ABOUT_APP.set_version(FS.__version__)
-HELP_APP = get_object_guide_sheet('ui_help_app')
-INTRO_APP = get_object_guide_sheet('ui_intro_app')
+# ABOUT_APP = get_object_guide_sheet('ui_about_app')
+# ABOUT_APP.set_version(FS.__version__)
+# HELP_APP = get_object_guide_sheet('ui_help_app')
+# INTRO_APP = get_object_guide_sheet('ui_intro_app')
 
-HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
-HELP_SHEET_DISPLAY = get_object_guide_sheet('ui_help_sheet_display')
-HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
-HELP_SHEET_TOPICS = get_object_guide_sheet('ui_help_sheet_topics')
+# HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
+# HELP_SHEET_DISPLAY = get_object_guide_sheet('ui_help_sheet_display')
+# HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
+# HELP_SHEET_TOPICS = get_object_guide_sheet('ui_help_sheet_topics')
 
-del builder_guide_sheet
-del get_object_guide_sheet
-
-# Sheet Types
-# KWArgs = typing.Mapping[str, typing.Any]
-# IndexOutline = AFACTORY.IndexOutline
-# OutlineTemplates = AFACTORY.OutlineTemplates
-# OutlineTopics = AFACTORY.OutlineTopics
-# ViewOutlineTemplates = AFACTORY.ViewOutlineTemplates
-# ViewOutlineTopics = AFACTORY.ViewOutlineTopics
-# NewViewOutlineTopics = typing.Callable[[], ViewOutlineTopics]
+# del builder_guide_sheet
+# del get_object_guide_sheet
 
 # Topic-level definitions
-# FACTORY_TOPIC = AFACTORY.FactoryTopic()
 
-# Topic-level guidance dialogs
-NAME_FILE_GUIDE_TOPIC_UI = str(DIR_UI / 'guide_topic.ui')
-builder_guide_topic = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_TOPIC_UI)
-get_object_guide_topic = builder_guide_topic.get_object
+# # Topic-level guidance dialogs
+# NAME_FILE_GUIDE_TOPIC_UI = str(DIR_UI / 'guide_topic.ui')
+# builder_guide_topic = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_TOPIC_UI)
+# get_object_guide_topic = builder_guide_topic.get_object
+#
+# HELP_TOPIC = get_object_guide_topic('ui_help_topic')
+# HELP_TOPIC_DISPLAY = get_object_guide_topic('ui_help_topic_display')
+#
+# del builder_guide_topic
+# del get_object_guide_topic
 
-HELP_TOPIC = get_object_guide_topic('ui_help_topic')
-HELP_TOPIC_DISPLAY = get_object_guide_topic('ui_help_topic_display')
-
-del builder_guide_topic
-del get_object_guide_topic
-
-# Topic Types
-# IdTopic = AFACTORY.IdTopic
-# OutlineFacts = AFACTORY.OutlineFacts
-# ViewOutlineFacts = AFACTORY.ViewOutlineFacts
 
 # Fact-level definitions
-# FACTORY_FACT = AFACTORY.FactoryFact()
 
-# Fact dialogs
-NAME_FILE_GUIDE_FACT_UI = str(DIR_UI / 'guide_fact.ui')
-builder_guide_fact = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_FACT_UI)
-get_object_guide_fact = builder_guide_fact.get_object
-
-HELP_FACT = get_object_guide_fact('ui_help_fact')
-HELP_FACT_DISPLAY = get_object_guide_fact('ui_help_fact_display')
-HELP_FACT_VALUE = get_object_guide_fact('ui_help_fact_value')
-
-del builder_guide_fact
-del get_object_guide_fact
+# # Fact dialogs
+# NAME_FILE_GUIDE_FACT_UI = str(DIR_UI / 'guide_fact.ui')
+# builder_guide_fact = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_FACT_UI)
+# get_object_guide_fact = builder_guide_fact.get_object
+#
+# HELP_FACT = get_object_guide_fact('ui_help_fact')
+# HELP_FACT_DISPLAY = get_object_guide_fact('ui_help_fact_display')
+# HELP_FACT_VALUE = get_object_guide_fact('ui_help_fact_value')
+#
+# del builder_guide_fact
+# del get_object_guide_fact
 
 # Fact Types
 # Not defined yet.
@@ -262,9 +244,10 @@ def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,
        #Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals
        .activate
     """
-    action = Gio.SimpleAction.new(p_name, None)
-    pm_group.add_action(action)
-    action.connect('activate', px_handler)
+    raise NotImplementedError
+    # action = Gio.SimpleAction.new(p_name, None)
+    # pm_group.add_action(action)
+    # action.connect('activate', px_handler)
 
 
 def new_action_active_dialog(pm_group: Gio.SimpleActionGroup,
@@ -280,6 +263,7 @@ def new_action_active_dialog(pm_group: Gio.SimpleActionGroup,
        handler for new action.
     :param px_dialog: dialog passed to handler.
     """
-    action = Gio.SimpleAction.new(p_name, None)
-    pm_group.add_action(action)
-    action.connect('activate', px_handler, px_dialog)
+    raise NotImplementedError
+    # action = Gio.SimpleAction.new(p_name, None)
+    # pm_group.add_action(action)
+    # action.connect('activate', px_handler, px_dialog)

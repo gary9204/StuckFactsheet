@@ -19,6 +19,7 @@ Submodules
 
 .. toctree::
 
+   factsheet.view.ui
    factsheet.view.view_sheet
 ..   factsheet.view.form_topic
 ..   factsheet.view.query_place
@@ -28,5 +29,4 @@ Submodules
 ..   factsheet.view.scene_table
 ..   factsheet.view.scene_value
 ..   factsheet.view.types_view
-..   factsheet.view.ui
 ..   factsheet.view.view_infoid

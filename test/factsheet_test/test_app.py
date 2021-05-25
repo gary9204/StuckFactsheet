@@ -1,5 +1,5 @@
 """
-Unit tests for :class:`.Factsheet` and entry point.
+Unit tests for :class:`.AppFactsheet` and entry point.
 """
 import gi   # type: ignore[import]
 
@@ -10,14 +10,14 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class TestFactsheet:
-    """Unit tests for :class:`.Factsheet`."""
+    """Unit tests for :class:`.AppFactsheet`."""
 
     def test_init(self):
         """Confirm initialization."""
         # Setup
         app_id = 'com.novafolks.g2alpha'
         # Test
-        target = APP.Factsheet()
+        target = APP.AppFactsheet()
         assert isinstance(target, Gtk.Application)
         assert app_id == target.get_application_id()
         assert not target.get_windows()
@@ -25,13 +25,15 @@ class TestFactsheet:
     def test_do_activate(self, capfd):
         """Confirm creation of initial window.."""
         # Setup
-        target = APP.Factsheet()
+        target = APP.AppFactsheet()
         # Test
         target.do_activate()
         snapshot = capfd.readouterr()   # Resets the internal buffer
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
+        print(target.get_windows())
+        assert False
 
     def test_do_shutdown(self, monkeypatch, caplog):
         """Confirm application teardown."""
@@ -47,12 +49,12 @@ class TestFactsheet:
             Gtk.Application, 'do_shutdown', patch.do_shutdown)
 
         N_LOGS = 1
-        target = APP.Factsheet()
+        target = APP.AppFactsheet()
         # Test
         target.do_shutdown()
         assert patch.called
         assert N_LOGS == len(caplog.records)
-        assert 'Factsheet application shutdown.' in caplog.text
+        assert 'AppFactsheet application shutdown.' in caplog.text
 
     def test_do_startup(self, monkeypatch, caplog):
         """Confirm application setup."""
@@ -68,16 +70,16 @@ class TestFactsheet:
             Gtk.Application, 'do_startup', patch.do_startup)
 
         N_LOGS = 1
-        target = APP.Factsheet()
+        target = APP.AppFactsheet()
         # Test
         target.do_startup()
         assert patch.called
         assert N_LOGS == len(caplog.records)
-        assert 'Factsheet application startup.' in caplog.text
+        assert 'AppFactsheet application startup.' in caplog.text
 
 
 class TestApp:
-    """Unit tests for Factsheet application entry point."""
+    """Unit tests for AppFactsheet application entry point."""
 
     def test_run_app(self, monkeypatch):
         """Confirm application invoked."""
@@ -88,7 +90,7 @@ class TestApp:
             def run(self, _argv): self.called = True
 
         patch = PatchRun()
-        monkeypatch.setattr(APP.Factsheet, 'run', patch.run)
+        monkeypatch.setattr(APP.AppFactsheet, 'run', patch.run)
         # Test
         APP.run_app()
         assert patch.called

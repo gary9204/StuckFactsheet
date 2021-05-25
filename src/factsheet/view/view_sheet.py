@@ -35,26 +35,38 @@ class ViewSheet:
 
     :param px_app: application to which factsheet belongs.
 
+    .. attribute:: CANCEL_CLOSE
+
+        Indicates GTK should cancel closing window of factsheet view.
+
+    .. attribute:: CONTINUE_CLOSE
+
+        Indicates GTK should continue closing window of factsheet view.
+
     .. attribute:: NAME_FILE_DIALOG_DATA_LOSS_UI
 
        Path to user interface definition of data loss warning dialog.
 
     .. attribute:: NAME_FILE_SHEET_UI
 
-       Path to user interface defintion of factsheet page.
+       Path to user interface defintion of factsheet view.
     """
+
+    CANCEL_CLOSE = True
+
+    CONTINUE_CLOSE = not CANCEL_CLOSE
 
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
-    def __init__(self, *, px_app: Gtk.Application) -> None:
-        pass
-        # self._control: typing.Optional[CSHEET.ControlSheet] = None
-        # builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
-        # get_object = builder.get_object
-        # self._window = get_object('ui_sheet')
-        # self._window.set_application(px_app)
+    def __init__(self, *, p_app: Gtk.Application,
+                 p_control: CSHEET.ControlSheet) -> None:
+        self._control = p_control
+        builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
+        get_object = builder.get_object
+        self._window = get_object('ui_sheet')
+        self._window.set_application(p_app)
 
         # Components
         # self._context_name = get_object('ui_context_name')
@@ -80,7 +92,7 @@ class ViewSheet:
         # self._infoid = VINFOID.ViewInfoId(get_object)
 
         # self._close_window = False
-        # self._window.show_all()
+        self._window.show_all()
 
         # Signals
         # view_name = self._infoid.get_view_name()
@@ -88,7 +100,7 @@ class ViewSheet:
         #     'activate', lambda _entry: self._context_name.popdown())
         # _id = self._context_name.connect('closed', self.on_popdown_name)
         # _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
-        # _id = self._window.connect('delete-event', self.on_close_page)
+        _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
         # UI.new_action_active(
@@ -353,10 +365,11 @@ class ViewSheet:
         unconditionally if no changes would be lost.  See also
         :meth:`close_page`.
 
-        :returns: :data:`.CANCEL_GTK` or :data:`.CLOSE_GTK` to,
+        :returns: :data:`.CANCEL_CLOSE` or :data:`.CONTINUE_CLOSE` to,
            respectively, cancel or continue page close.
         """
-        raise NotImplementedError
+        # stub
+        return self.CONTINUE_CLOSE
         # assert self._control is not None
         # if self._close_window:
         #     return UI.CLOSE_GTK

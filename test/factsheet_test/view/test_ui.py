@@ -3,104 +3,95 @@ Unit tests for functions and objects for user interface elements.
 
 See :mod:`.view.ui`.
 """
-import gi   # type: ignore[import]
+# import gi   # type: ignore[import]
+from pathlib import Path
 import pytest   # type: ignore[import]
 
-# from factsheet.adapt_gtk import adapt_factory as AFACTORY
 from factsheet.view import ui as UI
 
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gio   # type: ignore[import]    # noqa: E402
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+# gi.require_version('Gtk', '3.0')
+# from gi.repository import Gio   # type: ignore[import]    # noqa: E402
+# from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
+# from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class TestTypes:
-    """Unit tests for type definitions in :mod:`.ui`."""
+class TestUiItems:
+    """Unit tests for user interface constants and shared objects."""
 
-    # def test_types_sheet(self):
-    #     """Confirm types defined for sheet components."""
-    #     # Setup
-    #     # Test
-    #     assert UI.IndexOutline is AFACTORY.IndexOutline
-    #     assert UI.OutlineTemplates is AFACTORY.OutlineTemplates
-    #     assert UI.OutlineTopics is AFACTORY.OutlineTopics
-    #     assert UI.ViewOutlineTemplates is AFACTORY.ViewOutlineTemplates
-    #     assert UI.ViewOutlineTopics is AFACTORY.ViewOutlineTopics
-    #     # assert UI.AttachViewTopics is not None  # Not testable at
-    #     #     runtime [misc]
-
-    # def test_types_topic(self):
-    #     """Confirm types defined for topic components."""
-    #     # Setup
-    #     # Test
-    #     assert UI.TagTopic is AFACTORY.TagTopic
-    #     assert UI.OutlineFacts is AFACTORY.OutlineFacts
-    #     assert UI.ViewOutlineFacts is AFACTORY.ViewOutlineFacts
+    @pytest.mark.parametrize('NAME, TYPE', [
+        ('DIR_UI', Path),
+        ])
+    def test_defined(self, NAME, TYPE):
+        """Confirm module defines constants and shared objects."""
+        # Setup
+        item = getattr(UI, NAME)
+        assert isinstance(item, TYPE)
 
 
 class TestUiActions:
     """Unit tests for module functions defined in :mod:`.view.ui`.
     """
 
+    @pytest.mark.skip
     def test_new_active_action(self):
         """Confirm new action connected to activate handler."""
-        # Setup
-        _load_signals = Gio.SimpleAction.new('Null', None)
-        action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
-        signal = GO.signal_lookup('activate', action_gtype)
-        N_DEFAULT = 0
+        # # Setup
+        # _load_signals = Gio.SimpleAction.new('Null', None)
+        # action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
+        # signal = GO.signal_lookup('activate', action_gtype)
+        # N_DEFAULT = 0
+        #
+        # group = Gio.SimpleActionGroup()
+        # name_action = 'test-action'
+        #
+        # def handler(p_action, p_target): pass
+        # # Test
+        # UI.new_action_active(
+        #     pm_group=group, p_name=name_action, px_handler=handler)
+        # action = group.lookup_action(name_action)
+        # assert action is not None
+        # n_handlers = 0
+        # while True:
+        #     id_signal = GO.signal_handler_find(
+        #         action, GO.SignalMatchType.ID, signal, 0, None, None, None)
+        #     if 0 == id_signal:
+        #         break
+        #
+        #     n_handlers += 1
+        #     GO.signal_handler_disconnect(action, id_signal)
+        #
+        # assert N_DEFAULT + 1 == n_handlers
 
-        group = Gio.SimpleActionGroup()
-        name_action = 'test-action'
-
-        def handler(p_action, p_target): pass
-        # Test
-        UI.new_action_active(
-            pm_group=group, p_name=name_action, px_handler=handler)
-        action = group.lookup_action(name_action)
-        assert action is not None
-        n_handlers = 0
-        while True:
-            id_signal = GO.signal_handler_find(
-                action, GO.SignalMatchType.ID, signal, 0, None, None, None)
-            if 0 == id_signal:
-                break
-
-            n_handlers += 1
-            GO.signal_handler_disconnect(action, id_signal)
-
-        assert N_DEFAULT + 1 == n_handlers
-
-    def test_new_action_active_dialog(self):
-        """Confirm new action connected to activate handler."""
-        # Setup
-        _load_signals = Gio.SimpleAction.new('Null', None)
-        action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
-        signal = GO.signal_lookup('activate', action_gtype)
-        N_DEFAULT = 0
-
-        group = Gio.SimpleActionGroup()
-        name_action = 'test-action'
-
-        def handler(p_action, p_target, px_dialog): pass
-        dialog = Gtk.Dialog()
-        # Test
-        UI.new_action_active_dialog(pm_group=group, p_name=name_action,
-                                    px_handler=handler, px_dialog=dialog)
-        action = group.lookup_action(name_action)
-        assert action is not None
-        n_handlers = 0
-        while True:
-            id_signal = GO.signal_handler_find(
-                action, GO.SignalMatchType.ID, signal, 0, None, None, None)
-            if 0 == id_signal:
-                break
-
-            n_handlers += 1
-            GO.signal_handler_disconnect(action, id_signal)
-
-        assert N_DEFAULT + 1 == n_handlers
+    @pytest.mark.skip
+    # def test_new_action_active_dialog(self):
+    #     """Confirm new action connected to activate handler."""
+    #     # Setup
+    #     _load_signals = Gio.SimpleAction.new('Null', None)
+    #     action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
+    #     signal = GO.signal_lookup('activate', action_gtype)
+    #     N_DEFAULT = 0
+    #
+    #     group = Gio.SimpleActionGroup()
+    #     name_action = 'test-action'
+    #
+    #     def handler(p_action, p_target, px_dialog): pass
+    #     dialog = Gtk.Dialog()
+    #     # Test
+    #     UI.new_action_active_dialog(pm_group=group, p_name=name_action,
+    #                                 px_handler=handler, px_dialog=dialog)
+    #     action = group.lookup_action(name_action)
+    #     assert action is not None
+    #     n_handlers = 0
+    #     while True:
+    #         id_signal = GO.signal_handler_find(
+    #             action, GO.SignalMatchType.ID, signal, 0, None, None, None)
+    #         if 0 == id_signal:
+    #             break
+    #
+    #         n_handlers += 1
+    #         GO.signal_handler_disconnect(action, id_signal)
+    #
+    #     assert N_DEFAULT + 1 == n_handlers
 
     @pytest.mark.skip(reason='Not currently needed.')
     def test_new_action_bool_active(self):

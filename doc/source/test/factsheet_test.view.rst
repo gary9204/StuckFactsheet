@@ -19,6 +19,7 @@ Submodules
 
 .. toctree::
 
+   factsheet_test.view.test_ui
    factsheet_test.view.test_view_sheet
 ..   factsheet_test.view.conftest
 ..   factsheet_test.view.manual_scene_table
@@ -30,5 +31,4 @@ Submodules
 ..   factsheet_test.view.test_scene_table
 ..   factsheet_test.view.test_scene_value
 ..   factsheet_test.view.test_types_view
-..   factsheet_test.view.test_ui
 ..   factsheet_test.view.test_view_infoid

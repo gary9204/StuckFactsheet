@@ -1,5 +1,5 @@
 """
-Test fixtures for Factsheet as a whole.
+Test fixtures for AppFactsheet as a whole.
 """
 import pytest   # type: ignore[import]
 import typing
@@ -14,11 +14,11 @@ import factsheet.model.fact as MFACT
 # import factsheet.model.table as MTABLE
 import factsheet.model.topic as MTOPIC
 
-# import gi   # type: ignore[import]
-# gi.require_version('Gtk', '3.0')
-# from gi.repository import Gio   # type: ignore[import]    # noqa: E402
+import gi   # type: ignore[import]
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 # from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-# from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 # class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
@@ -87,14 +87,14 @@ def patch_idcore():
 #         def __init__(self):
 #             self._infoid = interface_view_infoid()
 #             self.called_update = False
-# 
+#
 #         def get_infoid(self): return self._infoid
-# 
+#
 #         def update(self, p_status, p_value) -> None:
 #             self.called_update = True
 #             self.update_status = p_status
 #             self.update_value = p_value
-# 
+#
 #     return PatchClassBlockFact
 
 
@@ -147,7 +147,7 @@ def fact_sample():
 # def factory_topic():
 #     """Pytest fixture: return factory for :class:`Topic` with facts
 #     outline.
-# 
+#
 #     :param p_top_facts: number of top-level facts.
 #     :param p_depth_facts: number of outline levels below top level.
 #     """
@@ -155,7 +155,7 @@ def fact_sample():
 #         TITLE_MODEL = 'Something completely different.'
 #         topic = MTOPIC.Topic()
 #         topic.init_identity(p_title=TITLE_MODEL)
-# 
+#
 #         for i in range(p_top_facts):
 #             fact = PatchFact(p_topic=topic)
 #             fact.init_identity(p_name='Fact {}'.format(i))
@@ -167,29 +167,38 @@ def fact_sample():
 #             fact.init_identity(p_name=name)
 #             parent = topic.insert_fact_child(fact, parent)
 #         return topic
-# 
+#
 #     return new_topic
 
 
-# class Factsheet(Gtk.Application):
-#     """Stub :class:`.Factsheet` class."""
-# 
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(application_id='com.novafolks.factsheet',
-#                          flags=Gio.ApplicationFlags.FLAGS_NONE,
-#                          *args, **kwargs)
-# 
-#     def do_activate(self):
-#         pass
-# 
-#     def do_startup(self):
-#         Gtk.Application.do_startup(self)
+class AppFactsheet(Gtk.Application):
+    """Stub :class:`.AppFactsheet` class."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(application_id='com.novafolks.factsheet.stub',
+                         flags=Gio.ApplicationFlags.FLAGS_NONE,
+                         *args, **kwargs)
+
+    def do_activate(self):
+        pass
+
+    # def do_shutdown(self):
+    #     """Application teardown. """
+    #     Gtk.Application.do_shutdown(self)
+
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
 
 
-# @pytest.fixture
-# def patch_factsheet():
-#     """Pytest fixture: return stub :class:`.Factsheet` class."""
-#     return Factsheet
+@pytest.fixture
+def patch_appfactsheet():
+    """
+    Pytest fixture with teardown: return stub :class:`.AppFactsheet`
+    class.
+    """
+    factsheet = AppFactsheet()
+    yield factsheet
+    del factsheet
 
 
 # @DC.dataclass
@@ -286,7 +295,8 @@ def fact_sample():
 #     list_mix = [MELEMENT.ElementOpaque('x', 0), None,
 #                 MELEMENT.ElementOpaque('y', 1), None,
 #                 MELEMENT.ElementOpaque('z', 2)]
-#     rows = Gtk.ListStore(GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT)
+    # rows = Gtk.ListStore(GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT,
+    #                      GO.TYPE_PYOBJECT)
 #     for e_int, e_str, e_mix in zip(set_int, set_str, list_mix):
 #         rows.append([e_int, e_str, e_mix])
 #     info_int = MTABLE.InfoColumn(title='Integers', symbol='i', styles=[

@@ -1,5 +1,5 @@
 """
-Defines Factsheet application and entry point.
+Defines AppFactsheet application and entry point.
 """
 import logging   # type: ignore[import]
 from logging.handlers import RotatingFileHandler
@@ -33,12 +33,12 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
-from factsheet.control import pool as CPOOL  # noqa: #402
-from factsheet.view import page_sheet as VSHEET  # noqa: #402
+from factsheet.control import control_sheet as CSHEET  # noqa: #402
+from factsheet.view import view_sheet as VSHEET  # noqa: #402
 
 
-class Factsheet(Gtk.Application):
-    """Defines Factsheet application representation.
+class AppFactsheet(Gtk.Application):
+    """Defines AppFactsheet application representation.
 
     :param args: superclass positional parameters
     :param kwargs: superclass keyword parameters
@@ -52,23 +52,26 @@ class Factsheet(Gtk.Application):
 
     def do_activate(self):
         """Create and display an initial factsheet with default content."""
-        sheets_active = CPOOL.PoolSheets()
-        _ = VSHEET.ViewSheet.new_factsheet(self, sheets_active)
+        # sheets_active = CPOOL.PoolSheets()
+        # _ = VSHEET.ViewSheet.new_factsheet(self, sheets_active)
+        # _ = VSHEET.ViewSheet.new_factsheet(self)
+        control = CSHEET.open_factsheet(None)
+        _ = VSHEET.ViewSheet(p_app=self, p_control=control)
 
     def do_shutdown(self):
         """Application teardown. """
         Gtk.Application.do_shutdown(self)
-        logger.info('Factsheet application shutdown.')
+        logger.info('AppFactsheet application shutdown.')
 
     def do_startup(self):
         """Application setup within GTK. """
         Gtk.Application.do_startup(self)
-        logger.info('Factsheet application startup.')
+        logger.info('AppFactsheet application startup.')
 
 
 def run_app():
     """Start application and show initial window."""
-    app = Factsheet()
+    app = AppFactsheet()
     app.run(sys.argv)
 
 

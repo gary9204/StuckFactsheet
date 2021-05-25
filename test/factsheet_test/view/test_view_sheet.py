@@ -16,7 +16,7 @@ from factsheet.control import control_sheet as CSHEET
 # from factsheet.model import topic as MTOPIC
 # from factsheet.view import query_place as QPLACE
 # from factsheet.view import query_template as QTEMPLATE
-# from factsheet.view import view_sheet as VSHEET
+from factsheet.view import view_sheet as VSHEET
 # from factsheet.view import scenes as VSCENES
 # from factsheet.view import form_topic as VTOPIC
 # from factsheet.view import types_view as VTYPES
@@ -26,7 +26,7 @@ from factsheet.control import control_sheet as CSHEET
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 # from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
-# from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
+from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
@@ -104,32 +104,56 @@ def patch_dialog_choose():
     return PatchDialog
 
 
-WINDOW_ANCHOR = Gtk.Window()
+# WINDOW_ANCHOR = Gtk.Window()
+
+
+@pytest.fixture
+def parent_window():
+    """Fixture with teardown to return parent window."""
+    parent = Gtk.Window()
+    yield parent
+    parent.destroy()
+
+
+class TestUiItems:
+    """Unit tests for user interface constants and shared objects."""
 
 
 class TestViewSheet:
     """Unit tests for :class:`.ViewSheet`."""
 
-    @pytest.mark.skip
-    def test_init(self, patch_factsheet, capfd):
+    @pytest.mark.parametrize('NAME, TYPE', [
+        ('NAME_FILE_SHEET_UI', str),
+        ('NAME_FILE_DIALOG_DATA_LOSS_UI', str),
+        ('CANCEL_CLOSE', bool),
+        ('CONTINUE_CLOSE', bool),
+        ])
+    def test_class_constants(self, NAME, TYPE):
+        """Confirm class defines constants."""
+        # Setup
+        item = getattr(VSHEET.ViewSheet, NAME)
+        assert isinstance(item, TYPE)
+
+    def test_init(self, patch_appfactsheet, capfd):
         """Confirm initialization.
         Case: visual elements.
         """
-        # # Setup
-        # factsheet = patch_factsheet()
-        # # Test
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.open_factsheet(p_path=None)
+        # Test
+        target = VSHEET.ViewSheet(p_app=app, p_control=control)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
-        # assert target._control is None
-        # assert isinstance(target._window, Gtk.ApplicationWindow)
-        # assert target._window.get_application() is factsheet
+        assert target._control is control
+        assert isinstance(target._window, Gtk.ApplicationWindow)
+        assert target._window.get_application() is app
         #
         # # Components
         # assert isinstance(target._context_name, Gtk.Popover)
@@ -192,53 +216,50 @@ class TestViewSheet:
         # assert target._window.lookup_action('show-help-topics') is not None
         #
         # assert not target._close_window
-        # assert target._window.is_visible()
+        assert target._window.is_visible()
         # # Teardown
         # target._window.destroy()
         # del target._window
         # del factsheet
 
-    @pytest.mark.skip
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
             # ('closed', '_context_name', Gtk.Popover, 0),
-            # ('delete-event', '_window', Gtk.ApplicationWindow, 0),
+            ('delete-event', '_window', Gtk.ApplicationWindow, 0),
             # ('changed', '_cursor_topics', Gtk.TreeSelection, 0),
             ])
-    def test_init_signals(self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN,
-                          N_DEFAULT, patch_factsheet, capfd):
+    def test_init_signals(
+            self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT,
+            patch_appfactsheet, capfd, parent_window):
         """Confirm initialization of signal connections."""
-        # # Setup
-        # origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
-        # signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        # factsheet = patch_factsheet()
-        # # Test
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        app = patch_appfactsheet
+        control = CSHEET.open_factsheet(p_path=None)
+        # Test
+        target = VSHEET.ViewSheet(p_app=app, p_control=control)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # attribute = getattr(target, NAME_ATTRIBUTE)
-        # n_handlers = 0
-        # while True:
-        #     id_signal = GO.signal_handler_find(
-        #         attribute, GO.SignalMatchType.ID, signal,
-        #         0, None, None, None)
-        #     if 0 == id_signal:
-        #         break
-        #
-        #     n_handlers += 1
-        #     GO.signal_handler_disconnect(attribute, id_signal)
-        #
-        # assert N_DEFAULT + 1 == n_handlers
-        # # Cleanup
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
+        target._window.set_transient_for(parent_window)
+
+        attribute = getattr(target, NAME_ATTRIBUTE)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                attribute, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(attribute, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
 
     @pytest.mark.skip
     def test_init_activate(self, patch_factsheet, capfd):
