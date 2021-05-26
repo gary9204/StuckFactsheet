@@ -25,4 +25,4 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
-..   factsheet.app
+   factsheet.app

@@ -37,7 +37,7 @@ class TestUiActions:
 
     @pytest.mark.skip
     def test_new_active_action(self):
-        """Confirm new action connected to activate handler."""
+        """Confirm activate signal for new action invokes handler."""
         # # Setup
         # _load_signals = Gio.SimpleAction.new('Null', None)
         # action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
@@ -66,7 +66,9 @@ class TestUiActions:
         # assert N_DEFAULT + 1 == n_handlers
 
     def test_new_action_active_dialog(self):
-        """Confirm new action connected to activate handler."""
+        """Confirm activate signal for new action invokes handler with
+        dialog to display.
+        """
         # Setup
         # Warning: GO.signal_lookup fails unless there is a prior
         #    reference to Gio.SimpleAction.  Reference loads GObject

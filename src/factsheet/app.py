@@ -38,10 +38,10 @@ from factsheet.view import view_sheet as VSHEET  # noqa: #402
 
 
 class AppFactsheet(Gtk.Application):
-    """Defines AppFactsheet application representation.
+    """Extends GTK application for factsheets.
     """
 
-    def __init__(self, *args: typing.Tuple, **kwargs: typing.Any):
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
         """Register application with GTK.
 
         :param args: superclass positional parameters
@@ -58,7 +58,9 @@ class AppFactsheet(Gtk.Application):
 
     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
                 p_hint: str) -> None:
-        """Application teardown. """
+        """Create and display factsheets from file names on the
+        command line.
+        """
         logger.critical('Stub for open -- command line files ignored.')
         logger.critical('Files: {}.'.format(p_files))
         logger.critical('N: {}'.format(p_n_files))
@@ -72,13 +74,13 @@ class AppFactsheet(Gtk.Application):
         logger.info('AppFactsheet application shutdown.')
 
     def do_startup(self) -> None:
-        """Application setup within GTK. """
+        """Application setup. """
         Gtk.Application.do_startup(self)
         logger.info('AppFactsheet application startup.')
 
 
 def run_app():
-    """Start application and show initial window."""
+    """Start application and display initial factsheet(s)."""
     app = AppFactsheet()
     app.run(sys.argv)
 

@@ -18,6 +18,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 1
 
    factsheet.view.ui
    factsheet.view.view_sheet

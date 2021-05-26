@@ -6,14 +6,6 @@ Factsheet-level Definitions
 Supporting deinitions for user interface elements for application and
 Factsheets.
 
-.. data:: CANCEL_GTK
-
-   Value to cancel processing of a GtkWidget `delete-event`_ signal.
-
-.. data:: CLOSE_GTK
-
-   Value to continue processing of a GtkWidget `delete-event`_ signal.
-
 .. _delete-event:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Widget.html
    #Gtk.Widget.signals.delete_event
@@ -21,15 +13,6 @@ Factsheets.
 .. data:: DIR_UI
 
    Path to directory that contains user interface definition files.
-
-.. data:: FACTORY_INFOID
-
-    Factory to produce :class:`.InfoId` components. See :mod:`.abc_factory`.
-
-.. data:: FACTORY_SHEET
-
-    Factory to produce factsheet components for classes :class:`.Sheet`
-    and :class:`.PageSheet`.   See :mod:`.abc_factory`.
 
 Sheet Dialogs
 -------------

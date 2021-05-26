@@ -166,7 +166,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. Factsheet provides templates for constructing small sets, operations, and groups.</property>
+                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures.  With Factsheet you can construct and explore small sets, operations, and groups.  You can view the structures you construct in a variety of formats and check their properties.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -184,7 +184,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic represents a specific subject, such as a set, binary operation, or group.  A topic includes a collection &lt;i&gt;facts &lt;/i&gt;about the subject along with checks to determine the value of each fact. </property>
+                    <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet.  &lt;/i&gt;A factsheet consists of a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic includes a collection of &lt;i&gt;facts &lt;/i&gt;about the specific subject. The set of integers module 6 is an exmple of a topic. The subset of divisors of zero is an example of a fact.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -2145,7 +2145,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">Factsheet is an application to explore facts about algebraic structures.  Factsheet provides tools for constructing and exploring small sets, binary operations, and groups. </property>
+                <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. With Factsheet you can construct and explore small sets, operations, and groups. You can view the structures you construct in a variety of formats and check their properties.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2162,7 +2162,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic represents a specific subject, such as a set, binary operation, or group.  A topic includes a collection &lt;i&gt;facts &lt;/i&gt;about the subject along with checks to determine the value of each fact. </property>
+                <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet.  &lt;/i&gt;A factsheet consists of a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic includes a collection of &lt;i&gt;facts &lt;/i&gt;about the specific subject. The set of integers module 6 is an exmple of a topic. The subset of divisors of zero is an example of a fact.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2177,7 +2177,7 @@ investigating algebraic structures.</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">A factsheet contains templates to construct topics. For example, you can use the template for groups of integers modulo &lt;i&gt;n&lt;/i&gt; to created a topic for the group of integers modulo 6.  You can use the topic's checks to determine, for example, the identity in the group. </property>
+                <property name="label" translatable="yes">Factsheet includes a collection of templates, which you can use to construct topics and facts.  For example, Factsheet has a template for contructing a group of integers module &lt;i&gt;n.  &lt;/i&gt;You choose the value of &lt;i&gt;n&lt;/i&gt;, say 6, to construct the topic the group of intergers modulo 6.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2194,6 +2194,23 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
+                <property name="label" translatable="yes">When you create a topic, all the topic’s facts are undetermined. You select which facts you wish to check. You also select how you want Factsheet to present results of each check.</property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
                 <property name="label" translatable="yes">Why Factsheet?  Algebra is fun.  Coding is fun.  So, I decided to combine the two and develop this application.  Along the way, I got to practice software development techniques and tools as well as learn Python.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
@@ -2202,7 +2219,7 @@ investigating algebraic structures.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
