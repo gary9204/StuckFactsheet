@@ -168,7 +168,7 @@ import typing
 
 from pathlib import Path
 
-# import factsheet as FS
+import factsheet as FS
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -181,22 +181,22 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 DIR_UI = Path(__file__).parent / 'ui'
 
 # Application/Sheet dialogs
-# NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')
-# builder_guide_sheet = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_SHEET_UI)
-# get_object_guide_sheet = builder_guide_sheet.get_object
+NAME_FILE_GUIDE_SHEET_UI = str(DIR_UI / 'guide_sheet.ui')
+builder_guide_sheet = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_SHEET_UI)
+get_object_guide_sheet = builder_guide_sheet.get_object
 
-# ABOUT_APP = get_object_guide_sheet('ui_about_app')
-# ABOUT_APP.set_version(FS.__version__)
-# HELP_APP = get_object_guide_sheet('ui_help_app')
-# INTRO_APP = get_object_guide_sheet('ui_intro_app')
+ABOUT_APP = get_object_guide_sheet('ui_about_app')
+ABOUT_APP.set_version(FS.__version__)
+HELP_APP = get_object_guide_sheet('ui_help_app')
+INTRO_APP = get_object_guide_sheet('ui_intro_app')
 
 # HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
 # HELP_SHEET_DISPLAY = get_object_guide_sheet('ui_help_sheet_display')
 # HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
 # HELP_SHEET_TOPICS = get_object_guide_sheet('ui_help_sheet_topics')
 
-# del builder_guide_sheet
-# del get_object_guide_sheet
+del builder_guide_sheet
+del get_object_guide_sheet
 
 # Topic-level definitions
 
@@ -230,14 +230,14 @@ DIR_UI = Path(__file__).parent / 'ui'
 # Not defined yet.
 
 
-def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,
-                      px_handler: typing.Callable) -> None:
+def new_action_active(p_group: Gio.SimpleActionGroup, p_name: str,
+                      p_handler: typing.Callable) -> None:
     """Construct action, add to group, and connect to
     `activate <GioSimpleActionActivate_>`_ signal handler.
 
-    :param pm_group: action group to contain new action.
+    :param p_group: action group to contain new action.
     :param p_name: name of new action.
-    :param px_handler: `activate <GioSimpleActionActivate_>`_ signal
+    :param p_handler: `activate <GioSimpleActionActivate_>`_ signal
        handler for new action.
 
     .. _GioSimpleActionActivate: https://lazka.github.io/pgi-docs/
@@ -246,24 +246,23 @@ def new_action_active(pm_group: Gio.SimpleActionGroup, p_name: str,
     """
     raise NotImplementedError
     # action = Gio.SimpleAction.new(p_name, None)
-    # pm_group.add_action(action)
-    # action.connect('activate', px_handler)
+    # p_group.add_action(action)
+    # action.connect('activate', p_handler)
 
 
-def new_action_active_dialog(pm_group: Gio.SimpleActionGroup,
-                             p_name: str, px_handler: typing.Callable,
-                             px_dialog: Gtk.Dialog) -> None:
+def new_action_active_dialog(p_group: Gio.SimpleActionGroup,
+                             p_name: str, p_handler: typing.Callable,
+                             p_dialog: Gtk.Dialog) -> None:
     """Construct action, add to group, and connect to
     `activate <GioSimpleActionActivate_>`_ signal handler with dialog
     parameter.
 
-    :param pm_group: action group to contain new action.
+    :param p_group: action group to contain new action.
     :param p_name: name of new action.
-    :param px_handler: `activate <GioSimpleActionActivate_>`_ signal
+    :param p_handler: `activate <GioSimpleActionActivate_>`_ signal
        handler for new action.
-    :param px_dialog: dialog passed to handler.
+    :param p_dialog: dialog passed to handler.
     """
-    raise NotImplementedError
-    # action = Gio.SimpleAction.new(p_name, None)
-    # pm_group.add_action(action)
-    # action.connect('activate', px_handler, px_dialog)
+    action = Gio.SimpleAction.new(p_name, None)
+    p_group.add_action(action)
+    action.connect('activate', p_handler, p_dialog)

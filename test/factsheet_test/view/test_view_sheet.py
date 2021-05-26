@@ -108,11 +108,11 @@ def patch_dialog_choose():
 
 
 @pytest.fixture
-def parent_window():
-    """Fixture with teardown to return parent window."""
-    parent = Gtk.Window()
-    yield parent
-    parent.destroy()
+def gtk_app_window():
+    """Fixture with teardown: return GTK.ApplicationWindow."""
+    gtk_window = Gtk.ApplicationWindow()
+    yield gtk_window
+    gtk_window.destroy()
 
 
 class TestUiItems:
@@ -184,11 +184,6 @@ class TestViewSheet:
         # assert target._window.lookup_action('save-sheet') is not None
         # assert target._window.lookup_action('save-as-sheet') is not None
         #
-        # # Application Menu
-        # assert target._window.lookup_action('show-intro-app') is not None
-        # assert target._window.lookup_action('show-help-app') is not None
-        # assert target._window.lookup_action('show-about-app') is not None
-        #
         # # Factsheet Menu
         # assert target._window.lookup_action('show-help-sheet') is not None
         #
@@ -230,7 +225,7 @@ class TestViewSheet:
             ])
     def test_init_signals(
             self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT,
-            patch_appfactsheet, capfd, parent_window):
+            patch_appfactsheet, capfd, gtk_app_window):
         """Confirm initialization of signal connections."""
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
@@ -245,7 +240,7 @@ class TestViewSheet:
         assert 'GApplication::startup signal' in snapshot.err
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
-        target._window.set_transient_for(parent_window)
+        target._window.set_transient_for(gtk_app_window)
 
         attribute = getattr(target, NAME_ATTRIBUTE)
         n_handlers = 0
@@ -287,6 +282,25 @@ class TestViewSheet:
         # target._window.destroy()
         # del target._window
         # del factsheet
+
+    @pytest.mark.parametrize('SIGNAL', [
+        'show-about-app',
+        'show-help-app',
+        'show-intro-app',
+        ])
+    def test_init_app_menu(self, patch_appfactsheet, capfd, SIGNAL):
+        """Confirm application menu actions defined."""
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_app=app, p_control=control)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # Test
+        assert target._window.lookup_action(SIGNAL) is not None
+        # assert target._window.lookup_action('show-about-app') is not None
 
     @pytest.mark.skip
     def test_close_page(self, monkeypatch, patch_factsheet, capfd):
@@ -2041,45 +2055,40 @@ class TestViewSheet:
         # del target._window
         # del factsheet
 
-    @pytest.mark.skip
-    def test_on_show_dialog(self, patch_factsheet, capfd, monkeypatch):
-        """Confirm handler runs dialog.
+    def test_on_show_dialog(
+            self, patch_appfactsheet, capfd, monkeypatch, gtk_app_window):
+        """Confirm handler displays dialog.
 
         See manual tests for dialog content checks.
         """
-        # # Setup
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # class DialogPatch:
-        #     def __init__(self): self.called = False
-        #
-        #     def run(self): self.called = True
-        #
-        # patch = DialogPatch()
-        # monkeypatch.setattr(Gtk.Dialog, 'run', patch.run)
-        #
-        # window = Gtk.ApplicationWindow()
-        # monkeypatch.setattr(
-        #     Gtk.Application, 'get_windows', lambda *_args: [window])
-        # dialog = Gtk.Dialog()
-        # dialog.set_visible(True)
-        # # Test
-        # target.on_show_dialog(None, None, dialog)
-        # assert patch.called
-        # assert not dialog.is_visible()
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-        # del window
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_app=app, p_control=control)
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-CRITICAL' in snapshot.err
+        assert 'GApplication::startup signal' in snapshot.err
+        # target._window.set_skip_pager_hint(True)
+        # target._window.set_skip_taskbar_hint(True)
+
+        class PatchRun:
+            def __init__(self): self.called = False
+
+            def run(self): self.called = True
+
+        patch = PatchRun()
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch.run)
+
+        dialog = Gtk.Dialog()
+        parent = gtk_app_window
+        dialog.set_transient_for(parent)
+        dialog.set_visible(True)
+        # Test
+        target.on_show_dialog(None, None, dialog)
+        assert dialog.get_transient_for() is None
+        assert patch.called
+        assert not dialog.is_visible()
 
     @pytest.mark.skip
     def test_on_toggle_search_field_inactive(self, patch_factsheet, capfd):

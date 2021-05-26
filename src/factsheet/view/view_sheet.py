@@ -113,6 +113,7 @@ class ViewSheet:
         #     self._window, 'save-as-sheet', self.on_save_as_sheet)
 
         # Application Menu
+        self._init_app_menu()
         # UI.new_action_active_dialog(self._window, 'show-intro-app',
         #                             self.on_show_dialog, UI.INTRO_APP)
         # UI.new_action_active_dialog(self._window, 'show-help-app',
@@ -181,6 +182,18 @@ class ViewSheet:
         # button_by_title = get_object('ui_find_by_title')
         # _ = button_by_title.connect(
         #     'toggled', self.on_toggle_search_field, ASHEET.FieldsTopic.TITLE)
+
+    def _init_app_menu(self):
+        """Initialize application menu.
+
+        Create an action for each application menu dialog.
+        """
+        UI.new_action_active_dialog(self._window, 'show-intro-app',
+                                    self.on_show_dialog, UI.INTRO_APP)
+        UI.new_action_active_dialog(self._window, 'show-help-app',
+                                    self.on_show_dialog, UI.HELP_APP)
+        UI.new_action_active_dialog(self._window, 'show-about-app',
+                                    self.on_show_dialog, UI.ABOUT_APP)
 
     def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
         """Construct Data Loss Warning dialog.
@@ -600,16 +613,16 @@ class ViewSheet:
         # del dialog
 
     def on_show_dialog(self, _action: Gio.SimpleAction,
-                       _target: GLib.Variant, px_dialog: Gtk.Dialog
+                       _target: GLib.Variant, p_dialog: Gtk.Dialog
                        ) -> None:
         """Display informational dialog.
 
-        :param px_dialog: informational dialog.
+        :param p_dialog: informational dialog.
         """
-        raise NotImplementedError
-        # px_dialog.set_transient_for(self._window)
-        # _ = px_dialog.run()
-        # px_dialog.hide()
+        p_dialog.set_transient_for(self._window)
+        _ = p_dialog.run()
+        p_dialog.hide()
+        p_dialog.set_transient_for(None)
 
     def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field
                                ) -> None:

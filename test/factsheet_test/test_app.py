@@ -32,8 +32,6 @@ class TestFactsheet:
         assert not snapshot.out
         assert 'Gtk-CRITICAL' in snapshot.err
         assert 'GApplication::startup signal' in snapshot.err
-        print(target.get_windows())
-        assert False
 
     def test_do_shutdown(self, monkeypatch, caplog):
         """Confirm application teardown."""

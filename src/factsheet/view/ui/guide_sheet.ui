@@ -7,7 +7,7 @@
     <property name="type_hint">dialog</property>
     <property name="program_name">Factsheet</property>
     <property name="version">Oops! Missing info</property>
-    <property name="copyright" translatable="yes">(c) 2020 Gary Grainger</property>
+    <property name="copyright" translatable="yes">(c) 2020, 2021 Gary Grainger</property>
     <property name="comments" translatable="yes">A demonstration application for
 investigating algebraic structures.</property>
     <property name="website">https://github.com/gary9204/Factsheet</property>
@@ -166,7 +166,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. Factsheet provides templates for constructing small sets, operations, and groups. The templates include forms to produce facts about the objects you construct.</property>
+                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. Factsheet provides templates for constructing small sets, operations, and groups.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -184,7 +184,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics. &lt;/i&gt;Each topic is either a template to constuct structures (such as sets of integers modulo &lt;i&gt;n&lt;/i&gt;) or a specified structure (such as the set of integers modulo 6). A topic for a specific structure contains a collection &lt;i&gt;facts &lt;/i&gt;about the structure. Initially facts are undetermined. A topic includes a check for each fact to produce the value of the fact. For example, each set topic has a size fact with a corresponding check to calculate the set size.</property>
+                    <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic represents a specific subject, such as a set, binary operation, or group.  A topic includes a collection &lt;i&gt;facts &lt;/i&gt;about the subject along with checks to determine the value of each fact. </property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -2145,7 +2145,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">Factsheet is an application to explore facts about algebraic structures.  Factsheet provides templates for constructing small sets, binary operations, and groups. The templates include forms to determine facts about the objects you construct.</property>
+                <property name="label" translatable="yes">Factsheet is an application to explore facts about algebraic structures.  Factsheet provides tools for constructing and exploring small sets, binary operations, and groups. </property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2162,7 +2162,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics. &lt;/i&gt;Each topic is either a template to constuct structures (such as sets of integers modulo &lt;i&gt;n&lt;/i&gt;) or a specified structure (such as the set of integers modulo 6). A topic for a specific structure contains a collection &lt;i&gt;facts &lt;/i&gt;about the structure. Initially, facts are undetermined. A topic includes a check for each fact to produce the value of the fact. For example, each set topic has a size fact with a corresponding check to calculate the set size.</property>
+                <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic represents a specific subject, such as a set, binary operation, or group.  A topic includes a collection &lt;i&gt;facts &lt;/i&gt;about the subject along with checks to determine the value of each fact. </property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2171,6 +2171,21 @@ investigating algebraic structures.</property>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">A factsheet contains templates to construct topics. For example, you can use the template for groups of integers modulo &lt;i&gt;n&lt;/i&gt; to created a topic for the group of integers modulo 6.  You can use the topic's checks to determine, for example, the identity in the group. </property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -2187,7 +2202,7 @@ investigating algebraic structures.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
