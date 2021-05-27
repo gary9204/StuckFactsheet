@@ -2177,7 +2177,7 @@ investigating algebraic structures.</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Factsheet includes a collection of templates, which you can use to construct topics and facts.  For example, Factsheet has a template for contructing a group of integers module &lt;i&gt;n.  &lt;/i&gt;You choose the value of &lt;i&gt;n&lt;/i&gt;, say 6, to construct the topic the group of intergers modulo 6.</property>
+                <property name="label" translatable="yes">Factsheet includes a collection of templates, which you can use to construct topics and facts.  For example, Factsheet has a template for contructing a set of integers module &lt;i&gt;n.  &lt;/i&gt;You choose the value of &lt;i&gt;n&lt;/i&gt;, say 6, to construct the topic the set of intergers modulo 6.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
