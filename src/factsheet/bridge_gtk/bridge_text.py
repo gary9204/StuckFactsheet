@@ -178,7 +178,7 @@ class BridgeTextFormat(BridgeText[ModelTextFormat, ViewTextFormat]):
         return model
 
     def new_view(self) -> ViewTextFormat:
-        """Return toolkit-specific object to display text."""
+        """Return toolkit-specific object to display and edit text."""
         return ViewTextFormat.new_with_buffer(self._model)
 
     def _set_persist(self, p_persist: PersistText) -> None:
@@ -211,6 +211,20 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
     """
 
+    def _destroy_view(self, p_view: ViewTextStatic) -> None:
+        """Stop updating display view that is being destroyed.
+
+        :param p_view: display view being destroyed.
+        """
+        id_view = id(p_view)
+        try:
+            _ = self._views.pop(id_view)
+        except KeyError:
+            logger.warning(
+                'Missing view: {} ({}.{})'.format(
+                    hex(id_view),
+                    self.__class__.__name__, self._destroy_view.__name__))
+
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
@@ -220,13 +234,28 @@ class BridgeTextMarkup(BridgeText[ModelTextMarkup, ViewTextMarkup]):
     def _new_model(self) -> ModelTextMarkup:
         """Return toolkit-specific object to store text."""
         model = ModelTextMarkup()
-        _ = model.connect('deleted-text', lambda *_a: self.set_stale())
-        _ = model.connect('inserted-text', lambda *_a: self.set_stale())
+        _ = model.connect('deleted-text', lambda *_a: self.on_change())
+        _ = model.connect('inserted-text', lambda *_a: self.on_change())
+        self._views: typing.MutableMapping[int, ViewTextStatic] = dict()
         return model
 
-    def new_view(self) -> ViewTextMarkup:
+    def new_view(self) -> ViewTextStatic:
         """Return toolkit-specific object to display text."""
+        view = ViewTextStatic(label=self._get_persist())
+        _ = view.connect('destroy', self._destroy_view)
+        self._views[id(view)] = view
+        return view
+
+    def new_view_editable(self) -> ViewTextMarkup:
+        """Return toolkit-specific object to display and edit text."""
         return ViewTextMarkup.new_with_buffer(self._model)
+
+    def on_change(self):
+        """Refresh display views when text is inserted or deleted."""
+        self.set_stale()
+        text_new = self._model.get_text()
+        for view in self._views.values():
+            view.set_label(text_new)
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -295,8 +324,8 @@ class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextStatic]):
     def new_view(self) -> ViewTextStatic:
         """Return toolkit-specific object to display text."""
         view = ViewTextStatic(label=self._model)
-        _ = view.connect('destroy', self._destroy_view)
         self._views[id(view)] = view
+        _ = view.connect('destroy', self._destroy_view)
         return view
 
     def _set_persist(self, p_persist: PersistText) -> None:

@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 1
 
+   factsheet_test.bridge_gtk
    factsheet_test.control
    factsheet_test.view
 ..   factsheet_test.abc_types
