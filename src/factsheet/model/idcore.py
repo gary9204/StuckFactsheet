@@ -21,11 +21,11 @@ import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_ui as BUI
 
 ViewName = typing.TypeVar(
-    'ViewName', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
+    'ViewName', BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)
 ViewSummary = typing.TypeVar(
-    'ViewSummary', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
+    'ViewSummary', BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)
 ViewTitle = typing.TypeVar(
-    'ViewTitle', BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)
+    'ViewTitle', BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)
 
 
 class IdCore(ABC_STALE.InterfaceStaleFile,

@@ -21,9 +21,8 @@ ViewOutlineColumnar = BOUTLINE.ViewOutlineColumnar
 ViewOutlineSelect = BOUTLINE.ViewOutlineSelect
 
 BridgeText = BTEXT.BridgeText
-BridgeTextFormat = BTEXT.BridgeTextFormat
 BridgeTextMarkup = BTEXT.BridgeTextMarkup
-BridgeTextStatic = BTEXT.BridgeTextStatic
-ViewTextFormat = BTEXT.ViewTextFormat
+BridgeTextTagged = BTEXT.BridgeTextTagged
+ViewTextDisplay = BTEXT.ViewTextDisplay
 ViewTextMarkup = BTEXT.ViewTextMarkup
-ViewTextStatic = BTEXT.ViewTextStatic
+ViewTextTagged = BTEXT.ViewTextTagged

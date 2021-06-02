@@ -18,7 +18,7 @@ SubjectAny = typing.Any
 SubjectOpaque = typing.TypeVar('SubjectOpaque')
 # ViewAspectBridge = typing.TypeVar('ViewAspectBridge')
 # ViewAspectOpaque = typing.TypeVar('ViewAspectOpaque')
-ViewAspectPlain = BUI.ViewTextStatic
+ViewAspectPlain = BUI.ViewTextDisplay
 
 
 class Aspect(abc.ABC, typing.Generic[SubjectOpaque]):

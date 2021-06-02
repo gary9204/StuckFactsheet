@@ -297,13 +297,13 @@ class TestIdCoreTypes:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (type(MIDCORE.ViewName), typing.TypeVar),
         (MIDCORE.ViewName.__constraints__, (
-            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+            BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)),
         (type(MIDCORE.ViewSummary), typing.TypeVar),
         (MIDCORE.ViewSummary.__constraints__, (
-            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+            BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)),
         (type(MIDCORE.ViewTitle), typing.TypeVar),
         (MIDCORE.ViewTitle.__constraints__, (
-            BUI.ViewTextFormat, BUI.ViewTextMarkup, BUI.ViewTextStatic)),
+            BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""

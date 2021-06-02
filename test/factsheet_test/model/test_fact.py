@@ -46,7 +46,7 @@ def fact_sample_with_view_aspect(request, fact_sample):
 
 
 class PatchTopic(MIDCORE.IdCore[
-        BUI.ViewTextMarkup, BUI.ViewTextFormat, BUI.ViewTextMarkup]):
+        BUI.ViewTextMarkup, BUI.ViewTextTagged, BUI.ViewTextMarkup]):
     """Stub for Topic class."""
 
     def __init__(self, **kwargs):
@@ -56,7 +56,7 @@ class PatchTopic(MIDCORE.IdCore[
 
     def _new_model(self):
         name = BUI.BridgeTextMarkup()
-        summary = BUI.BridgeTextFormat()
+        summary = BUI.BridgeTextTagged()
         title = BUI.BridgeTextMarkup()
         return name, summary, title
 
@@ -437,10 +437,10 @@ class TestTypes:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (MFACT.NameFact, BUI.BridgeTextMarkup),
-        (MFACT.SummaryFact, BUI.BridgeTextFormat),
+        (MFACT.SummaryFact, BUI.BridgeTextTagged),
         (MFACT.TitleFact, BUI.BridgeTextMarkup),
         (MFACT.ViewNameFact, BUI.ViewTextMarkup),
-        (MFACT.ViewSummaryFact, BUI.ViewTextFormat),
+        (MFACT.ViewSummaryFact, BUI.ViewTextTagged),
         (MFACT.ViewTitleFact, BUI.ViewTextMarkup),
         (MFACT.NamesAspects, BUI.BridgeOutlineSelect[str]),
         (MFACT.ViewNamesAspects, BUI.ViewOutlineSelect),

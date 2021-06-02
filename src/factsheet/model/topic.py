@@ -21,7 +21,7 @@ TagTopic = typing.NewType('TagTopic', int)  # was: MFACT.TagTopic
 # TitleTopic = MFACT.TitleTopic
 
 ViewNameTopic = BUI.ViewTextMarkup
-ViewSummaryTopic = BUI.ViewTextFormat
+ViewSummaryTopic = BUI.ViewTextTagged
 ViewTitleTopic = BUI.ViewTextMarkup
 
 

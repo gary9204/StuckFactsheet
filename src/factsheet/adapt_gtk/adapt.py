@@ -20,6 +20,6 @@ AspectValuePlain = AVALUE.AspectValuePlain
 
 ValueAny = AVALUE.ValueAny
 
-ViewTextFormat = ATEXT.ViewTextFormat
+ViewTextFormat = ATEXT.ViewTextTagged
 ViewTextMarkup = ATEXT.ViewTextMarkup
-ViewTextStatic = ATEXT.ViewTextStatic
+ViewTextStatic = ATEXT.ViewTextDisplay

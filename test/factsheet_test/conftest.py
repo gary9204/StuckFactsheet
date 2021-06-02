@@ -57,7 +57,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class PatchIdCore(MIDCORE.IdCore[BTEXT.ViewTextMarkup,
-                  BTEXT.ViewTextFormat, BTEXT.ViewTextMarkup]):
+                  BTEXT.ViewTextTagged, BTEXT.ViewTextMarkup]):
     """:class:`.IdCore` subclass with stubs for properties."""
 
     def __init__(self, *, p_name, p_summary, p_title, **kwargs):
@@ -66,7 +66,7 @@ class PatchIdCore(MIDCORE.IdCore[BTEXT.ViewTextMarkup,
 
     def _new_model(self):
         name = BTEXT.BridgeTextMarkup()
-        summary = BTEXT.BridgeTextFormat()
+        summary = BTEXT.BridgeTextTagged()
         title = BTEXT.BridgeTextMarkup()
         return name, summary, title
 

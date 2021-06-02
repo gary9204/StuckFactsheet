@@ -28,12 +28,11 @@ class TestBridgeTypes:
         (BUI.ViewOutlineColumnar, BOUTLINE.ViewOutlineColumnar),
         (BUI.ViewOutlineSelect, BOUTLINE.ViewOutlineSelect),
         (BUI.BridgeText, BTEXT.BridgeText),
-        (BUI.BridgeTextFormat, BTEXT.BridgeTextFormat),
         (BUI.BridgeTextMarkup, BTEXT.BridgeTextMarkup),
-        (BUI.BridgeTextStatic, BTEXT.BridgeTextStatic),
-        (BUI.ViewTextFormat, BTEXT.ViewTextFormat),
+        (BUI.BridgeTextTagged, BTEXT.BridgeTextTagged),
+        (BUI.ViewTextDisplay, BTEXT.ViewTextDisplay),
         (BUI.ViewTextMarkup, BTEXT.ViewTextMarkup),
-        (BUI.ViewTextStatic, BTEXT.ViewTextStatic),
+        (BUI.ViewTextTagged, BTEXT.ViewTextTagged),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm API definitions."""

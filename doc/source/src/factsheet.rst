@@ -27,3 +27,4 @@ Submodules
    :maxdepth: 1
 
    factsheet.app
+   factsheet.bridge_ui

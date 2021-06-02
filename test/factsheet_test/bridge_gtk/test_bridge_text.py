@@ -17,7 +17,7 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
+class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any, typing.Any]):
     """:class:`.BridgeText` subclass with stub text property."""
 
     def __init__(self):
@@ -32,6 +32,9 @@ class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):
     def new_view(self):
         return str()
 
+    def new_view_passive(self):
+        return str()
+
     def _set_persist(self, p_persist):
         self._model = str(p_persist)
 
@@ -43,6 +46,7 @@ class TestBridgeText:
         (BTEXT.BridgeText, '_get_persist'),
         (BTEXT.BridgeText, '_new_model'),
         (BTEXT.BridgeText, 'new_view'),
+        (BTEXT.BridgeText, 'new_view_passive'),
         (BTEXT.BridgeText, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
@@ -186,7 +190,7 @@ class TestBridgeTextCommon:
 
     @pytest.mark.parametrize(
         'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (BTEXT.BridgeTextFormat, BTEXT.ModelTextFormat,
+            (BTEXT.BridgeTextTagged, BTEXT.ModelTextTagged,
                 'changed', 0),
             (BTEXT.BridgeTextMarkup, BTEXT.ModelTextMarkup,
                 'deleted-text', 0),
@@ -225,7 +229,7 @@ class TestBridgeTextCommon:
         assert (N_DEFAULT + 1) == n_handlers
 
     @pytest.mark.parametrize('CLASS_BRIDGE, CLASS_TEXT', [
-        (BTEXT.BridgeTextFormat, BTEXT.ModelTextFormat),
+        (BTEXT.BridgeTextTagged, BTEXT.ModelTextTagged),
         (BTEXT.BridgeTextMarkup, BTEXT.ModelTextMarkup),
         # See TestBridgeTextStatic for specialized test.
         ])
@@ -240,7 +244,7 @@ class TestBridgeTextCommon:
 
     @pytest.mark.parametrize(
         'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (BTEXT.BridgeTextFormat, BTEXT.ModelTextFormat,
+            (BTEXT.BridgeTextTagged, BTEXT.ModelTextTagged,
                 'changed', 0),
             (BTEXT.BridgeTextMarkup, BTEXT.ModelTextMarkup,
                 'deleted-text', 0),
@@ -268,63 +272,15 @@ class TestBridgeTextCommon:
         assert (N_DEFAULT + 1) == n_handlers
 
 
-class TestBridgeTextFormat:
-    """Unit tests for :class:`.BridgeTextFormat`.
-
-    See :class:`.TestBridgeTextCommon` for additional unit tests for
-    :class:`.BridgeTextFormat`.
-    """
-
-    def test_get_persist(self):
-        """Confirm export to persistent form."""
-        # Setup
-        target = BTEXT.BridgeTextFormat()
-        TEXT = 'The Parrot Sketch.'
-        ALL = -1
-        target._model.set_text(TEXT, ALL)
-        # Test
-        assert TEXT == target._get_persist()
-
-    def test_new_model(self):
-        """Confirm storage element."""
-        # Setup
-        target = BTEXT.BridgeTextFormat()
-        # Test
-        assert isinstance(target._model, BTEXT.ModelTextFormat)
-
-    def test_new_view(self):
-        """Confirm view element."""
-        # Setup
-        target = BTEXT.BridgeTextFormat()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BTEXT.ViewTextFormat)
-        assert target._model is view.get_buffer()
-
-    def test_set_persist(self):
-        """Confirm import from persistent form."""
-        # Setup
-        target = BTEXT.BridgeTextFormat()
-        TEXT = 'The Parrot Sketch.'
-        ALL = -1
-        target._model.set_text(TEXT, ALL)
-        target._stale = False
-        TEXT_NEW = 'Something completely different.'
-        # Test
-        target._set_persist(TEXT_NEW)
-        assert TEXT_NEW == target._get_persist()
-        assert target._stale
-
-
 class TestBridgeTextMarkup:
     """Unit tests for :class:`.BridgeTextMarkup`.
 
     :class:`.TestBridgeTextCommon` contains additional unit tests for
-    :class:`.BridgeTestMarkup`.
+    :class:`.BridgeTextMarkup`.
     """
 
     def test_destroy_view(self):
-        """| Confirm view removal.
+        """| Confirm display-only view removal.
         | Case: model connected to view.
         """
         # Setup
@@ -332,7 +288,7 @@ class TestBridgeTextMarkup:
         N_VIEWS = 5
         I_REMOVE = 4
         for i in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
+            view = BTEXT.ViewTextDisplay()
             id_view = id(view)
             target._views[id_view] = view
             if i == I_REMOVE:
@@ -343,16 +299,16 @@ class TestBridgeTextMarkup:
         assert id_remove not in target._views
 
     def test_destroy_view_warn(self, PatchLogger, monkeypatch):
-        """| Confirm view removal.
+        """| Confirm display-only view removal.
         | Case: model not connected view.
         """
         # Setup
         target = BTEXT.BridgeTextMarkup()
         N_VIEWS = 5
         for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
+            view = BTEXT.ViewTextDisplay()
             target._views[id(view)] = view
-        VIEW_MISSING = BTEXT.ViewTextStatic()
+        VIEW_MISSING = BTEXT.ViewTextDisplay()
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
@@ -384,8 +340,18 @@ class TestBridgeTextMarkup:
         assert isinstance(target._views, dict)
         assert not target._views
 
-    def test_new_view(self, monkeypatch):
-        """Confirm view element."""
+    def test_new_view(self):
+        """Confirm return is editable view."""
+        # Setup
+        target = BTEXT.BridgeTextMarkup()
+        # Test
+        view = target.new_view()
+        assert isinstance(view, BTEXT.ViewTextMarkup)
+        assert target._model is view.get_buffer()
+        assert not target._views
+
+    def test_new_view_passive(self, monkeypatch):
+        """Confirm return is display-only view."""
         class PatchConnect:
             def __init__(self):
                 self.called = False
@@ -405,23 +371,13 @@ class TestBridgeTextMarkup:
         SIGNAL = 'destroy'
         HANDLER = target._destroy_view
         # Test
-        view = target.new_view()
-        assert isinstance(view, BTEXT.ViewTextStatic)
+        view = target.new_view_passive()
+        assert isinstance(view, BTEXT.ViewTextDisplay)
         assert TEXT == view.get_label()
         assert patch_connect.called
         assert SIGNAL == patch_connect.signal
         assert target._destroy_view == HANDLER
         assert target._views[id(view)] is view
-
-    def test_new_view_editable(self):
-        """Confirm view element."""
-        # Setup
-        target = BTEXT.BridgeTextMarkup()
-        # Test
-        view = target.new_view_editable()
-        assert isinstance(view, BTEXT.ViewTextMarkup)
-        assert target._model is view.get_buffer()
-        assert not target._views
 
     def test_on_change(self):
         """Confirm refresh of display views. """
@@ -432,7 +388,7 @@ class TestBridgeTextMarkup:
         target._model.set_text(TEXT, ALL)
         N_VIEWS = 3
         for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
+            view = BTEXT.ViewTextDisplay()
             target._views[id(view)] = view
         target.set_fresh()
         # Test
@@ -451,7 +407,7 @@ class TestBridgeTextMarkup:
         target._model.set_text(TEXT, ALL)
         N_VIEWS = 3
         for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
+            view = BTEXT.ViewTextDisplay()
             target._views[id(view)] = view
         target.set_fresh()
         TEXT_NEW = 'Something completely different.'
@@ -464,168 +420,229 @@ class TestBridgeTextMarkup:
             assert TEXT_NEW == view.get_label()
 
 
-class TestBridgeTextStatic:
-    """Unit tests for :class:`.BridgeTextStatis`.
-
-    See :class:`.TestBridgeTextCommon` for additional unit tests for
-    :class:`.BridgeTestStatic`.
-    """
-
-    def test_get_set_state(self, tmp_path):
-        """Confirm conversion to and from pickle format."""
-        # Setup
-        PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = BTEXT.BridgeTextStatic()
-        TEXT = 'Something completely different'
-        source._set_persist(TEXT)
-        source._stale = True
-        I_ENTRY = 0
-        source._views[I_ENTRY] = BTEXT.ViewTextStatic()
-        # Test
-        with PATH.open(mode='wb') as io_out:
-            pickle.dump(source, io_out)
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-        assert source._get_persist() == target._get_persist()
-        assert isinstance(target._views, dict)
-        assert not target._views
-        assert not target._stale
-
-    def test_init(self):
-        """Confirm initialization. """
-        # Setup
-        # Test
-        target = BTEXT.BridgeTextStatic()
-        assert not target._stale
-        assert not target._views
-        assert isinstance(target._model, BTEXT.ModelTextStatic)
-        assert not target._get_persist()
-
-    def test_destroy_view(self):
-        """| Confirm view removal.
-        | Case: model connected to view.
-        """
-        # Setup
-        target = BTEXT.BridgeTextStatic()
-        N_VIEWS = 5
-        I_REMOVE = 4
-        for i in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
-            id_view = id(view)
-            target._views[id_view] = view
-            if i == I_REMOVE:
-                id_remove = id_view
-                view_remove = view
-        # Test
-        target._destroy_view(view_remove)
-        assert id_remove not in target._views
-
-    def test_destroy_view_warn(self, PatchLogger, monkeypatch):
-        """| Confirm view removal.
-        | Case: model not connected view.
-        """
-        # Setup
-        target = BTEXT.BridgeTextStatic()
-        N_VIEWS = 5
-        for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
-            target._views[id(view)] = view
-        VIEW_MISSING = BTEXT.ViewTextStatic()
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
-        log_message = ('Missing view: {} (BridgeTextStatic._destroy_view)'
-                       ''.format(hex(id(VIEW_MISSING))))
-        # Test
-        target._destroy_view(VIEW_MISSING)
-        assert N_VIEWS == len(target._views)
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
-
-    def test_get_persist(self):
-        """Confirm export to persistent form."""
-        # Setup
-        target = BTEXT.BridgeTextStatic()
-        TEXT = 'The <b>Parrot </b>Sketch'
-        target._model = TEXT
-        # Test
-        assert TEXT == target._get_persist()
-
-    def test_new_model(self):
-        """Confirm storage type."""
-        # Setup
-        target = BTEXT.BridgeTextStatic()
-        # Test
-        assert isinstance(target._model, BTEXT.ModelTextStatic)
-
-    def test_new_view(self, monkeypatch):
-        """Confirm view element."""
-        # Setup
-        class PatchConnect:
-            def __init__(self):
-                self.called = False
-                self.signal = None
-                self.handler = None
-
-            def connect(self, p_signal, p_handler):
-                self.called = True
-                self.signal = p_signal
-                self.handler = p_handler
-
-        patch_connect = PatchConnect()
-        monkeypatch.setattr(Gtk.Widget, 'connect', patch_connect.connect)
-        target = BTEXT.BridgeTextStatic()
-        TEXT = 'The <b>Parrot </b>Sketch'
-        target._set_persist(TEXT)
-        SIGNAL = 'destroy'
-        HANDLER = target._destroy_view
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BTEXT.ViewTextStatic)
-        assert TEXT == view.get_label()
-        assert patch_connect.called
-        assert SIGNAL == patch_connect.signal
-        assert target._destroy_view == HANDLER
-        assert target._views[id(view)] is view
-
-    def test_set_persist(self):
-        """Confirm import from persistent form."""
-        # Setup
-        target = BTEXT.BridgeTextStatic()
-        TEXT = 'The <b>Parrot </b>Sketch.'
-        target._model = TEXT
-        target._stale = False
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextStatic()
-            target._views[id(view)] = view
-        TEXT_NEW = 'Something <i>completely </i>different.'
-        # Test
-        target._set_persist(TEXT_NEW)
-        assert TEXT_NEW == target._get_persist()
-        assert N_VIEWS == len(target._views)
-        for view in target._views.values():
-            assert TEXT_NEW == view.get_label()
-
-
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.bridge_text`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (type(BTEXT.ModelTextOpaque), typing.TypeVar),
         (BTEXT.ModelTextOpaque.__constraints__, ()),
-        (BTEXT.ModelTextFormat, Gtk.TextBuffer),
+        (BTEXT.ModelTextTagged, Gtk.TextBuffer),
         (BTEXT.ModelTextMarkup, Gtk.EntryBuffer),
-        (BTEXT.ModelTextStatic, str),
-        (BTEXT.ViewTextFormat, Gtk.TextView),
+        # (BTEXT.ModelTextStatic, str),
+        (BTEXT.ViewTextTagged, Gtk.TextView),
         (BTEXT.ViewTextMarkup, Gtk.Entry),
         (type(BTEXT.ViewTextOpaque), typing.TypeVar),
         (BTEXT.ViewTextOpaque.__constraints__, ()),
-        (BTEXT.ViewTextStatic, Gtk.Label),
+        (type(BTEXT.ViewTextOpaquePassive), typing.TypeVar),
+        (BTEXT.ViewTextOpaquePassive.__constraints__, ()),
+        (BTEXT.ViewTextDisplay, Gtk.Label),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_SOURCE
+
+
+class TestBridgeTextTagged:
+    """Unit tests for :class:`.BridgeTextTagged`.
+
+    See :class:`.TestBridgeTextCommon` for additional unit tests for
+    :class:`.BridgeTextTagged`.
+    """
+
+    def test_get_persist(self):
+        """Confirm export to persistent form."""
+        # Setup
+        target = BTEXT.BridgeTextTagged()
+        TEXT = 'The Parrot Sketch.'
+        ALL = -1
+        target._model.set_text(TEXT, ALL)
+        # Test
+        assert TEXT == target._get_persist()
+
+    def test_new_model(self):
+        """Confirm storage element."""
+        # Setup
+        target = BTEXT.BridgeTextTagged()
+        # Test
+        assert isinstance(target._model, BTEXT.ModelTextTagged)
+
+    def test_new_view(self):
+        """Confirm return is editable view."""
+        # Setup
+        target = BTEXT.BridgeTextTagged()
+        # Test
+        view = target.new_view()
+        assert isinstance(view, BTEXT.ViewTextTagged)
+        assert target._model is view.get_buffer()
+        assert view.get_editable()
+
+    def test_new_view_passive(self):
+        """Confirm return is display-only view."""
+        # Setup
+        target = BTEXT.BridgeTextTagged()
+        # Test
+        view = target.new_view_passive()
+        assert isinstance(view, BTEXT.ViewTextTagged)
+        assert target._model is view.get_buffer()
+        assert not view.get_editable()
+
+    def test_set_persist(self):
+        """Confirm import from persistent form."""
+        # Setup
+        target = BTEXT.BridgeTextTagged()
+        TEXT = 'The Parrot Sketch.'
+        ALL = -1
+        target._model.set_text(TEXT, ALL)
+        target._stale = False
+        TEXT_NEW = 'Something completely different.'
+        # Test
+        target._set_persist(TEXT_NEW)
+        assert TEXT_NEW == target._get_persist()
+        assert target._stale
+
+
+# class TestBridgeTextStatic:
+#     """Unit tests for :class:`.BridgeTextStatis`.
+#
+#     See :class:`.TestBridgeTextCommon` for additional unit tests for
+#     :class:`.BridgeTestStatic`.
+#     """
+#
+#     def test_get_set_state(self, tmp_path):
+#         """Confirm conversion to and from pickle format."""
+#         # Setup
+#         PATH = Path(str(tmp_path / 'get_set.fsg'))
+#         source = BTEXT.BridgeTextStatic()
+#         TEXT = 'Something completely different'
+#         source._set_persist(TEXT)
+#         source._stale = True
+#         I_ENTRY = 0
+#         source._views[I_ENTRY] = BTEXT.ViewTextDisplay()
+#         # Test
+#         with PATH.open(mode='wb') as io_out:
+#             pickle.dump(source, io_out)
+#         with PATH.open(mode='rb') as io_in:
+#             target = pickle.load(io_in)
+#         assert source._get_persist() == target._get_persist()
+#         assert isinstance(target._views, dict)
+#         assert not target._views
+#         assert not target._stale
+#
+#     def test_init(self):
+#         """Confirm initialization. """
+#         # Setup
+#         # Test
+#         target = BTEXT.BridgeTextStatic()
+#         assert not target._stale
+#         assert not target._views
+#         assert isinstance(target._model, BTEXT.ModelTextStatic)
+#         assert not target._get_persist()
+#
+#     def test_destroy_view(self):
+#         """| Confirm view removal.
+#         | Case: model connected to view.
+#         """
+#         # Setup
+#         target = BTEXT.BridgeTextStatic()
+#         N_VIEWS = 5
+#         I_REMOVE = 4
+#         for i in range(N_VIEWS):
+#             view = BTEXT.ViewTextDisplay()
+#             id_view = id(view)
+#             target._views[id_view] = view
+#             if i == I_REMOVE:
+#                 id_remove = id_view
+#                 view_remove = view
+#         # Test
+#         target._destroy_view(view_remove)
+#         assert id_remove not in target._views
+#
+#     def test_destroy_view_warn(self, PatchLogger, monkeypatch):
+#         """| Confirm view removal.
+#         | Case: model not connected view.
+#         """
+#         # Setup
+#         target = BTEXT.BridgeTextStatic()
+#         N_VIEWS = 5
+#         for _ in range(N_VIEWS):
+#             view = BTEXT.ViewTextDisplay()
+#             target._views[id(view)] = view
+#         VIEW_MISSING = BTEXT.ViewTextDisplay()
+#
+#         patch_logger = PatchLogger()
+#         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
+#         log_message = ('Missing view: {} (BridgeTextStatic._destroy_view)'
+#                        ''.format(hex(id(VIEW_MISSING))))
+#         # Test
+#         target._destroy_view(VIEW_MISSING)
+#         assert N_VIEWS == len(target._views)
+#         assert patch_logger.called
+#         assert PatchLogger.T_WARNING == patch_logger.level
+#         assert log_message == patch_logger.message
+#
+#     def test_get_persist(self):
+#         """Confirm export to persistent form."""
+#         # Setup
+#         target = BTEXT.BridgeTextStatic()
+#         TEXT = 'The <b>Parrot </b>Sketch'
+#         target._model = TEXT
+#         # Test
+#         assert TEXT == target._get_persist()
+#
+#     def test_new_model(self):
+#         """Confirm storage type."""
+#         # Setup
+#         target = BTEXT.BridgeTextStatic()
+#         # Test
+#         assert isinstance(target._model, BTEXT.ModelTextStatic)
+#
+#     def test_new_view(self, monkeypatch):
+#         """Confirm view element."""
+#         # Setup
+#         class PatchConnect:
+#             def __init__(self):
+#                 self.called = False
+#                 self.signal = None
+#                 self.handler = None
+#
+#             def connect(self, p_signal, p_handler):
+#                 self.called = True
+#                 self.signal = p_signal
+#                 self.handler = p_handler
+#
+#         patch_connect = PatchConnect()
+#         monkeypatch.setattr(Gtk.Widget, 'connect', patch_connect.connect)
+#         target = BTEXT.BridgeTextStatic()
+#         TEXT = 'The <b>Parrot </b>Sketch'
+#         target._set_persist(TEXT)
+#         SIGNAL = 'destroy'
+#         HANDLER = target._destroy_view
+#         # Test
+#         view = target.new_view()
+#         assert isinstance(view, BTEXT.ViewTextDisplay)
+#         assert TEXT == view.get_label()
+#         assert patch_connect.called
+#         assert SIGNAL == patch_connect.signal
+#         assert target._destroy_view == HANDLER
+#         assert target._views[id(view)] is view
+#
+#     def test_set_persist(self):
+#         """Confirm import from persistent form."""
+#         # Setup
+#         target = BTEXT.BridgeTextStatic()
+#         TEXT = 'The <b>Parrot </b>Sketch.'
+#         target._model = TEXT
+#         target._stale = False
+#         N_VIEWS = 3
+#         for _ in range(N_VIEWS):
+#             view = BTEXT.ViewTextDisplay()
+#             target._views[id(view)] = view
+#         TEXT_NEW = 'Something <i>completely </i>different.'
+#         # Test
+#         target._set_persist(TEXT_NEW)
+#         assert TEXT_NEW == target._get_persist()
+#         assert N_VIEWS == len(target._views)
+#         for view in target._views.values():
+#             assert TEXT_NEW == view.get_label()

@@ -96,7 +96,7 @@ class TestTypes:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (CTOPIC.ViewNameTopic, BUI.ViewTextMarkup),
-        (CTOPIC.ViewSummaryTopic, BUI.ViewTextFormat),
+        (CTOPIC.ViewSummaryTopic, BUI.ViewTextTagged),
         (CTOPIC.ViewTitleTopic, BUI.ViewTextMarkup),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):

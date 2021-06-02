@@ -27,4 +27,5 @@ Submodules
    :maxdepth: 1
 
    factsheet_test.test_app
+   factsheet_test.test_bridge_ui
 ..   factsheet_test.conftest

@@ -16,10 +16,10 @@ import factsheet.model.idcore as MIDCORE
 import factsheet.bridge_ui as BUI
 
 NameFact = BUI.BridgeTextMarkup
-SummaryFact = BUI.BridgeTextFormat
+SummaryFact = BUI.BridgeTextTagged
 TitleFact = BUI.BridgeTextMarkup
 ViewNameFact = BUI.ViewTextMarkup
-ViewSummaryFact = BUI.ViewTextFormat
+ViewSummaryFact = BUI.ViewTextTagged
 ViewTitleFact = BUI.ViewTextMarkup
 
 NamesAspects = BUI.BridgeOutlineSelect[str]

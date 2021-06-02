@@ -23,7 +23,7 @@ import factsheet.model.topic as MTOPIC
 # logger = logging.getLogger('Main.control_fact')
 
 ViewNameTopic = BUI.ViewTextMarkup
-ViewSummaryTopic = BUI.ViewTextFormat
+ViewSummaryTopic = BUI.ViewTextTagged
 ViewTitleTopic = BUI.ViewTextMarkup
 
 
