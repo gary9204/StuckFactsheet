@@ -18,9 +18,12 @@ import factsheet.bridge_ui as BUI
 NameFact = BUI.BridgeTextMarkup
 SummaryFact = BUI.BridgeTextTagged
 TitleFact = BUI.BridgeTextMarkup
-ViewNameFact = BUI.ViewTextMarkup
-ViewSummaryFact = BUI.ViewTextTagged
-ViewTitleFact = BUI.ViewTextMarkup
+ViewNameFactActive = BUI.ViewTextMarkup
+ViewNameFactPassive = BUI.ViewTextDisplay
+ViewSummaryFactActive = BUI.ViewTextTagged
+ViewSummaryFactPassive = BUI.ViewTextTagged
+ViewTitleFactActive = BUI.ViewTextMarkup
+ViewTitleFactPassive = BUI.ViewTextDisplay
 
 NamesAspects = BUI.BridgeOutlineSelect[str]
 ViewNamesAspects = BUI.ViewOutlineSelect
@@ -68,7 +71,9 @@ class StatusOfFact(enum.Enum):
 
 
 class Fact(typing.Generic[TopicOpaque, ValueOpaque],
-           MIDCORE.IdCore[ViewNameFact, ViewSummaryFact, ViewTitleFact]):
+           MIDCORE.IdCore[ViewNameFactActive, ViewNameFactPassive,
+                          ViewSummaryFactActive, ViewSummaryFactPassive,
+                          ViewTitleFactActive, ViewTitleFactPassive]):
     """Fact component of Factsheet :mod:`~.factsheet.model`.
 
     Class ``Fact`` represents a fact about a specific subject within a

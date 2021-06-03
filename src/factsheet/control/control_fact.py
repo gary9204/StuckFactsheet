@@ -35,9 +35,9 @@ class ControlFact(CIDCORE.ControlIdCore[
         """Return view of names of aspects for the fact."""
         return self._fact.new_view_names_aspects()
 
-    def new_view_name(self) -> MFACT.ViewNameFact:
+    def new_view_name_active(self) -> MFACT.ViewNameFact:
         """Return view to display name."""
-        return self._fact.new_view_name()
+        return self._fact.new_view_name_active()
 
     def new_view_note(self) -> MFACT.ViewNoteFact:
         """Return view of fact's note."""
@@ -47,14 +47,14 @@ class ControlFact(CIDCORE.ControlIdCore[
         """Return view of fact's status."""
         return self._fact.new_view_status()
 
-    def new_view_summary(self) -> MFACT.ViewSummaryFact:
+    def new_view_summary_active(self) -> MFACT.ViewSummaryFact:
         """Return view to display summary."""
-        return self._fact.new_view_summary()
+        return self._fact.new_view_summary_active()
 
     def new_view_tag(self):
         """Return view of fact's tag."""
         return self._fact.new_view_tag()
 
-    def new_view_title(self) -> MFACT.ViewTitleFact:
+    def new_view_title_active(self) -> MFACT.ViewTitleFact:
         """Return view to display title."""
-        return self._fact.new_view_title()
+        return self._fact.new_view_title_active()

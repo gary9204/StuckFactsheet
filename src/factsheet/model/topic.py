@@ -20,12 +20,17 @@ OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]
 TagTopic = typing.NewType('TagTopic', int)  # was: MFACT.TagTopic
 # TitleTopic = MFACT.TitleTopic
 
-ViewNameTopic = BUI.ViewTextMarkup
-ViewSummaryTopic = BUI.ViewTextTagged
-ViewTitleTopic = BUI.ViewTextMarkup
+ViewNameTopicActive = BUI.ViewTextMarkup
+ViewNameTopicPassive = BUI.ViewTextDisplay
+ViewSummaryTopicActive = BUI.ViewTextTagged
+ViewSummaryTopicPassive = BUI.ViewTextTagged
+ViewTitleTopicActive = BUI.ViewTextMarkup
+ViewTitleTopicPassive = BUI.ViewTextDisplay
 
 
-class Topic(MIDCORE.IdCore[ViewNameTopic, ViewSummaryTopic, ViewTitleTopic]):
+class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
+                           ViewSummaryTopicActive, ViewSummaryTopicPassive,
+                           ViewTitleTopicActive, ViewTitleTopicPassive]):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
     Class ``Topic`` represents a specific subject within a Factsheet.

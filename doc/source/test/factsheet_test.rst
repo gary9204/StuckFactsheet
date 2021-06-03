@@ -14,11 +14,11 @@ Subpackages
 
    factsheet_test.bridge_gtk
    factsheet_test.control
+   factsheet_test.model
    factsheet_test.view
 ..   factsheet_test.abc_types
 ..   factsheet_test.adapt_gtk
 ..   factsheet_test.content
-..   factsheet_test.model
 
 Submodules
 ----------

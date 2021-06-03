@@ -9,7 +9,7 @@ import factsheet.model.idcore as MIDCORE
 
 
 PatchControl = CIDCORE.ControlIdCore[
-    MIDCORE.ViewName, MIDCORE.ViewSummary, MIDCORE.ViewTitle]
+    MIDCORE.ViewNameActive, MIDCORE.ViewSummaryActive, MIDCORE.ViewTitleActive]
 
 
 class TestControlIdCore:

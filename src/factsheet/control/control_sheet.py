@@ -277,20 +277,20 @@ class ControlSheet(CIDCORE.ControlIdCore):
         # assert self._model is not None
         # self._model.update_titles(subtitle_base)
 
-    def new_view_name(self) -> ViewNameSheet:
+    def new_view_name_active(self) -> ViewNameSheet:
         """Return view to display name."""
         raise NotImplementedError
-        # return self._model.new_view_name()
+        # return self._model.new_view_name_active()
 
-    def new_view_summary(self) -> ViewSummarySheet:
+    def new_view_summary_active(self) -> ViewSummarySheet:
         """Return view to display summary."""
         raise NotImplementedError
-        # return self._model.new_view_summary()
+        # return self._model.new_view_summary_active()
 
-    def new_view_title(self) -> ViewTitleSheet:
+    def new_view_title_active(self) -> ViewTitleSheet:
         """Return view to display title."""
         raise NotImplementedError
-        # return self._model.new_view_title()
+        # return self._model.new_view_title_active()
 
     @classmethod
     def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':

@@ -9,7 +9,7 @@ import factsheet.model.idcore as MIDCORE
 
 
 class ControlIdCore(typing.Generic[
-        MIDCORE.ViewName, MIDCORE.ViewSummary, MIDCORE.ViewTitle],
+        MIDCORE.ViewNameActive, MIDCORE.ViewSummaryActive, MIDCORE.ViewTitleActive],
         abc.ABC):
     """Mediates addition of views of identity attributes.
 
@@ -20,19 +20,19 @@ class ControlIdCore(typing.Generic[
     #     self._idcore = p_idcore
 
     @abc.abstractmethod
-    def new_view_name(self) -> MIDCORE.ViewName:
+    def new_view_name_active(self) -> MIDCORE.ViewNameActive:
         """Return view to display name."""
         raise NotImplementedError
-        # return self._idcore.new_view_name()
+        # return self._idcore.new_view_name_active()
 
     @abc.abstractmethod
-    def new_view_summary(self) -> MIDCORE.ViewSummary:
+    def new_view_summary_active(self) -> MIDCORE.ViewSummaryActive:
         """Return view to display summary."""
         raise NotImplementedError
-        # return self._idcore.new_view_summary()
+        # return self._idcore.new_view_summary_active()
 
     @abc.abstractmethod
-    def new_view_title(self) -> MIDCORE.ViewTitle:
+    def new_view_title_active(self) -> MIDCORE.ViewTitleActive:
         """Return view to display title."""
         raise NotImplementedError
-        # return self._idcore.new_view_title()
+        # return self._idcore.new_view_title_active()

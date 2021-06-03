@@ -1,6 +1,7 @@
 """
 Unit tests for identity attributes common to Factsheet model components.
-See :class:`~.IdCore`."""
+See :class:`~.IdCore`.
+"""
 import copy
 from pathlib import Path
 import pickle
@@ -146,7 +147,7 @@ class TestIdCore:
         False,
         ])
     def test_is_fresh(self, IS_STALE, monkeypatch, patch_idcore):
-        """Confirm negation of :meth:`~.BridgeText.is_stale."""
+        """Confirm negation of :meth:`~.IdCore.is_stale`."""
         # Setup
         class PatchIsStale:
             def __init__(self, p_result):
@@ -218,12 +219,12 @@ class TestIdCore:
         assert not target._stale
 
     @pytest.mark.parametrize('NEW_VIEW, ATTR', [
-        ('new_view_name', '_name'),
-        ('new_view_summary', '_summary'),
-        ('new_view_title', '_title'),
+        ('new_view_name_active', '_name'),
+        ('new_view_summary_active', '_summary'),
+        ('new_view_title_active', '_title'),
         ])
-    def test_new_view(self, patch_idcore, NEW_VIEW, ATTR):
-        """Confirm control relays requests to identity."""
+    def test_new_view_active(self, patch_idcore, NEW_VIEW, ATTR):
+        """Confirm method returns editable view of identity component."""
         # Setup
         NAME = 'Parrot'
         SUMMARY = 'The parrot is a Norwegian Blue.'
@@ -234,6 +235,39 @@ class TestIdCore:
         # Test
         view = new_view()
         assert view.get_buffer() is attr._model
+        assert view.get_editable()
+
+    def test_new_view_passive(self, patch_idcore):
+        """Confirm method returns display-only view of identity component.
+
+        #. Case: name
+        #. Case: summary
+        #. Case: title
+        """
+        # Setup
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        # Test: name
+        name_view = target.new_view_name_passive()
+        assert isinstance(name_view, BTEXT.ViewTextDisplay)
+        assert NAME == name_view.get_label()
+        name_view.destroy()
+        # Test: summary
+        summary_view = target.new_view_summary_passive()
+        assert isinstance(summary_view, BTEXT.ViewTextTagged)
+        summary_buffer = summary_view.get_buffer()
+        start, end = summary_buffer.get_bounds()
+        GET_HIDDEN = True
+        assert SUMMARY == summary_buffer.get_text(start, end, GET_HIDDEN)
+        assert not summary_view.get_editable()
+        summary_view.destroy()
+        # Test: title
+        title_view = target.new_view_title_passive()
+        assert isinstance(title_view, BTEXT.ViewTextDisplay)
+        assert TITLE == title_view.get_label()
+        title_view.destroy()
 
     def test_set_fresh(self, patch_idcore):
         """Confirm instance marked fresh."""
@@ -295,15 +329,24 @@ class TestIdCoreTypes:
     """Unit tests for type hint definitions in :mod:`.idcore`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (type(MIDCORE.ViewName), typing.TypeVar),
-        (MIDCORE.ViewName.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)),
-        (type(MIDCORE.ViewSummary), typing.TypeVar),
-        (MIDCORE.ViewSummary.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)),
-        (type(MIDCORE.ViewTitle), typing.TypeVar),
-        (MIDCORE.ViewTitle.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextMarkup, BUI.ViewTextDisplay)),
+        (type(MIDCORE.ViewNameActive), typing.TypeVar),
+        (MIDCORE.ViewNameActive.__constraints__, (
+            BUI.ViewTextTagged, BUI.ViewTextMarkup)),
+        (type(MIDCORE.ViewNamePassive), typing.TypeVar),
+        (MIDCORE.ViewNamePassive.__constraints__, (
+            BUI.ViewTextTagged, BUI.ViewTextDisplay)),
+        (type(MIDCORE.ViewSummaryActive), typing.TypeVar),
+        (MIDCORE.ViewSummaryActive.__constraints__, (
+            BUI.ViewTextTagged, BUI.ViewTextMarkup)),
+        (type(MIDCORE.ViewSummaryPassive), typing.TypeVar),
+        (MIDCORE.ViewSummaryPassive.__constraints__, (
+            BUI.ViewTextTagged, BUI.ViewTextDisplay)),
+        (type(MIDCORE.ViewTitleActive), typing.TypeVar),
+        (MIDCORE.ViewTitleActive.__constraints__, (
+            BUI.ViewTextTagged, BUI.ViewTextMarkup)),
+        (type(MIDCORE.ViewTitlePassive), typing.TypeVar),
+        (MIDCORE.ViewTitlePassive.__constraints__, (
+            BUI.ViewTextTagged, BUI.ViewTextDisplay)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
