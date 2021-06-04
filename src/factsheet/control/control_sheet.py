@@ -1,12 +1,10 @@
 """
-Defines components to track active factsheets and to mediate
-factsheet-level interaction.
+Defines classes to mediate factsheet-level interactions along with a
+global collection of open factsheets.
 
-Functions :func:`open_factsheet` and :func:`close_factsheet`
-maintain a singleton collection of active factsheets.
+.. data:: g_roster_factsheets
 
-Class :class:`ControlSheet` mediates factsheet-level interaction from
-:mod:`~factsheet.view` to :mod:`~factsheet.model`.
+    Application-level collection that identifies all open factsheets.
 
 :doc:`../guide/devel_notes` explains how application Factsheet is based
 on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`
@@ -21,10 +19,10 @@ from pathlib import Path
 import typing   # noqa
 
 import factsheet.control.control_idcore as CIDCORE
+import factsheet.model.sheet as MSHEET
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 # from factsheet.control import pool as CPOOL
 # from factsheet.control import control_topic as CTOPIC
-# from factsheet.model import sheet as MSHEET
 # from factsheet.model import topic as MTOPIC
 # from factsheet.model import types_model as MTYPES
 # from factsheet.view import types_view as VTYPES
@@ -32,53 +30,59 @@ import factsheet.control.control_idcore as CIDCORE
 
 logger = logging.getLogger('Main.CSHEET')
 
-_m_factsheets: typing.MutableMapping[int, 'ControlSheet'] = dict()
 
+class RosterFactsheet:
+    """Maintains collection of open factsheets.
 
-def close_factsheet(p_control: 'ControlSheet') -> None:
-    """Close and stop tracking factsheet.
-
-    Log a warning when the control is not in the collection.
-
-    :param p_control: factsheet to close.
+    A user may open a factsheet by requesting a new, empty factsheet or
+    opening a factsheet file.
     """
-    raise NotImplementedError
-    # id_control = id(px_control)
-    # try:
-    #     self._controls.pop(id_control)
-    # except KeyError:
-    #     logger.warning('Missing control: {} ({}.{})'.format(
-    #         hex(id_control), self.__class__.__name__,
-    #         self.remove.__name__))
 
+    def __init__(self):
+        """Initialize empty roster for factsheets."""
+        self._roster: typing.MutableMapping[int, 'ControlSheet'] = dict()
 
-def open_factsheet(p_path: typing.Optional[Path] = None
-                   ) -> 'ControlSheet':
-    """Return new or existing factsheet with given path.
+    def close_factsheet(self, p_control: 'ControlSheet') -> None:
+        """Close and stop tracking factsheet.
 
-    If path is None or no existing factsheet has the given path, return
-    a new, empty factsheet. Otherwise, return factsheet that has the
-    given path.
+        Log a warning when the control is not in the collection.
 
-    :param p_path: location of file for factsheet model
-    """
-    if p_path is not None:
+        :param p_control: factsheet to close.
+        """
         raise NotImplementedError
-    # path_absolute = p_path.resolve()
-    # for control in _m_factsheets.values():
-    #     if control._path is not None:
-    #         if path_absolute == control._path.resolve():
-    #             control.present()
-    #             return
-    control = ControlSheet.open(p_path)
-    _m_factsheets[id(control)] = control
-    return control
+        # id_control = id(px_control)
+        # try:
+        #     self._controls.pop(id_control)
+        # except KeyError:
+        #     logger.warning('Missing control: {} ({}.{})'.format(
+        #         hex(id_control), self.__class__.__name__,
+        #         self.remove.__name__))
+
+    def open_factsheet(self, p_path: typing.Optional[Path] = None
+                       ) -> 'ControlSheet':
+        """Return new or existing factsheet with given path.
+
+        If path is None or no existing factsheet has the given path,
+        return a new, empty factsheet.  Otherwise, return factsheet
+        loaded from file at the given path.  See :meth:`.ControlSheet.open`
+        regarding file load failure.
+
+        :param p_path: location of factsheet file
+        """
+        if p_path is not None:
+            raise NotImplementedError
+        # path_absolute = p_path.resolve()
+        # for control in _m_factsheets.values():
+        #     if control._path is not None:
+        #         if path_absolute == control._path.resolve():
+        #             control.present()
+        #             return
+        control = ControlSheet.open(p_path)
+        self._roster[id(control)] = control
+        return control
 
 
-# Temporary patch until factsheet model is up to date.
-ViewNameSheet = typing.Any
-ViewSummarySheet = typing.Any
-ViewTitleSheet = typing.Any
+g_roster_factsheets = RosterFactsheet()
 
 
 class ControlSheet(CIDCORE.ControlIdCore):
@@ -277,17 +281,32 @@ class ControlSheet(CIDCORE.ControlIdCore):
         # assert self._model is not None
         # self._model.update_titles(subtitle_base)
 
-    def new_view_name_active(self) -> ViewNameSheet:
+    def new_view_name_active(self) -> MSHEET.ViewNameSheetActive:
         """Return view to display name."""
         raise NotImplementedError
         # return self._model.new_view_name_active()
 
-    def new_view_summary_active(self) -> ViewSummarySheet:
+    def new_view_name_passive(self) -> MSHEET.ViewNameSheetPassive:
+        """Return view to display name."""
+        raise NotImplementedError
+        # return self._model.new_view_name_active()
+
+    def new_view_summary_active(self) -> MSHEET.ViewSummarySheetActive:
         """Return view to display summary."""
         raise NotImplementedError
         # return self._model.new_view_summary_active()
 
-    def new_view_title_active(self) -> ViewTitleSheet:
+    def new_view_summary_passive(self) -> MSHEET.ViewSummarySheetPassive:
+        """Return view to display summary."""
+        raise NotImplementedError
+        # return self._model.new_view_summary_active()
+
+    def new_view_title_active(self) -> MSHEET.ViewTitleSheetActive:
+        """Return view to display title."""
+        raise NotImplementedError
+        # return self._model.new_view_title_active()
+
+    def new_view_title_passive(self) -> MSHEET.ViewTitleSheetPassive:
         """Return view to display title."""
         raise NotImplementedError
         # return self._model.new_view_title_active()
