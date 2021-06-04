@@ -47,8 +47,6 @@ class BridgeBase(abc.ABC,
     In addition to a storage element, a :class:`BridgeBase` object has
     transient content for toolkit view elements associated with the
     storage element.
-
-    A :class:`BridgeBase` iterator returns the associated views.
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:

@@ -52,7 +52,7 @@ add_module_names = False
 
 # This value selects what content will be inserted into the main body of
 # an autoclass directive.
-autoclass_content = 'both'
+# autoclass_content = 'both'
 
 # -- Options for HTML output -------------------------------------------------
 

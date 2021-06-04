@@ -81,6 +81,22 @@ def patch_idcore():
     return PatchIdCore
 
 
+@pytest.fixture
+def new_kwargs_idcore():
+    """Pytest fixture: factory for stock identity keyword arguments for
+    :class:`.IdCore`.
+    """
+    def new_kwargs():
+        kwargs = dict(
+            p_name='Parrot',
+            p_summary='The parrot is a Norwegian Blue.',
+            p_title='The Parrot Sketch',
+            )
+        return kwargs
+
+    return new_kwargs
+
+
 # @pytest.fixture
 # def patch_class_block_fact(interface_view_infoid):
 #     """Pytest fixture: return stub :class:`.InterfaceBlockFact` class.
@@ -100,49 +116,49 @@ def patch_idcore():
 #     return PatchClassBlockFact
 
 
-class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):
-    """Stub :class:`.Fact` class with complete check and clear methods."""
-
-    STATUS_CHECKED = MFACT.StatusOfFact.DEFINED
-    STATUS_CLEARED = MFACT.StatusOfFact.UNCHECKED
-    VALUE_CHECKED = 42
-    VALUE_CLEARED = None
-
-    def check(self) -> MFACT.StatusOfFact:
-        """Set fact value and set corresponding state of fact check."""
-        self._value = PatchFact.VALUE_CHECKED
-        self._status = PatchFact.STATUS_CHECKED
-        return super().check()
-
-    def clear(self) -> None:
-        """Clear fact value and set corresponding state of fact check."""
-        self._value = PatchFact.VALUE_CLEARED
-        self._status = PatchFact.STATUS_CLEARED
-        super().clear()
-
-
-@pytest.fixture
-def patch_class_fact():
-    """Pytest fixture: return stub :class:`.Fact` class with complete
-    check and clear methods.
-    """
-    return PatchFact
+# class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):
+#     """Stub :class:`.Fact` class with complete check and clear methods."""
+#
+#     STATUS_CHECKED = MFACT.StatusOfFact.DEFINED
+#     STATUS_CLEARED = MFACT.StatusOfFact.UNCHECKED
+#     VALUE_CHECKED = 42
+#     VALUE_CLEARED = None
+#
+#     def check(self) -> MFACT.StatusOfFact:
+#         """Set fact value and set corresponding state of fact check."""
+#         self._value = PatchFact.VALUE_CHECKED
+#         self._status = PatchFact.STATUS_CHECKED
+#         return super().check()
+#
+#     def clear(self) -> None:
+#         """Clear fact value and set corresponding state of fact check."""
+#         self._value = PatchFact.VALUE_CLEARED
+#         self._status = PatchFact.STATUS_CLEARED
+#         super().clear()
 
 
-@pytest.fixture
-def fact_sample():
-    """Fixture to return factory for sample facts."""
-    def _new_fact(p_name='Parrot', p_value=None):
-        Fact = MFACT.Fact[typing.Any, typing.Any]
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        TOPIC = None
-        sample = Fact(
-            p_name=p_name, p_summary=SUMMARY, p_title=TITLE, p_topic=TOPIC)
-        sample._value = p_value
-        return sample
+# @pytest.fixture
+# def patch_class_fact():
+#     """Pytest fixture: return stub :class:`.Fact` class with complete
+#     check and clear methods.
+#     """
+#     return PatchFact
 
-    return _new_fact
+
+# @pytest.fixture
+# def fact_sample():
+#     """Fixture to return factory for sample facts."""
+#     def _new_fact(p_name='Parrot', p_value=None):
+#         Fact = MFACT.Fact[typing.Any, typing.Any]
+#         SUMMARY = 'The parrot is a Norwegian Blue.'
+#         TITLE = 'The Parrot Sketch'
+#         TOPIC = None
+#         sample = Fact(
+#             p_name=p_name, p_summary=SUMMARY, p_title=TITLE, p_topic=TOPIC)
+#         sample._value = p_value
+#         return sample
+#
+#     return _new_fact
 
 
 # @pytest.fixture

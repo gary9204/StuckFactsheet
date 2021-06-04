@@ -99,6 +99,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         :param p_summary: description of component, which adds detail to
             title.
         :param p_title: one-line description of component.
+        :param kwargs: superclass keyword parameters.
         """
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
