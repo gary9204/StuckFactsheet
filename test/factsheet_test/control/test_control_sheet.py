@@ -60,7 +60,7 @@ class TestControlSheet:
     @pytest.mark.skip
     def test_attach_page(self, monkeypatch):
         """Confirm page addition."""
-        # # Setup
+        # Setup
         # class PatchModel:
         #     def __init__(self):
         #         self.called_attach_page = False
