@@ -14,9 +14,9 @@ import pytest   # type: ignore[import]
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet.control import control_sheet as CSHEET
+import factsheet.model.sheet as MSHEET
 # from factsheet.control import control_topic as CTOPIC
 # from factsheet.control import pool as CPOOL
-# from factsheet.model import sheet as MSHEET
 # from factsheet.model import topic as MTOPIC
 
 
@@ -41,17 +41,19 @@ from factsheet.control import control_sheet as CSHEET
 class TestControlSheet:
     """Unit tests for :class:`~.ControlSheet`."""
 
-    def test_init(self):
-        """| Confirm initialization.
-        | Case: non-default argument
+    def test_init(self, new_kwargs_idcore):
+        """Confirm initialization.
+
+        :param new_kwargs_idcore: factory for stock identity keyword
+            arguments
         """
         # Setup
+        KWARGS = new_kwargs_idcore()
+        model = MSHEET.Sheet(**KWARGS)
         # Test
-        target = CSHEET.ControlSheet()
-        # assert target._model is None
+        target = CSHEET.ControlSheet(p_model=model)
+        assert target._model is model
         assert target._path is None
-        # assert target._sheets_active is sheets_active
-        # assert sheets_active._controls[id(target)] is target
         # assert isinstance(target._controls_topic, typing.Dict)
         # assert not target._controls_topic
 
@@ -394,15 +396,42 @@ class TestControlSheet:
         # assert isinstance(control_new, CTOPIC.ControlTopic)
         # assert target._controls_topic[id_topic] is control_new
 
-    @pytest.mark.skip
-    def test_new(self):
-        """Confirm control creation with default model."""
-        # # Setup
-        # sheets_active = CPOOL.PoolSheets()
-        # # Test
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # assert isinstance(target, CSHEET.ControlSheet)
-        # assert isinstance(target._model, MSHEET.Sheet)
+    @pytest.mark.parametrize('NAME_METHOD, NAME_CHECK, CLASS', [
+        ('new_view_name_active', 'get_buffer', MSHEET.ViewNameSheetActive),
+        ('new_view_name_passive', 'get_label', MSHEET.ViewNameSheetPassive),
+        ('new_view_summary_active', 'get_buffer',
+            MSHEET.ViewSummarySheetActive),
+        ('new_view_summary_passive', 'get_buffer',
+            MSHEET.ViewSummarySheetPassive),
+        ('new_view_title_active', 'get_buffer', MSHEET.ViewTitleSheetActive),
+        ('new_view_title_passive', 'get_label', MSHEET.ViewTitleSheetPassive),
+        ])
+    def test_new_view(self, new_kwargs_idcore, NAME_METHOD, NAME_CHECK, CLASS):
+        """Confirm control relays requests for new views.
+
+        :param new_kwargs_idcore: factory for stock identity keyword
+            arguments
+        :param NAME_METHOD: name of method under test
+        :param NAME_CHECK: name of method used to check view
+        :param CLASS: expected view class
+        """
+        # Setup
+        KWARGS = new_kwargs_idcore()
+        model = MSHEET.Sheet(**KWARGS)
+        model_method = getattr(model, NAME_METHOD)
+        model_view = model_method()
+        model_check = getattr(model_view, NAME_CHECK)
+        PATH = None
+        target = CSHEET.ControlSheet(p_model=model, p_path=PATH)
+        target_method = getattr(target, NAME_METHOD)
+        # Test
+        target_view = target_method()
+        assert isinstance(target_view, CLASS)
+        target_check = getattr(target_view, NAME_CHECK)
+        assert model_check() == target_check()
+        # Teardown
+        target_view.destroy()
+        model_view.destroy()
 
     @pytest.mark.skip
     def test_new_name(self, monkeypatch):
@@ -531,11 +560,13 @@ class TestControlSheet:
         """
         # Setup
         PATH = None
+        model_default = MSHEET.Sheet()
         # Test
-        target = CSHEET.ControlSheet.open(PATH)
+        target = CSHEET.ControlSheet.open(p_path=PATH)
         assert isinstance(target, CSHEET.ControlSheet)
         assert target._path is None
-        # model = target._model
+        assert target._model is not None
+        assert model_default == target._model
 
     @pytest.mark.skip
     def test_present_factsheet(self, monkeypatch):

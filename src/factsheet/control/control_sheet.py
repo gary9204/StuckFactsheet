@@ -93,10 +93,10 @@ class ControlSheet(CIDCORE.ControlIdCore):
     in the collection of factsheet views (such as add or close a view).
     """
 
-    def __init__(self) -> None:
-        """Initialize instance with empty attributes."""
-        # self._model: typing.Optional[MSHEET.Sheet] = None
-        self._path: typing.Optional[Path] = None
+    def __init__(self, p_model: MSHEET.Sheet, p_path: Path = None) -> None:
+        """Initialize instance with given attributes and no topics."""
+        self._model = p_model
+        self._path = p_path
         # self._controls_topic: typing.Dict[
         #     MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
 
@@ -282,34 +282,28 @@ class ControlSheet(CIDCORE.ControlIdCore):
         # self._model.update_titles(subtitle_base)
 
     def new_view_name_active(self) -> MSHEET.ViewNameSheetActive:
-        """Return view to display name."""
-        raise NotImplementedError
-        # return self._model.new_view_name_active()
+        """Return editable view of name."""
+        return self._model.new_view_name_active()
 
     def new_view_name_passive(self) -> MSHEET.ViewNameSheetPassive:
-        """Return view to display name."""
-        raise NotImplementedError
-        # return self._model.new_view_name_active()
+        """Return display-only view of name."""
+        return self._model.new_view_name_passive()
 
     def new_view_summary_active(self) -> MSHEET.ViewSummarySheetActive:
-        """Return view to display summary."""
-        raise NotImplementedError
-        # return self._model.new_view_summary_active()
+        """Return editable view of summary."""
+        return self._model.new_view_summary_active()
 
     def new_view_summary_passive(self) -> MSHEET.ViewSummarySheetPassive:
-        """Return view to display summary."""
-        raise NotImplementedError
-        # return self._model.new_view_summary_active()
+        """Return display-only view of summary."""
+        return self._model.new_view_summary_passive()
 
     def new_view_title_active(self) -> MSHEET.ViewTitleSheetActive:
-        """Return view to display title."""
-        raise NotImplementedError
-        # return self._model.new_view_title_active()
+        """Return editable view of title."""
+        return self._model.new_view_title_active()
 
     def new_view_title_passive(self) -> MSHEET.ViewTitleSheetPassive:
-        """Return view to display title."""
-        raise NotImplementedError
-        # return self._model.new_view_title_active()
+        """Return display-only view of title."""
+        return self._model.new_view_title_passive()
 
     @classmethod
     def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
@@ -325,23 +319,21 @@ class ControlSheet(CIDCORE.ControlIdCore):
         :returns: Newly created control.
         """
         if p_path is None:
-            control = ControlSheet()
-            return control
-        # try:
-        #     with p_path.open(mode='rb') as io_in:
-        #         model = pickle.load(io_in)
-        # except Exception:
-        #     name = 'OPEN ERROR'
-        #     summary = TB.format_exc()
-        #     title = 'Error opening file \'{}\''.format(p_path)
-        #     control._model = MSHEET.Sheet(
-        #         p_name=name, p_summary=summary, p_title=title)
-        # else:
-        #     control._model = model
-        #     control._path = p_path
-        #
-        # return control
-        raise NotImplementedError
+            model = MSHEET.Sheet()
+        else:
+            try:
+                # with p_path.open(mode='rb') as io_in:
+                #     model = pickle.load(io_in)
+                raise NotImplementedError
+            except Exception:
+                raise
+                # name = 'OPEN ERROR'
+                # summary = TB.format_exc()
+                # title = 'Error opening file \'{}\''.format(p_path)
+                # model = MSHEET.Sheet(
+                #     p_name=name, p_summary=summary, p_title=title)
+        control = ControlSheet(p_model=model, p_path=p_path)
+        return control
 
     def _open_guard(self) -> typing.BinaryIO:
         """Backup existing file when opening for save.

@@ -11,7 +11,6 @@ import typing   # noqa
 
 # from factsheet.abc_types import abc_outline as ABC_OUTLINE
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.abc_types import abc_stalefile as ABC_STALE
 from factsheet import bridge_ui as BUI
 # from factsheet.abc_types import abc_topic as ABC_TOPIC
 import factsheet.model.idcore as MIDCORE
@@ -52,10 +51,13 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:
-        """Return True when p_other has same identification information.
+        """Return True when p_other has same topics and identity
+        information.
 
         :param p_other: object to compare with self.
         """
+        if not super().__eq__(p_other):
+            return False
         # if not isinstance(p_other, Sheet):
         #     return False
 
@@ -65,8 +67,7 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
         # if self._topics != p_other._topics:
         #     return False
 
-        raise NotImplementedError
-        # return True
+        return True
 
     # def __getstate__(self) -> typing.Dict:
     #     """Return factsheet model in form pickle can persist.
