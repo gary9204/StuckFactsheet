@@ -17,24 +17,24 @@ from factsheet.model import sheet as MSHEET
 class TestSheet:
     """Unit tests for :class:`~.model.sheet.Sheet`."""
 
-    @pytest.mark.skip
+    @pytest.mark.skip(reason='Topic outline check is incomplete.')
     def test_eq(self):
         """Confirm equivalence operator
 
         #. Case: type difference
-        #. Case: InfoId difference
+        #. Case: identity difference
         #. Case: topic outline difference
         #. Case: Equivalence
         """
-        # # Setup
-        # TITLE_SOURCE = 'The Parrot Sketch'
-        # source = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        # # Test: type difference
-        # assert not source.__eq__(TITLE_SOURCE)
-        # # Test: InfoId difference
-        # TITLE_TARGET = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_TARGET)
-        # assert not source.__eq__(target)
+        # Setup
+        TITLE_SOURCE = 'The Parrot Sketch'
+        source = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        # Test: type difference
+        assert not source.__eq__(TITLE_SOURCE)
+        # Test: identity difference
+        TITLE_TARGET = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_TARGET)
+        assert not source.__eq__(target)
         # # Test: topic outline difference
         # target = MSHEET.Sheet(p_title=TITLE_SOURCE)
         # topic = MTOPIC.Topic()
@@ -42,10 +42,10 @@ class TestSheet:
         # _index = target._topics.insert_child(topic, None)
         #
         # assert not source.__eq__(target)
-        # # Test: Equivalence
-        # target = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        # assert source.__eq__(target)
-        # assert not source.__ne__(target)
+        # Test: Equivalence
+        target = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
 
     @pytest.mark.skip(reason='Method marked for deletion')
     def test_get_set_state(self, tmp_path, interface_page_sheet):
