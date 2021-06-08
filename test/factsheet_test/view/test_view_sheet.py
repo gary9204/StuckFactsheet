@@ -115,6 +115,48 @@ def gtk_app_window():
     gtk_window.destroy()
 
 
+@pytest.fixture
+def setup_app_control_view(patch_appfactsheet, request, capfd):
+    """Fixture with teardown: return sheet view.
+
+    Set path to factsheet file with marker ``path_sheet`` and key
+    ``'path_sheet'``.
+
+    :param request: marker container
+    :param patch_appfactsheet: stub :class:`.AppFactsheet`
+    """
+    app = patch_appfactsheet
+    marker = request.node.get_closest_marker("path_sheet")
+    path = None
+    if marker is not None:
+        try:
+            path = marker.kwargs['path_sheet']
+        except KeyError:
+            pass
+    control = CSHEET.g_roster_factsheets.open_factsheet(p_path=path)
+    view_sheet = VSHEET.ViewSheet(p_app=app, p_control=control)
+    snapshot = capfd.readouterr()   # Resets the internal buffer
+    assert not snapshot.out
+    assert 'Gtk-CRITICAL' in snapshot.err
+    assert 'GApplication::startup signal' in snapshot.err
+    yield app, control, view_sheet
+    view_sheet._window.destroy()
+
+
+@pytest.fixture
+def setup_view_sheet(setup_app_control_view):
+    """Fixture with teardown: return sheet view.
+
+    Set path to factsheet file with marker ``path_sheet`` and key
+    ``'path_sheet'``.
+
+    :param request: marker container
+    :param patch_appfactsheet: stub :class:`.AppFactsheet`
+    """
+    _, _, view_sheet = setup_app_control_view
+    return view_sheet
+
+
 class TestUiItems:
     """Unit tests for user interface constants and shared objects."""
 
@@ -134,19 +176,15 @@ class TestViewSheet:
         item = getattr(VSHEET.ViewSheet, NAME)
         assert isinstance(item, TYPE)
 
-    def test_init(self, patch_appfactsheet, capfd):
-        """Confirm initialization.
-        Case: visual elements.
+    @pytest.mark.path_sheet(path_sheet=None)
+    def test_init(self, setup_app_control_view):
+        # def test_init(self, patch_appfactsheet, capfd):
+        """| Confirm initialization.
+        | Case: visual elements.
         """
         # Setup
-        app = patch_appfactsheet
-        control = CSHEET.open_factsheet(p_path=None)
         # Test
-        target = VSHEET.ViewSheet(p_app=app, p_control=control)
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert not snapshot.out
-        assert 'Gtk-CRITICAL' in snapshot.err
-        assert 'GApplication::startup signal' in snapshot.err
+        app, control, target = setup_app_control_view
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
@@ -212,11 +250,8 @@ class TestViewSheet:
         #
         # assert not target._close_window
         assert target._window.is_visible()
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
 
+    @pytest.mark.path_sheet(path_sheet=None)
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
             # ('closed', '_context_name', Gtk.Popover, 0),
@@ -225,19 +260,23 @@ class TestViewSheet:
             ])
     def test_init_signals(
             self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT,
-            patch_appfactsheet, capfd, gtk_app_window):
+            setup_view_sheet, gtk_app_window):
+        """| Confirm initialization.
+        | Case: signal connections
+
+        :param NAME_SIGNAL: TBD
+        :param NAME_ATTRIBTE: TBD
+        :param ORIGIN: TBD
+        :param N_DEFAULT: TBD
+        :param setup_view_sheet: TBD
+        :param gtk_app_window: TBD
+        """
         """Confirm initialization of signal connections."""
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        app = patch_appfactsheet
-        control = CSHEET.open_factsheet(p_path=None)
+        target = setup_view_sheet
         # Test
-        target = VSHEET.ViewSheet(p_app=app, p_control=control)
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert not snapshot.out
-        assert 'Gtk-CRITICAL' in snapshot.err
-        assert 'GApplication::startup signal' in snapshot.err
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
         target._window.set_transient_for(gtk_app_window)
@@ -283,21 +322,21 @@ class TestViewSheet:
         # del target._window
         # del factsheet
 
+    @pytest.mark.path_sheet(path_sheet=None)
     @pytest.mark.parametrize('SIGNAL', [
         'show-about-app',
         'show-help-app',
         'show-intro-app',
         ])
-    def test_init_app_menu(self, patch_appfactsheet, capfd, SIGNAL):
-        """Confirm application menu actions defined."""
+    def test_init_app_menu(self, setup_view_sheet, SIGNAL):
+        """| Confirm initialization.
+        | Case: definition fo app menu actions
+
+        :param setup_view_sheet: TBD
+        :param SIGNAL: TBD
+        """
         # Setup
-        app = patch_appfactsheet
-        control = CSHEET.open_factsheet(p_path=None)
-        target = VSHEET.ViewSheet(p_app=app, p_control=control)
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert not snapshot.out
-        assert 'Gtk-CRITICAL' in snapshot.err
-        assert 'GApplication::startup signal' in snapshot.err
+        target = setup_view_sheet
         # Test
         assert target._window.lookup_action(SIGNAL) is not None
         # assert target._window.lookup_action('show-about-app') is not None
@@ -2055,20 +2094,19 @@ class TestViewSheet:
         # del target._window
         # del factsheet
 
+    @pytest.mark.path_sheet(path_sheet=None)
     def test_on_show_dialog(
-            self, patch_appfactsheet, capfd, monkeypatch, gtk_app_window):
+            self, setup_view_sheet, monkeypatch, gtk_app_window):
         """Confirm handler displays dialog.
 
         See manual tests for dialog content checks.
+
+        :param setup_view_sheet: TBD
+        :param monkeypatch: TBD
+        :param gtk_app_window: TBD
         """
         # Setup
-        app = patch_appfactsheet
-        control = CSHEET.open_factsheet(p_path=None)
-        target = VSHEET.ViewSheet(p_app=app, p_control=control)
-        snapshot = capfd.readouterr()   # Resets the internal buffer
-        assert not snapshot.out
-        assert 'Gtk-CRITICAL' in snapshot.err
-        assert 'GApplication::startup signal' in snapshot.err
+        target = setup_view_sheet
         # target._window.set_skip_pager_hint(True)
         # target._window.set_skip_taskbar_hint(True)
 

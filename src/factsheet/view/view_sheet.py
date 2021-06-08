@@ -68,6 +68,11 @@ class ViewSheet:
         self._window = get_object('ui_sheet')
         self._window.set_application(p_app)
 
+        # Explore: name display
+        slot_name = get_object('x_slot_name_display')
+        view_name_display = self._control.new_view_name_passive()
+        slot_name.add(view_name_display)
+
         # Components
         # self._context_name = get_object('ui_context_name')
         # self._context_summary = get_object('ui_context_summary')

@@ -53,7 +53,7 @@ class AppFactsheet(Gtk.Application):
 
     def do_activate(self) -> None:
         """Create and display an initial factsheet with default content."""
-        control = CSHEET.open_factsheet(None)
+        control = CSHEET.g_roster_factsheets.open_factsheet(None)
         _ = VSHEET.ViewSheet(p_app=self, p_control=control)
 
     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
