@@ -13,6 +13,7 @@ from pathlib import Path
 import factsheet.bridge_gtk.bridge_text as BTEXT
 
 gi.require_version('Gtk', '3.0')
+from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
@@ -397,6 +398,50 @@ class TestBridgeTextMarkup:
         assert N_VIEWS == len(target._views)
         for view in target._views.values():
             assert TEXT == view.get_label()
+
+    def test_on_change_glib_error(self, monkeypatch):
+        """Confirm refresh of display views. """
+        # Setup
+        def patch_quark():
+            return GLib.MarkupError.EMPTY
+
+        monkeypatch.setattr(GLib, 'markup_error_quark', patch_quark)
+
+        target = BTEXT.BridgeTextMarkup()
+        TEXT = 'The <b>Parrot </b Sketch.'
+        ALL = -1
+        target._model.set_text(TEXT, ALL)
+        N_VIEWS = 1
+        for _ in range(N_VIEWS):
+            view = BTEXT.ViewTextDisplay()
+            target._views[id(view)] = view
+        target.set_fresh()
+        # Test
+        with pytest.raises(GLib.Error):
+            target.on_change()
+
+    def test_on_change_parse_error(self, capfd):
+        """Confirm refresh of display views. """
+        # Setup
+        target = BTEXT.BridgeTextMarkup()
+        TEXT = 'The <b>Parrot </b Sketch.'
+        ALL = -1
+        target._model.set_text(TEXT, ALL)
+        N_VIEWS = 1
+        for _ in range(N_VIEWS):
+            view = BTEXT.ViewTextDisplay()
+            target._views[id(view)] = view
+        target.set_fresh()
+        # Test
+        target.on_change()
+        assert target.is_stale()
+        assert N_VIEWS == len(target._views)
+        for view in target._views.values():
+            assert TEXT == view.get_label()
+        snapshot = capfd.readouterr()   # Resets the internal buffer
+        assert not snapshot.out
+        assert 'Gtk-WARNING' not in snapshot.err
+        assert 'error parsing markup' not in snapshot.err
 
     def test_set_persist(self):
         """Confirm import from persistent form."""

@@ -69,7 +69,9 @@ import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_gtk.bridge_base as BBASE
 
 gi.require_version('Gtk', '3.0')
+from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Pango    # type: ignore[import]    # noqa: E402
 
 ModelTextTagged = typing.Union[Gtk.TextBuffer]
 ModelTextMarkup = typing.Union[Gtk.EntryBuffer]
@@ -221,8 +223,19 @@ class BridgeTextMarkup(
         """Refresh display views when text is inserted or deleted."""
         self.set_stale()
         text_new = self._model.get_text()
+        is_valid_markup = True
+        try:
+            _, _, _, _ = Pango.parse_markup(text_new, -1, '0')
+        except GLib.Error as err:
+            if err.matches(GLib.markup_error_quark(), GLib.MarkupError.PARSE):
+                is_valid_markup = False
+            else:
+                raise
         for view in self._views.values():
-            view.set_label(text_new)
+            if is_valid_markup:
+                view.set_markup(text_new)
+            else:
+                view.set_text(text_new)
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
