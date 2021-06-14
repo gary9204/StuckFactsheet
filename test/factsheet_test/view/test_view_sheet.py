@@ -155,183 +155,6 @@ def setup_view_sheet(setup_app_control_view):
     """
     _, _, view_sheet = setup_app_control_view
     return view_sheet
-#
-#
-# @pytest.fixture
-# def setup_views_markup():
-#     """Fixture with teardown: return passive and active views of markup."""
-#     PATH = None
-#     control = CSHEET.g_roster_factsheets.open_factsheet(p_path=PATH)
-#     view_passive = control.new_view_name_passive()
-#     view_active = control.new_view_name_active()
-#     yield view_passive, view_active
-#     view_passive.destroy()
-#     view_active.destroy()
-#
-#
-# class TestEditorMarkup:
-#     """Unit tests for :class:`EditorMarkup`."""
-#
-#     def test_init(self, setup_views_markup):
-#         """Confirm initialization."""
-#         # Setup
-#         view_passive, view_active = setup_views_markup
-#         I_SITE_VIEW_PASSIVE = 1
-#         I_VIEW_PASSIVE = 0
-#         N_PADDING = 6
-#         N_XALIGN = 0.0
-#         I_BUTTON_EDIT = 0
-#         I_VIEW_ACTIVE = 0
-#         NAME_ICON_PRIMARY = 'gtk-apply'
-#         NAME_ICON_SECONDARY = 'gtk-cancel'
-#         TOOLTIP_PRIMARY = 'Click to accept changes.'
-#         TOOLTIP_SECONDARY = 'Click to cancel changes.'
-#         # Test
-#         target = VSHEET.EditorMarkup(
-#             p_view_passive=view_passive, p_view_active=view_active)
-#         children_editor = target._view_editor.get_children()
-#         assert target._buffer is view_active.get_buffer()
-#         assert isinstance(target._button_edit, Gtk.MenuButton)
-#         assert isinstance(target._popover, Gtk.Popover)
-#         assert '' == target._text_restore
-#         assert isinstance(target._view_editor, Gtk.Box)
-#
-#         site_view_passive = children_editor[I_SITE_VIEW_PASSIVE]
-#         assert isinstance(site_view_passive, Gtk.Box)
-#         assert view_passive is (
-#             site_view_passive.get_children()[I_VIEW_PASSIVE])
-#         expand_passive, fill_passive, padding_passive, _pack = (
-#             site_view_passive.query_child_packing(view_passive))
-#         assert expand_passive
-#         assert fill_passive
-#         assert N_PADDING == padding_passive
-#         assert Pango.EllipsizeMode.END is view_passive.get_ellipsize()
-#         assert Gtk.Align.START == view_passive.get_halign()
-#         assert view_passive.get_selectable()
-#         assert view_passive.get_use_markup()
-#         assert target.N_WIDTH_DISPLAY == view_passive.get_width_chars()
-#         assert math.isclose(N_XALIGN, view_passive.get_xalign())
-#         assert view_passive.get_visible()
-#
-#         button_edit = children_editor[I_BUTTON_EDIT]
-#         popover_edit = button_edit.get_popover()
-#         site_view_active = popover_edit.get_child()
-#         assert isinstance(site_view_active, Gtk.Box)
-#         assert view_active is (
-#             site_view_active.get_children()[I_VIEW_ACTIVE])
-#         expand_active, fill_active, padding_active, _pack = (
-#             site_view_active.query_child_packing(view_active))
-#         assert expand_active
-#         assert fill_active
-#         assert N_PADDING == padding_active
-#         assert NAME_ICON_PRIMARY == (
-#             view_active.get_icon_name(Gtk.EntryIconPosition.PRIMARY))
-#         assert NAME_ICON_SECONDARY == (
-#             view_active.get_icon_name(Gtk.EntryIconPosition.SECONDARY))
-#         assert TOOLTIP_PRIMARY == view_active.get_icon_tooltip_markup(
-#             Gtk.EntryIconPosition.PRIMARY)
-#         assert TOOLTIP_SECONDARY == view_active.get_icon_tooltip_markup(
-#             Gtk.EntryIconPosition.SECONDARY)
-#         assert target.N_WIDTH_EDIT == view_active.get_width_chars()
-#         assert Gtk.Align.START == view_active.get_halign()
-#         assert view_active.get_visible()
-
-    # def test_begin_edit(self, setup_views_markup):
-    #     """Confirm text recorded."""
-    #     # Setup
-    #     view_passive, view_active = setup_views_markup
-    #     target = VSHEET.EditorMarkup(
-    #         p_view_passive=view_passive, p_view_active=view_active)
-    #     TEXT = 'Something completely different'
-    #     target._buffer.set_text(TEXT, len(TEXT))
-    #     # Test
-    #     target._begin_edit()
-    #     assert TEXT == target._text_restore
-
-    # def test_cancel_edit(self, monkeypatch, setup_views_markup):
-    #     """Confirm text restored before ending edit."""
-    #     # Setup
-    #     class PatchClick:
-    #         def __init__(self): self.called = False
-    #
-    #         def clicked(self): self.called = True
-    #
-    #     patch = PatchClick()
-    #     monkeypatch.setattr(Gtk.MenuButton, 'clicked', patch.clicked)
-    #     view_passive, view_active = setup_views_markup
-    #     target = VSHEET.EditorMarkup(
-    #         p_view_passive=view_passive, p_view_active=view_active)
-    #     TEXT = 'Something completely different'
-    #     target._text_restore = TEXT
-    #     # Test
-    #     target._cancel_edit()
-    #     assert TEXT == target._buffer.get_text()
-    #     assert patch.called
-
-    # def test_end_edit(self, monkeypatch, setup_views_markup):
-    #     """Confirm edit button clicked."""
-    #     # Setup
-    #     class PatchClick:
-    #         def __init__(self): self.called = False
-    #
-    #         def clicked(self): self.called = True
-    #
-    #     patch = PatchClick()
-    #     monkeypatch.setattr(Gtk.MenuButton, 'clicked', patch.clicked)
-    #     view_passive, view_active = setup_views_markup
-    #     target = VSHEET.EditorMarkup(
-    #         p_view_passive=view_passive, p_view_active=view_active)
-    #     target._text_restore = 'Something completely different'
-    #     BLANK = ''
-    #     # Test
-    #     target._end_edit()
-    #     assert BLANK == target._text_restore
-    #     assert patch.called
-    #
-    # @pytest.mark.parametrize('ICON, EXPECT_TEXT', [
-    #     (Gtk.EntryIconPosition.PRIMARY, 'Something completely different'),
-    #     (Gtk.EntryIconPosition.SECONDARY, ''),
-    #     ])
-    # def test_on_icon_press(self, setup_views_markup, ICON, EXPECT_TEXT):
-    #     """Confirm text restored before ending edit
-    #
-    #     #. Case: primary icon
-    #     #. Case: secondary icon
-    #     """
-    #     # Setup
-    #     view_passive, view_active = setup_views_markup
-    #     target = VSHEET.EditorMarkup(
-    #         p_view_passive=view_passive, p_view_active=view_active)
-    #     TEXT = 'Something completely different'
-    #     target._buffer.set_text(TEXT, len(TEXT))
-    #     target._button_edit.clicked()
-    #     BLANK = ''
-    #     target._text_restore = BLANK
-    #     # Test: primary icon
-    #     target.on_icon_press(None, ICON, None)
-    #     assert not target._button_edit.get_active()
-    #     assert EXPECT_TEXT == target._buffer.get_text()
-    #
-    # def test_on_toggle(self, setup_views_markup):
-    #     """Confirm set and clear of restored text.
-    #
-    #     #. Case: edit button is active
-    #     #. Case: edit button is not active
-    #     """
-    #     # Setup
-    #     view_passive, view_active = setup_views_markup
-    #     target = VSHEET.EditorMarkup(
-    #         p_view_passive=view_passive, p_view_active=view_active)
-    #     button_dummy = Gtk.MenuButton()
-    #     BLANK = ''
-    #     TEXT = 'Something completely different.'
-    #     target._buffer.set_text(TEXT, len(TEXT))
-    #     # Test: edit button is active
-    #     target._button_edit.clicked()
-    #     assert TEXT == target._text_restore
-    #     # Test: edit button is not active
-    #     target._button_edit.clicked()
-    #     assert BLANK == target._text_restore
 
 
 class TestUiItems:
@@ -499,23 +322,38 @@ class TestViewSheet:
         # del factsheet
 
     @pytest.mark.path_sheet(path_sheet=None)
-    @pytest.mark.parametrize('SIGNAL', [
+    @pytest.mark.parametrize('ACTION', [
         'show-about-app',
         'show-help-app',
         'show-intro-app',
         ])
-    def test_init_app_menu(self, setup_view_sheet, SIGNAL):
+    def test_init_app_menu(self, setup_view_sheet, ACTION):
         """| Confirm initialization.
         | Case: definition fo app menu actions
 
-        :param setup_view_sheet: TBD
-        :param SIGNAL: TBD
+        :param setup_view_sheet: fixture :func:`.setup_view_sheet`.
+        :param ACTION: name of action for menu item.
         """
         # Setup
         target = setup_view_sheet
         # Test
-        assert target._window.lookup_action(SIGNAL) is not None
-        # assert target._window.lookup_action('show-about-app') is not None
+        assert target._window.lookup_action(ACTION) is not None
+
+    @pytest.mark.path_sheet(path_sheet=None)
+    @pytest.mark.parametrize('ACTION', [
+        'show-help-sheet',
+        ])
+    def test_init_factsheet_menu(self, setup_view_sheet, ACTION):
+        """| Confirm initialization.
+        | Case: definition fo app menu actions
+
+        :param setup_view_sheet: fixture :func:`.setup_view_sheet`.
+        :param ACTION: name of action for menu item.
+        """
+        # Setup
+        target = setup_view_sheet
+        # Test
+        assert target._window.lookup_action(ACTION) is not None
 
     @pytest.mark.skip
     def test_close_page(self, monkeypatch, patch_factsheet, capfd):

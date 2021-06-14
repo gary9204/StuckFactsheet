@@ -595,7 +595,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">A window for a factsheet consists of window header, factsheet header, and factsheet notebook.  The window header shows the factsheet name.  The factsheet header shows the sheet's title.  Both headers have icons to show menus of actions and options.  In addition, the sheet header has an icon to edit the sheet's name.  Please see &lt;b&gt;Symbols&lt;/b&gt; below.</property>
+                    <property name="label" translatable="yes">A window for a factsheet consists of window header, factsheet header, and factsheet notebook.  The window header shows the factsheet name.  The factsheet header shows the sheet's name and title.  Both headers have icons to show menus of actions and options.  In addition, the sheet header has as icons to edit the sheet's name and title.  Please see &lt;b&gt;Symbols&lt;/b&gt; below.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -717,7 +717,7 @@ investigating algebraic structures.</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="hexpand">True</property>
-                            <property name="label" translatable="yes">Click to show and edit sheet name</property>
+                            <property name="label" translatable="yes">Click to edit sheet name or title</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

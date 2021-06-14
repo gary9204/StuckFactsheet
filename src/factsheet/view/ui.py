@@ -173,7 +173,7 @@ ABOUT_APP.set_version(FS.__version__)
 HELP_APP = get_object_guide_sheet('ui_help_app')
 INTRO_APP = get_object_guide_sheet('ui_intro_app')
 
-# HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
+HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
 # HELP_SHEET_DISPLAY = get_object_guide_sheet('ui_help_sheet_display')
 # HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
 # HELP_SHEET_TOPICS = get_object_guide_sheet('ui_help_sheet_topics')
