@@ -381,7 +381,9 @@ class TestBridgeTextMarkup:
         assert target._views[id(view)] is view
 
     def test_on_change(self):
-        """Confirm refresh of display views. """
+        """| Confirm refresh of display views.
+        | Case: text is valid Pango markup
+        """
         # Setup
         target = BTEXT.BridgeTextMarkup()
         TEXT = 'The <b>Parrot </b>Sketch.'
@@ -400,7 +402,9 @@ class TestBridgeTextMarkup:
             assert TEXT == view.get_label()
 
     def test_on_change_glib_error(self, monkeypatch):
-        """Confirm refresh of display views. """
+        """| Confirm refresh of display views.
+        | Case: unexpected GLib error
+        """
         # Setup
         def patch_quark():
             return GLib.MarkupError.EMPTY
@@ -421,7 +425,9 @@ class TestBridgeTextMarkup:
             target.on_change()
 
     def test_on_change_parse_error(self, capfd):
-        """Confirm refresh of display views. """
+        """| Confirm refresh of display views.
+        | Case: text is not valid Pango markup
+        """
         # Setup
         target = BTEXT.BridgeTextMarkup()
         TEXT = 'The <b>Parrot </b Sketch.'

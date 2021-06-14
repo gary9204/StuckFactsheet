@@ -10,7 +10,7 @@ import pytest   # type: ignore[import]
 # from factsheet.abc_types import abc_outline as ABC_OUTLINE
 # from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # from factsheet.model import infoid as MINFOID
-from factsheet.model import sheet as MSHEET
+import factsheet.model.sheet as MSHEET
 # from factsheet.model import topic as MTOPIC
 
 
