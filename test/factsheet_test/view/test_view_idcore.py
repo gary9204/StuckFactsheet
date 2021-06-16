@@ -44,13 +44,15 @@ class TestEditorMarkup:
         N_XALIGN = 0.0
         I_BUTTON_EDIT = 0
         I_VIEW_ACTIVE = 0
-        NAME_ICON_PRIMARY = 'gtk-apply'
-        NAME_ICON_SECONDARY = 'gtk-cancel'
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
         TOOLTIP_PRIMARY = 'Click to accept changes.'
         TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        TYPE = 'Parrot'
+        TYPE_MARKED = '<b>' + TYPE + '</b>:'
         # Test
-        target = VIDCORE.EditorMarkup(
-            p_view_passive=view_passive, p_view_active=view_active)
+        target = VIDCORE.EditorMarkup(p_view_passive=view_passive,
+                                      p_view_active=view_active, p_type=TYPE)
         children_editor = target._view_editor.get_children()
         assert target._buffer is view_active.get_buffer()
         assert isinstance(target._button_edit, Gtk.MenuButton)
@@ -77,7 +79,9 @@ class TestEditorMarkup:
 
         button_edit = children_editor[I_BUTTON_EDIT]
         popover_edit = button_edit.get_popover()
-        site_view_active = popover_edit.get_child()
+        box_popover = popover_edit.get_child()
+        label_type, site_view_active = box_popover.get_children()
+        assert TYPE_MARKED == label_type.get_label()
         assert isinstance(site_view_active, Gtk.Box)
         assert view_active is (
             site_view_active.get_children()[I_VIEW_ACTIVE])

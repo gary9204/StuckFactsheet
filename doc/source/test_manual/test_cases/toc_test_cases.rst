@@ -1,5 +1,5 @@
-Tests Cases
-===========
+Test Cases
+==========
 
 .. toctree::
    :maxdepth: 2

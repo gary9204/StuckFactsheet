@@ -1,5 +1,5 @@
-Tests Helpers
-=============
+Test Helpers
+============
 
 .. toctree::
    :maxdepth: 1

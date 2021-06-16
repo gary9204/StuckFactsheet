@@ -188,12 +188,14 @@ class TestViewSheet:
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
+
         assert target._control is control
         assert isinstance(target._window, Gtk.ApplicationWindow)
         assert target._window.get_application() is app
-        #
-        # # Components
+
+        # Components
+        # name: manual case_sheet_name
+        # title: manual case_sheet_title
         # assert isinstance(target._context_name, Gtk.Popover)
         # assert isinstance(target._context_summary, Gtk.Expander)
         # assert isinstance(target._flip_summary, Gtk.CheckButton)

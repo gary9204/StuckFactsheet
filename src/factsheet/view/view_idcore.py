@@ -31,8 +31,8 @@ class EditorMarkup:
 
     """
 
-    N_WIDTH_DISPLAY = 25
-    N_WIDTH_EDIT = 60
+    N_WIDTH_DISPLAY = 15
+    N_WIDTH_EDIT = 45
     _UI_EDITOR_MARKUP = """<?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.22.1 -->
         <interface>
@@ -50,8 +50,8 @@ class EditorMarkup:
                   <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="icon_name">gtk-edit</property>
-                    <property name="icon_size">3</property>
+                    <property name="icon_name">document-edit-symbolic</property>
+                    <property name="icon_size">2</property>
                   </object>
                 </child>
               </object>
@@ -82,11 +82,35 @@ class EditorMarkup:
             <property name="position">bottom</property>
             <property name="constrain_to">none</property>
             <child>
-              <object class="GtkBox" id="site_view_active">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkLabel" id="label_type">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Oops!&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="site_view_active">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
             </child>
@@ -94,12 +118,13 @@ class EditorMarkup:
         </interface>
         """
 
-    def __init__(self, p_view_passive: Gtk.Label, p_view_active: Gtk.Entry
-                 ) -> None:
+    def __init__(self, p_view_passive: Gtk.Label, p_view_active: Gtk.Entry,
+                 p_type: str = '') -> None:
         """Initialize editor view contents.
 
         :param p_view_passive: display view for formatted text.
         :param p_view_active: edit view for markup text.
+        :param p_type: content type of editor (for example, 'Title')
         """
         builder = Gtk.Builder.new_from_string(self._UI_EDITOR_MARKUP, -1)
         get_object = builder.get_object
@@ -126,8 +151,11 @@ class EditorMarkup:
         p_view_passive.set_xalign(XALIGN_LEFT)
         p_view_passive.show()
 
-        NAME_ICON_PRIMARY = 'gtk-apply'
-        NAME_ICON_SECONDARY = 'gtk-cancel'
+        label_type = get_object('label_type')
+        label_type.set_label('<b>{}</b>:'.format(p_type))
+
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
         TOOLTIP_PRIMARY = 'Click to accept changes.'
         TOOLTIP_SECONDARY = 'Click to cancel changes.'
         site_view_active = get_object('site_view_active')

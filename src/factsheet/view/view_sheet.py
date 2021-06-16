@@ -70,13 +70,25 @@ class ViewSheet:
         self._window = get_object('ui_sheet')
         self._window.set_application(p_app)
 
-        # Explore: name editor
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+
         view_name_passive = self._control.new_view_name_passive()
         view_name_active = self._control.new_view_name_active()
         editor_name = VIDCORE.EditorMarkup(
-            view_name_passive, view_name_active)
+            view_name_passive, view_name_active, 'Name')
         site_name_sheet = get_object('ui_site_name_sheet')
-        site_name_sheet.pack_start(editor_name.view_editor, True, True, 0)
+        site_name_sheet.pack_start(
+            editor_name.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+
+        view_title_passive = self._control.new_view_title_passive()
+        view_title_active = self._control.new_view_title_active()
+        editor_title = VIDCORE.EditorMarkup(
+            view_title_passive, view_title_active, 'Title')
+        site_title_sheet = get_object('ui_site_title_sheet')
+        site_title_sheet.pack_start(
+            editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
         # Components
         # self._context_name = get_object('ui_context_name')
