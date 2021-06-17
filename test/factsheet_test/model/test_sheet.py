@@ -79,7 +79,11 @@ class TestSheet:
         # assert not target._pages
 
     def test_init(self, new_kwargs_idcore):
-        """Confirm initialization."""
+        """Confirm initialization.
+
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
+        """
         # Setup
         KWARGS = new_kwargs_idcore()
         # Test
@@ -468,49 +472,51 @@ class TestSheet:
         # assert patch_outline.called
         # assert target.is_stale()
 
-    @pytest.mark.skip
-    def test_is_fresh(self):
+    def test_is_fresh(self, new_kwargs_idcore):
         """Confirm return is accurate.
 
-        #. Case: Sheet stale, identification information fresh
-        #. Case: Sheet fresh, identification information stale
-        #. Case: Sheet fresh, identification information fresh
+        #. Case: Sheet stale, ID info fresh
+        #. Case: Sheet fresh, ID info stale
+        #. Case: Sheet fresh, ID info fresh
+
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
         """
         # Setup
-        # TEXT_TITLE = 'Something completely different'
-        # target = MSHEET.Sheet(p_title=TEXT_TITLE)
-        # # Test: InfoId stale, identification information fresh
-        # target._stale = True
-        # target._infoid.set_fresh()
-        # assert not target.is_fresh()
-        # assert target._stale
-        # # Test: InfoId fresh, identification information stale
-        # target._stale = False
-        # target._infoid.set_stale()
-        # assert not target.is_fresh()
-        # assert target._stale
-        # # Test: InfoId fresh, identification information fresh
-        # assert not target.is_fresh()
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # assert target.is_fresh()
-        # assert not target._stale
+        KWARGS = new_kwargs_idcore()
+        target = MSHEET.Sheet(**KWARGS)
+        # Test: Sheet stale, ID info fresh, no topics
+        target._stale = True
+        target._summary.set_fresh()
+        assert not target.is_fresh()
+        assert target._stale
+        # Test: Sheet fresh, ID info stale, no topics
+        target._stale = False
+        target._summary.set_stale()
+        assert not target.is_fresh()
+        assert target._stale
+        # Test: Sheet fresh, ID info fresh, no topics
+        target._stale = False
+        target._summary.set_fresh()
+        assert target.is_fresh()
+        assert not target._stale
 
-    @pytest.mark.skip
-    def test_is_stale(self):
+    def test_is_stale(self, new_kwargs_idcore):
         """Confirm return is accurate.
 
-        #. Case: Sheet stale, identification information fresh
-        #. Case: Sheet fresh, identification information stale
-        #. Case: Sheet fresh, identification information fresh
+        #. Case: Sheet stale, ID info fresh, topics fresh
+        #. Case: Sheet fresh, ID info stale, topics fresh
+        #. Case: Sheet fresh, ID info fresh, topics fresh
         #. Case: Sheet fresh, ID info fresh, leaf topic stale
         #. Case: Sheet fresh, ID info fresh, last topic stale
-        #. Case: Sheet fresh, ID info fresh, topics fresh
+
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
         """
-        # # Setup
-        # TEXT_TITLE = 'Something completely different'
-        # target = MSHEET.Sheet(p_title=TEXT_TITLE)
-        #
+        # Setup
+        KWARGS = new_kwargs_idcore()
+        target = MSHEET.Sheet(**KWARGS)
+
         # N_TOPICS = 3
         # for i in range(N_TOPICS):
         #     topic = MTOPIC.Topic()
@@ -525,21 +531,21 @@ class TestSheet:
         #     parent = target.insert_topic_child(topic, parent)
         # I_LEAF = 2
         # I_LAST = 4
-        # # Test: Sheet stale, identification information fresh
-        # target._stale = True
-        # target._infoid.set_fresh()
-        # assert target.is_stale()
-        # assert target._stale
-        # # Test: Sheet fresh, identification information stale
-        # target._stale = False
-        # target._infoid.set_stale()
-        # assert target.is_stale()
-        # assert target._stale
-        # # Test: Sheet fresh, identification information fresh
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # assert not target.is_stale()
-        # assert not target._stale
+        # # Test: Sheet stale, ID info fresh
+        target._stale = True
+        target._name.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, ID info stale
+        target._stale = False
+        target._name.set_stale()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, ID info fresh, topics fresh
+        target._stale = False
+        target._name.set_fresh()
+        assert not target.is_stale()
+        assert not target._stale
         # # Test: Sheet fresh, ID info fresh, leaf topic stale
         # target._stale = False
         # target._infoid.set_fresh()
@@ -562,17 +568,13 @@ class TestSheet:
         #         topic.set_fresh()
         # assert target.is_stale()
         # assert target._stale
-        # # Test: Sheet fresh, ID info fresh, topics fresh
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # for i, index in enumerate(target._topics.indices()):
-        #     topic = target._topics.get_item(index)
-        #     topic.set_fresh()
-        # assert not target.is_stale()
-        # assert not target._stale
 
     def test_new_model(self, new_kwargs_idcore):
-        """Confirm store for identity components."""
+        """Confirm store for identity components.
+
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
+        """
         # Setup
         KWARGS = new_kwargs_idcore()
         target = MSHEET.Sheet(**KWARGS)
@@ -615,9 +617,8 @@ class TestSheet:
         # for page in pages:
         #     assert page.called_present
 
-    @pytest.mark.skip
-    def test_set_fresh(self):
-        """Confirm all attributes set.
+    def test_set_fresh(self, new_kwargs_idcore):
+        """Confirm all attributes marked fresh.
 
         #. Case: Sheet fresh, identification information fresh
         #. Case: Sheet stale, identification information fresh
@@ -625,11 +626,16 @@ class TestSheet:
         #. Case: Sheet stale, identification information stale
         #. Case: Sheet fresh, topics stale
         #. Case: Sheet stale, topics stale
-         """
-        # # Setup
+
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
+        """
+        # Setup
+        KWARGS = new_kwargs_idcore()
+        target = MSHEET.Sheet(**KWARGS)
         # TEXT_TITLE = 'Something completely different'
         # target = MSHEET.Sheet(p_title=TEXT_TITLE)
-        #
+
         # N_TOPICS = 3
         # for i in range(N_TOPICS):
         #     topic = MTOPIC.Topic()
@@ -642,30 +648,30 @@ class TestSheet:
         #     topic = MTOPIC.Topic()
         #     topic.init_identity(p_name=name)
         #     parent = target.insert_topic_child(topic, parent)
-        # # Test: Sheet fresh, identification information fresh
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # target.set_fresh()
-        # assert not target._stale
-        # assert target._infoid.is_fresh()
-        # # Test: Sheet stale, identification information fresh
-        # target._stale = True
-        # target._infoid.set_fresh()
-        # target.set_fresh()
-        # assert not target._stale
-        # assert target._infoid.is_fresh()
-        # # Test: Sheet fresh, identification information stale
-        # target._stale = False
-        # target._infoid.set_stale()
-        # target.set_fresh()
-        # assert not target._stale
-        # assert target._infoid.is_fresh()
-        # # Test: Sheet stale, identification information stale
-        # target._stale = True
-        # target._infoid.set_stale()
-        # target.set_fresh()
-        # assert not target._stale
-        # assert target._infoid.is_fresh()
+        # Test: Sheet fresh, identification information fresh
+        target._stale = False
+        target._title.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._title.is_fresh()
+        # Test: Sheet stale, identification information fresh
+        target._stale = True
+        target._title.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._title.is_fresh()
+        # Test: Sheet fresh, identification information stale
+        target._stale = False
+        target._title.set_stale()
+        target.set_fresh()
+        assert not target._stale
+        assert target._title.is_fresh()
+        # Test: Sheet stale, identification information stale
+        target._stale = True
+        target._title.set_stale()
+        target.set_fresh()
+        assert not target._stale
+        assert target._title.is_fresh()
         # # Test: Sheet fresh, topics stale
         # target._stale = False
         # target._infoid.set_stale()
@@ -697,7 +703,7 @@ class TestSheet:
         #     topic = target._topics.get_item(index)
         #     assert topic.is_fresh()
 
-    @pytest.mark.skip
+    @pytest.mark.skip(reason='No need to extend inherited method')
     def test_set_stale(self):
         """Confirm all attributes set.
 

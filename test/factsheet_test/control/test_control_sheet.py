@@ -44,8 +44,8 @@ class TestControlSheet:
     def test_init(self, new_kwargs_idcore):
         """Confirm initialization.
 
-        :param new_kwargs_idcore: factory for stock identity keyword
-            arguments
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
         """
         # Setup
         KWARGS = new_kwargs_idcore()
@@ -396,6 +396,30 @@ class TestControlSheet:
         # assert isinstance(control_new, CTOPIC.ControlTopic)
         # assert target._controls_topic[id_topic] is control_new
 
+    @pytest.mark.parametrize('METHOD, MODEL_IS_STALE', [
+        ('is_fresh', False),
+        ('is_fresh', True),
+        ('is_stale', False),
+        ('is_stale', True),
+        ])
+    def test_is_fresh_stale(self, new_kwargs_idcore, METHOD, MODEL_IS_STALE):
+        """Confirm model and control report same state of change.
+
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
+        :param METHOD: method to test, which is ``is_fresh`` or ``is_stale``.
+        :param MODEL_IS_STALE: state of change in model.
+        """
+        # Setup
+        KWARGS = new_kwargs_idcore()
+        model = MSHEET.Sheet(**KWARGS)
+        method_model = getattr(model, METHOD)
+        target = CSHEET.ControlSheet(p_model=model)
+        method_target = getattr(target, METHOD)
+        model._stale = MODEL_IS_STALE
+        # Test
+        assert method_model() == method_target()
+
     @pytest.mark.parametrize('NAME_METHOD, NAME_CHECK, CLASS', [
         ('new_view_name_active', 'get_buffer', MSHEET.ViewNameSheetActive),
         ('new_view_name_passive', 'get_label', MSHEET.ViewNameSheetPassive),
@@ -409,8 +433,8 @@ class TestControlSheet:
     def test_new_view(self, new_kwargs_idcore, NAME_METHOD, NAME_CHECK, CLASS):
         """Confirm control relays requests for new views.
 
-        :param new_kwargs_idcore: factory for stock identity keyword
-            arguments
+        :param new_kwargs_idcore: fixture: factory for stock identity
+            keyword arguments
         :param NAME_METHOD: name of method under test
         :param NAME_CHECK: name of method used to check view
         :param CLASS: expected view class

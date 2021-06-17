@@ -260,6 +260,16 @@ class ControlSheet(CIDCORE.ControlIdCore):
     #     control_new = self._add_new_control_topic(px_topic)
     #     return index_new, control_new
 
+    def is_fresh(self) -> bool:
+        """Return True when there are no unsaved changes to factsheet."""
+        return self._model.is_fresh()
+
+    def is_stale(self) -> bool:
+        """Return True when there is at least one unsaved change to
+        factsheet.
+        """
+        return self._model.is_stale()
+
     # @classmethod
     # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
     #     """Create and return control with default model.

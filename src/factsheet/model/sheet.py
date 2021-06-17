@@ -254,19 +254,14 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to factsheet."""
-        raise NotImplementedError
         return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         factsheet.
         """
-        # if self._stale:
-        #     return True
-
-        # if self._infoid.is_stale():
-        #     self._stale = True
-        #     return True
+        if super().is_stale():
+            return True
 
         # for index in self._topics.indices():
         #     topic = self._topics.get_item(index)
@@ -275,8 +270,7 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
         #         self._stale = True
         #         return True
 
-        raise NotImplementedError
-        # return False
+        return False
 
     def _new_model(self) -> typing.Tuple[NameSheet, SummarySheet, TitleSheet]:
         """Return (name, summary, title) store."""
@@ -301,18 +295,16 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
 
     def set_fresh(self) -> None:
         """Mark factsheet in memory consistent with file contents."""
-        raise NotImplementedError
-        # self._stale = False
-        # self._infoid.set_fresh()
+        super().set_fresh()
         # for index in self._topics.indices():
         #     topic = self._topics.get_item(index)
         #     assert topic is not None
         #     topic.set_fresh()
 
-    def set_stale(self) -> None:
-        """Mark factsheet in memory changed from file contents."""
-        raise NotImplementedError
-        self._stale = True
+    # def set_stale(self) -> None:
+    #     """Mark factsheet in memory changed from file contents."""
+    #     raise NotImplementedError
+    #     self._stale = True
 
     def topics(self, p_index: typing.Any = None
                ) -> typing.Iterator[typing.Any]:
