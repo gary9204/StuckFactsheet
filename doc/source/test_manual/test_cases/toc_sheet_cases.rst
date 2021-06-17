@@ -6,6 +6,7 @@ Factsheet-level Cases
 
    case_sheet_dialogs
    case_sheet_name
+   case_sheet_summary
    case_sheet_title
 ..   case_sheet_new
 ..   case_sheet_open_page

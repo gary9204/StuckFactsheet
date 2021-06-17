@@ -12,7 +12,7 @@ Setup
 
 Steps
 -----
-1. **Step** Check icon layout.
+1. **Step:** Check window layout.
 
    a. *Expect:* The line immediately below the window title contains:
       |edit| (name edit icon), "Unnamed" (Factsheet name), |edit|
