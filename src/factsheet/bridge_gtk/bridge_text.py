@@ -178,7 +178,18 @@ class BridgeTextMarkup(
 
     .. _Gtk.EntryBuffer:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
+
+    .. data:: N_WIDTH_DISPLAY
+
+        Minimum width in characters of display view.
+
+    .. data:: N_WIDTH_EDIT
+
+        Minimum width in characters of edit view.
     """
+
+    N_WIDTH_DISPLAY = 15
+    N_WIDTH_EDIT = 45
 
     def _destroy_view(self, p_view: ViewTextDisplay) -> None:
         """Stop updating display view that is being destroyed.
@@ -210,13 +221,36 @@ class BridgeTextMarkup(
 
     def new_view(self) -> ViewTextMarkup:
         """Return view to display and edit text with mark up formatting."""
-        return ViewTextMarkup.new_with_buffer(self._model)
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        view = ViewTextMarkup.new_with_buffer(self._model)
+        view.set_halign(Gtk.Align.START)
+        view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
+        view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
+        view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
+        view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
+        view.set_width_chars(self.N_WIDTH_EDIT)
+        return view
 
     def new_view_passive(self) -> ViewTextDisplay:
         """Return view to display text with mark up formatting."""
         view = ViewTextDisplay(label=self._get_persist())
         _ = view.connect('destroy', self._destroy_view)
         self._views[id(view)] = view
+
+        XALIGN_LEFT = 0.0
+        view.set_ellipsize(Pango.EllipsizeMode.END)
+        view.set_halign(Gtk.Align.START)
+        view.set_selectable(True)
+        view.set_use_markup(True)
+        view.set_width_chars(self.N_WIDTH_DISPLAY)
+        view.set_xalign(XALIGN_LEFT)
         return view
 
     def on_change(self):

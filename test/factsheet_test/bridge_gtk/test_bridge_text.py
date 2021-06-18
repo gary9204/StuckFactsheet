@@ -4,6 +4,7 @@ information classes.  See :mod:`.bridge_text`.
 """
 import gi   # type: ignore[import]
 import logging
+import math
 import pickle
 import pytest   # type: ignore[import]
 import typing
@@ -16,6 +17,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any, typing.Any]):
@@ -344,12 +346,26 @@ class TestBridgeTextMarkup:
     def test_new_view(self):
         """Confirm return is editable view."""
         # Setup
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
         target = BTEXT.BridgeTextMarkup()
         # Test
         view = target.new_view()
         assert isinstance(view, BTEXT.ViewTextMarkup)
         assert target._model is view.get_buffer()
         assert not target._views
+        assert Gtk.Align.START == view.get_halign()
+        assert NAME_ICON_PRIMARY == (
+            view.get_icon_name(Gtk.EntryIconPosition.PRIMARY))
+        assert NAME_ICON_SECONDARY == (
+            view.get_icon_name(Gtk.EntryIconPosition.SECONDARY))
+        assert TOOLTIP_PRIMARY == (
+            view.get_icon_tooltip_markup(Gtk.EntryIconPosition.PRIMARY))
+        assert TOOLTIP_SECONDARY == (
+            view.get_icon_tooltip_markup(Gtk.EntryIconPosition.SECONDARY))
+        assert target.N_WIDTH_EDIT == view.get_width_chars()
 
     def test_new_view_passive(self, monkeypatch):
         """Confirm return is display-only view."""
@@ -371,6 +387,7 @@ class TestBridgeTextMarkup:
         target._set_persist(TEXT)
         SIGNAL = 'destroy'
         HANDLER = target._destroy_view
+        N_XALIGN = 0.0
         # Test
         view = target.new_view_passive()
         assert isinstance(view, BTEXT.ViewTextDisplay)
@@ -379,6 +396,13 @@ class TestBridgeTextMarkup:
         assert SIGNAL == patch_connect.signal
         assert target._destroy_view == HANDLER
         assert target._views[id(view)] is view
+
+        assert Pango.EllipsizeMode.END is view.get_ellipsize()
+        assert Gtk.Align.START == view.get_halign()
+        assert view.get_selectable()
+        assert view.get_use_markup()
+        assert target.N_WIDTH_DISPLAY == view.get_width_chars()
+        assert math.isclose(N_XALIGN, view.get_xalign())
 
     def test_on_change(self):
         """| Confirm refresh of display views.

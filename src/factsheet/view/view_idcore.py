@@ -7,7 +7,6 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 class EditorMarkup:
@@ -20,19 +19,8 @@ class EditorMarkup:
 
     .. _Pango markup:
         https://developer.gnome.org/pygtk/stable/pango-markup-language.html
-
-    .. data:: N_WIDTH_DISPLAY
-
-        Minimum width in characters of display view.
-
-    .. data:: N_WIDTH_EDIT
-
-        Minimum width in characters of edit view.
-
     """
 
-    N_WIDTH_DISPLAY = 15
-    N_WIDTH_EDIT = 45
     _UI_EDITOR_MARKUP = """<?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.22.1 -->
         <interface>
@@ -139,41 +127,20 @@ class EditorMarkup:
         EXPAND_OKAY = True
         FILL_OKAY = True
         N_PADDING = 6
-        XALIGN_LEFT = 0.0
         site_view_passive = get_object('site_view_passive')
         site_view_passive.pack_start(
             p_view_passive, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-        p_view_passive.set_ellipsize(Pango.EllipsizeMode.END)
-        p_view_passive.set_halign(Gtk.Align.START)
-        p_view_passive.set_selectable(True)
-        p_view_passive.set_use_markup(True)
-        p_view_passive.set_width_chars(self.N_WIDTH_DISPLAY)
-        p_view_passive.set_xalign(XALIGN_LEFT)
         p_view_passive.show()
 
         label_type = get_object('label_type')
         label_type.set_label('<b>{}</b>:'.format(p_type))
 
-        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        TOOLTIP_PRIMARY = 'Click to accept changes.'
-        TOOLTIP_SECONDARY = 'Click to cancel changes.'
         site_view_active = get_object('site_view_active')
         site_view_active.pack_start(
             p_view_active, EXPAND_OKAY, FILL_OKAY, N_PADDING)
         _ = p_view_active.connect('icon-press', self.on_icon_press)
         _ = p_view_active.connect(
             'activate', lambda _: self._button_edit.clicked())
-        p_view_active.set_halign(Gtk.Align.START)
-        p_view_active.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
-        p_view_active.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
-        p_view_active.set_icon_tooltip_markup(
-            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
-        p_view_active.set_icon_tooltip_markup(
-            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
-        p_view_active.set_width_chars(self.N_WIDTH_EDIT)
         p_view_active.show()
 
     def on_icon_press(

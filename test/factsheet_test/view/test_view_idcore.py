@@ -2,7 +2,6 @@
 Unit tests for classes to display identity information.  See
 :mod:`.view_idcore`.
 """
-import math
 import pytest   # type: ignore[import]
 
 import factsheet.control.control_sheet as CSHEET
@@ -12,7 +11,6 @@ import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-from gi.repository import Pango  # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
@@ -41,13 +39,8 @@ class TestEditorMarkup:
         I_SITE_VIEW_PASSIVE = 1
         I_VIEW_PASSIVE = 0
         N_PADDING = 6
-        N_XALIGN = 0.0
         I_BUTTON_EDIT = 0
         I_VIEW_ACTIVE = 0
-        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        TOOLTIP_PRIMARY = 'Click to accept changes.'
-        TOOLTIP_SECONDARY = 'Click to cancel changes.'
         TYPE = 'Parrot'
         TYPE_MARKED = '<b>' + TYPE + '</b>:'
         # Test
@@ -69,12 +62,6 @@ class TestEditorMarkup:
         assert expand_passive
         assert fill_passive
         assert N_PADDING == padding_passive
-        assert Pango.EllipsizeMode.END is view_passive.get_ellipsize()
-        assert Gtk.Align.START == view_passive.get_halign()
-        assert view_passive.get_selectable()
-        assert view_passive.get_use_markup()
-        assert target.N_WIDTH_DISPLAY == view_passive.get_width_chars()
-        assert math.isclose(N_XALIGN, view_passive.get_xalign())
         assert view_passive.get_visible()
 
         button_edit = children_editor[I_BUTTON_EDIT]
@@ -90,16 +77,6 @@ class TestEditorMarkup:
         assert expand_active
         assert fill_active
         assert N_PADDING == padding_active
-        assert NAME_ICON_PRIMARY == (
-            view_active.get_icon_name(Gtk.EntryIconPosition.PRIMARY))
-        assert NAME_ICON_SECONDARY == (
-            view_active.get_icon_name(Gtk.EntryIconPosition.SECONDARY))
-        assert TOOLTIP_PRIMARY == view_active.get_icon_tooltip_markup(
-            Gtk.EntryIconPosition.PRIMARY)
-        assert TOOLTIP_SECONDARY == view_active.get_icon_tooltip_markup(
-            Gtk.EntryIconPosition.SECONDARY)
-        assert target.N_WIDTH_EDIT == view_active.get_width_chars()
-        assert Gtk.Align.START == view_active.get_halign()
         assert view_active.get_visible()
 
     @pytest.mark.parametrize(
