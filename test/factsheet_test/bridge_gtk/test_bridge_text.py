@@ -543,25 +543,33 @@ class TestBridgeTextTagged:
         # Test
         assert isinstance(target._model, BTEXT.ModelTextTagged)
 
-    def test_new_view(self):
-        """Confirm return is editable view."""
-        # Setup
-        target = BTEXT.BridgeTextTagged()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BTEXT.ViewTextTagged)
-        assert target._model is view.get_buffer()
-        assert view.get_editable()
+    @pytest.mark.parametrize('METHOD, EDIT_OK', [
+        ('new_view', True),
+        ('new_view_passive', False),
+        ])
+    def test_new_views(self, METHOD, EDIT_OK):
+        """Confirm attributes of display and edit views.
 
-    def test_new_view_passive(self):
-        """Confirm return is display-only view."""
+        :param METHOD: method to test, which is ``new_view`` or
+            ``new_view_passive``.
+        :param EDIT_OK: whether view should be editable.
+        """
         # Setup
         target = BTEXT.BridgeTextTagged()
+        method_target = getattr(target, METHOD)
+        N_MARGIN_LEFT_RIGHT = 6
+        N_MARGIN_TOP_BOTTOM = 6
         # Test
-        view = target.new_view_passive()
+        view = method_target()
         assert isinstance(view, BTEXT.ViewTextTagged)
         assert target._model is view.get_buffer()
-        assert not view.get_editable()
+        assert N_MARGIN_TOP_BOTTOM == view.get_bottom_margin()
+        assert N_MARGIN_LEFT_RIGHT == view.get_left_margin()
+        assert N_MARGIN_LEFT_RIGHT == view.get_right_margin()
+        assert N_MARGIN_TOP_BOTTOM == view.get_top_margin()
+        assert view.get_vexpand()
+        assert Gtk.WrapMode.WORD_CHAR == view.get_wrap_mode()
+        assert view.get_editable() is EDIT_OK
 
     def test_set_persist(self):
         """Confirm import from persistent form."""

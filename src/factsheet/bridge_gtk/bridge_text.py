@@ -315,7 +315,16 @@ class BridgeTextTagged(
 
     def new_view(self) -> ViewTextTagged:
         """Return view to display and edit text with tag-based formatting."""
-        return ViewTextTagged.new_with_buffer(self._model)
+        N_MARGIN_LEFT_RIGHT = 6
+        N_MARGIN_TOP_BOTTOM = 6
+        view = ViewTextTagged.new_with_buffer(self._model)
+        view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
+        view.set_left_margin(N_MARGIN_LEFT_RIGHT)
+        view.set_right_margin(N_MARGIN_LEFT_RIGHT)
+        view.set_top_margin(N_MARGIN_TOP_BOTTOM)
+        view.set_vexpand(True)
+        view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        return view
 
     def new_view_passive(self) -> ViewTextTagged:
         """Return view to display text with tag-based formatting."""

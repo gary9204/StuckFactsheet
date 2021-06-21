@@ -90,15 +90,7 @@ class ViewSheet:
         site_title_sheet.pack_start(
             editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-        N_MARGIN_LEFT_RIGHT = 6
-        N_MARGIN_TOP_BOTTOM = 6
         view_summary_active = self._control.new_view_summary_active()
-        view_summary_active.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
-        view_summary_active.set_left_margin(N_MARGIN_LEFT_RIGHT)
-        view_summary_active.set_right_margin(N_MARGIN_LEFT_RIGHT)
-        view_summary_active.set_top_margin(N_MARGIN_TOP_BOTTOM)
-        view_summary_active.set_vexpand(True)
-        view_summary_active.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
         site_summary_sheet = get_object('ui_site_summary_sheet')
         site_summary_sheet.add(view_summary_active)
 
