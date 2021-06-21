@@ -162,7 +162,15 @@ class TestUiItems:
 
 
 class TestViewSheet:
-    """Unit tests for :class:`.ViewSheet`."""
+    """Unit tests for :class:`.ViewSheet`.
+
+    The following manual tests are needed to confirm placement,
+    appearance, and behavior of :class:`ViewSheet` components.
+
+    * :doc:`../test_manual/test_cases/case_sheet_name` for Factsheet name
+    * :doc:`../test_manual/test_cases/case_sheet_summary` for Factsheet summary
+    * :doc:`../test_manual/test_cases/case_sheet_title` for Factsheet title
+    """
 
     @pytest.mark.parametrize('NAME, TYPE', [
         ('NAME_FILE_SHEET_UI', str),
