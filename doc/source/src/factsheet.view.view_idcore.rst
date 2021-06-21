@@ -3,6 +3,7 @@
 
 .. automodule:: factsheet.view.view_idcore
    :members:
+   :special-members: __init__
    :undoc-members:
    :show-inheritance:
 

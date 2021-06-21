@@ -38,7 +38,8 @@ class EditorMarkup:
                   <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="icon_name">document-edit-symbolic</property>
+                    <property
+                        name="icon_name">document-edit-symbolic</property>
                     <property name="icon_size">2</property>
                   </object>
                 </child>
@@ -77,7 +78,8 @@ class EditorMarkup:
                   <object class="GtkLabel" id="label_type">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Oops!&lt;/b&gt;</property>
+                    <property name="label"
+                        translatable="yes">&lt;b&gt;Oops!&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
