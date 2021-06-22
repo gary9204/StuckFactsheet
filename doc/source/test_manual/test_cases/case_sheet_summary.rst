@@ -10,8 +10,8 @@ Setup
 1. **Step:** Start application with
    :doc:`../test_helpers/help_start_application`
 
-Steps
------
+Steps -- Appearance and Basic Editing
+-------------------------------------
 1. **Step:** Check window layout.
 
    a. *Expect:* A frame with collapser icon (|collapser|) and label
@@ -69,7 +69,78 @@ Steps
    a. *Expect:* Pane divider stops with about three summary lines
       visible.
 
-#. **Step:** Click initial window **close icon** |window-close|.
+Steps -- Hide/Show Summary
+--------------------------
+#. **Step:** Edit summary to "This sample factsheet includes a summary."
+
+   a. *Expect:* Text appears in summary pane as typed.
+
+#. **Step:** Click collapser icon (|collapser|) to left of *Factsheet
+   Summary* label.
+
+   a. *Expect:* The *Factsheet Summary* pane collapses and shows only
+      expander icon (|expander|) and label.
+   #. *Expect:* The *Factsheet Topics* pane expands to replace it.
+
+#. **Step:** Click expander icon (|expander|) to left of *Factsheet
+   Summary* label.
+
+   a. *Expect:* The *Factsheet Summary* pane expands.
+   #. *Expect:* The *Factsheet Topics* pane contracts to accommodate it.
+   #. *Expect:* The *Factsheet Summary* text is unchanged.
+
+#. **Step:** Select Factsheet **menu** |menu| item **Display ... >
+   Summary** (right of *Factsheet* name and title fields).
+
+   a. *Expect:* The *Factsheet Summary* label, frame, and pane disappear.
+   #. *Expect:* The *Factsheet Topics* pane expands to fill the window.
+   #. *Expect:* The popup menu remains visible.
+   #. *Expect:* The check box to the left of **Summary** menu item is
+      cleared. 
+
+#. **Step:** Select **Summary** menu item.
+
+   a. *Expect:* The *Factsheet Summary* label, frame, and pane appear.
+   #. *Expect:* The *Factsheet Topics* pane contracts to accommodate
+      them.
+   #. *Expect:* The *Factsheet Summary* text is unchanged.
+   #. *Expect:* The popup menu remains visible.
+   #. *Expect:* The **Summary** check box is checked.
+
+#. **Step:** Press Esc key.
+
+   a. *Expect:* The popup menu disappears.
+
+#. **Step:** Click collapser icon (|collapser|) to left of *Factsheet
+   Summary* label.
+
+   a. *Expect:* The *Factsheet Summary* pane collapses and shows only
+      expander icon (|expander|) and label.
+   #. *Expect:* The *Factsheet Topics* pane expands to replace it.
+
+#. **Step:** Select Factsheet **menu** |menu| item **Display ... >
+   Summary**\ .
+
+   a. *Expect:* The *Factsheet Summary* label disappears.
+   #. *Expect:* The *Factsheet Topics* pane expands to fill the window.
+   #. *Expect:* The popup menu remains visible.
+   #. *Expect:* The check box to the left of **Summary** menu item is
+      cleared. 
+
+#. **Step:** Select **Summary** menu item.
+
+   a. *Expect:* The *Factsheet Summary* label appears.
+   #. *Expect:* The *Factsheet Topics* pane contracts to accommodate
+      them.
+   #. *Expect:* The popup menu remains visible.
+   #. *Expect:* The **Summary** check box is checked.
+
+#. **Step:** Press Esc key.
+
+   a. *Expect:* The popup menu disappears.
+
+
+#. **Step:** Click window **close icon** |window-close|.
 
    a. *Expect:* Window disappears.
    #. *Expect:* *Application* closes.
@@ -98,3 +169,19 @@ Teardown
       #. Double and triple clicking to select text does not trigger
          warning.
       #. Selecting text with arrow keys does not trigger warning.
+
+#. Transient Gdk-WARNING on 2021-06-22 repeated
+
+   * *Warning:* (app.py:10104): Gdk-WARNING ...: Error writing selection
+     data: Error writing to file descriptor: Broken pipe
+   * *Reproduce:*
+
+      a. Enter text in Factsheet Summary frame.
+      #. Select text with mouse
+
+   * *Notes:*
+
+      a. The warning recurred after lunch.
+      #. I paused the virtual machine hosting the development
+         environment during lunch.
+      #. After rebooting the virtual machine, the warning did not recur.

@@ -211,7 +211,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">win.popup-name</property>
-            <property name="text" translatable="yes">Show name</property>
+            <property name="text" translatable="yes">Show TBD</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -220,12 +220,11 @@
           </packing>
         </child>
         <child>
-          <object class="GtkCheckButton" id="ui_flip_summary">
+          <object class="GtkCheckButton" id="ui_button_show_summary_sheet">
             <property name="label" translatable="yes">Summary</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
-            <property name="action_name">win.flip-summary</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
@@ -915,10 +914,11 @@
             <property name="orientation">vertical</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkExpander" id="ui_context_summary">
+              <object class="GtkExpander" id="ui_expander_summary_sheet">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="expanded">True</property>
+                <property name="resize_toplevel">True</property>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
@@ -933,8 +933,7 @@
                       <object class="GtkScrolledWindow" id="ui_site_summary_sheet">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="min_content_height">60</property>
-                        <property name="propagate_natural_height">True</property>
+                        <property name="min_content_height">80</property>
                         <child>
                           <placeholder/>
                         </child>

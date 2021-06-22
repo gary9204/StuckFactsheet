@@ -22,7 +22,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GLib   # type: ignore[import]    # noqa: E402
-# from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
+from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
@@ -89,6 +89,12 @@ class ViewSheet:
         site_title_sheet = get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
             editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+
+        button_show_summary_sheet = get_object('ui_button_show_summary_sheet')
+        expander_summary_sheet = get_object('ui_expander_summary_sheet')
+        SYNC = GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE
+        _binding = button_show_summary_sheet.bind_property(
+            'active', expander_summary_sheet, 'visible', SYNC)
 
         view_summary_active = self._control.new_view_summary_active()
         site_summary_sheet = get_object('ui_site_summary_sheet')
