@@ -38,7 +38,7 @@ class RosterFactsheet:
     opening a factsheet file.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize empty roster for factsheets."""
         self._roster: typing.MutableMapping[int, 'ControlSheet'] = dict()
 

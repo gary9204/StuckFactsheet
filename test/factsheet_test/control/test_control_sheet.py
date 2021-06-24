@@ -794,7 +794,7 @@ class TestGlobal:
 
 
 class TestRosterFactsheet:
-    """Unit tests for :class:`.PoolSheets`."""
+    """Unit tests for :class:`.RosterFactsheet`."""
 
     def test_init(self):
         """Confirm initialization."""
@@ -807,7 +807,7 @@ class TestRosterFactsheet:
     @pytest.mark.skip
     def test_close_factsheet(self):
         """| Confirm factsheet close.
-        | Case: existing control
+        | Case: control in roster
         """
         # # Setup
         # N_CONTROLS = 3
@@ -828,7 +828,7 @@ class TestRosterFactsheet:
     @pytest.mark.skip
     def test_close_factsheet_warn(self, PatchLogger, monkeypatch):
         """| Confirm factsheet close.
-        | Case: control not found
+        | Case: control not in roster
         """
         # # Setup
         # N_CONTROLS = 3

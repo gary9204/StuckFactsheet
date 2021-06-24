@@ -250,7 +250,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.open-page-sheet</property>
+            <property name="action_name">win.open-view-sheet</property>
             <property name="text" translatable="yes">Open window</property>
           </object>
           <packing>

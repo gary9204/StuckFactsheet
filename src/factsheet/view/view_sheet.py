@@ -27,6 +27,46 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
+class RosterViewSheet:
+    """Maintains roster of open views of a factsheet."""
+
+    def __init__(self, p_app: Gtk.ApplicationWindow,
+                 p_sheet: CSHEET.ControlSheet) -> None:
+        """Initialize empty roster for factsheets.
+
+        :param p_app: applicaton shared by all views in roster.
+        :param p_sheet: sheet control shared by all views in roster.
+        """
+        self._app = p_app
+        self._control = p_sheet
+        self._roster: typing.MutableMapping[int, 'ViewSheet'] = dict()
+
+    def close_view_sheet(self, p_view_sheet: 'ViewSheet') -> None:
+        """Close sheet view, provided there is no unacdeptable data loss.
+
+        Log a warning when the view is not in the roster.
+
+        :param p_view_sheet: sheet view to close.
+        """
+        raise NotImplementedError
+
+    def open_view_sheet(self) -> 'ViewSheet':
+        """Return new sheet view."""
+        view = ViewSheet(p_roster=self)
+        self._roster[id(view)] = view
+        return view
+
+    @property
+    def app(self) -> Gtk.ApplicationWindow:
+        """Return application shared by all sheet views in roster."""
+        return self._app
+
+    @property
+    def control(self) -> CSHEET.ControlSheet:
+        """Return control shared by all sheet views in roster."""
+        return self._control
+
+
 class ViewSheet:
     """Displays Factsheet document and translates user actions.
 
@@ -62,43 +102,46 @@ class ViewSheet:
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
-    def __init__(self, *, p_app: Gtk.Application,
-                 p_control: CSHEET.ControlSheet) -> None:
-        self._control = p_control
+    def __init__(self, *, p_roster: RosterViewSheet) -> None:
+        """Initialize sheet view and show window.
+
+        :param p_roster: roster of sheet views for factsheet.
+        """
+        self._roster = p_roster
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
-        self._window.set_application(p_app)
+        self._window.set_application(self._roster.app)
 
         EXPAND_OKAY = True
         FILL_OKAY = True
         N_PADDING = 6
 
-        view_name_passive = self._control.new_view_name_passive()
-        view_name_active = self._control.new_view_name_active()
+        view_name_passive = self._roster.control.new_view_name_passive()
+        view_name_active = self._roster.control.new_view_name_active()
         editor_name = VIDCORE.EditorMarkup(
             view_name_passive, view_name_active, 'Name')
         site_name_sheet = get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
             editor_name.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-        view_title_passive = self._control.new_view_title_passive()
-        view_title_active = self._control.new_view_title_active()
+        view_title_passive = self._roster.control.new_view_title_passive()
+        view_title_active = self._roster.control.new_view_title_active()
         editor_title = VIDCORE.EditorMarkup(
             view_title_passive, view_title_active, 'Title')
         site_title_sheet = get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
             editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
+        view_summary_active = self._roster.control.new_view_summary_active()
+        site_summary_sheet = get_object('ui_site_summary_sheet')
+        site_summary_sheet.add(view_summary_active)
+
         button_show_summary_sheet = get_object('ui_button_show_summary_sheet')
         expander_summary_sheet = get_object('ui_expander_summary_sheet')
         SYNC = GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE
         _binding = button_show_summary_sheet.bind_property(
             'active', expander_summary_sheet, 'visible', SYNC)
-
-        view_summary_active = self._control.new_view_summary_active()
-        site_summary_sheet = get_object('ui_site_summary_sheet')
-        site_summary_sheet.add(view_summary_active)
 
         # Components
         # self._context_name = get_object('ui_context_name')
@@ -160,8 +203,10 @@ class ViewSheet:
         #     self._window, 'reset-name', self.on_reset_name)
         # UI.new_action_active(
         #     self._window, 'flip-summary', self.on_flip_summary)
+        UI.new_action_active(self._window, 'open-view-sheet',
+                             lambda _a, _t: self._roster.open_view_sheet())
         # UI.new_action_active(
-        #     self._window, 'open-page-sheet', self.on_open_page)
+        #     self._window, 'open-view-sheet', self.on_open_view_sheet)
         # UI.new_action_active(self._window, 'close-page-sheet',
         #                      lambda _w, _e: self._window.close())
         # UI.new_action_active_dialog(
@@ -572,14 +617,14 @@ class ViewSheet:
         # self._view_topics.gtk_view.expand_to_path(path)
         # self._cursor_topics.select_iter(index)
 
-    def on_open_page(self, _action: Gio.SimpleAction,
-                     _target: GLib.Variant) -> None:
-        """Open another view of factsheet."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # app = self._window.get_application()
-        # page = ViewSheet(px_app=app)
-        # ViewSheet.link_factsheet(page, self._control)
+    # def on_open_view_sheet(self, _action: Gio.SimpleAction,
+    #                        _target: GLib.Variant) -> None:
+    #     """Open another view of factsheet."""
+    #     self._roster.open_view_sheet()
+    #     # assert self._control is not None
+    #     # app = self._window.get_application()
+    #     # page = ViewSheet(px_app=app)
+    #     # ViewSheet.link_factsheet(page, self._control)
 
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:

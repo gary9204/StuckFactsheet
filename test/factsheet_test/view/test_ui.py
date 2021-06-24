@@ -36,35 +36,34 @@ class TestUiActions:
     """Unit tests for module functions defined in :mod:`.view.ui`.
     """
 
-    @pytest.mark.skip
-    def test_new_active_action(self):
+    def test_new_action_active(self):
         """Confirm activate signal for new action invokes handler."""
-        # # Setup
-        # _load_signals = Gio.SimpleAction.new('Null', None)
-        # action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
-        # signal = GO.signal_lookup('activate', action_gtype)
-        # N_DEFAULT = 0
-        #
-        # group = Gio.SimpleActionGroup()
-        # name_action = 'test-action'
-        #
-        # def handler(p_action, p_target): pass
-        # # Test
-        # UI.new_action_active(
-        #     pm_group=group, p_name=name_action, px_handler=handler)
-        # action = group.lookup_action(name_action)
-        # assert action is not None
-        # n_handlers = 0
-        # while True:
-        #     id_signal = GO.signal_handler_find(
-        #         action, GO.SignalMatchType.ID, signal, 0, None, None, None)
-        #     if 0 == id_signal:
-        #         break
-        #
-        #     n_handlers += 1
-        #     GO.signal_handler_disconnect(action, id_signal)
-        #
-        # assert N_DEFAULT + 1 == n_handlers
+        # Setup
+        _load_signals = Gio.SimpleAction.new('Null', None)
+        action_gtype = GO.type_from_name(GO.type_name(Gio.SimpleAction))
+        signal = GO.signal_lookup('activate', action_gtype)
+        N_DEFAULT = 0
+
+        group = Gio.SimpleActionGroup()
+        name_action = 'test-action'
+
+        def handler(p_action, p_target): pass
+        # Test
+        UI.new_action_active(
+            p_group=group, p_name=name_action, p_handler=handler)
+        action = group.lookup_action(name_action)
+        assert action is not None
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                action, GO.SignalMatchType.ID, signal, 0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(action, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
 
     def test_new_action_active_dialog(self):
         """Confirm activate signal for new action invokes handler with
@@ -116,8 +115,8 @@ class TestUiActions:
 # #         def handler(p_action, p_target): pass
 #         # Test
 # #         UI.new_activate_action_boolean(
-# #             pm_group=group, p_name=name_action, p_state=state,
-# #             px_handler=handler)
+# #             p_group=group, p_name=name_action, p_state=state,
+# #             p_handler=handler)
 # #         action = group.lookup_action(name_action)
 # #         assert action is not None
 # #         assert state == action.get_state().get_boolean()

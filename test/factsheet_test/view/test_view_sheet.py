@@ -1,6 +1,9 @@
 """
 Unit tests for class to display Factsheet document.  See
 :mod:`.view_sheet`.
+
+.. _Pytest monkeypatch:
+   https://docs.pytest.org/en/latest/how-to/monkeypatch.html
 """
 # import math
 # from pathlib import Path
@@ -119,9 +122,8 @@ def gtk_app_window():
 
 
 @pytest.fixture
-def setup_app_control_view(patch_appfactsheet, request, capfd):
-    """Fixture with teardown: return consistent sheet app, control, and
-    view.
+def setup_view_roster(patch_appfactsheet, request, capfd):
+    """Fixture with teardown: return view sheet with its roster.
 
     Set path to factsheet file with marker ``path_sheet`` and key
     ``'path_sheet'``.
@@ -138,23 +140,14 @@ def setup_app_control_view(patch_appfactsheet, request, capfd):
         except KeyError:
             pass
     control = CSHEET.g_roster_factsheets.open_factsheet(p_path=path)
-    view_sheet = VSHEET.ViewSheet(p_app=app, p_control=control)
+    roster = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+    view_sheet = VSHEET.ViewSheet(p_roster=roster)
     snapshot = capfd.readouterr()   # Resets the internal buffer
     assert not snapshot.out
     assert 'Gtk-CRITICAL' in snapshot.err
     assert 'GApplication::startup signal' in snapshot.err
-    yield app, control, view_sheet
+    yield view_sheet, roster
     view_sheet._window.destroy()
-
-
-@pytest.fixture
-def setup_view_sheet(setup_app_control_view):
-    """Fixture with teardown: return sheet view.
-
-    :param setup_app_control_view: TBD
-    """
-    _, _, view_sheet = setup_app_control_view
-    return view_sheet
 
 
 class TestUiItems:
@@ -185,25 +178,23 @@ class TestViewSheet:
         assert isinstance(item, TYPE)
 
     @pytest.mark.path_sheet(path_sheet=None)
-    def test_init(self, setup_app_control_view):
+    def test_init(self, setup_view_roster):
         # def test_init(self, patch_appfactsheet, capfd):
         """| Confirm initialization.
         | Case: visual elements.
         """
         # Setup
         # Test
-        app, control, target = setup_app_control_view
+        target, roster = setup_view_roster
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
 
-        assert target._control is control
+        assert target._roster is roster
         assert isinstance(target._window, Gtk.ApplicationWindow)
-        assert target._window.get_application() is app
+        assert target._window.get_application() is roster.app
 
         # Components
-        # name: manual case_sheet_name
-        # title: manual case_sheet_title
         # assert isinstance(target._context_name, Gtk.Popover)
         # assert isinstance(target._context_summary, Gtk.Expander)
         # assert isinstance(target._flip_summary, Gtk.CheckButton)
@@ -239,7 +230,11 @@ class TestViewSheet:
         # assert target._window.lookup_action('popup-name') is not None
         # assert target._window.lookup_action('reset-name') is not None
         # assert target._window.lookup_action('flip-summary') is not None
-        # assert target._window.lookup_action('open-page-sheet') is not None
+        action_open_view_sheet = (
+            target._window.lookup_action('open-view-sheet'))
+        assert action_open_view_sheet is not None
+        action_open_view_sheet.activate(None)
+        assert 1 == len(roster._roster)
         # assert target._window.lookup_action('close-page-sheet') is not None
         # assert target._window.lookup_action(
         #     'show-help-sheet-display') is not None
@@ -270,21 +265,21 @@ class TestViewSheet:
             ])
     def test_init_signals(
             self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT,
-            setup_view_sheet, gtk_app_window):
+            setup_view_roster, gtk_app_window):
         """| Confirm initialization.
         | Case: signal connections
 
-        :param NAME_SIGNAL: TBD
-        :param NAME_ATTRIBTE: TBD
-        :param ORIGIN: TBD
-        :param N_DEFAULT: TBD
-        :param setup_view_sheet: TBD
-        :param gtk_app_window: TBD
+        :param NAME_SIGNAL: name of signal.
+        :param NAME_ATTRIBTE: name of attribute connected to signal.
+        :param ORIGIN: GTK class of connected attribute.
+        :param N_DEFAULT: number of default handlers
+        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        target = setup_view_sheet
+        target, _ = setup_view_roster
         # Test
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
@@ -337,15 +332,15 @@ class TestViewSheet:
         'show-help-app',
         'show-intro-app',
         ])
-    def test_init_app_menu(self, setup_view_sheet, ACTION):
+    def test_init_app_menu(self, setup_view_roster, ACTION):
         """| Confirm initialization.
         | Case: definition fo app menu actions
 
-        :param setup_view_sheet: fixture :func:`.setup_view_sheet`.
+        :param setup_view_roster: fixture :func:`.setup_view_roster`.
         :param ACTION: name of action for menu item.
         """
         # Setup
-        target = setup_view_sheet
+        target, _ = setup_view_roster
         # Test
         assert target._window.lookup_action(ACTION) is not None
 
@@ -353,15 +348,15 @@ class TestViewSheet:
     @pytest.mark.parametrize('ACTION', [
         'show-help-sheet',
         ])
-    def test_init_factsheet_menu(self, setup_view_sheet, ACTION):
+    def test_init_factsheet_menu(self, setup_view_roster, ACTION):
         """| Confirm initialization.
         | Case: definition fo app menu actions
 
-        :param setup_view_sheet: fixture :func:`.setup_view_sheet`.
+        :param setup_view_roster: fixture :func:`.setup_view_roster`.
         :param ACTION: name of action for menu item.
         """
         # Setup
-        target = setup_view_sheet
+        target, _ = setup_view_roster
         # Test
         assert target._window.lookup_action(ACTION) is not None
 
@@ -1685,35 +1680,6 @@ class TestViewSheet:
         # del factsheet
 
     @pytest.mark.skip
-    def test_on_open_page(self, patch_factsheet, capfd):
-        """Confirm response to request to open new view."""
-        # # Setup
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target._control = control
-        # # Test
-        # target.on_open_page(None, None)
-        # model = control._model
-        # assert 1 == model.n_pages()
-        # for page in model._pages.values():
-        #     assert page._control is control
-        #     assert page._query_place is not None
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-
-    @pytest.mark.skip
     def test_on_open_sheet_apply(self, tmp_path, patch_dialog_choose,
                                  monkeypatch, patch_factsheet, capfd):
         """Confirm open from file.
@@ -2120,17 +2086,17 @@ class TestViewSheet:
 
     @pytest.mark.path_sheet(path_sheet=None)
     def test_on_show_dialog(
-            self, setup_view_sheet, monkeypatch, gtk_app_window):
+            self, setup_view_roster, monkeypatch, gtk_app_window):
         """Confirm handler displays dialog.
 
         See manual tests for dialog content checks.
 
-        :param setup_view_sheet: TBD
-        :param monkeypatch: TBD
-        :param gtk_app_window: TBD
+        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param monkeypatch: fixture `Pytest monkeypatch`_.
+        :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
-        target = setup_view_sheet
+        target, _ = setup_view_roster
         # target._window.set_skip_pager_hint(True)
         # target._window.set_skip_taskbar_hint(True)
 
@@ -2339,3 +2305,87 @@ class TestViewSheet:
         # target._window.destroy()
         # del target._window
         # del factsheet
+
+
+class TestRosterViewSheet:
+    """Unit tests for :class:`.RosterViewSheet`."""
+
+    def test_init(self, patch_appfactsheet):
+        """Confirm initialization."""
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        # Test
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        assert target._app is app
+        assert target._control is control
+        assert isinstance(target._roster, dict)
+        assert not target._roster
+
+    @pytest.mark.skip
+    def test_close_view_sheet(self):
+        """| Confirm sheet view close.
+        | Case: existing view
+        """
+        # Setup
+        # Test
+        assert False
+
+    @pytest.mark.skip
+    def test_close_view_sheet_warn(self):
+        """| Confirm sheet view close.
+        | Case: sheet view not in roster
+        """
+        # Setup
+        # Test
+        assert False
+
+    def test_open_view_sheet(self, patch_appfactsheet, monkeypatch):
+        """Confirm sheet view open.
+
+        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+        :param monkeypatch: fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+
+        def patch_init(self, *, p_roster):
+            self._roster = p_roster
+
+        monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
+        # Test
+        view = target.open_view_sheet()
+        assert isinstance(view, VSHEET.ViewSheet)
+        assert view is target._roster[id(view)]
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_app', 'app'],
+        ['_control', 'control'],
+        ])
+    def test_property(self, patch_appfactsheet, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+        :param NAME_ATTR: name of attribute.
+        :param NAME_PROP: name of property.
+        """
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(VSHEET.RosterViewSheet, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr is value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None

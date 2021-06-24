@@ -227,10 +227,9 @@ def new_action_active(p_group: Gio.SimpleActionGroup, p_name: str,
        #Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals
        .activate
     """
-    raise NotImplementedError
-    # action = Gio.SimpleAction.new(p_name, None)
-    # p_group.add_action(action)
-    # action.connect('activate', p_handler)
+    action = Gio.SimpleAction.new(p_name, None)
+    p_group.add_action(action)
+    action.connect('activate', p_handler)
 
 
 def new_action_active_dialog(p_group: Gio.SimpleActionGroup,
