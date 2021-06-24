@@ -190,7 +190,7 @@ def new_kwargs_idcore():
 
 
 class AppFactsheet(Gtk.Application):
-    """Stub :class:`.AppFactsheet` class."""
+    """Stub :class:`~.app.AppFactsheet` class."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(application_id='com.novafolks.factsheet.stub',

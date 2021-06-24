@@ -129,7 +129,7 @@ def setup_view_roster(patch_appfactsheet, request, capfd):
     ``'path_sheet'``.
 
     :param request: marker container
-    :param patch_appfactsheet: stub :class:`.AppFactsheet`
+    :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
     """
     app = patch_appfactsheet
     marker = request.node.get_closest_marker("path_sheet")
@@ -161,6 +161,8 @@ class TestViewSheet:
     appearance, and behavior of :class:`ViewSheet` components.
 
     * :doc:`../test_manual/test_cases/case_sheet_name` for Factsheet name
+    * :doc:`../test_manual/test_cases/case_sheet_open_view` for new
+      Factsheet window.
     * :doc:`../test_manual/test_cases/case_sheet_summary` for Factsheet summary
     * :doc:`../test_manual/test_cases/case_sheet_title` for Factsheet title
     """
