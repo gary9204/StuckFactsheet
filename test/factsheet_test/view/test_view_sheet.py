@@ -150,6 +150,135 @@ def setup_view_roster(patch_appfactsheet, request, capfd):
     view_sheet._window.destroy()
 
 
+class TestNewDialogWarn:
+    """Unit tests for :func:`.new_dialog_warn_loss`."""
+
+    def test_new_dialog_warn(self, gtk_app_window):
+        """Confirm data loss warning dialog construction.
+
+        :param gtk_app_window: fixture :func:`.gtk_app_window`.
+        """
+        # Setup
+        PARENT = gtk_app_window
+        NAME = '<b>Parrot Sketch</b>'
+        WARN = ('Factsheet {} contains unsaved changes.  All unsaved'
+                ' changes will be discarded if you close.').format(NAME)
+        I_DIALOG = 0
+        I_WARN = 0
+        I_CANCEL = 0
+        TEXT_CANCEL = 'Cancel'
+        I_APPLY = 1
+        TEXT_APPLY = 'Discard'
+        # Test
+        target = VSHEET.new_dialog_warn_loss(p_parent=PARENT, p_name=NAME)
+        assert isinstance(target, Gtk.Dialog)
+        assert target.get_transient_for() is PARENT
+        assert target.get_destroy_with_parent()
+        box_content = target.get_content_area()
+        box_warn = box_content.get_children()[I_DIALOG]
+        label_warn = box_warn.get_children()[I_WARN]
+        assert isinstance(label_warn, Gtk.Label)
+        assert WARN == label_warn.get_label()
+        header_bar = target.get_header_bar()
+        assert isinstance(header_bar, Gtk.HeaderBar)
+        buttons = header_bar.get_children()
+        button_cancel = buttons[I_CANCEL]
+        assert TEXT_CANCEL == button_cancel.get_label()
+        assert target.get_widget_for_response(
+            Gtk.ResponseType.CANCEL) is button_cancel
+        assert button_cancel.get_style_context(
+            ).has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+        button_apply = buttons[I_APPLY]
+        assert TEXT_APPLY == button_apply.get_label()
+        assert target.get_widget_for_response(
+            Gtk.ResponseType.APPLY) is button_apply
+        assert button_apply.get_style_context(
+            ).has_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
+
+
+class TestRosterViewSheet:
+    """Unit tests for :class:`.RosterViewSheet`."""
+
+    def test_init(self, patch_appfactsheet):
+        """Confirm initialization."""
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        # Test
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        assert target._app is app
+        assert target._control is control
+        assert isinstance(target._roster, dict)
+        assert not target._roster
+
+    @pytest.mark.skip
+    def test_close_view_sheet(self):
+        """| Confirm sheet view close.
+        | Case: existing view
+        """
+        # Setup
+        # Test
+        assert False
+
+    @pytest.mark.skip
+    def test_close_view_sheet_warn(self):
+        """| Confirm sheet view close.
+        | Case: sheet view not in roster
+        """
+        # Setup
+        # Test
+        assert False
+
+    def test_open_view_sheet(self, patch_appfactsheet, monkeypatch):
+        """Confirm sheet view open.
+
+        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+        :param monkeypatch: fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+
+        def patch_init(self, *, p_roster):
+            self._roster = p_roster
+
+        monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
+        # Test
+        view = target.open_view_sheet()
+        assert isinstance(view, VSHEET.ViewSheet)
+        assert view is target._roster[id(view)]
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_app', 'app'],
+        ['_control', 'control'],
+        ])
+    def test_property(self, patch_appfactsheet, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+        :param NAME_ATTR: name of attribute.
+        :param NAME_PROP: name of property.
+        """
+        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(VSHEET.RosterViewSheet, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr is value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
 class TestUiItems:
     """Unit tests for user interface constants and shared objects."""
 
@@ -2307,87 +2436,3 @@ class TestViewSheet:
         # target._window.destroy()
         # del target._window
         # del factsheet
-
-
-class TestRosterViewSheet:
-    """Unit tests for :class:`.RosterViewSheet`."""
-
-    def test_init(self, patch_appfactsheet):
-        """Confirm initialization."""
-        # Setup
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        # Test
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
-        assert target._app is app
-        assert target._control is control
-        assert isinstance(target._roster, dict)
-        assert not target._roster
-
-    @pytest.mark.skip
-    def test_close_view_sheet(self):
-        """| Confirm sheet view close.
-        | Case: existing view
-        """
-        # Setup
-        # Test
-        assert False
-
-    @pytest.mark.skip
-    def test_close_view_sheet_warn(self):
-        """| Confirm sheet view close.
-        | Case: sheet view not in roster
-        """
-        # Setup
-        # Test
-        assert False
-
-    def test_open_view_sheet(self, patch_appfactsheet, monkeypatch):
-        """Confirm sheet view open.
-
-        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
-        :param monkeypatch: fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
-
-        def patch_init(self, *, p_roster):
-            self._roster = p_roster
-
-        monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
-        # Test
-        view = target.open_view_sheet()
-        assert isinstance(view, VSHEET.ViewSheet)
-        assert view is target._roster[id(view)]
-
-    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ['_app', 'app'],
-        ['_control', 'control'],
-        ])
-    def test_property(self, patch_appfactsheet, NAME_ATTR, NAME_PROP):
-        """Confirm properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-
-        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
-        :param NAME_ATTR: name of attribute.
-        :param NAME_PROP: name of property.
-        """
-        # Setup
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
-        value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(VSHEET.RosterViewSheet, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: read
-        assert target_prop.fget is not None
-        assert value_attr is value_prop
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None

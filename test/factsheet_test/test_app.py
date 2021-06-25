@@ -1,5 +1,5 @@
 """
-Unit tests for :class:`.AppFactsheet` and entry point.
+Unit tests for :class:`~.app.AppFactsheet` and entry point.
 """
 import gi   # type: ignore[import]
 
@@ -10,7 +10,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class TestFactsheet:
-    """Unit tests for :class:`.AppFactsheet`."""
+    """Unit tests for :class:`~.app.AppFactsheet`."""
 
     def test_init(self):
         """Confirm initialization."""

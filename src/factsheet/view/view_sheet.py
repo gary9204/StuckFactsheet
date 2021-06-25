@@ -27,6 +27,147 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
+def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
+                         p_name: str = 'Unnamed') -> Gtk.Dialog:
+    """Return Data Loss Warning dialog.
+
+    :param p_parent: window running dialog.
+    :param p_name: name of factsheet that might loose data.
+
+    .. note::
+       There are limitations in Glade and Python bindings for GTK.
+       Glade does not recognize use-header-bar property of GtkDialog.
+       Gtk.Dialog() does not recognize flag
+       Gtk.DialogFlags.USE_HEADER_BAR.
+
+        To replace hard-coded ui definition with a Glade file, Manually
+        add the following to GtkDialog section of the Glade file:
+
+           `<property name="use-header-bar">1</property>`
+    """
+
+    form_dialog = """<?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.22.1 -->
+        <interface>
+          <requires lib="gtk+" version="3.20"/>
+          <object class="GtkDialog" id="ui_dialog_data_loss">
+            <property name="use-header-bar">1</property>
+            <property name="can_focus">False</property>
+            <property name="title"
+                translatable="yes">Data Loss Warning</property>
+            <property name="modal">True</property>
+            <property name="default_width">500</property>
+            <property name="icon_name">dialog-warning</property>
+            <property name="type_hint">dialog</property>
+            <child type="titlebar">
+              <placeholder/>
+            </child>
+            <child internal-child="vbox">
+              <object class="GtkBox">
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">2</property>
+                <child internal-child="action_area">
+                  <object class="GtkButtonBox">
+                    <property name="can_focus">False</property>
+                    <property name="layout_style">end</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">12</property>
+                    <property name="margin_right">12</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkLabel" id="ui_warning">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label"
+                            translatable="yes">Oops!</property>
+                        <property name="use_markup">True</property>
+                        <property name="justify">fill</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="valign">start</property>
+                        <property name="label"translatable="yes">{}</property>
+                        <property name="use_markup">True</property>
+                        <property name="justify">center</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+        </interface>
+        """
+
+    text_direct = ('&lt;i&gt;Cancel close, or continue to close and'
+                   ' discard changes?&lt;/i&gt;'
+                   )
+    ui_dialog = form_dialog.format(text_direct)
+
+    builder = Gtk.Builder.new_from_string(ui_dialog, len(ui_dialog))
+    dialog = builder.get_object('ui_dialog_data_loss')
+    dialog.set_transient_for(p_parent)
+    dialog.set_destroy_with_parent(True)
+    form_warn = ('Factsheet {} contains unsaved changes.  All unsaved'
+                 ' changes will be discarded if you close.'
+                 )
+    text_warn = form_warn.format(p_name)
+    warning = builder.get_object('ui_warning')
+    warning.set_markup(text_warn)
+
+    dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
+    button_c = dialog.get_widget_for_response(Gtk.ResponseType.CANCEL)
+    style_c = button_c.get_style_context()
+    style_c.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+
+    dialog.add_button('Discard', Gtk.ResponseType.APPLY)
+    button_d = dialog.get_widget_for_response(Gtk.ResponseType.APPLY)
+    style_d = button_d.get_style_context()
+    style_d.add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
+
+    return dialog
+
+
 class RosterViewSheet:
     """Maintains roster of open views of a factsheet."""
 
@@ -205,8 +346,6 @@ class ViewSheet:
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
                              lambda _a, _t: self._roster.open_view_sheet())
-        # UI.new_action_active(
-        #     self._window, 'open-view-sheet', self.on_open_view_sheet)
         # UI.new_action_active(self._window, 'close-page-sheet',
         #                      lambda _w, _e: self._window.close())
         # UI.new_action_active_dialog(
@@ -274,40 +413,6 @@ class ViewSheet:
         """
         UI.new_action_active_dialog(self._window, 'show-help-sheet',
                                     self.on_show_dialog, UI.HELP_SHEET)
-
-    def _init_dialog_warn(self) -> typing.Tuple[Gtk.Dialog, Gtk.Label]:
-        """Construct Data Loss Warning dialog.
-
-        This method works around limitations in Glade and
-        Python bindings for GTK.  Glade does not recognize
-        use-header-bar property of GtkDialog.  Gtk.Dialog() does not
-        recognize flag Gtk.DialogFlags.USE_HEADER_BAR.
-
-        Manually add the following to GtkDialog section of
-        dialog_data_loss.ui:
-
-               `<property name="use-header-bar">1</property>`
-        """
-        pass
-        # builder = Gtk.Builder.new_from_file(
-        #     self.NAME_FILE_DIALOG_DATA_LOSS_UI)
-        # get_object = builder.get_object
-        # dialog = get_object('ui_dialog_data_loss')
-        # dialog.set_transient_for(self._window)
-        # dialog.set_destroy_with_parent(True)
-        # warning = get_object('ui_warning_data_loss')
-        #
-        # dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
-        # button_c = dialog.get_widget_for_response(Gtk.ResponseType.CANCEL)
-        # style_c = button_c.get_style_context()
-        # style_c.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
-        #
-        # dialog.add_button('Discard', Gtk.ResponseType.APPLY)
-        # button_d = dialog.get_widget_for_response(Gtk.ResponseType.APPLY)
-        # style_d = button_d.get_style_context()
-        # style_d.add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
-
-        # return dialog, warning
 
     def close_page(self) -> None:
         """Close page unconditionally.
