@@ -17,8 +17,8 @@ Steps -- No Changes
 
    a. *Expect:* *Application* displays default factsheet.
 
-#. **Step:** Select *Factsheet* **menu** |menu| item **Display ... >
-   Open window** (right of *Factsheet* field).
+#. **Step:** Select *Factsheet* **menu** item **Display ... > Open
+   window** (|menu| icon on far right of *Factsheet* identity line).
 
    a. *Expect:* Second window appears with same blank factsheet title as
       first window.
@@ -42,12 +42,13 @@ Steps -- Unsaved Changes
 
    a. *Expect:* *Application* displays default factsheet.
 
-#. **Step:** Type title "Alpha" in **Factsheet** field.
+1. **Step:** Edit (|edit| icon on left) factsheet name "Unnamed" to
+   "Alpha".
 
-   a. *Expect:* Title appears in field.
+   a. *Expect:* "Alpha" appears in name field.
 
-#. **Step:** Select *Factsheet* **menu** |menu| item **Display ... >
-   Open window** (right of *Factsheet* field).
+#. **Step:** Select *Factsheet* **menu** item **Display ... > Open
+   window** (|menu| icon on far right of *Factsheet* identity line).
 
    a. *Expect:* Second window appears with factsheet title ``Alpha``.
    #. New window may cover first window.
@@ -77,6 +78,8 @@ Steps -- Unsaved Changes
 
    a. *Expect:* Dialog and window disappear.
    #. *Expect:* *Application* closes.
+
+.. Note:: Move the following steps to text case for multiple factsheets.
 
 Steps -- Multiple Factsheet
 ---------------------------

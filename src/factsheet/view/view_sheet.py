@@ -374,7 +374,7 @@ class ViewSheet:
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
                              lambda _a, _t: self._roster.open_view_sheet())
-        UI.new_action_active(self._window, 'close-page-sheet',
+        UI.new_action_active(self._window, 'close-view-sheet',
                              lambda _a, _t: self._window.close())
         # UI.new_action_active_dialog(
         #     self._window, 'show-help-sheet-display',

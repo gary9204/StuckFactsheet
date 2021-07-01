@@ -59,24 +59,10 @@ Steps
 
    a. *Expect:* The text appears as entered in first and third windows.
 
-#. **Step:** In first window, click window **close icon**
-   |window-close|.
-
-   a. *Expect:* First window closes.
-   #. *Expect:* Third windows is unchanged.
-
-#. **Step:** In third window, click window **close icon**
-   |window-close|.
-
-   a. *Expect:* Third window closes.
-   #. *Expect:* Application closes.
-
 Teardown
 --------
 1. Check console for exceptions, GTK errors, and warning messages. There
    should be none.
-
-.. Note:: Update Teardown once close window is restored.
 
 Close each window as follows.
 
