@@ -169,7 +169,19 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
 
 
 class RosterViewSheet:
-    """Maintains roster of open views of a factsheet."""
+    """Maintains roster of open views of a factsheet.
+
+    .. attribute:: CANCEL_CLOSE
+
+        Indicates GTK should cancel closing a factsheet view.
+
+    .. attribute:: COMPLETE_CLOSE
+
+        Indicates GTK should continue closing a factsheet view.
+    """
+
+    CANCEL_CLOSE = True
+    COMPLETE_CLOSE = not CANCEL_CLOSE
 
     def __init__(self, p_app: Gtk.ApplicationWindow,
                  p_sheet: CSHEET.ControlSheet) -> None:
@@ -182,23 +194,8 @@ class RosterViewSheet:
         self._control = p_sheet
         self._roster: typing.MutableMapping[int, 'ViewSheet'] = dict()
 
-    def close_view_sheet(self, p_view_sheet: 'ViewSheet') -> None:
-        """Close sheet view, provided there is no unacdeptable data loss.
-
-        Log a warning when the view is not in the roster.
-
-        :param p_view_sheet: sheet view to close.
-        """
-        raise NotImplementedError
-
-    def open_view_sheet(self) -> 'ViewSheet':
-        """Return new sheet view."""
-        view = ViewSheet(p_roster=self)
-        self._roster[id(view)] = view
-        return view
-
     @property
-    def app(self) -> Gtk.ApplicationWindow:
+    def app(self) -> Gtk.Application:
         """Return application shared by all sheet views in roster."""
         return self._app
 
@@ -206,6 +203,47 @@ class RosterViewSheet:
     def control(self) -> CSHEET.ControlSheet:
         """Return control shared by all sheet views in roster."""
         return self._control
+
+    def close_view_sheet(self, p_view_sheet: 'ViewSheet') -> bool:
+        """Close sheet view, provided there is no unapproved data loss.
+
+        A user may ask to close a sheet view when there are unsaved
+        changes that would be lost.  This method includes checks to
+        ensure the user approves.  The method closes a view
+        unconditionally if no changes would be lost.
+
+        Log a warning when the sheet view is not in the roster.
+
+        :param p_view_sheet: sheet view to close.
+
+        :returns: :data:`.CANCEL_CLOSE` or :data:`.COMPLETE_CLOSE` to,
+           respectively, cancel or continue page close.
+        """
+        if (1 == len(self._roster)
+                and self.control.is_stale()
+                and not self.user_approves_close(p_view_sheet)):
+            return self.CANCEL_CLOSE
+
+        del self._roster[id(p_view_sheet)]
+        return self.COMPLETE_CLOSE
+
+    def open_view_sheet(self) -> 'ViewSheet':
+        """Return new sheet view."""
+        view = ViewSheet(p_roster=self)
+        self._roster[id(view)] = view
+        return view
+
+    def user_approves_close(self, p_view_sheet: 'ViewSheet') -> bool:
+        """Return True when user approves closing sheet view.
+
+        :param p_view_sheet: sheet view to close.
+        """
+        view_name = self.control.new_view_name_active()
+        name = view_name.get_text()
+        dialog = new_dialog_warn_loss(p_view_sheet.window, name)
+        response = dialog.run()
+        dialog.hide()
+        return Gtk.ResponseType.APPLY == response
 
 
 class ViewSheet:
@@ -218,14 +256,6 @@ class ViewSheet:
 
     :param px_app: application to which factsheet belongs.
 
-    .. attribute:: CANCEL_CLOSE
-
-        Indicates GTK should cancel closing window of factsheet view.
-
-    .. attribute:: CONTINUE_CLOSE
-
-        Indicates GTK should continue closing window of factsheet view.
-
     .. attribute:: NAME_FILE_DIALOG_DATA_LOSS_UI
 
        Path to user interface definition of data loss warning dialog.
@@ -234,10 +264,6 @@ class ViewSheet:
 
        Path to user interface defintion of factsheet view.
     """
-
-    CANCEL_CLOSE = True
-
-    CONTINUE_CLOSE = not CANCEL_CLOSE
 
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
@@ -316,7 +342,9 @@ class ViewSheet:
         #     'activate', lambda _entry: self._context_name.popdown())
         # _id = self._context_name.connect('closed', self.on_popdown_name)
         # _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
-        _id = self._window.connect('delete-event', self.on_close_page)
+        _id = self._window.connect(
+            'delete-event', lambda _w, _e: self._roster.close_view_sheet(self))
+        # _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
         # UI.new_action_active(
@@ -346,8 +374,8 @@ class ViewSheet:
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
                              lambda _a, _t: self._roster.open_view_sheet())
-        # UI.new_action_active(self._window, 'close-page-sheet',
-        #                      lambda _w, _e: self._window.close())
+        UI.new_action_active(self._window, 'close-page-sheet',
+                             lambda _a, _t: self._window.close())
         # UI.new_action_active_dialog(
         #     self._window, 'show-help-sheet-display',
         #     self.on_show_dialog, UI.HELP_SHEET_DISPLAY)
@@ -552,42 +580,6 @@ class ViewSheet:
         # pane = VTOPIC.FormTopic(pm_control=control)
         # self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
         # _ = self._scenes_topic.show_scene(name_topic)
-
-    def on_close_page(
-            self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
-        """Close page guarding against data loss.
-
-        A user may ask to close a factsheet page when there are unsaved
-        changes that would be lost.  If so, the method includes checks
-        to ensure the user approves.  The method closes the page
-        unconditionally if no changes would be lost.  See also
-        :meth:`close_page`.
-
-        :returns: :data:`.CANCEL_CLOSE` or :data:`.CONTINUE_CLOSE` to,
-           respectively, cancel or continue page close.
-        """
-        # stub
-        return self.CONTINUE_CLOSE
-        # assert self._control is not None
-        # if self._close_window:
-        #     return UI.CLOSE_GTK
-        #
-        # effect = self._control.detach_page_safe(self)
-        # if effect is ABC_SHEET.EffectSafe.COMPLETED:
-        #     return UI.CLOSE_GTK
-        #
-        # self._warning_data_loss.set_markup(
-        #     'Factsheet "<b>{}</b>" contains unsaved changes.  All '
-        #     'unsaved changes will be discarded if you close.'
-        #     ''.format('Unnamed'))
-        #
-        # response = self._dialog_data_loss.run()
-        # self._dialog_data_loss.hide()
-        # if response == Gtk.ResponseType.APPLY:
-        #     self._control.detach_page_force(self)
-        #     return UI.CLOSE_GTK
-        #
-        # return UI.CANCEL_GTK
 
     def on_delete_sheet(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
@@ -872,3 +864,8 @@ class ViewSheet:
         # headerbar = self._window.get_titlebar()
         # headerbar.set_title(self._infoid.name)
         # headerbar.set_subtitle(p_subtitle)
+
+    @property
+    def window(self) -> Gtk.ApplicationWindow:
+        """Return visual element for sheet view."""
+        return self._window

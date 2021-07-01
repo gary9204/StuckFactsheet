@@ -55,7 +55,7 @@ class AppFactsheet(Gtk.Application):
         """Create and display an initial factsheet with default content."""
         control = CSHEET.g_roster_factsheets.open_factsheet(None)
         roster = VSHEET.RosterViewSheet(p_app=self, p_sheet=control)
-        _ = VSHEET.ViewSheet(p_roster=roster)
+        _ = roster.open_view_sheet()
 
     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
                 p_hint: str) -> None:
@@ -68,7 +68,7 @@ class AppFactsheet(Gtk.Application):
         logger.critical('Hint: "{}".'.format(p_hint))
         control = CSHEET.g_roster_factsheets.open_factsheet(None)
         roster = VSHEET.RosterViewSheet(p_app=self, p_sheet=control)
-        _ = VSHEET.ViewSheet(p_roster=roster)
+        _ = roster.open_view_sheet()
 
     def do_shutdown(self) -> None:
         """Application teardown. """

@@ -205,20 +205,50 @@ class TestRosterViewSheet:
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
         # Test
+        assert VSHEET.RosterViewSheet.CANCEL_CLOSE
+        assert not VSHEET.RosterViewSheet.COMPLETE_CLOSE
         target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
         assert target._app is app
         assert target._control is control
         assert isinstance(target._roster, dict)
         assert not target._roster
 
-    @pytest.mark.skip
-    def test_close_view_sheet(self):
+    def test_close_view_sheet(self, patch_appfactsheet, monkeypatch):
         """| Confirm sheet view close.
-        | Case: existing view
+        | Case: multiple views
         """
-        # Setup
+        app = patch_appfactsheet
+        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
+        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+
+        def patch_init(self, *, p_roster):
+            self._roster = p_roster
+
+        monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
+        view_backup = target.open_view_sheet()
+        view_target = target.open_view_sheet()
         # Test
-        assert False
+        result = target.close_view_sheet(p_view_sheet=view_target)
+        assert result is VSHEET.RosterViewSheet.COMPLETE_CLOSE
+        assert target._roster[id(view_backup)] is view_backup
+        assert id(view_target) not in target._roster.keys()
+
+    def test_close_view_sheet_cancel(self, setup_view_roster, monkeypatch):
+        """| Confirm sheet view close.
+        | Case: single view and no changes to model
+        """
+        view, target = setup_view_roster
+        target._roster[id(view)] = view
+        target.control._model.set_stale()
+
+        def patch_run(self):
+            return Gtk.ResponseType.CANCEL
+
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
+        # Test
+        result = target.close_view_sheet(p_view_sheet=view)
+        assert id(view) in target._roster.keys()
+        assert result is VSHEET.RosterViewSheet.CANCEL_CLOSE
 
     @pytest.mark.skip
     def test_close_view_sheet_warn(self):
@@ -279,6 +309,24 @@ class TestRosterViewSheet:
         # Test: no delete
         assert target_prop.fdel is None
 
+    @pytest.mark.parametrize('RUN_DIALOG, EXPECT', [
+        (Gtk.ResponseType.APPLY, True),
+        (Gtk.ResponseType.CANCEL, False),
+        (Gtk.ResponseType.NONE, False)
+        ])
+    def test_user_approves_close(self, setup_view_roster, monkeypatch,
+                                 RUN_DIALOG, EXPECT):
+        # Setup
+        view, target = setup_view_roster
+
+        def patch_run(self):
+            return RUN_DIALOG
+
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
+        # Test
+        assert EXPECT == target.user_approves_close(p_view_sheet=view)
+
+
 class TestUiItems:
     """Unit tests for user interface constants and shared objects."""
 
@@ -299,8 +347,8 @@ class TestViewSheet:
     @pytest.mark.parametrize('NAME, TYPE', [
         ('NAME_FILE_SHEET_UI', str),
         ('NAME_FILE_DIALOG_DATA_LOSS_UI', str),
-        ('CANCEL_CLOSE', bool),
-        ('CONTINUE_CLOSE', bool),
+        # ('CANCEL_CLOSE', bool),
+        # ('CONTINUE_CLOSE', bool),
         ])
     def test_class_constants(self, NAME, TYPE):
         """Confirm class defines constants."""
@@ -2408,6 +2456,33 @@ class TestViewSheet:
         # target._window.destroy()
         # del target._window
         # del factsheet
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        ['_window', 'window'],
+        ])
+    def test_property(self, setup_view_roster, NAME_ATTR, NAME_PROP):
+        """Confirm properties are get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param NAME_ATTR: name of attribute.
+        :param NAME_PROP: name of property.
+        """
+        # Setup
+        target, _ = setup_view_roster
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(VSHEET.ViewSheet, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert value_attr is value_prop
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     @pytest.mark.skip
     def test_set_title(self, patch_factsheet, capfd):
