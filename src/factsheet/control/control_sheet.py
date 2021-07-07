@@ -11,6 +11,7 @@ on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`
 defines classes representing control components for a factsheet as a
 whole.
 """
+import enum
 # import errno
 import logging
 from pathlib import Path
@@ -31,7 +32,30 @@ import factsheet.model.sheet as MSHEET
 logger = logging.getLogger('Main.CSHEET')
 
 
-class RosterFactsheet:
+class GoNoGo(enum.Enum):  # TBD - Not tested yet
+    """Indicates whether an action should continue or halt.
+
+    .. attribute: GO
+
+        Continue the action.
+
+    .. attribute: NOGO
+
+        Halt the action.
+    """
+    GO = enum.auto()
+    NOGO = enum.auto()
+
+
+IdFactsheet = typing.NewType('IdFactsheet', int)  # TBD - Not tested yet
+
+
+def id_factsheet(p_roster_view: 'StubControlSheet') -> IdFactsheet:
+    """TBD"""
+    return IdFactsheet(id(p_roster_view))
+
+
+class ControlApp:
     """Maintains collection of open factsheets.
 
     A user may open a factsheet by requesting a new, empty factsheet or
@@ -40,9 +64,10 @@ class RosterFactsheet:
 
     def __init__(self) -> None:
         """Initialize empty roster for factsheets."""
-        self._roster: typing.MutableMapping[int, 'ControlSheet'] = dict()
+        self._roster: typing.MutableMapping[
+            IdFactsheet, 'StubControlSheet'] = dict()
 
-    def close_factsheet(self, p_control: 'ControlSheet') -> None:
+    def close_factsheet(self, p_control: 'StubControlSheet') -> None:
         """Close and stop tracking factsheet.
 
         Log a warning when the control is not in the collection.
@@ -57,6 +82,9 @@ class RosterFactsheet:
         #     logger.warning('Missing control: {} ({}.{})'.format(
         #         hex(id_control), self.__class__.__name__,
         #         self.remove.__name__))
+
+    def close_all_factsheets(self) -> None:
+        """TBD"""
 
     def open_factsheet(self, p_path: typing.Optional[Path] = None
                        ) -> 'ControlSheet':
@@ -78,11 +106,47 @@ class RosterFactsheet:
         #             control.present()
         #             return
         control = ControlSheet.open(p_path)
-        self._roster[id(control)] = control
+        # self._roster[id(control)] = control
         return control
 
 
-g_roster_factsheets = RosterFactsheet()
+g_roster_factsheets = ControlApp()
+
+
+class StubControlSheet:  # TBD - Not tested yet.
+    """TBD"""
+
+    def __init__(self, **kwargs):
+        """TBD"""
+        self._roster_views = dict()
+
+    def close_all_views(self) -> GoNoGo:
+        """TBD"""
+        pass
+
+    def new_view_sheet(self)-> 'StubViewSheet':
+        """TBD"""
+        pass
+
+    def present_views(self) -> None:
+        """TBD"""
+        pass
+
+
+class StubViewSheet:  # TBD - Not tested yet.
+    """TBD"""
+
+    def __init__(self, *, p_roster: StubControlSheet) -> None:
+        """TBD"""
+        pass
+
+    def close(self) -> None:
+        """TBD"""
+        pass
+
+    def present(self, p_time: int) -> None:
+        """TBD"""
+        pass
 
 
 class ControlSheet(CIDCORE.ControlIdCore):

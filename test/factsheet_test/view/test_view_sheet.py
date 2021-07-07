@@ -140,7 +140,7 @@ def setup_view_roster(patch_appfactsheet, request, capfd):
         except KeyError:
             pass
     control = CSHEET.g_roster_factsheets.open_factsheet(p_path=path)
-    roster = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+    roster = VSHEET.ControlSheet(p_app=app, p_sheet=control)
     view_sheet = VSHEET.ViewSheet(p_roster=roster)
     snapshot = capfd.readouterr()   # Resets the internal buffer
     assert not snapshot.out
@@ -197,7 +197,7 @@ class TestNewDialogWarn:
 
 
 class TestRosterViewSheet:
-    """Unit tests for :class:`.RosterViewSheet`."""
+    """Unit tests for :class:`.ControlSheet`."""
 
     def test_init(self, patch_appfactsheet):
         """Confirm initialization."""
@@ -205,9 +205,9 @@ class TestRosterViewSheet:
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
         # Test
-        assert VSHEET.RosterViewSheet.CANCEL_CLOSE
-        assert not VSHEET.RosterViewSheet.COMPLETE_CLOSE
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        assert VSHEET.ControlSheet.CANCEL_CLOSE
+        assert not VSHEET.ControlSheet.COMPLETE_CLOSE
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
         assert target._app is app
         assert target._control is control
         assert isinstance(target._roster, dict)
@@ -219,7 +219,7 @@ class TestRosterViewSheet:
         """
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
 
         def patch_init(self, *, p_roster):
             self._roster = p_roster
@@ -229,7 +229,7 @@ class TestRosterViewSheet:
         view_target = target.open_view_sheet()
         # Test
         result = target.close_view_sheet(p_view_sheet=view_target)
-        assert result is VSHEET.RosterViewSheet.COMPLETE_CLOSE
+        assert result is VSHEET.ControlSheet.COMPLETE_CLOSE
         assert target._roster[id(view_backup)] is view_backup
         assert id(view_target) not in target._roster.keys()
 
@@ -248,7 +248,7 @@ class TestRosterViewSheet:
         # Test
         result = target.close_view_sheet(p_view_sheet=view)
         assert id(view) in target._roster.keys()
-        assert result is VSHEET.RosterViewSheet.CANCEL_CLOSE
+        assert result is VSHEET.ControlSheet.CANCEL_CLOSE
 
     @pytest.mark.skip
     def test_close_view_sheet_warn(self):
@@ -268,7 +268,7 @@ class TestRosterViewSheet:
         # Setup
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
 
         def patch_init(self, *, p_roster):
             self._roster = p_roster
@@ -297,9 +297,9 @@ class TestRosterViewSheet:
         # Setup
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.RosterViewSheet(p_app=app, p_sheet=control)
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
         value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(VSHEET.RosterViewSheet, NAME_PROP)
+        target_prop = getattr(VSHEET.ControlSheet, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None

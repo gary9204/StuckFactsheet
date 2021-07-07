@@ -790,17 +790,17 @@ class TestGlobal:
         """Confirm global definition."""
         # Setup
         # Test
-        assert isinstance(CSHEET.g_roster_factsheets, CSHEET.RosterFactsheet)
+        assert isinstance(CSHEET.g_roster_factsheets, CSHEET.RosterFactsheets)
 
 
 class TestRosterFactsheet:
-    """Unit tests for :class:`.RosterFactsheet`."""
+    """Unit tests for :class:`.RosterFactsheets`."""
 
     def test_init(self):
         """Confirm initialization."""
         # Setup
         # Test
-        target = CSHEET.RosterFactsheet()
+        target = CSHEET.RosterFactsheets()
         assert isinstance(target._roster, dict)
         assert not target._roster
 
@@ -863,7 +863,7 @@ class TestRosterFactsheet:
         | Case: path is None
         """
         # Setup
-        target = CSHEET.RosterFactsheet()
+        target = CSHEET.RosterFactsheets()
         N_FACTSHEETS = 1
         # Test
         sheet = target.open_factsheet()

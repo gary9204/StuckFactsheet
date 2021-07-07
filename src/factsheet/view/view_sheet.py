@@ -27,6 +27,15 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
+class AppFactsheet(Gtk.Application):
+    """Move from module app. """
+
+    pass
+
+
+g_app = AppFactsheet()
+
+
 def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
                          p_name: str = 'Unnamed') -> Gtk.Dialog:
     """Return Data Loss Warning dialog.
@@ -168,7 +177,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     return dialog
 
 
-class RosterViewSheet:
+class ControlSheet(CSHEET.StubControlSheet):
     """Maintains roster of open views of a factsheet.
 
     .. attribute:: CANCEL_CLOSE
@@ -183,8 +192,8 @@ class RosterViewSheet:
     CANCEL_CLOSE = True
     COMPLETE_CLOSE = not CANCEL_CLOSE
 
-    def __init__(self, p_app: Gtk.ApplicationWindow,
-                 p_sheet: CSHEET.ControlSheet) -> None:
+    def __init__(self, *, p_app: Gtk.ApplicationWindow,
+                 p_sheet: CSHEET.ControlSheet, **kwargs) -> None:
         """Initialize empty roster for factsheets.
 
         :param p_app: applicaton shared by all views in roster.
@@ -246,7 +255,7 @@ class RosterViewSheet:
         return Gtk.ResponseType.APPLY == response
 
 
-class ViewSheet:
+class ViewSheet(CSHEET.StubViewSheet):
     """Displays Factsheet document and translates user actions.
 
     Class ``ViewSheet`` maintains presentation of a Factsheet.  The
@@ -269,7 +278,7 @@ class ViewSheet:
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
-    def __init__(self, *, p_roster: RosterViewSheet) -> None:
+    def __init__(self, *, p_roster: ControlSheet) -> None:
         """Initialize sheet view and show window.
 
         :param p_roster: roster of sheet views for factsheet.
