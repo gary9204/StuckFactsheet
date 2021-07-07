@@ -193,7 +193,7 @@ class ControlSheet(CSHEET.StubControlSheet):
     COMPLETE_CLOSE = not CANCEL_CLOSE
 
     def __init__(self, *, p_app: Gtk.ApplicationWindow,
-                 p_sheet: CSHEET.ControlSheet, **kwargs) -> None:
+                 p_sheet: CSHEET.StubControlSheet, **kwargs) -> None:
         """Initialize empty roster for factsheets.
 
         :param p_app: applicaton shared by all views in roster.
@@ -209,7 +209,7 @@ class ControlSheet(CSHEET.StubControlSheet):
         return self._app
 
     @property
-    def control(self) -> CSHEET.ControlSheet:
+    def control(self) -> CSHEET.StubControlSheet:
         """Return control shared by all sheet views in roster."""
         return self._control
 
@@ -278,16 +278,16 @@ class ViewSheet(CSHEET.StubViewSheet):
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
-    def __init__(self, *, p_roster: ControlSheet) -> None:
+    def __init__(self, *, p_control: CSHEET.StubControlSheet) -> None:
         """Initialize sheet view and show window.
 
         :param p_roster: roster of sheet views for factsheet.
         """
-        self._roster = p_roster
+        self._roster = p_control
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
-        self._window = get_object('ui_sheet')
-        self._window.set_application(self._roster.app)
+        # self._window = get_object('ui_sheet')
+        # self._window.set_application(self._roster.app)
 
         EXPAND_OKAY = True
         FILL_OKAY = True
@@ -485,7 +485,7 @@ class ViewSheet(CSHEET.StubViewSheet):
 
     @classmethod
     def link_factsheet(cls, pm_page: 'ViewSheet',
-                       pm_control: CSHEET.ControlSheet) -> None:
+                       pm_control: CSHEET.StubControlSheet) -> None:
         """Initialize links between new page and new control for a
         factsheet.
 
@@ -548,7 +548,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         """
         pass
         # page = ViewSheet(px_app=px_app)
-        # control = CSHEET.ControlSheet.new(pm_sheets_active)
+        # control = CSHEET.StubControlSheet.new(pm_sheets_active)
         # ViewSheet.link_factsheet(page, control)
         # return page
 
@@ -749,7 +749,7 @@ class ViewSheet(CSHEET.StubViewSheet):
 
     def on_popdown_name(self, _popover: Gtk.Popover) -> None:
         """Hide factsheet name popover and notify control
-        :class:`~.ControlSheet` when name changes."""
+        :class:`~.StubControlSheet` when name changes."""
         raise NotImplementedError
         # assert self._control is not None
         # if self._name_former != self._infoid.name:
@@ -847,7 +847,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         #     return None
         #
         # page = ViewSheet(px_app=px_app)
-        # control = CSHEET.ControlSheet.open(pm_sheets_active, p_path)
+        # control = CSHEET.StubControlSheet.open(pm_sheets_active, p_path)
         # ViewSheet.link_factsheet(page, control)
         # return page
 

@@ -20,7 +20,7 @@ class TestOpenFactsheet:
         CPOOL._m_factsheets.clear()
         # Test
         target = CPOOL.open_factsheet()
-        assert isinstance(target, CPOOL.ControlSheet)
+        assert isinstance(target, CPOOL.StubControlSheet)
         assert target is CPOOL._m_factsheets[id(target)]
 
     def test_open_factsheet_new(self, tmp_path):
@@ -38,7 +38,7 @@ class TestOpenFactsheet:
         PATH_DIFF = PATH_BASE / '/scd.fsg'
         # Test
         target = CPOOL.open_factsheet(PATH_DIFF)
-        assert isinstance(target, CPOOL.ControlSheet)
+        assert isinstance(target, CPOOL.StubControlSheet)
         assert PATH_DIFF == target._path
         assert N_CONTROLS + 1 == len(CPOOL._m_factsheets)
         assert target is CPOOL._m_factsheets[id(target)]
@@ -61,7 +61,7 @@ class TestOpenFactsheet:
                 control_match = control
         # Test
         target = CPOOL.open_factsheet(path_match)
-        assert isinstance(target, CPOOL.ControlSheet)
+        assert isinstance(target, CPOOL.StubControlSheet)
         assert target is control_match
         assert N_CONTROLS == len(CPOOL._m_factsheets)
         assert target is CPOOL._m_factsheets[id(target)]

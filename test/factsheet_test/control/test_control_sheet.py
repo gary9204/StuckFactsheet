@@ -6,7 +6,7 @@ Unit tests for class that mediates factsheet-level interactions from
 Unit tests for class that tracks and maintains pool of active
 factsheets.  See :mod:`.pool`.
 """
-# import logging
+import logging
 # from pathlib import Path
 # import pickle
 import pytest   # type: ignore[import]
@@ -39,7 +39,7 @@ import factsheet.model.sheet as MSHEET
 
 
 class TestControlSheet:
-    """Unit tests for :class:`~.ControlSheet`."""
+    """Unit tests for :class:`~.StubControlSheet`."""
 
     def test_init(self, new_kwargs_idcore):
         """Confirm initialization.
@@ -51,7 +51,7 @@ class TestControlSheet:
         KWARGS = new_kwargs_idcore()
         model = MSHEET.Sheet(**KWARGS)
         # Test
-        target = CSHEET.ControlSheet(p_model=model)
+        target = CSHEET.StubControlSheet(p_model=model)
         assert target._model is model
         assert target._path is None
         # assert isinstance(target._controls_topic, typing.Dict)
@@ -81,7 +81,7 @@ class TestControlSheet:
         #     MSHEET.Sheet, 'update_titles', patch_model.update_titles)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # target.attach_page(None)
         # assert patch_model.called_attach_page
@@ -104,7 +104,7 @@ class TestControlSheet:
         #     patch_model.attach_view_topics)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # target.attach_view_topics(None)
         # assert patch_model.called_attach_view_topics
@@ -126,7 +126,7 @@ class TestControlSheet:
         #     patch_model.detach_view_topics)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # target.detach_view_topics(None)
         # assert patch_model.called_detach_view_topics
@@ -144,7 +144,7 @@ class TestControlSheet:
         # monkeypatch.setattr(
         #     MSHEET.Sheet, 'clear', patch_clear.clear)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # target.clear()
         # assert patch_clear.called
@@ -163,7 +163,7 @@ class TestControlSheet:
         #     MSHEET.Sheet, 'detach_all', patch_model.detach_all)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # assert sheets_active._controls[id(target)] is target
         # # Test
         # target.delete_force()
@@ -188,7 +188,7 @@ class TestControlSheet:
         #     MSHEET.Sheet, 'is_stale', lambda _s: False)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # response = target.delete_safe()
         # assert patch_model.called
@@ -212,7 +212,7 @@ class TestControlSheet:
         #     MSHEET.Sheet, 'is_stale', lambda _s: True)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # response = target.delete_safe()
         # assert not patch_model.called
@@ -225,7 +225,7 @@ class TestControlSheet:
         # # Setup
         # patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # target._model = patch_model
         # assert sheets_active._controls[id(target)] is target
         # N_DETACH = 1
@@ -241,7 +241,7 @@ class TestControlSheet:
         # # Setup
         # patch_model = patch_model_safe(p_stale=True, p_n_pages=0)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # target._model = patch_model
         # assert sheets_active._controls[id(target)] is target
         # N_DETACH = 1
@@ -258,7 +258,7 @@ class TestControlSheet:
         # # Setup
         # patch_model = patch_model_safe(p_stale=False, p_n_pages=1)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # target._model = patch_model
         # N_DETACH = 1
         # # Test
@@ -274,7 +274,7 @@ class TestControlSheet:
         # # Setup
         # patch_model = patch_model_safe(p_stale=True, p_n_pages=2)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # target._model = patch_model
         # N_DETACH = 1
         # # Test
@@ -290,7 +290,7 @@ class TestControlSheet:
         # # Setup
         # patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # target._model = patch_model
         # N_DETACH = 0
         # # Test
@@ -311,7 +311,7 @@ class TestControlSheet:
         # monkeypatch.setattr(
         #     MSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # # Test
         # _ = target.extract_topic(None)
         # assert patch_extract.called
@@ -323,7 +323,7 @@ class TestControlSheet:
         """
         # # Setup
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         #
         # N_TOPICS = 3
         # topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
@@ -347,7 +347,7 @@ class TestControlSheet:
         """
         # # Setup
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         #
         # N_TOPICS = 3
         # topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
@@ -382,7 +382,7 @@ class TestControlSheet:
         # monkeypatch.setattr(
         #     MSHEET.Sheet, NAME_METHOD, patch_insert.insert_topic)
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # method = getattr(target, NAME_METHOD)
         #
         # TITLE = 'Something completely different.'
@@ -414,7 +414,7 @@ class TestControlSheet:
         KWARGS = new_kwargs_idcore()
         model = MSHEET.Sheet(**KWARGS)
         method_model = getattr(model, METHOD)
-        target = CSHEET.ControlSheet(p_model=model)
+        target = CSHEET.StubControlSheet(p_model=model)
         method_target = getattr(target, METHOD)
         model._stale = MODEL_IS_STALE
         # Test
@@ -446,7 +446,7 @@ class TestControlSheet:
         model_view = model_method()
         model_check = getattr(model_view, NAME_CHECK)
         PATH = None
-        target = CSHEET.ControlSheet(p_model=model, p_path=PATH)
+        target = CSHEET.StubControlSheet(p_model=model, p_path=PATH)
         target_method = getattr(target, NAME_METHOD)
         # Test
         target_view = target_method()
@@ -477,7 +477,7 @@ class TestControlSheet:
         #     MSHEET.Sheet, 'update_titles', patch_model.update_titles)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # PARENT = '/home/scratch'
         # FILE = 'larch.fsg'
         # target._path = Path(PARENT) / FILE
@@ -506,7 +506,7 @@ class TestControlSheet:
         #     MSHEET.Sheet, 'update_titles', patch_model.update_titles)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
+        # target = CSHEET.StubControlSheet.new(sheets_active)
         # DEFAULT = 'Unsaved'
         # # Test
         # target.new_name()
@@ -524,13 +524,13 @@ class TestControlSheet:
         # model = MSHEET.Sheet(p_title=TITLE)
         # model.set_stale()
         # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
+        # source = CSHEET.StubControlSheet(sheets_active)
         # source._model = model
         # source._path = PATH
         # assert not PATH.exists()
         # source.save()
         # # Test
-        # target = CSHEET.ControlSheet.open(sheets_active, PATH)
+        # target = CSHEET.StubControlSheet.open(sheets_active, PATH)
         # assert source._model == target._model
         # assert target._model.is_fresh()
 
@@ -546,7 +546,7 @@ class TestControlSheet:
         # assert not PATH.exists()
         # sheets_active = CPOOL.PoolSheets()
         # # Test
-        # target = CSHEET.ControlSheet.open(sheets_active, PATH)
+        # target = CSHEET.StubControlSheet.open(sheets_active, PATH)
         # model = target._model
         # assert model is not None
         # assert NAME == model._infoid.name
@@ -570,7 +570,7 @@ class TestControlSheet:
         # TITLE = 'Error opening file \'{}\''.format(PATH)
         # sheets_active = CPOOL.PoolSheets()
         # # Test
-        # target = CSHEET.ControlSheet.open(sheets_active, PATH)
+        # target = CSHEET.StubControlSheet.open(sheets_active, PATH)
         # model = target._model
         # assert model is not None
         # assert NAME == model._infoid.name
@@ -586,8 +586,8 @@ class TestControlSheet:
         PATH = None
         model_default = MSHEET.Sheet()
         # Test
-        target = CSHEET.ControlSheet.open(p_path=PATH)
-        assert isinstance(target, CSHEET.ControlSheet)
+        target = CSHEET.StubControlSheet.open(p_path=PATH)
+        assert isinstance(target, CSHEET.StubControlSheet)
         assert target._path is None
         assert target._model is not None
         assert model_default == target._model
@@ -608,7 +608,7 @@ class TestControlSheet:
         # model = MSHEET.Sheet(p_title=TITLE)
         # model.set_stale()
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # target._model = model
         # NO_TIME = 0
         # # Test
@@ -629,11 +629,11 @@ class TestControlSheet:
         """
         # # Setup
         # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
+        # target = CSHEET.StubControlSheet(sheets_active)
         # PATH = Path(tmp_path / 'path_factsheet.fsg')
         # target._path = PATH
         # value_attr = getattr(target, NAME_ATTR)
-        # target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
+        # target_prop = getattr(CSHEET.StubControlSheet, NAME_PROP)
         # value_prop = getattr(target, NAME_PROP)
         # # Test: read
         # assert target_prop.fget is not None
@@ -654,7 +654,7 @@ class TestControlSheet:
         # model = MSHEET.Sheet(p_title=TITLE)
         # model.set_stale()
         # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
+        # source = CSHEET.StubControlSheet(sheets_active)
         # source._model = model
         # source._path = PATH
         # assert not PATH.exists()
@@ -689,7 +689,7 @@ class TestControlSheet:
         # model = MSHEET.Sheet(p_title=TITLE)
         # model.set_stale()
         # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
+        # source = CSHEET.StubControlSheet(sheets_active)
         # source._model = model
         # PATH = Path(tmp_path / 'saved_factsheet.fsg')
         # assert not PATH.exists()
@@ -720,7 +720,7 @@ class TestControlSheet:
         # model = MSHEET.Sheet(p_title=TITLE)
         # model.set_stale()
         # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
+        # source = CSHEET.StubControlSheet(sheets_active)
         # source._model = model
         # source._path = PATH
         # # Test
@@ -741,7 +741,7 @@ class TestControlSheet:
         # model = MSHEET.Sheet(p_title=TITLE)
         # model.set_stale()
         # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
+        # source = CSHEET.StubControlSheet(sheets_active)
         # source._model = model
         # source._path = PATH
         # assert PATH.exists()
@@ -770,11 +770,11 @@ class TestControlSheet:
         # patch_logger = PatchLogger()
         # monkeypatch.setattr(
         #     logging.Logger, 'warning', patch_logger.warning)
-        # log_message = ('No file path (ControlSheet.save)')
+        # log_message = ('No file path (StubControlSheet.save)')
         # TITLE = 'Parrot Sketch'
         # model = MSHEET.Sheet(p_title=TITLE)
         # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
+        # source = CSHEET.StubControlSheet(sheets_active)
         # source._model = model
         # source._path = None
         # # Test
@@ -786,6 +786,7 @@ class TestControlSheet:
 class TestGlobal:
     """Unit tests for :data:`.g_roster_factsheets`."""
 
+    @pytest.mark.skip(reason='changing roster to control')
     def test_define(self):
         """Confirm global definition."""
         # Setup
@@ -796,6 +797,7 @@ class TestGlobal:
 class TestRosterFactsheet:
     """Unit tests for :class:`.RosterFactsheets`."""
 
+    @pytest.mark.skip(reason='changing roster to control')
     def test_init(self):
         """Confirm initialization."""
         # Setup
@@ -858,6 +860,7 @@ class TestRosterFactsheet:
         # assert PatchLogger.T_WARNING == patch_logger.level
         # assert log_message == patch_logger.message
 
+    @pytest.mark.skip(reason='changing roster to control')
     def test_open_factsheet_none(self):
         """| Confirm factsheet return.
         | Case: path is None
@@ -867,7 +870,7 @@ class TestRosterFactsheet:
         N_FACTSHEETS = 1
         # Test
         sheet = target.open_factsheet()
-        assert isinstance(sheet, CSHEET.ControlSheet)
+        assert isinstance(sheet, CSHEET.StubControlSheet)
         assert N_FACTSHEETS == len(target._roster)
         assert sheet is target._roster[id(sheet)]
 
@@ -882,12 +885,12 @@ class TestRosterFactsheet:
         # PATH_BASE = Path(tmp_path)
         # for i in range(N_FACTSHEETS):
         #     path = PATH_BASE / '/factsheet{}.fsg'.format(i)
-        #     control = CSHEET.ControlSheet.open(path)
+        #     control = CSHEET.StubControlSheet.open(path)
         #     CSHEET._m_factsheets[id(control)] = control
         # PATH_DIFF = PATH_BASE / '/scd.fsg'
         # # Test
         # target = CSHEET.open_factsheet(PATH_DIFF)
-        # assert isinstance(target, CSHEET.ControlSheet)
+        # assert isinstance(target, CSHEET.StubControlSheet)
         # assert PATH_DIFF == target._path
         # assert N_FACTSHEETS + 1 == len(CSHEET._m_factsheets)
         # assert target is CSHEET._m_factsheets[id(target)]
@@ -911,7 +914,7 @@ class TestRosterFactsheet:
         #         control_match = control
         # # Test
         # target = CPOOL.open_factsheet(path_match)
-        # assert isinstance(target, CPOOL.ControlSheet)
+        # assert isinstance(target, CPOOL.StubControlSheet)
         # assert target is control_match
         # assert N_CONTROLS == len(CPOOL._m_factsheets)
         # assert target is CPOOL._m_factsheets[id(target)]
@@ -945,3 +948,46 @@ class TestRosterFactsheet:
         # assert len(controls) == len(target._controls)
         # for control in controls:
         #     assert target._controls[id(control)] is control
+
+
+class TestStubViewSheet:
+    """Unit tests for :class:`.StubViewSheet`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        control = CSHEET.StubControlSheet(None)
+        # Test
+        target = CSHEET.StubViewSheet(p_control=control)
+        assert target._control is control
+
+    def test_close(self, PatchLogger, monkeypatch):
+        """Confirm stub raises critical error."""
+        # Setup
+        control = CSHEET.StubControlSheet(None)
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'critical', patch_logger.critical)
+        log_message = ('Logic error! Factsheet control: {} '
+                       '(StubViewSheet.close)'.format(hex(id(control))))
+        target = CSHEET.StubViewSheet(p_control=control)
+        # Test
+        target.close()
+        assert patch_logger.called
+        assert log_message == patch_logger.message
+
+    def test_present(self, PatchLogger, monkeypatch):
+        """Confirm stub raises critical error."""
+        # Setup
+        control = CSHEET.StubControlSheet(None)
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'critical', patch_logger.critical)
+        log_message = ('Logic error! Factsheet control: {} '
+                       '(StubViewSheet.present)'.format(hex(id(control))))
+        target = CSHEET.StubViewSheet(p_control=control)
+        TIME = 42
+        # Test
+        target.present(TIME)
+        assert patch_logger.called
+        assert log_message == patch_logger.message

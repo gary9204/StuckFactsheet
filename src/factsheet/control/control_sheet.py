@@ -87,12 +87,12 @@ class ControlApp:
         """TBD"""
 
     def open_factsheet(self, p_path: typing.Optional[Path] = None
-                       ) -> 'ControlSheet':
+                       ) -> 'StubControlSheet':
         """Return new or existing factsheet with given path.
 
         If path is None or no existing factsheet has the given path,
         return a new, empty factsheet.  Otherwise, return factsheet
-        loaded from file at the given path.  See :meth:`.ControlSheet.open`
+        loaded from file at the given path.  See :meth:`.StubControlSheet.open`
         regarding file load failure.
 
         :param p_path: location of factsheet file
@@ -105,54 +105,38 @@ class ControlApp:
         #         if path_absolute == control._path.resolve():
         #             control.present()
         #             return
-        control = ControlSheet.open(p_path)
+        control = StubControlSheet.open(p_path)
         # self._roster[id(control)] = control
         return control
 
 
 g_roster_factsheets = ControlApp()
+#
+#
+# class StubControlSheet:  # TBD - Not tested yet.
+#     """TBD"""
+#
+#     def __init__(self, **kwargs):
+#         """TBD"""
+#         self._roster_views = dict()
+#
+#     def close_all_views(self) -> GoNoGo:
+#         """TBD"""
+#         pass
+#
+#     def new_view_sheet(self)-> 'StubViewSheet':
+#         """TBD"""
+#         pass
+#
+#     def present_views(self) -> None:
+#         """TBD"""
+#         pass
 
 
-class StubControlSheet:  # TBD - Not tested yet.
-    """TBD"""
-
-    def __init__(self, **kwargs):
-        """TBD"""
-        self._roster_views = dict()
-
-    def close_all_views(self) -> GoNoGo:
-        """TBD"""
-        pass
-
-    def new_view_sheet(self)-> 'StubViewSheet':
-        """TBD"""
-        pass
-
-    def present_views(self) -> None:
-        """TBD"""
-        pass
-
-
-class StubViewSheet:  # TBD - Not tested yet.
-    """TBD"""
-
-    def __init__(self, *, p_roster: StubControlSheet) -> None:
-        """TBD"""
-        pass
-
-    def close(self) -> None:
-        """TBD"""
-        pass
-
-    def present(self, p_time: int) -> None:
-        """TBD"""
-        pass
-
-
-class ControlSheet(CIDCORE.ControlIdCore):
+class StubControlSheet(CIDCORE.ControlIdCore):
     """Mediates user actions at view to model updates for a factsheet.
 
-    Class :class:`ControlSheet` translates user requests in a factsheet
+    Class :class:`StubControlSheet` translates user requests in a factsheet
     view into changes in the factsheet model (such as save or delete) or
     in the collection of factsheet views (such as add or close a view).
     """
@@ -335,13 +319,13 @@ class ControlSheet(CIDCORE.ControlIdCore):
         return self._model.is_stale()
 
     # @classmethod
-    # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
+    # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'StubControlSheet':
     #     """Create and return control with default model.
     #
     #     :param pm_sheets_active: collection of open factsheet documents.
     #     :returns: Newly created control.
     #     """
-    #     control = ControlSheet(pm_sheets_active)
+    #     control = StubControlSheet(pm_sheets_active)
     #     control._model = MSHEET.Sheet()
     #     return control
 
@@ -380,7 +364,7 @@ class ControlSheet(CIDCORE.ControlIdCore):
         return self._model.new_view_title_passive()
 
     @classmethod
-    def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
+    def open(cls, p_path: typing.Optional[Path] = None) -> 'StubControlSheet':
         """Create and return control with model.
 
         If given path is None or there is no file at the path location,
@@ -406,7 +390,7 @@ class ControlSheet(CIDCORE.ControlIdCore):
                 # title = 'Error opening file \'{}\''.format(p_path)
                 # model = MSHEET.Sheet(
                 #     p_name=name, p_summary=summary, p_title=title)
-        control = ControlSheet(p_model=model, p_path=p_path)
+        control = StubControlSheet(p_model=model, p_path=p_path)
         return control
 
     def _open_guard(self) -> typing.BinaryIO:
@@ -481,3 +465,42 @@ class ControlSheet(CIDCORE.ControlIdCore):
     # def sheets_active(self) -> CPOOL.PoolSheets:
     #     """Return collection of active factsheets."""
     #     return self._sheets_active
+
+
+class StubViewSheet:
+    """Define interface for sheet control to notify a sheet view.
+
+    In general, a sheet view requests services from its sheet control.
+    For a few exceptions, a sheet view acts as an observer of its sheet
+    control.  A sheet control notifies its views when to present to the
+    user and when to close.
+
+    Class :class:`StubViewSheet` defines methods a view sheet needs
+    as an observer.  The class is a stub.  Its observer methods log
+    warnings of logic errors.
+    """
+
+    def __init__(self, *, p_control: StubControlSheet) -> None:
+        """Initialize the sheet control for the view.
+
+        :param p_control: sheet control for the sheet view.
+        """
+        self._control = p_control
+
+    def close(self) -> None:
+        """Close sheet view."""
+        logger.critical(
+            'Logic error! Factsheet control: {} ({}.{})'.format(
+                hex(id(self._control)),
+                self.__class__.__name__, self.close.__name__))
+
+    def present(self, p_time: int) -> None:
+        """Present sheet view to user.
+
+        :param time: time stamp to order multiple, independent requests.
+        """
+        _ = p_time
+        logger.critical(
+            'Logic error! Factsheet control: {} ({}.{})'.format(
+                hex(id(self._control)),
+                self.__class__.__name__, self.present.__name__))
