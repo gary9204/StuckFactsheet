@@ -18,6 +18,7 @@ import factsheet.view.view_idcore as VIDCORE
 # from factsheet.view import types_view as VTYPES
 import factsheet.view.ui as UI
 
+gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
@@ -27,13 +28,51 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
+m_control_app = CSHEET.ControlApp(p_type_view=CSHEET.StubViewSheet)
+
+
 class AppFactsheet(Gtk.Application):
-    """Move from module app. """
+    """Extends GTK application for factsheets."""
 
-    pass
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
+        """Register application with GTK.
 
+        :param args: superclass positional parameters
+        :param kwargs: superclass keyword parameters
+        """
+        super().__init__(application_id='com.novafolks.g2alpha',
+                         flags=Gio.ApplicationFlags.HANDLES_OPEN,
+                         *args, **kwargs)
 
-g_app = AppFactsheet()
+    def do_activate(self) -> None:
+        """Create and display an initial factsheet with default content."""
+        global m_control_app
+        control_sheet = m_control_app.open_factsheet(p_path=None)
+        control_sheet.open_view_sheet()
+
+#     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
+#                 p_hint: str) -> None:
+#         """Create and display factsheets from file names on the
+#         command line.
+#         """
+#         logger.critical('Stub for open -- command line files ignored.')
+#         logger.critical('Files: {}.'.format(p_files))
+#         logger.critical('N: {}'.format(p_n_files))
+#         logger.critical('Hint: "{}".'.format(p_hint))
+#         control = CSHEET.g_roster_factsheets.open_factsheet(None)
+#         roster = VSHEET.RosterViewSheet(p_app=self, p_sheet=control)
+#         _ = roster.open_view_sheet()
+#
+#     def do_shutdown(self) -> None:
+#         """Application teardown. """
+#         Gtk.Application.do_shutdown(self)
+#         logger.info('AppFactsheet application shutdown.')
+#
+#     def do_startup(self) -> None:
+#         """Application setup. """
+#         Gtk.Application.do_startup(self)
+#         logger.info('AppFactsheet application startup.')
+
 
 
 def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
@@ -177,84 +216,6 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     return dialog
 
 
-class ControlSheet(CSHEET.StubControlSheet):
-    """Maintains roster of open views of a factsheet.
-
-    .. attribute:: CANCEL_CLOSE
-
-        Indicates GTK should cancel closing a factsheet view.
-
-    .. attribute:: COMPLETE_CLOSE
-
-        Indicates GTK should continue closing a factsheet view.
-    """
-
-    CANCEL_CLOSE = True
-    COMPLETE_CLOSE = not CANCEL_CLOSE
-
-    def __init__(self, *, p_app: Gtk.ApplicationWindow,
-                 p_sheet: CSHEET.StubControlSheet, **kwargs) -> None:
-        """Initialize empty roster for factsheets.
-
-        :param p_app: applicaton shared by all views in roster.
-        :param p_sheet: sheet control shared by all views in roster.
-        """
-        self._app = p_app
-        self._control = p_sheet
-        self._roster: typing.MutableMapping[int, 'ViewSheet'] = dict()
-
-    @property
-    def app(self) -> Gtk.Application:
-        """Return application shared by all sheet views in roster."""
-        return self._app
-
-    @property
-    def control(self) -> CSHEET.StubControlSheet:
-        """Return control shared by all sheet views in roster."""
-        return self._control
-
-    def close_view_sheet(self, p_view_sheet: 'ViewSheet') -> bool:
-        """Close sheet view, provided there is no unapproved data loss.
-
-        A user may ask to close a sheet view when there are unsaved
-        changes that would be lost.  This method includes checks to
-        ensure the user approves.  The method closes a view
-        unconditionally if no changes would be lost.
-
-        Log a warning when the sheet view is not in the roster.
-
-        :param p_view_sheet: sheet view to close.
-
-        :returns: :data:`.CANCEL_CLOSE` or :data:`.COMPLETE_CLOSE` to,
-           respectively, cancel or continue page close.
-        """
-        if (1 == len(self._roster)
-                and self.control.is_stale()
-                and not self.user_approves_close(p_view_sheet)):
-            return self.CANCEL_CLOSE
-
-        del self._roster[id(p_view_sheet)]
-        return self.COMPLETE_CLOSE
-
-    def open_view_sheet(self) -> 'ViewSheet':
-        """Return new sheet view."""
-        view = ViewSheet(p_roster=self)
-        self._roster[id(view)] = view
-        return view
-
-    def user_approves_close(self, p_view_sheet: 'ViewSheet') -> bool:
-        """Return True when user approves closing sheet view.
-
-        :param p_view_sheet: sheet view to close.
-        """
-        view_name = self.control.new_view_name_active()
-        name = view_name.get_text()
-        dialog = new_dialog_warn_loss(p_view_sheet.window, name)
-        response = dialog.run()
-        dialog.hide()
-        return Gtk.ResponseType.APPLY == response
-
-
 class ViewSheet(CSHEET.StubViewSheet):
     """Displays Factsheet document and translates user actions.
 
@@ -272,18 +233,26 @@ class ViewSheet(CSHEET.StubViewSheet):
     .. attribute:: NAME_FILE_SHEET_UI
 
        Path to user interface defintion of factsheet view.
+
+    .. attribute:: CANCEL_CLOSE
+
+        Indicates GTK should cancel closing a factsheet view.
+
+    .. attribute:: COMPLETE_CLOSE
+
+        Indicates GTK should continue closing a factsheet view.
     """
 
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
 
-    def __init__(self, *, p_control: CSHEET.StubControlSheet) -> None:
+    def __init__(self, *, p_control: CSHEET.ControlSheet) -> None:
         """Initialize sheet view and show window.
 
         :param p_roster: roster of sheet views for factsheet.
         """
-        self._roster = p_control
+        self._control = p_control
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         # self._window = get_object('ui_sheet')
@@ -293,23 +262,23 @@ class ViewSheet(CSHEET.StubViewSheet):
         FILL_OKAY = True
         N_PADDING = 6
 
-        view_name_passive = self._roster.control.new_view_name_passive()
-        view_name_active = self._roster.control.new_view_name_active()
+        view_name_passive = self._control.new_view_name_passive()
+        view_name_active = self._control.new_view_name_active()
         editor_name = VIDCORE.EditorMarkup(
             view_name_passive, view_name_active, 'Name')
         site_name_sheet = get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
             editor_name.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-        view_title_passive = self._roster.control.new_view_title_passive()
-        view_title_active = self._roster.control.new_view_title_active()
+        view_title_passive = self._control.new_view_title_passive()
+        view_title_active = self._control.new_view_title_active()
         editor_title = VIDCORE.EditorMarkup(
             view_title_passive, view_title_active, 'Title')
         site_title_sheet = get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
             editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-        view_summary_active = self._roster.control.new_view_summary_active()
+        view_summary_active = self.control.new_view_summary_active()
         site_summary_sheet = get_object('ui_site_summary_sheet')
         site_summary_sheet.add(view_summary_active)
 
@@ -352,7 +321,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         # _id = self._context_name.connect('closed', self.on_popdown_name)
         # _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
         _id = self._window.connect(
-            'delete-event', lambda _w, _e: self._roster.close_view_sheet(self))
+            'delete-event', lambda _w, _e: self._close_view_sheet(self))
         # _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
@@ -382,7 +351,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         # UI.new_action_active(
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
-                             lambda _a, _t: self._roster.open_view_sheet())
+                             lambda _a, _t: self._control.open_view_sheet())
         UI.new_action_active(self._window, 'close-view-sheet',
                              lambda _a, _t: self._window.close())
         # UI.new_action_active_dialog(
@@ -485,7 +454,7 @@ class ViewSheet(CSHEET.StubViewSheet):
 
     @classmethod
     def link_factsheet(cls, pm_page: 'ViewSheet',
-                       pm_control: CSHEET.StubControlSheet) -> None:
+                       pm_control: CSHEET.ControlSheet) -> None:
         """Initialize links between new page and new control for a
         factsheet.
 
@@ -548,7 +517,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         """
         pass
         # page = ViewSheet(px_app=px_app)
-        # control = CSHEET.StubControlSheet.new(pm_sheets_active)
+        # control = CSHEET.ControlSheet.new(pm_sheets_active)
         # ViewSheet.link_factsheet(page, control)
         # return page
 
@@ -749,7 +718,7 @@ class ViewSheet(CSHEET.StubViewSheet):
 
     def on_popdown_name(self, _popover: Gtk.Popover) -> None:
         """Hide factsheet name popover and notify control
-        :class:`~.StubControlSheet` when name changes."""
+        :class:`~.ControlSheet` when name changes."""
         raise NotImplementedError
         # assert self._control is not None
         # if self._name_former != self._infoid.name:
@@ -847,7 +816,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         #     return None
         #
         # page = ViewSheet(px_app=px_app)
-        # control = CSHEET.StubControlSheet.open(pm_sheets_active, p_path)
+        # control = CSHEET.ControlSheet.open(pm_sheets_active, p_path)
         # ViewSheet.link_factsheet(page, control)
         # return page
 
@@ -878,3 +847,7 @@ class ViewSheet(CSHEET.StubViewSheet):
     def window(self) -> Gtk.ApplicationWindow:
         """Return visual element for sheet view."""
         return self._window
+
+
+g_app = AppFactsheet()
+g_control_app = CSHEET.ControlApp(ViewSheet)

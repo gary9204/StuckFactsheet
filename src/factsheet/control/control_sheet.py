@@ -10,6 +10,10 @@ global collection of open factsheets.
 on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`
 defines classes representing control components for a factsheet as a
 whole.
+
+.. data: IdViewSheet
+
+    Distinct type for unique identifier of a sheet view.
 """
 import enum
 # import errno
@@ -19,7 +23,8 @@ from pathlib import Path
 # import traceback as TB
 import typing   # noqa
 
-import factsheet.control.control_idcore as CIDCORE
+
+# import factsheet.control.control_idcore as CIDCORE
 import factsheet.model.sheet as MSHEET
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 # from factsheet.control import pool as CPOOL
@@ -50,9 +55,61 @@ class GoNoGo(enum.Enum):  # TBD - Not tested yet
 IdFactsheet = typing.NewType('IdFactsheet', int)  # TBD - Not tested yet
 
 
-def id_factsheet(p_roster_view: 'StubControlSheet') -> IdFactsheet:
+def id_factsheet(p_control_sheet: 'ControlSheet') -> IdFactsheet:
     """TBD"""
-    return IdFactsheet(id(p_roster_view))
+    return IdFactsheet(id(p_control_sheet))
+
+
+class StubViewSheet:
+    """Define interface for sheet control to notify a sheet view.
+
+    In general, a sheet view requests services from its sheet control.
+    For a few exceptions, a sheet view acts as an observer of its sheet
+    control.  A sheet control notifies its views when to present to the
+    user and when to close.
+
+    Class :class:`StubViewSheet` defines methods a view sheet needs
+    as an observer.  The class is a stub.  Its observer methods log
+    warnings of logic errors.
+    """
+
+    def __init__(self, *, p_control_sheet: 'ControlSheet') -> None:
+        """Initialize the sheet control for the view.
+
+        :param p_control: sheet control for the sheet view.
+        """
+        self._control_sheet = p_control_sheet
+
+    def close(self) -> None:
+        """Close sheet view.
+
+        Stub method logs a logic error message.
+        """
+        logger.critical(
+            'Logic error! Factsheet control: {} ({}.{})'.format(
+                hex(id(self._control_sheet)),
+                self.__class__.__name__, self.close.__name__))
+
+    def present(self, p_time: int) -> None:
+        """Present sheet view to user.
+
+        Stub method logs a logic error message.
+
+        :param time: time stamp to order multiple, independent requests.
+        """
+        _ = p_time
+        logger.critical(
+            'Logic error! Factsheet control: {} ({}.{})'.format(
+                hex(id(self._control_sheet)),
+                self.__class__.__name__, self.present.__name__))
+
+    def user_approves_close(self) -> GoNoGo:
+        """Return GO when user approves closing sheet view and NOGO
+        otherwise.
+
+        Stub method always returns GO to approve closing sheet view.
+        """
+        return GoNoGo.GO
 
 
 class ControlApp:
@@ -62,12 +119,14 @@ class ControlApp:
     opening a factsheet file.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, p_type_view: typing.Type[StubViewSheet]
+                 = StubViewSheet) -> None:
         """Initialize empty roster for factsheets."""
+        self._type_view = p_type_view
         self._roster: typing.MutableMapping[
-            IdFactsheet, 'StubControlSheet'] = dict()
+            IdFactsheet, 'ControlSheet'] = dict()
 
-    def close_factsheet(self, p_control: 'StubControlSheet') -> None:
+    def close_factsheet(self, p_control: 'ControlSheet') -> None:
         """Close and stop tracking factsheet.
 
         Log a warning when the control is not in the collection.
@@ -86,13 +145,12 @@ class ControlApp:
     def close_all_factsheets(self) -> None:
         """TBD"""
 
-    def open_factsheet(self, p_path: typing.Optional[Path] = None
-                       ) -> 'StubControlSheet':
+    def open_factsheet(self, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
         """Return new or existing factsheet with given path.
 
         If path is None or no existing factsheet has the given path,
         return a new, empty factsheet.  Otherwise, return factsheet
-        loaded from file at the given path.  See :meth:`.StubControlSheet.open`
+        loaded from file at the given path.  See :meth:`.ControlSheet.open`
         regarding file load failure.
 
         :param p_path: location of factsheet file
@@ -105,48 +163,74 @@ class ControlApp:
         #         if path_absolute == control._path.resolve():
         #             control.present()
         #             return
-        control = StubControlSheet.open(p_path)
+        control = ControlSheet(p_path, self._type_view)
         # self._roster[id(control)] = control
         return control
 
 
-g_roster_factsheets = ControlApp()
-#
-#
-# class StubControlSheet:  # TBD - Not tested yet.
-#     """TBD"""
-#
-#     def __init__(self, **kwargs):
-#         """TBD"""
-#         self._roster_views = dict()
-#
-#     def close_all_views(self) -> GoNoGo:
-#         """TBD"""
-#         pass
-#
-#     def new_view_sheet(self)-> 'StubViewSheet':
-#         """TBD"""
-#         pass
-#
-#     def present_views(self) -> None:
-#         """TBD"""
-#         pass
+IdViewSheet = typing.NewType('IdViewSheet', int)
 
 
-class StubControlSheet(CIDCORE.ControlIdCore):
+def id_view_sheet(p_view_sheet: 'StubViewSheet') -> IdViewSheet:
+    """Return unique identifier for a sheet view.
+
+    The identifier is unique during the lifetime of the sheet view.  An
+    identifier may be reused if a sheet view is destroyed.
+
+    :param p_view_sheet:
+    """
+    return IdViewSheet(id(p_view_sheet))
+
+
+class ControlSheet:
     """Mediates user actions at view to model updates for a factsheet.
 
-    Class :class:`StubControlSheet` translates user requests in a factsheet
+    Class :class:`ControlSheet` translates user requests in a factsheet
     view into changes in the factsheet model (such as save or delete) or
     in the collection of factsheet views (such as add or close a view).
     """
 
-    def __init__(self, p_model: MSHEET.Sheet, p_path: Path = None) -> None:
+    def __init__(self, p_path: Path = None,
+                 p_type_view: typing.Type[StubViewSheet] = StubViewSheet,
+                 ) -> None:
         """Initialize instance with given attributes and no topics."""
-        self._model = p_model
         self._path = p_path
+        self._type_view = p_type_view
+        self._model = self._model_from_path(p_path)
+        self._roster_views: typing.MutableMapping[
+            IdViewSheet, StubViewSheet] = dict()
         # self._controls_topic: typing.Dict[
         #     MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
+
+    def _model_from_path(self, p_path: typing.Optional[Path]) -> MSHEET.Sheet:
+        """Return sheet model from file at given location or a new model.
+
+        Return a new, empty sheet model when path is None or when there
+        is no file at given path. When model cannot be loaded from file
+        at given path, return, as heet model containing error
+        information.
+
+        :param p_path: location of file for factsheet model.
+        """
+        if p_path is None:
+            model = MSHEET.Sheet()
+            return model
+
+        try:
+            raise NotImplementedError
+            # with p_path.open(mode='rb') as io_in:
+            #     model = pickle.load(io_in)
+        except FileNotFoundError:
+            raise NotImplementedError
+            # model = MSHEET.Sheet()
+        except Exception:
+            raise NotImplementedError
+            # name = 'OPEN ERROR'
+            # summary = TB.format_exc()
+            # title = 'Error opening file \'{}\''.format(p_path)
+            # model = MSHEET.Sheet(
+            #     p_name=name, p_summary=summary, p_title=title)
+        # return model
 
     # def _add_new_control_topic(self, px_topic: MTOPIC.Topic
     #                            ) -> CTOPIC.ControlTopic:
@@ -158,15 +242,6 @@ class StubControlSheet(CIDCORE.ControlIdCore):
     #     id_topic = px_topic.tag
     #     self._controls_topic[id_topic] = control_new
     #     return control_new
-
-    # def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-    #     """Add page to model.
-    #
-    #     :param pm_page: page to add.
-    #     """
-    #     assert self._model is not None
-    #     self._model.attach_page(pm_page)
-    #     self.new_name()
 
     # def attach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
     #     """Add view of topics outline to model.
@@ -181,6 +256,46 @@ class StubControlSheet(CIDCORE.ControlIdCore):
         raise NotImplementedError
         # assert self._model is not None
         # self._model.clear()
+
+    def close_factsheet(self) -> GoNoGo:
+        """Close the factsheet along with all its sheet views.
+
+        A factsheet may contain unsaved changes.  If closing the
+        factsheet would discard unsaved changes, method
+        :meth:`.close_factsheet` confirms the user approves before
+        closing any views.  If no changes would be lost, the method
+        closes the factsheet unconditionally.
+
+        :return: GO if there are no unsaved changes or the user
+            approves discarding changes.  Otherwise, return NOGO.
+        """
+        logger.error('close_all_views: stub always returns GO.')
+        return GoNoGo.GO
+
+    def close_view_sheet(self, p_view_sheet: 'StubViewSheet') -> GoNoGo:
+        """Close sheet view and, if there are no other views, the
+        factsheet.
+
+        A factsheet may contain unsaved changes.  If closing the sheet
+        view would close the factsheet and discard unsaved changes,
+        method :meth:`.close_view_sheet` confirms the user approves
+        before closing the view.  If no changes would be lost, the
+        method closes the view unconditionally.
+
+        Log a warning when the sheet view is not in the roster.
+
+        :param p_view_sheet: sheet view to close.
+
+        :returns: :data:`.CANCEL_CLOSE` or :data:`.COMPLETE_CLOSE` to,
+           respectively, cancel or continue page close.
+        """
+        if (1 == len(self._roster_views)
+                and self.is_stale()
+                and p_view_sheet.user_approves_close() is GoNoGo.NOGO):
+            return GoNoGo.NOGO
+
+        del self._roster_views[id_view_sheet(p_view_sheet)]
+        return GoNoGo.GO
 
     def delete_force(self) -> None:
         """Delete factsheet unconditionally."""
@@ -319,13 +434,13 @@ class StubControlSheet(CIDCORE.ControlIdCore):
         return self._model.is_stale()
 
     # @classmethod
-    # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'StubControlSheet':
+    # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
     #     """Create and return control with default model.
     #
     #     :param pm_sheets_active: collection of open factsheet documents.
     #     :returns: Newly created control.
     #     """
-    #     control = StubControlSheet(pm_sheets_active)
+    #     control = ControlSheet(pm_sheets_active)
     #     control._model = MSHEET.Sheet()
     #     return control
 
@@ -339,32 +454,38 @@ class StubControlSheet(CIDCORE.ControlIdCore):
         # assert self._model is not None
         # self._model.update_titles(subtitle_base)
 
-    def new_view_name_active(self) -> MSHEET.ViewNameSheetActive:
-        """Return editable view of name."""
-        return self._model.new_view_name_active()
+    def open_view_sheet(self) -> None:
+        """Create and track a new view of the sheet."""
+        view = self._type_view(p_control_sheet=self)
+        self._roster_views[id_view_sheet(view)] = view
+        return
 
-    def new_view_name_passive(self) -> MSHEET.ViewNameSheetPassive:
-        """Return display-only view of name."""
-        return self._model.new_view_name_passive()
-
-    def new_view_summary_active(self) -> MSHEET.ViewSummarySheetActive:
-        """Return editable view of summary."""
-        return self._model.new_view_summary_active()
-
-    def new_view_summary_passive(self) -> MSHEET.ViewSummarySheetPassive:
-        """Return display-only view of summary."""
-        return self._model.new_view_summary_passive()
-
-    def new_view_title_active(self) -> MSHEET.ViewTitleSheetActive:
-        """Return editable view of title."""
-        return self._model.new_view_title_active()
-
-    def new_view_title_passive(self) -> MSHEET.ViewTitleSheetPassive:
-        """Return display-only view of title."""
-        return self._model.new_view_title_passive()
+    # def new_view_name_active(self) -> MSHEET.ViewNameSheetActive:
+    #     """Return editable view of name."""
+    #     return self._model.new_view_name_active()
+    #
+    # def new_view_name_passive(self) -> MSHEET.ViewNameSheetPassive:
+    #     """Return display-only view of name."""
+    #     return self._model.new_view_name_passive()
+    #
+    # def new_view_summary_active(self) -> MSHEET.ViewSummarySheetActive:
+    #     """Return editable view of summary."""
+    #     return self._model.new_view_summary_active()
+    #
+    # def new_view_summary_passive(self) -> MSHEET.ViewSummarySheetPassive:
+    #     """Return display-only view of summary."""
+    #     return self._model.new_view_summary_passive()
+    #
+    # def new_view_title_active(self) -> MSHEET.ViewTitleSheetActive:
+    #     """Return editable view of title."""
+    #     return self._model.new_view_title_active()
+    #
+    # def new_view_title_passive(self) -> MSHEET.ViewTitleSheetPassive:
+    #     """Return display-only view of title."""
+    #     return self._model.new_view_title_passive()
 
     @classmethod
-    def open(cls, p_path: typing.Optional[Path] = None) -> 'StubControlSheet':
+    def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
         """Create and return control with model.
 
         If given path is None or there is no file at the path location,
@@ -390,7 +511,7 @@ class StubControlSheet(CIDCORE.ControlIdCore):
                 # title = 'Error opening file \'{}\''.format(p_path)
                 # model = MSHEET.Sheet(
                 #     p_name=name, p_summary=summary, p_title=title)
-        control = StubControlSheet(p_model=model, p_path=p_path)
+        control = ControlSheet(p_path=p_path)
         return control
 
     def _open_guard(self) -> typing.BinaryIO:
@@ -421,12 +542,12 @@ class StubControlSheet(CIDCORE.ControlIdCore):
         raise NotImplementedError
         # return self._path
 
-    def present_factsheet(self, p_time: int) -> None:
-        """Make all factsheet pages visible to user.
+    def present_views(self, p_time: int) -> None:
+        """Make all sheet views visible to user.
 
-        :param p_time: timestamp of event requesting presentation.
+        :param p_time: time stamp of event requesting presentation.
         """
-        raise NotImplementedError
+        logging.error('present_views: method not implemented.')
         # assert self._model is not None
         # self._model.present_pages(p_time)
 
@@ -465,42 +586,3 @@ class StubControlSheet(CIDCORE.ControlIdCore):
     # def sheets_active(self) -> CPOOL.PoolSheets:
     #     """Return collection of active factsheets."""
     #     return self._sheets_active
-
-
-class StubViewSheet:
-    """Define interface for sheet control to notify a sheet view.
-
-    In general, a sheet view requests services from its sheet control.
-    For a few exceptions, a sheet view acts as an observer of its sheet
-    control.  A sheet control notifies its views when to present to the
-    user and when to close.
-
-    Class :class:`StubViewSheet` defines methods a view sheet needs
-    as an observer.  The class is a stub.  Its observer methods log
-    warnings of logic errors.
-    """
-
-    def __init__(self, *, p_control: StubControlSheet) -> None:
-        """Initialize the sheet control for the view.
-
-        :param p_control: sheet control for the sheet view.
-        """
-        self._control = p_control
-
-    def close(self) -> None:
-        """Close sheet view."""
-        logger.critical(
-            'Logic error! Factsheet control: {} ({}.{})'.format(
-                hex(id(self._control)),
-                self.__class__.__name__, self.close.__name__))
-
-    def present(self, p_time: int) -> None:
-        """Present sheet view to user.
-
-        :param time: time stamp to order multiple, independent requests.
-        """
-        _ = p_time
-        logger.critical(
-            'Logic error! Factsheet control: {} ({}.{})'.format(
-                hex(id(self._control)),
-                self.__class__.__name__, self.present.__name__))

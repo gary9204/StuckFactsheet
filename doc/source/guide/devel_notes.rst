@@ -2,26 +2,106 @@ Development Notes
 =================
 
 The Factsheet application evolves by exploration, review, and
-refactoring.  These notes record design and implementation decisions
-made as the project progresses.  The notes include some lessons learned
-along the way.  *Caveat emptor:* the notes are a work in progress and
-not comprehensive.
+refactoring.  These notes record development decisions made as the
+project progresses.  The notes include some lessons learned along the
+way.  *Caveat emptor:* the notes are a work in progress and not
+comprehensive.
 
 Purpose
 -------
 The primary purpose of Factsheet is exploration.  First, to explore
 Python and current software development tools and techniques.  Second,
 to explore visualization of basic properties of small algebraic
-structures (for example, sets, operations, and groups.
+structures (for example, sets, operations, and groups).
 
-Overall Design
---------------
-Factsheet is based on a model-view-controller pattern.  For an overview
-of the pattern, see Wikipedia page `Model-view-controller
-<https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_.
+Beginning
+---------
+I am learning techniques and tools as I go.  I expect to make a lot
+mistakes and encounter many dead ends.  I am working on my own.
+Consequently, I need a resilient plan and feedback mechanisms to make
+progress.
+
+The plan needs to accommodate the following.
+
+  * A graphical user interface (GUI).  The look and behavior of the
+    application will change considerably over time.  The underlying
+    widget toolkit may change, too.
+  * Calculations and persistent data.  The core of the application
+    should be independent of the GUI to the extent possible.  It should
+    be as easy as possible to extend content.
+  * Document and window management.  Rich visualization entails the
+    capability to compare data sets and to view a single data set in
+    different ways.
+
+`Model-view-controller
+<https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_
+presents a basic structure for applications that meets the initial
+needs.  This Wikipedia page identifies variations that might be more
+appropriate as development progresses.  Thus, the plan starts with the
+following together with a willingness to adapt as needed.
+
+  * **Model** -- persistent data with supporting calculations.
+  * **View** -- widget toolkit display elements with supporting code.
+  * **Controller** -- create, track, store, and load multiple Model
+    data sets as well as multiple View windows for each data set, 
+
+Ideally, change to any one component would have minimal effect on the
+other two.  Practicallly, I expect tradeoffs would be needed.  My
+emphasis will be on isolating the View, since the View is likely to
+change the most.  Moreover, I have little expreience with GUI
+development.
+
+A second aspect of the initial plan is layering to further decompose the
+components into more manageable pieces.  :doc:`../guide/intro` describes
+the orgnaization of a factsheet document.  A factsheet contains facts
+about one or more subjects.  Each fact is a statement about a specific
+subject.  A topic is a collection of facts related to the same subject.
+A factsheet is a collection of topics.  The initial plan partitions
+model, view, and control components into factsheet, topic, and fact
+layers.
+
+Using model-view-control structure and layering adds overhead to the
+project that may not be needed.  However, the primary purpose of the
+application is to explore techniques and tools.  Practice will show the
+benefits and costs of these techniques more clearly than simply reading
+about them.
 
 .. warning:: The text after this point is under review. Portions of
     the text are inaccurate and incomplete.
+
+.. note:: To Do - Describe feedback mechanisms:
+
+    1) Intent: documentation with docstrings and Sphinx, 
+    2) Confirmation: TDD with unit and manual tests,
+    3) Quality: type hints with MyPy and PEP 8 consistenty checks,
+    4) Localization: small methods and functions
+    5) Consistency: naming and layout conventions
+
+Tradeoffs
+---------
+
+Observers
+^^^^^^^^^
+In general, view classes call control class methods, control classes
+call model methods, and model classes call view methods.  In a few
+cases, it seems appropriate for a control class to call view class
+methods.  For example, when the user closes a factsheet from one view,
+a control notifies all views of the factsheet to close.  This
+arrangement rasise several issues.
+
+* Circular imports
+* Forward references
+* Fail-safe operation
+* Widget toolkit elements
+
+Possible approaches to creating observers include the following.
+
+* Factory
+* Registration
+
+
+
+
 
 The general flow of control is illustrated in the figure below.  A user
 takes action at the view.  The view translates an action into requests to

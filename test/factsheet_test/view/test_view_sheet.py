@@ -46,7 +46,7 @@ class PatchCall:
         return self.response
 
 
-class PatchSafe(CSHEET.StubControlSheet):
+class PatchSafe(CSHEET.ControlSheet):
     def __init__(self, p_effect, pm_sheets_active):
         super().__init__(pm_sheets_active)
         self.n_delete_force = 0
@@ -140,7 +140,7 @@ def setup_view_roster(patch_appfactsheet, request, capfd):
         except KeyError:
             pass
     control = CSHEET.g_roster_factsheets.open_factsheet(p_path=path)
-    roster = VSHEET.StubControlSheet(p_app=app, p_sheet=control)
+    roster = VSHEET.ControlSheet(p_app=app, p_sheet=control)
     view_sheet = VSHEET.ViewSheet(p_roster=roster)
     snapshot = capfd.readouterr()   # Resets the internal buffer
     assert not snapshot.out
@@ -197,7 +197,7 @@ class TestNewDialogWarn:
 
 
 class TestRosterViewSheet:
-    """Unit tests for :class:`.StubControlSheet`."""
+    """Unit tests for :class:`.ControlSheet`."""
 
     def test_init(self, patch_appfactsheet):
         """Confirm initialization."""
@@ -205,9 +205,9 @@ class TestRosterViewSheet:
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
         # Test
-        assert VSHEET.StubControlSheet.CANCEL_CLOSE
-        assert not VSHEET.StubControlSheet.COMPLETE_CLOSE
-        target = VSHEET.StubControlSheet(p_app=app, p_sheet=control)
+        assert VSHEET.ControlSheet.CANCEL_CLOSE
+        assert not VSHEET.ControlSheet.COMPLETE_CLOSE
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
         assert target._app is app
         assert target._control is control
         assert isinstance(target._roster, dict)
@@ -219,7 +219,7 @@ class TestRosterViewSheet:
         """
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.StubControlSheet(p_app=app, p_sheet=control)
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
 
         def patch_init(self, *, p_roster):
             self._roster = p_roster
@@ -229,7 +229,7 @@ class TestRosterViewSheet:
         view_target = target.open_view_sheet()
         # Test
         result = target.close_view_sheet(p_view_sheet=view_target)
-        assert result is VSHEET.StubControlSheet.COMPLETE_CLOSE
+        assert result is VSHEET.ControlSheet.COMPLETE_CLOSE
         assert target._roster[id(view_backup)] is view_backup
         assert id(view_target) not in target._roster.keys()
 
@@ -248,7 +248,7 @@ class TestRosterViewSheet:
         # Test
         result = target.close_view_sheet(p_view_sheet=view)
         assert id(view) in target._roster.keys()
-        assert result is VSHEET.StubControlSheet.CANCEL_CLOSE
+        assert result is VSHEET.ControlSheet.CANCEL_CLOSE
 
     @pytest.mark.skip
     def test_close_view_sheet_warn(self):
@@ -268,7 +268,7 @@ class TestRosterViewSheet:
         # Setup
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.StubControlSheet(p_app=app, p_sheet=control)
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
 
         def patch_init(self, *, p_roster):
             self._roster = p_roster
@@ -297,9 +297,9 @@ class TestRosterViewSheet:
         # Setup
         app = patch_appfactsheet
         control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.StubControlSheet(p_app=app, p_sheet=control)
+        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
         value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(VSHEET.StubControlSheet, NAME_PROP)
+        target_prop = getattr(VSHEET.ControlSheet, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
         # Test: read
         assert target_prop.fget is not None
@@ -586,7 +586,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -661,7 +661,7 @@ class TestViewSheet:
         # # Setup
         # factsheet = patch_factsheet()
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # page = VSHEET.ViewSheet(px_app=factsheet)
         # snapshot = capfd.readouterr()   # Resets the internal buffer
         # assert not snapshot.out
@@ -743,7 +743,7 @@ class TestViewSheet:
         # assert isinstance(target, VSHEET.ViewSheet)
         # assert target._window.get_application() is factsheet
         # control = target._control
-        # assert isinstance(control, CSHEET.StubControlSheet)
+        # assert isinstance(control, CSHEET.ControlSheet)
         # # Teardown
         # target._window.destroy()
         # del target._window
@@ -762,7 +762,7 @@ class TestViewSheet:
     #     # target._window.set_skip_taskbar_hint(True)
     #     target._window.set_transient_for(WINDOW_ANCHOR)
     #     sheets_active = CPOOL.PoolSheets()
-    #     control = CSHEET.StubControlSheet.new(sheets_active)
+    #     control = CSHEET.ControlSheet.new(sheets_active)
     #     target.link_factsheet(target, control)
 
     #     # Test
@@ -789,7 +789,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -833,7 +833,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -878,7 +878,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -893,7 +893,7 @@ class TestViewSheet:
         #         form.gtk_pane, hex(topic.tag))
         #
         # monkeypatch.setattr(
-        #     CSHEET.StubControlSheet, 'get_control_topic', lambda _s, _t: None)
+        #     CSHEET.ControlSheet, 'get_control_topic', lambda _s, _t: None)
         #
         # view.expand_all()
         # PATH_INIT = '0'
@@ -931,7 +931,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -977,7 +977,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -1277,7 +1277,7 @@ class TestViewSheet:
         #
         # patch_extract = PatchExtract()
         # monkeypatch.setattr(
-        #     CSHEET.StubControlSheet, 'extract_topic',
+        #     CSHEET.ControlSheet, 'extract_topic',
         #     patch_extract.extract_topic)
         #
         # factsheet = patch_factsheet()
@@ -1291,7 +1291,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -1327,7 +1327,7 @@ class TestViewSheet:
         #
         # patch_extract = PatchExtract()
         # monkeypatch.setattr(
-        #     CSHEET.StubControlSheet, 'extract_topic',
+        #     CSHEET.ControlSheet, 'extract_topic',
         #     patch_extract.extract_topic)
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -1340,7 +1340,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # # Test
         # target.on_delete_topic(None, None)
@@ -1362,7 +1362,7 @@ class TestViewSheet:
         #
         # patch_clear = PatchClear()
         # monkeypatch.setattr(
-        #     CSHEET.StubControlSheet, 'clear', patch_clear.clear)
+        #     CSHEET.ControlSheet, 'clear', patch_clear.clear)
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
         # snapshot = capfd.readouterr()   # Resets the internal buffer
@@ -1374,7 +1374,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # # Test
         # target.on_clear_topics(None, None)
@@ -1438,7 +1438,7 @@ class TestViewSheet:
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -1491,7 +1491,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # # Test
         # target.on_go_first_topic(None, None)
@@ -1519,7 +1519,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -1572,7 +1572,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # # Test
         # target.on_go_last_topic(None, None)
@@ -1600,7 +1600,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # outline_topics = new_outline_topics()
@@ -1657,7 +1657,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # # Test
         # target.on_new_sheet(None, None)
@@ -1685,7 +1685,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # gtk_model = target._view_topics.gtk_view.get_model()
         # NAME = 'Parrot'
@@ -1746,7 +1746,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # gtk_model = target._view_topics.gtk_view.get_model()
         # _index = gtk_model.append(None)
@@ -1765,7 +1765,7 @@ class TestViewSheet:
         #     def insert_topic_child(self, _t, _a): self.called = True
         #
         # patch_insert = PatchInsert()
-        # monkeypatch.setattr(CSHEET.StubControlSheet, 'insert_topic_child',
+        # monkeypatch.setattr(CSHEET.ControlSheet, 'insert_topic_child',
         #                     patch_insert.insert_topic_child)
         # # Test
         # target.on_new_topic(None, None)
@@ -1793,7 +1793,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # patch_query_template = PatchCall(None)
@@ -1825,7 +1825,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         #
         # query_template = target._query_template
@@ -1848,7 +1848,7 @@ class TestViewSheet:
         #     def insert_topic_child(self, _t, _a): self.called = True
         #
         # patch_insert = PatchInsert()
-        # monkeypatch.setattr(CSHEET.StubControlSheet, 'insert_topic_child',
+        # monkeypatch.setattr(CSHEET.ControlSheet, 'insert_topic_child',
         #                     patch_insert.insert_topic_child)
         # # Test
         # target.on_new_topic(None, None)
@@ -1885,7 +1885,7 @@ class TestViewSheet:
         #         self.called = True
         #         self.app = p_app
         #         self.path = p_path
-        #         return CSHEET.StubControlSheet(p_pool)
+        #         return CSHEET.ControlSheet(p_pool)
         #
         # patch_page = PatchPageSheet()
         # monkeypatch.setattr(
@@ -1902,7 +1902,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # # Test
         # target.on_open_sheet(None, None)
@@ -1941,7 +1941,7 @@ class TestViewSheet:
         #         self.called = True
         #         self.app = p_app
         #         self.path = p_path
-        #         return CSHEET.StubControlSheet()
+        #         return CSHEET.ControlSheet()
         #
         # patch_page = PatchPageSheet()
         # monkeypatch.setattr(
@@ -1979,7 +1979,7 @@ class TestViewSheet:
         #
         # patch_new_name = PatchNewName()
         # monkeypatch.setattr(
-        #     CSHEET.StubControlSheet, 'new_name', patch_new_name.new_name)
+        #     CSHEET.ControlSheet, 'new_name', patch_new_name.new_name)
         #
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -1992,7 +1992,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # target._infoid.get_view_name().set_text('The Confy Chair!')
         # target._name_former = target._infoid.name + ' Oh no!'
@@ -2019,7 +2019,7 @@ class TestViewSheet:
         #
         # patch_new_name = PatchNewName()
         # monkeypatch.setattr(
-        #     CSHEET.StubControlSheet, 'new_name', patch_new_name.new_name)
+        #     CSHEET.ControlSheet, 'new_name', patch_new_name.new_name)
         #
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -2032,7 +2032,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target._control = control
         # target._infoid.get_view_name().set_text('The Confy Chair!')
         # target._name_former = target._infoid.name
@@ -2112,7 +2112,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # PATH = Path(tmp_path / 'saved_factsheet.fsg')
         # control._path = PATH
@@ -2151,7 +2151,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # control._path = None
         # # Test
@@ -2195,7 +2195,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # PATH_OLD = Path(tmp_path / 'old_factsheet.fsg')
         # control._path = PATH_OLD
@@ -2247,7 +2247,7 @@ class TestViewSheet:
         # target._window.hide()
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # control._path = None
         # # Test
@@ -2362,13 +2362,13 @@ class TestViewSheet:
         # # Setup
         # def patch_open(p_pool, p_path):
         #     sheets_active = CPOOL.PoolSheets()
-        #     control = CSHEET.StubControlSheet(sheets_active)
+        #     control = CSHEET.ControlSheet(sheets_active)
         #     control._model = MSHEET.Sheet()
         #     control._path = p_path
         #     control._sheets_active = p_pool
         #     return control
         #
-        # monkeypatch.setattr(CSHEET.StubControlSheet, 'open', patch_open)
+        # monkeypatch.setattr(CSHEET.ControlSheet, 'open', patch_open)
         # factsheet = patch_factsheet()
         #
         # PATH = Path(tmp_path / 'factsheet.fsg')
@@ -2387,7 +2387,7 @@ class TestViewSheet:
         # assert isinstance(target, VSHEET.ViewSheet)
         # assert target._window.get_application() is factsheet
         # control = target._control
-        # assert isinstance(control, CSHEET.StubControlSheet)
+        # assert isinstance(control, CSHEET.ControlSheet)
         # # Teardown
         # target._window.destroy()
         # del target._window
@@ -2406,7 +2406,7 @@ class TestViewSheet:
         #     def present_factsheet(self, _time): self.called = True
         #
         # patch_present = PatchPresentFactsheet()
-        # monkeypatch.setattr(CSHEET.StubControlSheet, 'present_factsheet',
+        # monkeypatch.setattr(CSHEET.ControlSheet, 'present_factsheet',
         #                     patch_present.present_factsheet)
         #
         # PATH_MISS = Path(tmp_path / 'miss.fsg')
@@ -2416,7 +2416,7 @@ class TestViewSheet:
         #
         # sheets_active = CPOOL.PoolSheets()
         # for path in paths:
-        #     control = CSHEET.StubControlSheet.new(sheets_active)
+        #     control = CSHEET.ControlSheet.new(sheets_active)
         #     control._path = path
         #
         # factsheet = patch_factsheet()
@@ -2446,7 +2446,7 @@ class TestViewSheet:
         # target._window.set_transient_for(WINDOW_ANCHOR)
         #
         # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.StubControlSheet.new(sheets_active)
+        # control = CSHEET.ControlSheet.new(sheets_active)
         # target.link_factsheet(target, control)
         # target._window.hide()
         # # Test

@@ -11,11 +11,11 @@ import typing   # noqa
 
 logger = logging.getLogger('Main.CPOOL')
 
-_m_factsheets: typing.MutableMapping[int, 'StubControlSheet'] = dict()
+_m_factsheets: typing.MutableMapping[int, 'ControlSheet'] = dict()
 
 
 def open_factsheet(p_path: typing.Optional[Path] = None
-                   ) -> 'StubControlSheet':
+                   ) -> 'ControlSheet':
     """Return and track a new factsheet or return and present an
     existing factsheet.
 
@@ -26,7 +26,7 @@ def open_factsheet(p_path: typing.Optional[Path] = None
         file at the given location, create and return a new factsheet.
     """
     if p_path is None:
-        control = StubControlSheet.open(None)
+        control = ControlSheet.open(None)
         _m_factsheets[id(control)] = control
         return control
     raise NotImplementedError
@@ -38,7 +38,7 @@ def open_factsheet(p_path: typing.Optional[Path] = None
                 return
 
 
-def close_factsheet(p_control: 'StubControlSheet') -> None:
+def close_factsheet(p_control: 'ControlSheet') -> None:
     """Close and stop tracking factsheet.
 
     Log a warning when the control is not in the collection.
@@ -57,15 +57,15 @@ def close_factsheet(p_control: 'StubControlSheet') -> None:
     #         self.remove.__name__))
 
 
-class StubControlSheet:
+class ControlSheet:
     """Temporary placeholder"""
     def __init__(self):
         self._path = None
         self.present_called = False
 
     @classmethod
-    def open(cls, p_path: typing.Optional[Path] = None) -> 'StubControlSheet':
-        control = StubControlSheet()
+    def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
+        control = ControlSheet()
         control._path = p_path
         return control
 
