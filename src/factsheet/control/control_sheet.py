@@ -97,32 +97,31 @@ class ControlApp:
             IdFactsheet, 'ControlSheet'] = dict()
 
     def close_factsheet(self, p_control: 'ControlSheet') -> None:
-        """Close and stop tracking factsheet.
+        """Stop tracking factsheet.
 
         Log a warning when the control is not in the collection.
 
         :param p_control: factsheet to close.
         """
-        raise NotImplementedError
-        # id_control = id(px_control)
-        # try:
-        #     self._controls.pop(id_control)
-        # except KeyError:
-        #     logger.warning('Missing control: {} ({}.{})'.format(
-        #         hex(id_control), self.__class__.__name__,
-        #         self.remove.__name__))
+        id_control = id_factsheet(p_control)
+        try:
+            self._roster_sheets.pop(id_control)
+        except KeyError:
+            logger.warning('Missing control: 0x{:X} ({}.{})'.format(
+                id_control, self.__class__.__name__,
+                self.close_factsheet.__name__))
 
     def close_all_factsheets(self) -> None:
         """TBD"""
 
     def open_factsheet(self, p_path: typing.Optional[Path] = None
-                       ) -> 'ControlSheet':
-        """Return new or existing factsheet with given path.
+                       ) -> None:
+        """Create new or present existing factsheet with given path.
 
-        If path is None or no existing factsheet has the given path,
-        return a new, empty factsheet.  Otherwise, return factsheet
-        loaded from file at the given path.  See :meth:`.ControlSheet.open`
-        regarding file load failure.
+        If path is None or there is no file at given path, return a new,
+        empty factsheet.  Otherwise, return factsheet loaded from file
+        at the given path.  See :meth:`.ControlSheet.open` regarding
+        file load failure.
 
         :param p_path: location of factsheet file
         """
@@ -135,8 +134,8 @@ class ControlApp:
         #             control.present()
         #             return
         control = ControlSheet(p_path)
-        # self._roster_sheets[id(control)] = control
-        return control
+        id_control = id_factsheet(control)
+        self._roster_sheets[id_control] = control
 
 
 g_control_app = ControlApp()
