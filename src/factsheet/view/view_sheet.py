@@ -28,9 +28,6 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
-m_control_app = CSHEET.ControlApp(p_type_view=CSHEET.StubViewSheet)
-
-
 class AppFactsheet(Gtk.Application):
     """Extends GTK application for factsheets."""
 
@@ -46,9 +43,9 @@ class AppFactsheet(Gtk.Application):
 
     def do_activate(self) -> None:
         """Create and display an initial factsheet with default content."""
-        global m_control_app
-        control_sheet = m_control_app.open_factsheet(p_path=None)
-        control_sheet.open_view_sheet()
+        control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
+        view = ViewSheet(p_control=control_sheet)
+        control_sheet.add_view(view)
 
 #     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
 #                 p_hint: str) -> None:
@@ -61,7 +58,7 @@ class AppFactsheet(Gtk.Application):
 #         logger.critical('Hint: "{}".'.format(p_hint))
 #         control = CSHEET.g_roster_factsheets.open_factsheet(None)
 #         roster = VSHEET.RosterViewSheet(p_app=self, p_sheet=control)
-#         _ = roster.open_view_sheet()
+#         _ = roster.add_view()
 #
 #     def do_shutdown(self) -> None:
 #         """Application teardown. """
@@ -72,7 +69,6 @@ class AppFactsheet(Gtk.Application):
 #         """Application setup. """
 #         Gtk.Application.do_startup(self)
 #         logger.info('AppFactsheet application startup.')
-
 
 
 def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
@@ -216,7 +212,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     return dialog
 
 
-class ViewSheet(CSHEET.StubViewSheet):
+class ViewSheet(CSHEET.ObserverControlSheet):
     """Displays Factsheet document and translates user actions.
 
     Class ``ViewSheet`` maintains presentation of a Factsheet.  The
@@ -351,7 +347,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         # UI.new_action_active(
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
-                             lambda _a, _t: self._control.open_view_sheet())
+                             lambda _a, _t: self._control.add_view())
         UI.new_action_active(self._window, 'close-view-sheet',
                              lambda _a, _t: self._window.close())
         # UI.new_action_active_dialog(
@@ -420,7 +416,7 @@ class ViewSheet(CSHEET.StubViewSheet):
         UI.new_action_active_dialog(self._window, 'show-help-sheet',
                                     self.on_show_dialog, UI.HELP_SHEET)
 
-    def close_page(self) -> None:
+    def close(self) -> None:
         """Close page unconditionally.
 
         This method provides direct means to clase a page, for example
@@ -695,7 +691,7 @@ class ViewSheet(CSHEET.StubViewSheet):
     # def on_open_view_sheet(self, _action: Gio.SimpleAction,
     #                        _target: GLib.Variant) -> None:
     #     """Open another view of factsheet."""
-    #     self._roster.open_view_sheet()
+    #     self._roster.add_view()
     #     # assert self._control is not None
     #     # app = self._window.get_application()
     #     # page = ViewSheet(px_app=app)
@@ -850,4 +846,3 @@ class ViewSheet(CSHEET.StubViewSheet):
 
 
 g_app = AppFactsheet()
-g_control_app = CSHEET.ControlApp(ViewSheet)

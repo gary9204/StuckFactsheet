@@ -225,10 +225,10 @@ class TestRosterViewSheet:
             self._roster = p_roster
 
         monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
-        view_backup = target.open_view_sheet()
-        view_target = target.open_view_sheet()
+        view_backup = target.add_view()
+        view_target = target.add_view()
         # Test
-        result = target.close_view_sheet(p_view_sheet=view_target)
+        result = target.is_safe_to_close(p_view_sheet=view_target)
         assert result is VSHEET.ControlSheet.COMPLETE_CLOSE
         assert target._roster[id(view_backup)] is view_backup
         assert id(view_target) not in target._roster.keys()
@@ -246,7 +246,7 @@ class TestRosterViewSheet:
 
         monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
         # Test
-        result = target.close_view_sheet(p_view_sheet=view)
+        result = target.is_safe_to_close(p_view_sheet=view)
         assert id(view) in target._roster.keys()
         assert result is VSHEET.ControlSheet.CANCEL_CLOSE
 
@@ -275,7 +275,7 @@ class TestRosterViewSheet:
 
         monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
         # Test
-        view = target.open_view_sheet()
+        view = target.add_view()
         assert isinstance(view, VSHEET.ViewSheet)
         assert view is target._roster[id(view)]
 

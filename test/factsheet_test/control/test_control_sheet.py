@@ -38,6 +38,29 @@ import factsheet.model.sheet as MSHEET
 #     return PatchSafe
 
 
+class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
+    """:class:`.ObserverControlSheet` subclass with stubs for methods."""
+
+    def ___init__(self):
+        self.close_called = False
+        self.present_called = False
+
+    def close(self):
+        self.close_called = True
+
+    def present(self, p_time):
+        _ = p_time
+        self.present_called = True
+
+
+@pytest.fixture
+def patch_observer_control_sheet():
+    """Pytest fixture: Return :class:`.ObserverControlSheet` subclass
+    with stub methods.
+    """
+    return PatchObserverControlSheet
+
+
 class TestControlSheet:
     """Unit tests for :class:`~.ControlSheet`."""
 
@@ -49,11 +72,173 @@ class TestControlSheet:
         # Test
         target = CSHEET.ControlSheet(p_path=PATH)
         assert target._path is None
-        assert target._type_view is CSHEET.StubViewSheet
         assert MODEL_DEFAULT == target._model
         assert isinstance(target._roster_views, dict)
         assert not target._roster_views
+        assert not target._is_closing
         # assert not target._controls_topic
+
+    def test_model_from_path_none(self):
+        """| Confirm model creation.
+        | Case: no path
+        """
+        # Setup
+        PATH = None
+        target = CSHEET.ControlSheet(p_path=PATH)
+        model_default = MSHEET.Sheet()
+        # Test
+        model = target._model_from_path(p_path=PATH)
+        assert model_default == model
+
+    def test_add_view(self, patch_observer_control_sheet):
+        """| Confirm tracking of given sheet view.
+        | Case: view not tracked
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        # Test
+        target.add_view(view)
+        assert target._roster_views[id_view] is view
+
+    def test_add_view_warn(
+            self, patch_observer_control_sheet, PatchLogger, monkeypatch):
+        """| Confirm tracking of given sheet view.
+        | Case: duplicate view
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = ('Duplicate: sheet 0x{:X} add view 0x{:X}  '
+                       '(ControlSheet.add_view)'
+                       ''.format(id_view, id(target)))
+        # Test
+        target.add_view(view)
+        assert not patch_logger.called
+        target.add_view(view)
+        assert target._roster_views[id_view] is view
+        assert patch_logger.called
+        assert log_message == patch_logger.message
+
+    def test_remove_view_multi(self, patch_observer_control_sheet):
+        """| Confirm tracking stops for given sheet view.
+        | Case: multiple views tracked
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        target.add_view(view)
+        view_extra = patch_observer_control_sheet()
+        target.add_view(view_extra)
+        # Test
+        target.remove_view(view)
+        assert id_view not in target._roster_views
+
+    def test_remove_view_is_safe_fresh(self, patch_observer_control_sheet):
+        """| Confirm return shows safe to close.
+        | Case: no unsaved changes
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        target.add_view(view)
+        target._model.set_fresh()
+        target._is_closing = False
+        # Test
+        assert target.remove_view_is_safe()
+
+    def test_remove_view_is_safe_approved(self, patch_observer_control_sheet):
+        """| Confirm return shows safe to close.
+        | Case: user approves
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        target.add_view(view)
+        target._model.set_stale()
+        target._is_closing = True
+        # Test
+        assert target.remove_view_is_safe()
+
+    def test_remove_view_is_safe_multi(self, patch_observer_control_sheet):
+        """| Confirm return shows safe to close.
+        | Case: multiple windows
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        target.add_view(view)
+        view_extra = patch_observer_control_sheet()
+        target.add_view(view_extra)
+        target._model.set_stale()
+        target._is_closing = False
+        # Test
+        assert target.remove_view_is_safe()
+
+    def test_remove_view_is_safe_unsafe(self, patch_observer_control_sheet):
+        """Confirm return shows  not safe to close."""
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        target.add_view(view)
+        target._model.set_stale()
+        target._is_closing = False
+        # Test
+        assert not target.remove_view_is_safe()
+
+    def test_remove_view_single(
+            self, monkeypatch, patch_observer_control_sheet):
+        """| Confirm tracking stops for given sheet view.
+        | Case: single view tracked
+        """
+        # Setup
+        class PatchControlApp:
+            def __init__(self):
+                self.called = False
+                self.control_sheet = None
+
+            def close_factsheet(self, p_control):
+                self.called = True
+                self.control_sheet = p_control
+
+        patch = PatchControlApp()
+        monkeypatch.setattr(
+            CSHEET.ControlApp, 'close_factsheet', patch.close_factsheet)
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        target.add_view(view)
+        # Test
+        target.remove_view(view)
+        assert id_view not in target._roster_views
+        assert patch.called
+        assert target is patch.control_sheet
+
+    def test_remove_view_warn(
+            self, patch_observer_control_sheet, PatchLogger, monkeypatch):
+        """| Confirm tracking stops for given sheet view.
+        | Case: view not tracked
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        patch_logger = PatchLogger()
+        monkeypatch.setattr(
+            logging.Logger, 'warning', patch_logger.warning)
+        log_message = ('Missing: sheet 0x{:X} remove view 0x{:X}  '
+                       '(ControlSheet.remove_view)'
+                       ''.format(id_view, id(target)))
+        # Test
+        target.remove_view(view)
+        assert patch_logger.called
+        assert log_message == patch_logger.message
 
     @pytest.mark.skip
     def test_attach_view_topics(self, monkeypatch):
@@ -546,29 +731,6 @@ class TestControlSheet:
         # assert TITLE == model._infoid.title
         # assert target._path is None
 
-    def test_model_from_path_none(self):
-        """| Confirm model creation.
-        | Case: no path
-        """
-        # Setup
-        PATH = None
-        target = CSHEET.ControlSheet(p_path=PATH)
-        model_default = MSHEET.Sheet()
-        # Test
-        model = target._model_from_path(p_path=PATH)
-        assert model_default == model
-
-    def test_open_view_sheet(self):
-        """Confirm creation and tracking of new view sheet."""
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        # Test
-        target.open_view_sheet()
-        key, value = target._roster_views.popitem()
-        assert key == CSHEET.id_view_sheet(p_view_sheet=value)
-        assert isinstance(value, CSHEET.StubViewSheet)
-        assert value._control_sheet is target
-
     @pytest.mark.skip
     def test_present_factsheet(self, monkeypatch):
         """Confirm factsheet notifies model."""
@@ -763,27 +925,25 @@ class TestControlSheet:
 class TestGlobal:
     """Unit tests for :data:`.g_roster_factsheets`."""
 
-    @pytest.mark.skip(reason='changing roster to control')
     def test_define(self):
         """Confirm global definition."""
         # Setup
         # Test
-        assert isinstance(CSHEET.g_roster_factsheets, CSHEET.RosterFactsheets)
+        assert isinstance(CSHEET.g_control_app, CSHEET.ControlApp)
 
 
-class TestRosterFactsheet:
-    """Unit tests for :class:`.RosterFactsheets`."""
+@pytest.mark.skip(reason='update in progress')
+class TestControlApp:
+    """Unit tests for :class:`.ControlApp`."""
 
-    @pytest.mark.skip(reason='changing roster to control')
     def test_init(self):
         """Confirm initialization."""
         # Setup
         # Test
-        target = CSHEET.RosterFactsheets()
-        assert isinstance(target._roster, dict)
+        target = CSHEET.ControlApp()
+        assert isinstance(target._roster_sheet, dict)
         assert not target._roster
 
-    @pytest.mark.skip
     def test_close_factsheet(self):
         """| Confirm factsheet close.
         | Case: control in roster
@@ -804,7 +964,6 @@ class TestRosterFactsheet:
         # for control in controls:
         #     assert target._controls[id(control)] is control
 
-    @pytest.mark.skip
     def test_close_factsheet_warn(self, PatchLogger, monkeypatch):
         """| Confirm factsheet close.
         | Case: control not in roster
@@ -837,13 +996,12 @@ class TestRosterFactsheet:
         # assert PatchLogger.T_WARNING == patch_logger.level
         # assert log_message == patch_logger.message
 
-    @pytest.mark.skip(reason='changing roster to control')
     def test_open_factsheet_none(self):
         """| Confirm factsheet return.
         | Case: path is None
         """
         # Setup
-        target = CSHEET.RosterFactsheets()
+        target = CSHEET.ControlApp()
         N_FACTSHEETS = 1
         # Test
         sheet = target.open_factsheet()
@@ -927,79 +1085,34 @@ class TestRosterFactsheet:
         #     assert target._controls[id(control)] is control
 
 
+class TestIdFactsheet:
+    """unit tests for :func:`.id_view_sheet`."""
+
+    def test_id_factsheetsheet(self, patch_observer_control_sheet):
+        """Confirm id returned."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet()
+        # Test
+        assert id(control_sheet) == CSHEET.id_factsheet(control_sheet)
+
+
 class TestIdViewSheet:
     """unit tests for :func:`.id_view_sheet`."""
 
-    def test_id_view_sheet(self):
+    def test_id_view_sheet(self, patch_observer_control_sheet):
         """Confirm id returned."""
         # Setup
-        control_app = CSHEET.ControlApp(CSHEET.StubViewSheet)
-        control_sheet = control_app.open_factsheet(p_path=None)
-        view_sheet = CSHEET.StubViewSheet(p_control_sheet=control_sheet)
+        view_sheet = patch_observer_control_sheet()
         # Test
         assert id(view_sheet) == CSHEET.id_view_sheet(p_view_sheet=view_sheet)
-
-
-class TestStubViewSheet:
-    """Unit tests for :class:`.StubViewSheet`."""
-
-    def test_init(self):
-        """Confirm initialization."""
-        # Setup
-        control_sheet = CSHEET.ControlSheet(
-            p_path=None, p_type_view=CSHEET.StubViewSheet)
-        # Test
-        target = CSHEET.StubViewSheet(p_control_sheet=control_sheet)
-        assert target._control_sheet is control_sheet
-
-    def test_close(self, PatchLogger, monkeypatch):
-        """Confirm stub logs critical error."""
-        # Setup
-        control_app = CSHEET.ControlApp(CSHEET.StubViewSheet)
-        control_sheet = control_app.open_factsheet(p_path=None)
-        target = CSHEET.StubViewSheet(p_control_sheet=control_sheet)
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'critical', patch_logger.critical)
-        log_message = ('Logic error! Factsheet control: {} '
-                       '(StubViewSheet.close)'
-                       ''.format(hex(id(control_sheet))))
-        # Test
-        target.close()
-        assert patch_logger.called
-        assert log_message == patch_logger.message
-
-    def test_present(self, PatchLogger, monkeypatch):
-        """Confirm stub logs critical error."""
-        # Setup
-        control_sheet = CSHEET.ControlSheet(
-            p_path=None, p_type_view=CSHEET.StubViewSheet)
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'critical', patch_logger.critical)
-        log_message = ('Logic error! Factsheet control: {} '
-                       '(StubViewSheet.present)'
-                       ''.format(hex(id(control_sheet))))
-        target = CSHEET.StubViewSheet(p_control_sheet=control_sheet)
-        TIME = 42
-        # Test
-        target.present(TIME)
-        assert patch_logger.called
-        assert log_message == patch_logger.message
-
-    def test_user_approves_close(self):
-        """Confirm stub returns GO."""
-        # Setup
-        control_sheet = CSHEET.ControlSheet(None)
-        target = CSHEET.StubViewSheet(p_control_sheet=control_sheet)
-        # Test
-        assert target.user_approves_close() is CSHEET.GoNoGo.GO
 
 
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.control_sheet`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+        (CSHEET.IdFactsheet.__qualname__, 'NewType.<locals>.new_type'),
+        (CSHEET.IdFactsheet.__dict__['__supertype__'], int),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdViewSheet.__dict__['__supertype__'], int),
         # (type(MIDCORE.ViewTitlePassive), typing.TypeVar),
@@ -1011,3 +1124,18 @@ class TestTypes:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_SOURCE
+
+
+class TestObserverControlSheet:
+    """Unit tests for :class:`ObserverControlSheet`."""
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (CSHEET.ObserverControlSheet, 'close'),
+        (CSHEET.ObserverControlSheet, 'present'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified."""
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
