@@ -44,6 +44,8 @@ class AppFactsheet(Gtk.Application):
     def do_activate(self) -> None:
         """Create and display an initial factsheet with default content."""
         control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
+        if control_sheet is None:
+            raise NotImplementedError
         view = ViewSheet(p_control=control_sheet)
         control_sheet.add_view(view)
 
@@ -230,18 +232,21 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
        Path to user interface defintion of factsheet view.
 
-    .. attribute:: CANCEL_CLOSE
+    .. attribute:: ALLOW_CLOSE
+
+        Indicates GTK should close a factsheet view.
+
+    .. attribute:: DENY_CLOSE
 
         Indicates GTK should cancel closing a factsheet view.
-
-    .. attribute:: COMPLETE_CLOSE
-
-        Indicates GTK should continue closing a factsheet view.
     """
 
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
 
     NAME_FILE_DIALOG_DATA_LOSS_UI = str(UI.DIR_UI / 'dialog_data_loss.ui')
+
+    ALLOW_CLOSE = False
+    DENY_CLOSE = not ALLOW_CLOSE
 
     def __init__(self, *, p_control: CSHEET.ControlSheet) -> None:
         """Initialize sheet view and show window.
@@ -251,38 +256,13 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         self._control = p_control
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
-        # self._window = get_object('ui_sheet')
-        # self._window.set_application(self._roster.app)
+        self._window = get_object('ui_sheet')
+        global g_app
+        self._window.set_application(g_app)
 
-        EXPAND_OKAY = True
-        FILL_OKAY = True
-        N_PADDING = 6
-
-        view_name_passive = self._control.new_view_name_passive()
-        view_name_active = self._control.new_view_name_active()
-        editor_name = VIDCORE.EditorMarkup(
-            view_name_passive, view_name_active, 'Name')
-        site_name_sheet = get_object('ui_site_name_sheet')
-        site_name_sheet.pack_start(
-            editor_name.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-
-        view_title_passive = self._control.new_view_title_passive()
-        view_title_active = self._control.new_view_title_active()
-        editor_title = VIDCORE.EditorMarkup(
-            view_title_passive, view_title_active, 'Title')
-        site_title_sheet = get_object('ui_site_title_sheet')
-        site_title_sheet.pack_start(
-            editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-
-        view_summary_active = self.control.new_view_summary_active()
-        site_summary_sheet = get_object('ui_site_summary_sheet')
-        site_summary_sheet.add(view_summary_active)
-
-        button_show_summary_sheet = get_object('ui_button_show_summary_sheet')
-        expander_summary_sheet = get_object('ui_expander_summary_sheet')
-        SYNC = GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE
-        _binding = button_show_summary_sheet.bind_property(
-            'active', expander_summary_sheet, 'visible', SYNC)
+        self._init_name_sheet(get_object)
+        self._init_summary_sheet(get_object)
+        self._init_title_sheet(get_object)
 
         # Components
         # self._context_name = get_object('ui_context_name')
@@ -316,8 +296,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     'activate', lambda _entry: self._context_name.popdown())
         # _id = self._context_name.connect('closed', self.on_popdown_name)
         # _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
-        _id = self._window.connect(
-            'delete-event', lambda _w, _e: self._close_view_sheet(self))
+        _id = self._window.connect('delete-event', self.on_close_view_sheet)
         # _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
@@ -347,7 +326,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # UI.new_action_active(
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
-                             lambda _a, _t: self._control.add_view())
+                             self.on_open_view_sheet)
         UI.new_action_active(self._window, 'close-view-sheet',
                              lambda _a, _t: self._window.close())
         # UI.new_action_active_dialog(
@@ -415,6 +394,46 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         """
         UI.new_action_active_dialog(self._window, 'show-help-sheet',
                                     self.on_show_dialog, UI.HELP_SHEET)
+
+    def _init_name_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
+        """Initialize editor for factsheet name."""
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+
+        view_name_passive = self._control.model.new_view_name_passive()
+        view_name_active = self._control.model.new_view_name_active()
+        editor_name = VIDCORE.EditorMarkup(
+            view_name_passive, view_name_active, 'Name')
+        site_name_sheet = p_get_object('ui_site_name_sheet')
+        site_name_sheet.pack_start(
+            editor_name.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+
+    def _init_summary_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
+        """Initialize view for factsheet summary."""
+        view_summary_active = self._control.model.new_view_summary_active()
+        site_summary_sheet = p_get_object('ui_site_summary_sheet')
+        site_summary_sheet.add(view_summary_active)
+
+        button_show = p_get_object('ui_button_show_summary_sheet')
+        expander = p_get_object('ui_expander_summary_sheet')
+        SYNC = GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE
+        _binding = button_show.bind_property(
+            'active', expander, 'visible', SYNC)
+
+    def _init_title_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
+        """Initialize editor for factsheet title."""
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+
+        view_title_passive = self._control.model.new_view_title_passive()
+        view_title_active = self._control.model.new_view_title_active()
+        editor_title = VIDCORE.EditorMarkup(
+            view_title_passive, view_title_active, 'Title')
+        site_title_sheet = p_get_object('ui_site_title_sheet')
+        site_title_sheet.pack_start(
+            editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def close(self) -> None:
         """Close page unconditionally.
@@ -592,12 +611,33 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     assert self._control is not None
         #     self._control.extract_topic(index)
 
-    def on_clear_topics(self, _action: Gio.SimpleAction,
-                        _target: GLib.Variant) -> None:
+    def on_clear_topics(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
         """Remove all topics from the topics outline."""
         raise NotImplementedError
         # assert self._control is not None
         # self._control.clear()
+
+    def confirm_close(self):
+        """Return :data:`ALLOW_CLOSE` when user approves closing view.
+        Otherwise, return :data:`DENY_CLOSE`."""
+        dialog_warn = new_dialog_warn_loss(self._window, 'Oops!')
+        response = dialog_warn.run()
+        dialog_warn.hide()
+        if Gtk.ResponseType.APPLY == response:
+            return ViewSheet.ALLOW_CLOSE
+        else:
+            return ViewSheet.DENY_CLOSE
+
+    def on_close_view_sheet(
+            self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
+        """Close view of factsheet."""
+        if not self._control.remove_view_is_safe():
+            if ViewSheet.DENY_CLOSE == self.confirm_close():
+                return ViewSheet.DENY_CLOSE
+
+        self._control.remove_view(self)
+        return ViewSheet.ALLOW_CLOSE
 
     def on_flip_summary(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
@@ -688,14 +728,11 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # self._view_topics.gtk_view.expand_to_path(path)
         # self._cursor_topics.select_iter(index)
 
-    # def on_open_view_sheet(self, _action: Gio.SimpleAction,
-    #                        _target: GLib.Variant) -> None:
-    #     """Open another view of factsheet."""
-    #     self._roster.add_view()
-    #     # assert self._control is not None
-    #     # app = self._window.get_application()
-    #     # page = ViewSheet(px_app=app)
-    #     # ViewSheet.link_factsheet(page, self._control)
+    def on_open_view_sheet(self, _action: Gio.SimpleAction,
+                           _target: GLib.Variant) -> None:
+        """Open another view of factsheet."""
+        view_new = ViewSheet(p_control=self._control)
+        self._control.add_view(view_new)
 
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:

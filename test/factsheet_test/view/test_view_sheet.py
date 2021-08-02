@@ -21,6 +21,7 @@ import factsheet.control.control_sheet as CSHEET
 # from factsheet.model import topic as MTOPIC
 # from factsheet.view import query_place as QPLACE
 # from factsheet.view import query_template as QTEMPLATE
+# import factsheet.view.view_idcore as VIDCORE
 import factsheet.view.view_sheet as VSHEET
 # from factsheet.view import scenes as VSCENES
 # from factsheet.view import form_topic as VTOPIC
@@ -122,16 +123,26 @@ def gtk_app_window():
 
 
 @pytest.fixture
-def setup_view_roster(patch_appfactsheet, request, capfd):
-    """Fixture with teardown: return view sheet with its roster.
+def setup_factsheet(monkeypatch, request, capfd):
+    """Fixture with teardown: return sheet app patch, control, and view.
 
     Set path to factsheet file with marker ``path_sheet`` and key
     ``'path_sheet'``.
 
-    :param request: marker container
-    :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+    :param request: marker container.
     """
-    app = patch_appfactsheet
+    class PatchSetApp:
+        def __init__(self):
+            self.called = False
+            self.apps = []
+
+        def set_application(self, p_app):
+            self.called = True
+            self.apps.append(p_app)
+
+    patch_app = PatchSetApp()
+    monkeypatch.setattr(
+        Gtk.Window, 'set_application', patch_app.set_application)
     marker = request.node.get_closest_marker("path_sheet")
     path = None
     if marker is not None:
@@ -139,14 +150,13 @@ def setup_view_roster(patch_appfactsheet, request, capfd):
             path = marker.kwargs['path_sheet']
         except KeyError:
             pass
-    control = CSHEET.g_roster_factsheets.open_factsheet(p_path=path)
-    roster = VSHEET.ControlSheet(p_app=app, p_sheet=control)
-    view_sheet = VSHEET.ViewSheet(p_roster=roster)
+    control_sheet = CSHEET.g_control_app.open_factsheet(p_path=path)
+    view_sheet = VSHEET.ViewSheet(p_control=control_sheet)
+    control_sheet.add_view(view_sheet)
     snapshot = capfd.readouterr()   # Resets the internal buffer
     assert not snapshot.out
-    assert 'Gtk-CRITICAL' in snapshot.err
-    assert 'GApplication::startup signal' in snapshot.err
-    yield view_sheet, roster
+    assert not snapshot.err
+    yield patch_app, control_sheet, view_sheet
     view_sheet._window.destroy()
 
 
@@ -196,135 +206,135 @@ class TestNewDialogWarn:
             ).has_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
 
 
-class TestRosterViewSheet:
-    """Unit tests for :class:`.ControlSheet`."""
-
-    def test_init(self, patch_appfactsheet):
-        """Confirm initialization."""
-        # Setup
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        # Test
-        assert VSHEET.ControlSheet.CANCEL_CLOSE
-        assert not VSHEET.ControlSheet.COMPLETE_CLOSE
-        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
-        assert target._app is app
-        assert target._control is control
-        assert isinstance(target._roster, dict)
-        assert not target._roster
-
-    def test_close_view_sheet(self, patch_appfactsheet, monkeypatch):
-        """| Confirm sheet view close.
-        | Case: multiple views
-        """
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
-
-        def patch_init(self, *, p_roster):
-            self._roster = p_roster
-
-        monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
-        view_backup = target.add_view()
-        view_target = target.add_view()
-        # Test
-        result = target.is_safe_to_close(p_view_sheet=view_target)
-        assert result is VSHEET.ControlSheet.COMPLETE_CLOSE
-        assert target._roster[id(view_backup)] is view_backup
-        assert id(view_target) not in target._roster.keys()
-
-    def test_close_view_sheet_cancel(self, setup_view_roster, monkeypatch):
-        """| Confirm sheet view close.
-        | Case: single view and no changes to model
-        """
-        view, target = setup_view_roster
-        target._roster[id(view)] = view
-        target.control._model.set_stale()
-
-        def patch_run(self):
-            return Gtk.ResponseType.CANCEL
-
-        monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
-        # Test
-        result = target.is_safe_to_close(p_view_sheet=view)
-        assert id(view) in target._roster.keys()
-        assert result is VSHEET.ControlSheet.CANCEL_CLOSE
-
-    @pytest.mark.skip
-    def test_close_view_sheet_warn(self):
-        """| Confirm sheet view close.
-        | Case: sheet view not in roster
-        """
-        # Setup
-        # Test
-        assert False
-
-    def test_open_view_sheet(self, patch_appfactsheet, monkeypatch):
-        """Confirm sheet view open.
-
-        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
-        :param monkeypatch: fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
-
-        def patch_init(self, *, p_roster):
-            self._roster = p_roster
-
-        monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
-        # Test
-        view = target.add_view()
-        assert isinstance(view, VSHEET.ViewSheet)
-        assert view is target._roster[id(view)]
-
-    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ['_app', 'app'],
-        ['_control', 'control'],
-        ])
-    def test_property(self, patch_appfactsheet, NAME_ATTR, NAME_PROP):
-        """Confirm properties are get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-
-        :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
-        :param NAME_ATTR: name of attribute.
-        :param NAME_PROP: name of property.
-        """
-        # Setup
-        app = patch_appfactsheet
-        control = CSHEET.g_roster_factsheets.open_factsheet(p_path=None)
-        target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
-        value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(VSHEET.ControlSheet, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: read
-        assert target_prop.fget is not None
-        assert value_attr is value_prop
-        # Test: no replace
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
-    @pytest.mark.parametrize('RUN_DIALOG, EXPECT', [
-        (Gtk.ResponseType.APPLY, True),
-        (Gtk.ResponseType.CANCEL, False),
-        (Gtk.ResponseType.NONE, False)
-        ])
-    def test_user_approves_close(self, setup_view_roster, monkeypatch,
-                                 RUN_DIALOG, EXPECT):
-        # Setup
-        view, target = setup_view_roster
-
-        def patch_run(self):
-            return RUN_DIALOG
-
-        monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
-        # Test
-        assert EXPECT == target.user_approves_close(p_view_sheet=view)
+# class TestRosterViewSheet:
+#     """Unit tests for :class:`.ControlSheet`."""
+#
+#     def test_init(self, patch_appfactsheet):
+#         """Confirm initialization."""
+#         # Setup
+#         app = patch_appfactsheet
+#         control = CSHEET.g_control_app.open_factsheet(p_path=None)
+#         # Test
+#         assert VSHEET.ControlSheet.CANCEL_CLOSE
+#         assert not VSHEET.ControlSheet.COMPLETE_CLOSE
+#         target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
+#         assert target._app is app
+#         assert target._control is control
+#         assert isinstance(target._roster, dict)
+#         assert not target._roster
+#
+#     def test_close_view_sheet(self, patch_appfactsheet, monkeypatch):
+#         """| Confirm sheet view close.
+#         | Case: multiple views
+#         """
+#         app = patch_appfactsheet
+#         control = CSHEET.g_control_app.open_factsheet(p_path=None)
+#         target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
+#
+#         def patch_init(self, *, p_roster):
+#             self._roster = p_roster
+#
+#         monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
+#         view_backup = target.add_view()
+#         view_target = target.add_view()
+#         # Test
+#         result = target.is_safe_to_close(p_view_sheet=view_target)
+#         assert result is VSHEET.ControlSheet.COMPLETE_CLOSE
+#         assert target._roster[id(view_backup)] is view_backup
+#         assert id(view_target) not in target._roster.keys()
+#
+#     def test_close_view_sheet_cancel(self, setup_factsheet, monkeypatch):
+#         """| Confirm sheet view close.
+#         | Case: single view and no changes to model
+#         """
+#         view, target = setup_factsheet
+#         target._roster[id(view)] = view
+#         target.control._model.set_stale()
+#
+#         def patch_run(self):
+#             return Gtk.ResponseType.CANCEL
+#
+#         monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
+#         # Test
+#         result = target.is_safe_to_close(p_view_sheet=view)
+#         assert id(view) in target._roster.keys()
+#         assert result is VSHEET.ControlSheet.CANCEL_CLOSE
+#
+#     @pytest.mark.skip
+#     def test_close_view_sheet_warn(self):
+#         """| Confirm sheet view close.
+#         | Case: sheet view not in roster
+#         """
+#         # Setup
+#         # Test
+#         assert False
+#
+#     def test_open_view_sheet(self, patch_appfactsheet, monkeypatch):
+#         """Confirm sheet view open.
+#
+#         :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+#         :param monkeypatch: fixture `Pytest monkeypatch`_.
+#         """
+#         # Setup
+#         app = patch_appfactsheet
+#         control = CSHEET.g_control_app.open_factsheet(p_path=None)
+#         target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
+#
+#         def patch_init(self, *, p_roster):
+#             self._roster = p_roster
+#
+#         monkeypatch.setattr(VSHEET.ViewSheet, '__init__', patch_init)
+#         # Test
+#         view = target.add_view()
+#         assert isinstance(view, VSHEET.ViewSheet)
+#         assert view is target._roster[id(view)]
+#
+#     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+#         ['_app', 'app'],
+#         ['_control', 'control'],
+#         ])
+#     def test_property(self, patch_appfactsheet, NAME_ATTR, NAME_PROP):
+#         """Confirm properties are get-only.
+#
+#         #. Case: get
+#         #. Case: no set
+#         #. Case: no delete
+#
+#         :param patch_appfactsheet: fixture :func:`.patch_appfactsheet`.
+#         :param NAME_ATTR: name of attribute.
+#         :param NAME_PROP: name of property.
+#         """
+#         # Setup
+#         app = patch_appfactsheet
+#         control = CSHEET.g_control_app.open_factsheet(p_path=None)
+#         target = VSHEET.ControlSheet(p_app=app, p_sheet=control)
+#         value_attr = getattr(target, NAME_ATTR)
+#         target_prop = getattr(VSHEET.ControlSheet, NAME_PROP)
+#         value_prop = getattr(target, NAME_PROP)
+#         # Test: read
+#         assert target_prop.fget is not None
+#         assert value_attr is value_prop
+#         # Test: no replace
+#         assert target_prop.fset is None
+#         # Test: no delete
+#         assert target_prop.fdel is None
+#
+#     @pytest.mark.parametrize('RUN_DIALOG, EXPECT', [
+#         (Gtk.ResponseType.APPLY, True),
+#         (Gtk.ResponseType.CANCEL, False),
+#         (Gtk.ResponseType.NONE, False)
+#         ])
+#     def test_user_approves_close(self, setup_factsheet, monkeypatch,
+#                                  RUN_DIALOG, EXPECT):
+#         # Setup
+#         view, target = setup_factsheet
+#
+#         def patch_run(self):
+#             return RUN_DIALOG
+#
+#         monkeypatch.setattr(Gtk.Dialog, 'run', patch_run)
+#         # Test
+#         assert EXPECT == target.user_approves_close(p_view_sheet=view)
 
 
 class TestUiItems:
@@ -357,21 +367,24 @@ class TestViewSheet:
         assert isinstance(item, TYPE)
 
     @pytest.mark.path_sheet(path_sheet=None)
-    def test_init(self, setup_view_roster):
+    def test_init(self, setup_factsheet):
         # def test_init(self, patch_appfactsheet, capfd):
         """| Confirm initialization.
         | Case: visual elements.
         """
         # Setup
         # Test
-        target, roster = setup_view_roster
+        patch_app, control, target = setup_factsheet
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
         # target._window.set_transient_for(WINDOW_ANCHOR)
 
-        assert target._roster is roster
+        assert not VSHEET.ViewSheet.ALLOW_CLOSE
+        assert VSHEET.ViewSheet.DENY_CLOSE
+        assert target._control is control
         assert isinstance(target._window, Gtk.ApplicationWindow)
-        assert target._window.get_application() is roster.app
+        assert patch_app.called
+        assert patch_app.apps.pop() is VSHEET.g_app
 
         # Components
         # assert isinstance(target._context_name, Gtk.Popover)
@@ -409,12 +422,8 @@ class TestViewSheet:
         # assert target._window.lookup_action('popup-name') is not None
         # assert target._window.lookup_action('reset-name') is not None
         # assert target._window.lookup_action('flip-summary') is not None
-        action_open_view_sheet = (
-            target._window.lookup_action('open-view-sheet'))
-        assert action_open_view_sheet is not None
-        action_open_view_sheet.activate(None)
-        assert 1 == len(roster._roster)
-        # assert target._window.lookup_action('close-page-sheet') is not None
+        assert target._window.lookup_action('open-view-sheet') is not None
+        assert target._window.lookup_action('close-view-sheet') is not None
         # assert target._window.lookup_action(
         #     'show-help-sheet-display') is not None
         #
@@ -435,6 +444,153 @@ class TestViewSheet:
         # assert not target._close_window
         assert target._window.is_visible()
 
+    @pytest.mark.parametrize('HELPER, EDITOR, SITE', [
+        ('_init_name_sheet', 'Name', 'ui_site_name_sheet'),
+        ('_init_title_sheet', 'Title', 'ui_site_title_sheet'),
+        ])
+    def test_init_helper_editor(
+            self, monkeypatch, setup_factsheet, HELPER, EDITOR, SITE):
+        """Confirm helper creates editor fields in view."""
+        # Setup
+        class PatchGetObject:
+            def __init__(self):
+                self.called = False
+                self.site_ui = ''
+
+            def get_object(self, p_site_ui):
+                self.called = True
+                self.site_ui = p_site_ui
+                return Gtk.Box()
+
+        patch_get_object = PatchGetObject()
+
+        class PatchEditorMarkup:
+            def __init__(self):
+                self.called = False
+                self.view_active = 'Oops'
+                self.view_passive = None
+                self.text = ''
+
+            def init(self, p_view_passive, p_view_active, p_text):
+                self.called = True
+                self.view_active = p_view_active
+                self.view_passive = p_view_passive
+                self.text = p_text
+
+            def view_editor(self):
+                pass
+
+        patch_editor = PatchEditorMarkup()
+        monkeypatch.setattr(
+            VSHEET.VIDCORE.EditorMarkup, '__init__', patch_editor.init)
+        monkeypatch.setattr(VSHEET.VIDCORE.EditorMarkup, 'view_editor',
+                            patch_editor.view_editor)
+
+        class PatchSite:
+            def __init__(self):
+                self.called = False
+                self.view_editor = None
+                self.expand_okay = None
+                self.fill_okay = None
+                self.n_padding = 0
+
+            def pack_start(
+                    self, p_editor, p_exapnd_okay, p_fill_okay, p_n_padding):
+                self.called = True
+                self.view_editor = p_editor
+                self.expand_okay = p_exapnd_okay
+                self.fill_okay = p_fill_okay
+                self.n_padding = p_n_padding
+
+        patch_site = PatchSite()
+        monkeypatch.setattr(Gtk.Box, 'pack_start', patch_site.pack_start)
+
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+        # Test
+        _patch_app, _control, target = setup_factsheet
+        helper = getattr(target, HELPER)
+        helper(patch_get_object.get_object)
+        assert patch_editor.called
+        assert isinstance(patch_editor.view_active, Gtk.Entry)
+        assert isinstance(patch_editor.view_passive, Gtk.Label)
+        assert EDITOR == patch_editor.text
+        assert patch_get_object.called
+        assert SITE == patch_get_object.site_ui
+        assert patch_site.called
+        assert patch_editor.view_editor == patch_site.view_editor
+        assert EXPAND_OKAY == patch_site.expand_okay
+        assert FILL_OKAY == patch_site.fill_okay
+        assert N_PADDING == patch_site.n_padding
+
+    def test_init_helper_summary(
+            self, monkeypatch, setup_factsheet):
+        """Confirm helper creates summary field in view."""
+        # Setup
+        class PatchGetObject:
+            def __init__(self):
+                self.called = False
+                self.ui = list()
+
+            def get_object(self, p_ui):
+                self.called = True
+                self.ui.append(p_ui)
+                return Gtk.Box()
+
+        patch_get_object = PatchGetObject()
+
+        class PatchBind:
+            def __init__(self):
+                self.called = False
+                self.prop_source = 'Oops!'
+                self.target = None
+                self.prop_target = 'Oops!'
+                self.flags = None
+
+            def bind_property(
+                    self, p_prop_source, p_target, p_prop_target, p_flags):
+                self.called = True
+                self.prop_source = p_prop_source
+                self.target = p_target
+                self.prop_target = p_prop_target
+                self.flags = p_flags
+
+        patch_bind = PatchBind()
+        monkeypatch.setattr(Gtk.Box, 'bind_property', patch_bind.bind_property)
+
+        class PatchSite:
+            def __init__(self):
+                self.called = False
+                self.view = None
+
+            def add(self, p_view):
+                self.called = True
+                self.view = p_view
+
+        patch_site = PatchSite()
+        monkeypatch.setattr(Gtk.Box, 'add', patch_site.add)
+
+        SITE_UI = 'ui_site_summary_sheet'
+        BUTTON_SHOW_UI = 'ui_button_show_summary_sheet'
+        PROP_BUTTON_SHOW = 'active'
+        EXPANDER_UI = 'ui_expander_summary_sheet'
+        PROP_EXPANDER = 'visible'
+        FLAGS = GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE
+        # Test
+        _patch_app, _control, target = setup_factsheet
+        target._init_summary_sheet(patch_get_object.get_object)
+        assert patch_get_object.called
+        assert SITE_UI in patch_get_object.ui
+        assert patch_site.called
+        assert isinstance(patch_site.view, Gtk.TextView)
+        assert BUTTON_SHOW_UI in patch_get_object.ui
+        assert EXPANDER_UI in patch_get_object.ui
+        assert PROP_BUTTON_SHOW == patch_bind.prop_source
+        assert isinstance(patch_bind.target, Gtk.Box)
+        assert PROP_EXPANDER == patch_bind.prop_target
+        assert FLAGS == patch_bind.flags
+
     @pytest.mark.path_sheet(path_sheet=None)
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
@@ -444,7 +600,7 @@ class TestViewSheet:
             ])
     def test_init_signals(
             self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT,
-            setup_view_roster, gtk_app_window):
+            setup_factsheet, gtk_app_window):
         """| Confirm initialization.
         | Case: signal connections
 
@@ -452,13 +608,13 @@ class TestViewSheet:
         :param NAME_ATTRIBTE: name of attribute connected to signal.
         :param ORIGIN: GTK class of connected attribute.
         :param N_DEFAULT: number of default handlers
-        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param setup_factsheet: fixture :func:`.setup_factsheet`.
         :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        target, _ = setup_view_roster
+        _patch_app, _control, target = setup_factsheet
         # Test
         # # target._window.set_skip_pager_hint(True)
         # # target._window.set_skip_taskbar_hint(True)
@@ -511,15 +667,15 @@ class TestViewSheet:
         'show-help-app',
         'show-intro-app',
         ])
-    def test_init_app_menu(self, setup_view_roster, ACTION):
+    def test_init_app_menu(self, setup_factsheet, ACTION):
         """| Confirm initialization.
         | Case: definition fo app menu actions
 
-        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param setup_factsheet: fixture :func:`.setup_factsheet`.
         :param ACTION: name of action for menu item.
         """
         # Setup
-        target, _ = setup_view_roster
+        _, _, target = setup_factsheet
         # Test
         assert target._window.lookup_action(ACTION) is not None
 
@@ -527,50 +683,30 @@ class TestViewSheet:
     @pytest.mark.parametrize('ACTION', [
         'show-help-sheet',
         ])
-    def test_init_factsheet_menu(self, setup_view_roster, ACTION):
+    def test_init_factsheet_menu(self, setup_factsheet, ACTION):
         """| Confirm initialization.
         | Case: definition fo app menu actions
 
-        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param setup_factsheet: fixture :func:`.setup_factsheet`.
         :param ACTION: name of action for menu item.
         """
         # Setup
-        target, _ = setup_view_roster
+        _, _, target = setup_factsheet
         # Test
         assert target._window.lookup_action(ACTION) is not None
 
-    @pytest.mark.skip
-    def test_close_page(self, monkeypatch, patch_factsheet, capfd):
-        """Confirm window of page hidden and closed."""
-        # # Setup
-        # class PatchWindow:
-        #     def __init__(self): self.called = False
-        #
-        #     def close(self): self.called = True
-        #
-        # patch_window = PatchWindow()
-        # monkeypatch.setattr(
-        #     Gtk.ApplicationWindow, 'close', patch_window.close)
-        #
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        # target._window.set_visible(True)
-        # # Test
-        # target.close_page()
-        # assert not target._window.get_visible()
-        # assert target._close_window
-        # assert patch_window.called
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
+    @pytest.mark.parametrize('RESPONSE, RETURN', [
+        (Gtk.ResponseType.APPLY, VSHEET.ViewSheet.ALLOW_CLOSE),
+        (Gtk.ResponseType.CANCEL, VSHEET.ViewSheet.DENY_CLOSE)
+        ])
+    def test_confirm_close(
+            self, monkeypatch, setup_factsheet, RESPONSE, RETURN):
+        """Confirm translation of GTK response types."""
+        # Setup
+        monkeypatch.setattr(Gtk.Dialog, 'run', lambda _s: RESPONSE)
+        _patch_app, _control, target = setup_factsheet
+        # Test
+        assert RETURN == target.confirm_close()
 
     @pytest.mark.skip
     def test_close_topic(self, patch_factsheet, capfd, new_outline_topics):
@@ -1317,7 +1453,7 @@ class TestViewSheet:
     def test_on_delete_topic_none(
             self, monkeypatch, patch_factsheet, capfd):
         """| Confirm topic removal.
-        | Case: No topic selected.
+        | Case: No topic selected.s
         """
         # # Setup
         # class PatchExtract:
@@ -1383,6 +1519,105 @@ class TestViewSheet:
         # target._window.destroy()
         # del target._window
         # del factsheet
+
+    def test_on_close_view_sheet_safe(self, monkeypatch, setup_factsheet):
+        """| Confirm attempt to close view.
+        | Case: no loss of unsaved changes
+        """
+        # Setup
+        class PatchIsSafe:
+            def __init__(self, p_is_safe):
+                self.called = False
+                self.is_safe = p_is_safe
+
+            def remove_view_is_safe(self):
+                self.called = True
+                return self.is_safe
+
+        patch_safe = PatchIsSafe(p_is_safe=True)
+        monkeypatch.setattr(CSHEET.ControlSheet, 'remove_view_is_safe',
+                            patch_safe.remove_view_is_safe)
+
+        _patch_app, control, target = setup_factsheet
+        id_target = CSHEET.id_view_sheet(p_view_sheet=target)
+        view_new = VSHEET.ViewSheet(p_control=control)
+        control.add_view(view_new)
+        roster_views = control._roster_views
+        N_VIEWS = 1
+        # Test
+        result = target.on_close_view_sheet(None, None)
+        assert patch_safe.called
+        assert VSHEET.ViewSheet.ALLOW_CLOSE == result
+        assert N_VIEWS == len(roster_views)
+        assert id_target not in roster_views
+
+    def test_on_close_view_sheet_unsafe_allow(
+            self, monkeypatch, setup_factsheet):
+        """| Confirm attempt to close view.
+        | Case: user allows loss of unsaved changes
+        """
+        # Setup
+        class PatchIsSafe:
+            def __init__(self, p_is_safe):
+                self.called = False
+                self.is_safe = p_is_safe
+
+            def remove_view_is_safe(self):
+                self.called = True
+                return self.is_safe
+
+        patch_unsafe = PatchIsSafe(p_is_safe=False)
+        monkeypatch.setattr(CSHEET.ControlSheet, 'remove_view_is_safe',
+                            patch_unsafe.remove_view_is_safe)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'run', lambda _s: Gtk.ResponseType.APPLY)
+
+        _patch_app, control, target = setup_factsheet
+        id_target = CSHEET.id_view_sheet(p_view_sheet=target)
+        view_new = VSHEET.ViewSheet(p_control=control)
+        control.add_view(view_new)
+        roster_views = control._roster_views
+        N_VIEWS = 1
+        # Test
+        result = target.on_close_view_sheet(None, None)
+        assert patch_unsafe.called
+        assert VSHEET.ViewSheet.ALLOW_CLOSE == result
+        assert N_VIEWS == len(roster_views)
+        assert id_target not in roster_views
+
+    def test_on_close_view_sheet_unsafe_deny(
+            self, monkeypatch, setup_factsheet):
+        """| Confirm attempt to close view.
+        | Case: user denies loss of unsaved changes
+        """
+        # Setup
+        class PatchIsSafe:
+            def __init__(self, p_is_safe):
+                self.called = False
+                self.is_safe = p_is_safe
+
+            def remove_view_is_safe(self):
+                self.called = True
+                return self.is_safe
+
+        patch_unsafe = PatchIsSafe(p_is_safe=False)
+        monkeypatch.setattr(CSHEET.ControlSheet, 'remove_view_is_safe',
+                            patch_unsafe.remove_view_is_safe)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'run', lambda _s: Gtk.ResponseType.CANCEL)
+
+        _patch_app, control, target = setup_factsheet
+        view_new = VSHEET.ViewSheet(p_control=control)
+        id_view_new = CSHEET.id_view_sheet(p_view_sheet=view_new)
+        control.add_view(view_new)
+        roster_views = control._roster_views
+        N_VIEWS = 2
+        # Test
+        result = target.on_close_view_sheet(None, None)
+        assert patch_unsafe.called
+        assert VSHEET.ViewSheet.DENY_CLOSE == result
+        assert N_VIEWS == len(roster_views)
+        assert id_view_new in roster_views
 
     @pytest.mark.skip
     def test_on_flip_summary(self, patch_factsheet, capfd):
@@ -1966,6 +2201,21 @@ class TestViewSheet:
         # del target._window
         # del factsheet
 
+    def test_on_open_view_sheet(self, setup_factsheet):
+        """Confirm view created and added to control."""
+        # Setup
+        _patch_app, control, target = setup_factsheet
+        roster_views = control._roster_views
+        N_VIEWS = 2
+        # Test
+        target.on_open_view_sheet(None, None)
+        assert N_VIEWS == len(roster_views)
+        _ = roster_views.pop(CSHEET.id_view_sheet(p_view_sheet=target))
+        key_new, view_new = roster_views.popitem()
+        assert key_new == CSHEET.id_view_sheet(view_new)
+        assert isinstance(view_new, VSHEET.ViewSheet)
+        assert view_new._control is control
+
     @pytest.mark.skip
     def test_on_popdown_name(self, monkeypatch, patch_factsheet, capfd):
         """Confirm name popover becomes invisible.
@@ -2265,17 +2515,17 @@ class TestViewSheet:
 
     @pytest.mark.path_sheet(path_sheet=None)
     def test_on_show_dialog(
-            self, setup_view_roster, monkeypatch, gtk_app_window):
+            self, setup_factsheet, monkeypatch, gtk_app_window):
         """Confirm handler displays dialog.
 
         See manual tests for dialog content checks.
 
-        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param setup_factsheet: fixture :func:`.setup_factsheet`.
         :param monkeypatch: fixture `Pytest monkeypatch`_.
         :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
-        target, _ = setup_view_roster
+        _, _, target = setup_factsheet
         # target._window.set_skip_pager_hint(True)
         # target._window.set_skip_taskbar_hint(True)
 
@@ -2460,19 +2710,19 @@ class TestViewSheet:
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ['_window', 'window'],
         ])
-    def test_property(self, setup_view_roster, NAME_ATTR, NAME_PROP):
+    def test_property(self, setup_factsheet, NAME_ATTR, NAME_PROP):
         """Confirm properties are get-only.
 
         #. Case: get
         #. Case: no set
         #. Case: no delete
 
-        :param setup_view_roster: fixture :func:`.setup_view_roster`.
+        :param setup_factsheet: fixture :func:`.setup_factsheet`.
         :param NAME_ATTR: name of attribute.
         :param NAME_PROP: name of property.
         """
         # Setup
-        target, _ = setup_view_roster
+        _, _, target = setup_factsheet
         value_attr = getattr(target, NAME_ATTR)
         target_prop = getattr(VSHEET.ViewSheet, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)

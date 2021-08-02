@@ -115,15 +115,17 @@ class ControlApp:
         """TBD"""
 
     def open_factsheet(self, p_path: typing.Optional[Path] = None
-                       ) -> None:
-        """Create new or present existing factsheet with given path.
+                       ) -> typing.Optional['ControlSheet']:
+        """Return factsheet for the given path or None if factsheet is
+        open already.
 
-        If path is None or there is no file at given path, return a new,
-        empty factsheet.  Otherwise, return factsheet loaded from file
-        at the given path.  See :meth:`.ControlSheet.open` regarding
-        file load failure.
+        If the path corresponds to an open factsheet, present the sheet
+        views to the user and return None.  Otherwise, return factsheet
+        with the given path.
 
-        :param p_path: location of factsheet file
+        See :meth:`.ControlSheet.open` regarding file load failure.
+
+        :param p_path: location for factsheet file.
         """
         if p_path is not None:
             raise NotImplementedError
@@ -136,6 +138,7 @@ class ControlApp:
         control = ControlSheet(p_path)
         id_control = id_factsheet(control)
         self._roster_sheets[id_control] = control
+        return control
 
 
 g_control_app = ControlApp()
@@ -408,6 +411,11 @@ class ControlSheet:
         """
         return self._model.is_stale()
 
+    @property
+    def model(self) -> MSHEET.Sheet:
+        """Return sheet model."""
+        return self._model
+
     # @classmethod
     # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
     #     """Create and return control with default model.
@@ -509,8 +517,7 @@ class ControlSheet:
     @property
     def path(self) -> typing.Optional[Path]:
         """Return path to file containing factsheet contents."""
-        raise NotImplementedError
-        # return self._path
+        return self._path
 
     def present_views(self, p_time: int) -> None:
         """Make all sheet views visible to user.

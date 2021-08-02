@@ -25,6 +25,7 @@ class TestFactsheet:
     def test_do_activate(self, capfd):
         """Confirm creation of initial window.."""
         # Setup
+        # TODO: patch Gtk.Window.set_application to confirm call
         target = APP.AppFactsheet()
         # Test
         target.do_activate()

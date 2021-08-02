@@ -7,7 +7,7 @@ Unit tests for class that tracks and maintains pool of active
 factsheets.  See :mod:`.pool`.
 """
 import logging
-# from pathlib import Path
+from pathlib import Path
 # import pickle
 import pytest   # type: ignore[import]
 import typing
@@ -132,11 +132,11 @@ class TestControlApp:
         target = CSHEET.ControlApp()
         N_FACTSHEETS = 1
         # Test
-        target.open_factsheet()
+        control_sheet = target.open_factsheet()
         assert N_FACTSHEETS == len(target._roster_sheets)
-        id_control_sheet, control_sheet = target._roster_sheets.popitem()
         assert isinstance(control_sheet, CSHEET.ControlSheet)
-        assert id_control_sheet == CSHEET.id_factsheet(control_sheet)
+        id_control_sheet = CSHEET.id_factsheet(control_sheet)
+        assert target._roster_sheets[id_control_sheet] is control_sheet
 
     @pytest.mark.skip
     def test_open_factsheet_no_match(self, tmp_path):
@@ -907,33 +907,62 @@ class TestControlSheet:
         # target.present_factsheet(NO_TIME)
         # assert patch_present.called
 
-    @pytest.mark.skip
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        # ['_path', 'path'],
-        # ['_sheets_active', 'sheets_active'],
+        ('_path', 'path'),
+        ('_model', 'model'),
         ])
-    def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
+    def test_property(self, patch_observer_control_sheet, tmp_path,
+                      NAME_ATTR, NAME_PROP):
         """Confirm properties are get-only.
 
         #. Case: get
         #. Case: no set
         #. Case: no delete
         """
-        # # Setup
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # PATH = Path(tmp_path / 'path_factsheet.fsg')
-        # target._path = PATH
-        # value_attr = getattr(target, NAME_ATTR)
-        # target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
-        # value_prop = getattr(target, NAME_PROP)
-        # # Test: read
-        # assert target_prop.fget is not None
-        # assert str(value_attr) == str(value_prop)
-        # # Test: no replace
-        # assert target_prop.fset is None
-        # # Test: no delete
-        # assert target_prop.fdel is None
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = patch_observer_control_sheet()
+        target.add_view(view)
+        PATH = Path(tmp_path / 'path_factsheet.fsg')
+        target._path = PATH
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: read
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
+        # Test: no replace
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
+    # @pytest.mark.skip
+    # @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+    #     # ['_path', 'path'],
+    #     # ['_sheets_active', 'sheets_active'],
+    #     ])
+    # def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
+    #     """Confirm properties are get-only.
+    #
+    #     #. Case: get
+    #     #. Case: no set
+    #     #. Case: no delete
+    #     """
+    #     # # Setup
+    #     # sheets_active = CPOOL.PoolSheets()
+    #     # target = CSHEET.ControlSheet(sheets_active)
+    #     # PATH = Path(tmp_path / 'path_factsheet.fsg')
+    #     # target._path = PATH
+    #     # value_attr = getattr(target, NAME_ATTR)
+    #     # target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
+    #     # value_prop = getattr(target, NAME_PROP)
+    #     # # Test: read
+    #     # assert target_prop.fget is not None
+    #     # assert str(value_attr) == str(value_prop)
+    #     # # Test: no replace
+    #     # assert target_prop.fset is None
+    #     # # Test: no delete
+    #     # assert target_prop.fdel is None
 
     @pytest.mark.skip
     def test_save(self, tmp_path):
