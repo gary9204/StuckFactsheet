@@ -2,6 +2,7 @@
 Defines class to display Factsheet document in a window.
 """
 import gi   # type: ignore[import]
+import logging
 from pathlib import Path
 import typing   # noqa
 
@@ -27,6 +28,8 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
+logger = logging.getLogger('Main.VSHEET')
+
 
 class AppFactsheet(Gtk.Application):
     """Extends GTK application for factsheets."""
@@ -37,40 +40,52 @@ class AppFactsheet(Gtk.Application):
         :param args: superclass positional parameters
         :param kwargs: superclass keyword parameters
         """
-        super().__init__(application_id='com.novafolks.g2alpha',
+        super().__init__(application_id='com.novafolks.factsheet',
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          *args, **kwargs)
 
     def do_activate(self) -> None:
-        """Create and display an initial factsheet with default content."""
+        """Create and display an initial factsheet with default content.
+
+        Log initialization failure.
+        """
         control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
         if control_sheet is None:
-            raise NotImplementedError
+            logger.critical(
+                'Failed to create initial factsheet ({}.{})'
+                ''.format(self.__class__.__name__, self.do_activate.__name__))
+            return
         view = ViewSheet(p_control=control_sheet)
         control_sheet.add_view(view)
 
-#     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
-#                 p_hint: str) -> None:
-#         """Create and display factsheets from file names on the
-#         command line.
-#         """
-#         logger.critical('Stub for open -- command line files ignored.')
-#         logger.critical('Files: {}.'.format(p_files))
-#         logger.critical('N: {}'.format(p_n_files))
-#         logger.critical('Hint: "{}".'.format(p_hint))
-#         control = CSHEET.g_roster_factsheets.open_factsheet(None)
-#         roster = VSHEET.RosterViewSheet(p_app=self, p_sheet=control)
-#         _ = roster.add_view()
-#
-#     def do_shutdown(self) -> None:
-#         """Application teardown. """
-#         Gtk.Application.do_shutdown(self)
-#         logger.info('AppFactsheet application shutdown.')
-#
-#     def do_startup(self) -> None:
-#         """Application setup. """
-#         Gtk.Application.do_startup(self)
-#         logger.info('AppFactsheet application startup.')
+    def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
+                p_hint: str) -> None:
+        """Create and display factsheets from file names on the
+        command line.
+        """
+        logger.critical('Stub for open -- command line files ignored.')
+        logger.critical('Files: {}.'.format(p_files))
+        logger.critical('N: {}'.format(p_n_files))
+        logger.critical('Hint: "{}".'.format(p_hint))
+        control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
+        if control_sheet is None:
+            logger.critical(
+                'Failed to create initial factsheet ({}.{})'
+                ''.format(self.__class__.__name__, self.do_open.__name__))
+            return
+        view = ViewSheet(p_control=control_sheet)
+        control_sheet.add_view(view)
+
+    def do_shutdown(self) -> None:
+        """Application teardown. """
+        Gtk.Application.do_shutdown(self)
+        logger.info('AppFactsheet application shutdown.')
+
+    def do_startup(self) -> None:
+        """Application setup. """
+        pass
+        Gtk.Application.do_startup(self)
+        logger.info('AppFactsheet application startup.')
 
 
 def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,

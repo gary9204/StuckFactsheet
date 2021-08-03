@@ -5,6 +5,7 @@ Unit tests for class to display Factsheet document.  See
 .. _Pytest monkeypatch:
    https://docs.pytest.org/en/latest/how-to/monkeypatch.html
 """
+import logging
 # import math
 # from pathlib import Path
 import pytest   # type: ignore[import]
@@ -73,6 +74,16 @@ class PatchSafe(CSHEET.ControlSheet):
         return self.effect
 
 
+class PatchSetApp:
+    def __init__(self):
+        self.called = False
+        self.apps = []
+
+    def set_application(self, p_app):
+        self.called = True
+        self.apps.append(p_app)
+
+
 @pytest.fixture
 def patch_dialog_choose():
     """Pytest fixture returns stub
@@ -131,15 +142,6 @@ def setup_factsheet(monkeypatch, request, capfd):
 
     :param request: marker container.
     """
-    class PatchSetApp:
-        def __init__(self):
-            self.called = False
-            self.apps = []
-
-        def set_application(self, p_app):
-            self.called = True
-            self.apps.append(p_app)
-
     patch_app = PatchSetApp()
     monkeypatch.setattr(
         Gtk.Window, 'set_application', patch_app.set_application)
@@ -158,6 +160,131 @@ def setup_factsheet(monkeypatch, request, capfd):
     assert not snapshot.err
     yield patch_app, control_sheet, view_sheet
     view_sheet._window.destroy()
+
+
+class TestAppFactsheet:
+    """Unit tests for :class:`~.AppFactsheet`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        app_id = 'com.novafolks.factsheet'
+        # Test
+        target = VSHEET.AppFactsheet()
+        assert isinstance(target, Gtk.Application)
+        assert app_id == target.get_application_id()
+        assert not target.get_windows()
+
+    def test_do_activate(self, monkeypatch):
+        """| Confirm activation with initial window.
+        | Case: activation succeeds
+        """
+        # Setup
+        # TODO: patch Gtk.Window.set_application to confirm call
+        patch_app = PatchSetApp()
+        monkeypatch.setattr(
+            Gtk.Window, 'set_application', patch_app.set_application)
+        target = VSHEET.AppFactsheet()
+        control_app = CSHEET.g_control_app
+        N_SHEETS = 1
+        N_VIEWS = 1
+        # Test
+        target.do_activate()
+        assert N_SHEETS == len(control_app._roster_sheets)
+        _key, control_sheet = control_app._roster_sheets.popitem()
+        assert N_VIEWS == len(control_sheet._roster_views)
+        _key, view = control_sheet._roster_views.popitem()
+        assert view._control is control_sheet
+
+    def test_do_activate_warn(self, monkeypatch, caplog):
+        """| Confirm activation with initial window.
+        | Case: activation fails
+        """
+        # Setup
+        patch_app = PatchSetApp()
+        monkeypatch.setattr(
+            Gtk.Window, 'set_application', patch_app.set_application)
+        monkeypatch.setattr(
+            CSHEET.ControlApp, 'open_factsheet', lambda _c, **_kw: None)
+        log_message = (
+            'Failed to create initial factsheet (AppFactsheet.do_activate)')
+        target = VSHEET.AppFactsheet()
+        N_LOGS = 1
+        LAST = -1
+        # Test
+        target.do_activate()
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'CRITICAL' == record.levelname
+
+    def test_do_open(self):
+        """| Confirm factsheet open with initial window.
+        | Case: open succeeds
+        """
+        # Setup
+        # Test
+        pytest.xfail(reason='Pending implementation of file open')
+
+    def test_do_open_warn(self):
+        """| Confirm factsheet open with initial window.
+        | Case: open fails
+        """
+        # Setup
+        # Test
+        pytest.xfail(reason='Pending implementation of file open')
+
+    def test_do_shutdown(self, monkeypatch, caplog):
+        """Confirm application teardown."""
+        # Setup
+        # Bare call to superclass do_shutdown causes segmentation fault
+        class PatchAppDoShutdown:
+            def __init__(self): self.called = False
+
+            def do_shutdown(self, _app): self.called = True
+
+        patch = PatchAppDoShutdown()
+        monkeypatch.setattr(
+            Gtk.Application, 'do_shutdown', patch.do_shutdown)
+
+        caplog.set_level(logging.INFO)
+        N_LOGS = 1
+        LAST = -1
+        log_message = 'AppFactsheet application shutdown.'
+        target = VSHEET.AppFactsheet()
+        # Test
+        target.do_shutdown()
+        assert patch.called
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'INFO' == record.levelname
+
+    def test_do_startup(self, monkeypatch, caplog):
+        """Confirm application setup."""
+        # Setup
+        # Bare call to superclass do_startup causes segmentation fault
+        class PatchAppDoStartup:
+            def __init__(self): self.called = False
+
+            def do_startup(self, _app): self.called = True
+
+        patch = PatchAppDoStartup()
+        monkeypatch.setattr(
+            Gtk.Application, 'do_startup', patch.do_startup)
+
+        caplog.set_level(logging.INFO)
+        N_LOGS = 1
+        LAST = -1
+        log_message = 'AppFactsheet application startup.'
+        target = VSHEET.AppFactsheet()
+        # Test
+        target.do_startup()
+        assert patch.called
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'INFO' == record.levelname
 
 
 class TestNewDialogWarn:
