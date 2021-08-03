@@ -1,12 +1,9 @@
 """
 Unit tests for :class:`~.app.AppFactsheet` and entry point.
 """
-import gi   # type: ignore[import]
+import runpy
 
-import factsheet.app as APP
-
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+import factsheet.view.view_sheet as VSHEET
 
 
 class TestApp:
@@ -21,7 +18,7 @@ class TestApp:
             def run(self, _argv): self.called = True
 
         patch = PatchRun()
-        monkeypatch.setattr(APP.AppFactsheet, 'run', patch.run)
+        monkeypatch.setattr(VSHEET.AppFactsheet, 'run', patch.run)
         # Test
-        APP.run_app()
+        runpy.run_module('factsheet.app', run_name='__main__')
         assert patch.called
