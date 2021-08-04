@@ -62,6 +62,8 @@ class AppFactsheet(Gtk.Application):
                 p_hint: str) -> None:
         """Create and display factsheets from file names on the
         command line.
+
+        Log initialization failures.
         """
         logger.critical('Stub for open -- command line files ignored.')
         logger.critical('Files: {}.'.format(p_files))
@@ -83,7 +85,6 @@ class AppFactsheet(Gtk.Application):
 
     def do_startup(self) -> None:
         """Application setup. """
-        pass
         Gtk.Application.do_startup(self)
         logger.info('AppFactsheet application startup.')
 
@@ -93,7 +94,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     """Return Data Loss Warning dialog.
 
     :param p_parent: window running dialog.
-    :param p_name: name of factsheet that might loose data.
+    :param p_name: name of factsheet that might lose data.
 
     .. note::
        There are limitations in Glade and Python bindings for GTK.
@@ -232,7 +233,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
 class ViewSheet(CSHEET.ObserverControlSheet):
     """Displays Factsheet document and translates user actions.
 
-    Class ``ViewSheet`` maintains presentation of a Factsheet.  The
+    Class :class:`~.ViewSheet` maintains presentation of a Factsheet.  The
     class displays the content of a factsheet model.  It translates a
     user's actions at the user interface into requests to update the
     model and its presentation.
@@ -636,7 +637,8 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def confirm_close(self):
         """Return :data:`ALLOW_CLOSE` when user approves closing view.
         Otherwise, return :data:`DENY_CLOSE`."""
-        dialog_warn = new_dialog_warn_loss(self._window, 'Oops!')
+        name = self._control.model.name
+        dialog_warn = new_dialog_warn_loss(self._window, name)
         response = dialog_warn.run()
         dialog_warn.hide()
         if Gtk.ResponseType.APPLY == response:

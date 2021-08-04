@@ -139,10 +139,13 @@ Steps -- Hide/Show Summary
 
    a. *Expect:* The popup menu disappears.
 
+#. **Step:** Click initial window **close icon** |window-close|.
 
-#. **Step:** Click window **close icon** |window-close|.
+   a. *Expect:* *Data Loss Warning* dialog appears.
 
-   a. *Expect:* Window disappears.
+#. **Step:** Click **Discard button**.
+
+   a. *Expect:* Dialog and window disappear.
    #. *Expect:* *Application* closes.
 
 

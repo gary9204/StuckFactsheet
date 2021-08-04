@@ -2,6 +2,13 @@
 Unit tests for class to display Factsheet document.  See
 :mod:`.view_sheet`.
 
+.. _Pytest capfd:
+   https://docs.pytest.org/en/latest/how-to/
+   capture-stdout-stderr.html#captures
+
+.. _Pytest caplog:
+   https://docs.pytest.org/en/latest/how-to/logging.html#logging
+
 .. _Pytest monkeypatch:
    https://docs.pytest.org/en/latest/how-to/monkeypatch.html
 """
@@ -38,48 +45,42 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 # from gi.repository import Pango  # type: ignore[import]    # noqa: E402
 
 
-class PatchCall:
-    def __init__(self, p_response):
-        self.response = p_response
-        self.called = False
+# class PatchCall:
+#     def __init__(self, p_response):
+#         self.response = p_response
+#         self.called = False
+#
+#     def __call__(self):
+#         self.called = True
+#         return self.response
 
-    def __call__(self):
-        self.called = True
-        return self.response
 
+@pytest.fixture
+def gtk_app_window():
+    """Fixture with teardown: return `GTK.ApplicationWindow <gtk_app_window_>`_.
 
-class PatchSafe(CSHEET.ControlSheet):
-    def __init__(self, p_effect, pm_sheets_active):
-        super().__init__(pm_sheets_active)
-        self.n_delete_force = 0
-        self.n_delete_safe = 0
-        self.n_detach_force = 0
-        self.n_detach_safe = 0
-        self.effect = p_effect
-
-    def delete_force(self):
-        self.n_delete_force += 1
-        return self.effect
-
-    def delete_safe(self):
-        self.n_delete_safe += 1
-        return self.effect
-
-    def detach_page_force(self, _view):
-        self.n_detach_force += 1
-        return self.effect
-
-    def detach_page_safe(self, _view):
-        self.n_detach_safe += 1
-        return self.effect
+    .. _gtk_app_window: https://lazka.github.io/pgi-docs/
+       #Gtk-3.0/classes/ApplicationWindow.html#Gtk.ApplicationWindow
+    """
+    gtk_window = Gtk.ApplicationWindow()
+    yield gtk_window
+    gtk_window.destroy()
 
 
 class PatchSetApp:
+    """Basis for patches of
+    `Gtk.ApplicationWindow.set_application <set_application_>`_ locally.
+
+    .. _set_application: https://lazka.github.io/pgi-docs/
+       #Gtk-3.0/classes/Window.html#Gtk.Window.set_application
+    """
     def __init__(self):
+        """Initially, mark patch as not called."""
         self.called = False
         self.apps = []
 
     def set_application(self, p_app):
+        """Mark patch as called and record application argument."""
         self.called = True
         self.apps.append(p_app)
 
@@ -122,17 +123,6 @@ def patch_dialog_choose():
     return PatchDialog
 
 
-# WINDOW_ANCHOR = Gtk.Window()
-
-
-@pytest.fixture
-def gtk_app_window():
-    """Fixture with teardown: return GTK.ApplicationWindow."""
-    gtk_window = Gtk.ApplicationWindow()
-    yield gtk_window
-    gtk_window.destroy()
-
-
 @pytest.fixture
 def setup_factsheet(monkeypatch, request, capfd):
     """Fixture with teardown: return sheet app patch, control, and view.
@@ -140,7 +130,10 @@ def setup_factsheet(monkeypatch, request, capfd):
     Set path to factsheet file with marker ``path_sheet`` and key
     ``'path_sheet'``.
 
+    :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
     :param request: marker container.
+    :param capfd: built-in fixture `Pytest capfd`_.
+    :param gtk_app_window: fixture :func:`.gtk_app_window`.
     """
     patch_app = PatchSetApp()
     monkeypatch.setattr(
@@ -163,7 +156,7 @@ def setup_factsheet(monkeypatch, request, capfd):
 
 
 class TestAppFactsheet:
-    """Unit tests for :class:`~.AppFactsheet`."""
+    """Unit tests for :class:`~.view_sheet.AppFactsheet`."""
 
     def test_init(self):
         """Confirm initialization."""
@@ -178,6 +171,8 @@ class TestAppFactsheet:
     def test_do_activate(self, monkeypatch):
         """| Confirm activation with initial window.
         | Case: activation succeeds
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
         # TODO: patch Gtk.Window.set_application to confirm call
@@ -199,6 +194,9 @@ class TestAppFactsheet:
     def test_do_activate_warn(self, monkeypatch, caplog):
         """| Confirm activation with initial window.
         | Case: activation fails
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
         patch_app = PatchSetApp()
@@ -235,7 +233,11 @@ class TestAppFactsheet:
         pytest.xfail(reason='Pending implementation of file open')
 
     def test_do_shutdown(self, monkeypatch, caplog):
-        """Confirm application teardown."""
+        """Confirm application teardown.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
         # Setup
         # Bare call to superclass do_shutdown causes segmentation fault
         class PatchAppDoShutdown:
@@ -261,7 +263,11 @@ class TestAppFactsheet:
         assert 'INFO' == record.levelname
 
     def test_do_startup(self, monkeypatch, caplog):
-        """Confirm application setup."""
+        """Confirm application setup.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
         # Setup
         # Bare call to superclass do_startup causes segmentation fault
         class PatchAppDoStartup:
@@ -472,7 +478,7 @@ class TestViewSheet:
     """Unit tests for :class:`.ViewSheet`.
 
     The following manual tests are needed to confirm placement,
-    appearance, and behavior of :class:`ViewSheet` components.
+    appearance, and behavior of :class:`.ViewSheet` components.
 
     * :doc:`../test_manual/test_cases/case_sheet_name` for Factsheet name
     * :doc:`../test_manual/test_cases/case_sheet_open_view` for new
@@ -577,7 +583,10 @@ class TestViewSheet:
         ])
     def test_init_helper_editor(
             self, monkeypatch, setup_factsheet, HELPER, EDITOR, SITE):
-        """Confirm helper creates editor fields in view."""
+        """Confirm helper creates editor fields in view.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         class PatchGetObject:
             def __init__(self):
@@ -653,7 +662,10 @@ class TestViewSheet:
 
     def test_init_helper_summary(
             self, monkeypatch, setup_factsheet):
-        """Confirm helper creates summary field in view."""
+        """Confirm helper creates summary field in view.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         class PatchGetObject:
             def __init__(self):
@@ -763,7 +775,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_init_activate(self, patch_factsheet, capfd):
-        """Confirm initialization of name view activation signal."""
+        """Confirm initialization of name view activation signal.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # entry_gtype = GO.type_from_name(GO.type_name(Gtk.Entry))
@@ -828,7 +843,10 @@ class TestViewSheet:
         ])
     def test_confirm_close(
             self, monkeypatch, setup_factsheet, RESPONSE, RETURN):
-        """Confirm translation of GTK response types."""
+        """Confirm translation of GTK response types.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         monkeypatch.setattr(Gtk.Dialog, 'run', lambda _s: RESPONSE)
         _patch_app, _control, target = setup_factsheet
@@ -837,7 +855,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_close_topic(self, patch_factsheet, capfd, new_outline_topics):
-        """Confirm topic form removed from scenes and closed."""
+        """Confirm topic form removed from scenes and closed.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -880,7 +901,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_get_infoid(self, patch_factsheet, capfd):
-        """Confirm returns InfoId attribute."""
+        """Confirm returns InfoId attribute.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -900,7 +924,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_get_view_topics(self, patch_factsheet, capfd):
-        """Confirm returns view of topics outline."""
+        """Confirm returns view of topics outline.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -920,7 +947,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_link_factsheet(self, patch_factsheet, capfd):
-        """Confirm creation of factsheet links."""
+        """Confirm creation of factsheet links.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # sheets_active = CPOOL.PoolSheets()
@@ -954,7 +984,10 @@ class TestViewSheet:
         ])
     def test_make_dialog_file(
             self, patch_factsheet, capfd, ACTION, LABEL):
-        """Confirm construction of dialog for file save."""
+        """Confirm construction of dialog for file save.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # source = VSHEET.ViewSheet(px_app=factsheet)
@@ -990,7 +1023,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_new_factsheet(self, patch_factsheet, capfd):
-        """Confirm factsheet creation with default contents."""
+        """Confirm factsheet creation with default contents.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # sheets_active = CPOOL.PoolSheets()
@@ -1040,6 +1076,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm updates when current topic changes.
         | Case: change to topic with scene.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1084,6 +1122,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm updates when current topic changes.
         | Case: change to topic without scene.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1129,6 +1169,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics, monkeypatch):
         """| Confirm updates when current topic changes.
         | Case: change to topic without scene.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1182,6 +1225,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm updates when current topic changes.
         | Case: change to no current topic.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1228,6 +1273,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm updates when current topic changes.
         | Case: change to a topic is that is None.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1273,6 +1320,8 @@ class TestViewSheet:
     def test_on_close_page_force(self, patch_factsheet, capfd):
         """| Confirm response to request to close page.
         | Case: unconditional close.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1304,6 +1353,8 @@ class TestViewSheet:
     def test_on_close_page_safe(self, patch_factsheet, capfd):
         """| Confirm response to request to close page.
         | Case: safe to close.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1335,6 +1386,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, monkeypatch):
         """| Confirm response to request to close page.
         | Case: not safe to close, user cancels close.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1373,6 +1427,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, monkeypatch):
         """| Confirm response to request to close page.
         | Case: not safe to close, user approves close.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1411,6 +1468,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, patch_dialog_run, monkeypatch):
         """| Confirm response to request to delete factsheet.
         | Case: no unsaved changes.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1447,6 +1507,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, patch_dialog_run, monkeypatch):
         """| Confirm response to request to delete factsheet.
         | Case: unsaved chagnes, user cancels delete.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1487,6 +1550,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, patch_dialog_run, monkeypatch):
         """| Confirm response to request to delete factsheet.
         | Case: unsaved changes, user approves delete.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1527,6 +1593,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd, new_outline_topics):
         """| Confirm topic removal.
         | Case: Topic selected.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchExtract:
@@ -1581,6 +1650,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd):
         """| Confirm topic removal.
         | Case: No topic selected.s
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchExtract:
@@ -1616,7 +1688,11 @@ class TestViewSheet:
     @pytest.mark.skip
     def test_on_clear_topics(
             self, monkeypatch, patch_factsheet, capfd):
-        """TBD"""
+        """TBD
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # class PatchClear:
         #     def __init__(self): self.called = False
@@ -1650,6 +1726,8 @@ class TestViewSheet:
     def test_on_close_view_sheet_safe(self, monkeypatch, setup_factsheet):
         """| Confirm attempt to close view.
         | Case: no loss of unsaved changes
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
         class PatchIsSafe:
@@ -1682,6 +1760,8 @@ class TestViewSheet:
             self, monkeypatch, setup_factsheet):
         """| Confirm attempt to close view.
         | Case: user allows loss of unsaved changes
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
         class PatchIsSafe:
@@ -1716,6 +1796,8 @@ class TestViewSheet:
             self, monkeypatch, setup_factsheet):
         """| Confirm attempt to close view.
         | Case: user denies loss of unsaved changes
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
         class PatchIsSafe:
@@ -1752,6 +1834,8 @@ class TestViewSheet:
 
         #. Case: hide
         #. Case: show
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1788,6 +1872,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm first topic selection.
         | Case: Topic outline is not empty.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1830,6 +1916,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd):
         """| Confirm first topic selection.
         | Case: topic outline is empty.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchSelect:
@@ -1868,6 +1957,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm last topic selection.
         | Case: Topic outline is not empty; last topic is not top level.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1911,6 +2002,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd):
         """| Confirm last topic selection.
         | Case: topic outline is empty.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchSelect:
@@ -1949,6 +2043,8 @@ class TestViewSheet:
             self, patch_factsheet, capfd, new_outline_topics):
         """| Confirm last topic selection.
         | Case: Topic outline is not empty; last topic is top level.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -1994,7 +2090,11 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
-        """Confirm response to request to create default factsheet."""
+        """Confirm response to request to create default factsheet.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # class PatchNew:
         #     def __init__(self): self.called = False
@@ -2034,6 +2134,9 @@ class TestViewSheet:
         """| Confirm response to request to specify topic.
         | Case: user completes placement, template selection, and topic
           specification.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2095,6 +2198,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, monkeypatch):
         """| Confirm response to request to specify topic.
         | Case: user cancels placement.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2142,6 +2248,10 @@ class TestViewSheet:
             self, patch_factsheet, capfd, monkeypatch):
         """| Confirm response to request to specify topic.
         | Case: user cancels template selection.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2174,6 +2284,9 @@ class TestViewSheet:
             self, patch_factsheet, capfd, monkeypatch):
         """| Confirm response to request to specify topic.
         | Case: user cancels topic specification.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2225,6 +2338,9 @@ class TestViewSheet:
                                  monkeypatch, patch_factsheet, capfd):
         """Confirm open from file.
         Case: apply open.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # PATH = Path(tmp_path / 'factsheet.fsg')
@@ -2283,6 +2399,9 @@ class TestViewSheet:
                                   monkeypatch, patch_factsheet, capfd):
         """Confirm open from file.
         Case: cancel open.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # PATH = Path(tmp_path / 'factsheet.fsg')
@@ -2347,6 +2466,9 @@ class TestViewSheet:
     def test_on_popdown_name(self, monkeypatch, patch_factsheet, capfd):
         """Confirm name popover becomes invisible.
         Case: name changed.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchNewName:
@@ -2387,6 +2509,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd):
         """Confirm name popover becomes invisible.
         Case: name did not change.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchNewName:
@@ -2424,7 +2549,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_on_popup_name(self, patch_factsheet, capfd):
-        """Confirm name popover becomes visible."""
+        """Confirm name popover becomes visible.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -2449,7 +2577,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_on_reset_name(self, patch_factsheet, capfd):
-        """Confirm name reset."""
+        """Confirm name reset.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -2476,6 +2607,8 @@ class TestViewSheet:
     def test_on_save_sheet(self, patch_factsheet, capfd, tmp_path):
         """Confirm save to file.
         Case: file path defined.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2506,6 +2639,9 @@ class TestViewSheet:
     def test_on_save_sheet_none(self, monkeypatch, patch_factsheet, capfd):
         """Confirm save to file.
         Case: file path undefined.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchSaveAs:
@@ -2544,6 +2680,9 @@ class TestViewSheet:
                                     monkeypatch, patch_factsheet, capfd):
         """Confirm save to file with path set.
         Case: apply save.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # PATH_NEW = Path(tmp_path / 'new_factsheet.fsg')
@@ -2595,6 +2734,9 @@ class TestViewSheet:
                                      monkeypatch, patch_factsheet, capfd):
         """Confirm save to file with path set.
         Case: cancel save.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # PATH = Path(tmp_path / 'save_as_factsheet.fsg')
@@ -2648,7 +2790,7 @@ class TestViewSheet:
         See manual tests for dialog content checks.
 
         :param setup_factsheet: fixture :func:`.setup_factsheet`.
-        :param monkeypatch: fixture `Pytest monkeypatch`_.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
@@ -2678,6 +2820,8 @@ class TestViewSheet:
     def test_on_toggle_search_field_inactive(self, patch_factsheet, capfd):
         """| Confirm search field set.
         | Case: button inactive.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2706,6 +2850,8 @@ class TestViewSheet:
     def test_on_toggle_search_field_active(self, patch_factsheet, capfd):
         """| Confirm search field set.
         | Case: button inactive.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # factsheet = patch_factsheet()
@@ -2735,6 +2881,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd, tmp_path):
         """Confirm factsheet creation from file.
         Case: factsheet is not open.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # def patch_open(p_pool, p_path):
@@ -2775,6 +2924,9 @@ class TestViewSheet:
             self, monkeypatch, patch_factsheet, capfd, tmp_path):
         """Confirm factsheet creation from file.
         Case: factsheet is open.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
         """
         # # Setup
         # class PatchPresentFactsheet:
@@ -2810,7 +2962,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_present(self, patch_factsheet, capfd):
-        """Confirm page becomes visible."""
+        """Confirm page becomes visible.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)
@@ -2863,7 +3018,10 @@ class TestViewSheet:
 
     @pytest.mark.skip
     def test_set_title(self, patch_factsheet, capfd):
-        """Confirm window title update."""
+        """Confirm window title update.
+
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
         # # Setup
         # factsheet = patch_factsheet()
         # target = VSHEET.ViewSheet(px_app=factsheet)

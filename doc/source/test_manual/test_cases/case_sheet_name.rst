@@ -107,7 +107,11 @@ Steps
 
 #. **Step:** Click initial window **close icon** |window-close|.
 
-   a. *Expect:* Window disappears.
+   a. *Expect:* *Data Loss Warning* dialog appears.
+
+#. **Step:** Click **Discard button**.
+
+   a. *Expect:* Dialog and window disappear.
    #. *Expect:* *Application* closes.
 
 Teardown

@@ -35,7 +35,7 @@ The plan needs to accommodate the following.
 
 `Model-view-controller
 <https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_
-presents a basic structure for applications that meets the initial
+presents a basic structure for an application that meets the initial
 needs.  This Wikipedia page identifies variations that might be more
 appropriate as development progresses.  Thus, the plan starts with the
 following together with a willingness to adapt as needed.
@@ -66,16 +66,75 @@ application is to explore techniques and tools.  Practice will show the
 benefits and costs of these techniques more clearly than simply reading
 about them.
 
+Feedback Strategies
+-------------------
+Working alone and learning as I go mean mistakes and changes of
+direction are likely.  I use the following strategies to mimimize lost
+time.
+
+    1. Document intent
+    
+        Include docstrings for each module, class, method, and function
+        to document purpose and intended behavior.  Automate
+        documentation generation with `Sphinx <sphinx_>`_.  See
+        :doc:`../src/toc_src`.
+
+        .. _sphinx: https://www.sphinx-doc.org/en/master/
+
+    #. Confirm behavior frequently
+    
+        Include unit tests for each method and function.  Basic
+        test-driven development (TDD_) provides a means to continuously
+        develop useful unit tests.  Implement and automate unit tests
+        with pytest_.  See :doc:`../test/toc_test`.   
+
+        .. _pytest: https://docs.pytest.org/en/latest/
+
+        Include manual tests for compound behaviors as well as to assess
+        look and feel of application interface.  See
+        :doc:`../test_manual/toc_test_manual` .
+
+        .. _TDD: https://en.wikipedia.org/wiki/Test-driven_development
+
+    #. Check consistency and clarity
+    
+        Include `type hints <PEP_484_>`_ in method, function, and data
+        definitions.  Check type consistency with MyPy_, which is
+        supported by PyDev_ for Eclipse_.
+
+        Check code clarity with the PyDev_'s `PEP 8 <PEP_8_>`_ style
+        checker.
+        
+        .. _Eclipse: https://www.eclipse.org/ide/
+
+        .. _PyDev: https://www.pydev.org/index.html
+
+        .. _MyPy: https://mypy.readthedocs.io/en/stable/
+
+        .. _PEP_8: https://www.python.org/dev/peps/pep-0008/
+
+        .. _PEP_484: https://www.python.org/dev/peps/pep-0484/
+
+    #. Localize errors
+    
+        Write small, coherent methods and functions.  It is easier to
+        write complete, effective unit tests for a small function than
+        for a large function.
+
+    #. Foster consistency
+    
+        Establish and use naming and layout conventions. See **TBD**.
+
+    #. Facilitate recovery
+
+        Use Git_ version control to make it easier to try out ideas and
+        recover from ones that do not work out.  See `Factsheet
+        repository <https://github.com/gary9204/Factsheet>`_.
+
+        .. _Git: https://git-scm.com/
+
 .. warning:: The text after this point is under review. Portions of
     the text are inaccurate and incomplete.
-
-.. note:: To Do - Describe feedback mechanisms:
-
-    1) Intent: documentation with docstrings and Sphinx, 
-    2) Confirmation: TDD with unit and manual tests,
-    3) Quality: type hints with MyPy and PEP 8 consistenty checks,
-    4) Localization: small methods and functions
-    5) Consistency: naming and layout conventions
 
 Tradeoffs
 ---------

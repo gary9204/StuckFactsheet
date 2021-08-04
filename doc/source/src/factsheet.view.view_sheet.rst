@@ -9,6 +9,7 @@
 
 .. autoclass:: ViewSheet
    :members:
-   :exclude-members: NAME_FILE_SHEET_UI, NAME_FILE_DIALOG_DATA_LOSS_UI
+   :exclude-members: NAME_FILE_SHEET_UI, NAME_FILE_DIALOG_DATA_LOSS_UI,
+       ALLOW_CLOSE, DENY_CLOSE
    :undoc-members:
    :show-inheritance:
