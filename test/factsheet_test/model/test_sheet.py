@@ -783,24 +783,3 @@ class TestSheet:
         # # Test
         # assert TOPICS == list(target.topics())
         # assert TOPICS[2:] == list(target.topics(parent))
-
-    @pytest.mark.skip(reason='Method marked for deletion')
-    def test_update_titles(self, interface_page_sheet):
-        """Confirm all pages get update notice."""
-        # # Setup
-        # NAME_MODEL = 'The Larch'
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_name=NAME_MODEL, p_title=TITLE_MODEL)
-        # SUBTITLE_BASE = '/home/larch.fsg'
-        # SUBTITLE_TARGET = (
-        #     r'/home/larch\.fsg \([0-9A-Fa-f]{3}:[0-9A-Fa-f]{3}\)')
-        #
-        # N_PAGES = 3
-        # pages = [interface_page_sheet() for _ in range(N_PAGES)]
-        # for page in pages:
-        #     target.attach_page(page)
-        # # Test
-        # target.update_titles(SUBTITLE_BASE)
-        # for page in pages:
-        #     assert page.called_set_titles
-        #     assert re.match(SUBTITLE_TARGET, page.subtitle)

@@ -427,16 +427,6 @@ class ControlSheet:
     #     control._model = MSHEET.Sheet()
     #     return control
 
-    def new_name(self) -> None:
-        """Notify model a page changed factsheet name."""
-        raise NotImplementedError
-        # if self._path is None:
-        #     subtitle_base = 'Unsaved'
-        # else:
-        #     subtitle_base = self._path.name
-        # assert self._model is not None
-        # self._model.update_titles(subtitle_base)
-
     # def new_view_name_active(self) -> MSHEET.ViewNameSheetActive:
     #     """Return editable view of name."""
     #     return self._model.new_view_name_active()

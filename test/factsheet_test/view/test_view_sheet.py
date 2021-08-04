@@ -519,6 +519,12 @@ class TestViewSheet:
         assert patch_app.called
         assert patch_app.apps.pop() is VSHEET.g_app
 
+        headerbar = target._window.get_titlebar()
+        title_window = headerbar.get_custom_title()
+        assert isinstance(title_window, Gtk.Label)
+        title_window_str = title_window.get_label()
+        assert target._control.model.name == title_window_str
+
         # Components
         # assert isinstance(target._context_name, Gtk.Popover)
         # assert isinstance(target._context_summary, Gtk.Expander)
@@ -552,8 +558,6 @@ class TestViewSheet:
         # assert target._window.lookup_action('show-help-sheet') is not None
         #
         # # Factsheet Display Menu
-        # assert target._window.lookup_action('popup-name') is not None
-        # assert target._window.lookup_action('reset-name') is not None
         # assert target._window.lookup_action('flip-summary') is not None
         assert target._window.lookup_action('open-view-sheet') is not None
         assert target._window.lookup_action('close-view-sheet') is not None
@@ -2461,147 +2465,6 @@ class TestViewSheet:
         assert key_new == CSHEET.id_view_sheet(view_new)
         assert isinstance(view_new, VSHEET.ViewSheet)
         assert view_new._control is control
-
-    @pytest.mark.skip
-    def test_on_popdown_name(self, monkeypatch, patch_factsheet, capfd):
-        """Confirm name popover becomes invisible.
-        Case: name changed.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param capfd: built-in fixture `Pytest capfd`_.
-        """
-        # # Setup
-        # class PatchNewName:
-        #     def __init__(self): self.called = False
-        #
-        #     def new_name(self): self.called = True
-        #
-        # patch_new_name = PatchNewName()
-        # monkeypatch.setattr(
-        #     CSHEET.ControlSheet, 'new_name', patch_new_name.new_name)
-        #
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target.link_factsheet(target, control)
-        # target._infoid.get_view_name().set_text('The Confy Chair!')
-        # target._name_former = target._infoid.name + ' Oh no!'
-        # # Test
-        # target.on_popdown_name(None)
-        # assert target._name_former is None
-        # assert patch_new_name.called
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-
-    @pytest.mark.skip
-    def test_on_popdown_name_static(
-            self, monkeypatch, patch_factsheet, capfd):
-        """Confirm name popover becomes invisible.
-        Case: name did not change.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param capfd: built-in fixture `Pytest capfd`_.
-        """
-        # # Setup
-        # class PatchNewName:
-        #     def __init__(self): self.called = False
-        #
-        #     def new_name(self): self.called = True
-        #
-        # patch_new_name = PatchNewName()
-        # monkeypatch.setattr(
-        #     CSHEET.ControlSheet, 'new_name', patch_new_name.new_name)
-        #
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target._control = control
-        # target._infoid.get_view_name().set_text('The Confy Chair!')
-        # target._name_former = target._infoid.name
-        # # Test
-        # target.on_popdown_name(None)
-        # assert target._name_former is None
-        # assert not patch_new_name.called
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-
-    @pytest.mark.skip
-    def test_on_popup_name(self, patch_factsheet, capfd):
-        """Confirm name popover becomes visible.
-
-        :param capfd: built-in fixture `Pytest capfd`_.
-        """
-        # # Setup
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # target._context_name.set_visible(False)
-        # target._infoid.get_view_name().set_text('The Confy Chair!')
-        # # Test
-        # target.on_popup_name(None, None)
-        # assert target._context_name.get_visible()
-        # assert target._infoid.name == target._name_former
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-
-    @pytest.mark.skip
-    def test_on_reset_name(self, patch_factsheet, capfd):
-        """Confirm name reset.
-
-        :param capfd: built-in fixture `Pytest capfd`_.
-        """
-        # # Setup
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # name = target._infoid.get_view_name()
-        # name.set_text('The Spanish Inquisition!')
-        # target._name_former = 'Oh no!'
-        # # Test
-        # target.on_reset_name(None, None)
-        # assert target._name_former == name.get_text()
-        # # Target
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
 
     @pytest.mark.skip
     def test_on_save_sheet(self, patch_factsheet, capfd, tmp_path):

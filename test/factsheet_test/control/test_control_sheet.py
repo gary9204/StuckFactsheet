@@ -764,62 +764,6 @@ class TestControlSheet:
         model_view.destroy()
 
     @pytest.mark.skip
-    def test_new_name(self, monkeypatch):
-        """| Confirm model gets new name notice.
-        | Case: factsheet path is defined.
-        """
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self):
-        #         self.called = False
-        #         self.base = ''
-        #
-        #     def update_titles(self, p_base):
-        #         self.called = True
-        #         self.base = p_base
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'update_titles', patch_model.update_titles)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # PARENT = '/home/scratch'
-        # FILE = 'larch.fsg'
-        # target._path = Path(PARENT) / FILE
-        # # Test
-        # target.new_name()
-        # assert patch_model.called
-        # assert FILE == patch_model.base
-
-    @pytest.mark.skip
-    def test_new_name_unsaved(self, monkeypatch):
-        """| Confirm model gets new name notice.
-        | Case: factsheet path is not defined.
-        """
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self):
-        #         self.called = False
-        #         self.base = ''
-        #
-        #     def update_titles(self, p_base):
-        #         self.called = True
-        #         self.base = p_base
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'update_titles', patch_model.update_titles)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # DEFAULT = 'Unsaved'
-        # # Test
-        # target.new_name()
-        # assert patch_model.called
-        # assert DEFAULT == patch_model.base
-
-    @pytest.mark.skip
     def test_model_from_path(self, tmp_path):
         """| Confirm model creation.
         | Case: file at path location constains factsheet model

@@ -276,12 +276,15 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         global g_app
         self._window.set_application(g_app)
 
+        headerbar = self._window.get_titlebar()
+        title_window = self._control.model.new_view_name_passive()
+        headerbar.set_custom_title(title_window)
+
         self._init_name_sheet(get_object)
         self._init_summary_sheet(get_object)
         self._init_title_sheet(get_object)
 
         # Components
-        # self._context_name = get_object('ui_context_name')
         # self._context_summary = get_object('ui_context_summary')
         # self._flip_summary = get_object('ui_flip_summary')
 
@@ -335,10 +338,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     self.on_show_dialog, UI.HELP_SHEET)
 
         # Factsheet Display Menu
-        # UI.new_action_active(
-        #     self._window, 'popup-name', self.on_popup_name)
-        # UI.new_action_active(
-        #     self._window, 'reset-name', self.on_reset_name)
         # UI.new_action_active(
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
@@ -765,29 +764,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     sheets_active = self._control.sheets_active
         #     _page = ViewSheet.open_factsheet(app, sheets_active, path_new)
         # del dialog
-
-    def on_popdown_name(self, _popover: Gtk.Popover) -> None:
-        """Hide factsheet name popover and notify control
-        :class:`~.ControlSheet` when name changes."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # if self._name_former != self._infoid.name:
-        #     self._control.new_name()
-        # self._name_former = None
-
-    def on_popup_name(self, _action: Gio.SimpleAction,
-                      _target: GLib.Variant) -> None:
-        """Show factsheet name popover and save former name."""
-        raise NotImplementedError
-        # self._context_name.popup()
-        # self._name_former = self._infoid.name
-
-    def on_reset_name(self, _action: Gio.SimpleAction,
-                      _target: GLib.Variant) -> None:
-        """Reset name to value at start of name change."""
-        raise NotImplementedError
-        # view_name = self._infoid.get_view_name()
-        # view_name.set_text(self._name_former)
 
     def on_save_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:

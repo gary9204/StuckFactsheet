@@ -321,20 +321,3 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
         #     topic = self._topics.get_item(index)
         #     assert topic is not None
         #     yield topic
-
-    def update_titles(self, p_subtitle_base: str) -> None:
-        """Notify each page to update titles in page's window.
-
-        Each page receives a subtitle that identifies both the factsheet
-        and page.
-
-        :param p_subtitle_base: common part of all subtitles.
-        """
-        raise NotImplementedError
-        # id_model = self._infoid.tag
-        # text_model = hex(id_model)[-3:].upper()
-        # for id_page, page in self._pages.items():
-        #     text_page = hex(id_page)[-3:].upper()
-        #     subtitle = '{} ({}:{})'.format(
-        #         p_subtitle_base, text_model, text_page)
-        #     page.set_titles(subtitle)
