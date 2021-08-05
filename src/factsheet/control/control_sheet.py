@@ -23,7 +23,7 @@ import enum
 # import errno
 import logging
 from pathlib import Path
-# import pickle
+import pickle
 # import traceback as TB
 import typing   # noqa
 
@@ -187,12 +187,11 @@ class ControlSheet:
             return model
 
         try:
-            raise NotImplementedError
-            # with p_path.open(mode='rb') as io_in:
-            #     model = pickle.load(io_in)
+            with p_path.open(mode='rb') as io_in:
+                raise NotImplementedError
+                model = pickle.load(io_in)
         except FileNotFoundError:
-            raise NotImplementedError
-            # model = MSHEET.Sheet()
+            model = MSHEET.Sheet()
         except Exception:
             raise NotImplementedError
             # name = 'OPEN ERROR'
@@ -200,7 +199,7 @@ class ControlSheet:
             # title = 'Error opening file \'{}\''.format(p_path)
             # model = MSHEET.Sheet(
             #     p_name=name, p_summary=summary, p_title=title)
-        # return model
+        return model
 
     def remove_view(self, p_view: 'ObserverControlSheet') -> None:
         """Stop tracking given sheet view but warn of missing view."""

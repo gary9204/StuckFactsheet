@@ -147,12 +147,16 @@ def setup_factsheet(monkeypatch, request, capfd):
             pass
     control_sheet = CSHEET.g_control_app.open_factsheet(p_path=path)
     view_sheet = VSHEET.ViewSheet(p_control=control_sheet)
-    control_sheet.add_view(view_sheet)
     snapshot = capfd.readouterr()   # Resets the internal buffer
     assert not snapshot.out
     assert not snapshot.err
     yield patch_app, control_sheet, view_sheet
-    view_sheet._window.destroy()
+    control_app = CSHEET.g_control_app
+    for sheet in control_app._roster_sheets.values():
+        for view in sheet._roster_views.values():
+            view._window.destroy()
+        sheet._roster_views.clear()
+    control_app._roster_sheets.clear()
 
 
 class TestAppFactsheet:
@@ -175,46 +179,18 @@ class TestAppFactsheet:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        # TODO: patch Gtk.Window.set_application to confirm call
-        patch_app = PatchSetApp()
+        class PatchOnNew:
+            def __init__(self): self.called = False
+
+            def on_new_sheet(self, _a, _t): self.called = True
+
+        patch_on_new = PatchOnNew()
         monkeypatch.setattr(
-            Gtk.Window, 'set_application', patch_app.set_application)
+            VSHEET.ViewSheet, 'on_new_sheet', patch_on_new.on_new_sheet)
         target = VSHEET.AppFactsheet()
-        control_app = CSHEET.g_control_app
-        N_SHEETS = 1
-        N_VIEWS = 1
         # Test
         target.do_activate()
-        assert N_SHEETS == len(control_app._roster_sheets)
-        _key, control_sheet = control_app._roster_sheets.popitem()
-        assert N_VIEWS == len(control_sheet._roster_views)
-        _key, view = control_sheet._roster_views.popitem()
-        assert view._control is control_sheet
-
-    def test_do_activate_warn(self, monkeypatch, caplog):
-        """| Confirm activation with initial window.
-        | Case: activation fails
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param caplog: built-in fixture `Pytest caplog`_.
-        """
-        # Setup
-        patch_app = PatchSetApp()
-        monkeypatch.setattr(
-            Gtk.Window, 'set_application', patch_app.set_application)
-        monkeypatch.setattr(
-            CSHEET.ControlApp, 'open_factsheet', lambda _c, **_kw: None)
-        log_message = (
-            'Failed to create initial factsheet (AppFactsheet.do_activate)')
-        target = VSHEET.AppFactsheet()
-        N_LOGS = 1
-        LAST = -1
-        # Test
-        target.do_activate()
-        assert N_LOGS == len(caplog.records)
-        record = caplog.records[LAST]
-        assert log_message == record.message
-        assert 'CRITICAL' == record.levelname
+        assert patch_on_new.called
 
     def test_do_open(self):
         """| Confirm factsheet open with initial window.
@@ -515,6 +491,7 @@ class TestViewSheet:
         assert not VSHEET.ViewSheet.ALLOW_CLOSE
         assert VSHEET.ViewSheet.DENY_CLOSE
         assert target._control is control
+        assert control._roster_views[CSHEET.id_view_sheet(target)] is target
         assert isinstance(target._window, Gtk.ApplicationWindow)
         assert patch_app.called
         assert patch_app.apps.pop() is VSHEET.g_app
@@ -550,7 +527,7 @@ class TestViewSheet:
         #
         # # Application Title
         # assert target._window.lookup_action('open-sheet') is not None
-        # assert target._window.lookup_action('new-sheet') is not None
+        assert target._window.lookup_action('new-sheet') is not None
         # assert target._window.lookup_action('save-sheet') is not None
         # assert target._window.lookup_action('save-as-sheet') is not None
         #
@@ -1749,8 +1726,7 @@ class TestViewSheet:
 
         _patch_app, control, target = setup_factsheet
         id_target = CSHEET.id_view_sheet(p_view_sheet=target)
-        view_new = VSHEET.ViewSheet(p_control=control)
-        control.add_view(view_new)
+        _view_new = VSHEET.ViewSheet(p_control=control)
         roster_views = control._roster_views
         N_VIEWS = 1
         # Test
@@ -1785,8 +1761,7 @@ class TestViewSheet:
 
         _patch_app, control, target = setup_factsheet
         id_target = CSHEET.id_view_sheet(p_view_sheet=target)
-        view_new = VSHEET.ViewSheet(p_control=control)
-        control.add_view(view_new)
+        _view_new = VSHEET.ViewSheet(p_control=control)
         roster_views = control._roster_views
         N_VIEWS = 1
         # Test
@@ -1822,7 +1797,6 @@ class TestViewSheet:
         _patch_app, control, target = setup_factsheet
         view_new = VSHEET.ViewSheet(p_control=control)
         id_view_new = CSHEET.id_view_sheet(p_view_sheet=view_new)
-        control.add_view(view_new)
         roster_views = control._roster_views
         N_VIEWS = 2
         # Test
@@ -2092,14 +2066,14 @@ class TestViewSheet:
         # del target._window
         # del factsheet
 
-    @pytest.mark.skip
-    def test_on_new_sheet(self, monkeypatch, patch_factsheet, capfd):
+    def old_test_on_new_sheet(self, monkeypatch, setup_factsheet):
         """Confirm response to request to create default factsheet.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         :param capfd: built-in fixture `Pytest capfd`_.
         """
-        # # Setup
+        # Setup
+        _patch_app, control, target = setup_factsheet
         # class PatchNew:
         #     def __init__(self): self.called = False
         #
@@ -2132,6 +2106,50 @@ class TestViewSheet:
         # target._window.destroy()
         # del target._window
         # del factsheet
+
+    def test_on_new_sheet(self, monkeypatch):
+        """| Confirm factsheet creation with initial window.
+        | Case: creation succeeds
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        patch_app = PatchSetApp()
+        monkeypatch.setattr(
+            Gtk.Window, 'set_application', patch_app.set_application)
+        monkeypatch.setattr(
+            Gtk.Window, 'show_all', lambda _s: None)
+        control_app = CSHEET.g_control_app
+        N_SHEETS = 1
+        N_VIEWS = 1
+        # Test
+        VSHEET.ViewSheet.on_new_sheet(None, None)
+        assert N_SHEETS == len(control_app._roster_sheets)
+        _key, control_sheet = control_app._roster_sheets.popitem()
+        assert N_VIEWS == len(control_sheet._roster_views)
+        _key, view = control_sheet._roster_views.popitem()
+        assert view._control is control_sheet
+
+    def test_on_new_sheet_warn(self, monkeypatch, caplog):
+        """| Confirm factsheet creation with initial window.
+        | Case: creation fails
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        monkeypatch.setattr(
+            CSHEET.ControlApp, 'open_factsheet', lambda _c, **_kw: None)
+        log_message = (
+            'Failed to create new factsheet (ViewSheet.on_new_sheet)')
+        N_LOGS = 1
+        LAST = -1
+        # Test
+        VSHEET.ViewSheet.on_new_sheet(None, None)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'CRITICAL' == record.levelname
 
     @pytest.mark.skip
     def test_on_new_topic(self, patch_factsheet, capfd, monkeypatch):

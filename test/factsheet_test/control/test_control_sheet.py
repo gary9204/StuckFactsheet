@@ -231,18 +231,6 @@ class TestControlSheet:
         assert not target._is_closing
         # assert not target._controls_topic
 
-    def test_model_from_path_none(self):
-        """| Confirm model creation.
-        | Case: no path
-        """
-        # Setup
-        PATH = None
-        target = CSHEET.ControlSheet(p_path=PATH)
-        model_default = MSHEET.Sheet()
-        # Test
-        model = target._model_from_path(p_path=PATH)
-        assert model_default == model
-
     def test_add_view(self, patch_observer_control_sheet):
         """| Confirm tracking of given sheet view.
         | Case: view not tracked
@@ -784,26 +772,17 @@ class TestControlSheet:
         # assert source._model == target._model
         # assert target._model.is_fresh()
 
-    @pytest.mark.skip
     def test_model_from_path_empty(self, tmp_path):
         """| Confirm model creation.
         | Case: no file at path location
         """
-        # # Setup
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # NAME = 'OPEN ERROR'
-        # TITLE = 'Error opening file \'{}\''.format(PATH)
-        # assert not PATH.exists()
-        # sheets_active = CPOOL.PoolSheets()
-        # # Test
-        # target = CSHEET.ControlSheet.open(sheets_active, PATH)
-        # model = target._model
-        # assert model is not None
-        # assert NAME == model._infoid.name
-        # assert model._infoid.summary is not None
-        # assert model._infoid.summary
-        # assert TITLE == model._infoid.title
-        # assert target._path is None
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target = CSHEET.ControlSheet(p_path=PATH)
+        model_default = MSHEET.Sheet()
+        # Test
+        model = target._model_from_path(p_path=PATH)
+        assert model_default == model
 
     @pytest.mark.skip
     def test_model_from_path_except(self, tmp_path):
@@ -827,6 +806,18 @@ class TestControlSheet:
         # assert model._infoid.summary
         # assert TITLE == model._infoid.title
         # assert target._path is None
+
+    def test_model_from_path_none(self):
+        """| Confirm model creation.
+        | Case: no path
+        """
+        # Setup
+        PATH = None
+        target = CSHEET.ControlSheet(p_path=PATH)
+        model_default = MSHEET.Sheet()
+        # Test
+        model = target._model_from_path(p_path=PATH)
+        assert model_default == model
 
     @pytest.mark.skip
     def test_present_factsheet(self, monkeypatch):

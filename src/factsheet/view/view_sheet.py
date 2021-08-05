@@ -49,14 +49,7 @@ class AppFactsheet(Gtk.Application):
 
         Log initialization failure.
         """
-        control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
-        if control_sheet is None:
-            logger.critical(
-                'Failed to create initial factsheet ({}.{})'
-                ''.format(self.__class__.__name__, self.do_activate.__name__))
-            return
-        view = ViewSheet(p_control=control_sheet)
-        control_sheet.add_view(view)
+        ViewSheet.on_new_sheet(None, None)
 
     def do_open(self, p_files: typing.Tuple[Gio.File], p_n_files: int,
                 p_hint: str) -> None:
@@ -76,7 +69,6 @@ class AppFactsheet(Gtk.Application):
                 ''.format(self.__class__.__name__, self.do_open.__name__))
             return
         view = ViewSheet(p_control=control_sheet)
-        control_sheet.add_view(view)
 
     def do_shutdown(self) -> None:
         """Application teardown. """
@@ -270,6 +262,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         :param p_roster: roster of sheet views for factsheet.
         """
         self._control = p_control
+        self._control.add_view(self)
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
         get_object = builder.get_object
         self._window = get_object('ui_sheet')
@@ -321,8 +314,8 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # Application Title
         # UI.new_action_active(
         #     self._window, 'open-sheet', self.on_open_sheet)
-        # UI.new_action_active(
-        #     self._window, 'new-sheet', self.on_new_sheet)
+        UI.new_action_active(
+            self._window, 'new-sheet', self.on_new_sheet)
         # UI.new_action_active(
         #     self._window, 'save-sheet', self.on_save_sheet)
         # UI.new_action_active(
@@ -689,14 +682,18 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     IGNORE = 0
         #     gtk_view.scroll_to_cell(path, None, False, IGNORE, IGNORE)
 
-    def on_new_sheet(self, _action: Gio.SimpleAction,
+    @classmethod
+    def on_new_sheet(cls, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
         """Create a new factsheet with default contents."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # app = self._window.get_application()
-        # sheets_active = self._control.sheets_active
-        # _page = ViewSheet.new_factsheet(app, sheets_active)
+        control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
+        if control_sheet is None:
+            logger.critical('Failed to create new factsheet ({}.{})'
+                            ''.format(cls.__name__,
+                                      cls.on_new_sheet.__name__))
+            return
+
+        view = ViewSheet(p_control=control_sheet)
 
     def on_new_topic(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
@@ -747,8 +744,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def on_open_view_sheet(self, _action: Gio.SimpleAction,
                            _target: GLib.Variant) -> None:
         """Open another view of factsheet."""
-        view_new = ViewSheet(p_control=self._control)
-        self._control.add_view(view_new)
+        _view_new = ViewSheet(p_control=self._control)
 
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
