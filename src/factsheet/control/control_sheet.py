@@ -41,21 +41,6 @@ import factsheet.model.sheet as MSHEET
 logger = logging.getLogger('Main.CSHEET')
 
 
-class GoNoGo(enum.Enum):  # TBD - Not tested yet
-    """Indicates whether an action should continue or halt.
-
-    .. attribute: GO
-
-        Continue the action.
-
-    .. attribute: NOGO
-
-        Halt the action.
-    """
-    GO = enum.auto()
-    NOGO = enum.auto()
-
-
 IdFactsheet = typing.NewType('IdFactsheet', int)
 IdViewSheet = typing.NewType('IdViewSheet', int)
 
@@ -97,22 +82,15 @@ class ControlApp:
             IdFactsheet, 'ControlSheet'] = dict()
 
     def close_factsheet(self, p_control: 'ControlSheet') -> None:
-        """Stop tracking factsheet.
-
-        Log a warning when the control is not in the collection.
+        """Remove all factsheet's views, which stops factsheet tracking.
 
         :param p_control: factsheet to close.
         """
-        id_control = id_factsheet(p_control)
-        try:
-            self._roster_sheets.pop(id_control)
-        except KeyError:
-            logger.warning('Missing control: 0x{:X} ({}.{})'.format(
-                id_control, self.__class__.__name__,
-                self.close_factsheet.__name__))
+        p_control.remove_all_views()
 
     def close_all_factsheets(self) -> None:
         """TBD"""
+        pass
 
     def open_factsheet(self, p_path: typing.Optional[Path] = None
                        ) -> typing.Optional['ControlSheet']:
@@ -139,6 +117,21 @@ class ControlApp:
         id_control = id_factsheet(control)
         self._roster_sheets[id_control] = control
         return control
+
+    def remove_factsheet(self, p_control: 'ControlSheet') -> None:
+        """Stop tracking factsheet.
+
+        Log a warning when the control is not in the collection.
+
+        :param p_control: factsheet to close.
+        """
+        id_control = id_factsheet(p_control)
+        try:
+            _ = self._roster_sheets.pop(id_control)
+        except KeyError:
+            logger.warning('Missing control: 0x{:X} ({}.{})'.format(
+                id_control, self.__class__.__name__,
+                self.remove_factsheet.__name__))
 
 
 g_control_app = ControlApp()
@@ -201,39 +194,6 @@ class ControlSheet:
             #     p_name=name, p_summary=summary, p_title=title)
         return model
 
-    def remove_view(self, p_view: 'ObserverControlSheet') -> None:
-        """Stop tracking given sheet view but warn of missing view."""
-        id_view = id_view_sheet(p_view_sheet=p_view)
-        try:
-            self._roster_views.pop(id_view)
-        except KeyError:
-            logger.warning('Missing: sheet 0x{:X} remove view 0x{:X}  '
-                           '({}.{})'.format(id_view, id_factsheet(self),
-                                            self.__class__.__name__,
-                                            self.remove_view.__name__))
-            return
-
-        if not self._roster_views:
-            global g_control_app
-            g_control_app.close_factsheet(p_control=self)
-
-    def remove_view_is_safe(self) -> bool:
-        """Return True when the control can safely close a sheet view.
-
-        A factsheet closes when it has no views.  A sheet control may
-        safely close a sheet view when:
-
-        * The factsheet contains no unsaved changes or
-        * The factsheet has more than one view or
-        * The user approves closing the factsheet.
-        """
-        if (self.is_stale()
-                and not self._is_closing
-                and 1 == len(self._roster_views)):
-            return False
-
-        return True
-
     # def _add_new_control_topic(self, px_topic: MTOPIC.Topic
     #                            ) -> CTOPIC.ControlTopic:
     #     """Return a new topic control after adding it to the collection.
@@ -259,68 +219,46 @@ class ControlSheet:
         # assert self._model is not None
         # self._model.clear()
 
-    def close_all_views(self) -> GoNoGo:
-        """Close the factsheet along with all its sheet views.
+    def remove_all_views(self) -> None:
+        """Stop tracking all views of the factsheet."""
+        self._is_closing = True
+        views = self._roster_views.values()
+        while views:
+            view = next(iter(views))
+            view.close()
 
-        A factsheet may contain unsaved changes.  If closing the
-        factsheet would discard unsaved changes, method
-        :meth:`.close_all_views` confirms the user approves before
-        closing any views.  If no changes would be lost, the method
-        closes the factsheet unconditionally.
+    def remove_view(self, p_view: 'ObserverControlSheet') -> None:
+        """Stop tracking given sheet view but warn of missing view."""
+        id_view = id_view_sheet(p_view_sheet=p_view)
+        try:
+            self._roster_views.pop(id_view)
+        except KeyError:
+            logger.warning('Missing: sheet 0x{:X} remove view 0x{:X}  '
+                           '({}.{})'.format(id_view, id_factsheet(self),
+                                            self.__class__.__name__,
+                                            self.remove_view.__name__))
+            return
 
-        :return: GO if there are no unsaved changes or the user
-            approves discarding changes.  Otherwise, return NOGO.
+        if not self._roster_views:
+            global g_control_app
+            g_control_app.remove_factsheet(p_control=self)
+
+    def remove_view_is_safe(self) -> bool:
+        """Return True when the control can safely close a sheet view.
+
+        A factsheet closes when it has no views.  A sheet control may
+        safely close a sheet view when:
+
+        * The factsheet contains no unsaved changes or
+        * The factsheet has more than one view or
+        * The user approves closing the factsheet.
         """
-        logger.error('close_all_views: stub always returns GO.')
-        return GoNoGo.GO
+        if (self.is_stale()
+                and not self._is_closing
+                and 1 == len(self._roster_views)):
+            return False
 
-    def delete_force(self) -> None:
-        """Delete factsheet unconditionally."""
-        raise NotImplementedError
-        # assert self._model is not None
-        # self._model.detach_all()
-        # self._sheets_active.remove(self)
-
-    # def delete_safe(self) -> ABC_SHEET.EffectSafe:
-    #     """Delete factsheet provided no changes will be lost.
-    #
-    #     :returns: Whether delete request completed.
-    #     """
-    #     assert self._model is not None
-    #     if self._model.is_stale():
-    #         return ABC_SHEET.EffectSafe.NO_EFFECT
-    #
-    #     self.delete_force()
-    #     return ABC_SHEET.EffectSafe.COMPLETED
-
-    # def detach_page_force(self, pm_page: ABC_SHEET.InterfacePageSheet
-    #                       ) -> None:
-    #     """Remove page unconditionally.
-    #
-    #     :param pm_page: page to remove.
-    #     """
-    #     assert self._model is not None
-    #     self._model.detach_page(pm_page)
-    #     if 0 == self._model.n_pages():
-    #         self._sheets_active.remove(self)
-
-    # def detach_page_safe(self, pm_page: ABC_SHEET.InterfacePageSheet
-    #                      ) -> ABC_SHEET.EffectSafe:
-    #     """Remove page provided no changes will be lost.
-    #
-    #     :param pm_page: page to remove.
-    #     :returns: Whether remove request completed.
-    #     """
-    #     assert self._model is not None
-    #     if self._model.is_fresh():
-    #         self.detach_page_force(pm_page)
-    #         return ABC_SHEET.EffectSafe.COMPLETED
-    #
-    #     if 1 < self._model.n_pages():
-    #         self.detach_page_force(pm_page)
-    #         return ABC_SHEET.EffectSafe.COMPLETED
-    #
-    #     return ABC_SHEET.EffectSafe.NO_EFFECT
+        return True
 
     # def detach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
     #     """Remove view of topics outline from model.
@@ -575,3 +513,6 @@ class ObserverControlSheet(abc.ABC):
         :param time: time stamp to order multiple, independent requests.
         """
         raise NotImplementedError
+
+
+g_test = ['item 1']

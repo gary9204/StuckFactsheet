@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 # import pickle
 import pytest   # type: ignore[import]
-import typing
+# import typing
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 import factsheet.control.control_sheet as CSHEET
@@ -41,11 +41,13 @@ import factsheet.model.sheet as MSHEET
 class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
     """:class:`.ObserverControlSheet` subclass with stubs for methods."""
 
-    def ___init__(self):
+    def __init__(self, p_control):
+        self._control = p_control
         self.close_called = False
         self.present_called = False
 
     def close(self):
+        self._control.remove_view(self)
         self.close_called = True
 
     def present(self, p_time):
@@ -53,12 +55,36 @@ class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
         self.present_called = True
 
 
+@pytest.fixture  # (autouse=True)
+def reset_g_test():
+    CSHEET.g_test = ['item 3']
+
+
+@pytest.mark.skip(reason='saving for additional experiments.')
+class TestResetGTest:
+    """Experiment to determine behavior of global variables."""
+
+    def test_g_test_set(self):
+        # Setup
+        # Test
+        print('Set p_test pre:  {}'.format(CSHEET.g_test))
+        CSHEET.g_test.append('item 2')
+        print('Set p_test_post: {}'.format(CSHEET.g_test))
+        assert False
+
+    def test_g_test_get(self):
+        # Setup
+        # Test
+        print('Get p_test: {}'.format(CSHEET.g_test))
+        assert False
+
+
 @pytest.fixture
-def patch_observer_control_sheet():
-    """Pytest fixture: Return :class:`.ObserverControlSheet` subclass
-    with stub methods.
-    """
-    return PatchObserverControlSheet
+def patch_g_control_app():
+    """Pytest fixture with teardown: Reset :data:`.g_control_app`."""
+    CSHEET.g_control_app = CSHEET.ControlApp()
+    yield CSHEET.g_control_app
+    CSHEET.g_control_app = CSHEET.ControlApp()
 
 
 class TestControlApp:
@@ -72,57 +98,32 @@ class TestControlApp:
         assert isinstance(target._roster_sheets, dict)
         assert not target._roster_sheets
 
-    def test_close_factsheet(self):
-        """| Confirm factsheet close.
-        | Case: control in roster
+    def test_close_factsheet(self, patch_g_control_app):
+        """| Confirm tracking stops for given sheet with views removed.
+        | Case: sheet tracked
         """
         # Setup
-        target = CSHEET.ControlApp()
+        target = patch_g_control_app
+        assert target is CSHEET.g_control_app
         N_CONTROLS = 4
         for _ in range(N_CONTROLS):
-            target.open_factsheet(p_path=None)
+            control_sheet = target.open_factsheet(p_path=None)
+            view = PatchObserverControlSheet(p_control=control_sheet)
+            control_sheet.add_view(view)
         assert N_CONTROLS == len(target._roster_sheets)
 
         I_REMOVE = 1
         items = list(target._roster_sheets.items())
         (id_removed, control_removed) = items.pop(I_REMOVE)
+        view_removed = next(iter(control_removed._roster_views.values()))
         # Test
         target.close_factsheet(p_control=control_removed)
+        assert view_removed.close_called
+        assert not control_removed._roster_views
         assert id_removed not in target._roster_sheets.keys()
         assert len(items) == len(target._roster_sheets)
         for key, control in items:
             assert target._roster_sheets[key] is control
-
-    def test_close_factsheet_warn(self, PatchLogger, monkeypatch):
-        """| Confirm factsheet close.
-        | Case: control not in roster
-        """
-        # Setup
-        target = CSHEET.ControlApp()
-        N_CONTROLS = 4
-        for _ in range(N_CONTROLS):
-            target.open_factsheet(p_path=None)
-        assert N_CONTROLS == len(target._roster_sheets)
-
-        I_REMOVE = 1
-        items = list(target._roster_sheets.items())
-        (id_removed, control_removed) = items.pop(I_REMOVE)
-        target._roster_sheets.pop(id_removed)
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = ('Missing control: 0x{:X} '
-                       '(ControlApp.close_factsheet)'.format(id_removed))
-        # Test
-        target.close_factsheet(control_removed)
-        assert id_removed not in target._roster_sheets
-        assert len(items) == len(target._roster_sheets)
-        for key, control in items:
-            assert target._roster_sheets[key] is control
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
 
     def test_open_factsheet_none(self):
         """| Confirm factsheet return.
@@ -213,6 +214,58 @@ class TestControlApp:
         # for control in controls:
         #     assert target._controls[id(control)] is control
 
+    def test_remove_factsheet(self):
+        """| Confirm tracking stops for given sheet.
+        | Case: sheet tracked
+        """
+        # Setup
+        target = CSHEET.ControlApp()
+        N_CONTROLS = 4
+        for _ in range(N_CONTROLS):
+            _control_sheet = target.open_factsheet(p_path=None)
+        assert N_CONTROLS == len(target._roster_sheets)
+
+        I_REMOVE = 1
+        items = list(target._roster_sheets.items())
+        (id_removed, control_removed) = items.pop(I_REMOVE)
+        # Test
+        target.remove_factsheet(p_control=control_removed)
+        assert id_removed not in target._roster_sheets.keys()
+        assert len(items) == len(target._roster_sheets)
+        for key, control in items:
+            assert target._roster_sheets[key] is control
+
+    def test_remove_factsheet_warn(self, caplog):
+        """| Confirm tracking stops for given sheet.
+        | Case: sheet not tracked
+        """
+        # Setup
+        target = CSHEET.ControlApp()
+        N_CONTROLS = 4
+        for _ in range(N_CONTROLS):
+            _control_sheet = target.open_factsheet(p_path=None)
+        assert N_CONTROLS == len(target._roster_sheets)
+
+        I_REMOVE = 1
+        items = list(target._roster_sheets.items())
+        (id_removed, control_removed) = items.pop(I_REMOVE)
+        target._roster_sheets.pop(id_removed)
+
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Missing control: 0x{:X} '
+                       '(ControlApp.remove_factsheet)'.format(id_removed))
+        # Test
+        target.remove_factsheet(control_removed)
+        assert id_removed not in target._roster_sheets
+        assert len(items) == len(target._roster_sheets)
+        for key, control in items:
+            assert target._roster_sheets[key] is control
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+
 
 class TestControlSheet:
     """Unit tests for :class:`~.ControlSheet`."""
@@ -231,26 +284,25 @@ class TestControlSheet:
         assert not target._is_closing
         # assert not target._controls_topic
 
-    def test_add_view(self, patch_observer_control_sheet):
+    def test_add_view(self):
         """| Confirm tracking of given sheet view.
         | Case: view not tracked
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
         # Test
         target.add_view(view)
         assert target._roster_views[id_view] is view
 
-    def test_add_view_warn(
-            self, patch_observer_control_sheet, PatchLogger, monkeypatch):
+    def test_add_view_warn(self, PatchLogger, monkeypatch):
         """| Confirm tracking of given sheet view.
         | Case: duplicate view
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
         patch_logger = PatchLogger()
         monkeypatch.setattr(
@@ -266,75 +318,101 @@ class TestControlSheet:
         assert patch_logger.called
         assert log_message == patch_logger.message
 
-    def test_remove_view_multi(self, patch_observer_control_sheet):
-        """| Confirm tracking stops for given sheet view.
-        | Case: multiple views tracked
-        """
+    def test_remove_all_views(self, monkeypatch):
+        """Confirm tracking stops for all sheet views."""
         # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
-        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
-        target.add_view(view)
-        view_extra = patch_observer_control_sheet()
-        target.add_view(view_extra)
-        # Test
-        target.remove_view(view)
-        assert id_view not in target._roster_views
+        class PatchControlApp:
+            def __init__(self):
+                self.called = False
+                self.control_sheet = None
 
-    def test_remove_view_is_safe_fresh(self, patch_observer_control_sheet):
-        """| Confirm return shows safe to close.
-        | Case: no unsaved changes
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
-        target.add_view(view)
-        target._model.set_fresh()
-        target._is_closing = False
-        # Test
-        assert target.remove_view_is_safe()
+            def remove_factsheet(self, p_control):
+                self.called = True
+                self.control_sheet = p_control
 
-    def test_remove_view_is_safe_approved(self, patch_observer_control_sheet):
+        patch = PatchControlApp()
+        monkeypatch.setattr(
+            CSHEET.ControlApp, 'remove_factsheet', patch.remove_factsheet)
+        target = CSHEET.ControlSheet(p_path=None)
+        N_VIEWS = 5
+        for _ in range(N_VIEWS):
+            view = PatchObserverControlSheet(p_control=target)
+            target.add_view(p_view=view)
+        # Test
+        target.remove_all_views()
+        assert target._is_closing
+        assert not target._roster_views
+        assert patch.called
+        assert target is patch.control_sheet
+
+    def test_remove_view_is_safe_approved(self):
         """| Confirm return shows safe to close.
         | Case: user approves
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         target.add_view(view)
         target._model.set_stale()
         target._is_closing = True
         # Test
         assert target.remove_view_is_safe()
 
-    def test_remove_view_is_safe_multi(self, patch_observer_control_sheet):
+    def test_remove_view_is_safe_fresh(self):
+        """| Confirm return shows safe to close.
+        | Case: no unsaved changes
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        target.add_view(view)
+        target._model.set_fresh()
+        target._is_closing = False
+        # Test
+        assert target.remove_view_is_safe()
+
+    def test_remove_view_is_safe_multi(self):
         """| Confirm return shows safe to close.
         | Case: multiple windows
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         target.add_view(view)
-        view_extra = patch_observer_control_sheet()
+        view_extra = PatchObserverControlSheet(p_control=target)
         target.add_view(view_extra)
         target._model.set_stale()
         target._is_closing = False
         # Test
         assert target.remove_view_is_safe()
 
-    def test_remove_view_is_safe_unsafe(self, patch_observer_control_sheet):
+    def test_remove_view_is_safe_unsafe(self):
         """Confirm return shows  not safe to close."""
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         target.add_view(view)
         target._model.set_stale()
         target._is_closing = False
         # Test
         assert not target.remove_view_is_safe()
 
-    def test_remove_view_single(
-            self, monkeypatch, patch_observer_control_sheet):
+    def test_remove_view_multi(self):
+        """| Confirm tracking stops for given sheet view.
+        | Case: multiple views tracked
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        target.add_view(view)
+        view_extra = PatchObserverControlSheet(p_control=target)
+        target.add_view(view_extra)
+        # Test
+        target.remove_view(view)
+        assert id_view not in target._roster_views
+
+    def test_remove_view_single(self, monkeypatch):
         """| Confirm tracking stops for given sheet view.
         | Case: single view tracked
         """
@@ -344,15 +422,15 @@ class TestControlSheet:
                 self.called = False
                 self.control_sheet = None
 
-            def close_factsheet(self, p_control):
+            def remove_factsheet(self, p_control):
                 self.called = True
                 self.control_sheet = p_control
 
         patch = PatchControlApp()
         monkeypatch.setattr(
-            CSHEET.ControlApp, 'close_factsheet', patch.close_factsheet)
+            CSHEET.ControlApp, 'remove_factsheet', patch.remove_factsheet)
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
         target.add_view(view)
         # Test
@@ -361,14 +439,13 @@ class TestControlSheet:
         assert patch.called
         assert target is patch.control_sheet
 
-    def test_remove_view_warn(
-            self, patch_observer_control_sheet, PatchLogger, monkeypatch):
+    def test_remove_view_warn(self, PatchLogger, monkeypatch):
         """| Confirm tracking stops for given sheet view.
         | Case: view not tracked
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
         patch_logger = PatchLogger()
         monkeypatch.setattr(
@@ -442,155 +519,6 @@ class TestControlSheet:
         # # Test
         # target.clear()
         # assert patch_clear.called
-
-    @pytest.mark.skip
-    def test_delete_force(self, monkeypatch):
-        """Confirm unconditional deletion."""
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self): self.called = False
-        #
-        #     def detach_all(self): self.called = True
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'detach_all', patch_model.detach_all)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # assert sheets_active._controls[id(target)] is target
-        # # Test
-        # target.delete_force()
-        # assert patch_model.called
-        # assert id(target) not in sheets_active._controls.keys()
-
-    @pytest.mark.skip
-    def test_delete_safe_fresh(self, monkeypatch):
-        """| Confirm deletion with guard for unsaved changes.
-        | Case: no unsaved changes
-        """
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self): self.called = False
-        #
-        #     def detach_all(self): self.called = True
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'detach_all', patch_model.detach_all)
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'is_stale', lambda _s: False)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # # Test
-        # response = target.delete_safe()
-        # assert patch_model.called
-        # assert response is ABC_SHEET.EffectSafe.COMPLETED
-
-    @pytest.mark.skip
-    def test_delete_safe_stale(self, monkeypatch):
-        """| Confirm deletion with guard for unsaved changes.
-        | Case: unsaved changes
-        """
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self): self.called = False
-        #
-        #     def detach_all(self): self.called = True
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'detach_all', patch_model.detach_all)
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'is_stale', lambda _s: True)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # # Test
-        # response = target.delete_safe()
-        # assert not patch_model.called
-        # assert response is ABC_SHEET.EffectSafe.NO_EFFECT
-
-    @pytest.mark.skip
-    def test_detach_page_force(self, patch_model_safe):
-        """| Confirm page removed unconditionally.
-        | Case: not last page."""
-        # # Setup
-        # patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # target._model = patch_model
-        # assert sheets_active._controls[id(target)] is target
-        # N_DETACH = 1
-        # # Test
-        # target.detach_page_force(None)
-        # assert N_DETACH == patch_model.n_detach
-        # assert id(target) in sheets_active._controls.keys()
-
-    @pytest.mark.skip
-    def test_detach_page_force_last(self, patch_model_safe):
-        """| Confirm page removed unconditionally.
-        | Case: last page."""
-        # # Setup
-        # patch_model = patch_model_safe(p_stale=True, p_n_pages=0)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # target._model = patch_model
-        # assert sheets_active._controls[id(target)] is target
-        # N_DETACH = 1
-        # # Test
-        # target.detach_page_force(None)
-        # assert N_DETACH == patch_model.n_detach
-        # assert id(target) not in sheets_active._controls.keys()
-
-    @pytest.mark.skip
-    def test_detach_page_safe_fresh(self, patch_model_safe):
-        """| Confirm page removal with guard for unsaved changes.
-        | Case: no unsaved changes
-        """
-        # # Setup
-        # patch_model = patch_model_safe(p_stale=False, p_n_pages=1)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # target._model = patch_model
-        # N_DETACH = 1
-        # # Test
-        # assert target.detach_page_safe(None) is (
-        #     ABC_SHEET.EffectSafe.COMPLETED)
-        # assert N_DETACH == patch_model.n_detach
-
-    @pytest.mark.skip
-    def test_detach_page_safe_stale_multiple(self, patch_model_safe):
-        """| Confirm page removal with guard for unsaved changes.
-        | Case: unsaved changes, multiple pages
-        """
-        # # Setup
-        # patch_model = patch_model_safe(p_stale=True, p_n_pages=2)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # target._model = patch_model
-        # N_DETACH = 1
-        # # Test
-        # assert target.detach_page_safe(None) is (
-        #     ABC_SHEET.EffectSafe.COMPLETED)
-        # assert N_DETACH == patch_model.n_detach
-
-    @pytest.mark.skip
-    def test_detach_page_safe_stale_single(self, patch_model_safe):
-        """| Confirm page removal with guard for unsaved changes.
-        | Case: unsaved changes, single page
-        """
-        # # Setup
-        # patch_model = patch_model_safe(p_stale=True, p_n_pages=1)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # target._model = patch_model
-        # N_DETACH = 0
-        # # Test
-        # assert target.detach_page_safe(None) is (
-        #     ABC_SHEET.EffectSafe.NO_EFFECT)
-        # assert N_DETACH == patch_model.n_detach
 
     @pytest.mark.skip
     def test_extract_topic(self, monkeypatch):
@@ -846,8 +774,7 @@ class TestControlSheet:
         ('_path', 'path'),
         ('_model', 'model'),
         ])
-    def test_property(self, patch_observer_control_sheet, tmp_path,
-                      NAME_ATTR, NAME_PROP):
+    def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
         """Confirm properties are get-only.
 
         #. Case: get
@@ -856,7 +783,7 @@ class TestControlSheet:
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        view = patch_observer_control_sheet()
+        view = PatchObserverControlSheet(p_control=target)
         target.add_view(view)
         PATH = Path(tmp_path / 'path_factsheet.fsg')
         target._path = PATH
@@ -1052,7 +979,7 @@ class TestGlobal:
 class TestIdFactsheet:
     """unit tests for :func:`.id_view_sheet`."""
 
-    def test_id_factsheetsheet(self, patch_observer_control_sheet):
+    def test_id_factsheetsheet(self):
         """Confirm id returned."""
         # Setup
         control_sheet = CSHEET.ControlSheet()
@@ -1063,10 +990,11 @@ class TestIdFactsheet:
 class TestIdViewSheet:
     """unit tests for :func:`.id_view_sheet`."""
 
-    def test_id_view_sheet(self, patch_observer_control_sheet):
+    def test_id_view_sheet(self):
         """Confirm id returned."""
         # Setup
-        view_sheet = patch_observer_control_sheet()
+        control = CSHEET.ControlSheet()
+        view_sheet = PatchObserverControlSheet(p_control=control)
         # Test
         assert id(view_sheet) == CSHEET.id_view_sheet(p_view_sheet=view_sheet)
 

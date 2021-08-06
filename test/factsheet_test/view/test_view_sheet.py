@@ -86,6 +86,14 @@ class PatchSetApp:
 
 
 @pytest.fixture
+def patch_set_app(monkeypatch):
+    patch = PatchSetApp()
+    monkeypatch.setattr(
+        Gtk.Window, 'set_application', patch.set_application)
+    return patch
+
+
+@pytest.fixture
 def patch_dialog_choose():
     """Pytest fixture returns stub
     `GtkFileChooserDialog <GtkFileChooserDialog_>`_.
@@ -124,20 +132,18 @@ def patch_dialog_choose():
 
 
 @pytest.fixture
-def setup_factsheet(monkeypatch, request, capfd):
+def setup_factsheet(patch_set_app, request):
     """Fixture with teardown: return sheet app patch, control, and view.
 
     Set path to factsheet file with marker ``path_sheet`` and key
     ``'path_sheet'``.
 
-    :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
     :param request: marker container.
-    :param capfd: built-in fixture `Pytest capfd`_.
-    :param gtk_app_window: fixture :func:`.gtk_app_window`.
     """
-    patch_app = PatchSetApp()
-    monkeypatch.setattr(
-        Gtk.Window, 'set_application', patch_app.set_application)
+    patch_app = patch_set_app
+    # patch_app = PatchSetApp()
+    # monkeypatch.setattr(
+    #     Gtk.Window, 'set_application', patch_app.set_application)
     marker = request.node.get_closest_marker("path_sheet")
     path = None
     if marker is not None:
@@ -147,16 +153,14 @@ def setup_factsheet(monkeypatch, request, capfd):
             pass
     control_sheet = CSHEET.g_control_app.open_factsheet(p_path=path)
     view_sheet = VSHEET.ViewSheet(p_control=control_sheet)
-    snapshot = capfd.readouterr()   # Resets the internal buffer
-    assert not snapshot.out
-    assert not snapshot.err
     yield patch_app, control_sheet, view_sheet
-    control_app = CSHEET.g_control_app
-    for sheet in control_app._roster_sheets.values():
-        for view in sheet._roster_views.values():
-            view._window.destroy()
-        sheet._roster_views.clear()
-    control_app._roster_sheets.clear()
+    CSHEET.g_control_app = CSHEET.ControlApp()
+    # control_app = CSHEET.g_control_app
+    # for sheet in control_app._roster_sheets.values():
+    #     for view in sheet._roster_views.values():
+    #         view._window.destroy()
+    #     sheet._roster_views.clear()
+    # control_app._roster_sheets.clear()
 
 
 class TestAppFactsheet:

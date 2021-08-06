@@ -107,25 +107,6 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
     #     # self._stale = False
     #     # self._pages: typing.Dict[int, ABC_SHEET.InterfacePageSheet] = dict()
 
-    # def attach_page(self, p_page: ABC_SHEET.InterfacePageSheet) -> None:
-    #     """Add page to update display when sheet changes.
-    #
-    #     Log warning when requested page is already attached.
-    #
-    #     :param p_page: page to add.
-    #     """
-    #     id_page = id(p_page)
-    #     if id_page in self._pages.keys():
-    #         logger.warning(
-    #             'Duplicate page: {} ({}.{})'.format(
-    #                 hex(id_page),
-    #                 self.__class__.__name__, self.attach_page.__name__))
-    #         return
-    #
-    #     self._infoid.attach_view(p_page.get_infoid())
-    #     self.attach_view_topics(p_page.get_view_topics())
-    #     self._pages[id(p_page)] = p_page
-
     # def attach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
     #     """Add view to update dialpay when topics outline changes.
     #
@@ -139,42 +120,6 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
         # self.set_stale()
         # self._close_topic(None)
         # self._topics.clear()
-
-    # def detach_all(self) -> None:
-    #     """Detach all pages from sheet."""
-    #     while self._pages:
-    #         _id_page, page = self._pages.popitem()
-    #         self._detach_attribute_views(page)
-    #         page.close_page()
-
-    # def _detach_attribute_views(
-    #         self, p_page: ABC_SHEET.InterfacePageSheet) -> None:
-    #     """For each sheet attribute with a distinct view, remove the
-    #     view for the attribute.
-    #
-    #     :param p_page: page for factsheet as a whole.
-    #     """
-    #     self._infoid.detach_view(p_page.get_infoid())
-    #     self.detach_view_topics(p_page.get_view_topics())
-
-    # def detach_page(self, p_page: ABC_SHEET.InterfacePageSheet) -> None:
-    #     """Remove one page from sheet.
-    #
-    #     Log warning when requested page is not attached.
-    #
-    #     :param p_view: page to remove.
-    #     """
-    #     id_page = id(p_page)
-    #     try:
-    #         self._pages.pop(id_page)
-    #     except KeyError:
-    #         logger.warning(
-    #             'Missing page: {} ({}.{})'.format(
-    #                 hex(id_page),
-    #                 self.__class__.__name__, self.detach_page.__name__))
-    #         return
-    #
-    #     self._detach_attribute_views(p_page)
 
     # def detach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
     #     """Remove topics outline view.
@@ -278,20 +223,6 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
         summary = SummarySheet()
         title = TitleSheet()
         return name, summary, title
-
-    def n_pages(self) -> int:
-        """Return number of pages attached to factsheet."""
-        raise NotImplementedError
-        # return len(self._pages)
-
-    def present_pages(self, p_time: int) -> None:
-        """Notify all pages to make them visible to user.
-
-        :param p_time: timestamp of event requesting presentation.
-        """
-        raise NotImplementedError
-        # for page in self._pages.values():
-        #     page.present(p_time)
 
     def set_fresh(self) -> None:
         """Mark factsheet in memory consistent with file contents."""
