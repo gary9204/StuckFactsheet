@@ -46,7 +46,7 @@ class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
         self.close_called = False
         self.present_called = False
 
-    def close(self):
+    def erase(self):
         self._control.remove_view(self)
         self.close_called = True
 
@@ -346,7 +346,7 @@ class TestControlSheet:
         assert target is patch.control_sheet
 
     def test_remove_view_is_safe_approved(self):
-        """| Confirm return shows safe to close.
+        """| Confirm return shows safe to erase.
         | Case: user approves
         """
         # Setup
@@ -359,7 +359,7 @@ class TestControlSheet:
         assert target.remove_view_is_safe()
 
     def test_remove_view_is_safe_fresh(self):
-        """| Confirm return shows safe to close.
+        """| Confirm return shows safe to erase.
         | Case: no unsaved changes
         """
         # Setup
@@ -372,7 +372,7 @@ class TestControlSheet:
         assert target.remove_view_is_safe()
 
     def test_remove_view_is_safe_multi(self):
-        """| Confirm return shows safe to close.
+        """| Confirm return shows safe to erase.
         | Case: multiple windows
         """
         # Setup
@@ -387,7 +387,7 @@ class TestControlSheet:
         assert target.remove_view_is_safe()
 
     def test_remove_view_is_safe_unsafe(self):
-        """Confirm return shows  not safe to close."""
+        """Confirm return shows  not safe to erase."""
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
         view = PatchObserverControlSheet(p_control=target)
@@ -452,7 +452,7 @@ class TestControlSheet:
             logging.Logger, 'warning', patch_logger.warning)
         log_message = ('Missing: sheet 0x{:X} remove view 0x{:X}  '
                        '(ControlSheet.remove_view)'
-                       ''.format(id_view, id(target)))
+                       ''.format(id(target), id_view))
         # Test
         target.remove_view(view)
         assert patch_logger.called
@@ -1022,7 +1022,7 @@ class TestObserverControlSheet:
     """Unit tests for :class:`ObserverControlSheet`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (CSHEET.ObserverControlSheet, 'close'),
+        (CSHEET.ObserverControlSheet, 'erase'),
         (CSHEET.ObserverControlSheet, 'present'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):

@@ -193,7 +193,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
         </interface>
         """
 
-    text_direct = ('&lt;i&gt;Cancel close, or continue to close and'
+    text_direct = ('&lt;i&gt;Cancel erase, or continue to erase and'
                    ' discard changes?&lt;/i&gt;'
                    )
     ui_dialog = form_dialog.format(text_direct)
@@ -203,7 +203,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     dialog.set_transient_for(p_parent)
     dialog.set_destroy_with_parent(True)
     form_warn = ('Factsheet {} contains unsaved changes.  All unsaved'
-                 ' changes will be discarded if you close.'
+                 ' changes will be discarded if you erase.'
                  )
     text_warn = form_warn.format(p_name)
     warning = builder.get_object('ui_warning')
@@ -242,7 +242,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
     .. attribute:: ALLOW_CLOSE
 
-        Indicates GTK should close a factsheet view.
+        Indicates GTK should erase a factsheet view.
 
     .. attribute:: DENY_CLOSE
 
@@ -309,7 +309,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # _id = self._context_name.connect('closed', self.on_popdown_name)
         # _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
         _id = self._window.connect('delete-event', self.on_close_view_sheet)
-        # _id = self._window.connect('delete-event', self.on_close_page)
 
         # Application Title
         # UI.new_action_active(
@@ -335,15 +334,13 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     self._window, 'flip-summary', self.on_flip_summary)
         UI.new_action_active(self._window, 'open-view-sheet',
                              self.on_open_view_sheet)
-        UI.new_action_active(self._window, 'close-view-sheet',
-                             lambda _a, _t: self._window.close())
         # UI.new_action_active_dialog(
         #     self._window, 'show-help-sheet-display',
         #     self.on_show_dialog, UI.HELP_SHEET_DISPLAY)
 
         # Factsheet File Menu
-        # UI.new_action_active(
-        #     self._window, 'delete-sheet', self.on_delete_sheet)
+        UI.new_action_active(
+            self._window, 'delete-sheet', self.on_delete_sheet)
         # UI.new_action_active_dialog(
         #     self._window, 'show-help-sheet-file',
         #     self.on_show_dialog, UI.HELP_SHEET_FILE)
@@ -443,16 +440,10 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         site_title_sheet.pack_start(
             editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-    def close(self) -> None:
-        """Close page unconditionally.
-
-        This method provides direct means to clase a page, for example
-        when closing all pages of a factsheet.
-        """
-        raise NotImplementedError
-        # self._window.hide()
-        # self._close_window = True
-        # self._window.close()
+    def erase(self) -> None:
+        """Destroy visible portion of sheet view."""
+        self._window.hide()
+        self._window.destroy()
 
     def close_topic(self, p_id) -> None:
         # def close_topic(self, p_id: VTYPES.TagTopic) -> None:
@@ -460,7 +451,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         Closing a topic pane removes the pane from the factsheet page.
 
-        :param p_id: identity of topic pane to close.
+        :param p_id: identity of topic pane to erase.
         """
         raise NotImplementedError
         # name_scene = hex(p_id)
@@ -591,21 +582,11 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         approves.  The method deletes the factsheet unconditionally if
         no changes would be lost.
         """
-        raise NotImplementedError
-        # assert self._control is not None
-        # effect = self._control.delete_safe()
-        # if effect is ABC_SHEET.EffectSafe.COMPLETED:
-        #     return
-        #
-        # self._warning_data_loss.set_markup(
-        #     'Factsheet "<b>{}</b>" contains unsaved changes.  All'
-        #     'unsaved changes will be discarded if you close.'
-        #     ''.format('Unnamed'))
-        #
-        # response = self._dialog_data_loss.run()
-        # self._dialog_data_loss.hide()
-        # if response == Gtk.ResponseType.APPLY:
-        #     self._control.delete_force()
+        if self._control.model.is_stale():
+            if ViewSheet.DENY_CLOSE == self.confirm_close():
+                return
+
+        CSHEET.g_control_app.close_factsheet(p_control=self._control)
 
     def on_delete_topic(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:

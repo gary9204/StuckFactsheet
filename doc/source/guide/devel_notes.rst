@@ -133,6 +133,35 @@ time.
 
         .. _Git: https://git-scm.com/
 
+Lessons Learned
+---------------
+
+Asynchronous Behavior
+^^^^^^^^^^^^^^^^^^^^^
+When a method evokes a GTK signal, GTK might not process the signal until
+after the method completes.  This may cause unexpected behavior
+especially when the method evokes the signal indirectly.
+
+One implementation of :meth:`.ControlSheet.remove_all_views`
+serves as an example.  Method :meth:`.remove_all_views`
+relied on a :class:`.ViewSheet` method both to 
+destroy the GTK visual element and to stop tracking the sheet view.  
+The :class:`.ViewSheet` method emitted a Gtk.Window.delete-event_ signal and the
+:class:`.ViewSheet` signal handler called
+:meth:`.ControlSheet.remove_view` to stop tracking the sheet view.
+The :class:`.ViewSheet` method returned before the signal handler called
+:meth:`.remove_view` and :meth:`.remove_all_views` would enter an
+infinite loop.
+
+The fix was to replace the original method with :meth:`.ViewSheet.erase`
+and to have :meth:`.remove_all_views` directly call :meth:`.remove_view`
+for each view.
+
+.. _Gtk.Window.delete-event: https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
+    Widget.html#Gtk.Widget.signals.delete_event
+
+
+
 .. warning:: The text after this point is under review. Portions of
     the text are inaccurate and incomplete.
 

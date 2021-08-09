@@ -84,7 +84,7 @@ class ControlApp:
     def close_factsheet(self, p_control: 'ControlSheet') -> None:
         """Remove all factsheet's views, which stops factsheet tracking.
 
-        :param p_control: factsheet to close.
+        :param p_control: factsheet to erase.
         """
         p_control.remove_all_views()
 
@@ -123,7 +123,7 @@ class ControlApp:
 
         Log a warning when the control is not in the collection.
 
-        :param p_control: factsheet to close.
+        :param p_control: factsheet to erase.
         """
         id_control = id_factsheet(p_control)
         try:
@@ -142,7 +142,7 @@ class ControlSheet:
 
     Class :class:`ControlSheet` translates user requests in a factsheet
     view into changes in the factsheet model (such as save or delete) or
-    in the collection of factsheet views (such as add or close a view).
+    in the collection of factsheet views (such as add or erase a view).
     """
 
     def __init__(self, p_path: Path = None) -> None:
@@ -225,7 +225,8 @@ class ControlSheet:
         views = self._roster_views.values()
         while views:
             view = next(iter(views))
-            view.close()
+            view.erase()
+            self.remove_view(p_view=view)
 
     def remove_view(self, p_view: 'ObserverControlSheet') -> None:
         """Stop tracking given sheet view but warn of missing view."""
@@ -234,7 +235,7 @@ class ControlSheet:
             self._roster_views.pop(id_view)
         except KeyError:
             logger.warning('Missing: sheet 0x{:X} remove view 0x{:X}  '
-                           '({}.{})'.format(id_view, id_factsheet(self),
+                           '({}.{})'.format(id_factsheet(self), id_view,
                                             self.__class__.__name__,
                                             self.remove_view.__name__))
             return
@@ -244,10 +245,10 @@ class ControlSheet:
             g_control_app.remove_factsheet(p_control=self)
 
     def remove_view_is_safe(self) -> bool:
-        """Return True when the control can safely close a sheet view.
+        """Return True when the control can safely erase a sheet view.
 
         A factsheet closes when it has no views.  A sheet control may
-        safely close a sheet view when:
+        safely erase a sheet view when:
 
         * The factsheet contains no unsaved changes or
         * The factsheet has more than one view or
@@ -498,12 +499,12 @@ class ObserverControlSheet(abc.ABC):
     In general, a sheet view requests services from its sheet control.
     For a few exceptions, a sheet view acts as an observer of its sheet
     control.  A sheet control notifies its views when to present to the
-    user and when to close.
+    user and when to erase.
     """
 
     @abc.abstractmethod
-    def close(self) -> None:
-        """Close sheet view."""
+    def erase(self) -> None:
+        """Destroy visible portion of sheet view."""
         raise NotImplementedError
 
     @abc.abstractmethod
