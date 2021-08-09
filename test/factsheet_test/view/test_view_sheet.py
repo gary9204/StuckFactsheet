@@ -723,7 +723,6 @@ class TestViewSheet:
         monkeypatch.setattr(Gtk.Window, 'destroy', patch_destroy.destroy)
 
         control = CSHEET.g_control_app.open_factsheet(p_path=None)
-        control._is_closing = True
         target = VSHEET.ViewSheet(p_control=control)
         # Test
         target.erase()
@@ -2835,7 +2834,6 @@ class TestViewSheet:
         """
         # Setup
         control = CSHEET.g_control_app.open_factsheet(p_path=None)
-        control._is_closing = True
         id_control = CSHEET.id_factsheet(p_control_sheet=control)
         target = VSHEET.ViewSheet(p_control=control)
         # Test
@@ -2855,7 +2853,6 @@ class TestViewSheet:
         monkeypatch.setattr(
             Gtk.Dialog, 'run', lambda _s: Gtk.ResponseType.APPLY)
         control = CSHEET.g_control_app.open_factsheet(p_path=None)
-        control._is_closing = True
         id_control = CSHEET.id_factsheet(p_control_sheet=control)
         target = VSHEET.ViewSheet(p_control=control)
         # Test
@@ -2875,7 +2872,6 @@ class TestViewSheet:
         monkeypatch.setattr(
             Gtk.Dialog, 'run', lambda _s: Gtk.ResponseType.CANCEL)
         control = CSHEET.g_control_app.open_factsheet(p_path=None)
-        control._is_closing = True
         id_control = CSHEET.id_factsheet(p_control_sheet=control)
         target = VSHEET.ViewSheet(p_control=control)
         id_target = CSHEET.id_view_sheet(p_view_sheet=target)

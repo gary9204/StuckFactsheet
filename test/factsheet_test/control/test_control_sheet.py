@@ -43,12 +43,11 @@ class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
 
     def __init__(self, p_control):
         self._control = p_control
-        self.close_called = False
+        self.erase_called = False
         self.present_called = False
 
     def erase(self):
-        self._control.remove_view(self)
-        self.close_called = True
+        self.erase_called = True
 
     def present(self, p_time):
         _ = p_time
@@ -118,7 +117,7 @@ class TestControlApp:
         view_removed = next(iter(control_removed._roster_views.values()))
         # Test
         target.close_factsheet(p_control=control_removed)
-        assert view_removed.close_called
+        assert view_removed.erase_called
         assert not control_removed._roster_views
         assert id_removed not in target._roster_sheets.keys()
         assert len(items) == len(target._roster_sheets)
@@ -281,7 +280,6 @@ class TestControlSheet:
         assert MODEL_DEFAULT == target._model
         assert isinstance(target._roster_views, dict)
         assert not target._roster_views
-        assert not target._is_closing
         # assert not target._controls_topic
 
     def test_add_view(self):
@@ -340,23 +338,9 @@ class TestControlSheet:
             target.add_view(p_view=view)
         # Test
         target.remove_all_views()
-        assert target._is_closing
         assert not target._roster_views
         assert patch.called
         assert target is patch.control_sheet
-
-    def test_remove_view_is_safe_approved(self):
-        """| Confirm return shows safe to erase.
-        | Case: user approves
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        target.add_view(view)
-        target._model.set_stale()
-        target._is_closing = True
-        # Test
-        assert target.remove_view_is_safe()
 
     def test_remove_view_is_safe_fresh(self):
         """| Confirm return shows safe to erase.
@@ -367,7 +351,6 @@ class TestControlSheet:
         view = PatchObserverControlSheet(p_control=target)
         target.add_view(view)
         target._model.set_fresh()
-        target._is_closing = False
         # Test
         assert target.remove_view_is_safe()
 
@@ -382,7 +365,6 @@ class TestControlSheet:
         view_extra = PatchObserverControlSheet(p_control=target)
         target.add_view(view_extra)
         target._model.set_stale()
-        target._is_closing = False
         # Test
         assert target.remove_view_is_safe()
 
@@ -393,7 +375,6 @@ class TestControlSheet:
         view = PatchObserverControlSheet(p_control=target)
         target.add_view(view)
         target._model.set_stale()
-        target._is_closing = False
         # Test
         assert not target.remove_view_is_safe()
 

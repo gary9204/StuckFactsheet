@@ -151,7 +151,6 @@ class ControlSheet:
         self._model = self._model_from_path(p_path)
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()
-        self._is_closing = False
         # self._controls_topic: typing.Dict[
         #     MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
 
@@ -221,7 +220,6 @@ class ControlSheet:
 
     def remove_all_views(self) -> None:
         """Stop tracking all views of the factsheet."""
-        self._is_closing = True
         views = self._roster_views.values()
         while views:
             view = next(iter(views))
@@ -255,7 +253,6 @@ class ControlSheet:
         * The user approves closing the factsheet.
         """
         if (self.is_stale()
-                and not self._is_closing
                 and 1 == len(self._roster_views)):
             return False
 
