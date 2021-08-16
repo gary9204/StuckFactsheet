@@ -2,15 +2,7 @@
 Unit tests for class to display Factsheet document.  See
 :mod:`.view_sheet`.
 
-.. _Pytest capfd:
-   https://docs.pytest.org/en/latest/how-to/
-   capture-stdout-stderr.html#captures
-
-.. _Pytest caplog:
-   https://docs.pytest.org/en/latest/how-to/logging.html#logging
-
-.. _Pytest monkeypatch:
-   https://docs.pytest.org/en/latest/how-to/monkeypatch.html
+.. include:: /test/refs_include_pytest.txt
 """
 import logging
 # import math

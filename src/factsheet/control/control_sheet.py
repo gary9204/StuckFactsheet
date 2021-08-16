@@ -19,12 +19,10 @@ whole.
     Distinct type for unique identifier of a sheet view.
 """
 import abc
-import enum
-# import errno
 import logging
 from pathlib import Path
 import pickle
-# import traceback as TB
+import traceback as TB
 import typing   # noqa
 
 
@@ -43,6 +41,36 @@ logger = logging.getLogger('Main.CSHEET')
 
 IdFactsheet = typing.NewType('IdFactsheet', int)
 IdViewSheet = typing.NewType('IdViewSheet', int)
+
+
+class ExceptionSheet(Exception):
+    """Base class for Factsheet exceptions."""
+
+    pass
+
+
+class BackupFileError(ExceptionSheet):
+    """Raise for errors backing up a file during save operation."""
+
+    pass
+
+
+class DumpFileError(ExceptionSheet):
+    """Raise for errors dumping sheet up a file."""
+
+    pass
+
+
+class NoFileError(ExceptionSheet):
+    """Raise for file operations when when factsheet has no file path."""
+
+    pass
+
+
+class OpenFileError(ExceptionSheet):
+    """Raise for errors opening a file."""
+
+    pass
 
 
 def id_factsheet(p_control_sheet: 'ControlSheet') -> IdFactsheet:
@@ -159,7 +187,7 @@ class ControlSheet:
         id_view = id_view_sheet(p_view_sheet=p_view)
         if id_view in self._roster_views:
             logger.warning('Duplicate: sheet 0x{:X} add view 0x{:X}  '
-                           '({}.{})'.format(id_view, id_factsheet(self),
+                           '({}.{})'.format(id_factsheet(self), id_view,
                                             self.__class__.__name__,
                                             self.add_view.__name__))
         self._roster_views[id_view_sheet(p_view)] = p_view
@@ -185,7 +213,7 @@ class ControlSheet:
         except FileNotFoundError:
             model = MSHEET.Sheet()
         except Exception:
-            raise NotImplementedError
+            raise
             # name = 'OPEN ERROR'
             # summary = TB.format_exc()
             # title = 'Error opening file \'{}\''.format(p_path)
@@ -417,28 +445,6 @@ class ControlSheet:
         # control = ControlSheet(p_path=p_path)
         # return control
 
-    def _open_guard(self) -> typing.BinaryIO:
-        """Backup existing file when opening for save.
-
-        Backup provides (minimal) guard against inadvertent overwrite.
-        Backup and open are combined to minimize risk of race condition.
-
-        :raises OSError: When control cannot open file at control's
-           path.
-        :returns: Open file object at control's path.
-        """
-        raise NotImplementedError
-        # assert self._path is not None
-        # try:
-        #     io_out = self._path.open(mode='xb')
-        # except OSError as err:
-        #     if errno.EEXIST == err.errno:
-        #         self._path.replace(str(self._path) + '~')
-        #         io_out = self._path.open(mode='xb')
-        #     else:
-        #         raise
-        # return io_out
-
     @property
     def path(self) -> typing.Optional[Path]:
         """Return path to file containing factsheet contents."""
@@ -453,41 +459,49 @@ class ControlSheet:
         # assert self._model is not None
         # self._model.present_pages(p_time)
 
-    def save(self) -> None:
-        """Save factsheet contents to file.
+    def save(self, p_path: typing.Optional[Path] = None) -> None:
+        """Save factsheet contents to file at factsheet's path.
 
-        Log a warning when control has no file path.
+        :param p_path: path to replace factsheet's path.
 
+        :raises BackupFileError: when backup fails.
+        :raises OpenFileError: for all other errors.
+        :raises NoFileError: when path to save file is None.
         :raises OSError: when control cannot open file at path.
         """
-        raise NotImplementedError
-        # assert self._model is not None
-        # if self._path is None:
-        #     logger.warning('No file path ({}.{})'.format(
-        #         self.__class__.__name__, self.save.__name__))
-        #     return
-        #
-        # self._model.set_fresh()
-        # with self._open_guard() as io_out:
-        #     pickle.dump(self._model, io_out)
+        if p_path is not None:
+            self._path = p_path
+        with self._open_file_save() as io_out:
+            try:
+                pickle.dump(self._model, io_out)
+            except Exception as err_dump:
+                raise DumpFileError from err_dump
+        self._model.set_fresh()
 
-    def save_as(self, p_path: Path) -> None:
-        """Save factsheet contents to file at given path.
+    def _open_file_save(self) -> typing.BinaryIO:
+        """Return an open, empty file after backing up existing file.
 
-        :param p_path: file system path to file.
-        :raises OSError: when control cannot open file at path.
+        Backup provides (minimal) guard against inadvertent overwrite.
+
+        :raises ExceptionSheet: see :meth:`~.ControlSheet.save`.
+        :returns: Open file object at control's path.
         """
-        raise NotImplementedError
-        # self._path = p_path
-        # subtitle_base = self._path.name
-        # assert self._model is not None
-        # self._model.update_titles(subtitle_base)
-        # self.save()
-
-    # @property
-    # def sheets_active(self) -> CPOOL.PoolSheets:
-    #     """Return collection of active factsheets."""
-    #     return self._sheets_active
+        if self._path is None:
+            raise NoFileError('Save: cannot open path None.')
+        try:
+            io_out = self._path.open(mode='xb')
+        except FileExistsError:
+            try:
+                self._path.replace(str(self._path) + '~')
+            except Exception as err_replace:
+                raise BackupFileError from err_replace
+            try:
+                io_out = self._path.open(mode='xb')
+            except Exception as err_reopen:
+                raise OpenFileError from err_reopen
+        except Exception as err_open:
+            raise OpenFileError from err_open
+        return io_out
 
 
 class ObserverControlSheet(abc.ABC):

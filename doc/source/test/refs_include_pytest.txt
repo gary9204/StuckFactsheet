@@ -1,0 +1,15 @@
+.. Commonly used links to pytest.
+
+.. _Pytest capfd:
+   https://docs.pytest.org/en/latest/how-to/
+   capture-stdout-stderr.html#captures
+
+.. _Pytest caplog:
+   https://docs.pytest.org/en/latest/how-to/logging.html#logging
+
+.. _Pytest monkeypatch:
+   https://docs.pytest.org/en/latest/how-to/monkeypatch.html
+
+.. _Pytest tmp_path:
+   https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path
+

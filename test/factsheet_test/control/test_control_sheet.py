@@ -5,16 +5,20 @@ Unit tests for class that mediates factsheet-level interactions from
 
 Unit tests for class that tracks and maintains pool of active
 factsheets.  See :mod:`.pool`.
+
+.. include:: /test/refs_include_pytest.txt
 """
-import logging
+import io
+# import logging
 from pathlib import Path
-# import pickle
+import pickle
 import pytest   # type: ignore[import]
 # import typing
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 import factsheet.control.control_sheet as CSHEET
 import factsheet.model.sheet as MSHEET
+import errno
 # from factsheet.control import control_topic as CTOPIC
 # from factsheet.control import pool as CPOOL
 # from factsheet.model import topic as MTOPIC
@@ -272,10 +276,9 @@ class TestControlSheet:
     def test_init(self):
         """Confirm initialization."""
         # Setup
-        PATH = None
         MODEL_DEFAULT = MSHEET.Sheet()
         # Test
-        target = CSHEET.ControlSheet(p_path=PATH)
+        target = CSHEET.ControlSheet(p_path=None)
         assert target._path is None
         assert MODEL_DEFAULT == target._model
         assert isinstance(target._roster_views, dict)
@@ -294,7 +297,7 @@ class TestControlSheet:
         target.add_view(view)
         assert target._roster_views[id_view] is view
 
-    def test_add_view_warn(self, PatchLogger, monkeypatch):
+    def test_add_view_warn(self, caplog):
         """| Confirm tracking of given sheet view.
         | Case: duplicate view
         """
@@ -302,22 +305,25 @@ class TestControlSheet:
         target = CSHEET.ControlSheet(p_path=None)
         view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
         log_message = ('Duplicate: sheet 0x{:X} add view 0x{:X}  '
                        '(ControlSheet.add_view)'
-                       ''.format(id_view, id(target)))
+                       ''.format(id(target), id_view))
+        N_LOGS = 1
+        LAST = -1
+        target.add_view(view)
         # Test
         target.add_view(view)
-        assert not patch_logger.called
-        target.add_view(view)
         assert target._roster_views[id_view] is view
-        assert patch_logger.called
-        assert log_message == patch_logger.message
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
 
     def test_remove_all_views(self, monkeypatch):
-        """Confirm tracking stops for all sheet views."""
+        """Confirm tracking stops for all sheet views.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         class PatchControlApp:
             def __init__(self):
@@ -396,6 +402,8 @@ class TestControlSheet:
     def test_remove_view_single(self, monkeypatch):
         """| Confirm tracking stops for given sheet view.
         | Case: single view tracked
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
         class PatchControlApp:
@@ -420,24 +428,27 @@ class TestControlSheet:
         assert patch.called
         assert target is patch.control_sheet
 
-    def test_remove_view_warn(self, PatchLogger, monkeypatch):
+    def test_remove_view_warn(self, caplog):
         """| Confirm tracking stops for given sheet view.
         | Case: view not tracked
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
         view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
+        N_LOGS = 1
+        LAST = -1
         log_message = ('Missing: sheet 0x{:X} remove view 0x{:X}  '
                        '(ControlSheet.remove_view)'
                        ''.format(id(target), id_view))
         # Test
         target.remove_view(view)
-        assert patch_logger.called
-        assert log_message == patch_logger.message
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
 
     @pytest.mark.skip
     def test_attach_view_topics(self, monkeypatch):
@@ -614,8 +625,7 @@ class TestControlSheet:
         :param MODEL_IS_STALE: state of change in model.
         """
         # Setup
-        PATH = None
-        target = CSHEET.ControlSheet(p_path=PATH)
+        target = CSHEET.ControlSheet(p_path=None)
         method_model = getattr(target._model, METHOD)
         method_target = getattr(target, METHOD)
         target._model._stale = MODEL_IS_STALE
@@ -648,8 +658,7 @@ class TestControlSheet:
         model_method = getattr(model, NAME_METHOD)
         model_view = model_method()
         model_check = getattr(model_view, NAME_CHECK)
-        PATH = None
-        target = CSHEET.ControlSheet(p_model=model, p_path=PATH)
+        target = CSHEET.ControlSheet(p_model=model, p_path=None)
         target_method = getattr(target, NAME_METHOD)
         # Test
         target_view = target_method()
@@ -687,7 +696,7 @@ class TestControlSheet:
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        target = CSHEET.ControlSheet(p_path=PATH)
+        target = CSHEET.ControlSheet(p_path=None)
         model_default = MSHEET.Sheet()
         # Test
         model = target._model_from_path(p_path=PATH)
@@ -721,11 +730,10 @@ class TestControlSheet:
         | Case: no path
         """
         # Setup
-        PATH = None
-        target = CSHEET.ControlSheet(p_path=PATH)
+        target = CSHEET.ControlSheet(p_path=None)
         model_default = MSHEET.Sheet()
         # Test
-        model = target._model_from_path(p_path=PATH)
+        model = target._model_from_path(p_path=None)
         assert model_default == model
 
     @pytest.mark.skip
@@ -807,144 +815,174 @@ class TestControlSheet:
     #     # # Test: no delete
     #     # assert target_prop.fdel is None
 
-    @pytest.mark.skip
     def test_save(self, tmp_path):
         """| Confirm write to file.
         | Case: file does not exist.
         """
-        # # Setup
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # model.set_stale()
-        # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
-        # source._model = model
-        # source._path = PATH
-        # assert not PATH.exists()
-        # # Test
-        # source.save()
-        # assert PATH.exists()
-        # assert source._model.is_fresh()
-        #
-        # with PATH.open(mode='rb') as io_in:
-        #     target = pickle.load(io_in)
-        # assert target is not None
-        # assert TITLE == target._infoid.title
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target._path = PATH
+        target.model.set_stale()
+        assert not PATH.exists()
+        # Test
+        target.save()
+        assert target.model.is_fresh()
+        assert PATH.exists()
+        with PATH.open(mode='rb') as io_in:
+            model_disk = pickle.load(io_in)
+        assert model_disk is not None
+        assert target.model == model_disk
 
-    @pytest.mark.skip
-    def test_save_as(self, monkeypatch, tmp_path):
-        """Confirm write to file at new path."""
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self):
-        #         self.called = False
-        #         self.base = ''
-        #
-        #     def update_titles(self, p_base):
-        #         self.called = True
-        #         self.base = p_base
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'update_titles', patch_model.update_titles)
-        #
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # model.set_stale()
-        # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
-        # source._model = model
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # assert not PATH.exists()
-        # # Test
-        # source.save_as(PATH)
-        # assert PATH == source._path
-        # assert PATH.exists()
-        # assert source._model.is_fresh()
-        #
-        # with PATH.open(mode='rb') as io_in:
-        #     target = pickle.load(io_in)
-        # assert target is not None
-        # assert TITLE == target._infoid.title
-        # assert patch_model.called
-        # assert PATH.name == patch_model.base
-
-    @pytest.mark.skip
-    def test_save_oserror(self, monkeypatch, tmp_path):
+    def test_save_except(self, monkeypatch, tmp_path):
         """| Confirm write to file.
-        | Case: unexpected operating system exception.
+        | Case: dump to file fails.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
         """
-        # # Setup
-        # def open_oserror(_s, **_kwa): raise OSError
-        #
-        # monkeypatch.setattr(Path, 'open', open_oserror)
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # model.set_stale()
-        # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
-        # source._model = model
-        # source._path = PATH
-        # # Test
-        # with pytest.raises(OSError):
-        #     source.save()
+        # Setup
+        ERROR = 'Random Error'
 
-    @pytest.mark.skip
-    def test_save_exists(self, tmp_path):
+        def patch_dump(_object, _file):
+            raise pickle.PicklingError(ERROR)
+
+        monkeypatch.setattr(pickle, 'dump', patch_dump)
+        target = CSHEET.ControlSheet(p_path=None)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target._path = PATH
+        target.model.set_stale()
+        assert not PATH.exists()
+        # Test
+        with pytest.raises(CSHEET.DumpFileError) as exc_info:
+            target.save()
+        cause = exc_info.value.__cause__
+        assert isinstance(cause, pickle.PicklingError)
+        assert (ERROR,) == cause.args
+        assert ERROR == str(cause)
+
+    def test_save_new_path(self, tmp_path):
         """| Confirm write to file.
+        | Case: replace path to save file.
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target.model.set_stale()
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        assert not PATH.exists()
+        # Test
+        target.save(p_path=PATH)
+        assert PATH is target.path
+        assert target.model.is_fresh()
+        assert PATH.exists()
+
+    def test_open_file_save(self, tmp_path):
+        """| Confirm file open.
+        | Case: file does not exist.
+        """
+        # Setup
+        MODE = 'xb'
+        target = CSHEET.ControlSheet(p_path=None)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target._path = PATH
+        # Test
+        with target._open_file_save() as io_out:
+            assert isinstance(io_out, io.BufferedWriter)
+            assert MODE == io_out.mode
+
+    @pytest.mark.parametrize('PATCH_EXC, REPLACE, RAISE, I_EXC', [
+        ((ValueError('Error open'), Exception('Oops!'), Exception('Replace')),
+            False, pytest.raises(CSHEET.OpenFileError), 0),
+        ((FileExistsError('Oops!'), Exception('Error reopen'),
+            Exception('Replace')), False,
+            pytest.raises(CSHEET.OpenFileError), 1),
+        ((FileExistsError('Oops!'), Exception('Oops'), Exception('Replace')),
+            True, pytest.raises(CSHEET.BackupFileError), 2),
+        ])
+    def test_open_file_save_except(
+            self, PATCH_EXC, REPLACE, RAISE, I_EXC, monkeypatch, tmp_path):
+        """| Confirm file open.
+        | Case: open raises unanticipated exception.
+
+        :param PATCH_EXE: exceptions to raise in patched methods.
+        :param REPLACE: when True, raise exception in`replace` patch.
+        :param RAISE: expected exception.
+        :param I_EXC: index in PATCH_EXE of expected exception cause.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        I_EXC_OPEN = 0
+        I_EXC_REOPEN = 1
+        I_EXC_REPLACE = 2
+
+        class PatchPath:
+            def __init__(self): self.called = 0
+
+            def open(self, **_kwa):
+                if I_EXC_OPEN == self.called:
+                    self.called += 1
+                    raise PATCH_EXC[I_EXC_OPEN]
+                elif I_EXC_REOPEN == self.called:
+                    self.called += 1
+                    raise PATCH_EXC[I_EXC_REOPEN]
+                else:
+                    self.called += 1
+                    return None
+
+            def replace(self, _target):
+                if REPLACE:
+                    raise PATCH_EXC[I_EXC_REPLACE]
+                return None
+
+        patch_path = PatchPath()
+
+        monkeypatch.setattr(Path, 'open', patch_path.open)
+        monkeypatch.setattr(Path, 'replace', patch_path.replace)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target = CSHEET.ControlSheet(p_path=None)
+        target._path = PATH
+        # Test
+        with RAISE as exc_info:
+            with target._open_file_save() as _io_out:
+                pass
+        cause = exc_info.value.__cause__
+        assert isinstance(cause, type(PATCH_EXC[I_EXC]))
+        assert PATCH_EXC[I_EXC].args == cause.args
+        assert str(PATCH_EXC[I_EXC]) == str(cause)
+
+    def test_open_file_save_exists(self, tmp_path):
+        """| Confirm file open.
         | Case: file exists.
         """
-        # # Setup
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # TEXT = 'Existing content'
-        # with PATH.open(mode='w') as io_out:
-        #     io_out.write(TEXT)
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # model.set_stale()
-        # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
-        # source._model = model
-        # source._path = PATH
-        # assert PATH.exists()
-        # BACKUP = PATH.with_name(PATH.name + '~')
-        # assert not BACKUP.exists()
-        # # Test
-        # source.save()
-        # assert PATH.exists()
-        # assert source._model.is_fresh()
-        #
-        # with PATH.open(mode='rb') as io_in:
-        #     target = pickle.load(io_in)
-        # assert target is not None
-        #
-        # assert BACKUP.exists()
-        # with BACKUP.open(mode='r') as io_in:
-        #     backup_text = io_in.read()
-        # assert TEXT == backup_text
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        TEXT = 'What, the curtains?'
+        with PATH.open(mode='w') as io_out:
+            io_out.write(TEXT)
+        MODE = 'xb'
+        target = CSHEET.ControlSheet(p_path=None)
+        target._path = PATH
+        BACKUP = PATH.with_name(PATH.name + '~')
+        assert not BACKUP.exists()
+        # Test
+        with target._open_file_save() as io_out:
+            assert isinstance(io_out, io.BufferedWriter)
+            assert MODE == io_out.mode
+            assert BACKUP.exists()
+            with BACKUP.open(mode='r') as io_in:
+                backup_text = io_in.read()
+            assert TEXT == backup_text
 
-    @pytest.mark.skip
-    def test_save_no_path(self, PatchLogger, monkeypatch):
-        """| Confirm write to file.
-        | Case: no file path.
+    def test_open_file_save_no_path(self):
+        """| Confirm file open.
+        | Case: path is None.
         """
-        # # Setup
-        # patch_logger = PatchLogger()
-        # monkeypatch.setattr(
-        #     logging.Logger, 'warning', patch_logger.warning)
-        # log_message = ('No file path (ControlSheet.save)')
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
-        # source._model = model
-        # source._path = None
-        # # Test
-        # source.save()
-        # assert patch_logger.called
-        # assert log_message == patch_logger.message
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        MESSAGE = 'Save: cannot open path None.'
+        # Test
+        with pytest.raises(CSHEET.NoFileError, match=MESSAGE):
+            _io = target._open_file_save()
 
 
 class TestGlobal:
@@ -997,6 +1035,23 @@ class TestTypes:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_SOURCE
+
+
+class TestExceptions:
+    """Unit tests for exceptions defined in :mod:`.control_sheet`."""
+
+    @pytest.mark.parametrize('TARGET, SUPER', [
+        (CSHEET.ExceptionSheet, Exception),
+        (CSHEET.BackupFileError, CSHEET.ExceptionSheet),
+        (CSHEET.DumpFileError, CSHEET.ExceptionSheet),
+        (CSHEET.NoFileError, CSHEET.ExceptionSheet),
+        (CSHEET.OpenFileError, CSHEET.ExceptionSheet),
+        ])
+    def test_exceptions(self, TARGET, SUPER):
+        """Confirm presence of exceptions."""
+        # Setup
+        # Test
+        assert issubclass(TARGET, SUPER)
 
 
 class TestObserverControlSheet:
