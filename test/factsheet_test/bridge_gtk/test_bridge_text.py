@@ -1,6 +1,8 @@
 """
 Unit tests for GTK-based classes that implement abstract identification
 information classes.  See :mod:`.bridge_text`.
+
+.. include:: /test/refs_include_pytest.txt
 """
 import gi   # type: ignore[import]
 import logging
@@ -281,6 +283,26 @@ class TestBridgeTextMarkup:
     :class:`.TestBridgeTextCommon` contains additional unit tests for
     :class:`.BridgeTextMarkup`.
     """
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format."""
+        # Setup
+        PATH = Path(str(tmp_path / 'get_set.fsg'))
+        source = BTEXT.BridgeTextMarkup()
+        TEXT = 'Something completely different'
+        source._set_persist(TEXT)
+        source._stale = True
+        I_ENTRY = 0
+        source._views[I_ENTRY] = BTEXT.ViewTextDisplay()
+        # Test
+        with PATH.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert source._get_persist() == target._get_persist()
+        assert isinstance(target._views, dict)
+        assert not target._views
+        assert not target._stale
 
     def test_destroy_view(self):
         """| Confirm display-only view removal.

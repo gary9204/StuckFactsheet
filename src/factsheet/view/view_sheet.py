@@ -4,6 +4,7 @@ Defines class to display Factsheet document in a window.
 import gi   # type: ignore[import]
 import logging
 from pathlib import Path
+import traceback as TB
 import typing   # noqa
 
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
@@ -315,10 +316,10 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     self._window, 'open-sheet', self.on_open_sheet)
         UI.new_action_active(
             self._window, 'new-sheet', self.on_new_sheet)
-        # UI.new_action_active(
-        #     self._window, 'save-sheet', self.on_save_sheet)
-        # UI.new_action_active(
-        #     self._window, 'save-as-sheet', self.on_save_as_sheet)
+        UI.new_action_active(
+            self._window, 'save-sheet', self.on_save_sheet)
+        UI.new_action_active(
+            self._window, 'save-as-sheet', self.on_save_as_sheet)
 
         # Application Menu
         self._init_app_menu()
@@ -457,9 +458,23 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # name_scene = hex(p_id)
         # self._scenes_topic.remove_scene(name_scene)
 
-    # def get_infoid(self) -> VINFOID.ViewInfoId:
-    #     """Return view of factsheet identification information."""
-    #     return self._infoid
+    def get_path(self, p_suggest: Path = None) -> typing.Optional[Path]:
+        """Return path to factsheet file or None if user cancels.
+
+        :param p_suggest: path to suggest to user.
+        """
+        dialog = self._make_dialog_file(Gtk.FileChooserAction.SAVE)
+        if p_suggest:
+            _ = dialog.set_filename(str(p_suggest))
+        else:
+            dialog.set_current_name('factsheet.fsg')
+        response = dialog.run()
+        dialog.hide()
+        path_new = None
+        if response == Gtk.ResponseType.APPLY:
+            path_new = Path(dialog.get_filename())
+        del dialog
+        return path_new
 
     def get_view_topics(self):  # -> ASHEET.AdaptTreeViewTopic:
         """Return view of factsheet's topic outline."""
@@ -494,33 +509,33 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         :param p_action: dialog box action (Open or Save).
         :returns: File chooser dialog.
         """
-        raise NotImplementedError
-        # dialog = Gtk.FileChooserDialog(action=p_action)
-        # dialog.set_transient_for(self._window)
-        # dialog.set_destroy_with_parent(True)
-        # dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
-        #
+        dialog = Gtk.FileChooserDialog(action=p_action)
+        dialog.set_transient_for(self._window)
+        dialog.set_destroy_with_parent(True)
+        dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
+
         # label = 'Open'
-        # if p_action == Gtk.FileChooserAction.SAVE:
-        #     label = 'Save'
-        #     dialog.set_do_overwrite_confirmation(True)
-        # dialog.add_button(label, Gtk.ResponseType.APPLY)
-        # button_d = dialog.get_widget_for_response(
-        #     Gtk.ResponseType.APPLY)
-        # style_d = button_d.get_style_context()
-        # style_d.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
-        #
-        # filter_alpha = Gtk.FileFilter()
-        # filter_alpha.add_pattern('*.fsg')
-        # filter_alpha.set_name('Factsheet')
-        # dialog.add_filter(filter_alpha)
-        #
-        # filter_any = Gtk.FileFilter()
-        # filter_any.add_pattern('*')
-        # filter_any.set_name('Any')
-        # dialog.add_filter(filter_any)
-        #
-        # return dialog
+        label = 'Oops!'
+        if p_action == Gtk.FileChooserAction.SAVE:
+            label = 'Save'
+            dialog.set_do_overwrite_confirmation(True)
+        dialog.add_button(label, Gtk.ResponseType.APPLY)
+        button_d = dialog.get_widget_for_response(
+            Gtk.ResponseType.APPLY)
+        style_d = button_d.get_style_context()
+        style_d.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+
+        filter_alpha = Gtk.FileFilter()
+        filter_alpha.add_pattern('*.fsg')
+        filter_alpha.set_name('Factsheet')
+        dialog.add_filter(filter_alpha)
+
+        filter_any = Gtk.FileFilter()
+        filter_any.add_pattern('*')
+        filter_any.set_name('Any')
+        dialog.add_filter(filter_any)
+
+        return dialog
 
     @classmethod
     def new_factsheet(cls, px_app: Gtk.Application) -> 'ViewSheet':
@@ -745,30 +760,22 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def on_save_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
         """Persist factsheet contents to file."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # if self._control.path is None:
-        #     self.on_save_as_sheet(None, None)
-        # else:
-        #     self._control.save()
+        path_update = None
+        if self._control.path is None:
+            path_update = self.get_path(None)
+            if path_update is None:
+                return
+
+        self._control.save(path_update)
 
     def on_save_as_sheet(self, _action: Gio.SimpleAction,
                          _target: GLib.Variant) -> None:
         """Persist factsheet contents to file at new path."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # path_old = self._control.path
-        # dialog = self._make_dialog_file(Gtk.FileChooserAction.SAVE)
-        # if path_old:
-        #     _ = dialog.set_filename(str(path_old))
-        # else:
-        #     dialog.set_current_name('factsheet.fsg')
-        # response = dialog.run()
-        # dialog.hide()
-        # if response == Gtk.ResponseType.APPLY:
-        #     path_new = Path(dialog.get_filename())
-        #     self._control.save_as(path_new)
-        # del dialog
+        path_update = self.get_path(self._control.path)
+        if path_update is None:
+            return
+
+        self._control.save(path_update)
 
     def on_show_dialog(self, _action: Gio.SimpleAction,
                        _target: GLib.Variant, p_dialog: Gtk.Dialog
@@ -833,6 +840,47 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         """
         raise NotImplementedError
         # self._window.present_with_time(p_time)
+
+    def _report_error_sheet(self, p_err: Exception, p_message: str) -> None:
+        """Display error dialog to user.
+
+        :param p_err: error to display.
+        :param p_message: primary text for error dialog.
+        """
+        logger.error(p_message)
+        for line in TB.format_exception(
+                type(p_err), p_err, p_err.__traceback__):
+            logger.error(line)
+        dialog = Gtk.MessageDialog(message_type=Gtk.MessageType.ERROR)
+        dialog.set_markup(p_message)
+        text_cause = 'Error source is Factsheet.'
+        cause = p_err.__cause__
+        if cause is not None:
+            text_cause = 'Error source is {}: {}'.format(
+                type(cause).__name__, cause)
+        dialog.format_secondary_text(text_cause)
+        dialog.run()
+        del dialog
+
+    def save_sheet(self) -> None:
+        """Save factsheet to file with basic error handling."""
+        try:
+            self._control.save()
+        except CSHEET.BackupFileError as err:
+            text_prime = 'Factsheet not saved! could not make backup.'
+            self._report_error_sheet(err, text_prime)
+        except CSHEET.DumpFileError as err:
+            text_prime = 'Factsheet not saved! could not write file.'
+            self._report_error_sheet(err, text_prime)
+        except CSHEET.NoFileError as err:
+            text_prime = 'Factsheet not saved! no file selected.'
+            self._report_error_sheet(err, text_prime)
+        except CSHEET.OpenFileError as err:
+            text_prime = 'Factsheet not saved! could not open file.'
+            self._report_error_sheet(err, text_prime)
+        except Exception as err:
+            text_prime = 'Factsheet not saved! Application is broken!'
+            self._report_error_sheet(err, text_prime)
 
     def set_titles(self, p_subtitle: str):
         """Set title and subtitle of page's window.

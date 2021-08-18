@@ -6,7 +6,7 @@ Unit tests for class to display Factsheet document.  See
 """
 import logging
 # import math
-# from pathlib import Path
+from pathlib import Path
 import pytest   # type: ignore[import]
 
 # from factsheet.abc_types import abc_outline as ABC_OUTLINE
@@ -111,7 +111,7 @@ def patch_is_stale(monkeypatch, request):
 
 
 @pytest.fixture
-def patch_dialog_choose():
+def patch_dialog_choose(monkeypatch):
     """Pytest fixture returns stub
     `GtkFileChooserDialog <GtkFileChooserDialog_>`_.
 
@@ -119,14 +119,14 @@ def patch_dialog_choose():
        #Gtk-3.0/classes/FileChooserDialog.html
     """
     class PatchDialog:
-        def __init__(self, p_response, p_filename):
-            self.called_hide = False
+        def __init__(self, p_suggest, p_response):
             self.called_get_filename = False
+            self.called_hide = False
             self.called_run = False
             self.called_set_current_name = False
             self.called_set_filename = False
             self.response = p_response
-            self.filename = p_filename
+            self.filename = p_suggest
 
         def hide(self):
             self.called_hide = True
@@ -142,8 +142,11 @@ def patch_dialog_choose():
         def set_current_name(self, _n):
             self.called_set_current_name = True
 
-        def set_filename(self, _fn):
+        def set_filename(self, p_filename):
+            self.filename = p_filename
             self.called_set_filename = True
+
+    monkeypatch.setattr(Gtk.FileChooserDialog, 'hide', PatchDialog.hide)
 
     return PatchDialog
 
@@ -156,7 +159,7 @@ def patch_g_control_app():
     control_app = CSHEET.g_control_app
     for sheet in control_app._roster_sheets.values():
         for view in sheet._roster_views.values():
-            view._window.destroy()
+            del view._window
         sheet._roster_views.clear()
     control_app._roster_sheets.clear()
     CSHEET.g_control_app = CSHEET.ControlApp()
@@ -401,8 +404,8 @@ class TestViewSheet:
         # # Application Title
         # assert target._window.lookup_action('open-sheet') is not None
         assert target._window.lookup_action('new-sheet') is not None
-        # assert target._window.lookup_action('save-sheet') is not None
-        # assert target._window.lookup_action('save-as-sheet') is not None
+        assert target._window.lookup_action('save-sheet') is not None
+        assert target._window.lookup_action('save-as-sheet') is not None
         #
         # # Factsheet Menu
         # assert target._window.lookup_action('show-help-sheet') is not None
@@ -845,49 +848,39 @@ class TestViewSheet:
         # del page._window
         # del factsheet
 
-    @pytest.mark.skip
     @pytest.mark.parametrize('ACTION, LABEL', [
-        # (Gtk.FileChooserAction.SAVE, 'Save'),
+        (Gtk.FileChooserAction.SAVE, 'Save'),
         # (Gtk.FileChooserAction.OPEN, 'Open'),
         ])
-    def test_make_dialog_file(
-            self, patch_factsheet, capfd, ACTION, LABEL):
-        """Confirm construction of dialog for file save.
+    def test_make_dialog_file(self, ACTION, LABEL):
+        """Confirm construction of dialog for file save and open.
 
-        :param capfd: built-in fixture `Pytest capfd`_.
+        :param ACTION: dialog box action (Open or Save)
+        :param LABEL: response button label
         """
-        # # Setup
-        # factsheet = patch_factsheet()
-        # source = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # source._window.set_skip_pager_hint(True)
-        # source._window.set_skip_taskbar_hint(True)
-        # FILTERS = set(['Factsheet', 'Any'])
-        # # Test
-        # target = source._make_dialog_file(ACTION)
-        # assert isinstance(target, Gtk.FileChooserDialog)
-        # assert target.get_action() is ACTION
-        # assert target.get_transient_for() is source._window
-        # assert target.get_destroy_with_parent()
-        # if ACTION is Gtk.FileChooserAction.SAVE:
-        #     assert target.get_do_overwrite_confirmation()
-        #
-        # button = target.get_widget_for_response(Gtk.ResponseType.CANCEL)
-        # assert 'Cancel' == button.get_label()
-        #
-        # button = target.get_widget_for_response(Gtk.ResponseType.APPLY)
-        # assert LABEL == button.get_label()
-        # style = button.get_style_context()
-        # assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
-        #
-        # assert FILTERS == {f.get_name() for f in target.list_filters()}
-        # # Teardown
-        # source._window.destroy()
-        # del source._window
-        # del factsheet
+        # Setup
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        target._window.set_skip_taskbar_hint(True)
+        FILTERS = set(['Factsheet', 'Any'])
+        # Test
+        dialog = target._make_dialog_file(ACTION)
+        assert isinstance(dialog, Gtk.FileChooserDialog)
+        assert dialog.get_action() is ACTION
+        assert dialog.get_transient_for() is target._window
+        assert dialog.get_destroy_with_parent()
+        if ACTION is Gtk.FileChooserAction.SAVE:
+            assert dialog.get_do_overwrite_confirmation()
+
+        button = dialog.get_widget_for_response(Gtk.ResponseType.CANCEL)
+        assert 'Cancel' == button.get_label()
+
+        button = dialog.get_widget_for_response(Gtk.ResponseType.APPLY)
+        assert LABEL == button.get_label()
+        style = button.get_style_context()
+        assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+
+        assert FILTERS == {f.get_name() for f in dialog.list_filters()}
 
     @pytest.mark.skip
     def test_new_factsheet(self, patch_factsheet, capfd):
@@ -2257,7 +2250,7 @@ class TestViewSheet:
         # # Setup
         # PATH = Path(tmp_path / 'factsheet.fsg')
         # patch_dialog = patch_dialog_choose(
-        #     Gtk.ResponseType.APPLY, str(PATH))
+        #     str(PATH), Gtk.ResponseType.APPLY)
         # monkeypatch.setattr(
         #     Gtk.FileChooserDialog, 'get_filename', patch_dialog.get_filename)
         # monkeypatch.setattr(
@@ -2318,7 +2311,7 @@ class TestViewSheet:
         # # Setup
         # PATH = Path(tmp_path / 'factsheet.fsg')
         # patch_dialog = patch_dialog_choose(
-        #     Gtk.ResponseType.CANCEL, str(PATH))
+        #     str(PATH), Gtk.ResponseType.CANCEL)
         # monkeypatch.setattr(
         #     Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
         # monkeypatch.setattr(
@@ -2375,77 +2368,250 @@ class TestViewSheet:
         assert isinstance(view_new, VSHEET.ViewSheet)
         assert view_new._control is control
 
-    @pytest.mark.skip
-    def test_on_save_sheet(self, patch_factsheet, capfd, tmp_path):
-        """Confirm save to file.
-        Case: file path defined.
+    def test_on_save_as_sheet(self, monkeypatch, tmp_path):
+        """| Confirm file save with save as.
+        | Case: user provides file path.
 
-        :param capfd: built-in fixture `Pytest capfd`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
-        # # Setup
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target.link_factsheet(target, control)
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # control._path = PATH
-        # assert not control._path.exists()
-        # # Test
-        # target.on_save_sheet(None, None)
-        # assert control._path.exists()
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        monkeypatch.setattr(VSHEET.ViewSheet, 'get_path', lambda _s, _p: PATH)
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        assert not PATH.exists()
+        # Test
+        target.on_save_as_sheet(None, None)
+        assert control.path is PATH
+        assert control.path.exists()
 
-    @pytest.mark.skip
-    def test_on_save_sheet_none(self, monkeypatch, patch_factsheet, capfd):
-        """Confirm save to file.
-        Case: file path undefined.
+    def test_on_save_as_sheet_cancel(self, monkeypatch, tmp_path):
+        """| Confirm file save with save as.
+        | Case: user cancels save.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param capfd: built-in fixture `Pytest capfd`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
-        # # Setup
-        # class PatchSaveAs:
-        #     def __init__(self): self.called = False
-        #
-        #     def on_save_as_sheet(self, *_a): self.called = True
-        #
-        # patch_save_as = PatchSaveAs()
-        # monkeypatch.setattr(VSHEET.ViewSheet, 'on_save_as_sheet',
-        #                     patch_save_as.on_save_as_sheet)
-        #
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target.link_factsheet(target, control)
-        # control._path = None
-        # # Test
-        # target.on_save_sheet(None, None)
-        # assert patch_save_as.called
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
+        # Setup
+        monkeypatch.setattr(VSHEET.ViewSheet, 'get_path', lambda _s, _p: None)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        control._path = PATH
+        assert not control.path.exists()
+        target = VSHEET.ViewSheet(p_control=control)
+        # Test
+        target.on_save_as_sheet(None, None)
+        assert control.path is PATH
+        assert not control.path.exists()
+
+    def test_on_save_sheet(self, tmp_path):
+        """| Confirm file save.
+        | Case: file path defined.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        control._path = PATH
+        target = VSHEET.ViewSheet(p_control=control)
+        assert not control._path.exists()
+        # Test
+        target.on_save_sheet(None, None)
+        assert control._path.exists()
+
+    def test_on_save_sheet_cancel(self, monkeypatch):
+        """| Confirm file save.
+        | Case: no file path and user does not set one.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        monkeypatch.setattr(VSHEET.ViewSheet, 'get_path', lambda _s, _p: None)
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        # Test
+        target.on_save_sheet(None, None)
+        assert control.path is None
+
+    def test_on_save_sheet_none(self, monkeypatch, tmp_path):
+        """| Confirm save to file.
+        | Case: no file path.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        monkeypatch.setattr(VSHEET.ViewSheet, 'get_path', lambda _s, _p: PATH)
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        assert not PATH.exists()
+        # Test
+        target.on_save_sheet(None, None)
+        assert PATH == control.path
+        assert control.path.exists()
+
+    @pytest.mark.parametrize('ERROR, CAUSE, TRACE, PRIME, SECOND', [
+        (CSHEET.DumpFileError, Exception('No its not.'),
+         'Exception: No its not.', 'This parrot is dead!',
+         'Error source is Exception: No its not.'),
+        (CSHEET.NoFileError, None,
+         'Traceback (most recent call last):', 'It is a former parrot.',
+         'Error source is Factsheet.')
+        ])
+    def test_report_error_sheet(
+            self, ERROR, CAUSE, TRACE, PRIME, SECOND, monkeypatch, caplog):
+        """| Confirm save to file.
+        | Case: exceptions.
+
+        :param ERROR: sheet error exception.
+        :param CAUSE: system exception cause of sheet error.
+        :param PRIME: primary text for error dialog.
+        :param TRACE: marks start of traceback copied to log.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        class PatchDialog:
+            def __init__(self):
+                self.called_run = False
+                self.called_prime = False
+                self.prime = None
+                self.called_second = False
+                self.second = None
+
+            def format_prime(self, p_msg):
+                self.prime = p_msg
+                self.called_prime = True
+
+            def format_second(self, p_msg):
+                self.second = p_msg
+                self.called_second = True
+
+            def run(self):
+                self.called_run = True
+
+        patch_dialog = PatchDialog()
+        monkeypatch.setattr(Gtk.MessageDialog, 'format_secondary_text',
+                            patch_dialog.format_second)
+        monkeypatch.setattr(Gtk.MessageDialog, 'run', patch_dialog.run)
+        monkeypatch.setattr(Gtk.MessageDialog, 'set_markup',
+                            patch_dialog.format_prime)
+
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        I_PRIME = 0
+        I_CAUSE = 1
+        I_ERROR = -1
+        # Test
+        with pytest.raises(ERROR) as exc_info:
+            raise ERROR() from CAUSE
+        target._report_error_sheet(p_err=exc_info.value, p_message=PRIME)
+        assert patch_dialog.called_run
+        assert caplog.records
+        log_prime = caplog.records[I_PRIME]
+        assert 'ERROR' == log_prime.levelname
+        assert PRIME == log_prime.message
+        log_cause = caplog.records[I_CAUSE]
+        assert 'ERROR' == log_cause.levelname
+        print('log_cause: {}'.format(log_cause.message.rstrip('\n')))
+        assert log_cause.message.rstrip('\n').endswith(TRACE)
+        log_error = caplog.records[I_ERROR]
+        assert 'ERROR' == log_error.levelname
+        assert log_error.message.rstrip('\n').endswith(ERROR.__name__)
+        assert patch_dialog.called_prime
+        assert PRIME == patch_dialog.prime
+        assert patch_dialog.called_second
+        assert SECOND == patch_dialog.second
+
+    @pytest.mark.parametrize('ERROR, PRIME', [
+        (CSHEET.BackupFileError,
+            'Factsheet not saved! could not make backup.',),
+        (CSHEET.DumpFileError, 'Factsheet not saved! could not write file.'),
+        (CSHEET.NoFileError, 'Factsheet not saved! no file selected.'),
+        (CSHEET.OpenFileError, 'Factsheet not saved! could not open file.'),
+        (Exception, 'Factsheet not saved! Application is broken!'),
+        ])
+    def test_save_sheet_except(self, monkeypatch, ERROR, PRIME, caplog):
+        """| Confirm save to file.
+        | Case: exceptions.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param ERROR: exception test raises.
+        :param PRIME: primary text for notification.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        monkeypatch.setattr(Gtk.MessageDialog, 'run', lambda _s: None)
+
+        def patch_control_save(_self):
+            raise ERROR()
+
+        monkeypatch.setattr(CSHEET.ControlSheet, 'save', patch_control_save)
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        N_PRIME = 0
+        # Test
+        target.save_sheet()
+        assert caplog.records
+        log_prime = caplog.records[N_PRIME]
+        assert 'ERROR' == log_prime.levelname
+        assert PRIME == log_prime.message
+
+    @pytest.mark.parametrize('SUGGEST, RESPONSE, IS_SET, EXPECT', [
+        (None, None, False, (False, True, True, True, False)),
+        ('saved.fsg', None, False, (False, True, True, False, True)),
+        (None, Gtk.ResponseType.CANCEL, False,
+            (False, True, True, True, False)),
+        ('saved.fsg', Gtk.ResponseType.APPLY, True,
+            (True, True, True, False, True)),
+        ])
+    def test_get_path(self, tmp_path, SUGGEST, RESPONSE, IS_SET, EXPECT,
+                      patch_dialog_choose, monkeypatch):
+        """| Confirm save to file.
+        | Case: file path defined.
+
+        :param SUGGEST: suggested file name.
+        :param RESPONSE: response from file chooser dialog.
+        :param IS_SET: True when return value should not be None.
+        :param EXPECT: tuple identifying expected patch method calls.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        I_GET_FILE = 0
+        I_HIDE = 1
+        I_RUN = 2
+        I_SET_CURRENT = 3
+        I_SET_FILE = 4
+        PATH_SUGGEST = Path(tmp_path / SUGGEST) if SUGGEST else None
+        patch_dialog = patch_dialog_choose(str(PATH_SUGGEST), RESPONSE)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'get_filename', patch_dialog.get_filename)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
+        monkeypatch.setattr(
+            Gtk.FileChooserDialog, 'run', patch_dialog.run)
+        monkeypatch.setattr(Gtk.FileChooserDialog,
+                            'set_current_name', patch_dialog.set_current_name)
+        monkeypatch.setattr(Gtk.FileChooserDialog, 'set_filename',
+                            patch_dialog.set_filename)
+
+        control = CSHEET.g_control_app.open_factsheet(p_path=None)
+        target = VSHEET.ViewSheet(p_control=control)
+        # Test
+        result = target.get_path(PATH_SUGGEST)
+        if IS_SET:
+            assert str(PATH_SUGGEST) == patch_dialog.filename
+        else:
+            assert result is None
+        assert patch_dialog.called_get_filename is EXPECT[I_GET_FILE]
+        assert patch_dialog.called_hide is EXPECT[I_HIDE]
+        assert patch_dialog.called_run is EXPECT[I_RUN]
+        assert patch_dialog.called_set_current_name is EXPECT[I_SET_CURRENT]
+        assert patch_dialog.called_set_filename is EXPECT[I_SET_FILE]
 
     @pytest.mark.skip
     def test_on_save_as_sheet_apply(self, tmp_path, patch_dialog_choose,
@@ -2459,7 +2625,7 @@ class TestViewSheet:
         # # Setup
         # PATH_NEW = Path(tmp_path / 'new_factsheet.fsg')
         # patch_dialog = patch_dialog_choose(
-        #     Gtk.ResponseType.APPLY, str(PATH_NEW))
+        #     str(PATH_NEW), Gtk.ResponseType.APPLY)
         # monkeypatch.setattr(
         #     Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
         # monkeypatch.setattr(
@@ -2496,59 +2662,6 @@ class TestViewSheet:
         # assert patch_dialog.called_get_filename
         # assert PATH_NEW == target._control.path
         # assert control._path.exists()
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-
-    @pytest.mark.skip
-    def test_on_save_as_sheet_cancel(self, tmp_path, patch_dialog_choose,
-                                     monkeypatch, patch_factsheet, capfd):
-        """Confirm save to file with path set.
-        Case: cancel save.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param capfd: built-in fixture `Pytest capfd`_.
-        """
-        # # Setup
-        # PATH = Path(tmp_path / 'save_as_factsheet.fsg')
-        # patch_dialog = patch_dialog_choose(
-        #     Gtk.ResponseType.CANCEL, str(PATH))
-        # monkeypatch.setattr(
-        #     Gtk.FileChooserDialog, 'hide', patch_dialog.hide)
-        # monkeypatch.setattr(
-        #     Gtk.FileChooserDialog, 'get_filename', patch_dialog.get_filename)
-        # monkeypatch.setattr(
-        #     Gtk.FileChooserDialog, 'run', patch_dialog.run)
-        # monkeypatch.setattr(
-        #     Gtk.FileChooserDialog, 'set_current_name',
-        #     patch_dialog.set_current_name)
-        # monkeypatch.setattr(Gtk.FileChooserDialog, 'set_filename',
-        #                     patch_dialog.set_filename)
-        #
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        # target._window.hide()
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target.link_factsheet(target, control)
-        # control._path = None
-        # # Test
-        # target.on_save_as_sheet(None, None)
-        # assert not patch_dialog.called_set_filename
-        # assert patch_dialog.called_set_current_name
-        # assert patch_dialog.called_run
-        # assert patch_dialog.called_hide
-        # assert not patch_dialog.called_get_filename
-        # assert target._control.path is None
         # # Teardown
         # target._window.destroy()
         # del target._window

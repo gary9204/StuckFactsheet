@@ -760,15 +760,19 @@ class TestControlSheet:
         # assert patch_present.called
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ('_path', 'path'),
         ('_model', 'model'),
+        ('_path', 'path'),
         ])
     def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
-        """Confirm properties are get-only.
+        """Confirm model property is get-only.
 
         #. Case: get
         #. Case: no set
         #. Case: no delete
+
+        :param NAME_ATTR: name of attribute.
+        :param NAME_PROP: name of property.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
@@ -779,41 +783,13 @@ class TestControlSheet:
         value_attr = getattr(target, NAME_ATTR)
         target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
         value_prop = getattr(target, NAME_PROP)
-        # Test: read
+        # Test: get
         assert target_prop.fget is not None
         assert str(value_attr) == str(value_prop)
-        # Test: no replace
+        # Test: no set
         assert target_prop.fset is None
         # Test: no delete
         assert target_prop.fdel is None
-
-    # @pytest.mark.skip
-    # @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-    #     # ['_path', 'path'],
-    #     # ['_sheets_active', 'sheets_active'],
-    #     ])
-    # def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
-    #     """Confirm properties are get-only.
-    #
-    #     #. Case: get
-    #     #. Case: no set
-    #     #. Case: no delete
-    #     """
-    #     # # Setup
-    #     # sheets_active = CPOOL.PoolSheets()
-    #     # target = CSHEET.ControlSheet(sheets_active)
-    #     # PATH = Path(tmp_path / 'path_factsheet.fsg')
-    #     # target._path = PATH
-    #     # value_attr = getattr(target, NAME_ATTR)
-    #     # target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
-    #     # value_prop = getattr(target, NAME_PROP)
-    #     # # Test: read
-    #     # assert target_prop.fget is not None
-    #     # assert str(value_attr) == str(value_prop)
-    #     # # Test: no replace
-    #     # assert target_prop.fset is None
-    #     # # Test: no delete
-    #     # assert target_prop.fdel is None
 
     def test_save(self, tmp_path):
         """| Confirm write to file.

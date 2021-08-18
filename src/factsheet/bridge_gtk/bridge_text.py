@@ -191,6 +191,12 @@ class BridgeTextMarkup(
     N_WIDTH_DISPLAY = 15
     N_WIDTH_EDIT = 45
 
+    def __getstate__(self) -> typing.Dict:
+        """Return content of storage element in form pickle can store."""
+        state = super().__getstate__()
+        del state['_views']
+        return state
+
     def _destroy_view(self, p_view: ViewTextDisplay) -> None:
         """Stop updating display view that is being destroyed.
 
@@ -212,7 +218,7 @@ class BridgeTextMarkup(
         return self._model.get_text()
 
     def _new_model(self) -> ModelTextMarkup:
-        """Return toolkit-specific object to store text."""
+        """Return object to store text and add collection of static views."""
         model = ModelTextMarkup()
         _ = model.connect('deleted-text', lambda *_a: self.on_change())
         _ = model.connect('inserted-text', lambda *_a: self.on_change())
