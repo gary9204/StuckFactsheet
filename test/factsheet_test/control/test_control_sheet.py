@@ -15,31 +15,12 @@ import pickle
 import pytest   # type: ignore[import]
 # import typing
 
-# from factsheet.abc_types import abc_sheet as ABC_SHEET
+import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.model.sheet as MSHEET
-import errno
 # from factsheet.control import control_topic as CTOPIC
 # from factsheet.control import pool as CPOOL
 # from factsheet.model import topic as MTOPIC
-
-
-# @pytest.fixture
-# def patch_model_safe():
-#     class PatchSafe(MSHEET.Sheet):
-#         def __init__(self, p_stale, p_n_pages):
-#             super().__init__()
-#             self._stale = p_stale
-#             self._n_pages = p_n_pages
-#             self.n_detach = 0
-#
-#         def n_pages(self) -> int:
-#             return self._n_pages
-#
-#         def detach_page(self, _view):
-#             self.n_detach += 1
-#
-#     return PatchSafe
 
 
 class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
@@ -47,15 +28,16 @@ class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
 
     def __init__(self, p_control):
         self._control = p_control
-        self.erase_called = False
-        self.present_called = False
+        self.called_erase = 0
+        self.called_present = 0
+        self.times = []
 
     def erase(self):
-        self.erase_called = True
+        self.called_erase = True
 
     def present(self, p_time):
-        _ = p_time
-        self.present_called = True
+        self.times.append(p_time)
+        self.called_present = True
 
 
 @pytest.fixture  # (autouse=True)
@@ -110,7 +92,8 @@ class TestControlApp:
         assert target is CSHEET.g_control_app
         N_CONTROLS = 4
         for _ in range(N_CONTROLS):
-            control_sheet = target.open_factsheet(p_path=None)
+            control_sheet = target.open_factsheet(
+                p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
             view = PatchObserverControlSheet(p_control=control_sheet)
             control_sheet.add_view(view)
         assert N_CONTROLS == len(target._roster_sheets)
@@ -121,7 +104,7 @@ class TestControlApp:
         view_removed = next(iter(control_removed._roster_views.values()))
         # Test
         target.close_factsheet(p_control=control_removed)
-        assert view_removed.erase_called
+        assert view_removed.called_erase
         assert not control_removed._roster_views
         assert id_removed not in target._roster_sheets.keys()
         assert len(items) == len(target._roster_sheets)
@@ -136,56 +119,67 @@ class TestControlApp:
         target = CSHEET.ControlApp()
         N_FACTSHEETS = 1
         # Test
-        control_sheet = target.open_factsheet()
+        control_sheet = target.open_factsheet(
+            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         assert N_FACTSHEETS == len(target._roster_sheets)
         assert isinstance(control_sheet, CSHEET.ControlSheet)
         id_control_sheet = CSHEET.id_factsheet(control_sheet)
         assert target._roster_sheets[id_control_sheet] is control_sheet
 
-    @pytest.mark.skip
+    def test_open_factsheet_match(self, monkeypatch, tmp_path):
+        """| Confirm factsheet return.
+        | Case: path matches an existing file
+        """
+        # Setup
+        class PatchPresent:
+            def __init__(self):
+                self.called = False
+
+            def present_views(self, p_time):
+                self.called = True
+                self.time = p_time
+
+        patch_present = PatchPresent()
+        monkeypatch.setattr(
+            CSHEET.ControlSheet, 'present_views', patch_present.present_views)
+        target = CSHEET.ControlApp()
+        N_FACTSHEETS = 5
+        I_MATCH = 4
+        PATH_BASE = Path(tmp_path)
+        for i in range(N_FACTSHEETS):
+            path = PATH_BASE / '/factsheet{}.fsg'.format(i)
+            control = CSHEET.ControlSheet(p_path=path)
+            target._roster_sheets[id(control)] = control
+            if i == I_MATCH:
+                path_match = path
+        # Test
+        control_sheet = target.open_factsheet(
+            p_path=path_match, p_time=BUI.TIME_EVENT_CURRENT)
+        assert control_sheet is None
+        assert N_FACTSHEETS == len(target._roster_sheets)
+        assert patch_present.called
+        assert BUI.TIME_EVENT_CURRENT == patch_present.time
+
     def test_open_factsheet_no_match(self, tmp_path):
         """| Confirm factsheet return.
         | Case: path does not match an existing file
         """
-        # # Setup
-        # CSHEET._m_factsheets.clear()
-        # N_FACTSHEETS = 5
-        # PATH_BASE = Path(tmp_path)
-        # for i in range(N_FACTSHEETS):
-        #     path = PATH_BASE / '/factsheet{}.fsg'.format(i)
-        #     control = CSHEET.ControlSheet.open(path)
-        #     CSHEET._m_factsheets[id(control)] = control
-        # PATH_DIFF = PATH_BASE / '/scd.fsg'
-        # # Test
-        # target = CSHEET.open_factsheet(PATH_DIFF)
-        # assert isinstance(target, CSHEET.ControlSheet)
-        # assert PATH_DIFF == target._path
-        # assert N_FACTSHEETS + 1 == len(CSHEET._m_factsheets)
-        # assert target is CSHEET._m_factsheets[id(target)]
-
-    @pytest.mark.skip
-    def test_open_factsheet_match(self, tmp_path):
-        """| Confirm factsheet return.
-        | Case: path matches an existing file
-        """
-        # # Setup
-        # CPOOL._m_factsheets.clear()
-        # N_CONTROLS = 5
-        # I_MATCH = 4
-        # PATH_BASE = Path(tmp_path)
-        # for i in range(N_CONTROLS):
-        #     control = CPOOL.open_factsheet()
-        #     path = PATH_BASE / '/factsheet{}.fsg'.format(i)
-        #     control._path = path
-        #     if i == I_MATCH:
-        #         path_match = path
-        #         control_match = control
-        # # Test
-        # target = CPOOL.open_factsheet(path_match)
-        # assert isinstance(target, CPOOL.ControlSheet)
-        # assert target is control_match
-        # assert N_CONTROLS == len(CPOOL._m_factsheets)
-        # assert target is CPOOL._m_factsheets[id(target)]
+        # Setup
+        target = CSHEET.ControlApp()
+        N_FACTSHEETS = 5
+        PATH_BASE = Path(tmp_path)
+        for i in range(N_FACTSHEETS):
+            path = PATH_BASE / '/factsheet{}.fsg'.format(i)
+            control = CSHEET.ControlSheet(p_path=path)
+            target._roster_sheets[id(control)] = control
+        PATH_DIFF = PATH_BASE / '/diff.fsg'
+        # Test
+        control_sheet = target.open_factsheet(
+            p_path=PATH_DIFF, p_time=BUI.TIME_EVENT_CURRENT)
+        assert isinstance(control_sheet, CSHEET.ControlSheet)
+        assert PATH_DIFF == control_sheet._path
+        assert N_FACTSHEETS + 1 == len(target._roster_sheets)
+        assert control_sheet is target._roster_sheets[id(control_sheet)]
 
     @pytest.mark.skip
     def test_open_factsheet_except(self):
@@ -225,7 +219,8 @@ class TestControlApp:
         target = CSHEET.ControlApp()
         N_CONTROLS = 4
         for _ in range(N_CONTROLS):
-            _control_sheet = target.open_factsheet(p_path=None)
+            _control_sheet = target.open_factsheet(
+                p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         assert N_CONTROLS == len(target._roster_sheets)
 
         I_REMOVE = 1
@@ -246,7 +241,8 @@ class TestControlApp:
         target = CSHEET.ControlApp()
         N_CONTROLS = 4
         for _ in range(N_CONTROLS):
-            _control_sheet = target.open_factsheet(p_path=None)
+            _control_sheet = target.open_factsheet(
+                p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         assert N_CONTROLS == len(target._roster_sheets)
 
         I_REMOVE = 1
@@ -669,26 +665,50 @@ class TestControlSheet:
         target_view.destroy()
         model_view.destroy()
 
-    @pytest.mark.skip
+    def test_model_from_error(self, caplog):
+        """Confirm return of error sheet."""
+        # Setup
+        MESSAGE = 'One day this will all be yours!'
+        TEXT_ERROR = 'What, the curtains?'
+        ERROR = CSHEET.OpenFileError(TEXT_ERROR)
+        target = CSHEET.g_control_app.open_factsheet(
+            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
+        I_MESSAGE = 0
+        I_ERROR = -1
+        SUMMARY = '\n'.join([
+            MESSAGE,
+            'Error source is OpenFileError: What, the curtains?',
+            'Path: None',
+            ])
+        # Test
+        model = target._model_from_error(p_err=ERROR, p_message=MESSAGE)
+        assert caplog.records
+        log_message = caplog.records[I_MESSAGE]
+        assert 'ERROR' == log_message.levelname
+        assert MESSAGE == log_message.message
+        log_error = caplog.records[I_ERROR]
+        assert 'ERROR' == log_error.levelname
+        assert log_error.message.rstrip('\n').endswith(
+            ': '.join([type(ERROR).__name__, TEXT_ERROR]))
+        assert 'OPEN ERROR' == model.name
+        assert SUMMARY == model.summary
+        assert 'Factsheet not opened.' == model.title
+
     def test_model_from_path(self, tmp_path):
         """| Confirm model creation.
         | Case: file at path location constains factsheet model
         """
-        # # Setup
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # model.set_stale()
-        # sheets_active = CPOOL.PoolSheets()
-        # source = CSHEET.ControlSheet(sheets_active)
-        # source._model = model
-        # source._path = PATH
-        # assert not PATH.exists()
-        # source.save()
-        # # Test
-        # target = CSHEET.ControlSheet.open(sheets_active, PATH)
-        # assert source._model == target._model
-        # assert target._model.is_fresh()
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target = CSHEET.ControlSheet(p_path=None)
+        target._model.set_stale()
+        target.save(p_path=PATH)
+        assert PATH.exists()
+        # Test
+        model = target._model_from_path(p_path=PATH)
+        assert model is not None
+        assert model == target._model
+        assert target._model.is_fresh()
 
     def test_model_from_path_empty(self, tmp_path):
         """| Confirm model creation.
@@ -702,28 +722,42 @@ class TestControlSheet:
         model = target._model_from_path(p_path=PATH)
         assert model_default == model
 
-    @pytest.mark.skip
-    def test_model_from_path_except(self, tmp_path):
+    @pytest.mark.parametrize('ERROR, MESSAGE', [
+        ('open', 'Factsheet not open! could not open file.'),
+        ('pickle', 'Factsheet not open! could not read file.'),
+        ])
+    def test_model_from_path_except(
+            self, ERROR, MESSAGE, monkeypatch, tmp_path):
         """| Confirm model creation.
-        | Case: file at path location does not conatain factsheet
+        | Case: file at path location cannot be opened or loaded
+
+        :param ERROR: identifies where to raise exception.
+        :param MESSAGE: first line of summary in error model.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
         """
-        # # Setup
-        # PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        # BYTES = b'Something completely different'
-        # with PATH.open(mode='wb') as io_out:
-        #     io_out.write(BYTES)
-        # assert PATH.exists()
-        # NAME = 'OPEN ERROR'
-        # TITLE = 'Error opening file \'{}\''.format(PATH)
-        # sheets_active = CPOOL.PoolSheets()
-        # # Test
-        # target = CSHEET.ControlSheet.open(sheets_active, PATH)
-        # model = target._model
-        # assert model is not None
-        # assert NAME == model._infoid.name
-        # assert model._infoid.summary
-        # assert TITLE == model._infoid.title
-        # assert target._path is None
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        BYTES = b'Something completely different'
+        with PATH.open(mode='wb') as io_out:
+            io_out.write(BYTES)
+        assert PATH.exists()
+
+        def patch_except(*_args, **_kwargs): raise Exception(ERROR)
+
+        if 'open' == ERROR:
+            monkeypatch.setattr(Path, 'open', patch_except)
+        elif 'pickle' == ERROR:
+            monkeypatch.setattr(pickle, 'load', patch_except)
+        else:
+            assert False
+        target = CSHEET.g_control_app.open_factsheet(
+            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
+        FIRST = 0
+        # Test
+        model = target._model_from_path(PATH)
+        assert model is not None
+        assert MESSAGE == model.summary.splitlines()[FIRST]
 
     def test_model_from_path_none(self):
         """| Confirm model creation.
@@ -736,28 +770,31 @@ class TestControlSheet:
         model = target._model_from_path(p_path=None)
         assert model_default == model
 
-    @pytest.mark.skip
-    def test_present_factsheet(self, monkeypatch):
-        """Confirm factsheet notifies model."""
-        # # Setup
-        # class PatchPresentPages:
-        #     def __init__(self): self.called = False
-        #
-        #     def present_pages(self, _time): self.called = True
-        #
-        # patch_present = PatchPresentPages()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'present_pages', patch_present.present_pages)
-        # TITLE = 'Parrot Sketch'
-        # model = MSHEET.Sheet(p_title=TITLE)
-        # model.set_stale()
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet(sheets_active)
-        # target._model = model
-        # NO_TIME = 0
-        # # Test
-        # target.present_factsheet(NO_TIME)
-        # assert patch_present.called
+    def test_present_views(self):
+        """Confirm sheet control notifies all its views."""
+        # Setup
+        class PatchObserver(CSHEET.ObserverControlSheet):
+            def __init__(self, _control):
+                self.called_present = False
+                self.time = None
+
+            def erase(self): pass
+
+            def present(self, p_time):
+                self.called_present = True
+                self.time = p_time
+
+        target = CSHEET.ControlSheet(p_path=None)
+        N_VIEWS = 5
+        for _ in range(N_VIEWS):
+            view = PatchObserver(target)
+            target.add_view(p_view=view)
+        assert N_VIEWS == len(target._roster_views)
+        # Test
+        target.present_views(BUI.TIME_EVENT_CURRENT)
+        for view in target._roster_views.values():
+            assert view.called_present
+            assert BUI.TIME_EVENT_CURRENT == view.time
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ('_model', 'model'),
@@ -1020,6 +1057,7 @@ class TestExceptions:
         (CSHEET.ExceptionSheet, Exception),
         (CSHEET.BackupFileError, CSHEET.ExceptionSheet),
         (CSHEET.DumpFileError, CSHEET.ExceptionSheet),
+        # (CSHEET.LoadFileError, CSHEET.ExceptionSheet),
         (CSHEET.NoFileError, CSHEET.ExceptionSheet),
         (CSHEET.OpenFileError, CSHEET.ExceptionSheet),
         ])

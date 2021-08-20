@@ -27,6 +27,7 @@ import typing   # noqa
 
 
 # import factsheet.control.control_idcore as CIDCORE
+import factsheet.bridge_ui as BUI
 import factsheet.model.sheet as MSHEET
 # from factsheet.abc_types import abc_sheet as ABC_SHEET
 # from factsheet.control import pool as CPOOL
@@ -56,9 +57,15 @@ class BackupFileError(ExceptionSheet):
 
 
 class DumpFileError(ExceptionSheet):
-    """Raise for errors dumping sheet up a file."""
+    """Raise for errors dumping sheet to a file."""
 
     pass
+
+
+# class LoadFileError(ExceptionSheet):
+#     """Raise for errors loading sheet from a file."""
+#
+#     pass
 
 
 class NoFileError(ExceptionSheet):
@@ -120,8 +127,9 @@ class ControlApp:
         """TBD"""
         pass
 
-    def open_factsheet(self, p_path: typing.Optional[Path] = None
-                       ) -> typing.Optional['ControlSheet']:
+    def open_factsheet(
+            self, p_path: typing.Optional[Path], p_time: BUI.TimeEvent
+            ) -> typing.Optional['ControlSheet']:
         """Return factsheet for the given path or None if factsheet is
         open already.
 
@@ -134,13 +142,12 @@ class ControlApp:
         :param p_path: location for factsheet file.
         """
         if p_path is not None:
-            raise NotImplementedError
-        # path_absolute = p_path.resolve()
-        # for control in _m_factsheets.values():
-        #     if control._path is not None:
-        #         if path_absolute == control._path.resolve():
-        #             control.present()
-        #             return
+            path_absolute = p_path.resolve()
+            for control in self._roster_sheets.values():
+                if control._path is not None:
+                    if path_absolute == control._path.resolve():
+                        control.present_views(p_time)
+                        return None
         control = ControlSheet(p_path)
         id_control = id_factsheet(control)
         self._roster_sheets[id_control] = control
@@ -192,6 +199,25 @@ class ControlSheet:
                                             self.add_view.__name__))
         self._roster_views[id_view_sheet(p_view)] = p_view
 
+    def _model_from_error(
+            self, p_err: Exception, p_message: str) -> MSHEET.Sheet:
+        """Return sheet model containing error information and log details.
+
+        :param p_err: error to record.
+        :param p_message: text for error sheet summary.
+        """
+        logger.error(p_message)
+        for line in TB.format_exception(
+                type(p_err), p_err, p_err.__traceback__):
+            logger.error(line)
+        name = 'OPEN ERROR'
+        source = 'Error source is {}: {}'.format(type(p_err).__name__, p_err)
+        path = 'Path: {}'.format(str(self._path))
+        summary = '\n'.join([p_message, source, path])
+        title = 'Factsheet not opened.'
+        model = MSHEET.Sheet(p_name=name, p_summary=summary, p_title=title)
+        return model
+
     def _model_from_path(self, p_path: typing.Optional[Path]) -> MSHEET.Sheet:
         """Return sheet model from file at given location or a new model.
 
@@ -208,17 +234,16 @@ class ControlSheet:
 
         try:
             with p_path.open(mode='rb') as io_in:
-                raise NotImplementedError
-                model = pickle.load(io_in)
+                try:
+                    model = pickle.load(io_in)
+                except Exception as err:
+                    message = 'Factsheet not open! could not read file.'
+                    model = self._model_from_error(err, message)
         except FileNotFoundError:
             model = MSHEET.Sheet()
-        except Exception:
-            raise
-            # name = 'OPEN ERROR'
-            # summary = TB.format_exc()
-            # title = 'Error opening file \'{}\''.format(p_path)
-            # model = MSHEET.Sheet(
-            #     p_name=name, p_summary=summary, p_title=title)
+        except Exception as err:
+            message = 'Factsheet not open! could not open file.'
+            model = self._model_from_error(err, message)
         return model
 
     # def _add_new_control_topic(self, px_topic: MTOPIC.Topic
@@ -450,14 +475,13 @@ class ControlSheet:
         """Return path to file containing factsheet contents."""
         return self._path
 
-    def present_views(self, p_time: int) -> None:
+    def present_views(self, p_time: BUI.TimeEvent) -> None:
         """Make all sheet views visible to user.
 
         :param p_time: time stamp of event requesting presentation.
         """
-        raise NotImplementedError
-        # assert self._model is not None
-        # self._model.present_pages(p_time)
+        for view in self._roster_views.values():
+            view.present(p_time)
 
     def save(self, p_path: typing.Optional[Path] = None) -> None:
         """Save factsheet contents to file at factsheet's path.
@@ -519,7 +543,7 @@ class ObserverControlSheet(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def present(self, p_time: int) -> None:
+    def present(self, p_time: BUI.TIME_EVENT_CURRENT) -> None:
         """Present sheet view to user.
 
         :param time: time stamp to order multiple, independent requests.

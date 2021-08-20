@@ -15,6 +15,24 @@ Defines base for model classes that encapsulate widget toolkit classes.
     for persistent storage.  A GTK example is the string representation
     of a `Gtk.TextBuffer`_.
 
+.. data:: TimeEvent
+
+    Type hint for timestamp of a user interface event.  See
+    `Gtk.get_current_event_time`_.
+
+.. _Gtk.get_current_event_time:
+    https://lazka.github.io/pgi-docs/#Gtk-3.0/
+    functions.html#Gtk.get_current_event_time
+
+.. data:: TIME_EVENT_CURRENT
+
+    Represents the current time for a user interface event.  See
+    `Gdk.CURRENT_TIME`_.
+
+.. _Gdk.CURRENT_TIME:
+    https://lazka.github.io/pgi-docs/#Gdk-3.0/
+    constants.html#Gdk.CURRENT_TIME
+
 .. data:: ViewOpaque
 
     Placeholder type hint for a view element.  A GTK example is
@@ -28,10 +46,15 @@ import gi   # type: ignore[import]
 import logging
 import typing
 
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.bridge_base')
+
+TimeEvent = int
+TIME_EVENT_CURRENT = Gdk.CURRENT_TIME
 
 ModelOpaque = typing.TypeVar('ModelOpaque')
 PersistOpaque = typing.TypeVar('PersistOpaque')

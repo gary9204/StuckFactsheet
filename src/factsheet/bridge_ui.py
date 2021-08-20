@@ -9,6 +9,8 @@ import factsheet.bridge_gtk.bridge_text as BTEXT
 
 Bridge = BBASE.BridgeBase
 ModelOpaque = typing.Union[BBASE.ModelOpaque]
+TimeEvent = BBASE.TimeEvent
+TIME_EVENT_CURRENT = BBASE.TIME_EVENT_CURRENT
 ViewAny = BBASE.ViewAny
 ViewOpaque = typing.Union[BBASE.ViewOpaque]
 

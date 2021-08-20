@@ -842,7 +842,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # self._window.present_with_time(p_time)
 
     def _report_error_sheet(self, p_err: Exception, p_message: str) -> None:
-        """Display error dialog to user.
+        """Display error dialog to user and log error details.
 
         :param p_err: error to display.
         :param p_message: primary text for error dialog.

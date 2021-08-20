@@ -11,6 +11,8 @@ import typing
 
 import factsheet.bridge_gtk.bridge_base as BBASE
 
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
@@ -121,17 +123,31 @@ class TestBridgeBase:
 
 
 class TestBridgeTypes:
-    """Unit tests for type hint definitions in :mod:`.bridge_base`.
-    """
+    """Unit tests for type hint definitions in :mod:`.bridge_base`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (type(BBASE.ModelOpaque), typing.TypeVar),
         (type(BBASE.PersistOpaque), typing.TypeVar),
         (BBASE.ViewAny, Gtk.Widget),
         (type(BBASE.ViewOpaque), typing.TypeVar),
+        (BBASE.TimeEvent, int),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm type hint definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint as defined.
+        :param TYPE_EXPECT: expected type hint.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT
+
+
+class TestTimeEvent:
+    """Unit tests for time constant in :mod:`.bridge_base`."""
+
+    def test_time_current(self):
+        """Confirm value of constant :data:`.TIME_EVENT_CURRENT`."""
+        # Setup
+        # Test
+        assert Gdk.CURRENT_TIME == BBASE.TIME_EVENT_CURRENT

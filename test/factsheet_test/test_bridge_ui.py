@@ -18,6 +18,7 @@ class TestBridgeTypes:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (BUI.Bridge, BBASE.BridgeBase),
         (BUI.ModelOpaque, BBASE.ModelOpaque),
+        (BUI.TimeEvent, BBASE.TimeEvent),
         (BUI.ViewAny, BBASE.ViewAny),
         (BUI.ViewOpaque, BBASE.ViewOpaque),
         (BUI.BridgeOutlineColumnar, BOUTLINE.BridgeOutlineColumnar),
@@ -39,3 +40,16 @@ class TestBridgeTypes:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_SOURCE
+
+
+class TestBridgeConstant:
+    """Unit tests for definitions of API classes and type hints in
+    :mod:`.bridge_ui`.
+    """
+
+    def test_time_current(self):
+        """Confirm constant definitions."""
+        # Setup
+        # Test
+        assert BBASE.TIME_EVENT_CURRENT == BUI.TIME_EVENT_CURRENT
+
