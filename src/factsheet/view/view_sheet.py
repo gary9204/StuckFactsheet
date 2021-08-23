@@ -7,9 +7,7 @@ from pathlib import Path
 import traceback as TB
 import typing   # noqa
 
-# from factsheet.abc_types import abc_sheet as ABC_SHEET
-# from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-# from factsheet.adapt_gtk import adapt_sheet as ASHEET
+import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 # from factsheet.view import query_place as QPLACE
 # from factsheet.view import query_template as QTEMPLATE
@@ -19,6 +17,7 @@ import factsheet.view.view_idcore as VIDCORE
 # from factsheet.view import form_topic as VTOPIC
 # from factsheet.view import types_view as VTYPES
 import factsheet.view.ui as UI
+from factsheet.control.control_sheet import g_control_app
 
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
@@ -312,8 +311,8 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         _id = self._window.connect('delete-event', self.on_close_view_sheet)
 
         # Application Title
-        # UI.new_action_active(
-        #     self._window, 'open-sheet', self.on_open_sheet)
+        UI.new_action_active(
+            self._window, 'open-sheet', self.on_open_sheet)
         UI.new_action_active(
             self._window, 'new-sheet', self.on_new_sheet)
         UI.new_action_active(
@@ -458,15 +457,17 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # name_scene = hex(p_id)
         # self._scenes_topic.remove_scene(name_scene)
 
-    def get_path(self, p_suggest: Path = None) -> typing.Optional[Path]:
+    def get_path(self, p_action: Gtk.FileChooserAction,
+                 p_suggest: Path = None) -> typing.Optional[Path]:
         """Return path to factsheet file or None if user cancels.
 
+        :param p_action: dialog box action (Open, Save, etc.).
         :param p_suggest: path to suggest to user.
         """
-        dialog = self._make_dialog_file(Gtk.FileChooserAction.SAVE)
-        if p_suggest:
+        dialog = self._make_file_chooser(p_action)
+        if p_suggest is not None:
             _ = dialog.set_filename(str(p_suggest))
-        else:
+        elif Gtk.FileChooserAction.SAVE == p_action:
             dialog.set_current_name('factsheet.fsg')
         response = dialog.run()
         dialog.hide()
@@ -500,25 +501,30 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # pm_page._query_template = QTEMPLATE.QueryTemplate(
         #     pm_page._window, pm_page._control.attach_view_topics)
 
-    def _make_dialog_file(self, p_action: Gtk.FileChooserAction
+    def _make_file_chooser(self, p_action: Gtk.FileChooserAction
                           ) -> Gtk.FileChooserDialog:
         """Construct dialog to choose file for open or save.
 
         This helper method works around limitations in Glade.
 
-        :param p_action: dialog box action (Open or Save).
+        :param p_action: dialog box action (Open, Save, etc.).
         :returns: File chooser dialog.
         """
+
         dialog = Gtk.FileChooserDialog(action=p_action)
         dialog.set_transient_for(self._window)
         dialog.set_destroy_with_parent(True)
         dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
 
-        # label = 'Open'
-        label = 'Oops!'
         if p_action == Gtk.FileChooserAction.SAVE:
             label = 'Save'
             dialog.set_do_overwrite_confirmation(True)
+        elif p_action == Gtk.FileChooserAction.OPEN:
+            label = 'Open'
+        elif p_action == Gtk.FileChooserAction.CREATE_FOLDER:
+            label = 'Create'
+        else:
+            label = 'Select'
         dialog.add_button(label, Gtk.ResponseType.APPLY)
         button_d = dialog.get_widget_for_response(
             Gtk.ResponseType.APPLY)
@@ -682,7 +688,8 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def on_new_sheet(cls, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
         """Create a new factsheet with default contents."""
-        control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
+        control_sheet = CSHEET.g_control_app.open_factsheet(
+            p_path=None, p_time=Gtk.get_current_event_time())
         if control_sheet is None:
             logger.critical('Failed to create new factsheet ({}.{})'
                             ''.format(cls.__name__,
@@ -745,24 +752,19 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
         """Create a factsheet with contents from file."""
-        raise NotImplementedError
-        # dialog = self._make_dialog_file(Gtk.FileChooserAction.OPEN)
-        # response = dialog.run()
-        # dialog.hide()
-        # if response == Gtk.ResponseType.APPLY:
-        #     path_new = Path(dialog.get_filename())
-        #     app = self._window.get_application()
-        #     assert self._control is not None
-        #     sheets_active = self._control.sheets_active
-        #     _page = ViewSheet.open_factsheet(app, sheets_active, path_new)
-        # del dialog
+        time = Gtk.get_current_event_time()
+        path = self.get_path(Gtk.FileChooserAction.OPEN, None)
+        if path is not None:
+            control = g_control_app.open_factsheet(p_path=path, p_time=time)
+            if control is not None:
+                _view = ViewSheet(p_control=control)
 
     def on_save_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
         """Persist factsheet contents to file."""
         path_update = None
         if self._control.path is None:
-            path_update = self.get_path(None)
+            path_update = self.get_path(Gtk.FileChooserAction.SAVE, None)
             if path_update is None:
                 return
 
@@ -771,7 +773,8 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def on_save_as_sheet(self, _action: Gio.SimpleAction,
                          _target: GLib.Variant) -> None:
         """Persist factsheet contents to file at new path."""
-        path_update = self.get_path(self._control.path)
+        path_update = self.get_path(
+            Gtk.FileChooserAction.SAVE, self._control.path)
         if path_update is None:
             return
 
@@ -830,16 +833,15 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # ViewSheet.link_factsheet(page, control)
         # return page
 
-    def present(self, p_time: int) -> None:
-        """Make the page visible to user.
+    def present(self, p_time: BUI.TimeEvent) -> None:
+        """Make sheet view visible to user.
 
-        Presents page to user even when page is an icon or covered by
-        other windows.
+        Make view visible even when it is an icon or covered by other
+        windows.
 
-        :param p_time: timestamp of event requesting presentation.
+        :param p_time: time stamp to order multiple requests.
         """
-        raise NotImplementedError
-        # self._window.present_with_time(p_time)
+        self._window.present_with_time(p_time)
 
     def _report_error_sheet(self, p_err: Exception, p_message: str) -> None:
         """Display error dialog to user and log error details.

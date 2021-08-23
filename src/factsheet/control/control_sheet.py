@@ -209,7 +209,7 @@ class ControlSheet:
         logger.error(p_message)
         for line in TB.format_exception(
                 type(p_err), p_err, p_err.__traceback__):
-            logger.error(line)
+            logger.error(line.rstrip('\n'))
         name = 'OPEN ERROR'
         source = 'Error source is {}: {}'.format(type(p_err).__name__, p_err)
         path = 'Path: {}'.format(str(self._path))
@@ -543,10 +543,10 @@ class ObserverControlSheet(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def present(self, p_time: BUI.TIME_EVENT_CURRENT) -> None:
-        """Present sheet view to user.
+    def present(self, p_time: BUI.TimeEvent) -> None:
+        """Make sheet view visible to user.
 
-        :param time: time stamp to order multiple, independent requests.
+        :param p_time: time stamp to order multiple requests.
         """
         raise NotImplementedError
 
