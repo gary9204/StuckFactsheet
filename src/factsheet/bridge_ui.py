@@ -25,6 +25,7 @@ ViewOutlineSelect = BOUTLINE.ViewOutlineSelect
 BridgeText = BTEXT.BridgeText
 BridgeTextMarkup = BTEXT.BridgeTextMarkup
 BridgeTextTagged = BTEXT.BridgeTextTagged
+filter_user_markup = BTEXT.filter_user_markup
 ViewTextDisplay = BTEXT.ViewTextDisplay
 ViewTextMarkup = BTEXT.ViewTextMarkup
 ViewTextTagged = BTEXT.ViewTextTagged

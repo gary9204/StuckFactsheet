@@ -262,20 +262,9 @@ class BridgeTextMarkup(
     def on_change(self):
         """Refresh display views when text is inserted or deleted."""
         self.set_stale()
-        text_new = self._model.get_text()
-        is_valid_markup = True
-        try:
-            _, _, _, _ = Pango.parse_markup(text_new, -1, '0')
-        except GLib.Error as err:
-            if err.matches(GLib.markup_error_quark(), GLib.MarkupError.PARSE):
-                is_valid_markup = False
-            else:
-                raise
+        text_new = filter_user_markup(self._model.get_text())
         for view in self._views.values():
-            if is_valid_markup:
-                view.set_markup(text_new)
-            else:
-                view.set_text(text_new)
+            view.set_markup(text_new)
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -348,73 +337,21 @@ class BridgeTextTagged(
         self._model.set_text(p_persist, ALL)
 
 
-# class BridgeTextStatic(BridgeText[ModelTextStatic, ViewTextDisplay]):
-#     """Text bridge with support for `Pango markup`_ but not editing.
-#     See `Gtk.Label`_.
-#
-#     Text content cannot be changed through the user interface.
-#
-#     Text bridge objects have transient data for attached views in
-#     addition to persistant text content.
-#
-#     .. admonition:: About Equality
-#
-#         Two text bridge objects are equivalent when they have the equal
-#         content.  Transient aspects of the attributes are not compared
-#         and may be different.
-#
-#     .. _Gtk.Label:
-#         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
-#     """
-#
-#     def _destroy_view(self, p_view: ViewTextDisplay) -> None:
-#         """Stop updating view that is being destroyed.
-#
-#         :param p_view: view being destroyed.
-#         """
-#         id_view = id(p_view)
-#         try:
-#             _ = self._views.pop(id_view)
-#         except KeyError:
-#             logger.warning(
-#                 'Missing view: {} ({}.{})'.format(
-#                     hex(id_view),
-#                     self.__class__.__name__, self._destroy_view.__name__))
-#
-#     def __getstate__(self) -> typing.Dict:
-#         """Return content of storage element in form pickle can store.
-#
-#         Each descendant class defines its persistent contents.
-#         """
-#         state = super().__getstate__()
-#         del state['_views']
-#         return state
-#
-#     def _get_persist(self) -> PersistText:
-#         """Return text storage element in form suitable for persistent
-#         storage.
-#         """
-#         return self._model
-#
-#     def _new_model(self) -> ModelTextStatic:
-#         """Return toolkit-specific object to store text."""
-#         model = ModelTextStatic()
-#         self._views: typing.MutableMapping[int, ViewTextDisplay] = dict()
-#         return model
-#
-#     def new_view(self) -> ViewTextDisplay:
-#         """Return toolkit-specific object to display text."""
-#         view = ViewTextDisplay(label=self._model)
-#         self._views[id(view)] = view
-#         _ = view.connect('destroy', self._destroy_view)
-#         return view
-#
-#     def _set_persist(self, p_persist: PersistText) -> None:
-#         """Set text storage element from content in persistent form.
-#
-#         :param p_persist: persistent form for text storage element
-#             content.
-#         """
-#         self._model = p_persist
-#         for view in self._views.values():
-#             view.set_label(self._model)
+def filter_user_markup(p_markup: str) -> str:
+    """Return user-entered text without markup errors.
+
+    Excape Pango markup errors.
+
+    :param p_markup: markup text entered by user.
+    """
+    markup_new = p_markup
+    ALL = -1
+    NO_ACCEL_CHAR = '0'
+    try:
+        _, _, _, _ = Pango.parse_markup(markup_new, ALL, NO_ACCEL_CHAR)
+    except GLib.Error as err:
+        if 'g-markup-error-quark' == err.domain:
+            markup_new = GLib.markup_escape_text(p_markup, len(p_markup))
+        else:
+            raise
+    return markup_new

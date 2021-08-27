@@ -327,7 +327,7 @@ class TestAppFactsheet:
 class TestNewDialogWarn:
     """Unit tests for :func:`.new_dialog_warn_loss`."""
 
-    def test_new_dialog_warn(self, gtk_app_window):
+    def test_new_dialog_warn_loss(self, gtk_app_window):
         """Confirm data loss warning dialog construction.
 
         :param gtk_app_window: fixture :func:`.gtk_app_window`.
@@ -336,7 +336,7 @@ class TestNewDialogWarn:
         PARENT = gtk_app_window
         NAME = '<b>Parrot Sketch</b>'
         WARN = ('Factsheet {} contains unsaved changes.  All unsaved'
-                ' changes will be discarded if you erase.').format(NAME)
+                ' changes will be discarded if you close.').format(NAME)
         I_DIALOG = 0
         I_WARN = 0
         I_CANCEL = 0

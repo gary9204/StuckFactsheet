@@ -52,4 +52,5 @@ class TestBridgeConstant:
         # Setup
         # Test
         assert BBASE.TIME_EVENT_CURRENT == BUI.TIME_EVENT_CURRENT
+        assert BUI.filter_user_markup is BTEXT.filter_user_markup
 

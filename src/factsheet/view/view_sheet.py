@@ -4,6 +4,7 @@ Defines class to display Factsheet document in a window.
 import gi   # type: ignore[import]
 import logging
 from pathlib import Path
+import sys
 import traceback as TB
 import typing   # noqa
 
@@ -193,7 +194,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
         </interface>
         """
 
-    text_direct = ('&lt;i&gt;Cancel erase, or continue to erase and'
+    text_direct = ('&lt;i&gt;Cancel close, or continue to close and'
                    ' discard changes?&lt;/i&gt;'
                    )
     ui_dialog = form_dialog.format(text_direct)
@@ -203,9 +204,9 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     dialog.set_transient_for(p_parent)
     dialog.set_destroy_with_parent(True)
     form_warn = ('Factsheet {} contains unsaved changes.  All unsaved'
-                 ' changes will be discarded if you erase.'
+                 ' changes will be discarded if you close.'
                  )
-    text_warn = form_warn.format(p_name)
+    text_warn = BUI.filter_user_markup(form_warn.format(p_name))
     warning = builder.get_object('ui_warning')
     warning.set_markup(text_warn)
 
