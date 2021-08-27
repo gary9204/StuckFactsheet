@@ -425,6 +425,7 @@ class TestViewSheet:
         headerbar = target._window.get_titlebar()
         title_window = headerbar.get_custom_title()
         assert isinstance(title_window, Gtk.Label)
+        assert not title_window.get_selectable()
         title_window_str = title_window.get_label()
         assert target._control.model.name == title_window_str
 

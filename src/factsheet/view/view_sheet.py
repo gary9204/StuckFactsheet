@@ -272,6 +272,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         headerbar = self._window.get_titlebar()
         title_window = self._control.model.new_view_name_passive()
+        title_window.set_selectable(False)
         headerbar.set_custom_title(title_window)
 
         self._init_name_sheet(get_object)

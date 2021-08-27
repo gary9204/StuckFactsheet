@@ -24,8 +24,8 @@ Steps
 #. **Step:** Click *Application* **new Factsheet icon** |document-new|
    (window title on left next to open buttons).
 
-   a. *Expect:* Second window appears with name *Unnamed*. New
-      window may cover first window.
+   a. *Expect:* Second window appears with name *Unnamed*.
+   #. New window may cover first window.
 
 #. **Step:** Edit factsheet name "Unnamed" to "Beta".
 
@@ -41,8 +41,8 @@ Steps
 #. **Step:** Select *Factsheet* **menu** item **File ... > new** (|menu|
    icon on far right of *Factsheet* identity line).
 
-   a. *Expect:* Third window appears with name *Unnamed*. New
-      window may cover other windows.
+   a. *Expect:* Third window appears with name *Unnamed*.
+   #. New window may cover other windows.
 
 #. **Step:** Edit factsheet name "Unnamed" to "Gamma".
 

@@ -5,6 +5,7 @@ Factsheet-level Cases
    :maxdepth: 1
 
    case_sheet_close_view
+   case_sheet_delete
    case_sheet_dialogs
    case_sheet_name
    case_sheet_new
@@ -20,4 +21,3 @@ Factsheet-level Cases
 ..   case_sheet_search
 ..   case_sheet_titles
 ..   case_sheet_summary
-..   case_sheet_delete
