@@ -770,7 +770,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             if path_update is None:
                 return
 
-        self._control.save(path_update)
+        self.save_sheet(path_update)
 
     def on_save_as_sheet(self, _action: Gio.SimpleAction,
                          _target: GLib.Variant) -> None:
@@ -780,7 +780,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         if path_update is None:
             return
 
-        self._control.save(path_update)
+        self.save_sheet(path_update)
 
     def on_show_dialog(self, _action: Gio.SimpleAction,
                        _target: GLib.Variant, p_dialog: Gtk.Dialog
@@ -855,7 +855,9 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         for line in TB.format_exception(
                 type(p_err), p_err, p_err.__traceback__):
             logger.error(line)
-        dialog = Gtk.MessageDialog(message_type=Gtk.MessageType.ERROR)
+        dialog = Gtk.MessageDialog(
+            transient_for=self.window, message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK)
         dialog.set_markup(p_message)
         text_cause = 'Error source is Factsheet.'
         cause = p_err.__cause__
@@ -864,12 +866,12 @@ class ViewSheet(CSHEET.ObserverControlSheet):
                 type(cause).__name__, cause)
         dialog.format_secondary_text(text_cause)
         dialog.run()
-        del dialog
+        dialog.destroy()
 
-    def save_sheet(self) -> None:
+    def save_sheet(self, p_path_update: typing.Optional[Path] = None) -> None:
         """Save factsheet to file with basic error handling."""
         try:
-            self._control.save()
+            self._control.save(p_path_update)
         except CSHEET.BackupFileError as err:
             text_prime = 'Factsheet not saved! could not make backup.'
             self._report_error_sheet(err, text_prime)

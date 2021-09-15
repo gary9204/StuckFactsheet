@@ -2529,11 +2529,15 @@ class TestViewSheet:
         # Setup
         class PatchDialog:
             def __init__(self):
+                self.called_destroy = False
                 self.called_run = False
                 self.called_prime = False
                 self.prime = None
                 self.called_second = False
                 self.second = None
+
+            def destroy(self):
+                self.called_destroy = True
 
             def format_prime(self, p_msg):
                 self.prime = p_msg
@@ -2547,6 +2551,8 @@ class TestViewSheet:
                 self.called_run = True
 
         patch_dialog = PatchDialog()
+        monkeypatch.setattr(Gtk.MessageDialog, 'destroy',
+                            patch_dialog.destroy)
         monkeypatch.setattr(Gtk.MessageDialog, 'format_secondary_text',
                             patch_dialog.format_second)
         monkeypatch.setattr(Gtk.MessageDialog, 'run', patch_dialog.run)
@@ -2564,6 +2570,7 @@ class TestViewSheet:
             raise ERROR() from CAUSE
         target._report_error_sheet(p_err=exc_info.value, p_message=PRIME)
         assert patch_dialog.called_run
+        assert patch_dialog.called_destroy
         assert caplog.records
         log_prime = caplog.records[I_PRIME]
         assert 'ERROR' == log_prime.levelname
@@ -2600,7 +2607,7 @@ class TestViewSheet:
         # Setup
         monkeypatch.setattr(Gtk.MessageDialog, 'run', lambda _s: None)
 
-        def patch_control_save(_self):
+        def patch_control_save(_self, _path):
             raise ERROR()
 
         monkeypatch.setattr(CSHEET.ControlSheet, 'save', patch_control_save)
@@ -2609,7 +2616,7 @@ class TestViewSheet:
         target = VSHEET.ViewSheet(p_control=control)
         N_PRIME = 0
         # Test
-        target.save_sheet()
+        target.save_sheet(None)
         assert caplog.records
         log_prime = caplog.records[N_PRIME]
         assert 'ERROR' == log_prime.levelname
