@@ -33,8 +33,10 @@ The plan needs to accommodate the following.
     capability to compare data sets and to view a single data set in
     different ways.
 
-`Model-view-controller
-<https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_
+.. _`Model-View-Controller`:
+     https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller
+
+`Model-View-Controller`_
 presents a basic structure for an application that meets the initial
 needs.  This Wikipedia page identifies variations that might be more
 appropriate as development progresses.  Thus, the plan starts with the
@@ -72,14 +74,14 @@ Working alone and learning as I go mean mistakes and changes of
 direction are likely.  I use the following strategies to mimimize lost
 time.
 
+.. _sphinx: https://www.sphinx-doc.org/en/master/
+
     1. Document intent
     
         Include docstrings for each module, class, method, and function
         to document purpose and intended behavior.  Automate
         documentation generation with `Sphinx <sphinx_>`_.  See
         :doc:`../src/toc_src`.
-
-        .. _sphinx: https://www.sphinx-doc.org/en/master/
 
     #. Confirm behavior frequently
     
@@ -160,6 +162,24 @@ for each view.
 .. _Gtk.Window.delete-event: https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
     Widget.html#Gtk.Widget.signals.delete_event
 
+Model-View-Controller
+^^^^^^^^^^^^^^^^^^^^^
+A variety of issues complicated implementation of `Model-View-Controller`_.
+
+Circular imports
+""""""""""""""""
+When a user makes a request in a view, view calls controller to
+service the request.   Contoller calls model to change state to complete
+the request.  Model calls the view to update the presentation to the
+user.  A fix is need to prevent circular imports view |larr| controller <-
+model <- view.
+
+.. _`Observer pattern`: https://en.wikipedia.org/wiki/Observer_pattern
+
+The `Observer pattern`_ provides a fix.  A view registers a callback
+with its model to receive updates when the model changes.  The model
+defines an abstract interface for callbacks.  The model does not need to
+import from the view.
 
 
 .. warning:: The text after this point is under review. Portions of
