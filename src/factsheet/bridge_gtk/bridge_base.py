@@ -1,7 +1,7 @@
 """
 Defines base for model classes that encapsulate widget toolkit classes.
 
-.. data:: ModelOpaque
+.. data:: ModelGtkOpaque
 
     Placeholder type hint for a model component.  A GTK example is
     `Gtk.TextBuffer`_.
@@ -9,7 +9,7 @@ Defines base for model classes that encapsulate widget toolkit classes.
 .. _Gtk.TextBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 
-.. data:: PersistOpaque
+.. data:: PersistGtkOpaque
 
     Placeholder type hint for model representation suitable
     for persistent storage.  A GTK example is the string representation
@@ -33,7 +33,7 @@ Defines base for model classes that encapsulate widget toolkit classes.
     https://lazka.github.io/pgi-docs/#Gdk-3.0/
     constants.html#Gdk.CURRENT_TIME
 
-.. data:: ViewOpaque
+.. data:: ViewGtkOpaque
 
     Placeholder type hint for a view element.  A GTK example is
     `Gtk.TextView`_.
@@ -48,28 +48,21 @@ import typing
 
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.bridge_base')
 
 TimeEvent = int
 TIME_EVENT_CURRENT = Gdk.CURRENT_TIME
 
-ModelOpaque = typing.TypeVar('ModelOpaque')
-PersistOpaque = typing.TypeVar('PersistOpaque')
-ViewAny = typing.Union[Gtk.Widget]
-ViewOpaque = typing.TypeVar('ViewOpaque')
+ModelGtkOpaque = typing.TypeVar('ModelGtkOpaque')
+PersistGtkOpaque = typing.TypeVar('PersistGtkOpaque')
+# ViewAny = typing.Union[Gtk.Widget]
+ViewGtkOpaque = typing.TypeVar('ViewGtkOpaque')
 
 
-class BridgeBase(abc.ABC,
-                 typing.Generic[ModelOpaque, PersistOpaque, ViewOpaque]):
-    """Common ancestor of model classes that encapsulate storage and
-    view elements of toolkit.
-
-    In addition to a storage element, a :class:`BridgeBase` object has
-    transient content for toolkit view elements associated with the
-    storage element.
+class BridgeBase(abc.ABC, typing.Generic[ModelGtkOpaque, PersistGtkOpaque]):
+    """Common ancestor of model classes that encapsulate widget toolkit
+    storage elements.
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:
@@ -97,24 +90,15 @@ class BridgeBase(abc.ABC,
         return state
 
     def __init__(self) -> None:
-        """Initialize instance with model."""
-        self._model = self._new_model()
-        # self._init_transients()
-
-    # def _init_transients(self) -> None:
-    #     """Set transient content for initialization and pickling."""
-    #     pass
+        """Initialize instance with GTK storage."""
+        self._model: ModelGtkOpaque
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct storage element from content that pickle loads.
 
-        Reconstructed model has no views.
-
         :param p_state: unpickled content.
         """
         self.__dict__.update(p_state)
-        self._model = self._new_model()
-        # self._init_transients()
         self._set_persist(self.ex_model)   # type: ignore[attr-defined]
         del self.ex_model       # type: ignore[attr-defined]
 
@@ -123,24 +107,24 @@ class BridgeBase(abc.ABC,
         return '<{}: {}>'.format(type(self).__name__, self._get_persist())
 
     @abc.abstractmethod
-    def _get_persist(self) -> PersistOpaque:
+    def _get_persist(self) -> PersistGtkOpaque:
         """Return storage element in form suitable for persistent storage."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _new_model(self) -> ModelOpaque:
-        """Return storage element."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def new_view(self) -> ViewOpaque:
-        """Return toolkit-specific view element."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def _set_persist(self, p_persist: PersistOpaque) -> None:
+    def _set_persist(self, p_persist: PersistGtkOpaque) -> None:
         """Set storage element from content in persistent form.
 
         :param p_persist: persistent form for storage element content.
         """
+        raise NotImplementedError
+
+
+class FactoryGtkViewAbstract(
+        abc.ABC, typing.Generic[ViewGtkOpaque]):
+    """Common ancestor of factory classes for views of storage elements."""
+
+    @abc.abstractmethod
+    def __call__(self) -> ViewGtkOpaque:
+        """Return toolkit-specific view of storage element."""
         raise NotImplementedError

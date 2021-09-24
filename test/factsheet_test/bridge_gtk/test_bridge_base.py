@@ -17,21 +17,14 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any, str]):
+class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any]):
     """Class with test stubs for abstract :class:`~.BridgeBase` methods."""
 
     def __init__(self):
-        self.called_common = False
         super().__init__()
+        self._model = 'Oops! incomplete test initialization.'
 
     def _get_persist(self): return self._model
-
-    # def _init_transients(self):
-    #     self.called_common = True
-
-    def _new_model(self): return str()
-
-    def new_view(self): return dict()
 
     def _set_persist(self, p_persist): self._model = p_persist
 
@@ -47,22 +40,19 @@ class TestBridgeBase:
         #. Case: equivalent.
         """
         # Setup
-        source = PatchBridgeBase()
         TEXT = 'Parrot'
-        source._set_persist(TEXT)
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            _ = source.new_view()
+        source = PatchBridgeBase()
+        source._model = TEXT
         # Test: type difference.
         assert not source.__eq__(TEXT)
         # Test: storage element difference.
-        target = PatchBridgeBase()
         TEXT_DIFFER = 'Something completely different.'
-        target._set_persist(TEXT_DIFFER)
+        target = PatchBridgeBase()
+        target._model = TEXT_DIFFER
         assert not source.__eq__(target)
         # Test: equivalent.
         target = PatchBridgeBase()
-        target._set_persist(TEXT)
+        target._model = TEXT
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
@@ -70,19 +60,14 @@ class TestBridgeBase:
         """Confirm conversion to and from pickle format."""
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = PatchBridgeBase()
         TEXT = 'Parrot'
-        source._set_persist(TEXT)
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            _ = source.new_view()
-        # source.called_common = False
+        source = PatchBridgeBase()
+        source._model = TEXT
         # Test
         with PATH.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
         with PATH.open(mode='rb') as io_in:
             target = pickle.load(io_in)
-        # assert target.called_common
         assert not hasattr(target, 'ex_model')
         assert source._get_persist() == target._get_persist()
 
@@ -90,28 +75,21 @@ class TestBridgeBase:
         """Confirm initialization."""
         # Setup
         # Test
-        target = PatchBridgeBase()
-        # assert target.called_common
-        assert isinstance(target._model, str)
-        assert not target._model
+        _target = PatchBridgeBase()
+        # Successful call makes no state change.
 
     def test_str(self):
         """Confirm string representation."""
         # Setup
-        target = PatchBridgeBase()
         TEXT = 'Parrot'
-        target._set_persist(TEXT)
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            _ = target.new_view()
+        target = PatchBridgeBase()
+        target._model = TEXT
         expect = '<PatchBridgeBase: {}>'.format(TEXT)
         # Test
         assert expect == str(target)
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BBASE.BridgeBase, '_get_persist'),
-        (BBASE.BridgeBase, '_new_model'),
-        (BBASE.BridgeBase, 'new_view'),
         (BBASE.BridgeBase, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
@@ -123,13 +101,13 @@ class TestBridgeBase:
 
 
 class TestBridgeTypes:
-    """Unit tests for type hint definitions in :mod:`.bridge_base`."""
+    """Unit tests for :class:`~.FactoryGtkViewAbstract`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (type(BBASE.ModelOpaque), typing.TypeVar),
-        (type(BBASE.PersistOpaque), typing.TypeVar),
-        (BBASE.ViewAny, Gtk.Widget),
-        (type(BBASE.ViewOpaque), typing.TypeVar),
+        (type(BBASE.ModelGtkOpaque), typing.TypeVar),
+        (type(BBASE.PersistGtkOpaque), typing.TypeVar),
+        # (BBASE.ViewAny, Gtk.Widget),
+        (type(BBASE.ViewGtkOpaque), typing.TypeVar),
         (BBASE.TimeEvent, int),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
@@ -141,6 +119,20 @@ class TestBridgeTypes:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_EXPECT
+
+
+class TestFactoryGtkViewAbstract:
+    """Unit tests for `.FactoryGtkViewAbstract`."""
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (BBASE.FactoryGtkViewAbstract, '__call__'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified."""
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
 
 
 class TestTimeEvent:

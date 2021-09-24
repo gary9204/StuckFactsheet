@@ -4,15 +4,15 @@ Test fixtures for AppFactsheet as a whole.
 import pytest   # type: ignore[import]
 import typing
 
-import factsheet.bridge_gtk.bridge_text as BTEXT
-import factsheet.model.idcore as MIDCORE
+# import factsheet.bridge_gtk.bridge_text as BTEXT
+# import factsheet.model.idcore as MIDCORE
 # import factsheet.abc_types.abc_fact as ABC_FACT
 # import factsheet.abc_types.abc_infoid as ABC_INFOID
 # import factsheet.model.element as MELEMENT
-import factsheet.model.fact as MFACT
+# import factsheet.model.fact as MFACT
 # import factsheet.model.setindexed as MSET
 # import factsheet.model.table as MTABLE
-import factsheet.model.topic as MTOPIC
+# import factsheet.model.topic as MTOPIC
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -56,29 +56,29 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 #     return PatchBridgeText
 
 
-class PatchIdCore(MIDCORE.IdCore[
-        BTEXT.ViewTextMarkup, BTEXT.ViewTextDisplay,
-        BTEXT.ViewTextTagged, BTEXT.ViewTextTagged,
-        BTEXT.ViewTextMarkup, BTEXT.ViewTextDisplay]):
-    """:class:`.IdCore` subclass with stubs for properties."""
+# class PatchIdCore(MIDCORE.IdCore[
+#         BTEXT.ViewTextMarkup, BTEXT.ViewTextDisplay,
+#         BTEXT.ViewTextTagged, BTEXT.ViewTextTagged,
+#         BTEXT.ViewTextMarkup, BTEXT.ViewTextDisplay]):
+#     """:class:`.IdCore` subclass with stubs for properties."""
+#
+#     def __init__(self, *, p_name, p_summary, p_title, **kwargs):
+#         super().__init__(p_name=p_name, p_summary=p_summary,
+#                          p_title=p_title, **kwargs)
+#
+#     def _new_model(self):
+#         name = BTEXT.BridgeTextMarkup()
+#         summary = BTEXT.BridgeTextTagged()
+#         title = BTEXT.BridgeTextMarkup()
+#         return name, summary, title
 
-    def __init__(self, *, p_name, p_summary, p_title, **kwargs):
-        super().__init__(p_name=p_name, p_summary=p_summary,
-                         p_title=p_title, **kwargs)
 
-    def _new_model(self):
-        name = BTEXT.BridgeTextMarkup()
-        summary = BTEXT.BridgeTextTagged()
-        title = BTEXT.BridgeTextMarkup()
-        return name, summary, title
-
-
-@pytest.fixture
-def patch_idcore():
-    """Pytest fixture: return :class:`.IdCore` subclass with stub
-    identity properties.
-    """
-    return PatchIdCore
+# @pytest.fixture
+# def patch_idcore():
+#     """Pytest fixture: return :class:`.IdCore` subclass with stub
+#     identity properties.
+#     """
+#     return PatchIdCore
 
 
 @pytest.fixture
