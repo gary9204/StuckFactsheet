@@ -73,8 +73,8 @@ from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango    # type: ignore[import]    # noqa: E402
 
-ModelTextTagged = typing.Union[Gtk.TextBuffer]
-ModelTextMarkup = typing.Union[Gtk.EntryBuffer]
+# ModelTextTagged = typing.Union[Gtk.TextBuffer]
+# ModelTextMarkup = typing.Union[Gtk.EntryBuffer]
 ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
 # ModelTextStatic = str
 
@@ -89,11 +89,9 @@ ViewTextDisplay = typing.Union[Gtk.Label]
 logger = logging.getLogger('Main.bridge_text')
 
 
-class BridgeText(
-        ABC_STALE.InterfaceStaleFile,
-        BBASE.BridgeBase[ModelTextOpaque, PersistText, ViewTextOpaque],
-        typing.Generic[ModelTextOpaque, ViewTextOpaque, ViewTextOpaquePassive
-                       ],):
+class ModelGtkText(ABC_STALE.InterfaceStaleFile,
+                   BBASE.BridgeBase[ModelTextOpaque, PersistText],
+                   typing.Generic[ModelTextOpaque]):
     """Common ancestor of bridge classes for text.
 
     Text bridge objects have transient data for attached views in
@@ -134,11 +132,6 @@ class BridgeText(
         """
         return self._stale
 
-    @abc.abstractmethod
-    def new_view_passive(self) -> ViewTextOpaquePassive:
-        """Return toolkit-specific object to display, but not edit, text."""
-        raise NotImplementedError
-
     def set_fresh(self) -> None:
         """Mark attribute in memory consistent with file."""
         self._stale = False
@@ -162,8 +155,7 @@ class BridgeText(
         self.set_stale()
 
 
-class BridgeTextMarkup(
-        BridgeText[ModelTextMarkup, ViewTextMarkup, ViewTextDisplay]):
+class BridgeTextMarkup(ModelGtkText[Gtk.EntryBuffer]):
     """Text bridge with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 
@@ -202,14 +194,15 @@ class BridgeTextMarkup(
 
         :param p_view: display view being destroyed.
         """
-        id_view = id(p_view)
-        try:
-            _ = self._views.pop(id_view)
-        except KeyError:
-            logger.warning(
-                'Missing view: {} ({}.{})'.format(
-                    hex(id_view),
-                    self.__class__.__name__, self._destroy_view.__name__))
+        raise NotImplementedError
+        # id_view = id(p_view)
+        # try:
+        #     _ = self._views.pop(id_view)
+        # except KeyError:
+        #     logger.warning(
+        #         'Missing view: {} ({}.{})'.format(
+        #             hex(id_view),
+        #             self.__class__.__name__, self._destroy_view.__name__))
 
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
@@ -217,54 +210,58 @@ class BridgeTextMarkup(
         """
         return self._model.get_text()
 
-    def _new_model(self) -> ModelTextMarkup:
+    def _new_model(self) -> Gtk.EntryBuffer:
         """Return object to store text and add collection of static views."""
-        model = ModelTextMarkup()
-        _ = model.connect('deleted-text', lambda *_a: self.on_change())
-        _ = model.connect('inserted-text', lambda *_a: self.on_change())
-        self._views: typing.MutableMapping[int, ViewTextDisplay] = dict()
-        return model
+        raise NotImplementedError
+        # model = Gtk.EntryBuffer()
+        # _ = model.connect('deleted-text', lambda *_a: self.on_change())
+        # _ = model.connect('inserted-text', lambda *_a: self.on_change())
+        # self._views: typing.MutableMapping[int, ViewTextDisplay] = dict()
+        # return model
 
     def new_view(self) -> ViewTextMarkup:
         """Return view to display and edit text with mark up formatting."""
-        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        TOOLTIP_PRIMARY = 'Click to accept changes.'
-        TOOLTIP_SECONDARY = 'Click to cancel changes.'
-        view = ViewTextMarkup.new_with_buffer(self._model)
-        view.set_halign(Gtk.Align.START)
-        view.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
-        view.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
-        view.set_icon_tooltip_markup(
-            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
-        view.set_icon_tooltip_markup(
-            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
-        view.set_width_chars(self.N_WIDTH_EDIT)
-        return view
+        raise NotImplementedError
+        # NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        # NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        # TOOLTIP_PRIMARY = 'Click to accept changes.'
+        # TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        # view = ViewTextMarkup.new_with_buffer(self._model)
+        # view.set_halign(Gtk.Align.START)
+        # view.set_icon_from_icon_name(
+        #     Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
+        # view.set_icon_from_icon_name(
+        #     Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
+        # view.set_icon_tooltip_markup(
+        #     Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
+        # view.set_icon_tooltip_markup(
+        #     Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
+        # view.set_width_chars(self.N_WIDTH_EDIT)
+        # return view
 
     def new_view_passive(self) -> ViewTextDisplay:
         """Return view to display text with mark up formatting."""
-        view = ViewTextDisplay(label=self._get_persist())
-        _ = view.connect('destroy', self._destroy_view)
-        self._views[id(view)] = view
-
-        XALIGN_LEFT = 0.0
-        view.set_ellipsize(Pango.EllipsizeMode.END)
-        view.set_halign(Gtk.Align.START)
-        view.set_selectable(True)
-        view.set_use_markup(True)
-        view.set_width_chars(self.N_WIDTH_DISPLAY)
-        view.set_xalign(XALIGN_LEFT)
-        return view
+        raise NotImplementedError
+        # view = ViewTextDisplay(label=self._get_persist())
+        # _ = view.connect('destroy', self._destroy_view)
+        # self._views[id(view)] = view
+        #
+        # XALIGN_LEFT = 0.0
+        # view.set_ellipsize(Pango.EllipsizeMode.END)
+        # view.set_halign(Gtk.Align.START)
+        # view.set_selectable(True)
+        # view.set_use_markup(True)
+        # view.set_width_chars(self.N_WIDTH_DISPLAY)
+        # view.set_xalign(XALIGN_LEFT)
+        # return view
 
     def on_change(self):
         """Refresh display views when text is inserted or deleted."""
-        self.set_stale()
-        text_new = filter_user_markup(self._model.get_text())
-        for view in self._views.values():
-            view.set_markup(text_new)
+        raise NotImplementedError
+        # self.set_stale()
+        # text_new = filter_user_markup(self._model.get_text())
+        # for view in self._views.values():
+        #     view.set_markup(text_new)
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -276,8 +273,7 @@ class BridgeTextMarkup(
         self._model.set_text(p_persist, ALL)
 
 
-class BridgeTextTagged(
-        BridgeText[ModelTextTagged, ViewTextTagged, ViewTextTagged]):
+class BridgeTextTagged(ModelGtkText[Gtk.TextBuffer]):
     """Text bridge with support for editing and format tagging.  See
     `Gtk.TextBuffer`_.
 
@@ -302,30 +298,33 @@ class BridgeTextTagged(
         start, end = self._model.get_bounds()
         return self._model.get_text(start, end, NO_HIDDEN)
 
-    def _new_model(self) -> ModelTextTagged:
+    def _new_model(self) -> Gtk.TextBuffer:
         """Return toolkit-specific object to store text."""
-        model = ModelTextTagged()
-        _ = model.connect('changed', lambda *_a: self.set_stale())
-        return model
+        raise NotImplementedError
+        # model = Gtk.TextBuffer()
+        # _ = model.connect('changed', lambda *_a: self.set_stale())
+        # return model
 
     def new_view(self) -> ViewTextTagged:
         """Return view to display and edit text with tag-based formatting."""
-        N_MARGIN_LEFT_RIGHT = 6
-        N_MARGIN_TOP_BOTTOM = 6
-        view = ViewTextTagged.new_with_buffer(self._model)
-        view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
-        view.set_left_margin(N_MARGIN_LEFT_RIGHT)
-        view.set_right_margin(N_MARGIN_LEFT_RIGHT)
-        view.set_top_margin(N_MARGIN_TOP_BOTTOM)
-        view.set_vexpand(True)
-        view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
-        return view
+        raise NotImplementedError
+        # N_MARGIN_LEFT_RIGHT = 6
+        # N_MARGIN_TOP_BOTTOM = 6
+        # view = ViewTextTagged.new_with_buffer(self._model)
+        # view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
+        # view.set_left_margin(N_MARGIN_LEFT_RIGHT)
+        # view.set_right_margin(N_MARGIN_LEFT_RIGHT)
+        # view.set_top_margin(N_MARGIN_TOP_BOTTOM)
+        # view.set_vexpand(True)
+        # view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        # return view
 
     def new_view_passive(self) -> ViewTextTagged:
         """Return view to display text with tag-based formatting."""
-        view = self.new_view()
-        view.set_editable(False)
-        return view
+        raise NotImplementedError
+        # view = self.new_view()
+        # view.set_editable(False)
+        # return view
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.

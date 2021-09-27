@@ -318,7 +318,7 @@ class TestIdCore:
         target._stale = False
 
         patch = PatchAttrSetStale()
-        monkeypatch.setattr(BTEXT.BridgeText, 'set_stale', patch.set_stale)
+        monkeypatch.setattr(BTEXT.ModelGtkText, 'set_stale', patch.set_stale)
         # Test
         target.set_stale()
         assert not patch.called

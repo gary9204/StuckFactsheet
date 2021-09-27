@@ -150,7 +150,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
 
     @abc.abstractmethod
     def _new_model(self) -> typing.Tuple[
-            BUI.BridgeText, BUI.BridgeText, BUI.BridgeText]:
+            BUI.ModelGtkText, BUI.ModelGtkText, BUI.ModelGtkText]:
         """Return (name, summary, title) store."""
         raise NotImplementedError
 
