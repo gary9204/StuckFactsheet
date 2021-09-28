@@ -155,60 +155,16 @@ class ModelGtkText(ABC_STALE.InterfaceStaleFile,
         self.set_stale()
 
 
-class BridgeTextMarkup(ModelGtkText[Gtk.EntryBuffer]):
-    """Text bridge with support for editing and `Pango markup`_.  See
-    `Gtk.EntryBuffer`_.
-
-    Text bridge objects have transient data for attached views in
-    addition to persistant text content.
-
-    .. admonition:: About Equality
-
-        Two text bridge objects are equivalent when they have the equal
-        text.  Transient aspects of the attributes are not compared and
-        may be different.
-
-    .. _Gtk.EntryBuffer:
-        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
-
-    .. data:: N_WIDTH_DISPLAY
-
-        Minimum width in characters of display view.
+class FactoryGtkEntry(BBASE.FactoryGtkViewAbstract):
+    """TBD
 
     .. data:: N_WIDTH_EDIT
 
         Minimum width in characters of edit view.
     """
+    pass
 
-    N_WIDTH_DISPLAY = 15
     N_WIDTH_EDIT = 45
-
-    def __getstate__(self) -> typing.Dict:
-        """Return content of storage element in form pickle can store."""
-        state = super().__getstate__()
-        del state['_views']
-        return state
-
-    def _destroy_view(self, p_view: ViewTextDisplay) -> None:
-        """Stop updating display view that is being destroyed.
-
-        :param p_view: display view being destroyed.
-        """
-        raise NotImplementedError
-        # id_view = id(p_view)
-        # try:
-        #     _ = self._views.pop(id_view)
-        # except KeyError:
-        #     logger.warning(
-        #         'Missing view: {} ({}.{})'.format(
-        #             hex(id_view),
-        #             self.__class__.__name__, self._destroy_view.__name__))
-
-    def _get_persist(self) -> PersistText:
-        """Return text storage element in form suitable for persistent
-        storage.
-        """
-        return self._model.get_text()
 
     def _new_model(self) -> Gtk.EntryBuffer:
         """Return object to store text and add collection of static views."""
@@ -239,6 +195,41 @@ class BridgeTextMarkup(ModelGtkText[Gtk.EntryBuffer]):
         # view.set_width_chars(self.N_WIDTH_EDIT)
         # return view
 
+
+class FactoryGtkLabelBuffered:
+    """TBD
+
+    .. data:: N_WIDTH_DISPLAY
+
+        Minimum width in characters of display view.
+    """
+    pass
+
+    N_WIDTH_DISPLAY = 15
+
+    def on_change(self):
+        """Refresh display views when text is inserted or deleted."""
+        raise NotImplementedError
+        # self.set_stale()
+        # text_new = filter_user_markup(self._model.get_text())
+        # for view in self._views.values():
+        #     view.set_markup(text_new)
+
+    def _destroy_view(self, p_view: ViewTextDisplay) -> None:
+        """Stop updating display view that is being destroyed.
+
+        :param p_view: display view being destroyed.
+        """
+        raise NotImplementedError
+        # id_view = id(p_view)
+        # try:
+        #     _ = self._views.pop(id_view)
+        # except KeyError:
+        #     logger.warning(
+        #         'Missing view: {} ({}.{})'.format(
+        #             hex(id_view),
+        #             self.__class__.__name__, self._destroy_view.__name__))
+
     def new_view_passive(self) -> ViewTextDisplay:
         """Return view to display text with mark up formatting."""
         raise NotImplementedError
@@ -255,13 +246,41 @@ class BridgeTextMarkup(ModelGtkText[Gtk.EntryBuffer]):
         # view.set_xalign(XALIGN_LEFT)
         # return view
 
-    def on_change(self):
-        """Refresh display views when text is inserted or deleted."""
-        raise NotImplementedError
-        # self.set_stale()
-        # text_new = filter_user_markup(self._model.get_text())
-        # for view in self._views.values():
-        #     view.set_markup(text_new)
+
+class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
+    """Text bridge with support for editing and `Pango markup`_.  See
+    `Gtk.EntryBuffer`_.
+
+    Text bridge objects have transient data for attached views in
+    addition to persistant text content.
+
+    .. admonition:: About Equality
+
+        Two text bridge objects are equivalent when they have the equal
+        text.  Transient aspects of the attributes are not compared and
+        may be different.
+
+    .. _Gtk.EntryBuffer:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
+    """
+
+    def __init__(self) -> None:
+        """Extend initialization with GTK model."""
+        super().__init__()
+        self._set_persist('')
+
+    def _get_persist(self) -> PersistText:
+        """Return text storage element in form suitable for persistent
+        storage.
+        """
+        return self._model.get_text()
+
+    def _new_model(self) -> Gtk.EntryBuffer:
+        """Return GTK model with signals connections."""
+        model = Gtk.EntryBuffer()
+        _ = model.connect('deleted-text', lambda *_a: self.set_stale())
+        _ = model.connect('inserted-text', lambda *_a: self.set_stale())
+        return model
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -269,6 +288,8 @@ class BridgeTextMarkup(ModelGtkText[Gtk.EntryBuffer]):
         :param p_persist: persistent form for text storage element
             content.
         """
+        if not hasattr(self, '_model'):
+            self._model = self._new_model()
         ALL = -1
         self._model.set_text(p_persist, ALL)
 

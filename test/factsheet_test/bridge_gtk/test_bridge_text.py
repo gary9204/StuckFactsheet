@@ -184,9 +184,9 @@ class TestBridgeTextCommon:
         'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
             (BTEXT.BridgeTextTagged, Gtk.TextBuffer,
                 'changed', 0),
-            (BTEXT.BridgeTextMarkup, Gtk.EntryBuffer,
+            (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer,
                 'deleted-text', 0),
-            (BTEXT.BridgeTextMarkup, Gtk.EntryBuffer,
+            (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer,
                 'inserted-text', 0),
         ])
     def test_get_set_signals(self, tmp_path, CLASS_BRIDGE, CLASS_TEXT,
@@ -230,7 +230,7 @@ class TestBridgeTextCommon:
     @pytest.mark.skip
     @pytest.mark.parametrize('CLASS_BRIDGE, CLASS_TEXT', [
         (BTEXT.BridgeTextTagged, Gtk.TextBuffer),
-        (BTEXT.BridgeTextMarkup, Gtk.EntryBuffer),
+        (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer),
         # See TestBridgeTextStatic for specialized test.
         ])
     def test_init(self, CLASS_BRIDGE, CLASS_TEXT):
@@ -246,15 +246,11 @@ class TestBridgeTextCommon:
         assert isinstance(target._model, CLASS_TEXT)
         assert not target._get_persist()
 
-    @pytest.mark.skip
     @pytest.mark.parametrize(
         'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (BTEXT.BridgeTextTagged, Gtk.TextBuffer,
-                'changed', 0),
-            (BTEXT.BridgeTextMarkup, Gtk.EntryBuffer,
-                'deleted-text', 0),
-            (BTEXT.BridgeTextMarkup, Gtk.EntryBuffer,
-             'inserted-text', 0),
+            # (BTEXT.BridgeTextTagged, Gtk.TextBuffer, 'changed', 0),
+            # (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer, 'deleted-text', 0),
+            # (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer, 'inserted-text', 0),
         ])
     def test_init_signals(
             self, CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT):
@@ -283,36 +279,77 @@ class TestBridgeTextCommon:
         assert (N_DEFAULT + 1) == n_handlers
 
 
-class TestBridgeTextMarkup:
-    """Unit tests for :class:`.BridgeTextMarkup`.
-
-    :class:`.TestBridgeTextCommon` contains additional unit tests for
-    :class:`.BridgeTextMarkup`.
-    """
+class TestFactoryGtkEntry:
+    """Unit tests for :class:`.FactoryGtkEntry`."""
 
     @pytest.mark.skip
-    def test_get_set_state(self, tmp_path):
-        """Confirm conversion to and from pickle format.
-
-        :param tmp_path: built-in fixture `Pytest tmp_path`_.
-        """
+    def test_new_model(self):
+        """Confirm storage type."""
         # Setup
-        PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = BTEXT.BridgeTextMarkup()
-        TEXT = 'Something completely different'
-        source._set_persist(TEXT)
-        source._stale = True
-        I_ENTRY = 0
-        source._views[I_ENTRY] = BTEXT.ViewTextDisplay()
+        target = BTEXT.ModelGtkEntryBuffer()
         # Test
-        with PATH.open(mode='wb') as io_out:
-            pickle.dump(source, io_out)
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-        assert source._get_persist() == target._get_persist()
+        assert isinstance(target._model, Gtk.EntryBuffer)
         assert isinstance(target._views, dict)
         assert not target._views
-        assert not target._stale
+
+    @pytest.mark.skip
+    def test_new_view(self):
+        """Confirm return is editable view."""
+        # Setup
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        target = BTEXT.ModelGtkEntryBuffer()
+        # Test
+        view = target.new_view()
+        assert isinstance(view, BTEXT.ViewTextMarkup)
+        assert target._model is view.get_buffer()
+        assert not target._views
+        assert Gtk.Align.START == view.get_halign()
+        assert NAME_ICON_PRIMARY == (
+            view.get_icon_name(Gtk.EntryIconPosition.PRIMARY))
+        assert NAME_ICON_SECONDARY == (
+            view.get_icon_name(Gtk.EntryIconPosition.SECONDARY))
+        assert TOOLTIP_PRIMARY == (
+            view.get_icon_tooltip_markup(Gtk.EntryIconPosition.PRIMARY))
+        assert TOOLTIP_SECONDARY == (
+            view.get_icon_tooltip_markup(Gtk.EntryIconPosition.SECONDARY))
+        assert target.N_WIDTH_EDIT == view.get_width_chars()
+
+
+class TestFactoryGtkLabelBuffered:
+    """Unit tests for :class:`.FactoryGtkLabelBuffered`."""
+
+    @pytest.mark.skip
+    def test_new_model(self):
+        """Confirm storage type."""
+        # Setup
+        target = BTEXT.ModelGtkEntryBuffer()
+        # Test
+        assert isinstance(target._model, Gtk.EntryBuffer)
+        assert isinstance(target._views, dict)
+        assert not target._views
+
+    @pytest.mark.skip
+    def test_on_change(self):
+        """| Confirm refresh of display views."""
+        # Setup
+        target = BTEXT.ModelGtkEntryBuffer()
+        TEXT = 'The <b>Parrot </b>Sketch.'
+        ALL = -1
+        target._model.set_text(TEXT, ALL)
+        N_VIEWS = 3
+        for _ in range(N_VIEWS):
+            view = BTEXT.ViewTextDisplay()
+            target._views[id(view)] = view
+        target.set_fresh()
+        # Test
+        target.on_change()
+        assert target.is_stale()
+        assert N_VIEWS == len(target._views)
+        for view in target._views.values():
+            assert TEXT == view.get_label()
 
     @pytest.mark.skip
     def test_destroy_view(self):
@@ -320,7 +357,7 @@ class TestBridgeTextMarkup:
         | Case: model connected to view.
         """
         # Setup
-        target = BTEXT.BridgeTextMarkup()
+        target = BTEXT.ModelGtkEntryBuffer()
         N_VIEWS = 5
         I_REMOVE = 4
         for i in range(N_VIEWS):
@@ -343,7 +380,7 @@ class TestBridgeTextMarkup:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        target = BTEXT.BridgeTextMarkup()
+        target = BTEXT.ModelGtkEntryBuffer()
         N_VIEWS = 5
         for _ in range(N_VIEWS):
             view = BTEXT.ViewTextDisplay()
@@ -352,7 +389,7 @@ class TestBridgeTextMarkup:
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
-        log_message = ('Missing view: {} (BridgeTextMarkup._destroy_view)'
+        log_message = ('Missing view: {} (ModelGtkEntryBuffer._destroy_view)'
                        ''.format(hex(id(VIEW_MISSING))))
         # Test
         target._destroy_view(VIEW_MISSING)
@@ -360,52 +397,6 @@ class TestBridgeTextMarkup:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
-
-    @pytest.mark.skip
-    def test_get_persist(self):
-        """Confirm export to persistent form."""
-        # Setup
-        target = BTEXT.BridgeTextMarkup()
-        TEXT = 'The Parrot Sketch.'
-        ALL = -1
-        target._model.set_text(TEXT, ALL)
-        # Test
-        assert TEXT == target._get_persist()
-
-    @pytest.mark.skip
-    def test_new_model(self):
-        """Confirm storage type."""
-        # Setup
-        target = BTEXT.BridgeTextMarkup()
-        # Test
-        assert isinstance(target._model, Gtk.EntryBuffer)
-        assert isinstance(target._views, dict)
-        assert not target._views
-
-    @pytest.mark.skip
-    def test_new_view(self):
-        """Confirm return is editable view."""
-        # Setup
-        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        TOOLTIP_PRIMARY = 'Click to accept changes.'
-        TOOLTIP_SECONDARY = 'Click to cancel changes.'
-        target = BTEXT.BridgeTextMarkup()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BTEXT.ViewTextMarkup)
-        assert target._model is view.get_buffer()
-        assert not target._views
-        assert Gtk.Align.START == view.get_halign()
-        assert NAME_ICON_PRIMARY == (
-            view.get_icon_name(Gtk.EntryIconPosition.PRIMARY))
-        assert NAME_ICON_SECONDARY == (
-            view.get_icon_name(Gtk.EntryIconPosition.SECONDARY))
-        assert TOOLTIP_PRIMARY == (
-            view.get_icon_tooltip_markup(Gtk.EntryIconPosition.PRIMARY))
-        assert TOOLTIP_SECONDARY == (
-            view.get_icon_tooltip_markup(Gtk.EntryIconPosition.SECONDARY))
-        assert target.N_WIDTH_EDIT == view.get_width_chars()
 
     @pytest.mark.skip
     def test_new_view_passive(self, monkeypatch):
@@ -426,7 +417,7 @@ class TestBridgeTextMarkup:
 
         patch_connect = PatchConnect()
         monkeypatch.setattr(Gtk.Widget, 'connect', patch_connect.connect)
-        target = BTEXT.BridgeTextMarkup()
+        target = BTEXT.ModelGtkEntryBuffer()
         TEXT = 'The <b>Parrot </b>Sketch'
         target._set_persist(TEXT)
         SIGNAL = 'destroy'
@@ -448,47 +439,96 @@ class TestBridgeTextMarkup:
         assert target.N_WIDTH_DISPLAY == view.get_width_chars()
         assert math.isclose(N_XALIGN, view.get_xalign())
 
-    @pytest.mark.skip
-    def test_on_change(self):
-        """| Confirm refresh of display views."""
-        # Setup
-        target = BTEXT.BridgeTextMarkup()
-        TEXT = 'The <b>Parrot </b>Sketch.'
-        ALL = -1
-        target._model.set_text(TEXT, ALL)
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextDisplay()
-            target._views[id(view)] = view
-        target.set_fresh()
-        # Test
-        target.on_change()
-        assert target.is_stale()
-        assert N_VIEWS == len(target._views)
-        for view in target._views.values():
-            assert TEXT == view.get_label()
 
-    @pytest.mark.skip
-    def test_set_persist(self):
-        """Confirm import from persistent form."""
+class TestModelGtkEntryBuffer:
+    """Unit tests for :class:`.ModelGtkEntryBuffer`.
+
+    :class:`.TestBridgeTextCommon` contains additional unit tests for
+    :class:`.ModelGtkEntryBuffer`.
+    """
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
         # Setup
-        target = BTEXT.BridgeTextMarkup()
+        PATH = Path(str(tmp_path / 'get_set.fsg'))
+        source = BTEXT.ModelGtkEntryBuffer()
+        TEXT = 'Something completely different'
+        source._set_persist(TEXT)
+        source._stale = True
+        # Test
+        with PATH.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert source._get_persist() == target._get_persist()
+        assert not target._stale
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        BLANK = ''
+        # Test
+        target = BTEXT.ModelGtkEntryBuffer()
+        assert target._stale is not None
+        assert not target._stale
+        assert isinstance(target._model, Gtk.EntryBuffer)
+        assert BLANK == target._model.get_text()
+
+    def test_get_persist(self):
+        """Confirm export to persistent form."""
+        # Setup
+        target = BTEXT.ModelGtkEntryBuffer()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
         target._model.set_text(TEXT, ALL)
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextDisplay()
-            target._views[id(view)] = view
+        # Test
+        assert TEXT == target._get_persist()
+
+    @pytest.mark.parametrize(
+        'NAME_SIGNAL, N_DEFAULT', [
+            ('deleted-text', 0),
+            ('inserted-text', 0),
+        ])
+    def test_new_model(self, NAME_SIGNAL, N_DEFAULT):
+        """Confirm GTK model with signal connections.
+
+        :param NAME_SIGNAL: signal under test.
+        :param N_DEFAULT: number of default handlers for signal.
+        """
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(Gtk.EntryBuffer))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        NO_SIGNAL = 0
+        # Test
+        target = BTEXT.ModelGtkEntryBuffer()
+        assert isinstance(target._model, Gtk.EntryBuffer)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                target._model, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if NO_SIGNAL == id_signal:
+                break
+            n_handlers += 1
+            GO.signal_handler_disconnect(target._model, id_signal)
+        assert (N_DEFAULT + 1) == n_handlers
+
+    def test_set_persist(self):
+        """Confirm import from persistent form."""
+        # Setup
+        target = BTEXT.ModelGtkEntryBuffer()
+        TEXT = 'The Parrot Sketch.'
+        ALL = -1
+        target._model.set_text(TEXT, ALL)
         target.set_fresh()
         TEXT_NEW = 'Something completely different.'
         # Test
         target._set_persist(TEXT_NEW)
-        assert TEXT_NEW == target._get_persist()
         assert target.is_stale()
-        assert N_VIEWS == len(target._views)
-        for view in target._views.values():
-            assert TEXT_NEW == view.get_label()
+        assert TEXT_NEW == target._model.get_text()
 
 
 class TestBridgeTextTagged:

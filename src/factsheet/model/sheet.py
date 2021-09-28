@@ -21,9 +21,9 @@ import factsheet.model.idcore as MIDCORE
 logger = logging.getLogger('Main.model.sheet')
 
 
-NameSheet = BUI.BridgeTextMarkup
+NameSheet = BUI.ModelGtkEntryBuffer
 SummarySheet = BUI.BridgeTextTagged
-TitleSheet = BUI.BridgeTextMarkup
+TitleSheet = BUI.ModelGtkEntryBuffer
 ViewNameSheetActive = BUI.ViewTextMarkup
 ViewNameSheetPassive = BUI.ViewTextDisplay
 ViewSummarySheetActive = BUI.ViewTextTagged

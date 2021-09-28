@@ -60,6 +60,16 @@ PersistGtkOpaque = typing.TypeVar('PersistGtkOpaque')
 ViewGtkOpaque = typing.TypeVar('ViewGtkOpaque')
 
 
+class FactoryGtkViewAbstract(
+        abc.ABC, typing.Generic[ViewGtkOpaque]):
+    """Common ancestor of factory classes for views of storage elements."""
+
+    @abc.abstractmethod
+    def __call__(self) -> ViewGtkOpaque:
+        """Return toolkit-specific view of storage element."""
+        raise NotImplementedError
+
+
 class BridgeBase(abc.ABC, typing.Generic[ModelGtkOpaque, PersistGtkOpaque]):
     """Common ancestor of model classes that encapsulate widget toolkit
     storage elements.
@@ -117,14 +127,4 @@ class BridgeBase(abc.ABC, typing.Generic[ModelGtkOpaque, PersistGtkOpaque]):
 
         :param p_persist: persistent form for storage element content.
         """
-        raise NotImplementedError
-
-
-class FactoryGtkViewAbstract(
-        abc.ABC, typing.Generic[ViewGtkOpaque]):
-    """Common ancestor of factory classes for views of storage elements."""
-
-    @abc.abstractmethod
-    def __call__(self) -> ViewGtkOpaque:
-        """Return toolkit-specific view of storage element."""
         raise NotImplementedError
