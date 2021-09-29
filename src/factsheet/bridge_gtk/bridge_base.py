@@ -1,15 +1,15 @@
 """
 Defines base for model classes that encapsulate widget toolkit classes.
 
-.. data:: ModelGtkOpaque
+.. data:: ModelUiOpaque
 
-    Placeholder type hint for a model component.  A GTK example is
-    `Gtk.TextBuffer`_.
+    Placeholder type hint for a toolkit-specific storage element.  A GTK
+    example is `Gtk.TextBuffer`_.
 
 .. _Gtk.TextBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 
-.. data:: PersistGtkOpaque
+.. data:: PersistUiOpaque
 
     Placeholder type hint for model representation suitable
     for persistent storage.  A GTK example is the string representation
@@ -33,10 +33,10 @@ Defines base for model classes that encapsulate widget toolkit classes.
     https://lazka.github.io/pgi-docs/#Gdk-3.0/
     constants.html#Gdk.CURRENT_TIME
 
-.. data:: ViewGtkOpaque
+.. data:: ViewUiOpaque
 
-    Placeholder type hint for a view element.  A GTK example is
-    `Gtk.TextView`_.
+    Placeholder type hint for a toolkit-specific view element.  A GTK
+    example is `Gtk.TextView`_.
 
 .. _Gtk.TextView:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
@@ -54,23 +54,23 @@ logger = logging.getLogger('Main.bridge_base')
 TimeEvent = int
 TIME_EVENT_CURRENT = Gdk.CURRENT_TIME
 
-ModelGtkOpaque = typing.TypeVar('ModelGtkOpaque')
-PersistGtkOpaque = typing.TypeVar('PersistGtkOpaque')
+ModelUiOpaque = typing.TypeVar('ModelUiOpaque')
+PersistUiOpaque = typing.TypeVar('PersistUiOpaque')
 # ViewAny = typing.Union[Gtk.Widget]
-ViewGtkOpaque = typing.TypeVar('ViewGtkOpaque')
+ViewUiOpaque = typing.TypeVar('ViewUiOpaque')
 
 
-class FactoryGtkViewAbstract(
-        abc.ABC, typing.Generic[ViewGtkOpaque]):
+class FactoryUiViewAbstract(
+        abc.ABC, typing.Generic[ViewUiOpaque]):
     """Common ancestor of factory classes for views of storage elements."""
 
     @abc.abstractmethod
-    def __call__(self) -> ViewGtkOpaque:
+    def __call__(self) -> ViewUiOpaque:
         """Return toolkit-specific view of storage element."""
         raise NotImplementedError
 
 
-class BridgeBase(abc.ABC, typing.Generic[ModelGtkOpaque, PersistGtkOpaque]):
+class BridgeBase(abc.ABC, typing.Generic[ModelUiOpaque, PersistUiOpaque]):
     """Common ancestor of model classes that encapsulate widget toolkit
     storage elements.
     """
@@ -95,13 +95,13 @@ class BridgeBase(abc.ABC, typing.Generic[ModelGtkOpaque, PersistGtkOpaque]):
         Each descendant class defines its persistent contents.
         """
         state = self.__dict__.copy()
-        state['ex_model'] = self._get_persist()
-        del state['_model']
+        state['ex_ui_model'] = self._get_persist()
+        del state['_ui_model']
         return state
 
     def __init__(self) -> None:
-        """Initialize instance with GTK storage."""
-        self._model: ModelGtkOpaque
+        """Initialize instance with toolkit-specific storage."""
+        self._ui_model: ModelUiOpaque
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct storage element from content that pickle loads.
@@ -109,20 +109,29 @@ class BridgeBase(abc.ABC, typing.Generic[ModelGtkOpaque, PersistGtkOpaque]):
         :param p_state: unpickled content.
         """
         self.__dict__.update(p_state)
-        self._set_persist(self.ex_model)   # type: ignore[attr-defined]
-        del self.ex_model       # type: ignore[attr-defined]
+        self._set_persist(self.ex_ui_model)   # type: ignore[attr-defined]
+        del self.ex_ui_model       # type: ignore[attr-defined]
 
     def __str__(self) -> str:
         """Return storage element as string."""
         return '<{}: {}>'.format(type(self).__name__, self._get_persist())
 
+    @property
+    def ui_model(self) -> ModelUiOpaque:
+        """Return underlying user interface storage element.
+
+        Method :meth:`.ui_model` is intended only for use in bridge
+        classes.
+        """
+        return self._ui_model
+
     @abc.abstractmethod
-    def _get_persist(self) -> PersistGtkOpaque:
+    def _get_persist(self) -> PersistUiOpaque:
         """Return storage element in form suitable for persistent storage."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _set_persist(self, p_persist: PersistGtkOpaque) -> None:
+    def _set_persist(self, p_persist: PersistUiOpaque) -> None:
         """Set storage element from content in persistent form.
 
         :param p_persist: persistent form for storage element content.

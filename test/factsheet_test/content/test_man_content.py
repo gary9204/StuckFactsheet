@@ -18,5 +18,5 @@ class TestContent:
         # Test
         target = XMAN_CONTENT.new_templates(lambda: VIEW_TOPICS)
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
-        model = target._gtk_model
+        model = target._ui_model
         assert N_HEADINGS == len(model)

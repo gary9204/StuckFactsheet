@@ -27,13 +27,13 @@ class PatchBridgeText(BTEXT.ModelGtkText[typing.Any]):
 
     def __init__(self):
         super().__init__()
-        self._model = 'Oops! incomplete test initialization.'
+        self._ui_model = 'Oops! incomplete test initialization.'
 
     def _get_persist(self):
-        return self._model
+        return self._ui_model
 
     def _set_persist(self, p_persist):
-        self._model = str(p_persist)
+        self._ui_model = str(p_persist)
 
 
 class TestBridgeText:
@@ -110,7 +110,7 @@ class TestBridgeText:
         # Setup
         TEXT = 'The Parrot Sketch'
         target = PatchBridgeText()
-        target._model = TEXT
+        target._ui_model = TEXT
         expect = '<{}: {}>'.format(type(target).__name__, TEXT)
         # Test
         assert expect == str(target)
@@ -282,30 +282,28 @@ class TestBridgeTextCommon:
 class TestFactoryGtkEntry:
     """Unit tests for :class:`.FactoryGtkEntry`."""
 
-    @pytest.mark.skip
-    def test_new_model(self):
+    def test_init(self):
         """Confirm storage type."""
         # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
+        MODEL = BTEXT.ModelGtkEntryBuffer()
         # Test
-        assert isinstance(target._model, Gtk.EntryBuffer)
-        assert isinstance(target._views, dict)
-        assert not target._views
+        target = BTEXT.FactoryGtkEntry(p_model=MODEL)
+        assert target._ui_model is MODEL._ui_model
 
-    @pytest.mark.skip
-    def test_new_view(self):
+    def test_call(self):
         """Confirm return is editable view."""
         # Setup
         NAME_ICON_PRIMARY = 'emblem-default-symbolic'
         NAME_ICON_SECONDARY = 'edit-delete-symbolic'
         TOOLTIP_PRIMARY = 'Click to accept changes.'
         TOOLTIP_SECONDARY = 'Click to cancel changes.'
-        target = BTEXT.ModelGtkEntryBuffer()
+        N_WIDTH_EDIT = 45
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        target = BTEXT.FactoryGtkEntry(p_model=entry_buffer)
         # Test
-        view = target.new_view()
-        assert isinstance(view, BTEXT.ViewTextMarkup)
-        assert target._model is view.get_buffer()
-        assert not target._views
+        view = target()
+        assert isinstance(view, Gtk.Entry)
+        assert target._ui_model is view.get_buffer()
         assert Gtk.Align.START == view.get_halign()
         assert NAME_ICON_PRIMARY == (
             view.get_icon_name(Gtk.EntryIconPosition.PRIMARY))
@@ -315,7 +313,7 @@ class TestFactoryGtkEntry:
             view.get_icon_tooltip_markup(Gtk.EntryIconPosition.PRIMARY))
         assert TOOLTIP_SECONDARY == (
             view.get_icon_tooltip_markup(Gtk.EntryIconPosition.SECONDARY))
-        assert target.N_WIDTH_EDIT == view.get_width_chars()
+        assert N_WIDTH_EDIT == view.get_width_chars()
 
 
 class TestFactoryGtkLabelBuffered:
@@ -474,8 +472,8 @@ class TestModelGtkEntryBuffer:
         target = BTEXT.ModelGtkEntryBuffer()
         assert target._stale is not None
         assert not target._stale
-        assert isinstance(target._model, Gtk.EntryBuffer)
-        assert BLANK == target._model.get_text()
+        assert isinstance(target._ui_model, Gtk.EntryBuffer)
+        assert BLANK == target._ui_model.get_text()
 
     def test_get_persist(self):
         """Confirm export to persistent form."""
@@ -483,7 +481,7 @@ class TestModelGtkEntryBuffer:
         target = BTEXT.ModelGtkEntryBuffer()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
-        target._model.set_text(TEXT, ALL)
+        target._ui_model.set_text(TEXT, ALL)
         # Test
         assert TEXT == target._get_persist()
 
@@ -504,16 +502,16 @@ class TestModelGtkEntryBuffer:
         NO_SIGNAL = 0
         # Test
         target = BTEXT.ModelGtkEntryBuffer()
-        assert isinstance(target._model, Gtk.EntryBuffer)
+        assert isinstance(target._ui_model, Gtk.EntryBuffer)
         n_handlers = 0
         while True:
             id_signal = GO.signal_handler_find(
-                target._model, GO.SignalMatchType.ID, signal,
+                target._ui_model, GO.SignalMatchType.ID, signal,
                 0, None, None, None)
             if NO_SIGNAL == id_signal:
                 break
             n_handlers += 1
-            GO.signal_handler_disconnect(target._model, id_signal)
+            GO.signal_handler_disconnect(target._ui_model, id_signal)
         assert (N_DEFAULT + 1) == n_handlers
 
     def test_set_persist(self):
@@ -522,13 +520,13 @@ class TestModelGtkEntryBuffer:
         target = BTEXT.ModelGtkEntryBuffer()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
-        target._model.set_text(TEXT, ALL)
+        target._ui_model.set_text(TEXT, ALL)
         target.set_fresh()
         TEXT_NEW = 'Something completely different.'
         # Test
         target._set_persist(TEXT_NEW)
         assert target.is_stale()
-        assert TEXT_NEW == target._model.get_text()
+        assert TEXT_NEW == target._ui_model.get_text()
 
 
 class TestBridgeTextTagged:

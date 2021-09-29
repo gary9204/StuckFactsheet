@@ -19,8 +19,8 @@ def patch_view_topics(new_outline_topics):
     """Pytest fixture returns view of topic outline."""
     outline = VTYPES.ViewOutlineTopics()
     topics = new_outline_topics()
-    gtk_model = topics._gtk_model
-    outline.gtk_view.set_model(gtk_model)
+    ui_model = topics._ui_model
+    outline.gtk_view.set_model(ui_model)
     return outline
 
 

@@ -105,7 +105,7 @@ def new_outline_model():
 @pytest.fixture
 def patch_outline(new_outline_model):
     outline = MTYPES.OutlineTemplates()
-    outline._gtk_model = new_outline_model()
+    outline._ui_model = new_outline_model()
     return outline
 
 
@@ -224,7 +224,7 @@ class TestQueryTemplate:
         target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '1:1:0'
-        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         item = OUTLINE.get_item(i_item)
         target._cursor.select_iter(i_item)
         # Test
@@ -253,7 +253,7 @@ class TestQueryTemplate:
         target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '1:1:0'
-        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         target._cursor.select_iter(i_item)
 
         target._button_specify.set_sensitive(False)
@@ -278,7 +278,7 @@ class TestQueryTemplate:
         target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         target._cursor.select_iter(i_item)
         item = OUTLINE.get_item(i_item)
 
@@ -309,8 +309,8 @@ class TestQueryTemplate:
         heading = XHEADING.Heading(
             p_name=BLANK, p_summary=SUMMARY, p_title=BLANK)
         PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
-        OUTLINE._gtk_model.set_value(
+        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
+        OUTLINE._ui_model.set_value(
             i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, heading)
         target._cursor.select_iter(i_item)
 
@@ -338,8 +338,8 @@ class TestQueryTemplate:
         target._outline.gtk_view.expand_all()
 
         PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
-        OUTLINE._gtk_model.set_value(
+        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
+        OUTLINE._ui_model.set_value(
             i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, None)
         target._cursor.select_iter(i_item)
 

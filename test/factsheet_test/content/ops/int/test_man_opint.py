@@ -22,7 +22,7 @@ class TestOpInteger:
         # Test
         target = XMAN_OPINT.new_templates(lambda: VIEW_TOPICS)
         assert isinstance(target, ASHEET.AdaptTreeStoreTemplate)
-        model = target._gtk_model
+        model = target._ui_model
         assert N_HEADINGS == len(model)
         i_first = model.get_iter_first()
         heading = target.get_item(i_first)

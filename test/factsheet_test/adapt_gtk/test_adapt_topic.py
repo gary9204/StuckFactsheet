@@ -95,7 +95,7 @@ def patch_outline():
     """Pytext fixture returns stub facts outline."""
     def factory_outline(p_tag='Facts outline stub.'):
         outline = ATOPIC.AdaptTreeStoreFact()
-        outline._gtk_model = PatchOutlineModel(p_tag=p_tag).model
+        outline._ui_model = PatchOutlineModel(p_tag=p_tag).model
         return outline
 
     return factory_outline
@@ -124,15 +124,15 @@ class TestAdaptTreeStoreFact:
         """
         # Setup
         target = ATOPIC.AdaptTreeStoreFact()
-        target._gtk_model = PatchOutlineModel(p_tag='Target').model
+        target._ui_model = PatchOutlineModel(p_tag='Target').model
         PATH_VALUE = '1:1:1'
-        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
+        i_value = target._ui_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).name
         PATH_AFTER = '1:1:1'
-        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
+        i_after = target._ui_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_name(value, i_after)
-        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._ui_model.get_string_from_iter(i_match)
 
     def test_find_name_absent(self):
         """| Confirm search by fact name.
@@ -141,7 +141,7 @@ class TestAdaptTreeStoreFact:
         # Setup
         VALUE = 'Something completely different'
         target = ATOPIC.AdaptTreeStoreFact()
-        target._gtk_model = PatchOutlineModel(p_tag='Target').model
+        target._ui_model = PatchOutlineModel(p_tag='Target').model
         # Test
         i_match = target.find_name(VALUE)
         assert i_match is None
@@ -152,15 +152,15 @@ class TestAdaptTreeStoreFact:
         """
         # Setup
         target = ATOPIC.AdaptTreeStoreFact()
-        target._gtk_model = PatchOutlineModel(p_tag='Target').model
+        target._ui_model = PatchOutlineModel(p_tag='Target').model
         PATH_VALUE = '0:1'
-        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
+        i_value = target._ui_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value).title
         PATH_AFTER = '0:1'
-        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
+        i_after = target._ui_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_title(value, i_after)
-        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._ui_model.get_string_from_iter(i_match)
 
     def test_find_title_absent(self):
         """| Confirm search by fact title.
@@ -169,7 +169,7 @@ class TestAdaptTreeStoreFact:
         # Setup
         VALUE = 'Something completely different'
         target = ATOPIC.AdaptTreeStoreFact()
-        target._gtk_model = PatchOutlineModel(p_tag='Target').model
+        target._ui_model = PatchOutlineModel(p_tag='Target').model
         # Test
         i_match = target.find_title(VALUE)
         assert i_match is None
@@ -233,13 +233,13 @@ class TestAdaptTreeViewFact:
         # Setup
         OUTLINE = patch_outline(p_tag='Fact')
         PATH_ITEM = '0'
-        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         fact = OUTLINE.get_item(i_target)
         renderer = Gtk.CellRendererText()
         target = ATOPIC.AdaptTreeViewFact()
         OUTLINE.attach_view(target)
         # Test
-        target._fill_name(None, renderer, OUTLINE._gtk_model, i_target)
+        target._fill_name(None, renderer, OUTLINE._ui_model, i_target)
         assert fact.name == renderer.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
@@ -279,13 +279,13 @@ class TestAdaptTreeViewFact:
             Gtk.TreeView, 'expand_row', patch_expand.expand_row)
 
         OUTLINE = patch_outline(p_tag='Fact')
-        i_item = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         target = ATOPIC.AdaptTreeViewFact()
         OUTLINE.attach_view(target)
         target._scope_search = SEARCH
         # Test
         actual = target._test_field_ne(
-            OUTLINE._gtk_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
+            OUTLINE._ui_model, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM,
             VALUE, i_item, None)
         assert actual is EXPECT
         assert patch_expand.called is EXPANDED
@@ -297,14 +297,14 @@ class TestAdaptTreeViewFact:
         # Setup
         OUTLINE = patch_outline(p_tag='Fact')
         PATH_ITEM = '0:0'
-        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         fact = OUTLINE.get_item(i_target)
         render = Gtk.CellRendererText()
         target = ATOPIC.AdaptTreeViewFact()
         OUTLINE.attach_view(target)
         status_text = fact.status.name
         # Test
-        target._fill_status(None, render, OUTLINE._gtk_model, i_target)
+        target._fill_status(None, render, OUTLINE._ui_model, i_target)
         assert status_text == render.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):
@@ -315,13 +315,13 @@ class TestAdaptTreeViewFact:
         # Setup
         OUTLINE = patch_outline(p_tag='Fact')
         PATH_ITEM = '0:0:0'
-        i_target = OUTLINE._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_target = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
         fact = OUTLINE.get_item(i_target)
         render = Gtk.CellRendererText()
         target = ATOPIC.AdaptTreeViewFact()
         OUTLINE.attach_view(target)
         # Test
-        target._fill_title(None, render, OUTLINE._gtk_model, i_target)
+        target._fill_title(None, render, OUTLINE._ui_model, i_target)
         assert fact.title == render.get_property('text')
         with pytest.raises(TypeError,
                            match='property markup is not readable'):

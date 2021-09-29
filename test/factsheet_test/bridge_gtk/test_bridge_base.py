@@ -22,11 +22,11 @@ class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any]):
 
     def __init__(self):
         super().__init__()
-        self._model = 'Oops! incomplete test initialization.'
+        self._ui_model = 'Oops! incomplete test initialization.'
 
-    def _get_persist(self): return self._model
+    def _get_persist(self): return self._ui_model
 
-    def _set_persist(self, p_persist): self._model = p_persist
+    def _set_persist(self, p_persist): self._ui_model = p_persist
 
 
 class TestBridgeBase:
@@ -42,17 +42,17 @@ class TestBridgeBase:
         # Setup
         TEXT = 'Parrot'
         source = PatchBridgeBase()
-        source._model = TEXT
+        source._ui_model = TEXT
         # Test: type difference.
         assert not source.__eq__(TEXT)
         # Test: storage element difference.
         TEXT_DIFFER = 'Something completely different.'
         target = PatchBridgeBase()
-        target._model = TEXT_DIFFER
+        target._ui_model = TEXT_DIFFER
         assert not source.__eq__(target)
         # Test: equivalent.
         target = PatchBridgeBase()
-        target._model = TEXT
+        target._ui_model = TEXT
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
@@ -62,13 +62,13 @@ class TestBridgeBase:
         PATH = Path(str(tmp_path / 'get_set.fsg'))
         TEXT = 'Parrot'
         source = PatchBridgeBase()
-        source._model = TEXT
+        source._ui_model = TEXT
         # Test
         with PATH.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
         with PATH.open(mode='rb') as io_in:
             target = pickle.load(io_in)
-        assert not hasattr(target, 'ex_model')
+        assert not hasattr(target, 'ex_ui_model')
         assert source._get_persist() == target._get_persist()
 
     def test_init(self):
@@ -83,10 +83,21 @@ class TestBridgeBase:
         # Setup
         TEXT = 'Parrot'
         target = PatchBridgeBase()
-        target._model = TEXT
+        target._ui_model = TEXT
         expect = '<PatchBridgeBase: {}>'.format(TEXT)
         # Test
         assert expect == str(target)
+
+    def test_ui_model(self):
+        """Confirm access limits of ui_model property."""
+        # Setup
+        target_class = PatchBridgeBase
+        target = target_class()
+        # Test
+        assert target_class.ui_model.fget is not None
+        assert target.ui_model is target._ui_model
+        assert target_class.ui_model.fset is None
+        assert target_class.ui_model.fdel is None
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BBASE.BridgeBase, '_get_persist'),
@@ -101,13 +112,13 @@ class TestBridgeBase:
 
 
 class TestBridgeTypes:
-    """Unit tests for :class:`~.FactoryGtkViewAbstract`."""
+    """Unit tests for :class:`~.FactoryUiViewAbstract`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (type(BBASE.ModelGtkOpaque), typing.TypeVar),
-        (type(BBASE.PersistGtkOpaque), typing.TypeVar),
+        (type(BBASE.ModelUiOpaque), typing.TypeVar),
+        (type(BBASE.PersistUiOpaque), typing.TypeVar),
         # (BBASE.ViewAny, Gtk.Widget),
-        (type(BBASE.ViewGtkOpaque), typing.TypeVar),
+        (type(BBASE.ViewUiOpaque), typing.TypeVar),
         (BBASE.TimeEvent, int),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
@@ -122,10 +133,10 @@ class TestBridgeTypes:
 
 
 class TestFactoryGtkViewAbstract:
-    """Unit tests for `.FactoryGtkViewAbstract`."""
+    """Unit tests for `.FactoryUiViewAbstract`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BBASE.FactoryGtkViewAbstract, '__call__'),
+        (BBASE.FactoryUiViewAbstract, '__call__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""

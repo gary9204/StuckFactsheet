@@ -113,7 +113,7 @@ class TestAdaptTreeStore:
         """
         # Setup
         source = PatchOutline()
-        source._gtk_model = Gtk.TreeStore(
+        source._ui_model = Gtk.TreeStore(
             GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT)
         target = PatchOutline()
         # Test
@@ -126,7 +126,7 @@ class TestAdaptTreeStore:
         """
         # Setup
         source = PatchOutline()
-        source._gtk_model = Gtk.TreeStore(int)
+        source._ui_model = Gtk.TreeStore(int)
         target = PatchOutline()
         # Test
         assert not target.__eq__(source)
@@ -142,9 +142,9 @@ class TestAdaptTreeStore:
         i_remove = model_source.get_iter_from_string(PATH_REMOVE)
         model_source.remove(i_remove)
         source = PatchOutline()
-        source._gtk_model = model_source
+        source._ui_model = model_source
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
         # Test
         assert not target.__eq__(source)
         assert target.__ne__(source)
@@ -161,9 +161,9 @@ class TestAdaptTreeStore:
         i_last = model_source.get_iter_from_string(PATH_SECOND)
         model_source.move_after(i_first, i_last)
         source = PatchOutline()
-        source._gtk_model = model_source
+        source._ui_model = model_source
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
         # Test
         assert not target.__eq__(source)
         assert target.__ne__(source)
@@ -175,14 +175,14 @@ class TestAdaptTreeStore:
         # Setup
         source = PatchOutline()
         model_source = new_outline_model()
-        source._gtk_model = model_source
+        source._ui_model = model_source
         PATH_ITEM = '0:1'
         i_item = model_source.get_iter_from_string(PATH_ITEM)
         item = model_source.get_value(i_item, source.N_COLUMN_ITEM)
         NAME_NEW = 'Something completely different'
         item.name = NAME_NEW
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
         # Test
         assert not target.__eq__(source)
         assert target.__ne__(source)
@@ -193,9 +193,9 @@ class TestAdaptTreeStore:
         """
         # Setup
         source = PatchOutline()
-        source._gtk_model = new_outline_model()
+        source._ui_model = new_outline_model()
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
         # Test
         assert target.__eq__(source)
         assert not target.__ne__(source)
@@ -231,7 +231,7 @@ class TestAdaptTreeStore:
         PATH = tmp_path / 'get_set.fsg'
 
         source = PatchOutline()
-        source._gtk_model = new_pickle_model()
+        source._ui_model = new_pickle_model()
 
         N_VIEWS = 3
         views = [AOUTLINE.AdaptTreeView() for _ in range(N_VIEWS)]
@@ -256,9 +256,9 @@ class TestAdaptTreeStore:
         # Test
         target = PatchOutline()
         assert target is not None
-        assert isinstance(target._gtk_model, Gtk.TreeStore)
-        assert N_COLUMNS == target._gtk_model.get_n_columns()
-        name_type = GO.type_name(target._gtk_model.get_column_type(C_ITEM))
+        assert isinstance(target._ui_model, Gtk.TreeStore)
+        assert N_COLUMNS == target._ui_model.get_n_columns()
+        name_type = GO.type_name(target._ui_model.get_column_type(C_ITEM))
         assert NAME_PYOBJECT == name_type
         assert isinstance(target._views, dict)
         assert not target._views
@@ -269,14 +269,14 @@ class TestAdaptTreeStore:
         """
         # Setup
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
 
         N_VIEWS = 3
         views = [AOUTLINE.AdaptTreeView() for _ in range(N_VIEWS)]
         # Test
         for view in views:
             target.attach_view(view)
-            assert target._gtk_model is view._gtk_view.get_model()
+            assert target._ui_model is view._gtk_view.get_model()
             assert target._views[id(view)] is view
         assert len(views) == len(target._views)
 
@@ -292,7 +292,7 @@ class TestAdaptTreeStore:
             def set_model(self, _model): self.called = True
 
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
 
         N_VIEWS = 3
         views = [AOUTLINE.AdaptTreeView() for _ in range(N_VIEWS)]
@@ -326,11 +326,11 @@ class TestAdaptTreeStore:
         # Setup
         target = PatchOutline()
         model = new_outline_model('Target')
-        target._gtk_model = model
-        assert len(target._gtk_model)
+        target._ui_model = model
+        assert len(target._ui_model)
         # Test
         target.clear()
-        assert 0 == len(target._gtk_model)
+        assert 0 == len(target._ui_model)
 
     @pytest.mark.parametrize('PATH_SOURCE, PATH_TARGET, N_INSERT', [
         (None, None, 10),
@@ -356,19 +356,19 @@ class TestAdaptTreeStore:
         # Setup
         source = PatchOutline()
         model = new_outline_model('Source')
-        source._gtk_model = model
+        source._ui_model = model
         if PATH_SOURCE is None:
             i_source = None
         else:
             i_source = model.get_iter_from_string(PATH_SOURCE)
 
         target = PatchOutline()
-        target._gtk_model = new_outline_model('Target')
+        target._ui_model = new_outline_model('Target')
         if PATH_TARGET is None:
             i_target = None
         else:
-            i_target = target._gtk_model.get_iter_from_string(PATH_TARGET)
-        slot_insert = target._gtk_model.iter_n_children(i_target)
+            i_target = target._ui_model.get_iter_from_string(PATH_TARGET)
+        slot_insert = target._ui_model.iter_n_children(i_target)
 
         items_before = [target.get_item(i) for i in target.indices()]
         items_section = [source.get_item(i) for i in source.indices(i_source)]
@@ -382,13 +382,13 @@ class TestAdaptTreeStore:
         if PATH_TARGET is None:
             i_parent = None
         else:
-            i_parent = target._gtk_model.get_iter_from_string(PATH_TARGET)
+            i_parent = target._ui_model.get_iter_from_string(PATH_TARGET)
         items_insert = list()
-        i_insert = target._gtk_model.iter_nth_child(i_parent, slot_insert)
+        i_insert = target._ui_model.iter_nth_child(i_parent, slot_insert)
         while i_insert is not None:
             items_insert += [
                 target.get_item(i) for i in target.indices(i_insert)]
-            i_insert = target._gtk_model.iter_next(i_insert)
+            i_insert = target._ui_model.iter_next(i_insert)
         assert items_section == items_insert
 
     def test_detach_view(self, new_outline_model):
@@ -397,7 +397,7 @@ class TestAdaptTreeStore:
         """
         # Setup
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
 
         N_VIEWS = 3
         views = [AOUTLINE.AdaptTreeView() for _ in range(N_VIEWS)]
@@ -409,9 +409,9 @@ class TestAdaptTreeStore:
         target.detach_view(view_remove)
         assert len(views) == len(target._views)
         for view in views:
-            assert target._gtk_model is view._gtk_view.get_model()
+            assert target._ui_model is view._gtk_view.get_model()
             assert target._views[id(view)] is view
-        assert target._gtk_model is not view_remove._gtk_view.get_model()
+        assert target._ui_model is not view_remove._gtk_view.get_model()
 
     def test_detach_view_warn(
             self, new_outline_model, monkeypatch, PatchLogger):
@@ -420,7 +420,7 @@ class TestAdaptTreeStore:
         """
         # Setup
         target = PatchOutline()
-        target._gtk_model = new_outline_model()
+        target._ui_model = new_outline_model()
 
         N_VIEWS = 3
         views = [AOUTLINE.AdaptTreeView() for _ in range(N_VIEWS)]
@@ -454,12 +454,12 @@ class TestAdaptTreeStore:
         PATH_VALUE = '1:1:2'
         # PATH_AFTER n/a. Default px_i_after is None.
         target = PatchOutline()
-        target._gtk_model = new_outline_model('Target')
-        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
+        target._ui_model = new_outline_model('Target')
+        i_value = target._ui_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value)
         # Test
         i_match = target.find_next(value)
-        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._ui_model.get_string_from_iter(i_match)
 
     def test_find_next_none(self, new_outline_model):
         """| Confirm search results.
@@ -468,7 +468,7 @@ class TestAdaptTreeStore:
         # Setup
         VALUE = 'Something completely different'
         target = PatchOutline()
-        target._gtk_model = new_outline_model('Target')
+        target._ui_model = new_outline_model('Target')
         # Test
         i_match = target.find_next(VALUE)
         assert i_match is None
@@ -479,16 +479,16 @@ class TestAdaptTreeStore:
         """
         # Setup
         target = PatchOutline()
-        target._gtk_model = new_outline_model('Target')
+        target._ui_model = new_outline_model('Target')
         PATH_VALUE = '0:0'
-        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
+        i_value = target._ui_model.get_iter_from_string(PATH_VALUE)
         value = target.get_item(i_value)
         PATH_AFTER = '0:0'
-        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
+        i_after = target._ui_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_next(
             value, px_i_after=i_after)
-        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._ui_model.get_string_from_iter(i_match)
 
     def test_find_next_no_match(self, new_outline_model):
         """| Confirm search results.
@@ -499,9 +499,9 @@ class TestAdaptTreeStore:
 
         VALUE = 'Something completely different'
         target = PatchOutline()
-        target._gtk_model = new_outline_model('Target')
+        target._ui_model = new_outline_model('Target')
         PATH_AFTER = '0:1'
-        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
+        i_after = target._ui_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_next(
             VALUE, px_i_after=i_after, px_derive=derive_name)
@@ -515,16 +515,16 @@ class TestAdaptTreeStore:
         def derive_name(px_obj): return px_obj.name
 
         target = PatchOutline()
-        target._gtk_model = new_outline_model('Target')
+        target._ui_model = new_outline_model('Target')
         PATH_VALUE = '1:1:2'
-        i_value = target._gtk_model.get_iter_from_string(PATH_VALUE)
+        i_value = target._ui_model.get_iter_from_string(PATH_VALUE)
         value = derive_name(target.get_item(i_value))
         PATH_AFTER = '0'
-        i_after = target._gtk_model.get_iter_from_string(PATH_AFTER)
+        i_after = target._ui_model.get_iter_from_string(PATH_AFTER)
         # Test
         i_match = target.find_next(
             value, px_i_after=i_after, px_derive=derive_name)
-        assert PATH_VALUE == target._gtk_model.get_string_from_iter(i_match)
+        assert PATH_VALUE == target._ui_model.get_string_from_iter(i_match)
 
     @pytest.mark.parametrize('PATH_PARENT, N_CUT_BEGIN, N_CUT_END', [
         (None, 10, 10),
@@ -538,7 +538,7 @@ class TestAdaptTreeStore:
         # Setup
         target = PatchOutline()
         model = new_outline_model('Target')
-        target._gtk_model = model
+        target._ui_model = model
 
         names_before = [target.get_item(i).name for i in target.indices()]
         names_after = names_before[:N_CUT_BEGIN] + names_before[N_CUT_END:]
@@ -546,7 +546,7 @@ class TestAdaptTreeStore:
         if PATH_PARENT is None:
             i_target = None
         else:
-            i_target = target._gtk_model.get_iter_from_string(PATH_PARENT)
+            i_target = target._ui_model.get_iter_from_string(PATH_PARENT)
         # Test
         target.extract_section(i_target)
         names_target = [target.get_item(i).name for i in target.indices()]
@@ -564,8 +564,8 @@ class TestAdaptTreeStore:
         model = new_outline_model('Source')
         i_target = model.get_iter_from_string(PATH_TARGET)
         source = PatchOutline()
-        source._gtk_model = model
-        item_source = source._gtk_model.get_value(
+        source._ui_model = model
+        item_source = source._ui_model.get_value(
             i_target, source.N_COLUMN_ITEM)
         # Test
         target = source.get_item(i_target)
@@ -585,10 +585,10 @@ class TestAdaptTreeStore:
         log_message = ('Invalid item index ({}): (get_item_gtk)'
                        ''.format(hex(id(i_target))))
         source = PatchOutline()
-        source._gtk_model = model
-        assert source._gtk_model.get_value(
+        source._ui_model = model
+        assert source._ui_model.get_value(
             i_target, source.N_COLUMN_ITEM) is not None
-        source._gtk_model.clear()
+        source._ui_model.clear()
         # Test
         target = source.get_item(i_target)
         assert target is None
@@ -608,7 +608,7 @@ class TestAdaptTreeStore:
         model = new_outline_model('Source')
         i_target = None
         source = PatchOutline()
-        source._gtk_model = model
+        source._ui_model = model
         item_source = None
         # Test
         target = source.get_item(i_target)
@@ -634,7 +634,7 @@ class TestAdaptTreeStore:
         if PATH_TARGET is not None:
             i_target = model.get_iter_from_string(PATH_TARGET)
         target = PatchOutline()
-        target._gtk_model = model
+        target._ui_model = model
         # Tests
         indices = target.indices(i_target)
         target_names = [target.get_item(i).name for i in indices]
@@ -656,7 +656,7 @@ class TestAdaptTreeStore:
         else:
             i_insert = model.get_iter_from_string(PATH_INSERT)
         target = PatchOutline()
-        target._gtk_model = model
+        target._ui_model = model
 
         NAME = 'Something Different'
         item = PatchItem(p_name=NAME)
@@ -666,7 +666,7 @@ class TestAdaptTreeStore:
             names_before[:N_INSERT] + [item.name] + names_before[N_INSERT:])
         # Test
         i_target = target.insert_after(item, i_insert)
-        assert PATH_ITEM == target._gtk_model.get_string_from_iter(i_target)
+        assert PATH_ITEM == target._ui_model.get_string_from_iter(i_target)
         assert target.get_item(i_target) is item
         names_target = [target.get_item(i).name for i in target.indices()]
         assert names_after == names_target
@@ -687,7 +687,7 @@ class TestAdaptTreeStore:
         else:
             i_insert = model.get_iter_from_string(PATH_INSERT)
         target = PatchOutline()
-        target._gtk_model = model
+        target._ui_model = model
 
         NAME = 'Something Different'
         item = PatchItem(p_name=NAME)
@@ -698,7 +698,7 @@ class TestAdaptTreeStore:
         # Test
         i_target = target.insert_before(item, i_insert)
         assert target.get_item(i_target) is item
-        assert PATH_ITEM == target._gtk_model.get_string_from_iter(i_target)
+        assert PATH_ITEM == target._ui_model.get_string_from_iter(i_target)
         names_target = [target.get_item(i).name for i in target.indices()]
         assert names_after == names_target
 
@@ -718,7 +718,7 @@ class TestAdaptTreeStore:
         else:
             i_insert = model.get_iter_from_string(PATH_INSERT)
         target = PatchOutline()
-        target._gtk_model = model
+        target._ui_model = model
 
         NAME = 'Something Different'
         item = PatchItem(p_name=NAME)
@@ -729,7 +729,7 @@ class TestAdaptTreeStore:
         # Test
         i_target = target.insert_child(item, i_insert)
         assert target.get_item(i_target) is item
-        assert PATH_ITEM == target._gtk_model.get_string_from_iter(i_target)
+        assert PATH_ITEM == target._ui_model.get_string_from_iter(i_target)
         names_target = [target.get_item(i).name for i in target.indices()]
         for expect, actual in IT.zip_longest(names_after, names_target):
             print('{:8} - {:8}'.format(expect, actual))
@@ -777,9 +777,9 @@ class TestAdaptTreeView:
         """
         # Setup
         outline = PatchOutline()
-        outline._gtk_model = new_outline_model('Model')
+        outline._ui_model = new_outline_model('Model')
         PATH_ITEM = '0:1'
-        i_item = outline._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = outline._ui_model.get_iter_from_string(PATH_ITEM)
         target = AOUTLINE.AdaptTreeView()
         outline.attach_view(target)
         target._gtk_view.expand_all()
@@ -796,7 +796,7 @@ class TestAdaptTreeView:
         """
         # Setup
         outline = PatchOutline()
-        outline._gtk_model = new_outline_model('Model')
+        outline._ui_model = new_outline_model('Model')
         target = AOUTLINE.AdaptTreeView()
         outline.attach_view(target)
         target._gtk_view.expand_all()
@@ -833,9 +833,9 @@ class TestAdaptTreeView:
         """
         # Setup
         outline = PatchOutline()
-        outline._gtk_model = new_outline_model('Model')
+        outline._ui_model = new_outline_model('Model')
         PATH_ITEM = '1:1'
-        i_item = outline._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = outline._ui_model.get_iter_from_string(PATH_ITEM)
         target = AOUTLINE.AdaptTreeView()
         outline.attach_view(target)
         target._gtk_view.expand_all()
@@ -853,9 +853,9 @@ class TestAdaptTreeView:
         """
         # Setup
         outline = PatchOutline()
-        outline._gtk_model = new_outline_model('Model')
+        outline._ui_model = new_outline_model('Model')
         PATH_ITEM = '1:1'
-        i_item = outline._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = outline._ui_model.get_iter_from_string(PATH_ITEM)
         target = AOUTLINE.AdaptTreeView()
         outline.attach_view(target)
         target._gtk_view.expand_all()
@@ -868,9 +868,9 @@ class TestAdaptTreeView:
         """Confirm selection cleared."""
         # Setup
         outline = PatchOutline()
-        outline._gtk_model = new_outline_model('Model')
+        outline._ui_model = new_outline_model('Model')
         PATH_ITEM = '1:1:0'
-        i_item = outline._gtk_model.get_iter_from_string(PATH_ITEM)
+        i_item = outline._ui_model.get_iter_from_string(PATH_ITEM)
         target = AOUTLINE.AdaptTreeView()
         outline.attach_view(target)
         target._gtk_view.expand_all()

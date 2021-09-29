@@ -108,8 +108,9 @@ class ModelGtkText(ABC_STALE.InterfaceStaleFile,
         return state
 
     def __init__(self) -> None:
-        """Extend initialization with change state."""
+        """Extend initialization with text and change state."""
         super().__init__()
+        self._set_persist('')
         self._stale = False
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
@@ -155,45 +156,38 @@ class ModelGtkText(ABC_STALE.InterfaceStaleFile,
         self.set_stale()
 
 
-class FactoryGtkEntry(BBASE.FactoryGtkViewAbstract):
-    """TBD
+class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
+    """Editor factory for text stored ia a given :class:`.ModelGtkEntryBuffer`.
 
-    .. data:: N_WIDTH_EDIT
-
-        Minimum width in characters of edit view.
+    Views support editing both text and embedded `Pango markup`_.
     """
-    pass
 
-    N_WIDTH_EDIT = 45
+    def __init__(self, p_model: 'ModelGtkEntryBuffer') -> None:
+        """Initialize store for text.
 
-    def _new_model(self) -> Gtk.EntryBuffer:
-        """Return object to store text and add collection of static views."""
-        raise NotImplementedError
-        # model = Gtk.EntryBuffer()
-        # _ = model.connect('deleted-text', lambda *_a: self.on_change())
-        # _ = model.connect('inserted-text', lambda *_a: self.on_change())
-        # self._views: typing.MutableMapping[int, ViewTextDisplay] = dict()
-        # return model
+        :param p_model: model that contains storage for editors.
+        """
+        self._ui_model = p_model.ui_model
 
-    def new_view(self) -> ViewTextMarkup:
-        """Return view to display and edit text with mark up formatting."""
-        raise NotImplementedError
-        # NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        # NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        # TOOLTIP_PRIMARY = 'Click to accept changes.'
-        # TOOLTIP_SECONDARY = 'Click to cancel changes.'
-        # view = ViewTextMarkup.new_with_buffer(self._model)
-        # view.set_halign(Gtk.Align.START)
-        # view.set_icon_from_icon_name(
-        #     Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
-        # view.set_icon_from_icon_name(
-        #     Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
-        # view.set_icon_tooltip_markup(
-        #     Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
-        # view.set_icon_tooltip_markup(
-        #     Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
-        # view.set_width_chars(self.N_WIDTH_EDIT)
-        # return view
+    def __call__(self) -> Gtk.Entry:
+        """Return editor for text and mark up formatting."""
+        view = Gtk.Entry(buffer=self._ui_model)
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        N_WIDTH_EDIT = 45
+        view.set_halign(Gtk.Align.START)
+        view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
+        view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
+        view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
+        view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
+        view.set_width_chars(N_WIDTH_EDIT)
+        return view
 
 
 class FactoryGtkLabelBuffered:
@@ -230,6 +224,25 @@ class FactoryGtkLabelBuffered:
         #             hex(id_view),
         #             self.__class__.__name__, self._destroy_view.__name__))
 
+    def filter_user_markup(self, p_markup: str) -> str:
+        """Return user-entered text without markup errors.
+
+        Excape Pango markup errors.
+
+        :param p_markup: markup text entered by user.
+        """
+        markup_new = p_markup
+        ALL = -1
+        NO_ACCEL_CHAR = '0'
+        try:
+            _, _, _, _ = Pango.parse_markup(markup_new, ALL, NO_ACCEL_CHAR)
+        except GLib.Error as err:
+            if 'g-markup-error-quark' == err.domain:
+                markup_new = GLib.markup_escape_text(p_markup, len(p_markup))
+            else:
+                raise
+        return markup_new
+
     def new_view_passive(self) -> ViewTextDisplay:
         """Return view to display text with mark up formatting."""
         raise NotImplementedError
@@ -248,7 +261,7 @@ class FactoryGtkLabelBuffered:
 
 
 class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
-    """Text bridge with support for editing and `Pango markup`_.  See
+    """Text storage with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 
     Text bridge objects have transient data for attached views in
@@ -264,23 +277,23 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
     """
 
-    def __init__(self) -> None:
-        """Extend initialization with GTK model."""
-        super().__init__()
-        self._set_persist('')
+    # def __init__(self) -> None:
+    #     """Extend initialization with GTK model."""
+    #     super().__init__()
+    #     self._set_persist('')
 
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent
         storage.
         """
-        return self._model.get_text()
+        return self._ui_model.get_text()
 
-    def _new_model(self) -> Gtk.EntryBuffer:
-        """Return GTK model with signals connections."""
-        model = Gtk.EntryBuffer()
-        _ = model.connect('deleted-text', lambda *_a: self.set_stale())
-        _ = model.connect('inserted-text', lambda *_a: self.set_stale())
-        return model
+    def _new_gtk_model(self) -> Gtk.EntryBuffer:
+        """Return `GTK.EntryBuffer`_ with signals connections."""
+        ui_model = Gtk.EntryBuffer()
+        _ = ui_model.connect('deleted-text', lambda *_a: self.set_stale())
+        _ = ui_model.connect('inserted-text', lambda *_a: self.set_stale())
+        return ui_model
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -288,10 +301,10 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         :param p_persist: persistent form for text storage element
             content.
         """
-        if not hasattr(self, '_model'):
-            self._model = self._new_model()
+        if not hasattr(self, '_ui_model'):
+            self._ui_model = self._new_gtk_model()
         ALL = -1
-        self._model.set_text(p_persist, ALL)
+        self._ui_model.set_text(p_persist, ALL)
 
 
 class BridgeTextTagged(ModelGtkText[Gtk.TextBuffer]):
@@ -355,23 +368,3 @@ class BridgeTextTagged(ModelGtkText[Gtk.TextBuffer]):
         """
         ALL = -1
         self._model.set_text(p_persist, ALL)
-
-
-def filter_user_markup(p_markup: str) -> str:
-    """Return user-entered text without markup errors.
-
-    Excape Pango markup errors.
-
-    :param p_markup: markup text entered by user.
-    """
-    markup_new = p_markup
-    ALL = -1
-    NO_ACCEL_CHAR = '0'
-    try:
-        _, _, _, _ = Pango.parse_markup(markup_new, ALL, NO_ACCEL_CHAR)
-    except GLib.Error as err:
-        if 'g-markup-error-quark' == err.domain:
-            markup_new = GLib.markup_escape_text(p_markup, len(p_markup))
-        else:
-            raise
-    return markup_new
