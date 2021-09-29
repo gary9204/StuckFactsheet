@@ -60,7 +60,6 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 .. _Gtk.Label:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
 """
-import abc
 import gi   # type: ignore[import]
 import logging
 import typing   # noqa
@@ -80,6 +79,8 @@ ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
 
 PersistText = str
 
+IdDisplay = typing.NewType('IdDisplay', int)
+
 ViewTextTagged = typing.Union[Gtk.TextView]
 ViewTextMarkup = typing.Union[Gtk.Entry]
 ViewTextOpaque = typing.TypeVar('ViewTextOpaque')
@@ -87,6 +88,14 @@ ViewTextOpaquePassive = typing.TypeVar('ViewTextOpaquePassive')
 ViewTextDisplay = typing.Union[Gtk.Label]
 
 logger = logging.getLogger('Main.bridge_text')
+
+
+def id_display(p_display: Gtk.Label) -> IdDisplay:
+    """Return unique identifier for a display view.
+
+    :param p_display: display to identify.
+    """
+    return IdDisplay(id(p_display))
 
 
 class ModelGtkText(ABC_STALE.InterfaceStaleFile,
@@ -170,7 +179,7 @@ class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
         self._ui_model = p_model.ui_model
 
     def __call__(self) -> Gtk.Entry:
-        """Return editor for text and mark up formatting."""
+        """Return editor for text and markup formatting."""
         view = Gtk.Entry(buffer=self._ui_model)
         NAME_ICON_PRIMARY = 'emblem-default-symbolic'
         NAME_ICON_SECONDARY = 'edit-delete-symbolic'
@@ -191,73 +200,74 @@ class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
 
 
 class FactoryGtkLabelBuffered:
-    """TBD
+    """Display factory for text stored ia a given :class:`.ModelGtkEntryBuffer`.
 
-    .. data:: N_WIDTH_DISPLAY
-
-        Minimum width in characters of display view.
+    Views support text display formatting from embedded `Pango markup`_.
     """
-    pass
 
-    N_WIDTH_DISPLAY = 15
+    def __call__(self) -> Gtk.Label:
+        """Return view to display text with markup formatting."""
+        markup = self.filter_text_markup()
+        display = Gtk.Label(label=markup)
+        self._displays[id_display(display)] = display
+        _ = display.connect('destroy', self.on_destroy)
+        _ = self._ui_model.connect('deleted-text', self.on_change)
+        _ = self._ui_model.connect('inserted-text', self.on_change)
 
-    def on_change(self):
-        """Refresh display views when text is inserted or deleted."""
-        raise NotImplementedError
-        # self.set_stale()
-        # text_new = filter_user_markup(self._model.get_text())
-        # for view in self._views.values():
-        #     view.set_markup(text_new)
+        XALIGN_LEFT = 0.0
+        N_WIDTH_DISPLAY = 15
+        display.set_ellipsize(Pango.EllipsizeMode.END)
+        display.set_halign(Gtk.Align.START)
+        display.set_selectable(True)
+        display.set_use_markup(True)
+        display.set_width_chars(N_WIDTH_DISPLAY)
+        display.set_xalign(XALIGN_LEFT)
+        return display
 
-    def _destroy_view(self, p_view: ViewTextDisplay) -> None:
-        """Stop updating display view that is being destroyed.
+    def __init__(self, p_model: 'ModelGtkEntryBuffer') -> None:
+        """Initialize store for text and collection of displays.
 
-        :param p_view: display view being destroyed.
+        :param p_model: model that contains storage for displays.
         """
-        raise NotImplementedError
-        # id_view = id(p_view)
-        # try:
-        #     _ = self._views.pop(id_view)
-        # except KeyError:
-        #     logger.warning(
-        #         'Missing view: {} ({}.{})'.format(
-        #             hex(id_view),
-        #             self.__class__.__name__, self._destroy_view.__name__))
+        self._ui_model = p_model.ui_model
+        self._displays: typing.MutableMapping[IdDisplay, Gtk.Label] = dict()
 
-    def filter_user_markup(self, p_markup: str) -> str:
-        """Return user-entered text without markup errors.
+    def filter_text_markup(self) -> str:
+        """Return text without markup errors.
 
-        Excape Pango markup errors.
-
-        :param p_markup: markup text entered by user.
+        Escape Pango markup errors.  Raise GLib errors.
         """
-        markup_new = p_markup
+        markup = self._ui_model.get_text()
         ALL = -1
         NO_ACCEL_CHAR = '0'
         try:
-            _, _, _, _ = Pango.parse_markup(markup_new, ALL, NO_ACCEL_CHAR)
+            _, _, _, _ = Pango.parse_markup(markup, ALL, NO_ACCEL_CHAR)
         except GLib.Error as err:
             if 'g-markup-error-quark' == err.domain:
-                markup_new = GLib.markup_escape_text(p_markup, len(p_markup))
+                markup = GLib.markup_escape_text(markup, len(markup))
             else:
                 raise
-        return markup_new
+        return markup
 
-    def new_view_passive(self) -> ViewTextDisplay:
-        """Return view to display text with mark up formatting."""
-        raise NotImplementedError
-        # view = ViewTextDisplay(label=self._get_persist())
-        # _ = view.connect('destroy', self._destroy_view)
-        # self._views[id(view)] = view
-        #
-        # XALIGN_LEFT = 0.0
-        # view.set_ellipsize(Pango.EllipsizeMode.END)
-        # view.set_halign(Gtk.Align.START)
-        # view.set_selectable(True)
-        # view.set_use_markup(True)
-        # view.set_width_chars(self.N_WIDTH_DISPLAY)
-        # view.set_xalign(XALIGN_LEFT)
-        # return view
+    def on_change(self, _entry_buffer, _position, _n_chars):
+        """Refresh display views when text is inserted or deleted."""
+        markup = self.filter_text_markup()
+        for display in self._displays.values():
+            display.set_markup(markup)
+
+    def on_destroy(self, p_display: Gtk.Label) -> None:
+        """Stop updating display view that is being destroyed.
+
+        :param p_display: display view being destroyed.
+        """
+        id_destroy = id_display(p_display)
+        try:
+            _ = self._displays.pop(id_destroy)
+        except KeyError:
+            logger.warning(
+                'Missing display: {} ({}.{})'.format(
+                    hex(id_destroy),
+                    self.__class__.__name__, self.on_destroy.__name__))
 
 
 class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
@@ -276,11 +286,6 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
     .. _Gtk.EntryBuffer:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
     """
-
-    # def __init__(self) -> None:
-    #     """Extend initialization with GTK model."""
-    #     super().__init__()
-    #     self._set_persist('')
 
     def _get_persist(self) -> PersistText:
         """Return text storage element in form suitable for persistent

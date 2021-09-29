@@ -283,7 +283,7 @@ class TestFactoryGtkEntry:
     """Unit tests for :class:`.FactoryGtkEntry`."""
 
     def test_init(self):
-        """Confirm storage type."""
+        """Confirm storage initialization."""
         # Setup
         MODEL = BTEXT.ModelGtkEntryBuffer()
         # Test
@@ -319,123 +319,194 @@ class TestFactoryGtkEntry:
 class TestFactoryGtkLabelBuffered:
     """Unit tests for :class:`.FactoryGtkLabelBuffered`."""
 
-    @pytest.mark.skip
-    def test_new_model(self):
-        """Confirm storage type."""
-        # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
-        # Test
-        assert isinstance(target._model, Gtk.EntryBuffer)
-        assert isinstance(target._views, dict)
-        assert not target._views
+    def test_call(self, monkeypatch):
+        """Confirm return is display-only view.
 
-    @pytest.mark.skip
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        TEXT = 'The <b>Parrot </b Sketch.'
+        TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+
+        class PatchConnect:
+            def __init__(self):
+                self.calls = dict()
+
+            def connect(self, p_signal, p_handler):
+                self.calls[p_signal] = p_handler
+
+        patch_label = PatchConnect()
+        monkeypatch.setattr(Gtk.Label, 'connect', patch_label.connect)
+        EXPECT_LABEL = {'destroy': target.on_destroy}
+        patch_entry = PatchConnect()
+        monkeypatch.setattr(Gtk.EntryBuffer, 'connect', patch_entry.connect)
+        EXPECT_ENTRY_BUFFER = {'deleted-text': target.on_change,
+                               'inserted-text': target.on_change}
+        N_WIDTH_DISPLAY = 15
+        XALIGN = 0.0
+        # Test
+        display = target()
+        assert isinstance(display, Gtk.Label)
+        assert TEXT_ESCAPED == display.get_label()
+        assert target._displays[id(display)] is display
+        assert EXPECT_LABEL == patch_label.calls
+        assert EXPECT_ENTRY_BUFFER == patch_entry.calls
+
+        assert Pango.EllipsizeMode.END is display.get_ellipsize()
+        assert Gtk.Align.START == display.get_halign()
+        assert display.get_selectable()
+        assert display.get_use_markup()
+        assert N_WIDTH_DISPLAY == display.get_width_chars()
+        assert math.isclose(XALIGN, display.get_xalign())
+
+    def test_init(self):
+        """Confirm storage initialization."""
+        # Setup
+        MODEL = BTEXT.ModelGtkEntryBuffer()
+        # Test
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=MODEL)
+        assert target._ui_model is MODEL._ui_model
+        assert isinstance(target._displays, dict)
+        assert not target._displays
+
     def test_on_change(self):
         """| Confirm refresh of display views."""
         # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
-        TEXT = 'The <b>Parrot </b>Sketch.'
-        ALL = -1
-        target._model.set_text(TEXT, ALL)
-        N_VIEWS = 3
-        for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextDisplay()
-            target._views[id(view)] = view
-        target.set_fresh()
-        # Test
-        target.on_change()
-        assert target.is_stale()
-        assert N_VIEWS == len(target._views)
-        for view in target._views.values():
-            assert TEXT == view.get_label()
+        TEXT = 'The <b>Parrot </b Sketch.'
+        TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
 
-    @pytest.mark.skip
-    def test_destroy_view(self):
-        """| Confirm display-only view removal.
-        | Case: model connected to view.
+        N_DISPLAYS = 3
+        for _ in range(N_DISPLAYS):
+            display = BTEXT.ViewTextDisplay()
+            target._displays[id(display)] = display
+        # Test
+        target.on_change(None, None, None)
+        assert N_DISPLAYS == len(target._displays)
+        for display in target._displays.values():
+            assert TEXT_ESCAPED == display.get_label()
+
+    def test_on_destroy(self):
+        """| Confirm display view removal.
+        | Case: display connected to model.
         """
         # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
-        N_VIEWS = 5
-        I_REMOVE = 4
-        for i in range(N_VIEWS):
-            view = BTEXT.ViewTextDisplay()
-            id_view = id(view)
-            target._views[id_view] = view
-            if i == I_REMOVE:
-                id_remove = id_view
-                view_remove = view
+        TEXT = 'The <b>Parrot Sketch.</b>'
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        N_DISPLAYS = 5
+        I_DESTROY = 4
+        for i in range(N_DISPLAYS):
+            display = Gtk.Label()
+            id_display = BTEXT.id_display(display)
+            target._displays[id_display] = display
+            if i == I_DESTROY:
+                id_destroy = id_display
+                display_destroy = display
         # Test
-        target._destroy_view(view_remove)
-        assert id_remove not in target._views
+        target.on_destroy(display_destroy)
+        assert N_DISPLAYS - 1 == len(target._displays)
+        assert id_destroy not in target._displays
 
-    @pytest.mark.skip
-    def test_destroy_view_warn(self, PatchLogger, monkeypatch):
-        """| Confirm display-only view removal.
-        | Case: model not connected view.
+    def test_on_destroy_warn(self, PatchLogger, monkeypatch):
+        """| Confirm display view removal.
+        | Case: display not connected to model.
 
         :param PatchLogger: deprecated but not yet removed.
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
-        N_VIEWS = 5
-        for _ in range(N_VIEWS):
-            view = BTEXT.ViewTextDisplay()
-            target._views[id(view)] = view
-        VIEW_MISSING = BTEXT.ViewTextDisplay()
+        TEXT = 'The <b>Parrot Sketch.</b>'
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        N_DISPLAYS = 5
+        for _ in range(N_DISPLAYS):
+            display = Gtk.Label()
+            id_display = BTEXT.id_display(display)
+            target._displays[id_display] = display
+        DISPLAY_MISSING = Gtk.Label()
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
-        log_message = ('Missing view: {} (ModelGtkEntryBuffer._destroy_view)'
-                       ''.format(hex(id(VIEW_MISSING))))
+        log_message = ('Missing display: {} (FactoryGtkLabelBuffered'
+                       '.on_destroy)'.format(hex(id(DISPLAY_MISSING))))
         # Test
-        target._destroy_view(VIEW_MISSING)
-        assert N_VIEWS == len(target._views)
+        target.on_destroy(DISPLAY_MISSING)
+        assert N_DISPLAYS == len(target._displays)
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
 
-    @pytest.mark.skip
-    def test_new_view_passive(self, monkeypatch):
-        """Confirm return is display-only view.
+    def test_filter_text_markup(self):
+        """| Confirm markup errors escaped.
+        | Case: text does not contain markup error.
+        """
+        # Setup
+        TEXT = 'The <b>Parrot Sketch.</b>'
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        # Test
+        assert TEXT == target.filter_text_markup()
+
+    def test_filter_text_markup_error(self):
+        """| Confirm markup errors escaped.
+        | Case: text contains markup error.
+        """
+        # Setup
+        TEXT = 'The <b>Parrot </b Sketch.'
+        TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        # Test
+        assert TEXT_ESCAPED == target.filter_text_markup()
+
+    def test_filter_text_markup_except(self, monkeypatch):
+        """| Confirm markup errors escaped.
+        | Case: GLib error that is not a markup error.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
-        class PatchConnect:
-            def __init__(self):
-                self.called = False
-                self.signal = None
-                self.handler = None
+        # Setup
+        QUARK = GLib.unix_error_quark()
+        DOMAIN = GLib.quark_to_string(QUARK)
+        MESSAGE = 'Oops'
+        CODE = 42
 
-            def connect(self, p_signal, p_handler):
-                self.called = True
-                self.signal = p_signal
-                self.handler = p_handler
+        def patch_parse(_text, _len, _marker):
+            raise GLib.Error.new_literal(QUARK, MESSAGE, CODE)
 
-        patch_connect = PatchConnect()
-        monkeypatch.setattr(Gtk.Widget, 'connect', patch_connect.connect)
-        target = BTEXT.ModelGtkEntryBuffer()
-        TEXT = 'The <b>Parrot </b>Sketch'
-        target._set_persist(TEXT)
-        SIGNAL = 'destroy'
-        HANDLER = target._destroy_view
-        N_XALIGN = 0.0
+        monkeypatch.setattr(Pango, 'parse_markup', patch_parse)
+
+        TEXT = 'The <b>Parrot </b Sketch.'
+        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer.text = TEXT
+        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
         # Test
-        view = target.new_view_passive()
-        assert isinstance(view, BTEXT.ViewTextDisplay)
-        assert TEXT == view.get_label()
-        assert patch_connect.called
-        assert SIGNAL == patch_connect.signal
-        assert target._destroy_view == HANDLER
-        assert target._views[id(view)] is view
+        with pytest.raises(GLib.Error) as exc_info:
+            _ = target.filter_text_markup()
+        exc = exc_info.value
+        assert DOMAIN == exc.domain
+        assert MESSAGE == exc.message
+        assert CODE == exc.code
 
-        assert Pango.EllipsizeMode.END is view.get_ellipsize()
-        assert Gtk.Align.START == view.get_halign()
-        assert view.get_selectable()
-        assert view.get_use_markup()
-        assert target.N_WIDTH_DISPLAY == view.get_width_chars()
-        assert math.isclose(N_XALIGN, view.get_xalign())
+
+class TestIdDisplay:
+    """Unit tests for :func:`.id_display`."""
+
+    def test_id_display(self):
+        """Confirm id returned."""
+        # Setup
+        DISPLAY = Gtk.Label()
+        # Test
+        assert id(DISPLAY) == BTEXT.id_display(DISPLAY)
 
 
 class TestModelGtkEntryBuffer:
@@ -600,62 +671,12 @@ class TestBridgeTextTagged:
         assert target._stale
 
 
-class TestFilterUserMarkup:
-    """Unit tests for :func:`.filter_user_markup`."""
-
-    @pytest.mark.skip
-    def test_filter_user_markup(self):
-        """| Confirm markup errors escaped.
-        | Case: text does not contain markup error.
-        """
-        # Setup
-        TEXT = 'The <b>Parrot Sketch.</b>'
-        # Test
-        assert TEXT == BTEXT.filter_user_markup(p_markup=TEXT)
-
-    @pytest.mark.skip
-    def test_filter_user_markup_error(self):
-        """| Confirm markup errors escaped.
-        | Case: text contains markup error.
-        """
-        # Setup
-        TEXT = 'The <b>Parrot </b Sketch.'
-        TEXT_CLEAN = GLib.markup_escape_text(TEXT, len(TEXT))
-        # Test
-        assert TEXT_CLEAN == BTEXT.filter_user_markup(p_markup=TEXT)
-
-    @pytest.mark.skip
-    def test_filter_user_markup_except(self, monkeypatch):
-        """| Confirm markup errors escaped.
-        | Case: GLib error that is not a markup error.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        QUARK = GLib.unix_error_quark()
-        DOMAIN = GLib.quark_to_string(QUARK)
-        MESSAGE = 'Oops'
-        CODE = 42
-
-        def patch_parse(_text, _len, _marker):
-            raise GLib.Error.new_literal(QUARK, MESSAGE, CODE)
-
-        monkeypatch.setattr(Pango, 'parse_markup', patch_parse)
-
-        TEXT = 'The <b>Parrot </b Sketch.'
-        # Test
-        with pytest.raises(GLib.Error) as exc_info:
-            _ = BTEXT.filter_user_markup(p_markup=TEXT)
-        exc = exc_info.value
-        assert DOMAIN == exc.domain
-        assert MESSAGE == exc.message
-        assert CODE == exc.code
-
-
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.bridge_text`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+        (BTEXT.IdDisplay.__qualname__, 'NewType.<locals>.new_type'),
+        (BTEXT.IdDisplay.__dict__['__supertype__'], int),
         # (type(BTEXT.ModelTextOpaque), typing.TypeVar),
         # (BTEXT.ModelTextOpaque.__constraints__, ()),
         # # (BTEXT.ModelTextStatic, str),
