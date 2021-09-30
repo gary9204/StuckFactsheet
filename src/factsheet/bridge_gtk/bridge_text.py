@@ -312,7 +312,7 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         self._ui_model.set_text(p_persist, ALL)
 
 
-class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
+class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.TextView]):
     """Editor factory for text stored in a given :class:`.ModelGtkTextBuffer`.
 
     Views support editing text.
@@ -326,26 +326,23 @@ class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
 
         :param p_model: model that contains storage for editors.
         """
-        pass
-        # self._ui_model = p_model.ui_model
+        self._ui_model = p_model.ui_model
 
-    def __call__(self) -> Gtk.Entry:
-        """Return editor for text and markup formatting."""
-        """Return view to display and edit text with tag-based formatting."""
-        raise NotImplementedError
-        # N_MARGIN_LEFT_RIGHT = 6
-        # N_MARGIN_TOP_BOTTOM = 6
-        # view = ViewTextTagged.new_with_buffer(self._model)
-        # view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
-        # view.set_left_margin(N_MARGIN_LEFT_RIGHT)
-        # view.set_right_margin(N_MARGIN_LEFT_RIGHT)
-        # view.set_top_margin(N_MARGIN_TOP_BOTTOM)
-        # view.set_vexpand(True)
-        # view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
-        # return view
+    def __call__(self) -> Gtk.TextView:
+        """Return editor for text with tag-based formatting."""
+        N_MARGIN_LEFT_RIGHT = 6
+        N_MARGIN_TOP_BOTTOM = 6
+        view = Gtk.TextView(buffer=self._ui_model)
+        view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
+        view.set_left_margin(N_MARGIN_LEFT_RIGHT)
+        view.set_right_margin(N_MARGIN_LEFT_RIGHT)
+        view.set_top_margin(N_MARGIN_TOP_BOTTOM)
+        view.set_vexpand(True)
+        view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        return view
 
 
-class FactoryGtkTextViewDisplay(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
+class FactoryGtkTextViewDisplay(BBASE.FactoryUiViewAbstract[Gtk.TextView]):
     """Display factory for text stored in a given :class:`.ModelGtkTextBuffer`.
 
     Views support displaying text.

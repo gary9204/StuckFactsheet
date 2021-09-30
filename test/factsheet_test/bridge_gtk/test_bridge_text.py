@@ -604,34 +604,33 @@ class TestModelGtkEntryBuffer:
 class TestFactoryGtkTextView:
     """Unit tests for :class:`.FactoryGtkTextView`."""
 
-    @pytest.mark.skip
-    @pytest.mark.parametrize('METHOD, EDIT_OK', [
-        ('new_view', True),
-        ('new_view_passive', False),
-        ])
-    def test_new_views(self, METHOD, EDIT_OK):
-        """Confirm attributes of display and edit views.
-
-        :param METHOD: method to test, which is ``new_view`` or
-            ``new_view_passive``.
-        :param EDIT_OK: whether view should be editable.
-        """
+    def test_init(self):
+        """Confirm storage initialization."""
         # Setup
-        target = BTEXT.ModelGtkTextBuffer()
-        method_target = getattr(target, METHOD)
+        MODEL = BTEXT.ModelGtkTextBuffer()
+        # Test
+        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
+        assert target._ui_model is MODEL._ui_model
+
+    def test_call(self):
+        """Confirm attributes of display and edit views."""
+        # Setup
+        MODEL = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
         N_MARGIN_LEFT_RIGHT = 6
         N_MARGIN_TOP_BOTTOM = 6
+        WRAP_MODE = Gtk.WrapMode.WORD_CHAR
         # Test
-        view = method_target()
-        assert isinstance(view, BTEXT.ViewTextTagged)
-        assert target._model is view.get_buffer()
+        view = target()
+        assert isinstance(view, Gtk.TextView)
+        assert target._ui_model is view.get_buffer()
         assert N_MARGIN_TOP_BOTTOM == view.get_bottom_margin()
         assert N_MARGIN_LEFT_RIGHT == view.get_left_margin()
         assert N_MARGIN_LEFT_RIGHT == view.get_right_margin()
         assert N_MARGIN_TOP_BOTTOM == view.get_top_margin()
         assert view.get_vexpand()
-        assert Gtk.WrapMode.WORD_CHAR == view.get_wrap_mode()
-        assert view.get_editable() is EDIT_OK
+        assert WRAP_MODE == view.get_wrap_mode()
+        assert view.get_editable()
 
 
 class TestFactoryGtkTextViewDisplay:
