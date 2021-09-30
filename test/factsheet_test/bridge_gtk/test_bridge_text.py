@@ -182,7 +182,7 @@ class TestBridgeTextCommon:
     @pytest.mark.skip
     @pytest.mark.parametrize(
         'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (BTEXT.BridgeTextTagged, Gtk.TextBuffer,
+            (BTEXT.ModelGtkTextBuffer, Gtk.TextBuffer,
                 'changed', 0),
             (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer,
                 'deleted-text', 0),
@@ -229,7 +229,7 @@ class TestBridgeTextCommon:
 
     @pytest.mark.skip
     @pytest.mark.parametrize('CLASS_BRIDGE, CLASS_TEXT', [
-        (BTEXT.BridgeTextTagged, Gtk.TextBuffer),
+        (BTEXT.ModelGtkTextBuffer, Gtk.TextBuffer),
         (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer),
         # See TestBridgeTextStatic for specialized test.
         ])
@@ -248,7 +248,7 @@ class TestBridgeTextCommon:
 
     @pytest.mark.parametrize(
         'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            # (BTEXT.BridgeTextTagged, Gtk.TextBuffer, 'changed', 0),
+            # (BTEXT.ModelGtkTextBuffer, Gtk.TextBuffer, 'changed', 0),
             # (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer, 'deleted-text', 0),
             # (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer, 'inserted-text', 0),
         ])
@@ -556,10 +556,9 @@ class TestModelGtkEntryBuffer:
         # Test
         assert TEXT == target._get_persist()
 
-    @pytest.mark.parametrize(
-        'NAME_SIGNAL, N_DEFAULT', [
-            ('deleted-text', 0),
-            ('inserted-text', 0),
+    @pytest.mark.parametrize('NAME_SIGNAL, N_DEFAULT', [
+        ('deleted-text', 0),
+        ('inserted-text', 0),
         ])
     def test_new_model(self, NAME_SIGNAL, N_DEFAULT):
         """Confirm GTK model with signal connections.
@@ -589,6 +588,7 @@ class TestModelGtkEntryBuffer:
         """Confirm import from persistent form."""
         # Setup
         target = BTEXT.ModelGtkEntryBuffer()
+        target_buffer = target._ui_model
         TEXT = 'The Parrot Sketch.'
         ALL = -1
         target._ui_model.set_text(TEXT, ALL)
@@ -596,35 +596,13 @@ class TestModelGtkEntryBuffer:
         TEXT_NEW = 'Something completely different.'
         # Test
         target._set_persist(TEXT_NEW)
-        assert target.is_stale()
+        assert target._ui_model is target_buffer
         assert TEXT_NEW == target._ui_model.get_text()
+        assert target.is_stale()
 
 
-class TestBridgeTextTagged:
-    """Unit tests for :class:`.BridgeTextTagged`.
-
-    See :class:`.TestBridgeTextCommon` for additional unit tests for
-    :class:`.BridgeTextTagged`.
-    """
-
-    @pytest.mark.skip
-    def test_get_persist(self):
-        """Confirm export to persistent form."""
-        # Setup
-        target = BTEXT.BridgeTextTagged()
-        TEXT = 'The Parrot Sketch.'
-        ALL = -1
-        target._model.set_text(TEXT, ALL)
-        # Test
-        assert TEXT == target._get_persist()
-
-    @pytest.mark.skip
-    def test_new_model(self):
-        """Confirm storage element."""
-        # Setup
-        target = BTEXT.BridgeTextTagged()
-        # Test
-        assert isinstance(target._model, Gtk.TextBuffer)
+class TestFactoryGtkTextView:
+    """Unit tests for :class:`.FactoryGtkTextView`."""
 
     @pytest.mark.skip
     @pytest.mark.parametrize('METHOD, EDIT_OK', [
@@ -639,7 +617,7 @@ class TestBridgeTextTagged:
         :param EDIT_OK: whether view should be editable.
         """
         # Setup
-        target = BTEXT.BridgeTextTagged()
+        target = BTEXT.ModelGtkTextBuffer()
         method_target = getattr(target, METHOD)
         N_MARGIN_LEFT_RIGHT = 6
         N_MARGIN_TOP_BOTTOM = 6
@@ -655,20 +633,100 @@ class TestBridgeTextTagged:
         assert Gtk.WrapMode.WORD_CHAR == view.get_wrap_mode()
         assert view.get_editable() is EDIT_OK
 
-    @pytest.mark.skip
+
+class TestFactoryGtkTextViewDisplay:
+    """Unit tests for :class:`.FactoryGtkTextViewDisplay`."""
+
+    pass
+
+
+class TestModelGtkTextBuffer:
+    """Unit tests for :class:`.ModelGtkTextBuffer`."""
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        PATH = Path(str(tmp_path / 'get_set.fsg'))
+        source = BTEXT.ModelGtkTextBuffer()
+        TEXT = 'Something completely different'
+        source._set_persist(TEXT)
+        source._stale = True
+        # Test
+        with PATH.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert source._get_persist() == target._get_persist()
+        assert not target._stale
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        BLANK = ''
+        NO_HIDDEN = False
+        # Test
+        target = BTEXT.ModelGtkTextBuffer()
+        assert target._stale is not None
+        assert not target._stale
+        assert isinstance(target._ui_model, Gtk.TextBuffer)
+        start, end = target._ui_model.get_bounds()
+        assert BLANK == target._ui_model.get_text(start, end, NO_HIDDEN)
+
+    def test_get_persist(self):
+        """Confirm export to persistent form."""
+        # Setup
+        target = BTEXT.ModelGtkTextBuffer()
+        TEXT = 'The Parrot Sketch.'
+        ALL = -1
+        target._ui_model.set_text(TEXT, ALL)
+        # Test
+        assert TEXT == target._get_persist()
+
+    @pytest.mark.parametrize('NAME_SIGNAL, N_DEFAULT', [
+        ('changed', 0),
+        ])
+    def test_new_model(self, NAME_SIGNAL, N_DEFAULT):
+        """Confirm GTK model with signal connections.
+
+        :param NAME_SIGNAL: signal under test.
+        :param N_DEFAULT: number of default handlers for signal.
+        """
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(Gtk.TextBuffer))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        NO_SIGNAL = 0
+        # Test
+        target = BTEXT.ModelGtkTextBuffer()
+        assert isinstance(target._ui_model, Gtk.TextBuffer)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                target._ui_model, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if NO_SIGNAL == id_signal:
+                break
+            n_handlers += 1
+            GO.signal_handler_disconnect(target._ui_model, id_signal)
+        assert (N_DEFAULT + 1) == n_handlers
+
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
-        target = BTEXT.BridgeTextTagged()
+        target = BTEXT.ModelGtkTextBuffer()
+        target_buffer = target._ui_model
         TEXT = 'The Parrot Sketch.'
         ALL = -1
-        target._model.set_text(TEXT, ALL)
-        target._stale = False
+        target._ui_model.set_text(TEXT, ALL)
+        target.set_fresh()
         TEXT_NEW = 'Something completely different.'
         # Test
         target._set_persist(TEXT_NEW)
+        assert target._ui_model is target_buffer
         assert TEXT_NEW == target._get_persist()
-        assert target._stale
+        assert target.is_stale()
 
 
 class TestTypes:

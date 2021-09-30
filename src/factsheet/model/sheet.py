@@ -22,7 +22,7 @@ logger = logging.getLogger('Main.model.sheet')
 
 
 NameSheet = BUI.ModelGtkEntryBuffer
-SummarySheet = BUI.BridgeTextTagged
+SummarySheet = BUI.ModelGtkTextBuffer
 TitleSheet = BUI.ModelGtkEntryBuffer
 ViewNameSheetActive = BUI.ViewTextMarkup
 ViewNameSheetPassive = BUI.ViewTextDisplay

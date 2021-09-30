@@ -166,7 +166,7 @@ class ModelGtkText(ABC_STALE.InterfaceStaleFile,
 
 
 class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
-    """Editor factory for text stored ia a given :class:`.ModelGtkEntryBuffer`.
+    """Editor factory for text stored in a given :class:`.ModelGtkEntryBuffer`.
 
     Views support editing both text and embedded `Pango markup`_.
     """
@@ -199,10 +199,10 @@ class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
         return view
 
 
-class FactoryGtkLabelBuffered:
-    """Display factory for text stored ia a given :class:`.ModelGtkEntryBuffer`.
+class FactoryGtkLabelBuffered(BBASE.FactoryUiViewAbstract[Gtk.Label]):
+    """Display factory for text stored in a given :class:`.ModelGtkEntryBuffer`.
 
-    Views support text display formatting from embedded `Pango markup`_.
+    Views support text display formated from embedded `Pango markup`_.
     """
 
     def __call__(self) -> Gtk.Label:
@@ -294,7 +294,7 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         return self._ui_model.get_text()
 
     def _new_gtk_model(self) -> Gtk.EntryBuffer:
-        """Return `GTK.EntryBuffer`_ with signals connections."""
+        """Return `GTK.EntryBuffer`_ with signal connections."""
         ui_model = Gtk.EntryBuffer()
         _ = ui_model.connect('deleted-text', lambda *_a: self.set_stale())
         _ = ui_model.connect('inserted-text', lambda *_a: self.set_stale())
@@ -312,7 +312,78 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         self._ui_model.set_text(p_persist, ALL)
 
 
-class BridgeTextTagged(ModelGtkText[Gtk.TextBuffer]):
+class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
+    """Editor factory for text stored in a given :class:`.ModelGtkTextBuffer`.
+
+    Views support editing text.
+
+    .. note::
+       Editing and applying format tags is planned but not implemented yet.
+    """
+
+    def __init__(self, p_model: 'ModelGtkTextBuffer') -> None:
+        """Initialize store for text.
+
+        :param p_model: model that contains storage for editors.
+        """
+        pass
+        # self._ui_model = p_model.ui_model
+
+    def __call__(self) -> Gtk.Entry:
+        """Return editor for text and markup formatting."""
+        """Return view to display and edit text with tag-based formatting."""
+        raise NotImplementedError
+        # N_MARGIN_LEFT_RIGHT = 6
+        # N_MARGIN_TOP_BOTTOM = 6
+        # view = ViewTextTagged.new_with_buffer(self._model)
+        # view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
+        # view.set_left_margin(N_MARGIN_LEFT_RIGHT)
+        # view.set_right_margin(N_MARGIN_LEFT_RIGHT)
+        # view.set_top_margin(N_MARGIN_TOP_BOTTOM)
+        # view.set_vexpand(True)
+        # view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        # return view
+
+
+class FactoryGtkTextViewDisplay(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
+    """Display factory for text stored in a given :class:`.ModelGtkTextBuffer`.
+
+    Views support displaying text.
+
+    .. note::
+       Applying format tags is planned but not implemented yet.
+    """
+
+    def __init__(self, p_model: 'ModelGtkTextBuffer') -> None:
+        """Initialize store for text.
+
+        :param p_model: model that contains storage for editors.
+        """
+        pass
+        # self._ui_model = p_model.ui_model
+
+    def __call__(self) -> Gtk.TextView:
+        """Return view to display text with tag-based formatting."""
+        """Return editor for text and markup formatting."""
+        """Return view to display and edit text with tag-based formatting."""
+        raise NotImplementedError
+        # N_MARGIN_LEFT_RIGHT = 6
+        # N_MARGIN_TOP_BOTTOM = 6
+        # view = ViewTextTagged.new_with_buffer(self._model)
+        # view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
+        # view.set_left_margin(N_MARGIN_LEFT_RIGHT)
+        # view.set_right_margin(N_MARGIN_LEFT_RIGHT)
+        # view.set_top_margin(N_MARGIN_TOP_BOTTOM)
+        # view.set_vexpand(True)
+        # view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        # return view
+        raise NotImplementedError
+        # view = self.new_view()
+        # view.set_editable(False)
+        # return view
+
+
+class ModelGtkTextBuffer(ModelGtkText[Gtk.TextBuffer]):
     """Text bridge with support for editing and format tagging.  See
     `Gtk.TextBuffer`_.
 
@@ -334,36 +405,14 @@ class BridgeTextTagged(ModelGtkText[Gtk.TextBuffer]):
         storage.
         """
         NO_HIDDEN = False
-        start, end = self._model.get_bounds()
-        return self._model.get_text(start, end, NO_HIDDEN)
+        start, end = self._ui_model.get_bounds()
+        return self._ui_model.get_text(start, end, NO_HIDDEN)
 
-    def _new_model(self) -> Gtk.TextBuffer:
-        """Return toolkit-specific object to store text."""
-        raise NotImplementedError
-        # model = Gtk.TextBuffer()
-        # _ = model.connect('changed', lambda *_a: self.set_stale())
-        # return model
-
-    def new_view(self) -> ViewTextTagged:
-        """Return view to display and edit text with tag-based formatting."""
-        raise NotImplementedError
-        # N_MARGIN_LEFT_RIGHT = 6
-        # N_MARGIN_TOP_BOTTOM = 6
-        # view = ViewTextTagged.new_with_buffer(self._model)
-        # view.set_bottom_margin(N_MARGIN_TOP_BOTTOM)
-        # view.set_left_margin(N_MARGIN_LEFT_RIGHT)
-        # view.set_right_margin(N_MARGIN_LEFT_RIGHT)
-        # view.set_top_margin(N_MARGIN_TOP_BOTTOM)
-        # view.set_vexpand(True)
-        # view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
-        # return view
-
-    def new_view_passive(self) -> ViewTextTagged:
-        """Return view to display text with tag-based formatting."""
-        raise NotImplementedError
-        # view = self.new_view()
-        # view.set_editable(False)
-        # return view
+    def _new_gtk_model(self) -> Gtk.TextBuffer:
+        """Return `GTK.TextBuffer`_ with signals connections."""
+        model = Gtk.TextBuffer()
+        _ = model.connect('changed', lambda *_a: self.set_stale())
+        return model
 
     def _set_persist(self, p_persist: PersistText) -> None:
         """Set text storage element from content in persistent form.
@@ -371,5 +420,7 @@ class BridgeTextTagged(ModelGtkText[Gtk.TextBuffer]):
         :param p_persist: persistent form for text storage element
             content.
         """
+        if not hasattr(self, '_ui_model'):
+            self._ui_model = self._new_gtk_model()
         ALL = -1
-        self._model.set_text(p_persist, ALL)
+        self._ui_model.set_text(p_persist, ALL)

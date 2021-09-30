@@ -56,7 +56,7 @@ class PatchTopic(MIDCORE.IdCore[
 
     def _new_model(self):
         name = BUI.ModelGtkEntryBuffer()
-        summary = BUI.BridgeTextTagged()
+        summary = BUI.ModelGtkTextBuffer()
         title = BUI.ModelGtkEntryBuffer()
         return name, summary, title
 
@@ -437,7 +437,7 @@ class TestTypes:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
         (MFACT.NameFact, BUI.ModelGtkEntryBuffer),
-        (MFACT.SummaryFact, BUI.BridgeTextTagged),
+        (MFACT.SummaryFact, BUI.ModelGtkTextBuffer),
         (MFACT.TitleFact, BUI.ModelGtkEntryBuffer),
         (MFACT.ViewNameFact, BUI.ViewTextMarkup),
         (MFACT.ViewSummaryFact, BUI.ViewTextTagged),

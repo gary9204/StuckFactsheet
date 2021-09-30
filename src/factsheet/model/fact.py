@@ -16,7 +16,7 @@ import factsheet.model.idcore as MIDCORE
 import factsheet.bridge_ui as BUI
 
 NameFact = BUI.ModelGtkEntryBuffer
-SummaryFact = BUI.BridgeTextTagged
+SummaryFact = BUI.ModelGtkTextBuffer
 TitleFact = BUI.ModelGtkEntryBuffer
 ViewNameFactActive = BUI.ViewTextMarkup
 ViewNameFactPassive = BUI.ViewTextDisplay
