@@ -6,7 +6,7 @@ import pytest  # type: ignore[import]
 
 import factsheet.bridge_gtk.bridge_base as BBASE
 # import factsheet.bridge_gtk.bridge_outline as BOUTLINE
-# import factsheet.bridge_gtk.bridge_text as BTEXT
+import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.bridge_ui as BUI
 
 
@@ -16,11 +16,7 @@ class TestBridgeTypes:
     """
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        # (BUI.Bridge, BBASE.BridgeBase),
-        # (BUI.ModelOpaque, BBASE.ModelGtkOpaque),
         (BUI.TimeEvent, BBASE.TimeEvent),
-        # (BUI.ViewAny, BBASE.ViewAny),
-        # (BUI.ViewOpaque, BBASE.ViewGtkOpaque),
         # (BUI.BridgeOutlineColumnar, BOUTLINE.BridgeOutlineColumnar),
         # (BUI.BridgeOutlineMultiColumnar, BOUTLINE.BridgeOutlineMultiColumnar),
         # (BUI.BridgeOutlineMultiSelect, BOUTLINE.BridgeOutlineMultiSelect),
@@ -28,12 +24,16 @@ class TestBridgeTypes:
         # (BUI.LineOutline, BOUTLINE.LineOutline),
         # (BUI.ViewOutlineColumnar, BOUTLINE.ViewOutlineColumnar),
         # (BUI.ViewOutlineSelect, BOUTLINE.ViewOutlineSelect),
-        # (BUI.BridgeText, BTEXT.BridgeText),
-        # (BUI.BridgeTextMarkup, BTEXT.BridgeTextMarkup),
-        # (BUI.BridgeTextTagged, BTEXT.BridgeTextTagged),
-        # (BUI.ViewTextDisplay, BTEXT.ViewTextDisplay),
-        # (BUI.ViewTextMarkup, BTEXT.ViewTextMarkup),
-        # (BUI.ViewTextTagged, BTEXT.ViewTextTagged),
+        (BUI.ModelTextMarkup, BTEXT.ModelTextMarkup),
+        (BUI.DisplayTextMarkup, BTEXT.DisplayTextMarkup),
+        (BUI.FactoryDisplayTextMarkup, BTEXT.FactoryDisplayTextMarkup),
+        (BUI.EditorTextMarkup, BTEXT.EditorTextMarkup),
+        (BUI.FactoryEditorTextMarkup, BTEXT.FactoryEditorTextMarkup),
+        (BUI.ModelTextStyled, BTEXT.ModelTextStyled),
+        (BUI.DisplayTextStyled, BTEXT.DisplayTextStyled),
+        (BUI.FactoryDisplayTextStyled, BTEXT.FactoryDisplayTextStyled),
+        (BUI.EditorTextStyled, BTEXT.EditorTextStyled),
+        (BUI.FactoryEditorTextStyled, BTEXT.FactoryEditorTextStyled),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm API definitions."""

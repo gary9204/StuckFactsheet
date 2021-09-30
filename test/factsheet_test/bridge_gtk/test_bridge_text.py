@@ -37,14 +37,14 @@ class PatchModelGtkText(BTEXT.ModelGtkText[typing.Any]):
 
 
 class TestFactoryGtkEntry:
-    """Unit tests for :class:`.FactoryGtkEntry`."""
+    """Unit tests for :class:`.FactoryEditorTextMarkup`."""
 
     def test_init(self):
         """Confirm storage initialization."""
         # Setup
-        MODEL = BTEXT.ModelGtkEntryBuffer()
+        MODEL = BTEXT.ModelTextMarkup()
         # Test
-        target = BTEXT.FactoryGtkEntry(p_model=MODEL)
+        target = BTEXT.FactoryEditorTextMarkup(p_model=MODEL)
         assert target._ui_model is MODEL._ui_model
 
     def test_call(self):
@@ -55,8 +55,8 @@ class TestFactoryGtkEntry:
         TOOLTIP_PRIMARY = 'Click to accept changes.'
         TOOLTIP_SECONDARY = 'Click to cancel changes.'
         N_WIDTH_EDIT = 45
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
-        target = BTEXT.FactoryGtkEntry(p_model=entry_buffer)
+        entry_buffer = BTEXT.ModelTextMarkup()
+        target = BTEXT.FactoryEditorTextMarkup(p_model=entry_buffer)
         # Test
         view = target()
         assert isinstance(view, Gtk.Entry)
@@ -74,7 +74,7 @@ class TestFactoryGtkEntry:
 
 
 class TestFactoryGtkLabelBuffered:
-    """Unit tests for :class:`.FactoryGtkLabelBuffered`."""
+    """Unit tests for :class:`.FactoryDisplayTextMarkup`."""
 
     def test_call(self, monkeypatch):
         """Confirm return is display-only view.
@@ -83,9 +83,9 @@ class TestFactoryGtkLabelBuffered:
         """
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
 
         class PatchConnect:
             def __init__(self):
@@ -121,9 +121,9 @@ class TestFactoryGtkLabelBuffered:
     def test_init(self):
         """Confirm storage initialization."""
         # Setup
-        MODEL = BTEXT.ModelGtkEntryBuffer()
+        MODEL = BTEXT.ModelTextMarkup()
         # Test
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=MODEL)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=MODEL)
         assert target._ui_model is MODEL._ui_model
         assert isinstance(target._displays, dict)
         assert not target._displays
@@ -133,13 +133,13 @@ class TestFactoryGtkLabelBuffered:
         # Setup
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
 
         N_DISPLAYS = 3
         for _ in range(N_DISPLAYS):
-            display = BTEXT.ViewTextDisplay()
+            display = BTEXT.DisplayTextMarkup()
             target._displays[id(display)] = display
         # Test
         target.on_change(None, None, None)
@@ -153,9 +153,9 @@ class TestFactoryGtkLabelBuffered:
         """
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         N_DISPLAYS = 5
         I_DESTROY = 4
         for i in range(N_DISPLAYS):
@@ -179,9 +179,9 @@ class TestFactoryGtkLabelBuffered:
         """
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         N_DISPLAYS = 5
         for _ in range(N_DISPLAYS):
             display = Gtk.Label()
@@ -191,7 +191,7 @@ class TestFactoryGtkLabelBuffered:
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
-        log_message = ('Missing display: {} (FactoryGtkLabelBuffered'
+        log_message = ('Missing display: {} (FactoryDisplayTextMarkup'
                        '.on_destroy)'.format(hex(id(DISPLAY_MISSING))))
         # Test
         target.on_destroy(DISPLAY_MISSING)
@@ -206,9 +206,9 @@ class TestFactoryGtkLabelBuffered:
         """
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         # Test
         assert TEXT == target.filter_text_markup()
 
@@ -219,9 +219,9 @@ class TestFactoryGtkLabelBuffered:
         # Setup
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         # Test
         assert TEXT_ESCAPED == target.filter_text_markup()
 
@@ -243,9 +243,9 @@ class TestFactoryGtkLabelBuffered:
         monkeypatch.setattr(Pango, 'parse_markup', patch_parse)
 
         TEXT = 'The <b>Parrot </b Sketch.'
-        entry_buffer = BTEXT.ModelGtkEntryBuffer()
+        entry_buffer = BTEXT.ModelTextMarkup()
         entry_buffer.text = TEXT
-        target = BTEXT.FactoryGtkLabelBuffered(p_model=entry_buffer)
+        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         # Test
         with pytest.raises(GLib.Error) as exc_info:
             _ = target.filter_text_markup()
@@ -261,16 +261,16 @@ class TestFactoryGtkTextView:
     def test_init(self):
         """Confirm storage initialization."""
         # Setup
-        MODEL = BTEXT.ModelGtkTextBuffer()
+        MODEL = BTEXT.ModelTextStyled()
         # Test
-        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
+        target = BTEXT.FactoryEditorTextStyled(p_model=MODEL)
         assert target._ui_model is MODEL._ui_model
 
     def test_call(self):
         """Confirm attributes of display and edit views."""
         # Setup
-        MODEL = BTEXT.ModelGtkTextBuffer()
-        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
+        MODEL = BTEXT.ModelTextStyled()
+        target = BTEXT.FactoryEditorTextStyled(p_model=MODEL)
         N_MARGIN_LEFT_RIGHT = 6
         N_MARGIN_TOP_BOTTOM = 6
         WRAP_MODE = Gtk.WrapMode.WORD_CHAR
@@ -293,18 +293,18 @@ class TestFactoryGtkTextViewDisplay:
     def test_init(self):
         """Confirm storage initialization."""
         # Setup
-        MODEL = BTEXT.ModelGtkTextBuffer()
+        MODEL = BTEXT.ModelTextStyled()
         # Test
-        target = BTEXT.FactoryGtkTextViewDisplay(p_model=MODEL)
+        target = BTEXT.FactoryDisplayTextStyled(p_model=MODEL)
         source = target._factory_source
-        assert isinstance(source, BTEXT.FactoryGtkTextView)
+        assert isinstance(source, BTEXT.FactoryEditorTextStyled)
         assert source._ui_model is MODEL._ui_model
 
     def test_call(self):
         """Confirm attributes of display and edit views."""
         # Setup
-        MODEL = BTEXT.ModelGtkTextBuffer()
-        target = BTEXT.FactoryGtkTextViewDisplay(p_model=MODEL)
+        MODEL = BTEXT.ModelTextStyled()
+        target = BTEXT.FactoryDisplayTextStyled(p_model=MODEL)
         # Test
         view = target()
         assert isinstance(view, Gtk.TextView)
@@ -458,10 +458,10 @@ class TestModelGtkText:
 
 
 class TestModelGtkEntryBuffer:
-    """Unit tests for :class:`.ModelGtkEntryBuffer`.
+    """Unit tests for :class:`.ModelTextMarkup`.
 
     :class:`.TestBridgeTextCommon` contains additional unit tests for
-    :class:`.ModelGtkEntryBuffer`.
+    :class:`.ModelTextMarkup`.
     """
 
     def test_get_set_state(self, tmp_path):
@@ -471,7 +471,7 @@ class TestModelGtkEntryBuffer:
         """
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = BTEXT.ModelGtkEntryBuffer()
+        source = BTEXT.ModelTextMarkup()
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         source._stale = True
@@ -488,7 +488,7 @@ class TestModelGtkEntryBuffer:
         # Setup
         BLANK = ''
         # Test
-        target = BTEXT.ModelGtkEntryBuffer()
+        target = BTEXT.ModelTextMarkup()
         assert target._stale is not None
         assert not target._stale
         assert isinstance(target._ui_model, Gtk.EntryBuffer)
@@ -497,7 +497,7 @@ class TestModelGtkEntryBuffer:
     def test_get_persist(self):
         """Confirm export to persistent form."""
         # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
+        target = BTEXT.ModelTextMarkup()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
         target._ui_model.set_text(TEXT, ALL)
@@ -519,7 +519,7 @@ class TestModelGtkEntryBuffer:
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         NO_SIGNAL = 0
         # Test
-        target = BTEXT.ModelGtkEntryBuffer()
+        target = BTEXT.ModelTextMarkup()
         assert isinstance(target._ui_model, Gtk.EntryBuffer)
         n_handlers = 0
         while True:
@@ -535,7 +535,7 @@ class TestModelGtkEntryBuffer:
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
-        target = BTEXT.ModelGtkEntryBuffer()
+        target = BTEXT.ModelTextMarkup()
         target_buffer = target._ui_model
         TEXT = 'The Parrot Sketch.'
         ALL = -1
@@ -549,8 +549,8 @@ class TestModelGtkEntryBuffer:
         assert target.is_stale()
 
 
-class TestModelGtkTextBuffer:
-    """Unit tests for :class:`.ModelGtkTextBuffer`."""
+class TestModelTextStyled:
+    """Unit tests for :class:`.ModelTextStyled`."""
 
     def test_get_set_state(self, tmp_path):
         """Confirm conversion to and from pickle format.
@@ -559,7 +559,7 @@ class TestModelGtkTextBuffer:
         """
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = BTEXT.ModelGtkTextBuffer()
+        source = BTEXT.ModelTextStyled()
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         source._stale = True
@@ -577,7 +577,7 @@ class TestModelGtkTextBuffer:
         BLANK = ''
         NO_HIDDEN = False
         # Test
-        target = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.ModelTextStyled()
         assert target._stale is not None
         assert not target._stale
         assert isinstance(target._ui_model, Gtk.TextBuffer)
@@ -587,7 +587,7 @@ class TestModelGtkTextBuffer:
     def test_get_persist(self):
         """Confirm export to persistent form."""
         # Setup
-        target = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.ModelTextStyled()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
         target._ui_model.set_text(TEXT, ALL)
@@ -608,7 +608,7 @@ class TestModelGtkTextBuffer:
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         NO_SIGNAL = 0
         # Test
-        target = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.ModelTextStyled()
         assert isinstance(target._ui_model, Gtk.TextBuffer)
         n_handlers = 0
         while True:
@@ -624,7 +624,7 @@ class TestModelGtkTextBuffer:
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
-        target = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.ModelTextStyled()
         target_buffer = target._ui_model
         TEXT = 'The Parrot Sketch.'
         ALL = -1

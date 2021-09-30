@@ -13,8 +13,6 @@ import factsheet.bridge_gtk.bridge_base as BBASE
 
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any]):

@@ -251,12 +251,12 @@ class TestIdCore:
         target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # Test: name
         name_view = target.new_view_name_passive()
-        assert isinstance(name_view, BTEXT.ViewTextDisplay)
+        assert isinstance(name_view, BTEXT.DisplayTextMarkup)
         assert NAME == name_view.get_label()
         name_view.destroy()
         # Test: summary
         summary_view = target.new_view_summary_passive()
-        assert isinstance(summary_view, BTEXT.ViewTextTagged)
+        assert isinstance(summary_view, BTEXT.EditorTextStyled)
         summary_buffer = summary_view.get_buffer()
         start, end = summary_buffer.get_bounds()
         GET_HIDDEN = True
@@ -265,7 +265,7 @@ class TestIdCore:
         summary_view.destroy()
         # Test: title
         title_view = target.new_view_title_passive()
-        assert isinstance(title_view, BTEXT.ViewTextDisplay)
+        assert isinstance(title_view, BTEXT.DisplayTextMarkup)
         assert TITLE == title_view.get_label()
         title_view.destroy()
 

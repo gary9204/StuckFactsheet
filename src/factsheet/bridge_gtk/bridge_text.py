@@ -4,16 +4,16 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 .. data:: ModelTextTagged
 
     Type hint for GTK element to store text formatted with
-    externally-defined tags.  See :data:`ViewTextTagged` and
+    externally-defined tags.  See :data:`EditorTextStyled` and
     `Gtk.TextBuffer`_.
 
 .. _Gtk.TextBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 
-.. data:: ModelTextMarkup
+.. data:: UiTextMarkup
 
     Type hint for GTK element to store text formatted with
-    `Pango markup`_.  See :data:`ViewTextMarkup` `Gtk.EntryBuffer`_.
+    `Pango markup`_.  See :data:`EditorTextMarkup` `Gtk.EntryBuffer`_.
 
 .. _Gtk.EntryBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
@@ -25,7 +25,7 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 
     Type hint for placeholder GTK element to store a text attribute.
 
-.. data:: ViewTextTagged
+.. data:: EditorTextStyled
 
     Type hint for GTK element to display a text attribute.  The element
     supports rich, tag-based formatting.  The element may be editable or
@@ -34,7 +34,7 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 .. _Gtk.TextView:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
 
-.. data:: ViewTextMarkup
+.. data:: EditorTextMarkup
 
     Type hint for GTK element to display a text attribute.  The element
     is editable and supports `Pango markup`_.  See `Gtk.Entry`_.
@@ -52,7 +52,7 @@ Defines bridge classes that encapsulate widget toolkit text classes.
     Type hint for placeholder GTK display element for a display-only
     text attribute.
 
-.. data:: ViewTextDisplay
+.. data:: DisplayTextMarkup
 
     Type hint for GTK element to display a text attribute.  The element
     supports markup but is not editable.  See `Gtk.Label`_.
@@ -72,8 +72,6 @@ from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango    # type: ignore[import]    # noqa: E402
 
-# ModelTextTagged = typing.Union[Gtk.TextBuffer]
-# ModelTextMarkup = typing.Union[Gtk.EntryBuffer]
 ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
 # ModelTextStatic = str
 
@@ -81,29 +79,34 @@ PersistText = str
 
 IdDisplay = typing.NewType('IdDisplay', int)
 
-ViewTextTagged = typing.Union[Gtk.TextView]
-ViewTextMarkup = typing.Union[Gtk.Entry]
+UiTextMarkup = typing.Union[Gtk.EntryBuffer]
+DisplayTextMarkup = typing.Union[Gtk.Label]
+EditorTextMarkup = typing.Union[Gtk.Entry]
+
+UiTextStyled = typing.Union[Gtk.TextBuffer]
+DisplayTextStyled = typing.Union[Gtk.TextView]
+EditorTextStyled = typing.Union[Gtk.TextView]
+
 ViewTextOpaque = typing.TypeVar('ViewTextOpaque')
 ViewTextOpaquePassive = typing.TypeVar('ViewTextOpaquePassive')
-ViewTextDisplay = typing.Union[Gtk.Label]
 
 logger = logging.getLogger('Main.bridge_text')
 
 
-class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
-    """Editor factory for text stored in a given :class:`.ModelGtkEntryBuffer`.
+class FactoryEditorTextMarkup(BBASE.FactoryUiViewAbstract[EditorTextMarkup]):
+    """Editor factory for text stored in a given :class:`.ModelTextMarkup`.
 
     Views support editing both text and embedded `Pango markup`_.
     """
 
-    def __init__(self, p_model: 'ModelGtkEntryBuffer') -> None:
+    def __init__(self, p_model: 'ModelTextMarkup') -> None:
         """Initialize store for text.
 
         :param p_model: model that contains storage for editors.
         """
         self._ui_model = p_model.ui_model
 
-    def __call__(self) -> Gtk.Entry:
+    def __call__(self) -> EditorTextMarkup:
         """Return editor for text and markup formatting."""
         view = Gtk.Entry(buffer=self._ui_model)
         NAME_ICON_PRIMARY = 'emblem-default-symbolic'
@@ -124,13 +127,13 @@ class FactoryGtkEntry(BBASE.FactoryUiViewAbstract[Gtk.Entry]):
         return view
 
 
-class FactoryGtkLabelBuffered(BBASE.FactoryUiViewAbstract[Gtk.Label]):
-    """Display factory for text stored in a given :class:`.ModelGtkEntryBuffer`.
+class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
+    """Display factory for text stored in a given :class:`.ModelTextMarkup`.
 
     Views support text display formated from embedded `Pango markup`_.
     """
 
-    def __call__(self) -> Gtk.Label:
+    def __call__(self) -> DisplayTextMarkup:
         """Return view to display text with markup formatting."""
         markup = self.filter_text_markup()
         display = Gtk.Label(label=markup)
@@ -149,13 +152,14 @@ class FactoryGtkLabelBuffered(BBASE.FactoryUiViewAbstract[Gtk.Label]):
         display.set_xalign(XALIGN_LEFT)
         return display
 
-    def __init__(self, p_model: 'ModelGtkEntryBuffer') -> None:
+    def __init__(self, p_model: 'ModelTextMarkup') -> None:
         """Initialize store for text and collection of displays.
 
         :param p_model: model that contains storage for displays.
         """
         self._ui_model = p_model.ui_model
-        self._displays: typing.MutableMapping[IdDisplay, Gtk.Label] = dict()
+        self._displays: typing.MutableMapping[
+            IdDisplay, DisplayTextMarkup] = dict()
 
     def filter_text_markup(self) -> str:
         """Return text without markup errors.
@@ -180,7 +184,7 @@ class FactoryGtkLabelBuffered(BBASE.FactoryUiViewAbstract[Gtk.Label]):
         for display in self._displays.values():
             display.set_markup(markup)
 
-    def on_destroy(self, p_display: Gtk.Label) -> None:
+    def on_destroy(self, p_display: DisplayTextMarkup) -> None:
         """Stop updating display view that is being destroyed.
 
         :param p_display: display view being destroyed.
@@ -195,8 +199,8 @@ class FactoryGtkLabelBuffered(BBASE.FactoryUiViewAbstract[Gtk.Label]):
                     self.__class__.__name__, self.on_destroy.__name__))
 
 
-class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.TextView]):
-    """Editor factory for text stored in a given :class:`.ModelGtkTextBuffer`.
+class FactoryEditorTextStyled(BBASE.FactoryUiViewAbstract[EditorTextStyled]):
+    """Editor factory for text stored in a given :class:`.ModelTextStyled`.
 
     Views support editing text.
 
@@ -204,14 +208,14 @@ class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.TextView]):
        Editing and applying format tags is planned but not implemented yet.
     """
 
-    def __init__(self, p_model: 'ModelGtkTextBuffer') -> None:
+    def __init__(self, p_model: 'ModelTextStyled') -> None:
         """Initialize store for text.
 
         :param p_model: model that contains storage for editors.
         """
         self._ui_model = p_model.ui_model
 
-    def __call__(self) -> Gtk.TextView:
+    def __call__(self) -> EditorTextStyled:
         """Return editor for text with tag-based formatting."""
         N_MARGIN_LEFT_RIGHT = 6
         N_MARGIN_TOP_BOTTOM = 6
@@ -225,32 +229,32 @@ class FactoryGtkTextView(BBASE.FactoryUiViewAbstract[Gtk.TextView]):
         return view
 
 
-class FactoryGtkTextViewDisplay(BBASE.FactoryUiViewAbstract[Gtk.TextView]):
-    """Display factory for text stored in a given :class:`.ModelGtkTextBuffer`.
+class FactoryDisplayTextStyled(BBASE.FactoryUiViewAbstract[DisplayTextStyled]):
+    """Display factory for text stored in a given :class:`.ModelTextStyled`.
 
     Views support displaying text.
 
     .. note::
        Applying format tags is planned but not implemented yet.  Class
-       :class:`.FactoryGtkTextViewDisplay` is a wrapper for
-       :class:`.FactoryGtkTextView` until formatting is implemented.
+       :class:`.FactoryDisplayTextStyled` is a wrapper for
+       :class:`.FactoryEditorTextStyled` until formatting is implemented.
     """
 
-    def __init__(self, p_model: 'ModelGtkTextBuffer') -> None:
+    def __init__(self, p_model: 'ModelTextStyled') -> None:
         """Initialize store for text.
 
         :param p_model: model that contains storage for editors.
         """
-        self._factory_source = FactoryGtkTextView(p_model)
+        self._factory_source = FactoryEditorTextStyled(p_model)
 
-    def __call__(self) -> Gtk.TextView:
+    def __call__(self) -> DisplayTextStyled:
         """Return view to display text with tag-based formatting."""
         view = self._factory_source()
         view.set_editable(False)
         return view
 
 
-def id_display(p_display: Gtk.Label) -> IdDisplay:
+def id_display(p_display: DisplayTextMarkup) -> IdDisplay:
     """Return unique identifier for a display view.
 
     :param p_display: display to identify.
@@ -325,7 +329,7 @@ class ModelGtkText(ABC_STALE.InterfaceStaleFile,
         self.set_stale()
 
 
-class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
+class ModelTextMarkup(ModelGtkText[UiTextMarkup]):
     """Text storage with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 
@@ -348,9 +352,9 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         """
         return self._ui_model.get_text()
 
-    def _new_gtk_model(self) -> Gtk.EntryBuffer:
-        """Return `GTK.EntryBuffer`_ with signal connections."""
-        ui_model = Gtk.EntryBuffer()
+    def _new_gtk_model(self) -> UiTextMarkup:
+        """Return ``UiTextMarkup`` with signal connections."""
+        ui_model = UiTextMarkup()
         _ = ui_model.connect('deleted-text', lambda *_a: self.set_stale())
         _ = ui_model.connect('inserted-text', lambda *_a: self.set_stale())
         return ui_model
@@ -367,7 +371,7 @@ class ModelGtkEntryBuffer(ModelGtkText[Gtk.EntryBuffer]):
         self._ui_model.set_text(p_persist, ALL)
 
 
-class ModelGtkTextBuffer(ModelGtkText[Gtk.TextBuffer]):
+class ModelTextStyled(ModelGtkText[UiTextStyled]):
     """Text bridge with support for editing and format tagging.  See
     `Gtk.TextBuffer`_.
 
@@ -392,7 +396,7 @@ class ModelGtkTextBuffer(ModelGtkText[Gtk.TextBuffer]):
         start, end = self._ui_model.get_bounds()
         return self._ui_model.get_text(start, end, NO_HIDDEN)
 
-    def _new_gtk_model(self) -> Gtk.TextBuffer:
+    def _new_gtk_model(self) -> UiTextStyled:
         """Return `GTK.TextBuffer`_ with signals connections."""
         model = Gtk.TextBuffer()
         _ = model.connect('changed', lambda *_a: self.set_stale())
