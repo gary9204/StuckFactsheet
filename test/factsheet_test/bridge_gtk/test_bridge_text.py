@@ -22,7 +22,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
-class PatchBridgeText(BTEXT.ModelGtkText[typing.Any]):
+class PatchModelGtkText(BTEXT.ModelGtkText[typing.Any]):
     """:class:`.ModelGtkText` subclass with stub text property."""
 
     def __init__(self):
@@ -34,249 +34,6 @@ class PatchBridgeText(BTEXT.ModelGtkText[typing.Any]):
 
     def _set_persist(self, p_persist):
         self._ui_model = str(p_persist)
-
-
-class TestBridgeText:
-    """Unit tests for :class:`.ModelGtkText`."""
-
-    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BTEXT.ModelGtkText, '_get_persist'),
-        (BTEXT.ModelGtkText, '_set_persist'),
-        ])
-    def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified.
-
-        :param CLASS: class that should be abstract.
-        :param NAME_METHOD: method that should be abstract.
-        """
-        # Setup
-        # Test
-        assert hasattr(CLASS, '__abstractmethods__')
-        assert NAME_METHOD in CLASS.__abstractmethods__
-
-    def test_eq(self):
-        """Confirm equality comparison.
-
-        #. Case: not a text attribute.
-        #. Case: different content.
-        #. Case: equal
-        """
-        # Setup
-        TEXT = 'The Parrot Sketch'
-        source = PatchBridgeText()
-        source._set_persist(TEXT)
-        # Test: not a text attribute.
-        assert not source.__eq__(TEXT)
-        # Test: different content.
-        TEXT_DIFFER = 'Something completely different.'
-        target = PatchBridgeText()
-        target._set_persist(TEXT_DIFFER)
-        assert not source.__eq__(target)
-        # Test: equal
-        target = PatchBridgeText()
-        target._set_persist(TEXT)
-        assert source.__eq__(target)
-        assert not source.__ne__(target)
-
-    def test_get_set_state(self, tmp_path):
-        """Confirm conversion to and from pickle format.
-
-        :param tmp_path: built-in fixture `Pytest tmp_path`_.
-        """
-        # Setup
-        PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = PatchBridgeText()
-        TEXT = 'The Parrot Sketch'
-        source._set_persist(TEXT)
-        source._stale = True
-        # Test
-        with PATH.open(mode='wb') as io_out:
-            pickle.dump(source, io_out)
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-        assert source._get_persist() == target._get_persist()
-        assert not target._stale
-
-    def test_init(self):
-        """Confirm initialization."""
-        # Setup
-        # Test
-        target = PatchBridgeText()
-        assert target._stale is not None
-        assert not target._stale
-
-    def test_str(self):
-        """Confirm return is attribute content. """
-        # Setup
-        TEXT = 'The Parrot Sketch'
-        target = PatchBridgeText()
-        target._ui_model = TEXT
-        expect = '<{}: {}>'.format(type(target).__name__, TEXT)
-        # Test
-        assert expect == str(target)
-
-    def test_is_fresh(self):
-        """Confirm return matches state. """
-        # Setup
-        target = PatchBridgeText()
-        target._stale = False
-        # Test
-        assert target.is_fresh()
-        target._stale = True
-        assert not target.is_fresh()
-
-    def test_is_stale(self):
-        """Confirm return matches state. """
-        # Setup
-        target = PatchBridgeText()
-        target._stale = False
-        # Test
-        assert not target.is_stale()
-        target._stale = True
-        assert target.is_stale()
-
-    def test_set_freah(self):
-        """Confirm attribute marked fresh. """
-        # Setup
-        target = PatchBridgeText()
-        target._stale = True
-        # Test
-        target.set_fresh()
-        assert not target._stale
-
-    def test_set_stale(self):
-        """Confirm attribute marked stale. """
-        # Setup
-        target = PatchBridgeText()
-        target._stale = False
-        # Test
-        target.set_stale()
-        assert target._stale
-
-    def test_text(self):
-        """Confirm access limits of text property."""
-        # Setup
-        target_class = PatchBridgeText
-        target = target_class()
-        TEXT = 'The Parrot Sketch'
-        target._set_persist(TEXT)
-        TEXT_NEW = 'Something completely different.'
-        # Test
-        assert target_class.text.fget is not None
-        assert TEXT == target.text
-        assert target_class.text.fset is not None
-        target.text = TEXT_NEW
-        assert TEXT_NEW == target._get_persist()
-        assert target.is_stale()
-        assert target_class.text.fdel is None
-
-
-class TestBridgeTextCommon:
-    """Unit tests common to descendants of :class:`.ModelGtkText`.
-
-    Parameters specialize the tests for each class.  Some descendants
-    may need individualized tests (for example,
-    :class:`.BridgeTextStatic`).
-    """
-
-    @pytest.mark.skip
-    @pytest.mark.parametrize(
-        'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            (BTEXT.ModelGtkTextBuffer, Gtk.TextBuffer,
-                'changed', 0),
-            (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer,
-                'deleted-text', 0),
-            (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer,
-                'inserted-text', 0),
-        ])
-    def test_get_set_signals(self, tmp_path, CLASS_BRIDGE, CLASS_TEXT,
-                             NAME_SIGNAL, N_DEFAULT):
-        """Confirm reconstruction of signal connections.
-
-        :param tmp_path: built-in fixture `Pytest tmp_path`_.
-        :param CLASS_BRIDGE: bridge class under test.
-        :param CLASS_TEXT: text storage class for bridge.
-        :param NAME_SIGNAL: signal under test.
-        :param N_DEFAULT: number of default handlers for signal.
-        """
-        # Setup
-        source = CLASS_BRIDGE()
-        source._stale = True
-        TEXT = 'The Parrot Sketch'
-        source._set_persist(TEXT)
-        # Warning: GO.signal_lookup fails unless there is a prior
-        #    reference to CLASS_TEXT.  Reference loads GObject class.
-        origin_gtype = GO.type_from_name(GO.type_name(CLASS_TEXT))
-        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        NO_SIGNAL = 0
-        PATH = Path(str(tmp_path / 'get_set.fsg'))
-        # Test
-        with PATH.open(mode='wb') as io_out:
-            pickle.dump(source, io_out)
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-
-        n_handlers = 0
-        while True:
-            id_signal = GO.signal_handler_find(
-                target._model, GO.SignalMatchType.ID, signal,
-                0, None, None, None)
-            if NO_SIGNAL == id_signal:
-                break
-            n_handlers += 1
-            GO.signal_handler_disconnect(target._model, id_signal)
-        assert (N_DEFAULT + 1) == n_handlers
-
-    @pytest.mark.skip
-    @pytest.mark.parametrize('CLASS_BRIDGE, CLASS_TEXT', [
-        (BTEXT.ModelGtkTextBuffer, Gtk.TextBuffer),
-        (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer),
-        # See TestBridgeTextStatic for specialized test.
-        ])
-    def test_init(self, CLASS_BRIDGE, CLASS_TEXT):
-        """Confirm initialization.
-
-        :param CLASS_BRIDGE: bridge class under test.
-        :param CLASS_TEXT: text storage class for bridge.
-        """
-        # Setup
-        # Test
-        target = CLASS_BRIDGE()
-        assert not target._stale
-        assert isinstance(target._model, CLASS_TEXT)
-        assert not target._get_persist()
-
-    @pytest.mark.parametrize(
-        'CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT', [
-            # (BTEXT.ModelGtkTextBuffer, Gtk.TextBuffer, 'changed', 0),
-            # (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer, 'deleted-text', 0),
-            # (BTEXT.ModelGtkEntryBuffer, Gtk.EntryBuffer, 'inserted-text', 0),
-        ])
-    def test_init_signals(
-            self, CLASS_BRIDGE, CLASS_TEXT, NAME_SIGNAL, N_DEFAULT):
-        """Confirm initialization of signal connections.
-
-        :param CLASS_BRIDGE: bridge class under test.
-        :param CLASS_TEXT: text storage class for bridge.
-        :param NAME_SIGNAL: signal under test.
-        :param N_DEFAULT: number of default handlers for signal.
-        """
-        # Setup
-        origin_gtype = GO.type_from_name(GO.type_name(CLASS_TEXT))
-        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        NO_SIGNAL = 0
-        # Test
-        target = CLASS_BRIDGE()
-        n_handlers = 0
-        while True:
-            id_signal = GO.signal_handler_find(
-                target._model, GO.SignalMatchType.ID, signal,
-                0, None, None, None)
-            if NO_SIGNAL == id_signal:
-                break
-            n_handlers += 1
-            GO.signal_handler_disconnect(target._model, id_signal)
-        assert (N_DEFAULT + 1) == n_handlers
 
 
 class TestFactoryGtkEntry:
@@ -498,6 +255,62 @@ class TestFactoryGtkLabelBuffered:
         assert CODE == exc.code
 
 
+class TestFactoryGtkTextView:
+    """Unit tests for :class:`.FactoryGtkTextView`."""
+
+    def test_init(self):
+        """Confirm storage initialization."""
+        # Setup
+        MODEL = BTEXT.ModelGtkTextBuffer()
+        # Test
+        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
+        assert target._ui_model is MODEL._ui_model
+
+    def test_call(self):
+        """Confirm attributes of display and edit views."""
+        # Setup
+        MODEL = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
+        N_MARGIN_LEFT_RIGHT = 6
+        N_MARGIN_TOP_BOTTOM = 6
+        WRAP_MODE = Gtk.WrapMode.WORD_CHAR
+        # Test
+        view = target()
+        assert isinstance(view, Gtk.TextView)
+        assert target._ui_model is view.get_buffer()
+        assert N_MARGIN_TOP_BOTTOM == view.get_bottom_margin()
+        assert N_MARGIN_LEFT_RIGHT == view.get_left_margin()
+        assert N_MARGIN_LEFT_RIGHT == view.get_right_margin()
+        assert N_MARGIN_TOP_BOTTOM == view.get_top_margin()
+        assert view.get_vexpand()
+        assert WRAP_MODE == view.get_wrap_mode()
+        assert view.get_editable()
+
+
+class TestFactoryGtkTextViewDisplay:
+    """Unit tests for :class:`.FactoryGtkTextViewDisplay`."""
+
+    def test_init(self):
+        """Confirm storage initialization."""
+        # Setup
+        MODEL = BTEXT.ModelGtkTextBuffer()
+        # Test
+        target = BTEXT.FactoryGtkTextViewDisplay(p_model=MODEL)
+        source = target._factory_source
+        assert isinstance(source, BTEXT.FactoryGtkTextView)
+        assert source._ui_model is MODEL._ui_model
+
+    def test_call(self):
+        """Confirm attributes of display and edit views."""
+        # Setup
+        MODEL = BTEXT.ModelGtkTextBuffer()
+        target = BTEXT.FactoryGtkTextViewDisplay(p_model=MODEL)
+        # Test
+        view = target()
+        assert isinstance(view, Gtk.TextView)
+        assert not view.get_editable()
+
+
 class TestIdDisplay:
     """Unit tests for :func:`.id_display`."""
 
@@ -507,6 +320,141 @@ class TestIdDisplay:
         DISPLAY = Gtk.Label()
         # Test
         assert id(DISPLAY) == BTEXT.id_display(DISPLAY)
+
+
+class TestModelGtkText:
+    """Unit tests for :class:`.ModelGtkText`."""
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (BTEXT.ModelGtkText, '_get_persist'),
+        (BTEXT.ModelGtkText, '_set_persist'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+    def test_eq(self):
+        """Confirm equality comparison.
+
+        #. Case: not a text attribute.
+        #. Case: different content.
+        #. Case: equal
+        """
+        # Setup
+        TEXT = 'The Parrot Sketch'
+        source = PatchModelGtkText()
+        source._set_persist(TEXT)
+        # Test: not a text attribute.
+        assert not source.__eq__(TEXT)
+        # Test: different content.
+        TEXT_DIFFER = 'Something completely different.'
+        target = PatchModelGtkText()
+        target._set_persist(TEXT_DIFFER)
+        assert not source.__eq__(target)
+        # Test: equal
+        target = PatchModelGtkText()
+        target._set_persist(TEXT)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        PATH = Path(str(tmp_path / 'get_set.fsg'))
+        source = PatchModelGtkText()
+        TEXT = 'The Parrot Sketch'
+        source._set_persist(TEXT)
+        source._stale = True
+        # Test
+        with PATH.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert source._get_persist() == target._get_persist()
+        assert not target._stale
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        # Test
+        target = PatchModelGtkText()
+        assert target._stale is not None
+        assert not target._stale
+
+    def test_str(self):
+        """Confirm return is attribute content. """
+        # Setup
+        TEXT = 'The Parrot Sketch'
+        target = PatchModelGtkText()
+        target._ui_model = TEXT
+        expect = '<{}: {}>'.format(type(target).__name__, TEXT)
+        # Test
+        assert expect == str(target)
+
+    def test_is_fresh(self):
+        """Confirm return matches state. """
+        # Setup
+        target = PatchModelGtkText()
+        target._stale = False
+        # Test
+        assert target.is_fresh()
+        target._stale = True
+        assert not target.is_fresh()
+
+    def test_is_stale(self):
+        """Confirm return matches state. """
+        # Setup
+        target = PatchModelGtkText()
+        target._stale = False
+        # Test
+        assert not target.is_stale()
+        target._stale = True
+        assert target.is_stale()
+
+    def test_set_freah(self):
+        """Confirm attribute marked fresh. """
+        # Setup
+        target = PatchModelGtkText()
+        target._stale = True
+        # Test
+        target.set_fresh()
+        assert not target._stale
+
+    def test_set_stale(self):
+        """Confirm attribute marked stale. """
+        # Setup
+        target = PatchModelGtkText()
+        target._stale = False
+        # Test
+        target.set_stale()
+        assert target._stale
+
+    def test_text(self):
+        """Confirm access limits of text property."""
+        # Setup
+        target_class = PatchModelGtkText
+        target = target_class()
+        TEXT = 'The Parrot Sketch'
+        target._set_persist(TEXT)
+        TEXT_NEW = 'Something completely different.'
+        # Test
+        assert target_class.text.fget is not None
+        assert TEXT == target.text
+        assert target_class.text.fset is not None
+        target.text = TEXT_NEW
+        assert TEXT_NEW == target._get_persist()
+        assert target.is_stale()
+        assert target_class.text.fdel is None
 
 
 class TestModelGtkEntryBuffer:
@@ -599,44 +547,6 @@ class TestModelGtkEntryBuffer:
         assert target._ui_model is target_buffer
         assert TEXT_NEW == target._ui_model.get_text()
         assert target.is_stale()
-
-
-class TestFactoryGtkTextView:
-    """Unit tests for :class:`.FactoryGtkTextView`."""
-
-    def test_init(self):
-        """Confirm storage initialization."""
-        # Setup
-        MODEL = BTEXT.ModelGtkTextBuffer()
-        # Test
-        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
-        assert target._ui_model is MODEL._ui_model
-
-    def test_call(self):
-        """Confirm attributes of display and edit views."""
-        # Setup
-        MODEL = BTEXT.ModelGtkTextBuffer()
-        target = BTEXT.FactoryGtkTextView(p_model=MODEL)
-        N_MARGIN_LEFT_RIGHT = 6
-        N_MARGIN_TOP_BOTTOM = 6
-        WRAP_MODE = Gtk.WrapMode.WORD_CHAR
-        # Test
-        view = target()
-        assert isinstance(view, Gtk.TextView)
-        assert target._ui_model is view.get_buffer()
-        assert N_MARGIN_TOP_BOTTOM == view.get_bottom_margin()
-        assert N_MARGIN_LEFT_RIGHT == view.get_left_margin()
-        assert N_MARGIN_LEFT_RIGHT == view.get_right_margin()
-        assert N_MARGIN_TOP_BOTTOM == view.get_top_margin()
-        assert view.get_vexpand()
-        assert WRAP_MODE == view.get_wrap_mode()
-        assert view.get_editable()
-
-
-class TestFactoryGtkTextViewDisplay:
-    """Unit tests for :class:`.FactoryGtkTextViewDisplay`."""
-
-    pass
 
 
 class TestModelGtkTextBuffer:
