@@ -2,29 +2,17 @@
 Defines identity attributes common to Factsheet model components.
 See :mod:`~factsheet.model`
 
-.. data:: ViewNameActive
+.. data:: ModelName
 
-    Type hint for editable view of name attribute of model.
+    Type hint for model of name attribute.
 
-.. data:: ViewNamePassive
+.. data:: ModelSummary
 
-    Type hint for display-only view of name attribute of model.
+    Type hint for model of summary attribute.
 
-.. data:: ViewSummaryActive
+.. data:: ModelTitle
 
-    Type hint for editable view of summary attribute of model.
-
-.. data:: ViewSummaryPassive
-
-    Type hint for display-only view of summary attribute of model.
-
-.. data:: ViewTitleActive
-
-    Type hint for editable view of title attribute of model.
-
-.. data:: ViewTitlePassive
-
-    Type hint for display-only view of title attribute of model.
+    Type hint for model of title attribute.
 """
 import abc
 import typing
@@ -32,35 +20,17 @@ import typing
 import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_ui as BUI
 
-ViewNameActive = typing.TypeVar(
-    'ViewNameActive', BUI.ViewTextTagged, BUI.ViewTextMarkup)
-ViewNamePassive = typing.TypeVar(
-    'ViewNamePassive', BUI.ViewTextTagged, BUI.ViewTextDisplay)
-ViewSummaryActive = typing.TypeVar(
-    'ViewSummaryActive', BUI.ViewTextTagged, BUI.ViewTextMarkup)
-ViewSummaryPassive = typing.TypeVar(
-    'ViewSummaryPassive', BUI.ViewTextTagged, BUI.ViewTextDisplay)
-ViewTitleActive = typing.TypeVar(
-    'ViewTitleActive', BUI.ViewTextTagged, BUI.ViewTextMarkup)
-ViewTitlePassive = typing.TypeVar(
-    'ViewTitlePassive', BUI.ViewTextTagged, BUI.ViewTextDisplay)
+ModelName = typing.TypeVar(
+    'ModelName', BUI.ModelTextMarkup, BUI.ModelTextStyled)
+ModelSummary = typing.TypeVar(
+    'ModelSummary', BUI.ModelTextMarkup, BUI.ModelTextStyled)
+ModelTitle = typing.TypeVar(
+    'ModelTitle', BUI.ModelTextMarkup, BUI.ModelTextStyled)
 
 
 class IdCore(ABC_STALE.InterfaceStaleFile,
-             typing.Generic[ViewNameActive, ViewNamePassive,
-                            ViewSummaryActive, ViewSummaryPassive,
-                            ViewTitleActive, ViewTitlePassive], abc.ABC):
-    """Defines identity attributes common to Factsheet model components.
-
-    A descendant class must extend :meth:`~._new_model` to define stores
-    for each identity attribute.
-
-    .. admonition:: About Equality
-
-        Two :class:`~.IdCore` instances are equivalent when their names,
-        titles, and summaries are the equal. Transient aspects of the
-        instances (like views) are not compared and may be different.
-    """
+             typing.Generic[ModelName, ModelSummary, ModelTitle], abc.ABC):
+    """Defines identity attributes common to Factsheet model components."""
 
     def __eq__(self, p_other: typing.Any) -> bool:
         """Return True when p_other has equal name, summary, and title.
@@ -90,8 +60,8 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
-    def __init__(self, *, p_name: str, p_summary: str, p_title: str,
-                 **kwargs: typing.Any) -> None:
+    def __init__(self, *, p_name: ModelName, p_summary: ModelSummary,
+                 p_title: ModelTitle, **kwargs: typing.Any) -> None:
         """Initialize instance.
 
         :param p_name: short identifier for component (suitable, for
@@ -104,14 +74,11 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
                             '{}'.format(type(self).__name__, kwargs))
-        self._name, self._summary, self._title = self._new_model()
-        self._name.text = p_name
-        self._name.set_fresh()
-        self._summary.text = p_summary
-        self._summary.set_fresh()
-        self._title.text = p_title
-        self._title.set_fresh()
-        self._stale = False
+        self._name: ModelName = p_name
+        self._summary: ModelSummary = p_summary
+        self._title: ModelTitle = p_title
+        self._stale: bool
+        self.set_fresh()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct identity from state pickle loads.
@@ -121,7 +88,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         :param px_state: unpickled state of stored identity.
         """
         self.__dict__.update(px_state)
-        self._stale = False
+        self.set_fresh()
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to identity."""
@@ -148,40 +115,10 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
 
         return False
 
-    @abc.abstractmethod
-    def _new_model(self) -> typing.Tuple[
-            BUI.ModelGtkText, BUI.ModelGtkText, BUI.ModelGtkText]:
-        """Return (name, summary, title) store."""
-        raise NotImplementedError
-
     @property
     def name(self) -> str:
         """Return component name as text."""
         return self._name.text
-
-    def new_view_name_active(self) -> ViewNameActive:
-        """Return editable view of name."""
-        return self._name.new_view()
-
-    def new_view_name_passive(self) -> ViewNamePassive:
-        """Return display-only view of name."""
-        return self._name.new_view_passive()
-
-    def new_view_summary_active(self) -> ViewSummaryActive:
-        """Return editable view of summary."""
-        return self._summary.new_view()
-
-    def new_view_summary_passive(self) -> ViewSummaryPassive:
-        """Return display-only view of summary."""
-        return self._summary.new_view_passive()
-
-    def new_view_title_active(self) -> ViewTitleActive:
-        """Return editable view of title."""
-        return self._title.new_view()
-
-    def new_view_title_passive(self) -> ViewTitlePassive:
-        """Return display-only view of title."""
-        return self._title.new_view_passive()
 
     def set_fresh(self) -> None:
         """Mark identity in memory consistent with file contents."""

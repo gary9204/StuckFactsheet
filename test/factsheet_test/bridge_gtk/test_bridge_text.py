@@ -22,8 +22,8 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
-class PatchModelGtkText(BTEXT.ModelGtkText[typing.Any]):
-    """:class:`.ModelGtkText` subclass with stub text property."""
+class PatchModelGtkText(BTEXT.ModelText[typing.Any]):
+    """:class:`.ModelText` subclass with stub text property."""
 
     def __init__(self):
         super().__init__()
@@ -323,11 +323,11 @@ class TestIdDisplay:
 
 
 class TestModelGtkText:
-    """Unit tests for :class:`.ModelGtkText`."""
+    """Unit tests for :class:`.ModelText`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BTEXT.ModelGtkText, '_get_persist'),
-        (BTEXT.ModelGtkText, '_set_persist'),
+        (BTEXT.ModelText, '_get_persist'),
+        (BTEXT.ModelText, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.

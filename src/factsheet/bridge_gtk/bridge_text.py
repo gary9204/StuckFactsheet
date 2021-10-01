@@ -262,9 +262,9 @@ def id_display(p_display: DisplayTextMarkup) -> IdDisplay:
     return IdDisplay(id(p_display))
 
 
-class ModelGtkText(ABC_STALE.InterfaceStaleFile,
-                   BBASE.BridgeBase[ModelTextOpaque, PersistText],
-                   typing.Generic[ModelTextOpaque]):
+class ModelText(ABC_STALE.InterfaceStaleFile,
+                BBASE.BridgeBase[ModelTextOpaque, PersistText],
+                typing.Generic[ModelTextOpaque]):
     """Common ancestor of bridge classes for text.
 
     Text bridge objects have transient data for attached views in
@@ -329,7 +329,7 @@ class ModelGtkText(ABC_STALE.InterfaceStaleFile,
         self.set_stale()
 
 
-class ModelTextMarkup(ModelGtkText[UiTextMarkup]):
+class ModelTextMarkup(ModelText[UiTextMarkup]):
     """Text storage with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 
@@ -371,7 +371,7 @@ class ModelTextMarkup(ModelGtkText[UiTextMarkup]):
         self._ui_model.set_text(p_persist, ALL)
 
 
-class ModelTextStyled(ModelGtkText[UiTextStyled]):
+class ModelTextStyled(ModelText[UiTextStyled]):
     """Text bridge with support for editing and format tagging.  See
     `Gtk.TextBuffer`_.
 

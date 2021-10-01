@@ -17,43 +17,7 @@ import factsheet.model.idcore as MIDCORE
 class TestIdCore:
     """Unit tests for :class:`.IdCore`."""
 
-    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (MIDCORE.IdCore, '_new_model'),
-        ])
-    def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
-        # Setup
-        # Test
-        assert hasattr(CLASS, '__abstractmethods__')
-        assert NAME_METHOD in CLASS.__abstractmethods__
-
-    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR, HAS_SETTER', [
-        ('name', '_name', False),
-        ('summary', '_summary', False),
-        ('title', '_title', False),
-        ])
-    def test_property_access(
-            self, patch_idcore, NAME_PROP, NAME_ATTR, HAS_SETTER):
-        """Confirm access limits of each property."""
-        # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-        attr = getattr(target, NAME_ATTR)
-        CLASS = MIDCORE.IdCore
-        target_prop = getattr(CLASS, NAME_PROP)
-        # Test
-        assert target_prop.fget is not None
-        assert attr.text == target_prop.fget(target)
-        if HAS_SETTER:
-            with pytest.raises(NotImplementedError):
-                target_prop.fset(None, 'Oops!')
-        else:
-            assert target_prop.fset is None
-        assert target_prop.fdel is None
-
-    def test_eq(self, patch_idcore):
+    def test_eq(self):
         """Confirm equivalence operator.
 
         #. Case: type difference.
@@ -63,10 +27,13 @@ class TestIdCore:
         #. Case: equivalent
         """
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        source = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        NAME.text = 'Parrot'
+        SUMMARY = BUI.ModelTextStyled()
+        SUMMARY.text = 'The parrot is a Norwegian Blue.'
+        TITLE = BUI.ModelTextMarkup()
+        TITLE.text = 'The Parrot Sketch'
+        source = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         TEXT = 'Something completely different.'
         # Test: type difference.
         assert not source.__eq__(TEXT)
@@ -88,65 +55,67 @@ class TestIdCore:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    def test_get_set_state(self, tmp_path, patch_idcore):
+    def test_get_set_state(self, tmp_path):
         """Confirm conversion to and from pickle format."""
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        source = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        NAME.text = 'Parrot'
+        SUMMARY = BUI.ModelTextStyled()
+        SUMMARY.text = 'The parrot is a Norwegian Blue.'
+        TITLE = BUI.ModelTextMarkup()
+        TITLE.text = 'The Parrot Sketch'
+        source = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         source._stale = True
         # Test
         with path.open(mode='wb') as io_out:
             pickle.dump(source, io_out)
         with path.open(mode='rb') as io_in:
             target = pickle.load(io_in)
+        assert NAME == target._name
+        assert SUMMARY == target._summary
+        assert TITLE == target._title
         assert not target._stale
-        source._stale = False
-        assert source == target
 
-    def test_init(self, patch_idcore):
+    def test_init(self):
         """| Confirm initialization.
         | Case: nominal.
         """
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
+        NAME = BUI.ModelTextMarkup()
+        NAME.text = 'Parrot'
+        SUMMARY = BUI.ModelTextStyled()
+        SUMMARY.text = 'The parrot is a Norwegian Blue.'
+        TITLE = BUI.ModelTextMarkup()
+        TITLE.text = 'The Parrot Sketch'
         # Test
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-        assert not target._stale
-        assert NAME == target._name.text
-        assert target._name.is_fresh()
-        assert SUMMARY == target._summary.text
-        assert target._summary.is_fresh()
-        assert TITLE == target._title.text
-        assert target._title.is_fresh()
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        assert target._name is NAME
+        assert target._summary is SUMMARY
+        assert target._title is TITLE
         assert isinstance(target._stale, bool)
-        assert target.is_fresh()
+        assert not target._stale
 
-    def test_init_extra(self, patch_idcore):
+    def test_init_extra(self):
         """| Confirm initialization.
         | Case: extra keyword argument.
         """
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-
+        NAME = BUI.ModelTextMarkup()
+        SUMMARY = BUI.ModelTextStyled()
+        TITLE = BUI.ModelTextMarkup()
         ERROR = re.escape("IdCore.__init__() called with extra "
                           "argument(s): {'extra': 'Oops!'}")
         # Test
         with pytest.raises(TypeError, match=ERROR):
-            _ = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE,
-                             extra='Oops!')
+            _ = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY,
+                               p_title=TITLE, extra='Oops!')
 
     @pytest.mark.parametrize('IS_STALE', [
         True,
         False,
         ])
-    def test_is_fresh(self, IS_STALE, monkeypatch, patch_idcore):
+    def test_is_fresh(self, IS_STALE, monkeypatch):
         """Confirm negation of :meth:`~.IdCore.is_stale`."""
         # Setup
         class PatchIsStale:
@@ -160,15 +129,15 @@ class TestIdCore:
 
         patch = PatchIsStale(IS_STALE)
         monkeypatch.setattr(MIDCORE.IdCore, 'is_stale', patch.is_stale)
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        SUMMARY = BUI.ModelTextStyled()
+        TITLE = BUI.ModelTextMarkup()
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # Test
         assert target.is_fresh() is not IS_STALE
         assert patch.called
 
-    def test_is_stale(self, patch_idcore):
+    def test_is_stale(self):
         """Confirm return is accurate.
 
         #. Case: IdCore stale, name, summary, and title fresh
@@ -178,10 +147,10 @@ class TestIdCore:
         #. Case: IdCore fresh, name, summary, and title fresh
         """
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        SUMMARY = BUI.ModelTextStyled()
+        TITLE = BUI.ModelTextMarkup()
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # Test: IdCore stale, name, summary, and title fresh
         target._stale = True
         target._name.set_fresh()
@@ -218,64 +187,42 @@ class TestIdCore:
         assert not target.is_stale()
         assert not target._stale
 
-    @pytest.mark.parametrize('NEW_VIEW, ATTR', [
-        ('new_view_name_active', '_name'),
-        ('new_view_summary_active', '_summary'),
-        ('new_view_title_active', '_title'),
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR, HAS_SETTER', [
+        ('name', '_name', False),
+        ('summary', '_summary', False),
+        ('title', '_title', False),
         ])
-    def test_new_view_active(self, patch_idcore, NEW_VIEW, ATTR):
-        """Confirm method returns editable view of identity component."""
+    def test_property_access(
+            self, NAME_PROP, NAME_ATTR, HAS_SETTER):
+        """Confirm access limits of each property."""
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-        new_view = getattr(target, NEW_VIEW)
-        attr = getattr(target, ATTR)
+        NAME = BUI.ModelTextMarkup()
+        NAME.text = 'Parrot'
+        SUMMARY = BUI.ModelTextStyled()
+        SUMMARY.text = 'The parrot is a Norwegian Blue.'
+        TITLE = BUI.ModelTextMarkup()
+        TITLE.text = 'The Parrot Sketch'
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        attr = getattr(target, NAME_ATTR)
+        CLASS = MIDCORE.IdCore
+        target_prop = getattr(CLASS, NAME_PROP)
         # Test
-        view = new_view()
-        assert view.get_buffer() is attr._model
-        assert view.get_editable()
+        assert target_prop.fget is not None
+        assert attr.text == target_prop.fget(target)
+        if HAS_SETTER:
+            with pytest.raises(NotImplementedError):
+                target_prop.fset(None, 'Oops!')
+        else:
+            assert target_prop.fset is None
+        assert target_prop.fdel is None
 
-    def test_new_view_passive(self, patch_idcore):
-        """Confirm method returns display-only view of identity component.
-
-        #. Case: name
-        #. Case: summary
-        #. Case: title
-        """
-        # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-        # Test: name
-        name_view = target.new_view_name_passive()
-        assert isinstance(name_view, BTEXT.DisplayTextMarkup)
-        assert NAME == name_view.get_label()
-        name_view.destroy()
-        # Test: summary
-        summary_view = target.new_view_summary_passive()
-        assert isinstance(summary_view, BTEXT.EditorTextStyled)
-        summary_buffer = summary_view.get_buffer()
-        start, end = summary_buffer.get_bounds()
-        GET_HIDDEN = True
-        assert SUMMARY == summary_buffer.get_text(start, end, GET_HIDDEN)
-        assert not summary_view.get_editable()
-        summary_view.destroy()
-        # Test: title
-        title_view = target.new_view_title_passive()
-        assert isinstance(title_view, BTEXT.DisplayTextMarkup)
-        assert TITLE == title_view.get_label()
-        title_view.destroy()
-
-    def test_set_fresh(self, patch_idcore):
+    def test_set_fresh(self):
         """Confirm instance marked fresh."""
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        SUMMARY = BUI.ModelTextStyled()
+        TITLE = BUI.ModelTextMarkup()
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         target._stale = True
         # Test
         target.set_fresh()
@@ -286,22 +233,21 @@ class TestIdCore:
         '_summary',
         '_title',
         ])
-    def test_set_fresh_attr(self, patch_idcore, ATTR):
+    def test_set_fresh_attr(self, ATTR):
         """Confirm all attributes marked fresh."""
         # Setup
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        SUMMARY = BUI.ModelTextStyled()
+        TITLE = BUI.ModelTextMarkup()
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         target._stale = True
         attribute = getattr(target, ATTR)
         attribute.set_stale()
         # Test
         target.set_fresh()
-        assert not target._stale
         assert attribute.is_fresh()
 
-    def test_set_stale(self, monkeypatch, patch_idcore):
+    def test_set_stale(self, monkeypatch):
         """Confirm instance marked stale and attributes unchanged."""
         # Setup
         class PatchAttrSetStale:
@@ -311,14 +257,14 @@ class TestIdCore:
             def set_stale(self):
                 self.called = True
 
-        NAME = 'Parrot'
-        SUMMARY = 'The parrot is a Norwegian Blue.'
-        TITLE = 'The Parrot Sketch'
-        target = patch_idcore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+        NAME = BUI.ModelTextMarkup()
+        SUMMARY = BUI.ModelTextStyled()
+        TITLE = BUI.ModelTextMarkup()
+        target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         target._stale = False
 
         patch = PatchAttrSetStale()
-        monkeypatch.setattr(BTEXT.ModelGtkText, 'set_stale', patch.set_stale)
+        monkeypatch.setattr(BTEXT.ModelText, 'set_stale', patch.set_stale)
         # Test
         target.set_stale()
         assert not patch.called
@@ -329,24 +275,15 @@ class TestIdCoreTypes:
     """Unit tests for type hint definitions in :mod:`.idcore`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
-        (type(MIDCORE.ViewNameActive), typing.TypeVar),
-        (MIDCORE.ViewNameActive.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextMarkup)),
-        (type(MIDCORE.ViewNamePassive), typing.TypeVar),
-        (MIDCORE.ViewNamePassive.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextDisplay)),
-        (type(MIDCORE.ViewSummaryActive), typing.TypeVar),
-        (MIDCORE.ViewSummaryActive.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextMarkup)),
-        (type(MIDCORE.ViewSummaryPassive), typing.TypeVar),
-        (MIDCORE.ViewSummaryPassive.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextDisplay)),
-        (type(MIDCORE.ViewTitleActive), typing.TypeVar),
-        (MIDCORE.ViewTitleActive.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextMarkup)),
-        (type(MIDCORE.ViewTitlePassive), typing.TypeVar),
-        (MIDCORE.ViewTitlePassive.__constraints__, (
-            BUI.ViewTextTagged, BUI.ViewTextDisplay)),
+        (type(MIDCORE.ModelName), typing.TypeVar),
+        (MIDCORE.ModelName.__constraints__, (
+            BUI.ModelTextMarkup, BUI.ModelTextStyled)),
+        (type(MIDCORE.ModelSummary), typing.TypeVar),
+        (MIDCORE.ModelSummary.__constraints__, (
+            BUI.ModelTextMarkup, BUI.ModelTextStyled)),
+        (type(MIDCORE.ModelTitle), typing.TypeVar),
+        (MIDCORE.ModelTitle.__constraints__, (
+            BUI.ModelTextMarkup, BUI.ModelTextStyled)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
         """Confirm type hint definitions."""
