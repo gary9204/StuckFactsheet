@@ -22,12 +22,11 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
-class PatchModelGtkText(BTEXT.ModelText[typing.Any]):
+class PatchModelText(BTEXT.ModelText[typing.Any]):
     """:class:`.ModelText` subclass with stub text property."""
 
-    def __init__(self):
-        super().__init__()
-        self._ui_model = 'Oops! incomplete test initialization.'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def _get_persist(self):
         return self._ui_model
@@ -36,7 +35,7 @@ class PatchModelGtkText(BTEXT.ModelText[typing.Any]):
         self._ui_model = str(p_persist)
 
 
-class TestFactoryGtkEntry:
+class TestFactoryEditorTextMarkup:
     """Unit tests for :class:`.FactoryEditorTextMarkup`."""
 
     def test_init(self):
@@ -73,7 +72,7 @@ class TestFactoryGtkEntry:
         assert N_WIDTH_EDIT == view.get_width_chars()
 
 
-class TestFactoryGtkLabelBuffered:
+class TestFactoryDisplayTextMarkup:
     """Unit tests for :class:`.FactoryDisplayTextMarkup`."""
 
     def test_call(self, monkeypatch):
@@ -255,8 +254,8 @@ class TestFactoryGtkLabelBuffered:
         assert CODE == exc.code
 
 
-class TestFactoryGtkTextView:
-    """Unit tests for :class:`.FactoryGtkTextView`."""
+class TestFactoryEditorTextStyled:
+    """Unit tests for :class:`.FactoryEditorTextStyled`."""
 
     def test_init(self):
         """Confirm storage initialization."""
@@ -287,8 +286,8 @@ class TestFactoryGtkTextView:
         assert view.get_editable()
 
 
-class TestFactoryGtkTextViewDisplay:
-    """Unit tests for :class:`.FactoryGtkTextViewDisplay`."""
+class TestFactoryDisplayTextStyled:
+    """Unit tests for :class:`.FactoryDisplayTextStyled`."""
 
     def test_init(self):
         """Confirm storage initialization."""
@@ -322,7 +321,7 @@ class TestIdDisplay:
         assert id(DISPLAY) == BTEXT.id_display(DISPLAY)
 
 
-class TestModelGtkText:
+class TestModelText:
     """Unit tests for :class:`.ModelText`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
@@ -349,17 +348,17 @@ class TestModelGtkText:
         """
         # Setup
         TEXT = 'The Parrot Sketch'
-        source = PatchModelGtkText()
+        source = PatchModelText()
         source._set_persist(TEXT)
         # Test: not a text attribute.
         assert not source.__eq__(TEXT)
         # Test: different content.
         TEXT_DIFFER = 'Something completely different.'
-        target = PatchModelGtkText()
+        target = PatchModelText()
         target._set_persist(TEXT_DIFFER)
         assert not source.__eq__(target)
         # Test: equal
-        target = PatchModelGtkText()
+        target = PatchModelText()
         target._set_persist(TEXT)
         assert source.__eq__(target)
         assert not source.__ne__(target)
@@ -371,7 +370,7 @@ class TestModelGtkText:
         """
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = PatchModelGtkText()
+        source = PatchModelText()
         TEXT = 'The Parrot Sketch'
         source._set_persist(TEXT)
         source._stale = True
@@ -384,10 +383,26 @@ class TestModelGtkText:
         assert not target._stale
 
     def test_init(self):
-        """Confirm initialization."""
+        """| Confirm initialization.
+        | Case: non-default text.
+        """
         # Setup
+        TEXT = 'The Parrot Sketch'
         # Test
-        target = PatchModelGtkText()
+        target = PatchModelText(p_text=TEXT)
+        assert TEXT == target.text
+        assert target._stale is not None
+        assert not target._stale
+
+    def test_init_default(self):
+        """| Confirm initialization.
+        | Case: default text.
+        """
+        # Setup
+        BLANK = ''
+        # Test
+        target = PatchModelText()
+        assert BLANK == target.text
         assert target._stale is not None
         assert not target._stale
 
@@ -395,8 +410,8 @@ class TestModelGtkText:
         """Confirm return is attribute content. """
         # Setup
         TEXT = 'The Parrot Sketch'
-        target = PatchModelGtkText()
-        target._ui_model = TEXT
+        target = PatchModelText()
+        target._set_persist(p_persist=TEXT)
         expect = '<{}: {}>'.format(type(target).__name__, TEXT)
         # Test
         assert expect == str(target)
@@ -404,7 +419,7 @@ class TestModelGtkText:
     def test_is_fresh(self):
         """Confirm return matches state. """
         # Setup
-        target = PatchModelGtkText()
+        target = PatchModelText()
         target._stale = False
         # Test
         assert target.is_fresh()
@@ -414,7 +429,7 @@ class TestModelGtkText:
     def test_is_stale(self):
         """Confirm return matches state. """
         # Setup
-        target = PatchModelGtkText()
+        target = PatchModelText()
         target._stale = False
         # Test
         assert not target.is_stale()
@@ -424,7 +439,7 @@ class TestModelGtkText:
     def test_set_freah(self):
         """Confirm attribute marked fresh. """
         # Setup
-        target = PatchModelGtkText()
+        target = PatchModelText()
         target._stale = True
         # Test
         target.set_fresh()
@@ -433,7 +448,7 @@ class TestModelGtkText:
     def test_set_stale(self):
         """Confirm attribute marked stale. """
         # Setup
-        target = PatchModelGtkText()
+        target = PatchModelText()
         target._stale = False
         # Test
         target.set_stale()
@@ -442,7 +457,7 @@ class TestModelGtkText:
     def test_text(self):
         """Confirm access limits of text property."""
         # Setup
-        target_class = PatchModelGtkText
+        target_class = PatchModelText
         target = target_class()
         TEXT = 'The Parrot Sketch'
         target._set_persist(TEXT)
@@ -453,7 +468,7 @@ class TestModelGtkText:
         assert target_class.text.fdel is None
 
 
-class TestModelGtkEntryBuffer:
+class TestModelTextMarkup:
     """Unit tests for :class:`.ModelTextMarkup`.
 
     :class:`.TestBridgeTextCommon` contains additional unit tests for

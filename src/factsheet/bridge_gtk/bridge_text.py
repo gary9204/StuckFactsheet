@@ -280,10 +280,10 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
-    def __init__(self) -> None:
+    def __init__(self, p_text: str = '') -> None:
         """Extend initialization with text and change state."""
         super().__init__()
-        self._set_persist('')
+        self._set_persist(p_text)
         self._stale = False
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
