@@ -84,7 +84,7 @@ class TestFactoryGtkLabelBuffered:
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
 
         class PatchConnect:
@@ -134,7 +134,7 @@ class TestFactoryGtkLabelBuffered:
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
 
         N_DISPLAYS = 3
@@ -154,7 +154,7 @@ class TestFactoryGtkLabelBuffered:
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         N_DISPLAYS = 5
         I_DESTROY = 4
@@ -180,7 +180,7 @@ class TestFactoryGtkLabelBuffered:
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         N_DISPLAYS = 5
         for _ in range(N_DISPLAYS):
@@ -207,7 +207,7 @@ class TestFactoryGtkLabelBuffered:
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         # Test
         assert TEXT == target.filter_text_markup()
@@ -220,7 +220,7 @@ class TestFactoryGtkLabelBuffered:
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         # Test
         assert TEXT_ESCAPED == target.filter_text_markup()
@@ -244,7 +244,7 @@ class TestFactoryGtkLabelBuffered:
 
         TEXT = 'The <b>Parrot </b Sketch.'
         entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer.text = TEXT
+        entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         # Test
         with pytest.raises(GLib.Error) as exc_info:
@@ -446,14 +446,10 @@ class TestModelGtkText:
         target = target_class()
         TEXT = 'The Parrot Sketch'
         target._set_persist(TEXT)
-        TEXT_NEW = 'Something completely different.'
         # Test
         assert target_class.text.fget is not None
         assert TEXT == target.text
-        assert target_class.text.fset is not None
-        target.text = TEXT_NEW
-        assert TEXT_NEW == target._get_persist()
-        assert target.is_stale()
+        assert target_class.text.fset is None
         assert target_class.text.fdel is None
 
 

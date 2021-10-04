@@ -60,8 +60,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
-    def __init__(self, *, p_name: ModelName, p_summary: ModelSummary,
-                 p_title: ModelTitle, **kwargs: typing.Any) -> None:
+    def __init__(self, **kwargs: typing.Any) -> None:
         """Initialize instance.
 
         :param p_name: short identifier for component (suitable, for
@@ -74,11 +73,16 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
                             '{}'.format(type(self).__name__, kwargs))
-        self._name: ModelName = p_name
-        self._summary: ModelSummary = p_summary
-        self._title: ModelTitle = p_title
+        self._name: ModelName
+        self._summary: ModelSummary
+        self._title: ModelTitle
         self._stale: bool
         self.set_fresh()
+        # self._name: ModelName = p_name
+        # self._summary: ModelSummary = p_summary
+        # self._title: ModelTitle = p_title
+        # self._stale: bool
+        # self.set_fresh()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct identity from state pickle loads.
