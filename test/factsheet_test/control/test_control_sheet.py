@@ -826,6 +826,12 @@ class TestControlSheet:
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
         ('_model', 'model'),
+        ('_factory_display_name', 'new_display_name'),
+        ('_factory_editor_name', 'new_editor_name'),
+        ('_factory_display_summary', 'new_display_summary'),
+        ('_factory_editor_summary', 'new_editor_summary'),
+        ('_factory_display_title', 'new_display_title'),
+        ('_factory_editor_title', 'new_editor_title'),
         ('_path', 'path'),
         ])
     def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):

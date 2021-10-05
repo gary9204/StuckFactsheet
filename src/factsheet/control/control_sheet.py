@@ -218,7 +218,32 @@ class ControlSheet:
     @property
     def new_display_name(self) -> MSHEET.DisplayName:
         """Return factory for displays of sheet names."""
-        raise NotImplementedError
+        return self._factory_display_name
+
+    @property
+    def new_editor_name(self) -> MSHEET.EditorName:
+        """Return factory for editors of sheet names."""
+        return self._factory_editor_name
+
+    @property
+    def new_display_summary(self) -> MSHEET.DisplaySummary:
+        """Return factory for displays of sheet summarys."""
+        return self._factory_display_summary
+
+    @property
+    def new_editor_summary(self) -> MSHEET.EditorSummary:
+        """Return factory for editors of sheet summarys."""
+        return self._factory_editor_summary
+
+    @property
+    def new_display_title(self) -> MSHEET.DisplayTitle:
+        """Return factory for displays of sheet titles."""
+        return self._factory_display_title
+
+    @property
+    def new_editor_title(self) -> MSHEET.EditorTitle:
+        """Return factory for editors of sheet titles."""
+        return self._factory_editor_title
 
     def _model_from_error(
             self, p_err: Exception, p_message: str) -> MSHEET.Sheet:
