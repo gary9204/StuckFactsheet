@@ -14,6 +14,22 @@ import factsheet.model.sheet as MSHEET
 # from factsheet.model import topic as MTOPIC
 
 
+@pytest.fixture
+def new_id_args():
+    """Pytest fixture: factory for stock identity arguments for
+    :class:`.Sheet`.
+    """
+    def new_args():
+        id_args = dict(
+            p_name='Parrot',
+            p_summary='The parrot is a Norwegian Blue.',
+            p_title='The Parrot Sketch',
+            )
+        return id_args
+
+    return new_args
+
+
 class TestSheet:
     """Unit tests for :class:`~.model.sheet.Sheet`."""
 
@@ -47,75 +63,78 @@ class TestSheet:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    @pytest.mark.skip(reason='Method marked for deletion')
-    def test_get_set_state(self, tmp_path, interface_page_sheet):
-        """Confirm conversion to and from pickle format."""
-        # # Setup
-        # path = Path(str(tmp_path / 'get_set.fsg'))
-        #
-        # TITLE_MODEL = 'Something completely different.'
-        # source = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # source._stale = True
-        #
-        # topic = MTOPIC.Topic()
-        # topic.init_identity(p_name='Killer Rabbit')
-        # _index = source._topics.insert_child(topic, None)
-        #
-        # N_PAGES = 3
-        # pages = [interface_page_sheet() for _ in range(N_PAGES)]
-        # for page in pages:
-        #     source.attach_page(page)
-        # # Test
-        # with path.open(mode='wb') as io_out:
-        #     pickle.dump(source, io_out)
-        #
-        # with path.open(mode='rb') as io_in:
-        #     target = pickle.load(io_in)
-        #
-        # assert source._infoid == target._infoid
-        # assert source._topics == target._topics
-        # assert not target._stale
-        # assert isinstance(target._pages, dict)
-        # assert not target._pages
+    # @pytest.mark.skip(reason='Method marked for deletion')
+    # def test_get_set_state(self, tmp_path, interface_page_sheet):
+    #     """Confirm conversion to and from pickle format."""
+    #     # # Setup
+    #     # path = Path(str(tmp_path / 'get_set.fsg'))
+    #     #
+    #     # TITLE_MODEL = 'Something completely different.'
+    #     # source = MSHEET.Sheet(p_title=TITLE_MODEL)
+    #     # source._stale = True
+    #     #
+    #     # topic = MTOPIC.Topic()
+    #     # topic.init_identity(p_name='Killer Rabbit')
+    #     # _index = source._topics.insert_child(topic, None)
+    #     #
+    #     # N_PAGES = 3
+    #     # pages = [interface_page_sheet() for _ in range(N_PAGES)]
+    #     # for page in pages:
+    #     #     source.attach_page(page)
+    #     # # Test
+    #     # with path.open(mode='wb') as io_out:
+    #     #     pickle.dump(source, io_out)
+    #     #
+    #     # with path.open(mode='rb') as io_in:
+    #     #     target = pickle.load(io_in)
+    #     #
+    #     # assert source._infoid == target._infoid
+    #     # assert source._topics == target._topics
+    #     # assert not target._stale
+    #     # assert isinstance(target._pages, dict)
+    #     # assert not target._pages
 
-    def test_init(self, new_kwargs_idcore):
-        """Confirm initialization.
+    def test_init(self, new_id_args):
+        """| Confirm initialization.
+        | Case: nominal.
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments
+        :param new_id_args: fixture: factory for stock identity
+            keyword arguments.
         """
         # Setup
-        KWARGS = new_kwargs_idcore()
+        ID_ARGS = new_id_args()
         # Test
-        target = MSHEET.Sheet(**KWARGS)
-        assert KWARGS['p_name'] == target.name
-        assert KWARGS['p_summary'] == target.summary
-        assert KWARGS['p_title'] == target.title
+        target = MSHEET.Sheet(**ID_ARGS)
+        assert ID_ARGS['p_name'] == target.name.text
+        assert ID_ARGS['p_summary'] == target.summary.text
+        assert ID_ARGS['p_title'] == target.title.text
         # assert isinstance(target._topics, ABC_OUTLINE.AbstractOutline)
         assert not target._stale
 
     def test_init_default(self):
-        """Confirm initialization with default arguments."""
+        """| Confirm initialization.
+        | Case: default arguments.
+        """
         # Setup
         NAME_DEFAULT = 'Unnamed'
         SUMMARY_DEFAULT = ''
         TITLE_DEFAULT = ''
         # Test
         target = MSHEET.Sheet()
-        assert NAME_DEFAULT == target.name
-        assert SUMMARY_DEFAULT == target.summary
-        assert TITLE_DEFAULT == target.title
+        assert NAME_DEFAULT == target.name.text
+        assert SUMMARY_DEFAULT == target.summary.text
+        assert TITLE_DEFAULT == target.title.text
 
-    @pytest.mark.skip(reason='Method marked for deletion')
-    def test_attach_view_topics(self):
-        """Confirm topics outline view addition."""
-        # # Setup
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        # # Test
-        # target.attach_view_topics(VIEW_TOPICS)
-        # assert target._topics._gtk_model is VIEW_TOPICS.gtk_view.get_model()
+    # @pytest.mark.skip(reason='Method marked for deletion')
+    # def test_attach_view_topics(self):
+    #     """Confirm topics outline view addition."""
+    #     # # Setup
+    #     # TITLE_MODEL = 'Something completely different.'
+    #     # target = MSHEET.Sheet(p_title=TITLE_MODEL)
+    #     # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+    #     # # Test
+    #     # target.attach_view_topics(VIEW_TOPICS)
+    #     # assert target._topics._gtk_model is VIEW_TOPICS.gtk_view.get_model()
 
     @pytest.mark.skip
     def test_clear(self, monkeypatch, interface_page_sheet):
@@ -155,17 +174,17 @@ class TestSheet:
         #     assert ids_extracted == page.closed_topics
         # assert patch_outline.called
 
-    @pytest.mark.skip(reason='Method marked for deletion')
-    def test_detach_view_topics(self):
-        """Confirm topics outline view removal."""
-        # # Setup
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        # target.attach_view_topics(VIEW_TOPICS)
-        # # Test
-        # target.detach_view_topics(VIEW_TOPICS)
-        # assert VIEW_TOPICS.gtk_view.get_model() is None
+    # @pytest.mark.skip(reason='Method marked for deletion')
+    # def test_detach_view_topics(self):
+    #     """Confirm topics outline view removal."""
+    #     # # Setup
+    #     # TITLE_MODEL = 'Something completely different.'
+    #     # target = MSHEET.Sheet(p_title=TITLE_MODEL)
+    #     # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+    #     # target.attach_view_topics(VIEW_TOPICS)
+    #     # # Test
+    #     # target.detach_view_topics(VIEW_TOPICS)
+    #     # assert VIEW_TOPICS.gtk_view.get_model() is None
 
     @pytest.mark.skip
     def test_extract_topic(self, monkeypatch, interface_page_sheet):
@@ -293,19 +312,19 @@ class TestSheet:
         # assert patch_outline.called
         # assert target.is_stale()
 
-    def test_is_fresh(self, new_kwargs_idcore):
+    def test_is_fresh(self, new_id_args):
         """Confirm return is accurate.
 
         #. Case: Sheet stale, ID info fresh
         #. Case: Sheet fresh, ID info stale
         #. Case: Sheet fresh, ID info fresh
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments
+        :param new_id_args: fixture: factory for stock identity
+            keyword arguments.
         """
         # Setup
-        KWARGS = new_kwargs_idcore()
-        target = MSHEET.Sheet(**KWARGS)
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
         # Test: Sheet stale, ID info fresh, no topics
         target._stale = True
         target._summary.set_fresh()
@@ -322,7 +341,7 @@ class TestSheet:
         assert target.is_fresh()
         assert not target._stale
 
-    def test_is_stale(self, new_kwargs_idcore):
+    def test_is_stale(self, new_id_args):
         """Confirm return is accurate.
 
         #. Case: Sheet stale, ID info fresh, topics fresh
@@ -331,12 +350,12 @@ class TestSheet:
         #. Case: Sheet fresh, ID info fresh, leaf topic stale
         #. Case: Sheet fresh, ID info fresh, last topic stale
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments
+        :param new_id_args: fixture: factory for stock identity
+            keyword arguments.
         """
         # Setup
-        KWARGS = new_kwargs_idcore()
-        target = MSHEET.Sheet(**KWARGS)
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
 
         # N_TOPICS = 3
         # for i in range(N_TOPICS):
@@ -390,22 +409,22 @@ class TestSheet:
         # assert target.is_stale()
         # assert target._stale
 
-    def test_new_model(self, new_kwargs_idcore):
-        """Confirm store for identity components.
+    # def test_new_model(self, new_id_args):
+    #     """Confirm store for identity components.
+    #
+    #     :param new_id_args: fixture: factory for stock identity
+    #         keyword arguments.
+    #     """
+    #     # Setup
+    #     ID_ARGS = new_id_args()
+    #     target = MSHEET.Sheet(**ID_ARGS)
+    #     # Test
+    #     name, summary, title = target._new_model()
+    #     assert isinstance(name, MSHEET.NameSheet)
+    #     assert isinstance(summary, MSHEET.SummarySheet)
+    #     assert isinstance(title, MSHEET.TitleSheet)
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments
-        """
-        # Setup
-        KWARGS = new_kwargs_idcore()
-        target = MSHEET.Sheet(**KWARGS)
-        # Test
-        name, summary, title = target._new_model()
-        assert isinstance(name, MSHEET.NameSheet)
-        assert isinstance(summary, MSHEET.SummarySheet)
-        assert isinstance(title, MSHEET.TitleSheet)
-
-    def test_set_fresh(self, new_kwargs_idcore):
+    def test_set_fresh(self, new_id_args):
         """Confirm all attributes marked fresh.
 
         #. Case: Sheet fresh, identification information fresh
@@ -415,12 +434,12 @@ class TestSheet:
         #. Case: Sheet fresh, topics stale
         #. Case: Sheet stale, topics stale
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments
+        :param new_id_args: fixture: factory for stock identity
+            keyword arguments.
         """
         # Setup
-        KWARGS = new_kwargs_idcore()
-        target = MSHEET.Sheet(**KWARGS)
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
         # TEXT_TITLE = 'Something completely different'
         # target = MSHEET.Sheet(p_title=TEXT_TITLE)
 
@@ -491,68 +510,68 @@ class TestSheet:
         #     topic = target._topics.get_item(index)
         #     assert topic.is_fresh()
 
-    @pytest.mark.skip(reason='No need to extend inherited method')
-    def test_set_stale(self):
-        """Confirm all attributes set.
-
-        #. Case: Sheet fresh, ID info fresh, no topics.
-        #. Case: Sheet stale, ID info fresh, no topics.
-        #. Case: Sheet fresh, ID info stale, no topics.
-        #. Case: Sheet stale, ID info stale, no topics.
-        #. Case: Sheet fresh, ID info fresh, topics fresh
-         """
-        # # Setup
-        # TEXT_TITLE = 'Something completely different'
-        # target = MSHEET.Sheet(p_title=TEXT_TITLE)
-        #
-        # N_TOPICS = 3
-        # for i in range(N_TOPICS):
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name='Topic {}'.format(i))
-        #     target.insert_topic_before(topic, None)
-        # N_DESCEND = 2
-        # parent = target._topics._gtk_model.get_iter_first()
-        # for j in range(N_DESCEND):
-        #     name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name=name)
-        #     parent = target.insert_topic_child(topic, parent)
-        # # Test: Sheet fresh, ID info fresh, no topics.
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # target.set_stale()
-        # assert target._stale
-        # assert target._infoid.is_fresh()
-        # # Test: Sheet stale, ID info fresh, no topics.
-        # target._stale = True
-        # target._infoid.set_fresh()
-        # target.set_stale()
-        # assert target._stale
-        # assert target._infoid.is_fresh()
-        # # Test: Sheet fresh, ID info stale, no topics.
-        # target._stale = False
-        # target._infoid.set_stale()
-        # target.set_stale()
-        # assert target._stale
-        # assert target._infoid.is_stale()
-        # # Test: Sheet stale, ID info stale, no topics.
-        # target._stale = True
-        # target._infoid.set_stale()
-        # target.set_stale()
-        # assert target._stale
-        # assert target._infoid.is_stale()
-        # # Test: Sheet fresh, ID info fresh, topics fresh.
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # for index in target._topics.indices():
-        #     topic = target._topics.get_item(index)
-        #     topic.set_fresh()
-        # target.set_stale()
-        # assert target._stale
-        # assert target._infoid.is_fresh()
-        # for index in target._topics.indices():
-        #     topic = target._topics.get_item(index)
-        #     assert topic.is_fresh()
+    # @pytest.mark.skip(reason='No need to extend inherited method')
+    # def test_set_stale(self):
+    #     """Confirm all attributes set.
+    #
+    #     #. Case: Sheet fresh, ID info fresh, no topics.
+    #     #. Case: Sheet stale, ID info fresh, no topics.
+    #     #. Case: Sheet fresh, ID info stale, no topics.
+    #     #. Case: Sheet stale, ID info stale, no topics.
+    #     #. Case: Sheet fresh, ID info fresh, topics fresh
+    #      """
+    #     # # Setup
+    #     # TEXT_TITLE = 'Something completely different'
+    #     # target = MSHEET.Sheet(p_title=TEXT_TITLE)
+    #     #
+    #     # N_TOPICS = 3
+    #     # for i in range(N_TOPICS):
+    #     #     topic = MTOPIC.Topic()
+    #     #     topic.init_identity(p_name='Topic {}'.format(i))
+    #     #     target.insert_topic_before(topic, None)
+    #     # N_DESCEND = 2
+    #     # parent = target._topics._gtk_model.get_iter_first()
+    #     # for j in range(N_DESCEND):
+    #     #     name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+    #     #     topic = MTOPIC.Topic()
+    #     #     topic.init_identity(p_name=name)
+    #     #     parent = target.insert_topic_child(topic, parent)
+    #     # # Test: Sheet fresh, ID info fresh, no topics.
+    #     # target._stale = False
+    #     # target._infoid.set_fresh()
+    #     # target.set_stale()
+    #     # assert target._stale
+    #     # assert target._infoid.is_fresh()
+    #     # # Test: Sheet stale, ID info fresh, no topics.
+    #     # target._stale = True
+    #     # target._infoid.set_fresh()
+    #     # target.set_stale()
+    #     # assert target._stale
+    #     # assert target._infoid.is_fresh()
+    #     # # Test: Sheet fresh, ID info stale, no topics.
+    #     # target._stale = False
+    #     # target._infoid.set_stale()
+    #     # target.set_stale()
+    #     # assert target._stale
+    #     # assert target._infoid.is_stale()
+    #     # # Test: Sheet stale, ID info stale, no topics.
+    #     # target._stale = True
+    #     # target._infoid.set_stale()
+    #     # target.set_stale()
+    #     # assert target._stale
+    #     # assert target._infoid.is_stale()
+    #     # # Test: Sheet fresh, ID info fresh, topics fresh.
+    #     # target._stale = False
+    #     # target._infoid.set_fresh()
+    #     # for index in target._topics.indices():
+    #     #     topic = target._topics.get_item(index)
+    #     #     topic.set_fresh()
+    #     # target.set_stale()
+    #     # assert target._stale
+    #     # assert target._infoid.is_fresh()
+    #     # for index in target._topics.indices():
+    #     #     topic = target._topics.get_item(index)
+    #     #     assert topic.is_fresh()
 
     @pytest.mark.skip
     def test_topics(self):

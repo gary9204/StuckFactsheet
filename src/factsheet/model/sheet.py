@@ -22,19 +22,17 @@ logger = logging.getLogger('Main.model.sheet')
 
 
 NameSheet = BUI.ModelTextMarkup
-SummarySheet = BUI.ModelGtkTextBuffer
+SummarySheet = BUI.ModelTextStyled
 TitleSheet = BUI.ModelTextMarkup
-ViewNameSheetActive = BUI.ViewTextMarkup
-ViewNameSheetPassive = BUI.ViewTextDisplay
-ViewSummarySheetActive = BUI.ViewTextTagged
-ViewSummarySheetPassive = BUI.ViewTextTagged
-ViewTitleSheetActive = BUI.ViewTextMarkup
-ViewTitleSheetPassive = BUI.ViewTextDisplay
+# ViewNameSheetActive = BUI.ViewTextMarkup
+# ViewNameSheetPassive = BUI.ViewTextDisplay
+# ViewSummarySheetActive = BUI.ViewTextTagged
+# ViewSummarySheetPassive = BUI.ViewTextTagged
+# ViewTitleSheetActive = BUI.ViewTextMarkup
+# ViewTitleSheetPassive = BUI.ViewTextDisplay
 
 
-class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
-                           ViewSummarySheetActive, ViewSummarySheetPassive,
-                           ViewTitleSheetActive, ViewTitleSheetPassive]):
+class Sheet(MIDCORE.IdCore[NameSheet, SummarySheet, TitleSheet]):
     """Factsheet document :mod:`~factsheet.model`.
 
     Class ``Sheet`` represents an entire Factsheet document.  A model
@@ -88,8 +86,10 @@ class Sheet(MIDCORE.IdCore[ViewNameSheetActive, ViewNameSheetPassive,
         :param p_title: title of factsheet.
         :param kwargs: superclass keyword parameters.
         """
-        super().__init__(
-            p_name=p_name, p_summary=p_summary, p_title=p_title, **kwargs)
+        self._name = NameSheet(p_text=p_name)
+        self._summary = SummarySheet(p_text=p_summary)
+        self._title = TitleSheet(p_text=p_title)
+        super().__init__(**kwargs)
 
     # def __setstate__(self, p_state: typing.Dict) -> None:
     #     """Reconstruct factsheet model from state pickle loads.

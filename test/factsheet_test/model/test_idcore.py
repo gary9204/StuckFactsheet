@@ -65,7 +65,10 @@ class TestIdCore:
         assert not source.__ne__(target)
 
     def test_get_set_state(self, tmp_path):
-        """Confirm conversion to and from pickle format."""
+        """Confirm conversion to and from pickle format.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
         # Setup
         path = Path(str(tmp_path / 'get_set.fsg'))
         NAME = 'Parrot'
@@ -104,6 +107,9 @@ class TestIdCore:
     def test_init_attr(self, ATTR, HINT):
         """| Confirm initialization.
         | Case: missing attribute definition.
+
+        :param ATTR: missing attribute.
+        :param HINT: type hint for missing attribute.
         """
         # Setup
         class PatchPartial(MIDCORE.IdCore[BUI.ModelTextMarkup,
@@ -148,7 +154,11 @@ class TestIdCore:
         False,
         ])
     def test_is_fresh(self, IS_STALE, monkeypatch):
-        """Confirm negation of :meth:`~.IdCore.is_stale`."""
+        """Confirm negation of :meth:`~.IdCore.is_stale`.
+
+        :param IS_STALE: state to report for sheet.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         class PatchIsStale:
             def __init__(self, p_result):
@@ -226,7 +236,11 @@ class TestIdCore:
         ])
     def test_property_access(
             self, NAME_PROP, NAME_ATTR):
-        """Confirm access limits of each property."""
+        """Confirm access limits of each property.
+
+        :param NAME_PROP: name of property.
+        :param NAME_ATTR: name of attribute.
+        """
         # Setup
         NAME = 'Parrot'
         SUMMARY = 'The parrot is a Norwegian Blue.'
@@ -259,7 +273,10 @@ class TestIdCore:
         '_title',
         ])
     def test_set_fresh_attr(self, ATTR):
-        """Confirm all attributes marked fresh."""
+        """Confirm all attributes marked fresh.
+
+        :param ATTR: name of attribute.
+        """
         # Setup
         NAME = 'Parrot'
         SUMMARY = 'The parrot is a Norwegian Blue.'
@@ -273,7 +290,10 @@ class TestIdCore:
         assert attribute.is_fresh()
 
     def test_set_stale(self, monkeypatch):
-        """Confirm instance marked stale and attributes unchanged."""
+        """Confirm instance marked stale and attributes unchanged.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         class PatchAttrSetStale:
             def __init__(self):
@@ -311,7 +331,11 @@ class TestIdCoreTypes:
             BUI.ModelTextMarkup, BUI.ModelTextStyled)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm type hint definitions."""
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type under test.
+        :param TYPE_SOURCE: expected type.
+        """
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_SOURCE
