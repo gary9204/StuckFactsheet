@@ -10,24 +10,25 @@ import pytest   # type: ignore[import]
 # from factsheet.abc_types import abc_outline as ABC_OUTLINE
 # from factsheet.adapt_gtk import adapt_sheet as ASHEET
 # from factsheet.model import infoid as MINFOID
+import factsheet.bridge_ui as BUI
 import factsheet.model.sheet as MSHEET
 # from factsheet.model import topic as MTOPIC
-
-
-@pytest.fixture
-def new_id_args():
-    """Pytest fixture: factory for stock identity arguments for
-    :class:`.Sheet`.
-    """
-    def new_args():
-        id_args = dict(
-            p_name='Parrot',
-            p_summary='The parrot is a Norwegian Blue.',
-            p_title='The Parrot Sketch',
-            )
-        return id_args
-
-    return new_args
+#
+#
+# @pytest.fixture
+# def new_id_args():
+#     """Pytest fixture: factory for stock identity arguments for
+#     :class:`.Sheet`.
+#     """
+#     def new_args():
+#         id_args = dict(
+#             p_name='Parrot',
+#             p_summary='The parrot is a Norwegian Blue.',
+#             p_title='The Parrot Sketch',
+#             )
+#         return id_args
+#
+#     return new_args
 
 
 class TestSheet:
@@ -117,8 +118,8 @@ class TestSheet:
         """
         # Setup
         NAME_DEFAULT = 'Unnamed'
-        SUMMARY_DEFAULT = ''
-        TITLE_DEFAULT = ''
+        SUMMARY_DEFAULT = 'New Factsheet'
+        TITLE_DEFAULT = 'Edit factsheet description here.'
         # Test
         target = MSHEET.Sheet()
         assert NAME_DEFAULT == target.name.text
@@ -590,3 +591,34 @@ class TestSheet:
         # # Test
         # assert TOPICS == list(target.topics())
         # assert TOPICS[2:] == list(target.topics(parent))
+
+
+class TestSheetTypes:
+    """Unit tests for type hint definitions in :mod:`.sheet`."""
+
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (MSHEET.Name, BUI.ModelTextMarkup),
+        (MSHEET.DisplayName, BUI.DisplayTextMarkup),
+        (MSHEET.FactoryDisplayName, BUI.FactoryDisplayTextMarkup),
+        (MSHEET.EditorName, BUI.EditorTextMarkup),
+        (MSHEET.FactoryEditorName, BUI.FactoryEditorTextMarkup),
+        (MSHEET.Summary, BUI.ModelTextStyled),
+        (MSHEET.DisplaySummary, BUI.DisplayTextStyled),
+        (MSHEET.FactoryDisplaySummary, BUI.FactoryDisplayTextStyled),
+        (MSHEET.EditorSummary, BUI.EditorTextStyled),
+        (MSHEET.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
+        (MSHEET.Title, BUI.ModelTextMarkup),
+        (MSHEET.DisplayTitle, BUI.DisplayTextMarkup),
+        (MSHEET.FactoryDisplayTitle, BUI.FactoryDisplayTextMarkup),
+        (MSHEET.EditorTitle, BUI.EditorTextMarkup),
+        (MSHEET.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
+        ])
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type under test.
+        :param TYPE_EXPECT: expected type.
+        """
+        # Setup
+        # Test
+        assert TYPE_TARGET == TYPE_EXPECT

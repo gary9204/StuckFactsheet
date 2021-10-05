@@ -184,6 +184,22 @@ class ControlSheet:
         """Initialize instance with given attributes and no topics."""
         self._path = p_path
         self._model = self._model_from_path(p_path)
+
+        self._factory_display_name = (
+            MSHEET.FactoryDisplayName(self._model.name))
+        self._factory_editor_name = (
+            MSHEET.FactoryEditorName(self._model.name))
+
+        self._factory_display_summary = (
+            MSHEET.FactoryDisplaySummary(self._model.summary))
+        self._factory_editor_summary = (
+            MSHEET.FactoryEditorSummary(self._model.summary))
+
+        self._factory_display_title = (
+            MSHEET.FactoryDisplayTitle(self._model.title))
+        self._factory_editor_title = (
+            MSHEET.FactoryEditorTitle(self._model.title))
+
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()
         # self._controls_topic: typing.Dict[
@@ -198,6 +214,11 @@ class ControlSheet:
                                             self.__class__.__name__,
                                             self.add_view.__name__))
         self._roster_views[id_view_sheet(p_view)] = p_view
+
+    @property
+    def new_display_name(self) -> MSHEET.DisplayName:
+        """Return factory for displays of sheet names."""
+        raise NotImplementedError
 
     def _model_from_error(
             self, p_err: Exception, p_message: str) -> MSHEET.Sheet:

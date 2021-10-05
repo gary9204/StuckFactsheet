@@ -298,6 +298,7 @@ class TestFactoryDisplayTextStyled:
         source = target._factory_source
         assert isinstance(source, BTEXT.FactoryEditorTextStyled)
         assert source._ui_model is MODEL._ui_model
+        assert target._ui_model is MODEL._ui_model
 
     def test_call(self):
         """Confirm attributes of display and edit views."""

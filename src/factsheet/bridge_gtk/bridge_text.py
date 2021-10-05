@@ -245,6 +245,7 @@ class FactoryDisplayTextStyled(BBASE.FactoryUiViewAbstract[DisplayTextStyled]):
 
         :param p_model: model that contains storage for editors.
         """
+        self._ui_model = p_model.ui_model
         self._factory_source = FactoryEditorTextStyled(p_model)
 
     def __call__(self) -> DisplayTextStyled:

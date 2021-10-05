@@ -277,6 +277,32 @@ class TestControlSheet:
         target = CSHEET.ControlSheet(p_path=None)
         assert target._path is None
         assert MODEL_DEFAULT == target._model
+
+        model_name = target._model.name
+        factory_display_name = target._factory_display_name
+        assert isinstance(factory_display_name, MSHEET.FactoryDisplayName)
+        assert factory_display_name._ui_model is model_name._ui_model
+        factory_editor_name = target._factory_editor_name
+        assert isinstance(factory_editor_name, MSHEET.FactoryEditorName)
+        assert factory_editor_name._ui_model is model_name._ui_model
+
+        model_summary = target._model.summary
+        factory_display_summary = target._factory_display_summary
+        assert isinstance(
+            factory_display_summary, MSHEET.FactoryDisplaySummary)
+        assert factory_display_summary._ui_model is model_summary._ui_model
+        factory_editor_summary = target._factory_editor_summary
+        assert isinstance(factory_editor_summary, MSHEET.FactoryEditorSummary)
+        assert factory_editor_summary._ui_model is model_summary._ui_model
+
+        model_title = target._model.title
+        factory_display_title = target._factory_display_title
+        assert isinstance(factory_display_title, MSHEET.FactoryDisplayTitle)
+        assert factory_display_title._ui_model is model_title._ui_model
+        factory_editor_title = target._factory_editor_title
+        assert isinstance(factory_editor_title, MSHEET.FactoryEditorTitle)
+        assert factory_editor_title._ui_model is model_title._ui_model
+
         assert isinstance(target._roster_views, dict)
         assert not target._roster_views
         # assert not target._controls_topic
@@ -616,7 +642,7 @@ class TestControlSheet:
         """Confirm model and control report same state of change.
 
         :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments
+            keyword arguments.
         :param METHOD: method to test, which is ``is_fresh`` or ``is_stale``.
         :param MODEL_IS_STALE: state of change in model.
         """
@@ -630,26 +656,26 @@ class TestControlSheet:
 
     @pytest.mark.skip(reason='being replaced by model pass through')
     @pytest.mark.parametrize('NAME_METHOD, NAME_CHECK, CLASS', [
-        ('new_view_name_active', 'get_buffer', MSHEET.ViewNameSheetActive),
-        ('new_view_name_passive', 'get_label', MSHEET.ViewNameSheetPassive),
-        ('new_view_summary_active', 'get_buffer',
-            MSHEET.ViewSummarySheetActive),
-        ('new_view_summary_passive', 'get_buffer',
-            MSHEET.ViewSummarySheetPassive),
-        ('new_view_title_active', 'get_buffer', MSHEET.ViewTitleSheetActive),
-        ('new_view_title_passive', 'get_label', MSHEET.ViewTitleSheetPassive),
+        # ('new_view_name_active', 'get_buffer', MSHEET.ViewNameSheetActive),
+        # ('new_view_name_passive', 'get_label', MSHEET.ViewNameSheetPassive),
+        # ('new_view_summary_active', 'get_buffer',
+        #     MSHEET.ViewSummarySheetActive),
+        # ('new_view_summary_passive', 'get_buffer',
+        #     MSHEET.ViewSummarySheetPassive),
+        # ('new_view_title_active', 'get_buffer', MSHEET.ViewTitleSheetActive),
+        # ('new_view_title_passive', 'get_label', MSHEET.ViewTitleSheetPassive),
         ])
-    def test_new_view(self, new_kwargs_idcore, NAME_METHOD, NAME_CHECK, CLASS):
+    def test_new_view(self, new_id_args, NAME_METHOD, NAME_CHECK, CLASS):
         """Confirm control relays requests for new views.
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
+        :param new_id_args: fixture: factory for stock identity
             keyword arguments
         :param NAME_METHOD: name of method under test
         :param NAME_CHECK: name of method used to check view
         :param CLASS: expected view class
         """
         # Setup
-        KWARGS = new_kwargs_idcore()
+        KWARGS = new_id_args()
         model = MSHEET.Sheet(**KWARGS)
         model_method = getattr(model, NAME_METHOD)
         model_view = model_method()
@@ -665,6 +691,7 @@ class TestControlSheet:
         target_view.destroy()
         model_view.destroy()
 
+    @pytest.mark.skip(reason='#229')
     def test_model_from_error(self, caplog):
         """Confirm return of error sheet."""
         # Setup
@@ -722,6 +749,7 @@ class TestControlSheet:
         model = target._model_from_path(p_path=PATH)
         assert model_default == model
 
+    @pytest.mark.skip(reason='#229')
     @pytest.mark.parametrize('ERROR, MESSAGE', [
         ('open', 'Factsheet not open! could not open file.'),
         ('pickle', 'Factsheet not open! could not read file.'),

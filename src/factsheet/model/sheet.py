@@ -21,18 +21,26 @@ import factsheet.model.idcore as MIDCORE
 logger = logging.getLogger('Main.model.sheet')
 
 
-NameSheet = BUI.ModelTextMarkup
-SummarySheet = BUI.ModelTextStyled
-TitleSheet = BUI.ModelTextMarkup
-# ViewNameSheetActive = BUI.ViewTextMarkup
-# ViewNameSheetPassive = BUI.ViewTextDisplay
-# ViewSummarySheetActive = BUI.ViewTextTagged
-# ViewSummarySheetPassive = BUI.ViewTextTagged
-# ViewTitleSheetActive = BUI.ViewTextMarkup
-# ViewTitleSheetPassive = BUI.ViewTextDisplay
+Name = BUI.ModelTextMarkup
+DisplayName = BUI.DisplayTextMarkup
+FactoryDisplayName = BUI.FactoryDisplayTextMarkup
+EditorName = BUI.EditorTextMarkup
+FactoryEditorName = BUI.FactoryEditorTextMarkup
+
+Summary = BUI.ModelTextStyled
+DisplaySummary = BUI.DisplayTextStyled
+FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
+EditorSummary = BUI.EditorTextStyled
+FactoryEditorSummary = BUI.FactoryEditorTextStyled
+
+Title = BUI.ModelTextMarkup
+DisplayTitle = BUI.DisplayTextMarkup
+FactoryDisplayTitle = BUI.FactoryDisplayTextMarkup
+EditorTitle = BUI.EditorTextMarkup
+FactoryEditorTitle = BUI.FactoryEditorTextMarkup
 
 
-class Sheet(MIDCORE.IdCore[NameSheet, SummarySheet, TitleSheet]):
+class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
     """Factsheet document :mod:`~factsheet.model`.
 
     Class ``Sheet`` represents an entire Factsheet document.  A model
@@ -77,8 +85,10 @@ class Sheet(MIDCORE.IdCore[NameSheet, SummarySheet, TitleSheet]):
     #     # del state['_stale']
     #     return state
 
-    def __init__(self, *, p_name: str = 'Unnamed', p_summary: str = '',
-                 p_title: str = '', **kwargs: typing.Any) -> None:
+    def __init__(self, *, p_name: str = 'Unnamed',
+                 p_summary: str = 'New Factsheet',
+                 p_title: str = 'Edit factsheet description here.',
+                 **kwargs: typing.Any) -> None:
         """Initialize factsheet with given identity and no topics.
 
         :param p_name: name of factsheet.
@@ -86,9 +96,9 @@ class Sheet(MIDCORE.IdCore[NameSheet, SummarySheet, TitleSheet]):
         :param p_title: title of factsheet.
         :param kwargs: superclass keyword parameters.
         """
-        self._name = NameSheet(p_text=p_name)
-        self._summary = SummarySheet(p_text=p_summary)
-        self._title = TitleSheet(p_text=p_title)
+        self._name = Name(p_text=p_name)
+        self._summary = Summary(p_text=p_summary)
+        self._title = Title(p_text=p_title)
         super().__init__(**kwargs)
 
     # def __setstate__(self, p_state: typing.Dict) -> None:
@@ -217,12 +227,12 @@ class Sheet(MIDCORE.IdCore[NameSheet, SummarySheet, TitleSheet]):
 
         return False
 
-    def _new_model(self) -> typing.Tuple[NameSheet, SummarySheet, TitleSheet]:
-        """Return (name, summary, title) store."""
-        name = NameSheet()
-        summary = SummarySheet()
-        title = TitleSheet()
-        return name, summary, title
+    # def _new_model(self) -> typing.Tuple[Name, Summary, Title]:
+    #     """Return (name, summary, title) store."""
+    #     name = Name()
+    #     summary = Summary()
+    #     title = Title()
+    #     return name, summary, title
 
     def set_fresh(self) -> None:
         """Mark factsheet in memory consistent with file contents."""

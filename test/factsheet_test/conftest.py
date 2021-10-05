@@ -82,19 +82,35 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
-def new_kwargs_idcore():
-    """Pytest fixture: factory for stock identity keyword arguments for
-    :class:`.IdCore`.
+def new_id_args():
+    """Pytest fixture: factory for stock identity arguments for
+    :class:`.Sheet`.
     """
-    def new_kwargs():
-        kwargs = dict(
+    def new_args():
+        id_args = dict(
             p_name='Parrot',
             p_summary='The parrot is a Norwegian Blue.',
             p_title='The Parrot Sketch',
             )
-        return kwargs
+        return id_args
 
-    return new_kwargs
+    return new_args
+
+
+# @pytest.fixture
+# def new_kwargs_idcore():
+#     """Pytest fixture: factory for stock identity keyword arguments for
+#     :class:`.IdCore`.
+#     """
+#     def new_kwargs():
+#         kwargs = dict(
+#             p_name='Parrot',
+#             p_summary='The parrot is a Norwegian Blue.',
+#             p_title='The Parrot Sketch',
+#             )
+#         return kwargs
+#
+#     return new_kwargs
 
 
 # @pytest.fixture
