@@ -123,9 +123,9 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         return False
 
     @property
-    def name(self) -> str:
-        """Return component name as text."""
-        return self._name.text
+    def name(self) -> ModelName:
+        """Return name model."""
+        return self._name
 
     def set_fresh(self) -> None:
         """Mark identity in memory consistent with file contents."""
@@ -139,11 +139,11 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         self._stale = True
 
     @property
-    def summary(self) -> str:
-        """Return component summary as text."""
-        return self._summary.text
+    def summary(self) -> ModelSummary:
+        """Return summary model."""
+        return self._summary
 
     @property
-    def title(self) -> str:
-        """Return component title as text."""
-        return self._title.text
+    def title(self) -> ModelTitle:
+        """Return title model."""
+        return self._title
