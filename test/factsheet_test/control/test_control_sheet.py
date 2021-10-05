@@ -691,7 +691,6 @@ class TestControlSheet:
         target_view.destroy()
         model_view.destroy()
 
-    @pytest.mark.skip(reason='#229')
     def test_model_from_error(self, caplog):
         """Confirm return of error sheet."""
         # Setup
@@ -717,9 +716,9 @@ class TestControlSheet:
         assert 'ERROR' == log_error.levelname
         assert log_error.message.rstrip('\n').endswith(
             ': '.join([type(ERROR).__name__, TEXT_ERROR]))
-        assert 'OPEN ERROR' == model.name
-        assert SUMMARY == model.summary
-        assert 'Factsheet not opened.' == model.title
+        assert 'OPEN ERROR' == model.name.text
+        assert SUMMARY == model.summary.text
+        assert 'Factsheet not opened.' == model.title.text
 
     def test_model_from_path(self, tmp_path):
         """| Confirm model creation.
@@ -749,7 +748,6 @@ class TestControlSheet:
         model = target._model_from_path(p_path=PATH)
         assert model_default == model
 
-    @pytest.mark.skip(reason='#229')
     @pytest.mark.parametrize('ERROR, MESSAGE', [
         ('open', 'Factsheet not open! could not open file.'),
         ('pickle', 'Factsheet not open! could not read file.'),
@@ -785,7 +783,7 @@ class TestControlSheet:
         # Test
         model = target._model_from_path(PATH)
         assert model is not None
-        assert MESSAGE == model.summary.splitlines()[FIRST]
+        assert MESSAGE == model.summary.text.splitlines()[FIRST]
 
     def test_model_from_path_none(self):
         """| Confirm model creation.
