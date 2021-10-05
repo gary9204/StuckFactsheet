@@ -14,15 +14,16 @@ import factsheet.bridge_ui as BUI
 import factsheet.model.idcore as MIDCORE
 
 
-class PatchIdCore(MIDCORE.IdCore[
-        BUI.ModelTextMarkup, BUI.ModelTextStyled, BUI.ModelTextMarkup]):
-    """TBD"""
+class PatchIdCore(MIDCORE.IdCore[BUI.ModelTextMarkup,
+                                 BUI.ModelTextStyled,
+                                 BUI.ModelTextMarkup]):
+    """Defines attributes for  :func:`.IdCore.__init__`."""
 
-    def __init__(self):
-        self._name = BUI.ModelTextMarkup()
-        self._summary = BUI.ModelTextStyled()
-        self._title = BUI.ModelTextStyled()
-        super().__init__()
+    def __init__(self, p_name, p_summary, p_title, **kwargs):
+        self._name = BUI.ModelTextMarkup(p_name)
+        self._summary = BUI.ModelTextStyled(p_summary)
+        self._title = BUI.ModelTextMarkup(p_title)
+        super().__init__(**kwargs)
 
 
 class TestIdCore:
@@ -95,36 +96,60 @@ class TestIdCore:
         | Case: nominal.
         """
         # Setup
-        # NAME = BUI.ModelTextMarkup()
-        # NAME.text = 'Parrot'
-        # SUMMARY = BUI.ModelTextStyled()
-        # SUMMARY.text = 'The parrot is a Norwegian Blue.'
-        # TITLE = BUI.ModelTextMarkup()
-        # TITLE.text = 'The Parrot Sketch'
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
         # Test
-        # target = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
-        target = PatchIdCore()
-        assert isinstance(target._name, BUI.ModelTextMarkup)
-        assert isinstance(target._summary, BUI.ModelTextStyled)
-        assert isinstance(target._title, BUI.ModelTextStyled)
+        target = PatchIdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         assert isinstance(target._stale, bool)
         assert not target._stale
 
-    @pytest.mark.skip
+    @pytest.mark.parametrize('ATTR, HINT', [
+        ('_name', '~ModelName'),
+        ('_summary', '~ModelSummary'),
+        ('_title', '~ModelTitle'),
+        ])
+    def test_init_attr(self, ATTR, HINT):
+        """| Confirm initialization.
+        | Case: missing attribute definition.
+        """
+        # Setup
+        class PatchPartial(MIDCORE.IdCore[BUI.ModelTextMarkup,
+                                          BUI.ModelTextStyled,
+                                          BUI.ModelTextMarkup]):
+            """Partially defines attributes for  :func:`.IdCore.__init__`."""
+
+            def __init__(self, p_name, p_summary, p_title, **kwargs):
+                self._name = BUI.ModelTextMarkup(p_name)
+                self._summary = BUI.ModelTextStyled(p_summary)
+                self._title = BUI.ModelTextMarkup(p_title)
+                delattr(self, ATTR)
+                super().__init__(**kwargs)
+
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        ERROR = re.escape('PatchPartial: IdCore subclasses must define '
+                          '{} attribute with type {} and then call '
+                          'super().__init__()'.format(ATTR, HINT))
+        # Test
+        with pytest.raises(AttributeError, match=ERROR):
+            _ = PatchPartial(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+
     def test_init_extra(self):
         """| Confirm initialization.
         | Case: extra keyword argument.
         """
         # Setup
-        NAME = BUI.ModelTextMarkup()
-        SUMMARY = BUI.ModelTextStyled()
-        TITLE = BUI.ModelTextMarkup()
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
         ERROR = re.escape("IdCore.__init__() called with extra "
                           "argument(s): {'extra': 'Oops!'}")
         # Test
         with pytest.raises(TypeError, match=ERROR):
-            _ = MIDCORE.IdCore(p_name=NAME, p_summary=SUMMARY,
-                               p_title=TITLE, extra='Oops!')
+            _ = PatchIdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE,
+                            extra='Oops!')
 
     @pytest.mark.skip
     @pytest.mark.parametrize('IS_STALE', [

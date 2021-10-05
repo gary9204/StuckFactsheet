@@ -32,6 +32,10 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
              typing.Generic[ModelName, ModelSummary, ModelTitle], abc.ABC):
     """Defines identity attributes common to Factsheet model components."""
 
+    _name: ModelName
+    _summary: ModelSummary
+    _title: ModelTitle
+
     def __eq__(self, p_other: typing.Any) -> bool:
         """Return True when p_other has equal name, summary, and title.
 
@@ -73,16 +77,15 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         if kwargs:
             raise TypeError('{}.__init__() called with extra argument(s): '
                             '{}'.format(type(self).__name__, kwargs))
-        self._name: ModelName
-        self._summary: ModelSummary
-        self._title: ModelTitle
+        type_hints = typing.get_type_hints(self.__class__)
+        for name, hint in type_hints.items():
+            if not hasattr(self, name):
+                raise AttributeError(
+                    '{}: IdCore subclasses must define {} attribute '
+                    'with type {} and then call super().__init__()'
+                    ''.format(self.__class__.__name__, name, hint))
         self._stale: bool
         self.set_fresh()
-        # self._name: ModelName = p_name
-        # self._summary: ModelSummary = p_summary
-        # self._title: ModelTitle = p_title
-        # self._stale: bool
-        # self.set_fresh()
 
     def __setstate__(self, px_state: typing.Dict) -> None:
         """Reconstruct identity from state pickle loads.
