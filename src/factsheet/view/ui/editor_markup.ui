@@ -2,7 +2,46 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkBox" id="display">
+  <object class="GtkPopover" id="editor">
+    <property name="can_focus">False</property>
+    <property name="relative_to">button_edit</property>
+    <property name="position">bottom</property>
+    <property name="constrain_to">none</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="label_type">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">&lt;b&gt;Oops!&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="site_editor">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkBox" id="view">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
@@ -27,7 +66,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="site_view_passive">
+      <object class="GtkBox" id="site_display">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -39,45 +78,6 @@
         <property name="fill">True</property>
         <property name="position">1</property>
       </packing>
-    </child>
-  </object>
-  <object class="GtkPopover" id="editor">
-    <property name="can_focus">False</property>
-    <property name="relative_to">button_edit</property>
-    <property name="position">bottom</property>
-    <property name="constrain_to">none</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkLabel" id="label_type">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">&lt;b&gt;Oops!&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox" id="site_view_active">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
     </child>
   </object>
 </interface>

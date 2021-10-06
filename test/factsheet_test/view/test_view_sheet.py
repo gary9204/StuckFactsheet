@@ -525,8 +525,8 @@ class TestViewSheet:
 
         patch_editor = PatchEditorMarkup()
         monkeypatch.setattr(
-            VSHEET.VIDCORE.EditorMarkup, '__init__', patch_editor.init)
-        monkeypatch.setattr(VSHEET.VIDCORE.EditorMarkup, 'view_editor',
+            VSHEET.VIDCORE.ViewMarkup, '__init__', patch_editor.init)
+        monkeypatch.setattr(VSHEET.VIDCORE.ViewMarkup, 'view_editor',
                             patch_editor.view_editor)
 
         class PatchSite:

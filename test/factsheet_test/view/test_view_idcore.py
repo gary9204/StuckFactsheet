@@ -4,6 +4,7 @@ Unit tests for classes to display identity information.  See
 """
 import pytest   # type: ignore[import]
 
+import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.view.view_idcore as VIDCORE
 
@@ -15,18 +16,19 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def setup_views_markup():
-    """Fixture with teardown: return passive and active views of markup."""
+    """Fixture with teardown: return dispaly and editor views of markup."""
     PATH = None
-    control = CSHEET.g_roster_factsheets.open_factsheet(p_path=PATH)
-    view_passive = control.new_view_name_passive()
-    view_active = control.new_view_name_active()
-    yield view_passive, view_active
-    view_passive.destroy()
-    view_active.destroy()
+    control = CSHEET.g_control_app.open_factsheet(
+        p_path=PATH, p_time=BUI.TIME_EVENT_CURRENT)
+    display_name = control.new_display_name()
+    editor_name = control.new_editor_name()
+    yield display_name, editor_name
+    display_name.destroy()
+    editor_name.destroy()
 
 
 class TestEditorMarkup:
-    """Unit tests for :class:`.EditorMarkup`."""
+    """Unit tests for :class:`.ViewMarkup`."""
 
     def test_init(self, setup_views_markup):
         """| Confirm initialization.
@@ -35,49 +37,47 @@ class TestEditorMarkup:
         :param setup_views_markup: fixture :func:`.setup_views_markup`.
         """
         # Setup
-        view_passive, view_active = setup_views_markup
-        I_SITE_VIEW_PASSIVE = 1
-        I_VIEW_PASSIVE = 0
+        DISPLAY, EDITOR = setup_views_markup
+        I_SITE_DISPLAY = 1
+        I_DISPLAY = 0
         N_PADDING = 6
         I_BUTTON_EDIT = 0
-        I_VIEW_ACTIVE = 0
+        I_EDITOR = 0
         TYPE = 'Parrot'
         TYPE_MARKED = '<b>' + TYPE + '</b>:'
         # Test
-        target = VIDCORE.EditorMarkup(p_view_passive=view_passive,
-                                      p_view_active=view_active, p_type=TYPE)
-        children_editor = target._view_editor.get_children()
-        assert target._buffer is view_active.get_buffer()
+        target = VIDCORE.ViewMarkup(
+            p_display=DISPLAY, p_editor=EDITOR, p_type=TYPE)
+        children_editor = target._view.get_children()
+        assert target._buffer is EDITOR.get_buffer()
         assert isinstance(target._button_edit, Gtk.MenuButton)
-        assert isinstance(target._popover, Gtk.Popover)
         assert '' == target._text_restore
-        assert isinstance(target._view_editor, Gtk.Box)
+        assert isinstance(target._view, Gtk.Box)
 
-        site_view_passive = children_editor[I_SITE_VIEW_PASSIVE]
-        assert isinstance(site_view_passive, Gtk.Box)
-        assert view_passive is (
-            site_view_passive.get_children()[I_VIEW_PASSIVE])
+        site_display = children_editor[I_SITE_DISPLAY]
+        assert isinstance(site_display, Gtk.Box)
+        assert DISPLAY is (
+            site_display.get_children()[I_DISPLAY])
         expand_passive, fill_passive, padding_passive, _pack = (
-            site_view_passive.query_child_packing(view_passive))
+            site_display.query_child_packing(DISPLAY))
         assert expand_passive
         assert fill_passive
         assert N_PADDING == padding_passive
-        assert view_passive.get_visible()
+        assert DISPLAY.get_visible()
 
         button_edit = children_editor[I_BUTTON_EDIT]
         popover_edit = button_edit.get_popover()
         box_popover = popover_edit.get_child()
-        label_type, site_view_active = box_popover.get_children()
+        label_type, site_editor = box_popover.get_children()
         assert TYPE_MARKED == label_type.get_label()
-        assert isinstance(site_view_active, Gtk.Box)
-        assert view_active is (
-            site_view_active.get_children()[I_VIEW_ACTIVE])
+        assert isinstance(site_editor, Gtk.Box)
+        assert EDITOR is site_editor.get_children()[I_EDITOR]
         expand_active, fill_active, padding_active, _pack = (
-            site_view_active.query_child_packing(view_active))
+            site_editor.query_child_packing(EDITOR))
         assert expand_active
         assert fill_active
         assert N_PADDING == padding_active
-        assert view_active.get_visible()
+        assert EDITOR.get_visible()
 
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTR, ORIGIN, N_DEFAULT', [
@@ -97,11 +97,9 @@ class TestEditorMarkup:
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        view_passive, view_active = setup_views_markup
-        target = VIDCORE.EditorMarkup(
-            p_view_passive=view_passive, p_view_active=view_active)
+        DISPLAY, EDITOR = setup_views_markup
+        target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         # Test
-
         attribute = getattr(target, NAME_ATTR)
         n_handlers = 0
         while True:
@@ -120,7 +118,7 @@ class TestEditorMarkup:
             ('icon_press', Gtk.Entry, 0),
             ('activate', Gtk.Entry, 0),
             ])
-    def test_init_signals_view_active(
+    def test_init_signals_editor(
             self, setup_views_markup, NAME_SIGNAL, ORIGIN, N_DEFAULT):
         """| Confirm initialization.
         | Case: signal connections to active view
@@ -133,20 +131,19 @@ class TestEditorMarkup:
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        view_passive, view_active = setup_views_markup
-        _target = VIDCORE.EditorMarkup(
-            p_view_passive=view_passive, p_view_active=view_active)
+        DISPLAY, EDITOR = setup_views_markup
+        _target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         # Test
         n_handlers = 0
         while True:
             id_signal = GO.signal_handler_find(
-                view_active, GO.SignalMatchType.ID, signal,
+                EDITOR, GO.SignalMatchType.ID, signal,
                 0, None, None, None)
             if 0 == id_signal:
                 break
 
             n_handlers += 1
-            GO.signal_handler_disconnect(view_active, id_signal)
+            GO.signal_handler_disconnect(EDITOR, id_signal)
 
         assert N_DEFAULT + 1 == n_handlers
 
@@ -165,9 +162,9 @@ class TestEditorMarkup:
         :param EXPECT_TEXT: text expected in buffer.
         """
         # Setup
-        view_passive, view_active = setup_views_markup
-        target = VIDCORE.EditorMarkup(
-            p_view_passive=view_passive, p_view_active=view_active)
+        DISPLAY, EDITOR = setup_views_markup
+        target = VIDCORE.ViewMarkup(
+            p_display=DISPLAY, p_editor=EDITOR)
         TEXT = 'Something completely different'
         target._buffer.set_text(TEXT, len(TEXT))
         target._button_edit.clicked()
@@ -187,9 +184,8 @@ class TestEditorMarkup:
         :param setup_views_markup: fixture :func:`.setup_views_markup`.
         """
         # Setup
-        view_passive, view_active = setup_views_markup
-        target = VIDCORE.EditorMarkup(
-            p_view_passive=view_passive, p_view_active=view_active)
+        DISPLAY, EDITOR = setup_views_markup
+        target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         BLANK = ''
         TEXT = 'Something completely different.'
         target._buffer.set_text(TEXT, len(TEXT))
@@ -201,7 +197,7 @@ class TestEditorMarkup:
         assert BLANK == target._text_restore
 
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
-        ('view_editor', '_view_editor'),
+        ('view', '_view'),
         ])
     def test_property_access(
             self, setup_views_markup, NAME_PROP, NAME_ATTR):
@@ -211,11 +207,10 @@ class TestEditorMarkup:
         :param NAME_ATTR: name of attribute for property.
         """
         # Setup
-        view_passive, view_active = setup_views_markup
-        target = VIDCORE.EditorMarkup(
-            p_view_passive=view_passive, p_view_active=view_active)
+        DISPLAY, EDITOR = setup_views_markup
+        target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         attr = getattr(target, NAME_ATTR)
-        CLASS = VIDCORE.EditorMarkup
+        CLASS = VIDCORE.ViewMarkup
         target_prop = getattr(CLASS, NAME_PROP)
         # Test
         assert target_prop.fget is not None

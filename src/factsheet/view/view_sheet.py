@@ -410,7 +410,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         view_name_passive = self._control.model.new_view_name_passive()
         view_name_active = self._control.model.new_view_name_active()
-        editor_name = VIDCORE.EditorMarkup(
+        editor_name = VIDCORE.ViewMarkup(
             view_name_passive, view_name_active, 'Name')
         site_name_sheet = p_get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
@@ -436,7 +436,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         view_title_passive = self._control.model.new_view_title_passive()
         view_title_active = self._control.model.new_view_title_active()
-        editor_title = VIDCORE.EditorMarkup(
+        editor_title = VIDCORE.ViewMarkup(
             view_title_passive, view_title_active, 'Title')
         site_title_sheet = p_get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(

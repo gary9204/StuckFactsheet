@@ -3,13 +3,15 @@ Defines view classes for identity information.
 """
 import gi   # type: ignore[import]
 
+import factsheet.bridge_ui as BUI
+
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class EditorMarkup:
+class ViewMarkup:
     """Provides capability to display and edit text with `Pango markup`_.
 
     Display view shows formatted text when markup is valid.  User can
@@ -21,11 +23,11 @@ class EditorMarkup:
         https://developer.gnome.org/pygtk/stable/pango-markup-language.html
     """
 
-    _UI_EDITOR_MARKUP = """<?xml version="1.0" encoding="UTF-8"?>
+    _UI_VIEW_MARKUP = """<?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.22.1 -->
         <interface>
           <requires lib="gtk+" version="3.20"/>
-          <object class="GtkBox" id="display">
+          <object class="GtkBox" id="view">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -51,7 +53,7 @@ class EditorMarkup:
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="site_view_passive">
+              <object class="GtkBox" id="site_display">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -89,7 +91,7 @@ class EditorMarkup:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="site_view_active">
+                  <object class="GtkBox" id="site_active">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
@@ -108,42 +110,41 @@ class EditorMarkup:
         </interface>
         """
 
-    def __init__(self, p_view_passive: Gtk.Label, p_view_active: Gtk.Entry,
+    def __init__(self, p_display: BUI.DisplayTextMarkup, p_editor: Gtk.Entry,
                  p_type: str = '') -> None:
         """Initialize editor view contents.
 
-        :param p_view_passive: display view for formatted text.
-        :param p_view_active: edit view for markup text.
+        :param p_display: display view for formatted text.
+        :param p_editor: editor view for markup text.
         :param p_type: content type of editor (for example, 'Title')
         """
-        builder = Gtk.Builder.new_from_string(self._UI_EDITOR_MARKUP, -1)
+        builder = Gtk.Builder.new_from_string(self._UI_VIEW_MARKUP, -1)
         get_object = builder.get_object
 
-        self._buffer = p_view_active.get_buffer()
+        self._buffer = p_editor.get_buffer()
         self._button_edit = get_object('button_edit')
         _ = self._button_edit.connect('toggled', self.on_toggled)
-        self._popover = get_object('editor')
         self._text_restore = ''
-        self._view_editor = get_object('display')
+        self._view = get_object('view')
 
         EXPAND_OKAY = True
         FILL_OKAY = True
         N_PADDING = 6
-        site_view_passive = get_object('site_view_passive')
-        site_view_passive.pack_start(
-            p_view_passive, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-        p_view_passive.show()
+        site_display = get_object('site_display')
+        site_display.pack_start(
+            p_display, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        p_display.show()
 
         label_type = get_object('label_type')
         label_type.set_label('<b>{}</b>:'.format(p_type))
 
-        site_view_active = get_object('site_view_active')
-        site_view_active.pack_start(
-            p_view_active, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-        _ = p_view_active.connect('icon-press', self.on_icon_press)
-        _ = p_view_active.connect(
+        site_active = get_object('site_active')
+        site_active.pack_start(
+            p_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        _ = p_editor.connect('icon-press', self.on_icon_press)
+        _ = p_editor.connect(
             'activate', lambda _: self._button_edit.clicked())
-        p_view_active.show()
+        p_editor.show()
 
     def on_icon_press(
             self, _entry, p_icon_position, _event: Gdk.Event) -> None:
@@ -153,7 +154,6 @@ class EditorMarkup:
         :param p_icon_position: identifies icon user clicked.
         :param _event: user interface event (unused).
         """
-        pass
         if Gtk.EntryIconPosition.SECONDARY == p_icon_position:
             self._buffer.set_text(self._text_restore, len(self._text_restore))
         self._button_edit.clicked()
@@ -169,6 +169,6 @@ class EditorMarkup:
             self._text_restore = ''
 
     @property
-    def view_editor(self) -> Gtk.Box:
-        """Return view of editor."""
-        return self._view_editor
+    def view(self) -> Gtk.Box:
+        """Return view of markup editor."""
+        return self._view
