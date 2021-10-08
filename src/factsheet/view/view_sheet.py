@@ -4,7 +4,7 @@ Defines class to display Factsheet document in a window.
 import gi   # type: ignore[import]
 import logging
 from pathlib import Path
-import sys
+# import sys
 import traceback as TB
 import typing   # noqa
 
@@ -63,13 +63,14 @@ class AppFactsheet(Gtk.Application):
         logger.critical('Files: {}.'.format(p_files))
         logger.critical('N: {}'.format(p_n_files))
         logger.critical('Hint: "{}".'.format(p_hint))
-        control_sheet = CSHEET.g_control_app.open_factsheet(p_path=None)
+        control_sheet = CSHEET.g_control_app.open_factsheet(
+            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         if control_sheet is None:
             logger.critical(
                 'Failed to create initial factsheet ({}.{})'
                 ''.format(self.__class__.__name__, self.do_open.__name__))
             return
-        view = ViewSheet(p_control=control_sheet)
+        _view = ViewSheet(p_control=control_sheet)
 
     def do_shutdown(self) -> None:
         """Application teardown. """
@@ -82,8 +83,8 @@ class AppFactsheet(Gtk.Application):
         logger.info('AppFactsheet application startup.')
 
 
-def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
-                         p_name: str = 'Unnamed') -> Gtk.Dialog:
+def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow, p_name: str
+                         ) -> Gtk.Dialog:
     """Return Data Loss Warning dialog.
 
     :param p_parent: window running dialog.
@@ -206,7 +207,7 @@ def new_dialog_warn_loss(p_parent: Gtk.ApplicationWindow,
     form_warn = ('Factsheet {} contains unsaved changes.  All unsaved'
                  ' changes will be discarded if you close.'
                  )
-    text_warn = BUI.filter_user_markup(form_warn.format(p_name))
+    text_warn = form_warn.format(p_name)
     warning = builder.get_object('ui_warning')
     warning.set_markup(text_warn)
 
@@ -271,7 +272,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         self._window.set_application(g_app)
 
         headerbar = self._window.get_titlebar()
-        title_window = self._control.model.new_view_name_passive()
+        title_window = self._control.new_display_name()
         title_window.set_selectable(False)
         headerbar.set_custom_title(title_window)
 
@@ -408,17 +409,16 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         FILL_OKAY = True
         N_PADDING = 6
 
-        view_name_passive = self._control.model.new_view_name_passive()
-        view_name_active = self._control.model.new_view_name_active()
-        editor_name = VIDCORE.ViewMarkup(
-            view_name_passive, view_name_active, 'Name')
+        display_name = self._control.new_display_name()
+        editor_name = self._control.new_editor_name()
+        view_name = VIDCORE.ViewMarkup(display_name, editor_name, 'Name')
         site_name_sheet = p_get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
-            editor_name.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+            view_name.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def _init_summary_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
         """Initialize view for factsheet summary."""
-        view_summary_active = self._control.model.new_view_summary_active()
+        view_summary_active = self._control.new_editor_summary()
         site_summary_sheet = p_get_object('ui_site_summary_sheet')
         site_summary_sheet.add(view_summary_active)
 
@@ -434,18 +434,17 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         FILL_OKAY = True
         N_PADDING = 6
 
-        view_title_passive = self._control.model.new_view_title_passive()
-        view_title_active = self._control.model.new_view_title_active()
-        editor_title = VIDCORE.ViewMarkup(
-            view_title_passive, view_title_active, 'Title')
+        display_title = self._control.new_display_title()
+        editor_title = self._control.new_editor_title()
+        view_title = VIDCORE.ViewMarkup(display_title, editor_title, 'Title')
         site_title_sheet = p_get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
-            editor_title.view_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+            view_title.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def erase(self) -> None:
         """Destroy visible portion of sheet view."""
         self._window.hide()
-        self._window.destroy()
+        self._window.close()
 
     def close_topic(self, p_id) -> None:
         # def close_topic(self, p_id: VTYPES.TagTopic) -> None:
@@ -504,7 +503,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     pm_page._window, pm_page._control.attach_view_topics)
 
     def _make_file_chooser(self, p_action: Gtk.FileChooserAction
-                          ) -> Gtk.FileChooserDialog:
+                           ) -> Gtk.FileChooserDialog:
         """Construct dialog to choose file for open or save.
 
         This helper method works around limitations in Glade.
@@ -605,7 +604,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         approves.  The method deletes the factsheet unconditionally if
         no changes would be lost.
         """
-        if self._control.model.is_stale():
+        if self._control.is_stale():
             if ViewSheet.DENY_CLOSE == self.confirm_close():
                 return
 
@@ -633,7 +632,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def confirm_close(self):
         """Return :data:`ALLOW_CLOSE` when user approves closing view.
         Otherwise, return :data:`DENY_CLOSE`."""
-        name = self._control.model.name
+        name = self._control.name
         dialog_warn = new_dialog_warn_loss(self._window, name)
         response = dialog_warn.run()
         dialog_warn.hide()
@@ -698,7 +697,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
                                       cls.on_new_sheet.__name__))
             return
 
-        view = ViewSheet(p_control=control_sheet)
+        _view = ViewSheet(p_control=control_sheet)
 
     def on_new_topic(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

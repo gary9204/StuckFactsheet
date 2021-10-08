@@ -86,8 +86,8 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
     #     return state
 
     def __init__(self, *, p_name: str = 'Unnamed',
-                 p_summary: str = 'New Factsheet',
-                 p_title: str = 'Edit factsheet description here.',
+                 p_summary: str = 'Edit factsheet description here.',
+                 p_title: str = 'New Factsheet',
                  **kwargs: typing.Any) -> None:
         """Initialize factsheet with given identity and no topics.
 

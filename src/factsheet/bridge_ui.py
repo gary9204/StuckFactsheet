@@ -17,6 +17,7 @@ TIME_EVENT_CURRENT = BBASE.TIME_EVENT_CURRENT
 # ViewOutlineColumnar = BOUTLINE.ViewOutlineColumnar
 # ViewOutlineSelect = BOUTLINE.ViewOutlineSelect
 
+escape_text_markup = BTEXT.escape_text_markup
 ModelTextMarkup = BTEXT.ModelTextMarkup
 DisplayTextMarkup = BTEXT.DisplayTextMarkup
 FactoryDisplayTextMarkup = BTEXT.FactoryDisplayTextMarkup

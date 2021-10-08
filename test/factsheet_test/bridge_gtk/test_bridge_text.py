@@ -35,6 +35,56 @@ class PatchModelText(BTEXT.ModelText[typing.Any]):
         self._ui_model = str(p_persist)
 
 
+class TestEscapeTextMarkup:
+    """Unit tests for :func:`.escape_text_markup`."""
+
+    def test_escape_text_markup(self):
+        """| Confirm markup errors escaped.
+        | Case: text does not contain markup error.
+        """
+        # Setup
+        TEXT = 'The <b>Parrot Sketch.</b>'
+        TEXT_ESCAPED = TEXT
+        # Test
+        assert TEXT_ESCAPED == BTEXT.escape_text_markup(TEXT)
+
+    def test_escape_text_markup_error(self):
+        """| Confirm markup errors escaped.
+        | Case: text contains markup error.
+        """
+        # Setup
+        TEXT = 'The <b>Parrot </b Sketch.'
+        TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
+        # Test
+        assert TEXT_ESCAPED == BTEXT.escape_text_markup(TEXT)
+
+    def test_escape_text_markup_except(self, monkeypatch):
+        """| Confirm markup errors escaped.
+        | Case: GLib error that is not a markup error.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        QUARK = GLib.unix_error_quark()
+        DOMAIN = GLib.quark_to_string(QUARK)
+        MESSAGE = 'Oops'
+        CODE = 42
+
+        def patch_parse(_text, _len, _marker):
+            raise GLib.Error.new_literal(QUARK, MESSAGE, CODE)
+
+        monkeypatch.setattr(Pango, 'parse_markup', patch_parse)
+
+        TEXT = 'The <b>Parrot </b Sketch.'
+        # Test
+        with pytest.raises(GLib.Error) as exc_info:
+            _ = BTEXT.escape_text_markup(TEXT)
+        exc = exc_info.value
+        assert DOMAIN == exc.domain
+        assert MESSAGE == exc.message
+        assert CODE == exc.code
+
+
 class TestFactoryEditorTextMarkup:
     """Unit tests for :class:`.FactoryEditorTextMarkup`."""
 
@@ -198,60 +248,6 @@ class TestFactoryDisplayTextMarkup:
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
-
-    def test_filter_text_markup(self):
-        """| Confirm markup errors escaped.
-        | Case: text does not contain markup error.
-        """
-        # Setup
-        TEXT = 'The <b>Parrot Sketch.</b>'
-        entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer._set_persist(p_persist=TEXT)
-        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
-        # Test
-        assert TEXT == target.filter_text_markup()
-
-    def test_filter_text_markup_error(self):
-        """| Confirm markup errors escaped.
-        | Case: text contains markup error.
-        """
-        # Setup
-        TEXT = 'The <b>Parrot </b Sketch.'
-        TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
-        entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer._set_persist(p_persist=TEXT)
-        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
-        # Test
-        assert TEXT_ESCAPED == target.filter_text_markup()
-
-    def test_filter_text_markup_except(self, monkeypatch):
-        """| Confirm markup errors escaped.
-        | Case: GLib error that is not a markup error.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        QUARK = GLib.unix_error_quark()
-        DOMAIN = GLib.quark_to_string(QUARK)
-        MESSAGE = 'Oops'
-        CODE = 42
-
-        def patch_parse(_text, _len, _marker):
-            raise GLib.Error.new_literal(QUARK, MESSAGE, CODE)
-
-        monkeypatch.setattr(Pango, 'parse_markup', patch_parse)
-
-        TEXT = 'The <b>Parrot </b Sketch.'
-        entry_buffer = BTEXT.ModelTextMarkup()
-        entry_buffer._set_persist(p_persist=TEXT)
-        target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
-        # Test
-        with pytest.raises(GLib.Error) as exc_info:
-            _ = target.filter_text_markup()
-        exc = exc_info.value
-        assert DOMAIN == exc.domain
-        assert MESSAGE == exc.message
-        assert CODE == exc.code
 
 
 class TestFactoryEditorTextStyled:

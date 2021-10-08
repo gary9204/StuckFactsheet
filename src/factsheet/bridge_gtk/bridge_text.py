@@ -93,6 +93,23 @@ ViewTextOpaquePassive = typing.TypeVar('ViewTextOpaquePassive')
 logger = logging.getLogger('Main.bridge_text')
 
 
+def escape_text_markup(p_markup: str) -> str:
+    """Return text without markup errors.
+
+    Escape Pango markup errors.  Raise GLib errors.
+    """
+    ALL = -1
+    NO_ACCEL_CHAR = '0'
+    try:
+        _, _, _, _ = Pango.parse_markup(p_markup, ALL, NO_ACCEL_CHAR)
+    except GLib.Error as err:
+        if 'g-markup-error-quark' == err.domain:
+            p_markup = GLib.markup_escape_text(p_markup, ALL)
+        else:
+            raise
+    return p_markup
+
+
 class FactoryEditorTextMarkup(BBASE.FactoryUiViewAbstract[EditorTextMarkup]):
     """Editor factory for text stored in a given :class:`.ModelTextMarkup`.
 
@@ -135,7 +152,7 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
 
     def __call__(self) -> DisplayTextMarkup:
         """Return view to display text with markup formatting."""
-        markup = self.filter_text_markup()
+        markup = escape_text_markup(self._ui_model.get_text())
         display = Gtk.Label(label=markup)
         self._displays[id_display(display)] = display
         _ = display.connect('destroy', self.on_destroy)
@@ -161,26 +178,9 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
         self._displays: typing.MutableMapping[
             IdDisplay, DisplayTextMarkup] = dict()
 
-    def filter_text_markup(self) -> str:
-        """Return text without markup errors.
-
-        Escape Pango markup errors.  Raise GLib errors.
-        """
-        markup = self._ui_model.get_text()
-        ALL = -1
-        NO_ACCEL_CHAR = '0'
-        try:
-            _, _, _, _ = Pango.parse_markup(markup, ALL, NO_ACCEL_CHAR)
-        except GLib.Error as err:
-            if 'g-markup-error-quark' == err.domain:
-                markup = GLib.markup_escape_text(markup, len(markup))
-            else:
-                raise
-        return markup
-
-    def on_change(self, _entry_buffer, _position, _n_chars):
+    def on_change(self, *_args):
         """Refresh display views when text is inserted or deleted."""
-        markup = self.filter_text_markup()
+        markup = escape_text_markup(self._ui_model.get_text())
         for display in self._displays.values():
             display.set_markup(markup)
 

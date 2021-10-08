@@ -47,9 +47,9 @@ class TestBridgeConstant:
     :mod:`.bridge_ui`.
     """
 
-    def test_time_current(self):
+    def test_constants(self):
         """Confirm constant definitions."""
         # Setup
         # Test
         assert BBASE.TIME_EVENT_CURRENT == BUI.TIME_EVENT_CURRENT
-        # assert BUI.filter_user_markup is BTEXT.filter_user_markup
+        assert BUI.escape_text_markup is BTEXT.escape_text_markup

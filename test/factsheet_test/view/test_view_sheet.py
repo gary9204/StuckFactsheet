@@ -52,7 +52,7 @@ def gtk_app_window():
     """
     gtk_window = Gtk.ApplicationWindow()
     yield gtk_window
-    gtk_window.destroy()
+    gtk_window.close()
 
 
 class PatchSetApp:
@@ -208,6 +208,7 @@ def patch_g_control_app():
     control_app = CSHEET.g_control_app
     for sheet in control_app._roster_sheets.values():
         for view in sheet._roster_views.values():
+            view._window.close()
             del view._window
         sheet._roster_views.clear()
     control_app._roster_sheets.clear()
@@ -427,7 +428,8 @@ class TestViewSheet:
         assert isinstance(title_window, Gtk.Label)
         assert not title_window.get_selectable()
         title_window_str = title_window.get_label()
-        assert target._control.model.name == title_window_str
+        target_name = target._control.name
+        assert target_name == title_window_str
 
         # Components
         # assert isinstance(target._context_name, Gtk.Popover)
@@ -485,14 +487,17 @@ class TestViewSheet:
         # assert not target._close_window
         assert target._window.is_visible()
 
-    @pytest.mark.parametrize('HELPER, EDITOR, SITE', [
+    @pytest.mark.parametrize('HELPER, CONTENT, SITE', [
         ('_init_name_sheet', 'Name', 'ui_site_name_sheet'),
         ('_init_title_sheet', 'Title', 'ui_site_title_sheet'),
         ])
-    def test_init_helper_editor(self, monkeypatch, HELPER, EDITOR, SITE):
+    def test_init_helper_view(self, monkeypatch, HELPER, CONTENT, SITE):
         """Confirm helper creates editor fields in view.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param HELPER: initialization helper method under test.
+        :param CONTENT: name of view type.
+        :param SITE: expected locaton for new view.
         """
         # Setup
         class PatchGetObject:
@@ -507,40 +512,41 @@ class TestViewSheet:
 
         patch_get_object = PatchGetObject()
 
-        class PatchEditorMarkup:
+        class PatchViewEditor:
             def __init__(self):
                 self.called = False
-                self.view_active = 'Oops'
-                self.view_passive = None
-                self.text = ''
+                self.display = None
+                self.editor = 'Oops'
+                self.content = ''
+                self.view = Gtk.Box()
 
-            def init(self, p_view_passive, p_view_active, p_text):
+            def init(self, p_display, p_editor, p_type):
                 self.called = True
-                self.view_active = p_view_active
-                self.view_passive = p_view_passive
-                self.text = p_text
+                self.display = p_display
+                self.editor = p_editor
+                self.content = p_type
 
-            def view_editor(self):
-                pass
-
-        patch_editor = PatchEditorMarkup()
+        patch_view = PatchViewEditor()
         monkeypatch.setattr(
-            VSHEET.VIDCORE.ViewMarkup, '__init__', patch_editor.init)
-        monkeypatch.setattr(VSHEET.VIDCORE.ViewMarkup, 'view_editor',
-                            patch_editor.view_editor)
+            VSHEET.VIDCORE.ViewMarkup, '__init__', patch_view.init)
+        monkeypatch.setattr(
+            VSHEET.VIDCORE.ViewMarkup, 'view', patch_view.view)
 
         class PatchSite:
             def __init__(self):
+                self.clear()
+
+            def clear(self):
                 self.called = False
-                self.view_editor = None
+                self.view = None
                 self.expand_okay = None
                 self.fill_okay = None
                 self.n_padding = 0
 
             def pack_start(
-                    self, p_editor, p_exapnd_okay, p_fill_okay, p_n_padding):
+                    self, p_view, p_exapnd_okay, p_fill_okay, p_n_padding):
                 self.called = True
-                self.view_editor = p_editor
+                self.view = p_view
                 self.expand_okay = p_exapnd_okay
                 self.fill_okay = p_fill_okay
                 self.n_padding = p_n_padding
@@ -553,18 +559,19 @@ class TestViewSheet:
         N_PADDING = 6
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
+        view_sheet = VSHEET.ViewSheet(p_control=control)
+        patch_site.clear()
         # Test
-        target = VSHEET.ViewSheet(p_control=control)
-        helper = getattr(target, HELPER)
-        helper(patch_get_object.get_object)
-        assert patch_editor.called
-        assert isinstance(patch_editor.view_active, Gtk.Entry)
-        assert isinstance(patch_editor.view_passive, Gtk.Label)
-        assert EDITOR == patch_editor.text
+        target = getattr(view_sheet, HELPER)
+        target(patch_get_object.get_object)
+        assert patch_view.called
+        assert isinstance(patch_view.editor, Gtk.Entry)
+        assert isinstance(patch_view.display, Gtk.Label)
+        assert CONTENT == patch_view.content
         assert patch_get_object.called
         assert SITE == patch_get_object.site_ui
         assert patch_site.called
-        assert patch_editor.view_editor == patch_site.view_editor
+        assert patch_view.view is patch_site.view
         assert EXPAND_OKAY == patch_site.expand_okay
         assert FILL_OKAY == patch_site.fill_okay
         assert N_PADDING == patch_site.n_padding
@@ -766,13 +773,13 @@ class TestViewSheet:
     def test_erases(self, monkeypatch):
         """Confirm view destroys its visual element."""
         # Setup
-        class PatchDestroy:
+        class PatchClose:
             def __init__(self): self.called = False
 
-            def destroy(self): self.called = True
+            def close(self): self.called = True
 
-        patch_destroy = PatchDestroy()
-        monkeypatch.setattr(Gtk.Window, 'destroy', patch_destroy.destroy)
+        patch_close = PatchClose()
+        monkeypatch.setattr(Gtk.Window, 'close', patch_close.close)
 
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
@@ -780,7 +787,7 @@ class TestViewSheet:
         # Test
         target.erase()
         assert not target._window.get_visible()
-        assert patch_destroy.called
+        assert patch_close.called
 
     @pytest.mark.skip
     def test_close_topic(self, patch_factsheet, capfd, new_outline_topics):
@@ -1669,7 +1676,7 @@ class TestViewSheet:
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         target = VSHEET.ViewSheet(p_control=control)
         id_target = CSHEET.id_view_sheet(p_view_sheet=target)
-        _view_new = VSHEET.ViewSheet(p_control=control)
+        view_new = VSHEET.ViewSheet(p_control=control)
         roster_views = control._roster_views
         N_VIEWS = 1
         # Test
@@ -1678,6 +1685,8 @@ class TestViewSheet:
         assert VSHEET.ViewSheet.ALLOW_CLOSE == result
         assert N_VIEWS == len(roster_views)
         assert id_target not in roster_views
+        # Teardown
+        view_new._window.close()
 
     def test_on_close_view_sheet_unsafe_allow(self, monkeypatch):
         """| Confirm attempt to erase view.
@@ -1705,7 +1714,7 @@ class TestViewSheet:
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         target = VSHEET.ViewSheet(p_control=control)
         id_target = CSHEET.id_view_sheet(p_view_sheet=target)
-        _view_new = VSHEET.ViewSheet(p_control=control)
+        view_new = VSHEET.ViewSheet(p_control=control)
         roster_views = control._roster_views
         N_VIEWS = 1
         # Test
@@ -1714,6 +1723,8 @@ class TestViewSheet:
         assert VSHEET.ViewSheet.ALLOW_CLOSE == result
         assert N_VIEWS == len(roster_views)
         assert id_target not in roster_views
+        # Teardown
+        view_new._window.close()
 
     def test_on_close_view_sheet_unsafe_deny(self, monkeypatch):
         """| Confirm attempt to erase view.
@@ -1750,6 +1761,8 @@ class TestViewSheet:
         assert VSHEET.ViewSheet.DENY_CLOSE == result
         assert N_VIEWS == len(roster_views)
         assert id_view_new in roster_views
+        # Teardown
+        view_new._window.close()
 
     @pytest.mark.skip
     def test_on_flip_summary(self, patch_factsheet, capfd):
@@ -2011,50 +2024,6 @@ class TestViewSheet:
         # del target._window
         # del factsheet
 
-    @pytest.mark.skip(resson='pending deleteion')
-    def old_test_on_new_sheet(self, monkeypatch):
-        """Confirm response to request to create default factsheet.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param capfd: built-in fixture `Pytest capfd`_.
-        """
-        # Setup
-        control = CSHEET.g_control_app.open_factsheet(
-            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
-        target = VSHEET.ViewSheet(p_control=control)
-        # class PatchNew:
-        #     def __init__(self): self.called = False
-        #
-        #     def new_factsheet(self, px_app, pm_sheets_active):
-        #         _ = px_app
-        #         _ = pm_sheets_active
-        #         self.called = True
-        #
-        # patch_new = PatchNew()
-        # monkeypatch.setattr(
-        #     VSHEET.ViewSheet, 'new_factsheet', patch_new.new_factsheet)
-        #
-        # factsheet = patch_factsheet()
-        # target = VSHEET.ViewSheet(px_app=factsheet)
-        # snapshot = capfd.readouterr()   # Resets the internal buffer
-        # assert not snapshot.out
-        # assert 'Gtk-CRITICAL' in snapshot.err
-        # assert 'GApplication::startup signal' in snapshot.err
-        # # target._window.set_skip_pager_hint(True)
-        # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(WINDOW_ANCHOR)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # control = CSHEET.ControlSheet.new(sheets_active)
-        # target.link_factsheet(target, control)
-        # # Test
-        # target.on_new_sheet(None, None)
-        # assert patch_new.called
-        # # Teardown
-        # target._window.destroy()
-        # del target._window
-        # del factsheet
-
     def test_on_new_sheet(self, monkeypatch):
         """| Confirm factsheet creation with initial window.
         | Case: creation succeeds
@@ -2077,27 +2046,6 @@ class TestViewSheet:
         assert N_VIEWS == len(control_sheet._roster_views)
         _key, view = control_sheet._roster_views.popitem()
         assert view._control is control_sheet
-
-    def test_on_new_sheet_warn(self, monkeypatch, caplog):
-        """| Confirm factsheet creation with initial window.
-        | Case: creation fails
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param caplog: built-in fixture `Pytest caplog`_.
-        """
-        # Setup
-        monkeypatch.setattr(
-            CSHEET.ControlApp, 'open_factsheet', lambda _c, **_kw: None)
-        log_message = (
-            'Failed to create new factsheet (ViewSheet.on_new_sheet)')
-        N_LOGS = 1
-        LAST = -1
-        # Test
-        VSHEET.ViewSheet.on_new_sheet(None, None)
-        assert N_LOGS == len(caplog.records)
-        record = caplog.records[LAST]
-        assert log_message == record.message
-        assert 'CRITICAL' == record.levelname
 
     @pytest.mark.skip
     def test_on_new_topic(self, patch_factsheet, capfd, monkeypatch):
@@ -2946,11 +2894,8 @@ class TestViewSheet:
         # # Teardown
         # # None - no window created
 
-    def test_present(self, monkeypatch):
-        """Confirm page becomes visible.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
+    def test_present(self):
+        """Confirm page becomes visible."""
         # Setup
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)

@@ -118,8 +118,8 @@ class TestSheet:
         """
         # Setup
         NAME_DEFAULT = 'Unnamed'
-        SUMMARY_DEFAULT = 'New Factsheet'
-        TITLE_DEFAULT = 'Edit factsheet description here.'
+        SUMMARY_DEFAULT = 'Edit factsheet description here.'
+        TITLE_DEFAULT = 'New Factsheet'
         # Test
         target = MSHEET.Sheet()
         assert NAME_DEFAULT == target.name.text

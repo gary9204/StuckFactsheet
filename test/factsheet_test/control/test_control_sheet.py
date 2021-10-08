@@ -654,43 +654,6 @@ class TestControlSheet:
         # Test
         assert method_model() == method_target()
 
-    @pytest.mark.skip(reason='being replaced by model pass through')
-    @pytest.mark.parametrize('NAME_METHOD, NAME_CHECK, CLASS', [
-        # ('new_view_name_active', 'get_buffer', MSHEET.ViewNameSheetActive),
-        # ('new_view_name_passive', 'get_label', MSHEET.ViewNameSheetPassive),
-        # ('new_view_summary_active', 'get_buffer',
-        #     MSHEET.ViewSummarySheetActive),
-        # ('new_view_summary_passive', 'get_buffer',
-        #     MSHEET.ViewSummarySheetPassive),
-        # ('new_view_title_active', 'get_buffer', MSHEET.ViewTitleSheetActive),
-        # ('new_view_title_passive', 'get_label', MSHEET.ViewTitleSheetPassive),
-        ])
-    def test_new_view(self, new_id_args, NAME_METHOD, NAME_CHECK, CLASS):
-        """Confirm control relays requests for new views.
-
-        :param new_id_args: fixture: factory for stock identity
-            keyword arguments
-        :param NAME_METHOD: name of method under test
-        :param NAME_CHECK: name of method used to check view
-        :param CLASS: expected view class
-        """
-        # Setup
-        KWARGS = new_id_args()
-        model = MSHEET.Sheet(**KWARGS)
-        model_method = getattr(model, NAME_METHOD)
-        model_view = model_method()
-        model_check = getattr(model_view, NAME_CHECK)
-        target = CSHEET.ControlSheet(p_model=model, p_path=None)
-        target_method = getattr(target, NAME_METHOD)
-        # Test
-        target_view = target_method()
-        assert isinstance(target_view, CLASS)
-        target_check = getattr(target_view, NAME_CHECK)
-        assert model_check() == target_check()
-        # Teardown
-        target_view.destroy()
-        model_view.destroy()
-
     def test_model_from_error(self, caplog):
         """Confirm return of error sheet."""
         # Setup
@@ -823,7 +786,7 @@ class TestControlSheet:
             assert BUI.TIME_EVENT_CURRENT == view.time
 
     @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        ('_model', 'model'),
+        # ('_model', 'model'),
         ('_factory_display_name', 'new_display_name'),
         ('_factory_editor_name', 'new_editor_name'),
         ('_factory_display_summary', 'new_display_summary'),
@@ -860,6 +823,34 @@ class TestControlSheet:
         # Test: no delete
         assert target_prop.fdel is None
 
+    @pytest.mark.parametrize('NAME, ESCAPED', [
+        ('<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
+        ('<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
+        ])
+    def test_property_name(self, NAME, ESCAPED):
+        """| Confirm model name property is get-only without markup errors.
+        | Case: name does not contain markup errors
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param NAME: name of factsheet.
+        :param ESCAPED: name of factsheet with markup errors escaped.
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target_prop = getattr(CSHEET.ControlSheet, 'name')
+        model_name = target._model.name
+        model_name._set_persist(NAME)
+        # Test: get
+        assert target_prop.fget is not None
+        assert ESCAPED == target.name
+        # Test: no set
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
     def test_save(self, tmp_path):
         """| Confirm write to file.
         | Case: file does not exist.
@@ -868,16 +859,16 @@ class TestControlSheet:
         target = CSHEET.ControlSheet(p_path=None)
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
         target._path = PATH
-        target.model.set_stale()
+        target._model.set_stale()
         assert not PATH.exists()
         # Test
         target.save()
-        assert target.model.is_fresh()
+        assert target._model.is_fresh()
         assert PATH.exists()
         with PATH.open(mode='rb') as io_in:
             model_disk = pickle.load(io_in)
         assert model_disk is not None
-        assert target.model == model_disk
+        assert target._model == model_disk
 
     def test_save_except(self, monkeypatch, tmp_path):
         """| Confirm write to file.
@@ -896,7 +887,7 @@ class TestControlSheet:
         target = CSHEET.ControlSheet(p_path=None)
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
         target._path = PATH
-        target.model.set_stale()
+        target._model.set_stale()
         assert not PATH.exists()
         # Test
         with pytest.raises(CSHEET.DumpFileError) as exc_info:
@@ -912,13 +903,13 @@ class TestControlSheet:
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
-        target.model.set_stale()
+        target._model.set_stale()
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
         assert not PATH.exists()
         # Test
         target.save(p_path=PATH)
         assert PATH is target.path
-        assert target.model.is_fresh()
+        assert target._model.is_fresh()
         assert PATH.exists()
 
     def test_open_file_save(self, tmp_path):

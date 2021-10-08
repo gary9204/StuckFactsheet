@@ -446,9 +446,15 @@ class ControlSheet:
         return self._model.is_stale()
 
     @property
-    def model(self) -> MSHEET.Sheet:
-        """Return sheet model."""
-        return self._model
+    def name(self) -> str:
+        """Return sheet name without markup errors."""
+        name = BUI.escape_text_markup(self._model.name.text)
+        return name
+
+    # @property
+    # def model(self) -> MSHEET.Sheet:
+    #     """Return sheet model."""
+    #     return self._model
 
     # @classmethod
     # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
