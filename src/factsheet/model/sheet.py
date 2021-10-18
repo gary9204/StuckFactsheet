@@ -96,14 +96,9 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
         :param p_title: title of factsheet.
         :param kwargs: superclass keyword parameters.
         """
-        logger.info('#231 Enter')
         self._name = Name(p_text=p_name)
-        logger.info('#231 \tName: {} (ID: 0x{:x}. Buffer: 0x{:x})'.format(
-            self._name.__class__.__name__, id(self._name), id(self._name._ui_model)))
         self._summary = Summary(p_text=p_summary)
         self._title = Title(p_text=p_title)
-        logger.info('#231 \tTitle: {} (ID: 0x{:x}. Buffer: 0x{:x})'.format(
-            self._title.__class__.__name__, id(self._title), id(self._title._ui_model)))
         super().__init__(**kwargs)
 
     # def __setstate__(self, p_state: typing.Dict) -> None:

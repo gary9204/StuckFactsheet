@@ -25,8 +25,6 @@ import pickle
 import traceback as TB
 import typing   # noqa
 
-import sys  # #231 fix
-
 
 # import factsheet.control.control_idcore as CIDCORE
 import factsheet.bridge_ui as BUI
@@ -123,9 +121,6 @@ class ControlApp:
 
         :param p_control: factsheet to erase.
         """
-        # logger.info('#231 Enter')
-        # logger.info('#231 \tControl: 0x{:X}'.format(id(p_control)))
-        # logger.info('#231 \tName: {}'.format(p_control.name))
         p_control.remove_all_views()
 
     def close_all_factsheets(self) -> None:
@@ -187,15 +182,11 @@ class ControlSheet:
 
     def __init__(self, p_path: Path = None) -> None:
         """Initialize instance with given attributes and no topics."""
-        logger.info('#231 Enter')
         self._path = p_path
         self._model = self._model_from_path(p_path)
 
         self._factory_display_name = (
             MSHEET.FactoryDisplayName(self._model.name))
-        logger.info('#231 \tFactory: {} (ID: 0x{:x})'.format(
-            self._factory_display_name.__class__.__name__,
-            id(self._factory_display_name)))
         self._factory_editor_name = (
             MSHEET.FactoryEditorName(self._model.name))
 
@@ -206,9 +197,6 @@ class ControlSheet:
 
         self._factory_display_title = (
             MSHEET.FactoryDisplayTitle(self._model.title))
-        logger.info('#231 \tFactory: {} (ID: 0x{:x})'.format(
-            self._factory_display_title.__class__.__name__,
-            id(self._factory_display_title)))
         self._factory_editor_title = (
             MSHEET.FactoryEditorTitle(self._model.title))
 
@@ -331,9 +319,6 @@ class ControlSheet:
 
     def remove_all_views(self) -> None:
         """Stop tracking all views of the factsheet."""
-        logger.info('#231 Enter')
-        logger.info('#231 \tControl: 0x{:X}'.format(id(self)))
-        logger.info('#231 \tName: {}'.format(self.name))
         views = self._roster_views.values()
         while views:
             view = next(iter(views))
@@ -342,9 +327,6 @@ class ControlSheet:
 
     def remove_view(self, p_view: 'ObserverControlSheet') -> None:
         """Stop tracking given sheet view but warn of missing view."""
-        logger.info('#231 Enter')
-        logger.info('#231 \tWindow: {}'.format(p_view._window))
-        logger.info('#231 \tName: {}'.format(self.name))
         id_view = id_view_sheet(p_view_sheet=p_view)
         try:
             self._roster_views.pop(id_view)

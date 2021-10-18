@@ -155,14 +155,6 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
         markup = escape_text_markup(self._ui_model.get_text())
         display = Gtk.Label(label=markup)
         self._displays[id_display(display)] = display
-        logger.info('#231 \tDisplay: {}'.format(display))
-        logger.info('#231 \tText: {}'.format(self._ui_model.get_text()))
-        logger.info('#231 \tFactory: {} (ID: 0x{:x})'.format(
-            self.__class__.__name__, id(self)))
-        logger.info('#231 \tBuffer: {}'.format(self._ui_model))
-        logger.info('#231 \tDisplays:')
-        for display in self._displays.values():
-            logger.info('#231 \t\t{}'.format(display))
         _ = display.connect('destroy', self.on_destroy)
         _ = self._ui_model.connect('deleted-text', self.on_change)
         _ = self._ui_model.connect('inserted-text', self.on_change)
@@ -181,15 +173,9 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
 
         :param p_model: model that contains storage for displays.
         """
-        logger.info('#231 \tFactory: {} (ID: 0x{:x})'.format(
-            self.__class__.__name__, id(self)))
-        logger.info('#231 \tModel: {} (ID: 0x{:x})'.format(p_model, id(p_model)))
-        logger.info('#231 \tBuffer: {}'.format(p_model._ui_model))
-        logger.info('#231 \tText: {}'.format(p_model.text))
         self._ui_model = p_model.ui_model
         self._displays: typing.MutableMapping[
             IdDisplay, DisplayTextMarkup] = dict()
-        logger.info('#231 \tDisplays: {}'.format(self._displays))
 
     def on_change(self, *_args):
         """Refresh display views when text is inserted or deleted."""
@@ -203,28 +189,13 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
         :param p_display: display view being destroyed.
         """
         id_destroy = id_display(p_display)
-        logger.info('#231 \tDisplay: {}'.format(p_display))
-        logger.info('#231 \tText: {}'.format(p_display.get_label()))
-        logger.info('#231 \tFactory: {} (ID: 0x{:x})'.format(
-            self.__class__.__name__, id(self)))
         try:
-            logger.info('#231 \tDisplays before:')
-            for display in self._displays.values():
-                logger.info('#231 \t\t{}'.format(display))
             _ = self._displays.pop(id_destroy)
-            logger.info('#231 \tDisplays after:')
-            for display in self._displays.values():
-                logger.info('#231 \t\t{}'.format(display))
         except KeyError:
             logger.warning(
                 'Missing display: {} ({}.{})'.format(
                     hex(id_destroy),
                     self.__class__.__name__, self.on_destroy.__name__))
-        except AttributeError as err:
-            logger.info('#231 {}: {}'.format(err.__class__.__name__, err))
-            logger.info('#231 in {}'.format(self.__class__.__name__))
-            logger.info('#231 \tDisplay: {}'.format(p_display))
-            logger.info('#231 \tText: {}'.format(p_display.get_label()))
 
 
 class FactoryEditorTextStyled(BBASE.FactoryUiViewAbstract[EditorTextStyled]):
