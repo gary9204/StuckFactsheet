@@ -273,16 +273,16 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         global g_app
         self._window.set_application(g_app)
 
-        headerbar = self._window.get_titlebar()
-        logger.info('#231 \tWindow: {}'.format(self._window))
-        title_window = self._control.new_display_name()
-        logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
-            self._control.new_display_name.__class__.__name__,
-            id(self._control.new_display_name)))
-        logger.info('#231 \tWin Title: {})'.format(title_window))
-        logger.info('#231 \tText: {}'.format(title_window.get_label()))
-        title_window.set_selectable(False)
-        headerbar.set_custom_title(title_window)
+        # headerbar = self._window.get_titlebar()
+        # logger.info('#231 \tWindow: {}'.format(self._window))
+        # title_window = self._control.new_display_name()
+        # logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
+        #     self._control.new_display_name.__class__.__name__,
+        #     id(self._control.new_display_name)))
+        # logger.info('#231 \tWin Title: {})'.format(title_window))
+        # logger.info('#231 \tText: {}'.format(title_window.get_label()))
+        # title_window.set_selectable(False)
+        # headerbar.set_custom_title(title_window)
 
         self._init_name_sheet(get_object)
         self._init_summary_sheet(get_object)
@@ -430,12 +430,19 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         site_name_sheet = p_get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
             view_name.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+
         # #231 fix in progress -- work around
-        # title = Gtk.Label(label='Parrot', use_markup=True)
-        # _ = display_name.bind_property(
-        #     'label', title, 'label', GO.BindingFlags.SYNC_CREATE)
-        # headerbar = self._window.get_titlebar()
-        # headerbar.set_custom_title(title)
+        title = Gtk.Label(label='Error! please report.', use_markup=True)
+        title.set_selectable(False)
+        _ = display_name.bind_property(
+            'label', title, 'label', GO.BindingFlags.SYNC_CREATE)
+        headerbar = self._window.get_titlebar()
+        headerbar.set_custom_title(title)
+
+        logger.info('#231 \tWindow: {}'.format(self._window))
+        title_window = headerbar.get_custom_title()
+        logger.info('#231 \tWin Title: {})'.format(title_window))
+        logger.info('#231 \tText: {}'.format(title_window.get_label()))
 
     def _init_summary_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
         """Initialize view for factsheet summary."""
@@ -469,14 +476,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         site_title_sheet.pack_start(
             view_title.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-    def clear_headerbar(self) -> None:
-        """#231 Fix"""
-        headerbar = self._window.get_titlebar()
-        display_title = headerbar.get_custom_title()
-        title_closing = Gtk.Label(label='closing ...')
-        headerbar.set_custom_title(title_closing)
-        display_title.destroy()
-
     def erase(self) -> None:
         """Destroy visible portion of sheet view."""
         logger.info('#231 Enter')
@@ -486,7 +485,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             self._control.new_display_name.__class__.__name__,
             id(self._control.new_display_name)))
         self._window.hide()
-        self.clear_headerbar()  # #231 fix
         self._window.destroy()
         logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
             self._control.new_display_name.__class__.__name__,
@@ -701,7 +699,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
                 return ViewSheet.DENY_CLOSE
 
         self._control.remove_view(self)
-        self.clear_headerbar()  # #231 fix
         return ViewSheet.ALLOW_CLOSE
 
     def on_flip_summary(self, _action: Gio.SimpleAction,
