@@ -4,7 +4,6 @@ Defines class to display Factsheet document in a window.
 import gi   # type: ignore[import]
 import logging
 from pathlib import Path
-# import sys
 import traceback as TB
 import typing   # noqa
 
@@ -74,6 +73,8 @@ class AppFactsheet(Gtk.Application):
 
     def do_shutdown(self) -> None:
         """Application teardown. """
+        logger.info('#231 Enter')
+        logger.info('#231 \tWindows: {}'.format(self.get_windows()))
         Gtk.Application.do_shutdown(self)
         logger.info('AppFactsheet application shutdown.')
 
@@ -263,6 +264,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         :param p_roster: roster of sheet views for factsheet.
         """
+        logger.info('#231 Enter')
         self._control = p_control
         self._control.add_view(self)
         builder = Gtk.Builder.new_from_file(self.NAME_FILE_SHEET_UI)
@@ -272,9 +274,22 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         self._window.set_application(g_app)
 
         headerbar = self._window.get_titlebar()
+        logger.info('#231 \tWindow: {}'.format(self._window))
         title_window = self._control.new_display_name()
+        logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
+            self._control.new_display_name.__class__.__name__,
+            id(self._control.new_display_name)))
+        logger.info('#231 \tWin Title: {})'.format(title_window))
+        logger.info('#231 \tText: {}'.format(title_window.get_label()))
         title_window.set_selectable(False)
         headerbar.set_custom_title(title_window)
+
+        # title_window = Gtk.Label(label='Oops!')
+        # display_name.bind_property(
+        #     'label', title_window, 'label', GO.BindingFlags.SYNC_CREATE)
+        # headerbar.set_title(display_name.get_label())
+
+        # headerbar.set_title('Oops!')
 
         self._init_name_sheet(get_object)
         self._init_summary_sheet(get_object)
@@ -409,12 +424,25 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         FILL_OKAY = True
         N_PADDING = 6
 
+        logger.info('#231 Enter')
+        logger.info('#231 \tWindow: {}'.format(self._window))
         display_name = self._control.new_display_name()
+        logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
+            self._control.new_display_name.__class__.__name__,
+            id(self._control.new_display_name)))
+        logger.info('#231 \tName: {}'.format(display_name))
+        logger.info('#231 \tText: {}'.format(display_name.get_label()))
         editor_name = self._control.new_editor_name()
         view_name = VIDCORE.ViewMarkup(display_name, editor_name, 'Name')
         site_name_sheet = p_get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
             view_name.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        # #231 fix in progress -- work around
+        # title = Gtk.Label(label='Parrot', use_markup=True)
+        # _ = display_name.bind_property(
+        #     'label', title, 'label', GO.BindingFlags.SYNC_CREATE)
+        # headerbar = self._window.get_titlebar()
+        # headerbar.set_custom_title(title)
 
     def _init_summary_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
         """Initialize view for factsheet summary."""
@@ -434,17 +462,42 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         FILL_OKAY = True
         N_PADDING = 6
 
+        logger.info('#231 Enter')
+        logger.info('#231 \tWindow: {}'.format(self._window))
         display_title = self._control.new_display_title()
+        logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
+            self._control.new_display_title.__class__.__name__,
+            id(self._control.new_display_title)))
+        logger.info('#231 \tTitle: {}'.format(display_title))
+        logger.info('#231 \tText: {}'.format(display_title.get_label()))
         editor_title = self._control.new_editor_title()
         view_title = VIDCORE.ViewMarkup(display_title, editor_title, 'Title')
         site_title_sheet = p_get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
             view_title.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
+    # def clear_headerbar(self) -> None:
+    #     """ #231 Fix"""
+    #     headerbar = self._window.get_titlebar()
+    #     display_title = headerbar.get_custom_title()
+    #     title_closing = Gtk.Label(label='closing ...')
+    #     headerbar.set_custom_title(title_closing)
+    #     display_title.destroy()
+
     def erase(self) -> None:
         """Destroy visible portion of sheet view."""
+        logger.info('#231 Enter')
+        logger.info('#231 \tWindow: {}'.format(self._window))
+        logger.info('#231 \tName: {}'.format(self._control.name))
+        logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
+            self._control.new_display_name.__class__.__name__,
+            id(self._control.new_display_name)))
         self._window.hide()
-        self._window.close()
+        # self.clear_headerbar()  # #231 fix
+        self._window.destroy()
+        logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
+            self._control.new_display_name.__class__.__name__,
+            id(self._control.new_display_name)))
 
     def close_topic(self, p_id) -> None:
         # def close_topic(self, p_id: VTYPES.TagTopic) -> None:
@@ -604,6 +657,9 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         approves.  The method deletes the factsheet unconditionally if
         no changes would be lost.
         """
+        logger.info('#231 Enter')
+        logger.info('#231 \tWindow: {}'.format(self._window))
+        logger.info('#231 \tName: {}'.format(self._control.name))
         if self._control.is_stale():
             if ViewSheet.DENY_CLOSE == self.confirm_close():
                 return
@@ -644,11 +700,15 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def on_close_view_sheet(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
         """Close view of factsheet."""
+        logger.info('#231 Enter')
+        logger.info('#231 \tWindow: {}'.format(self._window))
+        logger.info('#231 \tName: {}'.format(self._control.name))
         if not self._control.remove_view_is_safe():
             if ViewSheet.DENY_CLOSE == self.confirm_close():
                 return ViewSheet.DENY_CLOSE
 
         self._control.remove_view(self)
+        # self.clear_headerbar()  # #231 fix
         return ViewSheet.ALLOW_CLOSE
 
     def on_flip_summary(self, _action: Gio.SimpleAction,

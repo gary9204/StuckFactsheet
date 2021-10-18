@@ -773,13 +773,13 @@ class TestViewSheet:
     def test_erases(self, monkeypatch):
         """Confirm view destroys its visual element."""
         # Setup
-        class PatchClose:
+        class PatchDestroy:
             def __init__(self): self.called = False
 
-            def close(self): self.called = True
+            def destroy(self): self.called = True
 
-        patch_close = PatchClose()
-        monkeypatch.setattr(Gtk.Window, 'close', patch_close.close)
+        patch_destroy = PatchDestroy()
+        monkeypatch.setattr(Gtk.Window, 'destroy', patch_destroy.destroy)
 
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
@@ -787,7 +787,7 @@ class TestViewSheet:
         # Test
         target.erase()
         assert not target._window.get_visible()
-        assert patch_close.called
+        assert patch_destroy.called
 
     @pytest.mark.skip
     def test_close_topic(self, patch_factsheet, capfd, new_outline_topics):
