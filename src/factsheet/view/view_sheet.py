@@ -284,13 +284,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         title_window.set_selectable(False)
         headerbar.set_custom_title(title_window)
 
-        # title_window = Gtk.Label(label='Oops!')
-        # display_name.bind_property(
-        #     'label', title_window, 'label', GO.BindingFlags.SYNC_CREATE)
-        # headerbar.set_title(display_name.get_label())
-
-        # headerbar.set_title('Oops!')
-
         self._init_name_sheet(get_object)
         self._init_summary_sheet(get_object)
         self._init_title_sheet(get_object)
@@ -476,13 +469,13 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         site_title_sheet.pack_start(
             view_title.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-    # def clear_headerbar(self) -> None:
-    #     """ #231 Fix"""
-    #     headerbar = self._window.get_titlebar()
-    #     display_title = headerbar.get_custom_title()
-    #     title_closing = Gtk.Label(label='closing ...')
-    #     headerbar.set_custom_title(title_closing)
-    #     display_title.destroy()
+    def clear_headerbar(self) -> None:
+        """#231 Fix"""
+        headerbar = self._window.get_titlebar()
+        display_title = headerbar.get_custom_title()
+        title_closing = Gtk.Label(label='closing ...')
+        headerbar.set_custom_title(title_closing)
+        display_title.destroy()
 
     def erase(self) -> None:
         """Destroy visible portion of sheet view."""
@@ -493,7 +486,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             self._control.new_display_name.__class__.__name__,
             id(self._control.new_display_name)))
         self._window.hide()
-        # self.clear_headerbar()  # #231 fix
+        self.clear_headerbar()  # #231 fix
         self._window.destroy()
         logger.info('#231 \tFactory: {} (ID: 0x{:x}))'.format(
             self._control.new_display_name.__class__.__name__,
@@ -708,7 +701,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
                 return ViewSheet.DENY_CLOSE
 
         self._control.remove_view(self)
-        # self.clear_headerbar()  # #231 fix
+        self.clear_headerbar()  # #231 fix
         return ViewSheet.ALLOW_CLOSE
 
     def on_flip_summary(self, _action: Gio.SimpleAction,
