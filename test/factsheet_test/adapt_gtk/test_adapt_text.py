@@ -596,7 +596,7 @@ class TestAdaptTextStatic:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.adapt_text`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (type(ATEXT.TextOpaqueGtk), typing.TypeVar),
         (ATEXT.TextFormatGtk, Gtk.TextBuffer),
         (ATEXT.TextMarkupGtk, Gtk.EntryBuffer),
@@ -607,8 +607,8 @@ class TestTypes:
         (ATEXT.ViewTextOpaque.__constraints__, ()),
         (ATEXT.ViewTextStatic, Gtk.Label),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions."""
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

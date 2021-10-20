@@ -102,7 +102,11 @@ class TestBridgeBase:
         (BBASE.BridgeBase, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
         # Setup
         # Test
         assert hasattr(CLASS, '__abstractmethods__')
@@ -122,8 +126,8 @@ class TestBridgeTypes:
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.
 
-        :param TYPE_TARGET: type hint as defined.
-        :param TYPE_EXPECT: expected type hint.
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
         """
         # Setup
         # Test
@@ -137,7 +141,11 @@ class TestFactoryGtkViewAbstract:
         (BBASE.FactoryUiViewAbstract, '__call__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
         # Setup
         # Test
         assert hasattr(CLASS, '__abstractmethods__')

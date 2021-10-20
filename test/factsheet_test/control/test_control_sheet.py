@@ -236,6 +236,8 @@ class TestControlApp:
     def test_remove_factsheet_warn(self, caplog):
         """| Confirm tracking stops for given sheet.
         | Case: sheet not tracked
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
         target = CSHEET.ControlApp()
@@ -322,6 +324,8 @@ class TestControlSheet:
     def test_add_view_warn(self, caplog):
         """| Confirm tracking of given sheet view.
         | Case: duplicate view
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
@@ -655,7 +659,10 @@ class TestControlSheet:
         assert method_model() == method_target()
 
     def test_model_from_error(self, caplog):
-        """Confirm return of error sheet."""
+        """Confirm return of error sheet.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
         # Setup
         MESSAGE = 'One day this will all be yours!'
         TEXT_ERROR = 'What, the curtains?'
@@ -1057,7 +1064,7 @@ class TestIdViewSheet:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.control_sheet`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (CSHEET.IdFactsheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdFactsheet.__dict__['__supertype__'], int),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),
@@ -1066,11 +1073,15 @@ class TestTypes:
         # (MIDCORE.ViewTitlePassive.__constraints__, (
         #     BUI.ViewTextTagged, BUI.ViewTextDisplay)),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm type hint definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT
 
 
 class TestExceptions:

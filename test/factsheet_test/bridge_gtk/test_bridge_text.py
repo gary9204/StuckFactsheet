@@ -5,7 +5,6 @@ information classes.  See :mod:`.bridge_text`.
 .. include:: /test/refs_include_pytest.txt
 """
 import gi   # type: ignore[import]
-import logging
 import math
 import pickle
 import pytest   # type: ignore[import]
@@ -23,7 +22,11 @@ from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 class PatchModelText(BTEXT.ModelText[typing.Any]):
-    """:class:`.ModelText` subclass with stub text property."""
+    """:class:`.ModelText` subclass with stub text property.
+
+        :param args: patch and superclass positional parameters.
+        :param kwargs: patch and superclass keyword parameters.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,7 +39,7 @@ class PatchModelText(BTEXT.ModelText[typing.Any]):
 
 
 class TestEscapeTextMarkup:
-    """Unit tests for :func:`.escape_text_markup`."""
+    """Unit tests for function :func:`.escape_text_markup`."""
 
     def test_escape_text_markup(self):
         """| Confirm markup errors escaped.
@@ -219,12 +222,11 @@ class TestFactoryDisplayTextMarkup:
         assert N_DISPLAYS - 1 == len(target._displays)
         assert id_destroy not in target._displays
 
-    def test_on_destroy_warn(self, PatchLogger, monkeypatch):
+    def test_on_destroy_warn(self, caplog):
         """| Confirm display view removal.
         | Case: display not connected to model.
 
-        :param PatchLogger: deprecated but not yet removed.
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
@@ -237,17 +239,17 @@ class TestFactoryDisplayTextMarkup:
             id_display = BTEXT.id_display(display)
             target._displays[id_display] = display
         DISPLAY_MISSING = Gtk.Label()
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(logging.Logger, 'warning', patch_logger.warning)
+        N_LOGS = 1
+        LAST = -1
         log_message = ('Missing display: {} (FactoryDisplayTextMarkup'
                        '.on_destroy)'.format(hex(id(DISPLAY_MISSING))))
         # Test
         target.on_destroy(DISPLAY_MISSING)
         assert N_DISPLAYS == len(target._displays)
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
 
 
 class TestFactoryEditorTextStyled:
@@ -649,7 +651,7 @@ class TestModelTextStyled:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.bridge_text`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (BTEXT.IdDisplay.__qualname__, 'NewType.<locals>.new_type'),
         (BTEXT.IdDisplay.__dict__['__supertype__'], int),
         # (type(BTEXT.ModelTextOpaque), typing.TypeVar),
@@ -663,12 +665,12 @@ class TestTypes:
         # (BTEXT.ViewTextOpaquePassive.__constraints__, ()),
         # (BTEXT.ViewTextDisplay, Gtk.Label),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.
 
-        :param TYPE_TARGET: type under test.
-        :param TYPE_SOURCE: expected type.
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
         """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

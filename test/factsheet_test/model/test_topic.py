@@ -484,7 +484,7 @@ class TestTopic:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.topic`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (MTOPIC.LineOutline, BUI.LineOutline),
         (MTOPIC.NameTopic, MFACT.NameTopic),
         (MTOPIC.OutlineFacts, BUI.BridgeOutlineColumnar[MFACT.Fact]),
@@ -492,8 +492,12 @@ class TestTypes:
         (MTOPIC.TitleTopic, MFACT.TitleTopic),
         (MTOPIC.TagTopic, MFACT.TagTopic),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm type hint definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

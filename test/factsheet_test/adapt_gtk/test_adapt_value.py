@@ -312,7 +312,7 @@ class TestFormatValuePlain:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.adapt_value`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (AVALUE.ValueAny, typing.Any),
         (type(AVALUE.ValueOpaque), typing.TypeVar),
         (AVALUE.ValueOpaque.__constraints__, ()),
@@ -321,8 +321,8 @@ class TestTypes:
         (AVALUE.AspectValueOpaque.__constraints__, ()),
         (AspectValuePlain, Gtk.Label),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions."""
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

@@ -15,7 +15,7 @@ class TestBridgeTypes:
     :mod:`.bridge_ui`.
     """
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (BUI.TimeEvent, BBASE.TimeEvent),
         # (BUI.BridgeOutlineColumnar, BOUTLINE.BridgeOutlineColumnar),
         # (BUI.BridgeOutlineMultiColumnar, BOUTLINE.BridgeOutlineMultiColumnar),
@@ -35,11 +35,15 @@ class TestBridgeTypes:
         (BUI.EditorTextStyled, BTEXT.EditorTextStyled),
         (BUI.FactoryEditorTextStyled, BTEXT.FactoryEditorTextStyled),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm API definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm API definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT
 
 
 class TestBridgeConstant:

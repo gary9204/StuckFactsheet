@@ -1,6 +1,8 @@
 """
 Unit tests for identity attributes common to Factsheet model components.
 See :class:`~.IdCore`.
+
+.. include:: /test/refs_include_pytest.txt
 """
 import copy
 from pathlib import Path
@@ -17,7 +19,7 @@ import factsheet.model.idcore as MIDCORE
 class PatchIdCore(MIDCORE.IdCore[BUI.ModelTextMarkup,
                                  BUI.ModelTextStyled,
                                  BUI.ModelTextMarkup]):
-    """Defines attributes for  :func:`.IdCore.__init__`."""
+    """Stub subclass for testing :class:`.IdCore` methods."""
 
     def __init__(self, p_name, p_summary, p_title, **kwargs):
         self._name = BUI.ModelTextMarkup(p_name)
@@ -319,7 +321,7 @@ class TestIdCore:
 class TestIdCoreTypes:
     """Unit tests for type hint definitions in :mod:`.idcore`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (type(MIDCORE.ModelName), typing.TypeVar),
         (MIDCORE.ModelName.__constraints__, (
             BUI.ModelTextMarkup, BUI.ModelTextStyled)),
@@ -330,12 +332,12 @@ class TestIdCoreTypes:
         (MIDCORE.ModelTitle.__constraints__, (
             BUI.ModelTextMarkup, BUI.ModelTextStyled)),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.
 
-        :param TYPE_TARGET: type under test.
-        :param TYPE_SOURCE: expected type.
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
         """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

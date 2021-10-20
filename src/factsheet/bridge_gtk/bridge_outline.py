@@ -235,8 +235,7 @@ class InterfaceOutlineMulti(abc.ABC, typing.Generic[
 
 
 class BridgeOutline(InterfaceOutline[ItemOpaque, LineOutline],
-                    BBASE.BridgeBase[ModelOutlineSingle, PersistOutline,
-                                     ViewOutlineOpaque],
+                    BBASE.BridgeBase[ModelOutlineSingle, PersistOutline],
                     typing.Generic[ItemOpaque, ViewOutlineOpaque]):
     """
     Encapsulate widget toolkit class for a single-level outline.

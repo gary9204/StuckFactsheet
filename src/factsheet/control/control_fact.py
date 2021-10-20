@@ -9,7 +9,6 @@ class for the fact layer.
 import typing   # noqa
 
 import factsheet.bridge_ui as BUI
-import factsheet.control.control_idcore as CIDCORE
 import factsheet.model.fact as MFACT
 
 

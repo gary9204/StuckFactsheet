@@ -94,13 +94,17 @@ class TestTopic:
 class TestTypes:
     """Unit tests for type definitions in :mod:`.control_topic`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (CTOPIC.ViewNameTopic, BUI.ViewTextMarkup),
         (CTOPIC.ViewSummaryTopic, BUI.ViewTextTagged),
         (CTOPIC.ViewTitleTopic, BUI.ViewTextMarkup),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm type hint definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

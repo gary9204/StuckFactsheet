@@ -930,7 +930,7 @@ class TestBridgeOutlineTypes:
     :mod:`.bridge_outline`.
     """
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (BOUTLINE.LineOutline, Gtk.TreeIter),
         (BOUTLINE.ModelOutline, Gtk.TreeModel),
         (BOUTLINE.ModelOutlineSingle, Gtk.ListStore),
@@ -943,8 +943,12 @@ class TestBridgeOutlineTypes:
         (BOUTLINE.ViewOutlineOpaque.__constraints__,
             (BOUTLINE.ViewOutlineColumnar, BOUTLINE.ViewOutlineSelect)),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm API definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

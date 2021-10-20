@@ -104,7 +104,7 @@ class TestAdaptTypes:
     :mod:`.adapt`.
     """
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (ADAPT.AdaptText, ATEXT.AdaptText),
         (ADAPT.AdaptTextFormat, ATEXT.AdaptTextFormat),
         (ADAPT.AdaptTextMarkup, ATEXT.AdaptTextMarkup),
@@ -119,8 +119,8 @@ class TestAdaptTypes:
         (ADAPT.AspectValuePlain, AVALUE.AspectValuePlain),
         (ADAPT.ValueOpaque, AVALUE.ValueOpaque),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm API definitions."""
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

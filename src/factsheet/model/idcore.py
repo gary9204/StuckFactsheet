@@ -4,15 +4,15 @@ See :mod:`~factsheet.model`
 
 .. data:: ModelName
 
-    Type hint for model of name attribute.
+    Type hint for model for component name.
 
 .. data:: ModelSummary
 
-    Type hint for model of summary attribute.
+    Type hint for model for component summary.
 
 .. data:: ModelTitle
 
-    Type hint for model of title attribute.
+    Type hint for model for component title.
 """
 import abc
 import typing
@@ -29,8 +29,19 @@ ModelTitle = typing.TypeVar(
 
 
 class IdCore(ABC_STALE.InterfaceStaleFile,
-             typing.Generic[ModelName, ModelSummary, ModelTitle], abc.ABC):
-    """Defines identity attributes common to Factsheet model components."""
+             typing.Generic[ModelName, ModelSummary, ModelTitle]):
+    """Defines identity attributes common to Factsheet model components.
+
+    Common identity atttributes are name, summary, and title.
+
+        *Name:* short identifier for component (suitable, for
+        example, as a label).
+
+        *Summary:* description of component, which adds detail to
+        title.
+
+        *Title:* one-line description of component.
+    """
 
     _name: ModelName
     _summary: ModelSummary
@@ -67,11 +78,9 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
     def __init__(self, **kwargs: typing.Any) -> None:
         """Initialize instance.
 
-        :param p_name: short identifier for component (suitable, for
-            example, as a label).
-        :param p_summary: description of component, which adds detail to
-            title.
-        :param p_title: one-line description of component.
+        Subclasses must define attributes for name, summary, and title
+        before calling :meth:`.IdCore.__init__`.
+
         :param kwargs: superclass keyword parameters.
         """
         if kwargs:

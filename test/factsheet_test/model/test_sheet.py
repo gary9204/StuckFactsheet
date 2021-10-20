@@ -616,8 +616,8 @@ class TestSheetTypes:
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.
 
-        :param TYPE_TARGET: type under test.
-        :param TYPE_EXPECT: expected type.
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
         """
         # Setup
         # Test

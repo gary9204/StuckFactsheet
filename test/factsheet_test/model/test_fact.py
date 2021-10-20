@@ -435,7 +435,7 @@ class TestStatusOfFact:
 class TestTypes:
     """Unit tests for type hint definitions in :mod:`.fact`."""
 
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_SOURCE', [
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (MFACT.NameFact, BUI.ModelTextMarkup),
         (MFACT.SummaryFact, BUI.ModelGtkTextBuffer),
         (MFACT.TitleFact, BUI.ModelTextMarkup),
@@ -457,8 +457,12 @@ class TestTypes:
         (type(MFACT.TopicOpaque), typing.TypeVar),
         (MFACT.TopicOpaque.__constraints__, ()),
         ])
-    def test_types(self, TYPE_TARGET, TYPE_SOURCE):
-        """Confirm type hint definitions."""
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
         # Setup
         # Test
-        assert TYPE_TARGET == TYPE_SOURCE
+        assert TYPE_TARGET == TYPE_EXPECT

@@ -1,14 +1,44 @@
 """
 Defines bridge classes that encapsulate widget toolkit text classes.
 
-.. data:: ModelTextTagged
+.. data:: DisplayTextMarkup
 
-    Type hint for GTK element to store text formatted with
-    externally-defined tags.  See :data:`EditorTextStyled` and
-    `Gtk.TextBuffer`_.
+    Type hint for GTK element to display a text attribute.  The element
+    supports `Pango markup`_ but is not editable.  See `Gtk.Label`_.
 
-.. _Gtk.TextBuffer:
-   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
+.. _Pango markup:
+    https://docs.gtk.org/Pango/pango_markup.html
+
+.. _Gtk.Label:
+    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
+
+.. data:: DisplayTextStyled
+
+    Type hint for GTK element to display a text attribute.  The element
+    supports rich, tag-based formatting but is not editable.  See
+    `Gtk.TextView`_.
+
+.. _Gtk.TextView:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
+
+.. data:: EditorTextMarkup
+
+    Type hint for GTK element to display a text attribute.  The element
+    is editable and supports embedding `Pango markup`_.  See
+    `Gtk.Entry`_.
+
+.. _Gtk.Entry:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html
+
+.. data:: EditorTextStyled
+
+    Type hint for GTK element to display a text attribute.  The element
+    is editable and supports rich, tag-based formatting.  See
+    `Gtk.TextView`_.
+
+.. data:: ModelTextOpaque
+
+    Type hint for placeholder GTK element to store a text attribute.
 
 .. data:: UiTextMarkup
 
@@ -18,47 +48,14 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 .. _Gtk.EntryBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
 
-    .. _Pango markup:
-        https://developer.gnome.org/pygtk/stable/pango-markup-language.html
+.. data:: UiTextStyled
 
-.. data:: ModelTextOpaque
+    Type hint for GTK element to store text formatted with
+    externally-defined tags.  See :data:`EditorTextStyled` and
+    `Gtk.TextBuffer`_.
 
-    Type hint for placeholder GTK element to store a text attribute.
-
-.. data:: EditorTextStyled
-
-    Type hint for GTK element to display a text attribute.  The element
-    supports rich, tag-based formatting.  The element may be editable or
-    display-only.  See `Gtk.TextView`_.
-
-.. _Gtk.TextView:
-   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
-
-.. data:: EditorTextMarkup
-
-    Type hint for GTK element to display a text attribute.  The element
-    is editable and supports `Pango markup`_.  See `Gtk.Entry`_.
-
-.. _Gtk.Entry:
-   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html
-
-.. data:: ViewTextOpaque
-
-    Type hint for placeholder GTK display element for an editable text
-    attribute.
-
-.. data:: ViewTextOpaquePassive
-
-    Type hint for placeholder GTK display element for a display-only
-    text attribute.
-
-.. data:: DisplayTextMarkup
-
-    Type hint for GTK element to display a text attribute.  The element
-    supports markup but is not editable.  See `Gtk.Label`_.
-
-.. _Gtk.Label:
-    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
+.. _Gtk.TextBuffer:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
 """
 import gi   # type: ignore[import]
 import logging
@@ -73,7 +70,6 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango    # type: ignore[import]    # noqa: E402
 
 ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
-# ModelTextStatic = str
 
 PersistText = str
 
@@ -87,16 +83,15 @@ UiTextStyled = typing.Union[Gtk.TextBuffer]
 DisplayTextStyled = typing.Union[Gtk.TextView]
 EditorTextStyled = typing.Union[Gtk.TextView]
 
-ViewTextOpaque = typing.TypeVar('ViewTextOpaque')
-ViewTextOpaquePassive = typing.TypeVar('ViewTextOpaquePassive')
-
 logger = logging.getLogger('Main.bridge_text')
 
 
 def escape_text_markup(p_markup: str) -> str:
     """Return text without markup errors.
 
-    Escape Pango markup errors.  Raise GLib errors.
+    Escape `Pango markup`_ errors.  Raise other GLib errors.
+
+    :param p_markup: text that may contain markup errors.
     """
     ALL = -1
     NO_ACCEL_CHAR = '0'
@@ -147,7 +142,7 @@ class FactoryEditorTextMarkup(BBASE.FactoryUiViewAbstract[EditorTextMarkup]):
 class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
     """Display factory for text stored in a given :class:`.ModelTextMarkup`.
 
-    Views support text display formated from embedded `Pango markup`_.
+    Views support text display formatted from embedded `Pango markup`_.
     """
 
     def __call__(self) -> DisplayTextMarkup:
@@ -184,7 +179,7 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
             display.set_markup(markup)
 
     def on_destroy(self, p_display: DisplayTextMarkup) -> None:
-        """Stop updating display view that is being destroyed.
+        """Stop refreshing display view that is being destroyed.
 
         :param p_display: display view being destroyed.
         """
@@ -242,7 +237,7 @@ class FactoryDisplayTextStyled(BBASE.FactoryUiViewAbstract[DisplayTextStyled]):
     def __init__(self, p_model: 'ModelTextStyled') -> None:
         """Initialize store for text.
 
-        :param p_model: model that contains storage for editors.
+        :param p_model: model that contains storage for displays.
         """
         self._ui_model = p_model.ui_model
         self._factory_source = FactoryEditorTextStyled(p_model)
@@ -267,8 +262,23 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
                 typing.Generic[ModelTextOpaque]):
     """Common ancestor of bridge classes for text.
 
-    Text bridge objects have transient data for attached views in
+    Text bridge objects may have transient aspects associated with views in
     addition to persistant text content.
+    Text bridge objects fhave persistent text content. In addition, a
+    text bridge object may have transient aspects
+    such as signal connections to views or change state with respect to file
+    storage, 
+
+    .. admonition:: About Equality
+
+        Each text bridge object has persistent text content.  In
+        addition, a text bridge object may have transient aspects such
+        as signal connections to views or change state with respect to
+        file storage,
+
+        Two text bridge objects are equivalent when their text content
+        are equal.  Transient aspects of the objects are not compared
+        and may be different.
     """
 
     def __getstate__(self) -> typing.Dict:
@@ -281,7 +291,10 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         return state
 
     def __init__(self, p_text: str = '') -> None:
-        """Extend initialization with text and change state."""
+        """Extend initialization with text and change state.
+
+        :param p_text: initial text content.
+        """
         super().__init__()
         self._set_persist(p_text)
         self._stale = False
@@ -307,11 +320,11 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         return self._stale
 
     def set_fresh(self) -> None:
-        """Mark attribute in memory consistent with file."""
+        """Mark content in memory consistent with file."""
         self._stale = False
 
     def set_stale(self) -> None:
-        """Mark attribute in memory changed from file."""
+        """Mark content in memory changed from file."""
         self._stale = True
 
     @property
@@ -324,14 +337,7 @@ class ModelTextMarkup(ModelText[UiTextMarkup]):
     """Text storage with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 
-    Text bridge objects have transient data for attached views in
-    addition to persistant text content.
-
-    .. admonition:: About Equality
-
-        Two text bridge objects are equivalent when they have the equal
-        text.  Transient aspects of the attributes are not compared and
-        may be different.
+    See :class:`.ModelText` regarding equality.
 
     .. _Gtk.EntryBuffer:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
@@ -366,14 +372,7 @@ class ModelTextStyled(ModelText[UiTextStyled]):
     """Text bridge with support for editing and format tagging.  See
     `Gtk.TextBuffer`_.
 
-    Text bridge objects have transient data for attached views in
-    addition to persistant text content.
-
-    .. admonition:: About Equality
-
-        Two text bridge objects are equivalent when they have equal
-        text.  Transient aspects of the attributes are not compared
-        and may be different.
+    See :class:`.ModelText` regarding equality.
 
     .. _Gtk.TextBuffer:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
