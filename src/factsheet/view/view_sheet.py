@@ -329,6 +329,8 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # Factsheet Display Menu
         # UI.new_action_active(
         #     self._window, 'flip-summary', self.on_flip_summary)
+        UI.new_action_active(self._window, 'close-view-sheet',
+                             lambda _a, _p: self._window.close())
         UI.new_action_active(self._window, 'open-view-sheet',
                              self.on_open_view_sheet)
         # UI.new_action_active_dialog(

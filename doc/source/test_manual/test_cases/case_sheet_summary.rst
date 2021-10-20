@@ -17,12 +17,14 @@ Steps -- Appearance and Basic Editing
    a. *Expect:* A frame with collapser icon (|collapser|) and label
       "*Factsheet Summary*\ " appears immediately below the edit icon
       |edit| for the Factsheet name.
+   #. *Expect:* Default text for Factsheet summary is "Edit Factsheet
+      description here."
 
-#. **Step:** Click inside the *Factsheet Summary* frame away from the
-   margins. 
+#. **Step:** Click inside the *Factsheet Summary* frame after the
+   default text.
 
-   a. *Expect:* A blinking text cursor (|) appears in the upper left
-      corner of the frame.
+   a. *Expect:* A blinking text cursor (|) appears after the default
+      text.
 
 #. **Step:** Edit the summary as follows: "There is a tide in the
    affairs of men, which taken at the flood, leads on to fortune.

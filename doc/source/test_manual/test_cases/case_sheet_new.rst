@@ -36,7 +36,7 @@ Steps
    "<i>Factsheet</i> Beta".
 
    a. *Expect:* Title changes to "\ *Factsheet* Beta" in Beta window.
-   #. *Expect:* Title remains blank in Alpha window.
+   #. *Expect:* Title remains "New Factsheet" in Alpha window.
 
 #. **Step:** Select *Factsheet* **menu** item **File ... > new** (|menu|
    icon on far right of *Factsheet* identity line).

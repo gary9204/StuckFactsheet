@@ -466,7 +466,7 @@ class TestViewSheet:
         # # Factsheet Display Menu
         # assert target._window.lookup_action('flip-summary') is not None
         assert target._window.lookup_action('open-view-sheet') is not None
-        # assert target._window.lookup_action('erase-view-sheet') is not None
+        assert target._window.lookup_action('close-view-sheet') is not None
         # assert target._window.lookup_action(
         #     'show-help-sheet-display') is not None
         #

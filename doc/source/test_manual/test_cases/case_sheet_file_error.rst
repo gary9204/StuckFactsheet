@@ -99,7 +99,7 @@ Steps -- Save Failure
    #. *Expect:* Window title is "Inquisition".
    #. *Expect:* Factsheet name is "Inquisition".
    #. *Expect:* Factsheet title is "No one expects".
-   #. *Expect:* Factsheet summary is blank.
+   #. *Expect:* Factsheet summary is "Edit factsheet description here.".
 
 #. **Step:** In the ``Inquisition`` window, Edit (|edit| icon on left)
    factsheet title to "No one expects the Spanish Inquisition!"

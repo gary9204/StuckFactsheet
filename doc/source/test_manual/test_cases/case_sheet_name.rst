@@ -16,8 +16,8 @@ Steps
 
    a. *Expect:* The line immediately below the window title contains:
       |edit| (name edit icon), "Unnamed" (Factsheet name), |edit|
-      (title edit icon), blank space, |menu| (Factsheet menu icon), and
-      |help| (Factsheet Help icon).
+      (title edit icon), "New Factsheet" (Factsheet title), |menu|
+      (Factsheet menu icon), and |help| (Factsheet Help icon).
    #. *Expect:* The window title is "Unnamed"
 
 #. **Step:** Click name edit icon |edit| on far left.

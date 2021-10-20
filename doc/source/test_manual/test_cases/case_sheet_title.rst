@@ -16,10 +16,10 @@ Steps
 
    a. *Expect:* The line immediately below the window title contains:
       |edit| (name edit icon), "Unnamed" (Factsheet name), |edit|
-      (title edit icon), blank space, |menu| (Factsheet menu icon), and
-      |help| (Factsheet Help icon).
+      (title edit icon), "New Factsheet" (Factsheet title), |menu|
+      (Factsheet menu icon), and |help| (Factsheet Help icon).
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
 
@@ -32,7 +32,7 @@ Steps
    a. *Expect:* The popup disappears.
    #. *Expect:* Factsheet title is "Untitled".
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
    #. *Expect:* Title edit popup contains: "\ **Title:**\ ", |apply|
@@ -44,7 +44,7 @@ Steps
    a. *Expect:* The popup disappears.
    #. *Expect:* Factsheet title is unchanged ("Untitled")
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
 
@@ -53,7 +53,7 @@ Steps
    a. *Expect:* The popup disappears.
    #. *Expect:* Factsheet title is unchanged ("Untitled").
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
 
@@ -62,7 +62,7 @@ Steps
    a. *Expect:* The popup disappears.
    #. *Expect:* Factsheet title is unchanged ("Untitled").
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
 
@@ -80,7 +80,7 @@ Steps
    a. *Expect:* The popup disappears.
    #. *Expect:* Factsheet title is "\ **Z**\ ".
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
 
@@ -104,7 +104,7 @@ Steps
    a. *Expect:* The popup disappears.
    #. *Expect:* Factsheet title is "\ **Z** 1".
 
-#. **Step:** Click title edit icon |edit| on right of Factsheet name.
+#. **Step:** Click title edit icon |edit| on left of Factsheet title.
 
    a. *Expect:* Title edit popup appears below |edit| icon. 
 

@@ -37,11 +37,10 @@ Steps
    #. New window may cover first or second window. Keep track of
       relative positions of windows.
 
-#. **Step:** Click inside the *Factsheet Summary* frame away from the
-   margins.
+#. **Step:** Click inside the *Factsheet Summary* frame after existing
+   text.
 
-   a. *Expect:* A blinking text cursor (|) appears in the upper left
-      corner of the frame.
+   a. *Expect:* A blinking text cursor (|) appears after existing text.
 
 #. **Step:** Edit the summary as follows: “Factsheet Alpha describes a
    Norwegian Blue parrot."

@@ -30,11 +30,10 @@ Steps -- Save and Open
 
    a. *Expect:* "First factsheet" appears in field.
 
-#. **Step:** Click inside the *Factsheet Summary* frame away from the
-   margins. 
+#. **Step:** Click inside the *Factsheet Summary* frame after existing
+   text.
 
-   a. *Expect:* A blinking text cursor (|) appears in the upper left
-      corner of the frame.
+   a. *Expect:* A blinking text cursor (|) appears after existing text.
 
 #. **Step:** Edit the summary to "This is the first factsheet."
 
@@ -194,11 +193,10 @@ Steps -- Save as
 
    a. *Expect:* "Second factsheet" appears in field.
 
-#. **Step:** Click inside the *Factsheet Summary* frame away from the
-   margins. 
+#. **Step:** Click inside the *Factsheet Summary* frame after existing
+   test.
 
-   a. *Expect:* A blinking text cursor (|) appears in the upper left
-      corner of the frame.
+   a. *Expect:* A blinking text cursor (|) appears after existing text.
 
 #. **Step:** Edit the summary to "This is the second factsheet."
 
@@ -266,7 +264,7 @@ Steps -- Save as
    (|menu| icon on far right of *Factsheet* identity line).
 
    a. *Expect:* Save dialog appears.
-   #. *Expect:* Dialog file **Name** field contains "Beta.fsg".
+   #. *Expect:* Dialog file **Name** field contains "Gamma.fsg".
 
 #. **Step:** Change to test data directory.
 
@@ -287,11 +285,7 @@ Steps -- Save as
    #. *Expect:* Files ``Gamma.fsg`` and ``Delta.fsg`` have the same
       size.
 
-#. **Step:** In *Gamma* window, click window **close icon** |window-close|.
-
-   a. *Expect:* Window disappears.
-
-#. **Step:** in *Beta* window, click window **close icon** |window-close|.
+#. **Step:** in *Delta* window, click window **close icon** |window-close|.
 
    a. *Expect:* Window disappears.
    #. *Expect:* *Application* closes.
@@ -316,7 +310,7 @@ Steps -- Duplicate Open
    title on right)
 
    a. *Expect:* Open dialog disappears.
-   #. *Expect:* Second window appears with window title "beta".
+   #. *Expect:* Second window appears with window title "Beta".
    #. *Expect:* Name is "Beta".
    #. *Expect:* Title is "Second factsheet".
    #. *Expect:* Summary contains "This is the second factsheet."
@@ -347,14 +341,15 @@ Steps -- Duplicate Open
    #. *Expect:* Both ``Beta`` windows cover parts of ``Unnamed`` window.
    #. *Expect:* No new windows appear.
 
-#. **Step:** Click ``Beta`` window **close icon** |window-close| (window
-   title far right).
+#. **Step:** In ``Beta`` window, select *Factsheet* **menu** item
+   **File ... > Close.** (|menu| icon on far right of *Factsheet*
+   identity line).
 
-   a. *Expect:* ``Beta`` window disappears.
+   a. *Expect:* Both ``Beta`` windows disappear.
 
 #. **Step:** click ``Unnamed`` window **close icon** |window-close|.
 
-   a. *Expect:* ``Unnamed`` indow disappears.
+   a. *Expect:* ``Unnamed`` window disappears.
    #. *Expect:* *application* closes.
 
 Steps -- Data Loss and Overwrite Warnings
@@ -365,9 +360,10 @@ Steps -- Data Loss and Overwrite Warnings
    a. *Expect:* *Application* displays default factsheet.
 
 #. **Step:** Edit (|edit| icon on left) factsheet name "Unnamed" to
-   "Guards".
+   "<b>Guards</b>".
 
-   a. *Expect:* "Guards" appears in field.
+   a. *Expect:* "**Guards**" appears in field.
+   #. *Expect:* "**Guards**" appears in window title.
 
 #. **Step:** Click *Factsheet* **Save button** (window title on right
    near center).
@@ -401,6 +397,11 @@ Steps -- Data Loss and Overwrite Warnings
    far right).
 
    a. *Expect:* *Data Loss Warning* dialog appears.
+   #. *Expect:* First warning line is: "Factsheet **Guards** contains
+      unsaved changes. All unsaved changes will be discarded if you
+      close."
+   #. *Expect:* Second warning line is: "Cancel close, or continue to
+      close and discard changes?"
 
 #. **Step:** Click **Cancel button**
 
