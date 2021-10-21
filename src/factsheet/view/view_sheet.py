@@ -11,7 +11,7 @@ import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 # from factsheet.view import query_place as QPLACE
 # from factsheet.view import query_template as QTEMPLATE
-import factsheet.view.view_idcore as VIDCORE
+import factsheet.view.view_markup as VMARKUP
 # from factsheet.view import scenes as VSCENES
 # from factsheet.view import view_infoid as VINFOID
 # from factsheet.view import form_topic as VTOPIC
@@ -407,7 +407,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         display_name = self._control.new_display_name()
         editor_name = self._control.new_editor_name()
-        view_name = VIDCORE.ViewMarkup(display_name, editor_name, 'Name')
+        view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
         site_name_sheet = p_get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
             view_name.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
@@ -440,7 +440,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         display_title = self._control.new_display_title()
         editor_title = self._control.new_editor_title()
-        view_title = VIDCORE.ViewMarkup(display_title, editor_title, 'Title')
+        view_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
         site_title_sheet = p_get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
             view_title.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)

@@ -21,7 +21,7 @@ Submodules
    :maxdepth: 1
 
    factsheet.view.ui
-   factsheet.view.view_idcore
+   factsheet.view.view_markup
    factsheet.view.view_sheet
 ..   factsheet.view.form_topic
 ..   factsheet.view.query_place

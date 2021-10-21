@@ -17,7 +17,7 @@ import factsheet.model.sheet as MSHEET
 # from factsheet.model import topic as MTOPIC
 # from factsheet.view import query_place as QPLACE
 # from factsheet.view import query_template as QTEMPLATE
-# import factsheet.view.view_idcore as VIDCORE
+# import factsheet.view.view_markup as VMARKUP
 import factsheet.view.view_sheet as VSHEET
 # from factsheet.view import scenes as VSCENES
 # from factsheet.view import form_topic as VTOPIC

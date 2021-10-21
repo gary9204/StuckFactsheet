@@ -20,7 +20,7 @@ Submodules
 .. toctree::
 
    factsheet_test.view.test_ui
-   factsheet_test.view.test_view_idcore
+   factsheet_test.view.test_view_markup
    factsheet_test.view.test_view_sheet
 ..   factsheet_test.view.conftest
 ..   factsheet_test.view.manual_scene_table

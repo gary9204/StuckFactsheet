@@ -1,12 +1,12 @@
 """
 Unit tests for classes to display identity information.  See
-:mod:`.view_idcore`.
+:mod:`.view_markup`.
 """
 import pytest   # type: ignore[import]
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
-import factsheet.view.view_idcore as VIDCORE
+import factsheet.view.view_markup as VMARKUP
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -46,7 +46,7 @@ class TestEditorMarkup:
         TYPE = 'Parrot'
         TYPE_MARKED = '<b>' + TYPE + '</b>:'
         # Test
-        target = VIDCORE.ViewMarkup(
+        target = VMARKUP.ViewMarkup(
             p_display=DISPLAY, p_editor=EDITOR, p_type=TYPE)
         children_editor = target._ui_view.get_children()
         assert target._buffer is EDITOR.get_buffer()
@@ -98,7 +98,7 @@ class TestEditorMarkup:
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         DISPLAY, EDITOR = setup_views_markup
-        target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
+        target = VMARKUP.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         # Test
         attribute = getattr(target, NAME_ATTR)
         n_handlers = 0
@@ -132,7 +132,7 @@ class TestEditorMarkup:
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         DISPLAY, EDITOR = setup_views_markup
-        _target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
+        _target = VMARKUP.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         # Test
         n_handlers = 0
         while True:
@@ -163,7 +163,7 @@ class TestEditorMarkup:
         """
         # Setup
         DISPLAY, EDITOR = setup_views_markup
-        target = VIDCORE.ViewMarkup(
+        target = VMARKUP.ViewMarkup(
             p_display=DISPLAY, p_editor=EDITOR)
         TEXT = 'Something completely different'
         target._buffer.set_text(TEXT, len(TEXT))
@@ -185,7 +185,7 @@ class TestEditorMarkup:
         """
         # Setup
         DISPLAY, EDITOR = setup_views_markup
-        target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
+        target = VMARKUP.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         BLANK = ''
         TEXT = 'Something completely different.'
         target._buffer.set_text(TEXT, len(TEXT))
@@ -208,9 +208,9 @@ class TestEditorMarkup:
         """
         # Setup
         DISPLAY, EDITOR = setup_views_markup
-        target = VIDCORE.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
+        target = VMARKUP.ViewMarkup(p_display=DISPLAY, p_editor=EDITOR)
         attr = getattr(target, NAME_ATTR)
-        CLASS = VIDCORE.ViewMarkup
+        CLASS = VMARKUP.ViewMarkup
         target_prop = getattr(CLASS, NAME_PROP)
         # Test
         assert target_prop.fget is not None
