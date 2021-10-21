@@ -40,30 +40,6 @@ class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
         self.called_present = True
 
 
-@pytest.fixture  # (autouse=True)
-def reset_g_test():
-    CSHEET.g_test = ['item 3']
-
-
-@pytest.mark.skip(reason='saving for additional experiments.')
-class TestResetGTest:
-    """Experiment to determine behavior of global variables."""
-
-    def test_g_test_set(self):
-        # Setup
-        # Test
-        print('Set p_test pre:  {}'.format(CSHEET.g_test))
-        CSHEET.g_test.append('item 2')
-        print('Set p_test_post: {}'.format(CSHEET.g_test))
-        assert False
-
-    def test_g_test_get(self):
-        # Setup
-        # Test
-        print('Get p_test: {}'.format(CSHEET.g_test))
-        assert False
-
-
 @pytest.fixture
 def patch_g_control_app():
     """Pytest fixture with teardown: Reset :data:`.g_control_app`."""

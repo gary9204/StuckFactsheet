@@ -44,16 +44,20 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
     """Factsheet document :mod:`~factsheet.model`.
 
     Class ``Sheet`` represents an entire Factsheet document.  A model
-    factsheet consists of a hierarchy of topics along with
-    identification information (see :class:`.IdCore`.) Each topic
-    represents a collection of facts about a specific subject.
+    factsheet consists of a outline of topics along with identification
+    information (see :class:`.IdCore`). Each topic represents a
+    collection of facts about a specific subject.
 
     .. admonition:: About Equality
 
-        Two factsheet are equivalent when they have the same topic
-        outlines and identification information. Transient aspects of
-        the factsheets (like windows) are not compared and may be
-        different.
+        Each factsheet model has persistent identification information
+        and a topic outline.  In addition, a factsheet model may have
+        transient aspects such as change state with respect to file
+        storage,
+
+        Two factsheet are equal when their identification information
+        are equal and their topic outlines are equal.  Transient
+        aspects of the factsheets are not compared and may be different.
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:
@@ -75,16 +79,6 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
 
         return True
 
-    # def __getstate__(self) -> typing.Dict:
-    #     """Return factsheet model in form pickle can persist.
-    #
-    #     Persistent form of factsheet excludes run-time information .
-    #     """
-    #     state = self.__dict__.copy()
-    #     # del state['_pages']
-    #     # del state['_stale']
-    #     return state
-
     def __init__(self, *, p_name: str = 'Unnamed',
                  p_summary: str = 'Edit factsheet description here.',
                  p_title: str = 'New Factsheet',
@@ -100,22 +94,6 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
         self._summary = Summary(p_text=p_summary)
         self._title = Title(p_text=p_title)
         super().__init__(**kwargs)
-
-    # def __setstate__(self, p_state: typing.Dict) -> None:
-    #     """Reconstruct factsheet model from state pickle loads.
-    #
-    #     Reconstructed attribute is marked fresh and has no views.
-    #
-    #     :param p_state: unpickled state of stored factsheet model.
-    #     """
-    #     self.__dict__.update(p_state)
-    #     # self._state_transient()
-
-    # def _state_transient(self) -> None:
-    #     """Helper ensures initialization and pickling are consistent."""
-    #     raise NotImplementedError
-    #     # self._stale = False
-    #     # self._pages: typing.Dict[int, ABC_SHEET.InterfacePageSheet] = dict()
 
     # def attach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
     #     """Add view to update dialpay when topics outline changes.

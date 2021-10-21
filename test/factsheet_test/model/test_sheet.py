@@ -1,5 +1,7 @@
 """
 Unit tests for factsheet-level model.  See :mod:`~factsheet.model`.
+
+.. include:: /test/refs_include_pytest.txt
 """
 # import logging
 # from pathlib import Path
@@ -64,43 +66,11 @@ class TestSheet:
         assert source.__eq__(target)
         assert not source.__ne__(target)
 
-    # @pytest.mark.skip(reason='Method marked for deletion')
-    # def test_get_set_state(self, tmp_path, interface_page_sheet):
-    #     """Confirm conversion to and from pickle format."""
-    #     # # Setup
-    #     # path = Path(str(tmp_path / 'get_set.fsg'))
-    #     #
-    #     # TITLE_MODEL = 'Something completely different.'
-    #     # source = MSHEET.Sheet(p_title=TITLE_MODEL)
-    #     # source._stale = True
-    #     #
-    #     # topic = MTOPIC.Topic()
-    #     # topic.init_identity(p_name='Killer Rabbit')
-    #     # _index = source._topics.insert_child(topic, None)
-    #     #
-    #     # N_PAGES = 3
-    #     # pages = [interface_page_sheet() for _ in range(N_PAGES)]
-    #     # for page in pages:
-    #     #     source.attach_page(page)
-    #     # # Test
-    #     # with path.open(mode='wb') as io_out:
-    #     #     pickle.dump(source, io_out)
-    #     #
-    #     # with path.open(mode='rb') as io_in:
-    #     #     target = pickle.load(io_in)
-    #     #
-    #     # assert source._infoid == target._infoid
-    #     # assert source._topics == target._topics
-    #     # assert not target._stale
-    #     # assert isinstance(target._pages, dict)
-    #     # assert not target._pages
-
     def test_init(self, new_id_args):
         """| Confirm initialization.
         | Case: nominal.
 
-        :param new_id_args: fixture: factory for stock identity
-            keyword arguments.
+        :param new_id_args: fixture :func:`.new_id_args`.
         """
         # Setup
         ID_ARGS = new_id_args()
@@ -138,8 +108,11 @@ class TestSheet:
     #     # assert target._topics._gtk_model is VIEW_TOPICS.gtk_view.get_model()
 
     @pytest.mark.skip
-    def test_clear(self, monkeypatch, interface_page_sheet):
-        """| Confirm topics outline removal."""
+    def test_clear(self, monkeypatch):
+        """| Confirm topics outline removal.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # # Setup
         # class PatchClear:
         #     def __init__(self): self.called = False
@@ -188,9 +161,11 @@ class TestSheet:
     #     # assert VIEW_TOPICS.gtk_view.get_model() is None
 
     @pytest.mark.skip
-    def test_extract_topic(self, monkeypatch, interface_page_sheet):
+    def test_extract_topic(self, monkeypatch):
         """| Confirm method request relay to outline.
         | Case: relay index.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # class PatchExtract:
@@ -236,6 +211,8 @@ class TestSheet:
     def test_extract_topic_none(self, monkeypatch):
         """| Confirm method request relay to outline.
         | Case: drop None.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # # Setup
         # class PatchExtract:
@@ -255,7 +232,10 @@ class TestSheet:
 
     @pytest.mark.skip
     def test_insert_topic_after(self, monkeypatch):
-        """Confirm method passes request to outline."""
+        """Confirm method passes request to outline.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         # class PatchInsertAfter:
         #     def __init__(self): self.called = False
@@ -275,7 +255,10 @@ class TestSheet:
 
     @pytest.mark.skip
     def test_insert_topic_before(self, monkeypatch):
-        """Confirm method passes request to outline."""
+        """Confirm method passes request to outline.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # # Setup
         # class PatchInsertBefore:
         #     def __init__(self): self.called = False
@@ -295,7 +278,10 @@ class TestSheet:
 
     @pytest.mark.skip
     def test_insert_topic_child(self, monkeypatch):
-        """Confirm method passes request to outline."""
+        """Confirm method passes request to outline.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         # class PatchInsertChild:
         #     def __init__(self): self.called = False
@@ -320,8 +306,7 @@ class TestSheet:
         #. Case: Sheet fresh, ID info stale
         #. Case: Sheet fresh, ID info fresh
 
-        :param new_id_args: fixture: factory for stock identity
-            keyword arguments.
+        :param new_id_args: fixture :func:`.new_id_args`.
         """
         # Setup
         ID_ARGS = new_id_args()
@@ -351,8 +336,7 @@ class TestSheet:
         #. Case: Sheet fresh, ID info fresh, leaf topic stale
         #. Case: Sheet fresh, ID info fresh, last topic stale
 
-        :param new_id_args: fixture: factory for stock identity
-            keyword arguments.
+        :param new_id_args: fixture :func:`.new_id_args`.
         """
         # Setup
         ID_ARGS = new_id_args()
@@ -428,15 +412,14 @@ class TestSheet:
     def test_set_fresh(self, new_id_args):
         """Confirm all attributes marked fresh.
 
-        #. Case: Sheet fresh, identification information fresh
-        #. Case: Sheet stale, identification information fresh
-        #. Case: Sheet fresh, identification information stale
-        #. Case: Sheet stale, identification information stale
+        #. Case: Sheet fresh, ID info fresh
+        #. Case: Sheet stale, ID info fresh
+        #. Case: Sheet fresh, ID info stale
+        #. Case: Sheet stale, ID info stale
         #. Case: Sheet fresh, topics stale
         #. Case: Sheet stale, topics stale
 
-        :param new_id_args: fixture: factory for stock identity
-            keyword arguments.
+        :param new_id_args: fixture :func:`.new_id_args`.
         """
         # Setup
         ID_ARGS = new_id_args()
@@ -456,25 +439,25 @@ class TestSheet:
         #     topic = MTOPIC.Topic()
         #     topic.init_identity(p_name=name)
         #     parent = target.insert_topic_child(topic, parent)
-        # Test: Sheet fresh, identification information fresh
+        # Test: Sheet fresh, ID info fresh
         target._stale = False
         target._title.set_fresh()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # Test: Sheet stale, identification information fresh
+        # Test: Sheet stale, ID info fresh
         target._stale = True
         target._title.set_fresh()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # Test: Sheet fresh, identification information stale
+        # Test: Sheet fresh, ID info stale
         target._stale = False
         target._title.set_stale()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # Test: Sheet stale, identification information stale
+        # Test: Sheet stale, ID info stale
         target._stale = True
         target._title.set_stale()
         target.set_fresh()

@@ -16,7 +16,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def setup_views_markup():
-    """Fixture with teardown: return dispaly and editor views of markup."""
+    """Fixture with teardown: return display and editor views of markup."""
     PATH = None
     control = CSHEET.g_control_app.open_factsheet(
         p_path=PATH, p_time=BUI.TIME_EVENT_CURRENT)
@@ -48,11 +48,11 @@ class TestEditorMarkup:
         # Test
         target = VIDCORE.ViewMarkup(
             p_display=DISPLAY, p_editor=EDITOR, p_type=TYPE)
-        children_editor = target._view.get_children()
+        children_editor = target._ui_view.get_children()
         assert target._buffer is EDITOR.get_buffer()
         assert isinstance(target._button_edit, Gtk.MenuButton)
         assert '' == target._text_restore
-        assert isinstance(target._view, Gtk.Box)
+        assert isinstance(target._ui_view, Gtk.Box)
 
         site_display = children_editor[I_SITE_DISPLAY]
         assert isinstance(site_display, Gtk.Box)
@@ -86,7 +86,7 @@ class TestEditorMarkup:
     def test_init_signals_attr(self, setup_views_markup,
                                NAME_SIGNAL, NAME_ATTR, ORIGIN, N_DEFAULT):
         """| Confirm initialization.
-        | Case: signal connections to attributes
+        | Case: signal connections to view attributes.
 
         :param setup_views_markup: fixture :func:`.setup_views_markup`.
         :param NAME_SIGNAL: name of signal to check.
@@ -121,7 +121,7 @@ class TestEditorMarkup:
     def test_init_signals_editor(
             self, setup_views_markup, NAME_SIGNAL, ORIGIN, N_DEFAULT):
         """| Confirm initialization.
-        | Case: signal connections to active view
+        | Case: signal connections to editor.
 
         :param setup_views_markup: fixture :func:`.setup_views_markup`.
         :param NAME_SIGNAL: name of signal to check.
@@ -154,8 +154,8 @@ class TestEditorMarkup:
     def test_on_icon_press(self, setup_views_markup, ICON, EXPECT_TEXT):
         """Confirm text restored before ending edit.
 
-        #. Case: primary icon
-        #. Case: secondary icon
+        #. Case: primary icon.
+        #. Case: secondary icon.
 
         :param setup_views_markup: fixture :func:`.setup_views_markup`.
         :param ICON: icon to check.
@@ -170,16 +170,16 @@ class TestEditorMarkup:
         target._button_edit.clicked()
         BLANK = ''
         target._text_restore = BLANK
-        # Test: primary icon
+        # Test
         target.on_icon_press(None, ICON, None)
         assert not target._button_edit.get_active()
         assert EXPECT_TEXT == target._buffer.get_text()
 
     def test_on_toggle(self, setup_views_markup):
-        """Confirm record and clear of restored text.
+        """Confirm record of restore text and clear of restore text.
 
-        #. Case: edit button is active
-        #. Case: edit button is not active
+        #. Case: editor changes to active
+        #. Case: editor changes to not active
 
         :param setup_views_markup: fixture :func:`.setup_views_markup`.
         """
@@ -197,7 +197,7 @@ class TestEditorMarkup:
         assert BLANK == target._text_restore
 
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
-        ('view', '_view'),
+        ('ui_view', '_ui_view'),
         ])
     def test_property_access(
             self, setup_views_markup, NAME_PROP, NAME_ATTR):

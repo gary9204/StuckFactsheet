@@ -14,10 +14,12 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class ViewMarkup:
     """Provides capability to display and edit text with `Pango markup`_.
 
-    Display view shows formatted text when markup is valid.  User can
-    popup view of markup text to edit.  The formatted text display
-    updates as the user edits the markup text.  User can cancel edit and
-    discard changes.
+    The view contains a display and an editor. Display shows formatted
+    text when markup is valid.  It shows text with embedded markup when
+    there is a markup error.  User can popup editor to edit both text
+    and embedded markup.  The formatted text in the display updates as
+    the user edits the markup text.  User can cancel edit and discard
+    changes.
 
     .. _Pango markup:
         https://developer.gnome.org/pygtk/stable/pango-markup-language.html
@@ -114,9 +116,9 @@ class ViewMarkup:
                  p_type: str = '') -> None:
         """Initialize editor view contents.
 
-        :param p_display: display view for formatted text.
-        :param p_editor: editor view for markup text.
-        :param p_type: content type of editor (for example, 'Title')
+        :param p_display: display for formatted text.
+        :param p_editor: editor for markup text.
+        :param p_type: content type of view (for example, 'Title')
         """
         builder = Gtk.Builder.new_from_string(self._UI_VIEW_MARKUP, -1)
         get_object = builder.get_object
@@ -125,7 +127,7 @@ class ViewMarkup:
         self._button_edit = get_object('button_edit')
         _ = self._button_edit.connect('toggled', self.on_toggled)
         self._text_restore = ''
-        self._view = get_object('view')
+        self._ui_view = get_object('view')
 
         EXPAND_OKAY = True
         FILL_OKAY = True
@@ -169,6 +171,6 @@ class ViewMarkup:
             self._text_restore = ''
 
     @property
-    def view(self) -> Gtk.Box:
-        """Return view of markup editor."""
-        return self._view
+    def ui_view(self) -> Gtk.Box:
+        """Return GTK element of markup view."""
+        return self._ui_view

@@ -83,8 +83,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 @pytest.fixture
 def new_id_args():
-    """Pytest fixture: factory for stock identity arguments for
-    :class:`.Sheet`.
+    """Pytest fixture: factory for stock identity keyword arguments.
     """
     def new_args():
         id_args = dict(

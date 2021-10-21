@@ -51,57 +51,11 @@ class ExceptionSheet(Exception):
 
 
 class BackupFileError(ExceptionSheet):
-    """Raise for errors backing up a file during save operation."""
-
-    pass
-
-
-class DumpFileError(ExceptionSheet):
-    """Raise for errors dumping sheet to a file."""
-
-    pass
-
-
-# class LoadFileError(ExceptionSheet):
-#     """Raise for errors loading sheet from a file."""
-#
-#     pass
-
-
-class NoFileError(ExceptionSheet):
-    """Raise for file operations when when factsheet has no file path."""
-
-    pass
-
-
-class OpenFileError(ExceptionSheet):
-    """Raise for errors opening a file."""
-
-    pass
-
-
-def id_factsheet(p_control_sheet: 'ControlSheet') -> IdFactsheet:
-    """Return unique identifier for a factsheet.
-
-    There is a one-to-one correspondence between factsheets and sheet
-    controls.  The identifier is unique during the lifetime of the
-    factsheet.  An identifier may be reused if a factsheet view is
-    destroyed.
-
-    :param p_control_sheet: sheet control for the factsheet to identify.
+    """Raise for errors when making backup copy of file during save
+    operation.
     """
-    return IdFactsheet(id(p_control_sheet))
 
-
-def id_view_sheet(p_view_sheet: 'ObserverControlSheet') -> IdViewSheet:
-    """Return unique identifier for a sheet view.
-
-    The identifier is unique during the lifetime of the sheet view.  An
-    identifier may be reused if a sheet view is destroyed.
-
-    :param p_view_sheet: sheet view to identify.
-    """
-    return IdViewSheet(id(p_view_sheet))
+    pass
 
 
 class ControlApp:
@@ -116,16 +70,16 @@ class ControlApp:
         self._roster_sheets: typing.MutableMapping[
             IdFactsheet, 'ControlSheet'] = dict()
 
-    def close_factsheet(self, p_control: 'ControlSheet') -> None:
-        """Remove all factsheet's views, which stops factsheet tracking.
-
-        :param p_control: factsheet to erase.
-        """
-        p_control.remove_all_views()
-
     def close_all_factsheets(self) -> None:
         """TBD"""
         pass
+
+    def close_factsheet(self, p_control: 'ControlSheet') -> None:
+        """Close all views of the given factsheet.
+
+        :param p_control: factsheet whose views to close.
+        """
+        p_control.remove_all_views()
 
     def open_factsheet(
             self, p_path: typing.Optional[Path], p_time: BUI.TimeEvent
@@ -140,6 +94,7 @@ class ControlApp:
         See :meth:`.ControlSheet.open` regarding file load failure.
 
         :param p_path: location for factsheet file.
+        :param p_time: timestamp to order open requests.
         """
         if p_path is not None:
             path_absolute = p_path.resolve()
@@ -154,11 +109,11 @@ class ControlApp:
         return control
 
     def remove_factsheet(self, p_control: 'ControlSheet') -> None:
-        """Stop tracking factsheet.
+        """Remove factsheet from collection of open factsheets.
 
         Log a warning when the control is not in the collection.
 
-        :param p_control: factsheet to erase.
+        :param p_control: factsheet to remove.
         """
         id_control = id_factsheet(p_control)
         try:
@@ -173,15 +128,16 @@ g_control_app = ControlApp()
 
 
 class ControlSheet:
-    """Mediates user actions at view to model updates for a factsheet.
+    """Mediates between user actions at factsheet view and factsheet model.
 
-    Class :class:`ControlSheet` translates user requests in a factsheet
+    Class :class:`ControlSheet` maintains a collection of active views
+    of a factsheet. The class translates user requests in a factsheet
     view into changes in the factsheet model (such as save or delete) or
-    in the collection of factsheet views (such as add or erase a view).
+    in the collection of factsheet views (such as add or remove a view).
     """
 
     def __init__(self, p_path: Path = None) -> None:
-        """Initialize instance with given attributes and no topics."""
+        """Initialize instance from given file or with default attributes."""
         self._path = p_path
         self._model = self._model_from_path(p_path)
 
@@ -206,7 +162,12 @@ class ControlSheet:
         #     MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
 
     def add_view(self, p_view: 'ObserverControlSheet') -> None:
-        """Track given sheet view but warn of duplicates."""
+        """Add given view to collection of active views.
+
+        Log a warning for a duplicate addition.
+
+        :param p_view: view to add.
+        """
         id_view = id_view_sheet(p_view_sheet=p_view)
         if id_view in self._roster_views:
             logger.warning('Duplicate: sheet 0x{:X} add view 0x{:X}  '
@@ -214,6 +175,75 @@ class ControlSheet:
                                             self.__class__.__name__,
                                             self.add_view.__name__))
         self._roster_views[id_view_sheet(p_view)] = p_view
+
+    def clear(self) -> None:
+        """Requests topics outline to remove all topics."""
+        raise NotImplementedError
+        # assert self._model is not None
+        # self._model.clear()
+
+    def is_fresh(self) -> bool:
+        """Return True when there are no unsaved changes to factsheet."""
+        return self._model.is_fresh()
+
+    def is_stale(self) -> bool:
+        """Return True when there is at least one unsaved change to
+        factsheet.
+        """
+        return self._model.is_stale()
+
+    def _model_from_error(
+            self, p_err: Exception, p_message: str) -> MSHEET.Sheet:
+        """Return sheet model containing error information and log details.
+
+        :param p_err: error to record.
+        :param p_message: text for error sheet summary.
+        """
+        logger.error(p_message)
+        for line in TB.format_exception(
+                type(p_err), p_err, p_err.__traceback__):
+            logger.error(line.rstrip('\n'))
+        name = 'OPEN ERROR'
+        source = 'Error source is {}: {}'.format(type(p_err).__name__, p_err)
+        path = 'Path: {}'.format(str(self._path))
+        summary = '\n'.join([p_message, source, path])
+        title = 'Factsheet not opened.'
+        model = MSHEET.Sheet(p_name=name, p_summary=summary, p_title=title)
+        return model
+
+    def _model_from_path(self, p_path: typing.Optional[Path]) -> MSHEET.Sheet:
+        """Return sheet model from file at given location or a new model.
+
+        Return a new, empty sheet model when path is None or when there
+        is no file at given path. When model cannot be loaded from file
+        at given path, return a sheet model containing error
+        information.
+
+        :param p_path: location of file for factsheet model.
+        """
+        if p_path is None:
+            model = MSHEET.Sheet()
+            return model
+
+        try:
+            with p_path.open(mode='rb') as io_in:
+                try:
+                    model = pickle.load(io_in)
+                except Exception as err:
+                    message = 'Factsheet not open! could not read file.'
+                    model = self._model_from_error(err, message)
+        except FileNotFoundError:
+            model = MSHEET.Sheet()
+        except Exception as err:
+            message = 'Factsheet not open! could not open file.'
+            model = self._model_from_error(err, message)
+        return model
+
+    @property
+    def name(self) -> str:
+        """Return sheet name without markup errors."""
+        name = BUI.escape_text_markup(self._model.name.text)
+        return name
 
     @property
     def new_display_name(self) -> MSHEET.DisplayName:
@@ -245,52 +275,43 @@ class ControlSheet:
         """Return factory for editors of sheet titles."""
         return self._factory_editor_title
 
-    def _model_from_error(
-            self, p_err: Exception, p_message: str) -> MSHEET.Sheet:
-        """Return sheet model containing error information and log details.
+    def _open_file_save(self) -> typing.BinaryIO:
+        """Return an open file object after backing up any existing file.
 
-        :param p_err: error to record.
-        :param p_message: text for error sheet summary.
+        Backup provides (minimal) guard against inadvertent overwrite.
+
+        :raises ExceptionSheet: see :meth:`~.ControlSheet.save`.
+        :returns: Open file object at control's path.
         """
-        logger.error(p_message)
-        for line in TB.format_exception(
-                type(p_err), p_err, p_err.__traceback__):
-            logger.error(line.rstrip('\n'))
-        name = 'OPEN ERROR'
-        source = 'Error source is {}: {}'.format(type(p_err).__name__, p_err)
-        path = 'Path: {}'.format(str(self._path))
-        summary = '\n'.join([p_message, source, path])
-        title = 'Factsheet not opened.'
-        model = MSHEET.Sheet(p_name=name, p_summary=summary, p_title=title)
-        return model
-
-    def _model_from_path(self, p_path: typing.Optional[Path]) -> MSHEET.Sheet:
-        """Return sheet model from file at given location or a new model.
-
-        Return a new, empty sheet model when path is None or when there
-        is no file at given path. When model cannot be loaded from file
-        at given path, return, as heet model containing error
-        information.
-
-        :param p_path: location of file for factsheet model.
-        """
-        if p_path is None:
-            model = MSHEET.Sheet()
-            return model
-
+        if self._path is None:
+            raise NoFileError('Save: cannot open path None.')
         try:
-            with p_path.open(mode='rb') as io_in:
-                try:
-                    model = pickle.load(io_in)
-                except Exception as err:
-                    message = 'Factsheet not open! could not read file.'
-                    model = self._model_from_error(err, message)
-        except FileNotFoundError:
-            model = MSHEET.Sheet()
-        except Exception as err:
-            message = 'Factsheet not open! could not open file.'
-            model = self._model_from_error(err, message)
-        return model
+            io_out = self._path.open(mode='xb')
+        except FileExistsError:
+            try:
+                self._path.replace(str(self._path) + '~')
+            except Exception as err_replace:
+                raise BackupFileError from err_replace
+            try:
+                io_out = self._path.open(mode='xb')
+            except Exception as err_reopen:
+                raise OpenFileError from err_reopen
+        except Exception as err_open:
+            raise OpenFileError from err_open
+        return io_out
+
+    @property
+    def path(self) -> typing.Optional[Path]:
+        """Return path to file containing factsheet contents."""
+        return self._path
+
+    def present_views(self, p_time: BUI.TimeEvent) -> None:
+        """Make visible to user all views of the factsheet.
+
+        :param p_time: timestamp of event requesting presentation.
+        """
+        for view in self._roster_views.values():
+            view.present(p_time)
 
     # def _add_new_control_topic(self, px_topic: MTOPIC.Topic
     #                            ) -> CTOPIC.ControlTopic:
@@ -311,14 +332,8 @@ class ControlSheet:
     #     assert self._model is not None
     #     self._model.attach_view_topics(p_view)
 
-    def clear(self) -> None:
-        """Requests topics outline to remove all topics."""
-        raise NotImplementedError
-        # assert self._model is not None
-        # self._model.clear()
-
     def remove_all_views(self) -> None:
-        """Stop tracking all views of the factsheet."""
+        """Remove all views of the collection of active views."""
         views = self._roster_views.values()
         while views:
             view = next(iter(views))
@@ -326,7 +341,15 @@ class ControlSheet:
             self.remove_view(p_view=view)
 
     def remove_view(self, p_view: 'ObserverControlSheet') -> None:
-        """Stop tracking given sheet view but warn of missing view."""
+        """Remove given view from collection of active views.
+
+        Log a warning for a missing view.
+
+        If the collection of active views is empty, remove the factsheet
+        from the collection of open factsheets.
+
+        :param p_view: view to remove.
+        """
         id_view = id_view_sheet(p_view_sheet=p_view)
         try:
             self._roster_views.pop(id_view)
@@ -342,10 +365,10 @@ class ControlSheet:
             g_control_app.remove_factsheet(p_control=self)
 
     def remove_view_is_safe(self) -> bool:
-        """Return True when the control can safely erase a sheet view.
+        """Return True when the control can safely remove a view.
 
         A factsheet closes when it has no views.  A sheet control may
-        safely erase a sheet view when:
+        safely remove a sheet view when:
 
         * The factsheet contains no unsaved changes or
         * The factsheet has more than one view or
@@ -435,22 +458,6 @@ class ControlSheet:
     #     control_new = self._add_new_control_topic(px_topic)
     #     return index_new, control_new
 
-    def is_fresh(self) -> bool:
-        """Return True when there are no unsaved changes to factsheet."""
-        return self._model.is_fresh()
-
-    def is_stale(self) -> bool:
-        """Return True when there is at least one unsaved change to
-        factsheet.
-        """
-        return self._model.is_stale()
-
-    @property
-    def name(self) -> str:
-        """Return sheet name without markup errors."""
-        name = BUI.escape_text_markup(self._model.name.text)
-        return name
-
     # @property
     # def model(self) -> MSHEET.Sheet:
     #     """Return sheet model."""
@@ -491,59 +498,15 @@ class ControlSheet:
     #     """Return display-only view of title."""
     #     return self._model.new_view_title_passive()
 
-    @classmethod
-    def open(cls, p_path: typing.Optional[Path] = None) -> 'ControlSheet':
-        """Create and return control with model.
-
-        If given path is None or there is no file at the path location,
-        then return control with a new, empty model.  If a file at the
-        path location does not contain a factsheet, then return control
-        with a new model containing a warning message.  Otherwise,
-        return control with model from the factsheet file.
-
-        :param p_path: location of file for factsheet model.
-        :returns: Newly created control.
-        """
-        raise NotImplementedError
-        # if p_path is None:
-        #     model = MSHEET.Sheet()
-        # else:
-        #     try:
-        #         # with p_path.open(mode='rb') as io_in:
-        #         #     model = pickle.load(io_in)
-        #         raise NotImplementedError
-        #     except Exception:
-        #         raise
-        #         # name = 'OPEN ERROR'
-        #         # summary = TB.format_exc()
-        #         # title = 'Error opening file \'{}\''.format(p_path)
-        #         # model = MSHEET.Sheet(
-        #         #     p_name=name, p_summary=summary, p_title=title)
-        # control = ControlSheet(p_path=p_path)
-        # return control
-
-    @property
-    def path(self) -> typing.Optional[Path]:
-        """Return path to file containing factsheet contents."""
-        return self._path
-
-    def present_views(self, p_time: BUI.TimeEvent) -> None:
-        """Make all sheet views visible to user.
-
-        :param p_time: time stamp of event requesting presentation.
-        """
-        for view in self._roster_views.values():
-            view.present(p_time)
-
     def save(self, p_path: typing.Optional[Path] = None) -> None:
         """Save factsheet contents to file at factsheet's path.
 
         :param p_path: path to replace factsheet's path.
 
         :raises BackupFileError: when backup fails.
+        :raises DumpFileError: when factsheet cannot be written to file.
         :raises OpenFileError: for all other errors.
         :raises NoFileError: when path to save file is None.
-        :raises OSError: when control cannot open file at path.
         """
         if p_path is not None:
             self._path = p_path
@@ -554,34 +517,21 @@ class ControlSheet:
                 raise DumpFileError from err_dump
         self._model.set_fresh()
 
-    def _open_file_save(self) -> typing.BinaryIO:
-        """Return an open, empty file after backing up existing file.
 
-        Backup provides (minimal) guard against inadvertent overwrite.
+class DumpFileError(ExceptionSheet):
+    """Raise for errors dumping sheet to a file."""
 
-        :raises ExceptionSheet: see :meth:`~.ControlSheet.save`.
-        :returns: Open file object at control's path.
-        """
-        if self._path is None:
-            raise NoFileError('Save: cannot open path None.')
-        try:
-            io_out = self._path.open(mode='xb')
-        except FileExistsError:
-            try:
-                self._path.replace(str(self._path) + '~')
-            except Exception as err_replace:
-                raise BackupFileError from err_replace
-            try:
-                io_out = self._path.open(mode='xb')
-            except Exception as err_reopen:
-                raise OpenFileError from err_reopen
-        except Exception as err_open:
-            raise OpenFileError from err_open
-        return io_out
+    pass
+
+
+class NoFileError(ExceptionSheet):
+    """Raise for file operations when when factsheet has no file path."""
+
+    pass
 
 
 class ObserverControlSheet(abc.ABC):
-    """Define interface for sheet control to notify a sheet view observer.
+    """Define interface for sheet control to notify a sheet view.
 
     In general, a sheet view requests services from its sheet control.
     For a few exceptions, a sheet view acts as an observer of its sheet
@@ -603,4 +553,31 @@ class ObserverControlSheet(abc.ABC):
         raise NotImplementedError
 
 
-g_test = ['item 1']
+class OpenFileError(ExceptionSheet):
+    """Raise for errors opening a file."""
+
+    pass
+
+
+def id_factsheet(p_control_sheet: 'ControlSheet') -> IdFactsheet:
+    """Return unique identifier for a factsheet.
+
+    There is a one-to-one correspondence between factsheets and sheet
+    controls.  The identifier is unique during the lifetime of the
+    factsheet.  An identifier may be reused if a factsheet is
+    destroyed.
+
+    :param p_control_sheet: sheet control used to identify factsheet.
+    """
+    return IdFactsheet(id(p_control_sheet))
+
+
+def id_view_sheet(p_view_sheet: 'ObserverControlSheet') -> IdViewSheet:
+    """Return unique identifier for a sheet view.
+
+    The identifier is unique during the lifetime of the sheet view.  An
+    identifier may be reused if a sheet view is destroyed.
+
+    :param p_view_sheet: sheet view to identify.
+    """
+    return IdViewSheet(id(p_view_sheet))
