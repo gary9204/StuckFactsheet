@@ -231,23 +231,21 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     user's actions at the user interface into requests to update the
     model and its presentation.
 
-    :param px_app: application to which factsheet belongs.
-
     .. attribute:: NAME_FILE_DIALOG_DATA_LOSS_UI
 
        Path to user interface definition of data loss warning dialog.
 
     .. attribute:: NAME_FILE_SHEET_UI
 
-       Path to user interface defintion of factsheet view.
+       Path to user interface defintion of factsheet window.
 
     .. attribute:: ALLOW_CLOSE
 
-        Indicates GTK should erase a factsheet view.
+        Indicates GTK should close a factsheet window.
 
     .. attribute:: DENY_CLOSE
 
-        Indicates GTK should cancel closing a factsheet view.
+        Indicates GTK should cancel closing a factsheet window.
     """
 
     NAME_FILE_SHEET_UI = str(UI.DIR_UI / 'sheet.ui')
@@ -260,7 +258,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     def __init__(self, *, p_control: CSHEET.ControlSheet) -> None:
         """Initialize sheet view and show window.
 
-        :param p_roster: roster of sheet views for factsheet.
+        :param p_control: control for factsheet to display.
         """
         self._control = p_control
         self._control.add_view(self)
@@ -410,7 +408,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
         site_name_sheet = p_get_object('ui_site_name_sheet')
         site_name_sheet.pack_start(
-            view_name.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+            view_name.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
         # Work around for issue #231.
         title = Gtk.Label(label='Error! please report.', use_markup=True)
@@ -443,12 +441,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         view_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
         site_title_sheet = p_get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
-            view_title.view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-
-    def erase(self) -> None:
-        """Destroy visible portion of sheet view."""
-        self._window.hide()
-        self._window.destroy()
+            view_title.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def close_topic(self, p_id) -> None:
         # def close_topic(self, p_id: VTYPES.TagTopic) -> None:
@@ -456,11 +449,28 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         Closing a topic pane removes the pane from the factsheet page.
 
-        :param p_id: identity of topic pane to erase.
+        :param p_id: identity of topic pane to close.
         """
         raise NotImplementedError
         # name_scene = hex(p_id)
         # self._scenes_topic.remove_scene(name_scene)
+
+    def confirm_close(self):
+        """Return :data:`ALLOW_CLOSE` when user approves closing view.
+        Otherwise, return :data:`DENY_CLOSE`."""
+        name = self._control.name
+        dialog_warn = new_dialog_warn_loss(self._window, name)
+        response = dialog_warn.run()
+        dialog_warn.hide()
+        if Gtk.ResponseType.APPLY == response:
+            return ViewSheet.ALLOW_CLOSE
+        else:
+            return ViewSheet.DENY_CLOSE
+
+    def erase(self) -> None:
+        """Destroy visible portion of sheet view."""
+        self._window.hide()
+        self._window.destroy()
 
     def get_path(self, p_action: Gtk.FileChooserAction,
                  p_suggest: Path = None) -> typing.Optional[Path]:
@@ -486,25 +496,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         """Return view of factsheet's topic outline."""
         raise NotImplementedError
         # return self._view_topics
-
-    @classmethod
-    def link_factsheet(cls, pm_page: 'ViewSheet',
-                       pm_control: CSHEET.ControlSheet) -> None:
-        """Initialize links between new page and new control for a
-        factsheet.
-
-        :param pm_page: new factsheet page.
-        :param pm_control: new factsheet control.
-        """
-        raise NotImplementedError
-        # pm_control.attach_page(pm_page)
-        # pm_page._control = pm_control
-        # query_view_topics = VTYPES.ViewOutlineTopics()
-        # pm_page._control.attach_view_topics(query_view_topics)
-        # pm_page._query_place = QPLACE.QueryPlace(
-        #     pm_page._window, query_view_topics)
-        # pm_page._query_template = QTEMPLATE.QueryTemplate(
-        #     pm_page._window, pm_page._control.attach_view_topics)
 
     def _make_file_chooser(self, p_action: Gtk.FileChooserAction
                            ) -> Gtk.FileChooserDialog:
@@ -548,19 +539,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         return dialog
 
-    @classmethod
-    def new_factsheet(cls, px_app: Gtk.Application) -> 'ViewSheet':
-        """Create factsheet with default contents and return window for it.
-
-        :param px_app: application to which the factsheet belongs.
-        :returns: Window for new factsheet.
-        """
-        pass
-        # page = ViewSheet(px_app=px_app)
-        # control = CSHEET.ControlSheet.new(pm_sheets_active)
-        # ViewSheet.link_factsheet(page, control)
-        # return page
-
     # def new_view_topics(self) -> VTYPES.ViewOutlineTopics:
     #     """Return new, unattached view of topics outline. """
     #     view_topics_new = VTYPES.ViewOutlineTopics()
@@ -569,7 +547,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
     #     return view_topics_new
 
     def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
-        """Changes topic scene to match current topic.
+        """Changes topic view to match current topic.
 
         :param px_cursor: identifies now-current topic.
         """
@@ -599,6 +577,23 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
         # _ = self._scenes_topic.show_scene(name_topic)
 
+    def on_clear_topics(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Remove all topics from the topics outline."""
+        raise NotImplementedError
+        # assert self._control is not None
+        # self._control.clear()
+
+    def on_close_view_sheet(
+            self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
+        """Close view of factsheet."""
+        if not self._control.remove_view_is_safe():
+            if ViewSheet.DENY_CLOSE == self.confirm_close():
+                return ViewSheet.DENY_CLOSE
+
+        self._control.remove_view(self)
+        return ViewSheet.ALLOW_CLOSE
+
     def on_delete_sheet(self, _action: Gio.SimpleAction,
                         _target: GLib.Variant) -> None:
         """Delete factsheet guarding against data loss.
@@ -618,49 +613,13 @@ class ViewSheet(CSHEET.ObserverControlSheet):
                         _target: GLib.Variant) -> None:
         """Remove selected topic from the topics outline.
 
-        If not topic is selected, then the topics outline is unchanged.
+        If no topic is selected, then the topics outline is unchanged.
         """
         raise NotImplementedError
         # _model, index = self._cursor_topics.get_selected()
         # if index is not None:
         #     assert self._control is not None
         #     self._control.extract_topic(index)
-
-    def on_clear_topics(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Remove all topics from the topics outline."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # self._control.clear()
-
-    def confirm_close(self):
-        """Return :data:`ALLOW_CLOSE` when user approves closing view.
-        Otherwise, return :data:`DENY_CLOSE`."""
-        name = self._control.name
-        dialog_warn = new_dialog_warn_loss(self._window, name)
-        response = dialog_warn.run()
-        dialog_warn.hide()
-        if Gtk.ResponseType.APPLY == response:
-            return ViewSheet.ALLOW_CLOSE
-        else:
-            return ViewSheet.DENY_CLOSE
-
-    def on_close_view_sheet(
-            self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
-        """Close view of factsheet."""
-        if not self._control.remove_view_is_safe():
-            if ViewSheet.DENY_CLOSE == self.confirm_close():
-                return ViewSheet.DENY_CLOSE
-
-        self._control.remove_view(self)
-        return ViewSheet.ALLOW_CLOSE
-
-    def on_flip_summary(self, _action: Gio.SimpleAction,
-                        _target: GLib.Variant) -> None:
-        """Flip visibility of summary pane."""
-        raise NotImplementedError
-        # new_state = not self._context_summary.get_visible()
-        # self._context_summary.set_visible(new_state)
 
     def on_go_first_topic(self, _action: Gio.SimpleAction,
                           _target: GLib.Variant) -> None:
@@ -696,9 +655,9 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         control_sheet = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=Gtk.get_current_event_time())
         if control_sheet is None:
-            logger.critical('Failed to create new factsheet ({}.{})'
-                            ''.format(cls.__name__,
-                                      cls.on_new_sheet.__name__))
+            logger.critical(
+                'Failed to create new factsheet ({}.{})'
+                ''.format(cls.__name__, cls.on_new_sheet.__name__))
             return
 
         _view = ViewSheet(p_control=control_sheet)
@@ -749,11 +708,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # self._view_topics.gtk_view.expand_to_path(path)
         # self._cursor_topics.select_iter(index)
 
-    def on_open_view_sheet(self, _action: Gio.SimpleAction,
-                           _target: GLib.Variant) -> None:
-        """Open another view of factsheet."""
-        _view_new = ViewSheet(p_control=self._control)
-
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
         """Create a factsheet with contents from file."""
@@ -764,16 +718,10 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             if control is not None:
                 _view = ViewSheet(p_control=control)
 
-    def on_save_sheet(self, _action: Gio.SimpleAction,
-                      _target: GLib.Variant) -> None:
-        """Persist factsheet contents to file."""
-        path_update = None
-        if self._control.path is None:
-            path_update = self.get_path(Gtk.FileChooserAction.SAVE, None)
-            if path_update is None:
-                return
-
-        self.save_sheet(path_update)
+    def on_open_view_sheet(self, _action: Gio.SimpleAction,
+                           _target: GLib.Variant) -> None:
+        """Open another view of factsheet."""
+        _view_new = ViewSheet(p_control=self._control)
 
     def on_save_as_sheet(self, _action: Gio.SimpleAction,
                          _target: GLib.Variant) -> None:
@@ -782,6 +730,17 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             Gtk.FileChooserAction.SAVE, self._control.path)
         if path_update is None:
             return
+
+        self.save_sheet(path_update)
+
+    def on_save_sheet(self, _action: Gio.SimpleAction,
+                      _target: GLib.Variant) -> None:
+        """Persist factsheet contents to file."""
+        path_update = None
+        if self._control.path is None:
+            path_update = self.get_path(Gtk.FileChooserAction.SAVE, None)
+            if path_update is None:
+                return
 
         self.save_sheet(path_update)
 
@@ -811,37 +770,10 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # else:
         #     self._view_topics.scope_search &= ~p_field
 
-    @classmethod
-    def open_factsheet(cls, px_app: Gtk.Application, p_path: Path
-                       ) -> typing.Optional['ViewSheet']:
-        """Create factsheet with contents from file and return the new
-        factsheet page.
-
-        If a factsheet with the given file is active already, show all
-        the pages corresponding to that factsheet file.  Return None in
-        this case.
-
-        :param px_app: application to which the factsheet belongs.
-        :param pm_sheets_active: collection of factsheets.
-        :param p_path: path to file containing factsheet contents.
-        :returns: New page if one is created or None otherwise.
-        """
-        raise NotImplementedError
-        # open_time = Gtk.get_current_event_time()
-        # control_file = pm_sheets_active.owner_file(p_path)
-        # if control_file is not None:
-        #     control_file.present_factsheet(open_time)
-        #     return None
-        #
-        # page = ViewSheet(px_app=px_app)
-        # control = CSHEET.ControlSheet.open(pm_sheets_active, p_path)
-        # ViewSheet.link_factsheet(page, control)
-        # return page
-
     def present(self, p_time: BUI.TimeEvent) -> None:
-        """Make sheet view visible to user.
+        """Make sheet view window visible to user.
 
-        Make view visible even when it is an icon or covered by other
+        Make window visible even when it is an icon or covered by other
         windows.
 
         :param p_time: time stamp to order multiple requests.
@@ -890,18 +822,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         except Exception as err:
             text_prime = 'Factsheet not saved! Application is broken!'
             self._report_error_sheet(err, text_prime)
-
-    def set_titles(self, p_subtitle: str):
-        """Set title and subtitle of page's window.
-
-        The page's title is the factsheet name.
-
-        :param p_subtitle: subtitle for window.
-        """
-        raise NotImplementedError
-        # headerbar = self._window.get_titlebar()
-        # headerbar.set_title(self._infoid.name)
-        # headerbar.set_subtitle(p_subtitle)
 
     @property
     def window(self) -> Gtk.ApplicationWindow:
