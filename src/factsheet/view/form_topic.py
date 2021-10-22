@@ -4,7 +4,7 @@ Defines class to display topic in a factsheet window pane.
 import gi   # type: ignore[import]
 import typing   # noqa
 
-from factsheet.abc_types import abc_topic as ABC_TOPIC
+# from factsheet.abc_types import abc_topic as ABC_TOPIC
 from factsheet.control import control_topic as CTOPIC
 # from factsheet.control import pool as CPOOL
 from factsheet.view import view_infoid as VINFOID

@@ -9,7 +9,6 @@ import math
 import pytest   # type: ignore[import]
 import typing
 
-from factsheet.abc_types import abc_fact as ABC_FACT
 from factsheet.model import fact as MFACT
 from factsheet.control import control_fact as CFACT
 from factsheet.view import scenes as VSCENES

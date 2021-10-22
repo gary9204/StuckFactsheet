@@ -9,10 +9,7 @@ class representing the model of a factsheet.
 import logging
 import typing   # noqa
 
-# from factsheet.abc_types import abc_outline as ABC_OUTLINE
-# from factsheet.abc_types import abc_sheet as ABC_SHEET
 from factsheet import bridge_ui as BUI
-# from factsheet.abc_types import abc_topic as ABC_TOPIC
 import factsheet.model.idcore as MIDCORE
 # from factsheet.model import types_model as MTYPES
 # from factsheet.view import types_view as VTYPES

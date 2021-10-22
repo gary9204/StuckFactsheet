@@ -5,8 +5,6 @@ import gi   # type: ignore[import]
 import logging
 import typing
 
-from factsheet.abc_types import abc_fact as ABC_FACT
-from factsheet.abc_types import abc_infoid as ABC_INFOID
 from factsheet.control import control_fact as CFACT
 from factsheet.view import scenes as VSCENES
 from factsheet.view import view_infoid as VINFOID

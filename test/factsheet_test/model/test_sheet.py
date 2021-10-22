@@ -9,9 +9,6 @@ Unit tests for factsheet-level model.  See :mod:`~factsheet.model`.
 import pytest   # type: ignore[import]
 # import re
 
-# from factsheet.abc_types import abc_outline as ABC_OUTLINE
-# from factsheet.adapt_gtk import adapt_sheet as ASHEET
-# from factsheet.model import infoid as MINFOID
 import factsheet.bridge_ui as BUI
 import factsheet.model.sheet as MSHEET
 # from factsheet.model import topic as MTOPIC

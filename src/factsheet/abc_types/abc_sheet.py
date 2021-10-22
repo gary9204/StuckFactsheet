@@ -15,9 +15,6 @@ import enum
 from pathlib import Path
 import typing
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.abc_types import abc_outline as ABC_OUTLINE
-from factsheet.abc_types import abc_topic as ABC_TOPIC
 
 
 class AbstractTemplate(abc.ABC):

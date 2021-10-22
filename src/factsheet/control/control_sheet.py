@@ -26,11 +26,8 @@ import traceback as TB
 import typing   # noqa
 
 
-# import factsheet.control.control_idcore as CIDCORE
 import factsheet.bridge_ui as BUI
 import factsheet.model.sheet as MSHEET
-# from factsheet.abc_types import abc_sheet as ABC_SHEET
-# from factsheet.control import pool as CPOOL
 # from factsheet.control import control_topic as CTOPIC
 # from factsheet.model import topic as MTOPIC
 # from factsheet.model import types_model as MTYPES
