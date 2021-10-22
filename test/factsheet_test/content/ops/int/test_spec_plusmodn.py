@@ -8,8 +8,6 @@ from pathlib import Path
 import pytest   # type: ignore[import]
 import typing
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.content import spec as XSPEC
 from factsheet.content.note import topic_note as XNOTE

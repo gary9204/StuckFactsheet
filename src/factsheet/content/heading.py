@@ -1,7 +1,6 @@
 """
 Defines class to create a heading in Factsheet template outline.
 """
-# from factsheet.abc_types import abc_sheet as ABC_SHEET
 
 
 class Heading(ABC_SHEET.AbstractTemplate):

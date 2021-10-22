@@ -6,8 +6,6 @@ import dataclasses as DC
 import gi   # type: ignore[import]
 import typing
 
-import factsheet.adapt_gtk.adapt_outline as AOUTLINE
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.spec as XSPEC
 import factsheet.content.ops.int.topic_plusmodn as XPLUS_N
 import factsheet.content.sets.int.topic_setint as XSETINT

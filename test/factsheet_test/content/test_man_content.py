@@ -3,7 +3,6 @@ Unit tests for manifext function of Factsheet content.  See
 :mod:`.man_content`.
 """
 import factsheet.content.man_content as XMAN_CONTENT
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.view.types_view as VTYPES
 
 

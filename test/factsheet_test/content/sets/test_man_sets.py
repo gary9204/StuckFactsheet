@@ -2,7 +2,6 @@
 Unit tests fanifest function of sets section of Factsheet content.  See
 :mod:`~.man_sets`.
 """
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.heading as XHEADING
 import factsheet.content.sets.man_sets as XMAN_SET
 import factsheet.view.types_view as VTYPES

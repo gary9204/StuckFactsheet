@@ -61,36 +61,3 @@ Defines type aliases for model components that depend on GTK.
     Type hint for view of model component title attribute.  A user
     cannot edit the title in this view.
 """
-import factsheet.adapt_gtk.adapt_infoid as AINFOID
-# import factsheet.adapt_gtk.adapt_sheet as ASHEET
-# import factsheet.adapt_gtk.adapt_topic as ATOPIC
-
-# from factsheet.adapt_gtk.adapt_sheet import IndexTemplate  # noqa
-# from factsheet.adapt_gtk.adapt_sheet import IndexTopic  # noqa (non-local use)
-# from factsheet.abc_types.abc_topic import TagTopic  # noqa (non-local use)
-
-# from factsheet.adapt_gtk.adapt_topic import IndexFact  # noqa (non-local use)
-# from factsheet.abc_types.abc_fact import TagFact  # noqa (non-local use)
-
-# ModelName = AINFOID.AdaptEntryBuffer
-# ModelSummary = AINFOID.AdaptTextBuffer
-# ModelTitle = AINFOID.AdaptEntryBuffer
-
-# OutlineTemplates = ASHEET.AdaptTreeStoreTemplate
-# OutlineTopics = ASHEET.AdaptTreeStoreTopic
-
-# OutlineFacts = ATOPIC.AdaptTreeStoreFact
-
-IdName = AINFOID.AdaptTextMarkup
-IdNameStatic = AINFOID.AdaptTextStatic
-IdSummary = AINFOID.AdaptTextFormat
-IdSummaryStatic = AINFOID.AdaptTextStatic
-IdTitle = AINFOID.AdaptTextMarkup
-IdTitleStatic = AINFOID.AdaptTextStatic
-
-ViewIdName = AINFOID.ViewTextMarkup
-ViewIdNameStatic = AINFOID.ViewTextStatic
-ViewIdSummary = AINFOID.ViewTextFormat
-ViewIdSummaryStatic = AINFOID.ViewTextStatic
-ViewIdTitle = AINFOID.ViewTextMarkup
-ViewIdTitleStatic = AINFOID.ViewTextStatic

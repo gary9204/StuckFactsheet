@@ -5,8 +5,6 @@ import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.content import spec as XSPEC
 from factsheet.content.note import spec_note as XSPEC_NOTE

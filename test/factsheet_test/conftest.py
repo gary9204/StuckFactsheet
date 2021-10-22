@@ -6,8 +6,6 @@ import typing
 
 # import factsheet.bridge_gtk.bridge_text as BTEXT
 # import factsheet.model.idcore as MIDCORE
-# import factsheet.abc_types.abc_fact as ABC_FACT
-# import factsheet.abc_types.abc_infoid as ABC_INFOID
 # import factsheet.model.element as MELEMENT
 # import factsheet.model.fact as MFACT
 # import factsheet.model.setindexed as MSET
@@ -110,25 +108,6 @@ def new_id_args():
 #         return kwargs
 #
 #     return new_kwargs
-
-
-# @pytest.fixture
-# def patch_class_block_fact(interface_view_infoid):
-#     """Pytest fixture: return stub :class:`.InterfaceBlockFact` class.
-#     """
-#     class PatchClassBlockFact(ABC_FACT.InterfaceBlockFact):
-#         def __init__(self):
-#             self._infoid = interface_view_infoid()
-#             self.called_update = False
-#
-#         def get_infoid(self): return self._infoid
-#
-#         def update(self, p_status, p_value) -> None:
-#             self.called_update = True
-#             self.update_status = p_status
-#             self.update_value = p_value
-#
-#     return PatchClassBlockFact
 
 
 # class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):

@@ -6,8 +6,6 @@ import gi   # type: ignore[import]
 import typing
 
 import factsheet.content.man_content as XMAN_CONTENT
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.content import heading as XHEADING
 from factsheet.view import types_view as VTYPES
 from factsheet.view import ui as UI

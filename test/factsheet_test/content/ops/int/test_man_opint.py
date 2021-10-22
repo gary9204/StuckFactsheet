@@ -2,7 +2,6 @@
 Unit tests for manifest function of integer operations subsection of
 operations section.  See :mod:`~.factsheet.content.ops.int`.
 """
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.heading as XHEADING
 import factsheet.content.ops.int.man_opint as XMAN_OPINT
 import factsheet.view.types_view as VTYPES

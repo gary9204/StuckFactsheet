@@ -4,8 +4,6 @@ Unit tests for topic placement class.  See :mod:`.query_place`.
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.view import query_place as QPLACE
 from factsheet.view import types_view as VTYPES
 # from factsheet.view import ui as UI

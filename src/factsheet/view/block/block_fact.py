@@ -7,11 +7,7 @@ import typing
 
 from factsheet.control import control_fact as CFACT
 from factsheet.view import scenes as VSCENES
-from factsheet.view import view_infoid as VINFOID
 from factsheet.view import ui as UI
-
-from factsheet.abc_types.abc_fact import StatusOfFact
-from factsheet.abc_types.abc_fact import ValueOpaque
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402

@@ -12,9 +12,6 @@ import dataclasses as DC
 import gi   # type: ignore[import]
 import typing
 
-import factsheet.abc_types.abc_fact as ABC_FACT
-import factsheet.abc_types.abc_sheet as ABC_SHEET
-import factsheet.abc_types.abc_topic as ABC_TOPIC
 import factsheet.view.block.block_fact as VFACT
 import factsheet.view.types_view as VTYPES
 

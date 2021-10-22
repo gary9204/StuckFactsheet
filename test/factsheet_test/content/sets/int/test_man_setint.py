@@ -2,7 +2,6 @@
 Unit tests for manifest function of integer subsection of sets section.
 See :mod:`.man_setint`.
 """
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.heading as XHEADING
 import factsheet.content.sets.int.man_setint as XMAN_SETINT
 import factsheet.view.types_view as VTYPES

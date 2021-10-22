@@ -2,7 +2,6 @@
 Unit tests for manifest function of operations section of Factsheet
 content.  See :mod:`.man_ops`.
 """
-import factsheet.adapt_gtk.adapt_sheet as ASHEET
 import factsheet.content.heading as XHEADING
 import factsheet.content.ops.man_ops as XMAN_OPS
 import factsheet.view.types_view as VTYPES
