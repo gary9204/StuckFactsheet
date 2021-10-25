@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import traceback as TB
 import typing   # noqa
+import warnings
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
@@ -536,6 +537,23 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         filter_any.add_pattern('*')
         filter_any.set_name('Any')
         dialog.add_filter(filter_any)
+
+        # Partial work around for issue #235.
+        content_area = dialog.get_content_area()
+        # print('Content: {}'.format(content_area))
+        chooser_widget = content_area.get_children()[0]
+        # print('Chooser: {}'.format(chooser_widget))
+        action_bar = chooser_widget.get_children()[1]
+        # print('Action bar: {}'.format(action_bar))
+        filter_box = action_bar.get_children()[1]
+        # print('Filter box: {}'.format(filter_box))
+        filter_combo = filter_box.get_children()[0]
+        # print('Filter combo: {}'.format(filter_combo))
+        # print('\tHas tooltip: {}'.format(filter_combo.get_has_tooltip()))
+        # print('\tTooltip: {}'.format(filter_combo.get_tooltip_text()))
+        filter_combo.set_tooltip_text(None)
+        # print('Clear tooltip')
+        # print('\tHas tooltip: {}'.format(filter_combo.get_has_tooltip()))
 
         return dialog
 
