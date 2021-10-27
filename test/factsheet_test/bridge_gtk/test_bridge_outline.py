@@ -35,34 +35,32 @@ class PatchItem:
     tag: str = 'Target'
 
 
-class PatchOutline(
-        BOUTLINE.BridgeOutline[PatchItem, BOUTLINE.ViewOutlineSelect]):
+class PatchOutlineSingle(BOUTLINE.ModelOutlineSingle[PatchItem]):
     """Stub class for single-level outline tests unrelated to view."""
 
     def new_view(self):
-        return BOUTLINE.ViewOutlineSelect()
+        return BOUTLINE.ChooserItem()
 
 
-class PatchOutlineMulti(
-        BOUTLINE.BridgeOutlineMulti[PatchItem, BOUTLINE.ViewOutlineColumnar]):
+class PatchOutlineMulti(BOUTLINE.ModelOutlineMulti[PatchItem]):
     """Stub class for multi-level outline tests unrelated to view."""
 
     def new_view(self):
-        return BOUTLINE.ViewOutlineColumnar()
+        return BOUTLINE.ViewOutline()
 
 
-@pytest.fixture(params=[BOUTLINE.BridgeOutlineColumnar[PatchItem],
-                        BOUTLINE.BridgeOutlineSelect[PatchItem]])
+@pytest.fixture(params=[BOUTLINE.ModelOutlineSingle[PatchItem],
+                        BOUTLINE.ModelOutlineMulti[PatchItem]])
 def patch_class_outline(request):
-    """Pytest fixture: Return single-level outline classes.
+    """Pytest fixture: Return each outline class with patch items.
 
-    Supports indirect parametrization by view.
+    Supports indirect parametrization for each outline class.
     """
     return request.param
 
 
-@pytest.fixture(params=[BOUTLINE.BridgeOutlineMultiColumnar[PatchItem],
-                        BOUTLINE.BridgeOutlineMultiSelect[PatchItem]])
+@pytest.fixture(params=[BOUTLINE.ModelOutlineSingle[PatchItem],
+                        BOUTLINE.ModelOutlineMulti[PatchItem]])
 def patch_class_outlinemulti(request):
     """Pytest fixture: Return multi-level outline classes.
 
@@ -90,7 +88,7 @@ def patch_store_multi():
         |         Item 112
     """
     def new_model(p_tag='Target'):
-        model = BOUTLINE.ModelOutlineMulti(GO.TYPE_PYOBJECT)
+        model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
         item = PatchItem('Item 0xx', p_tag)
         i_0xx = model.append(None, [item])
         item = PatchItem('Item 00x', p_tag)
@@ -124,7 +122,7 @@ def patch_store_single():
     :param p_tag: identifies model (default is 'Target').
     """
     def new_model(p_n_items=5, p_tag='Target'):
-        model = BOUTLINE.ModelOutlineSingle(GO.TYPE_PYOBJECT)
+        model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
         for i in range(p_n_items):
             name = 'Item {}'.format(i)
             item = PatchItem(name=name, tag=p_tag)
@@ -147,7 +145,7 @@ def snippet_store_multi():
         |         Item aab
         |         Item aaa
     """
-    model = BOUTLINE.ModelOutlineMulti(GO.TYPE_PYOBJECT)
+    model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
     item = PatchItem('Item axx', 'Snippet')
     i_axx = model.append(None, [item])
     item = PatchItem('Item aax', 'Snippet')
@@ -159,6 +157,86 @@ def snippet_store_multi():
     return model
 
 
+class TestModelOutline:
+    """Unit tests for :class:`.ModelOutline`."""
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        # (BOUTLINE.ModelOutline, 'get_item'),
+        # (BOUTLINE.ModelOutline, 'get_item_direct'),
+        # (BOUTLINE.ModelOutline, 'items'),
+        (BOUTLINE.ModelOutline, 'insert_after'),
+        (BOUTLINE.ModelOutline, 'insert_before'),
+        (BOUTLINE.ModelOutline, 'lines'),
+        (BOUTLINE.ModelOutline, '_set_persist'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified."""
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+    def test_init(self, patch_class_outline):
+        """| Confirm initialization.
+        | Case: nominal.
+        """
+        # Setup
+        # Test
+        target = patch_class_outline()
+        assert isinstance(target._ui_model, (
+            BOUTLINE.UiModelOutlineMulti, BOUTLINE.UiModelOutlineSingle))
+        assert not target._ui_model
+
+    @pytest.mark.skip
+    @pytest.mark.parametrize('ATTR, HINT', [
+        ('_name', '~ModelName'),
+        ('_summary', '~ModelSummary'),
+        ('_title', '~ModelTitle'),
+        ])
+    def test_init_attr(self, ATTR, HINT):
+        """| Confirm initialization.
+        | Case: missing attribute definition.
+
+        :param ATTR: missing attribute.
+        :param HINT: type hint for missing attribute.
+        """
+        # Setup
+        class PatchPartial(MIDCORE.IdCore[BUI.ModelTextMarkup,
+                                          BUI.ModelTextStyled,
+                                          BUI.ModelTextMarkup]):
+            """Partially defines attributes for  :func:`.IdCore.__init__`."""
+
+            def __init__(self, p_name, p_summary, p_title, **kwargs):
+                self._name = BUI.ModelTextMarkup(p_name)
+                self._summary = BUI.ModelTextStyled(p_summary)
+                self._title = BUI.ModelTextMarkup(p_title)
+                delattr(self, ATTR)
+                super().__init__(**kwargs)
+
+        NAME = 'Parrot'
+        SUMMARY = 'The parrot is a Norwegian Blue.'
+        TITLE = 'The Parrot Sketch'
+        ERROR = re.escape('PatchPartial: IdCore subclasses must define '
+                          '{} attribute with type {} and then call '
+                          'super().__init__()'.format(ATTR, HINT))
+        # Test
+        with pytest.raises(AttributeError, match=ERROR):
+            _ = PatchPartial(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
+
+    @pytest.mark.skip
+    def test_init_extra(self):
+        """| Confirm initialization.
+        | Case: extra keyword argument.
+        """
+        # Setup
+        ERROR = re.escape("IdCore.__init__() called with extra "
+                          "argument(s): {'extra': 'Oops!'}")
+        # Test
+        with pytest.raises(TypeError, match=ERROR):
+            _ = PatchIdCore(extra='Oops!')
+
+
+@pytest.mark.skip(reason='Refactor in progress')
 class TestBridgeOutline:
     """Unit tests for :class:`~.BridgeOutline`."""
 
@@ -170,7 +248,7 @@ class TestBridgeOutline:
         assert C_ITEM == patch_class_outline._C_ITEM
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BOUTLINE.BridgeOutline, 'new_view'),
+        (BOUTLINE.ModelOutlineSingle, 'new_view'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""
@@ -217,13 +295,13 @@ class TestBridgeOutline:
         # Setup
         # Test
         target = patch_class_outline()
-        assert isinstance(target._model, BOUTLINE.ModelOutlineSingle)
+        assert isinstance(target._model, BOUTLINE.ModelOutline)
 
     def test_clear(self, patch_store_single):
         """Confirm removal of all items."""
         # Setup
         N_ITEMS = 5
-        target = PatchOutline()
+        target = PatchOutlineSingle()
         model = patch_store_single(N_ITEMS)
         target._model = model
         # Test
@@ -238,13 +316,13 @@ class TestBridgeOutline:
     def test_get_item(self, patch_store_single, N_ITEMS, LINE):
         """Confirm get from outline."""
         # Setup
-        target = PatchOutline()
+        target = PatchOutlineSingle()
         model = patch_store_single(N_ITEMS)
         target._model = model
         line = model.get_iter_from_string(LINE)
         # Test
         item = target.get_item(line)
-        assert item is model.get_value(line, PatchOutline._C_ITEM)
+        assert item is model.get_value(line, PatchOutlineSingle._C_ITEM)
 
     @pytest.mark.parametrize('N_ITEMS, LINE', [
         (5, '0'),
@@ -257,8 +335,8 @@ class TestBridgeOutline:
         model = patch_store_single(N_ITEMS)
         line = model.get_iter_from_string(LINE)
         # Test
-        item = PatchOutline.get_item_direct(model, line)
-        assert item is model.get_value(line, PatchOutline._C_ITEM)
+        item = PatchOutlineSingle.get_item_direct(model, line)
+        assert item is model.get_value(line, PatchOutlineSingle._C_ITEM)
 
     def test_get_persist(self, patch_class_outline, patch_store_single):
         """Confirm export to persistent form."""
@@ -290,7 +368,7 @@ class TestBridgeOutline:
                     METHOD, INSERT, PARENT, BEFORE, AFTER):
         """Confirm item insertion."""
         # Setup
-        target = PatchOutline()
+        target = PatchOutlineSingle()
         model = patch_store_single(N_ITEMS)
         target._model = model
         expect = list()
@@ -298,7 +376,7 @@ class TestBridgeOutline:
             item = None
             if place is not None:
                 line = model.get_iter_from_string(place)
-                item = model.get_value(line, PatchOutline._C_ITEM)
+                item = model.get_value(line, PatchOutlineSingle._C_ITEM)
             expect.append((place, item))
         NAME = 'Something completely different'
         item_new = PatchItem(name=NAME)
@@ -308,7 +386,7 @@ class TestBridgeOutline:
         method_target = getattr(target, METHOD)
         # Test
         line_new = method_target(item_new, line_insert)
-        assert item_new == model.get_value(line_new, PatchOutline._C_ITEM)
+        assert item_new == model.get_value(line_new, PatchOutlineSingle._C_ITEM)
         line_parent = model.iter_parent(line_new)
         line_before = model.iter_previous(line_new)
         line_after = model.iter_next(line_new)
@@ -317,19 +395,19 @@ class TestBridgeOutline:
             if line is None:
                 assert place is None
             else:
-                assert item is model.get_value(line, PatchOutline._C_ITEM)
+                assert item is model.get_value(line, PatchOutlineSingle._C_ITEM)
 
     def test_items(self, patch_store_single):
         """Confirm iterator over items."""
         # Setup
         N_ITEMS = 5
-        target = PatchOutline()
+        target = PatchOutlineSingle()
         model = patch_store_single(N_ITEMS)
         target._model = model
         items = list()
         line = model.get_iter_first()
         while line is not None:
-            item = model.get_value(line, PatchOutline._C_ITEM)
+            item = model.get_value(line, PatchOutlineSingle._C_ITEM)
             items.append(item)
             line = model.iter_next(line)
         # Test
@@ -339,7 +417,7 @@ class TestBridgeOutline:
         """Confirm iterator over lines."""
         # Setup
         N_ITEMS = 5
-        target = PatchOutline()
+        target = PatchOutlineSingle()
         model = patch_store_single(N_ITEMS)
         target._model = model
         paths = list()
@@ -350,17 +428,6 @@ class TestBridgeOutline:
             line = model.iter_next(line)
         # Test
         assert paths == [target._model.get_path(l) for l in target.lines()]
-
-    def test_new_model(self):
-        """Confirm storage element."""
-        # Setup
-        N_COLUMNS = 1
-        target = PatchOutline()
-        # Test
-        model = target._new_model()
-        assert isinstance(model, BOUTLINE.ModelOutlineSingle)
-        assert N_COLUMNS == model.get_n_columns()
-        assert not len(model)
 
     @pytest.mark.parametrize('N_ITEMS, PATH_PARENT', [
         (5, None),
@@ -377,7 +444,7 @@ class TestBridgeOutline:
             it_expect = expect._model.get_iter_from_string(PATH_PARENT)
             expect._model.remove(it_expect)
 
-        target = PatchOutline()
+        target = PatchOutlineSingle()
         target._model = patch_store_single(N_ITEMS)
         it_target = None
         if PATH_PARENT is not None:
@@ -402,37 +469,40 @@ class TestBridgeOutline:
         assert persist == target._get_persist()
 
 
-class TestBridgeOutlineColumnar:
-    """Unit tests for :class:`~.BridgeOutlineColumnar`."""
-
-    def test_new_view(self):
-        """Confirm view element."""
-        # Setup
-        target = BOUTLINE.BridgeOutlineColumnar()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
-        assert target._model is view.get_model()
-
-
-class TestBridgeOutlineSelect:
-    """Unit tests for :class:`~.BridgeOutlineSelect`."""
-
-    def test_new_view(self):
-        """Confirm view element."""
-        # Setup
-        target = BOUTLINE.BridgeOutlineSelect()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BOUTLINE.ViewOutlineSelect)
-        assert target._model is view.get_model()
+# @pytest.mark.skip(reason='Refactor in progress')
+# class TestBridgeOutlineColumnar:
+#     """Unit tests for :class:`~.BridgeOutlineColumnar`."""
+#
+#     def test_new_view(self):
+#         """Confirm view element."""
+#         # Setup
+#         target = BOUTLINE.BridgeOutlineColumnar()
+#         # Test
+#         view = target.new_view()
+#         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
+#         assert target._model is view.get_model()
 
 
+# @pytest.mark.skip(reason='Refactor in progress')
+# class TestBridgeOutlineSelect:
+#     """Unit tests for :class:`~.BridgeOutlineSelect`."""
+#
+#     def test_new_view(self):
+#         """Confirm view element."""
+#         # Setup
+#         target = BOUTLINE.BridgeOutlineSelect()
+#         # Test
+#         view = target.new_view()
+#         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
+#         assert target._model is view.get_model()
+
+
+@pytest.mark.skip(reason='Refactor in progress')
 class TestBridgeOutlineMulti:
     """Unit tests for :class:`~.BridgeOutlineMulti`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BOUTLINE.BridgeOutlineMulti, 'new_view'),
+        (BOUTLINE.ModelOutlineMulti, 'new_view'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified."""
@@ -753,7 +823,7 @@ class TestBridgeOutlineMulti:
         target._model = model
         root = None
         lines = iters_section(model, root)
-        items = [model.get_value(l, PatchOutline._C_ITEM) for l in lines]
+        items = [model.get_value(l, PatchOutlineSingle._C_ITEM) for l in lines]
         # Test
         assert items == list(target.items())
 
@@ -773,7 +843,7 @@ class TestBridgeOutlineMulti:
         if ROOT is not None:
             root = model.get_iter_from_string(ROOT)
         lines = iters_section(model, root)
-        items = [model.get_value(l, PatchOutline._C_ITEM) for l in lines]
+        items = [model.get_value(l, PatchOutlineSingle._C_ITEM) for l in lines]
         # Test
         assert items == list(target.items_section(root))
 
@@ -811,17 +881,6 @@ class TestBridgeOutlineMulti:
             path_model = model.get_string_from_iter(it_model)
             path_line = target._model.get_string_from_iter(line)
             assert path_model == path_line
-
-    def test_new_model(self):
-        """Confirm storage element."""
-        # Setup
-        N_COLUMNS = 1
-        target = PatchOutlineMulti()
-        # Test
-        model = target._new_model()
-        assert isinstance(model, BOUTLINE.ModelOutlineMulti)
-        assert N_COLUMNS == model.get_n_columns()
-        assert not len(model)
 
     @pytest.mark.parametrize('PATH_PARENT', [
         None,
@@ -862,32 +921,35 @@ class TestBridgeOutlineMulti:
         assert persist == target._get_persist()
 
 
-class TestBridgeOutlineMultiColumnar:
-    """Unit tests for :class:`~.BridgeOutlineMultiColumnar`."""
-
-    def test_new_view(self):
-        """Confirm view element."""
-        # Setup
-        target = BOUTLINE.BridgeOutlineMultiColumnar()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
-        assert target._model is view.get_model()
-
-
-class TestBridgeOutlineMultiSelect:
-    """Unit tests for :class:`~.BridgeOutlineMultiSelect`."""
-
-    def test_new_view(self):
-        """Confirm view element."""
-        # Setup
-        target = BOUTLINE.BridgeOutlineMultiSelect()
-        # Test
-        view = target.new_view()
-        assert isinstance(view, BOUTLINE.ViewOutlineSelect)
-        assert target._model is view.get_model()
+# @pytest.mark.skip(reason='Refactor in progress')
+# class TestBridgeOutlineMultiColumnar:
+#     """Unit tests for :class:`~.BridgeOutlineMultiColumnar`."""
+#
+#     def test_new_view(self):
+#         """Confirm view element."""
+#         # Setup
+#         target = BOUTLINE.BridgeOutlineMultiColumnar()
+#         # Test
+#         view = target.new_view()
+#         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)
+#         assert target._model is view.get_model()
 
 
+# @pytest.mark.skip(reason='Refactor in progress')
+# class TestBridgeOutlineMultiSelect:
+#     """Unit tests for :class:`~.BridgeOutlineMultiSelect`."""
+#
+#     def test_new_view(self):
+#         """Confirm view element."""
+#         # Setup
+#         target = BOUTLINE.BridgeOutlineMultiSelect()
+#         # Test
+#         view = target.new_view()
+#         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
+#         assert target._model is view.get_model()
+
+
+@pytest.mark.skip(reason='Refactor in progress')
 class TestInterfaceOutline:
     """Unit tests for :class:`~.InterfaceOutline`."""
 
@@ -908,6 +970,7 @@ class TestInterfaceOutline:
         assert NAME_METHOD in CLASS.__abstractmethods__
 
 
+@pytest.mark.skip(reason='Refactor in progress')
 class TestInterfaceOutlineMulti:
     """Unit tests for :class:`~.InterfaceOutlineMulti`."""
 
@@ -931,17 +994,17 @@ class TestBridgeOutlineTypes:
     """
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (BOUTLINE.ChooserItem, Gtk.ComboBox),
         (BOUTLINE.LineOutline, Gtk.TreeIter),
-        (BOUTLINE.ModelOutline, Gtk.TreeModel),
-        (BOUTLINE.ModelOutlineSingle, Gtk.ListStore),
-        (BOUTLINE.ModelOutlineMulti, Gtk.TreeStore),
         (BOUTLINE.PersistOutline,
             typing.MutableMapping[str, BOUTLINE.ItemOpaque]),
-        (BOUTLINE.ViewOutlineColumnar, Gtk.TreeView),
-        (BOUTLINE.ViewOutlineSelect, Gtk.ComboBox),
-        (type(BOUTLINE.ViewOutlineOpaque), typing.TypeVar),
-        (BOUTLINE.ViewOutlineOpaque.__constraints__,
-            (BOUTLINE.ViewOutlineColumnar, BOUTLINE.ViewOutlineSelect)),
+        # (BOUTLINE.UiModelOutline, Gtk.TreeModel),
+        (type(BOUTLINE.UiModelOutline), typing.TypeVar),
+        (BOUTLINE.UiModelOutline.__constraints__, (
+            BOUTLINE.UiModelOutlineMulti, BOUTLINE.UiModelOutlineSingle)),
+        (BOUTLINE.UiModelOutlineMulti, Gtk.TreeStore),
+        (BOUTLINE.UiModelOutlineSingle, Gtk.ListStore),
+        (BOUTLINE.ViewOutline, Gtk.TreeView),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.

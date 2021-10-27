@@ -267,7 +267,7 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
     Text bridge objects fhave persistent text content. In addition, a
     text bridge object may have transient aspects
     such as signal connections to views or change state with respect to file
-    storage, 
+    storage,
 
     .. admonition:: About Equality
 
@@ -290,12 +290,12 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
-    def __init__(self, p_text: str = '') -> None:
+    def __init__(self, p_text: str = '', **kwargs) -> None:
         """Extend initialization with text and change state.
 
         :param p_text: initial text content.
         """
-        super().__init__()
+        super().__init__(**kwargs)
         self._set_persist(p_text)
         self._stale = False
 
@@ -349,7 +349,7 @@ class ModelTextMarkup(ModelText[UiTextMarkup]):
         """
         return self._ui_model.get_text()
 
-    def _new_gtk_model(self) -> UiTextMarkup:
+    def _new_ui_model(self) -> UiTextMarkup:
         """Return ``UiTextMarkup`` with signal connections."""
         ui_model = UiTextMarkup()
         _ = ui_model.connect('deleted-text', lambda *_a: self.set_stale())
@@ -362,8 +362,6 @@ class ModelTextMarkup(ModelText[UiTextMarkup]):
         :param p_persist: persistent form for text storage element
             content.
         """
-        if not hasattr(self, '_ui_model'):
-            self._ui_model = self._new_gtk_model()
         ALL = -1
         self._ui_model.set_text(p_persist, ALL)
 
@@ -386,7 +384,7 @@ class ModelTextStyled(ModelText[UiTextStyled]):
         start, end = self._ui_model.get_bounds()
         return self._ui_model.get_text(start, end, NO_HIDDEN)
 
-    def _new_gtk_model(self) -> UiTextStyled:
+    def _new_ui_model(self) -> UiTextStyled:
         """Return `GTK.TextBuffer`_ with signals connections."""
         model = Gtk.TextBuffer()
         _ = model.connect('changed', lambda *_a: self.set_stale())
@@ -398,7 +396,5 @@ class ModelTextStyled(ModelText[UiTextStyled]):
         :param p_persist: persistent form for text storage element
             content.
         """
-        if not hasattr(self, '_ui_model'):
-            self._ui_model = self._new_gtk_model()
         ALL = -1
         self._ui_model.set_text(p_persist, ALL)

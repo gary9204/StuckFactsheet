@@ -18,11 +18,14 @@ from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any]):
     """Class with test stubs for abstract :class:`~.BridgeBase` methods."""
 
-    def __init__(self):
-        super().__init__()
-        self._ui_model = 'Oops! incomplete test initialization.'
+    # def __init__(self):
+    #     super().__init__()
+    #     self._ui_model = 'Oops! incomplete test initialization.'
+    MODEL_INIT = 'A Norwegian Blue'
 
     def _get_persist(self): return self._ui_model
+
+    def _new_ui_model(self): return self.MODEL_INIT
 
     def _set_persist(self, p_persist): self._ui_model = p_persist
 
@@ -73,8 +76,8 @@ class TestBridgeBase:
         """Confirm initialization."""
         # Setup
         # Test
-        _target = PatchBridgeBase()
-        # Successful call makes no state change.
+        target = PatchBridgeBase()
+        assert PatchBridgeBase.MODEL_INIT == target._ui_model
 
     def test_str(self):
         """Confirm string representation."""
@@ -99,6 +102,7 @@ class TestBridgeBase:
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BBASE.BridgeBase, '_get_persist'),
+        (BBASE.BridgeBase, '_new_ui_model'),
         (BBASE.BridgeBase, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):

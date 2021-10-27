@@ -99,9 +99,9 @@ class BridgeBase(abc.ABC, typing.Generic[ModelUiOpaque, PersistUiOpaque]):
         del state['_ui_model']
         return state
 
-    def __init__(self) -> None:
+    def __init__(self, **_kwargs) -> None:
         """Initialize instance with toolkit-specific storage."""
-        self._ui_model: ModelUiOpaque
+        self._ui_model = self._new_ui_model()
 
     def __setstate__(self, p_state: typing.MutableMapping) -> None:
         """Reconstruct storage element from content that pickle loads.
@@ -109,6 +109,7 @@ class BridgeBase(abc.ABC, typing.Generic[ModelUiOpaque, PersistUiOpaque]):
         :param p_state: unpickled content.
         """
         self.__dict__.update(p_state)
+        self._ui_model = self._new_ui_model()
         self._set_persist(self.ex_ui_model)   # type: ignore[attr-defined]
         del self.ex_ui_model       # type: ignore[attr-defined]
 
@@ -116,18 +117,14 @@ class BridgeBase(abc.ABC, typing.Generic[ModelUiOpaque, PersistUiOpaque]):
         """Return storage element as string."""
         return '<{}: {}>'.format(type(self).__name__, self._get_persist())
 
-    @property
-    def ui_model(self) -> ModelUiOpaque:
-        """Return underlying user interface storage element.
-
-        Method :meth:`.ui_model` is intended only for use in bridge
-        classes.
-        """
-        return self._ui_model
-
     @abc.abstractmethod
     def _get_persist(self) -> PersistUiOpaque:
         """Return storage element in form suitable for persistent storage."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _new_ui_model(self) -> ModelUiOpaque:
+        """Return user interface storage element with signal connections."""
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -137,3 +134,12 @@ class BridgeBase(abc.ABC, typing.Generic[ModelUiOpaque, PersistUiOpaque]):
         :param p_persist: persistent form for storage element content.
         """
         raise NotImplementedError
+
+    @property
+    def ui_model(self) -> ModelUiOpaque:
+        """Return underlying user interface storage element.
+
+        Method :meth:`.ui_model` is intended only for use in bridge
+        classes.
+        """
+        return self._ui_model

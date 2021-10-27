@@ -34,6 +34,9 @@ class PatchModelText(BTEXT.ModelText[typing.Any]):
     def _get_persist(self):
         return self._ui_model
 
+    def _new_ui_model(self):
+        self._ui_model = ''
+
     def _set_persist(self, p_persist):
         self._ui_model = str(p_persist)
 
@@ -325,6 +328,7 @@ class TestModelText:
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BTEXT.ModelText, '_get_persist'),
+        (BTEXT.ModelText, '_new_ui_model'),
         (BTEXT.ModelText, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
@@ -390,7 +394,7 @@ class TestModelText:
         # Test
         target = PatchModelText(p_text=TEXT)
         assert TEXT == target.text
-        assert target._stale is not None
+        assert isinstance(target._stale, bool)
         assert not target._stale
 
     def test_init_default(self):
@@ -402,7 +406,7 @@ class TestModelText:
         # Test
         target = PatchModelText()
         assert BLANK == target.text
-        assert target._stale is not None
+        assert isinstance(target._stale, bool)
         assert not target._stale
 
     def test_str(self):
