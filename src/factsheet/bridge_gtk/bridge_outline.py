@@ -118,33 +118,10 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
         (fields, items, and sections) and corresponding items are equal.
     """
 
-    _ui_model: UiModelOutline
     _C_ITEM = 0
-
-    def __init__(self, **kwargs: typing.Any) -> None:
-        """Initialize instance.
-
-        Subclasses must define attributes for name, summary, and title
-        before calling :meth:`.IdCore.__init__`.
-
-        :param kwargs: superclass keyword parameters.
-        """
-        # if kwargs:
-        #     raise TypeError('{}.__init__() called with extra argument(s): '
-        #                     '{}'.format(type(self).__name__, kwargs))
-        # type_hints = typing.get_type_hints(self.__class__)
-        # for name, hint in type_hints.items():
-        #     if not hasattr(self, name):
-        #         raise AttributeError(
-        #             '{}: ModelOutline subclasses must define {} '
-        #             'attribute with type {} and then call '
-        #             'super().__init__()'.format(
-        #                 self.__class__.__name__, name, hint))
-        self._set_persist(dict())
 
     def clear(self) -> None:
         """Remove all items from outline."""
-        raise NotImplementedError
         self._ui_model.clear()
 
     def get_item(self, p_line: LineOutline) -> typing.Optional[ItemOpaque]:
@@ -152,7 +129,6 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
 
         :param p_line: line of desired item.
         """
-        raise NotImplementedError
         return self.get_item_direct(self._ui_model, p_line)
 
     @classmethod
@@ -163,12 +139,10 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
         :param p_model: outline storage element.
         :param p_line: line containing desired item.
         """
-        raise NotImplementedError
         return p_model.get_value(p_line, cls._C_ITEM)
 
     def _get_persist(self) -> PersistOutline:
         """Return outline in form suitable for persistent storage."""
-        raise NotImplementedError
         persist: PersistOutline = dict()
         for line in self.lines():
             path = self._ui_model.get_string_from_iter(line)
@@ -218,7 +192,6 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
         :param p_line: line to remove along with all descendants.  If
             line is None, remove no items.
         """
-        raise NotImplementedError
         if p_line is not None:
             _ = self._ui_model.remove(p_line)
 
@@ -243,42 +216,6 @@ class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
         Transient aspects of the outlines (like views) are not compared
         and may be different.
     """
-
-    _C_ITEM = 0
-
-    def clear(self) -> None:
-        """Remove all items from outline."""
-        raise NotImplementedError
-        self._model.clear()
-
-    def get_item(self, p_line: LineOutline) -> typing.Optional[ItemOpaque]:
-        """Return item at given line or None when no item at line.
-
-        :param p_line: line of desired item.
-        """
-        raise NotImplementedError
-        return self.get_item_direct(self._model, p_line)
-
-    @classmethod
-    def get_item_direct(cls, p_model: ModelOutline, p_line: LineOutline
-                        ) -> typing.Optional[ItemOpaque]:
-        """Return item at given line directly from outline storage element.
-
-        :param p_model: outline storage element.
-        :param p_line: line containing desired item.
-        """
-        raise NotImplementedError
-        return p_model.get_value(p_line, cls._C_ITEM)
-
-    def _get_persist(self) -> PersistOutline:
-        """Return outline in form suitable for persistent storage."""
-        raise NotImplementedError
-        persist: PersistOutline = dict()
-        for line in self.lines():
-            path = self._model.get_string_from_iter(line)
-            item = self.get_item(line)
-            persist[path] = item
-        return persist
 
     def insert_after(self, p_item: ItemOpaque,
                      p_line: LineOutline = None) -> LineOutline:
@@ -306,42 +243,31 @@ class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
         raise NotImplementedError
         return self._model.insert_before(p_line, [p_item])
 
-    def items(self) -> typing.Iterator[typing.Optional[ItemOpaque]]:
-        """Return iterator over items in outline."""
-        for line in self.lines():
-            yield self.get_item(line)
+    # def items(self) -> typing.Iterator[typing.Optional[ItemOpaque]]:
+    #     """Return iterator over items in outline."""
+    #     for line in self.lines():
+    #         yield self.get_item(line)
 
     def lines(self) -> typing.Iterator[LineOutline]:
         """Return iterator over lines in outline."""
-        raise NotImplementedError
-        line = self._model.get_iter_first()
+        line = self._ui_model.get_iter_first()
         while line is not None:
             yield line
-            line = self._model.iter_next(line)
+            line = self._ui_model.iter_next(line)
 
-    def _new_model(self) -> UiModelOutlineSingle:
+    def _new_ui_model(self) -> UiModelOutlineSingle:
         """Return toolkit-specific outline storage element."""
         return UiModelOutlineSingle(GO.TYPE_PYOBJECT)
-
-    def remove(self, p_line: typing.Optional[LineOutline]) -> None:
-        """Remove item at given line from outline.
-
-        :param p_line: line to remove along with all descendants.  If
-            line is None, remove no items.
-        """
-        raise NotImplementedError
-        if p_line is not None:
-            _ = self._model.remove(p_line)
 
     def _set_persist(self, p_persist: PersistOutline) -> None:
         """Set outline storage element from content in persistent form.
 
         :param p_persist: persistent form for outline content.
         """
-        raise NotImplementedError
-        for path_str, item in (p_persist.items()):
-            position = int(path_str)
-            self._model.insert(position, [item])
+        pass
+        # for path_str, item in (p_persist.items()):
+        #     position = int(path_str)
+        #     self._model.insert(position, [item])
 
 
 class ModelOutlineMulti(ModelOutline[UiModelOutlineMulti, ItemOpaque],
@@ -455,15 +381,14 @@ class ModelOutlineMulti(ModelOutline[UiModelOutlineMulti, ItemOpaque],
         :param p_line: parent line of section.  Default iterates over
             entire outline.
         """
-        raise NotImplementedError
         if p_line is not None:
             yield p_line
-        line = self._model.iter_children(p_line)
+        line = self._ui_model.iter_children(p_line)
         while line is not None:
             yield from self.lines_section(line)
-            line = self._model.iter_next(line)
+            line = self._ui_model.iter_next(line)
 
-    def _new_model(self) -> UiModelOutlineMulti:
+    def _new_ui_model(self) -> UiModelOutlineMulti:
         """Return toolkit-specific outline storage element."""
         return UiModelOutlineMulti(GO.TYPE_PYOBJECT)
 
@@ -472,92 +397,13 @@ class ModelOutlineMulti(ModelOutline[UiModelOutlineMulti, ItemOpaque],
 
         :param p_persist: persistent form for outline content.
         """
-        raise NotImplementedError
-        TOP_LEVEL = 1
-        for path_str, item in (p_persist.items()):
-            path = Gtk.TreePath(path_str)
-            if TOP_LEVEL == path.get_depth():
-                i_parent = None
-            else:
-                _ = path.up()
-                i_parent = self._model.get_iter(path)
-            self._model.append(i_parent, [item])
-
-
-# ======================================================================
-# ======================================================================
-# ======================================================================
-# ======================================================================
-# ======================================================================
-
-class InterfaceOutline(abc.ABC, typing.Generic[
-        ItemOpaque]):
-    """Specifies methods of model clases that encapsulate toolkit
-    storage elements for single-level outlines.
-    """
-
-    pass
-
-
-class InterfaceOutlineMulti(abc.ABC, typing.Generic[ItemOpaque]):
-    """Specifies methods of model clases that encapsulate toolkit
-    storage elements for multi-level outlines.
-    """
-
-    pass
-
-
-# class BridgeOutlineColumnar(BridgeOutline[
-#         ItemOpaque, ViewOutlineColumnar], typing.Generic[ItemOpaque]):
-#     """Encapsulate widget toolkit classes for columnar view of a
-#     single-level outline.
-#     """
-#
-#     def new_view(self) -> ViewOutlineColumnar:
-#         """Return toolkit-specific columnar view element."""
-#         raise NotImplementedError
-#         view = ViewOutlineColumnar()
-#         view.set_model(self._model)
-#         return view
-
-
-# class BridgeOutlineSelect(BridgeOutline[
-#         ItemOpaque, ViewOutlineSelect], typing.Generic[ItemOpaque]):
-#     """Encapsulate widget toolkit classes for selection view of a
-#     single-level outline.
-#     """
-#
-#     def new_view(self) -> ViewOutlineSelect:
-#         """Return toolkit-specific selection element."""
-#         raise NotImplementedError
-#         view = ViewOutlineSelect()
-#         view.set_model(self._model)
-#         return view
-
-
-# class BridgeOutlineMultiColumnar(BridgeOutlineMulti[
-#         ItemOpaque, ViewOutlineColumnar], typing.Generic[ItemOpaque]):
-#     """Encapsulate widget toolkit classes for a columnal view of a
-#     multi-level outline.
-#     """
-#
-#     def new_view(self) -> ViewOutlineColumnar:
-#         """Return toolkit-specific columnar element."""
-#         raise NotImplementedError
-#         view = ViewOutlineColumnar()
-#         view.set_model(self._model)
-#         return view
-
-
-# class BridgeOutlineMultiSelect(BridgeOutlineMulti[
-#         ItemOpaque, ViewOutlineSelect], typing.Generic[ItemOpaque]):
-#     """Encapsulate widget toolkit classes for a selction view of a
-#     multi-level outline.
-#     """
-#
-#     def new_view(self) -> ViewOutlineSelect:
-#         """Return toolkit-specific selection element."""
-#         raise NotImplementedError
-#         view = ViewOutlineSelect()
-#         view.set_model(self._model)
-#         return view
+        pass
+        # TOP_LEVEL = 1
+        # for path_str, item in (p_persist.items()):
+        #     path = Gtk.TreePath(path_str)
+        #     if TOP_LEVEL == path.get_depth():
+        #         i_parent = None
+        #     else:
+        #         _ = path.up()
+        #         i_parent = self._model.get_iter(path)
+        #     self._model.append(i_parent, [item])

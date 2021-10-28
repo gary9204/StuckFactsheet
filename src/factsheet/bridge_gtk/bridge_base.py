@@ -99,7 +99,7 @@ class BridgeBase(abc.ABC, typing.Generic[ModelUiOpaque, PersistUiOpaque]):
         del state['_ui_model']
         return state
 
-    def __init__(self, **_kwargs) -> None:
+    def __init__(self) -> None:
         """Initialize instance with toolkit-specific storage."""
         self._ui_model = self._new_ui_model()
 

@@ -290,12 +290,12 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         del state['_stale']
         return state
 
-    def __init__(self, p_text: str = '', **kwargs) -> None:
+    def __init__(self, p_text: str = '') -> None:
         """Extend initialization with text and change state.
 
         :param p_text: initial text content.
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self._set_persist(p_text)
         self._stale = False
 
