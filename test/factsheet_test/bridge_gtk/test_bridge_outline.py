@@ -427,29 +427,82 @@ class TestModelOutlineMulti:
 class TestModelOutlineSingle:
     """Unit tests for :class:`.ModelOutlineSingle`."""
 
-    pass
+    def test_set_persist(self, new_patch_single):
+        """Confirm import from persistent form."""
+        # Setup
+        source = new_patch_single()
+        persist = source._get_persist()
+        target = BOUTLINE.ModelOutlineSingle()
+        # Test
+        target._set_persist(persist)
+        assert persist == target._get_persist()
+
+    @pytest.mark.parametrize('AFTER', [
+            None,
+            '0',
+            '2',
+            '4',
+            ])
+    def test_insert_after(
+            self, new_patch_single, new_names_model_single, AFTER):
+        """Confirm item insertion.
+
+        :param new_patch_single: fixture :func:`.new_patch_single`.
+        :param new_names_model_single: fixture
+            :func:`.new_names_model_single`.
+        :param AFTER: position after which to insert item.
+        """
+        # Setup
+        target = new_patch_single()
+        model = target._ui_model
+        ITEM_NEW = PatchItem('Item New', 'Inserted')
+        names = list(new_names_model_single().values())
+        line = None
+        position = 0
+        if AFTER is not None:
+            line = model.get_iter_from_string(AFTER)
+            position = int(AFTER) + 1
+        _ = names.insert(position, ITEM_NEW.name)
+        # Test
+        line_new = target.insert_after(ITEM_NEW, line)
+        assert ITEM_NEW == target.get_item(line_new)
+        assert names == [item.name for item in target.items()]
+
+    @pytest.mark.parametrize('BEFORE', [
+            '0',
+            '2',
+            '4',
+            None,
+            ])
+    def test_insert_before(
+            self, new_patch_single, new_names_model_single, BEFORE):
+        """Confirm item insertion.
+
+        :param new_patch_single: fixture :func:`.new_patch_single`.
+        :param new_names_model_single: fixture
+            :func:`.new_names_model_single`.
+        :param BEFORE: position after which to insert item.
+        """
+        # Setup
+        target = new_patch_single()
+        model = target._ui_model
+        ITEM_NEW = PatchItem('Item New', 'Inserted')
+        names = list(new_names_model_single().values())
+        line = None
+        position = len(names)
+        if BEFORE is not None:
+            line = model.get_iter_from_string(BEFORE)
+            position = int(BEFORE)
+        _ = names.insert(position, ITEM_NEW.name)
+        # Test
+        line_new = target.insert_before(ITEM_NEW, line)
+        assert ITEM_NEW == target.get_item(line_new)
+        assert names == [item.name for item in target.items()]
 
 
 @pytest.mark.skip(reason='Refactor in progress')
 class TestBridgeOutline:
     """Unit tests for :class:`~.BridgeOutline`."""
-
-    def test_constants(self, patch_class_outline):
-        """Confirm definition of class constants."""
-        # Setup
-        C_ITEM = 0
-        # Test
-        assert C_ITEM == patch_class_outline._C_ITEM
-
-    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BOUTLINE.ModelOutlineSingle, 'new_view'),
-        ])
-    def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
-        # Setup
-        # Test
-        assert hasattr(CLASS, '__abstractmethods__')
-        assert NAME_METHOD in CLASS.__abstractmethods__
 
     def test_eq(self, patch_class_outline, patch_gtk_model_single):
         """Confirm equality comparison.
@@ -527,21 +580,6 @@ class TestBridgeOutline:
                 assert place is None
             else:
                 assert item is model.get_value(line, PatchOutlineSingle._C_ITEM)
-
-    def test_set_persist(self, patch_class_outline, patch_gtk_model_single):
-        """Confirm import from persistent form."""
-        # Setup
-        N_ITEMS = 5
-        target = patch_class_outline()
-        model = patch_gtk_model_single(N_ITEMS)
-        persist = dict()
-        for it in iter_section(model):
-            path_str = model.get_string_from_iter(it)
-            item = model.get_value(it, patch_class_outline._C_ITEM)
-            persist[path_str] = item
-        # Test
-        target._set_persist(persist)
-        assert persist == target._get_persist()
 
 
 # @pytest.mark.skip(reason='Refactor in progress')

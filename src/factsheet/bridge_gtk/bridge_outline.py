@@ -213,8 +213,6 @@ class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
 
         Two outlines are equivalent when they have the same structure
         (fields, items, and sections) and corresponding items are equal.
-        Transient aspects of the outlines (like views) are not compared
-        and may be different.
     """
 
     def insert_after(self, p_item: ItemOpaque,
@@ -227,8 +225,7 @@ class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
         :param p_line: line to precede new line.
         :returns: line of newly-added item.
         """
-        raise NotImplementedError
-        return self._model.insert_after(p_line, [p_item])
+        return self._ui_model.insert_after(p_line, [p_item])
 
     def insert_before(self, p_item: ItemOpaque,
                       p_line: LineOutline = None) -> LineOutline:
@@ -240,13 +237,7 @@ class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
         :param p_line: line to follow new line.
         :returns: line of newly-added item.
         """
-        raise NotImplementedError
-        return self._model.insert_before(p_line, [p_item])
-
-    # def items(self) -> typing.Iterator[typing.Optional[ItemOpaque]]:
-    #     """Return iterator over items in outline."""
-    #     for line in self.lines():
-    #         yield self.get_item(line)
+        return self._ui_model.insert_before(p_line, [p_item])
 
     def lines(self) -> typing.Iterator[LineOutline]:
         """Return iterator over lines in outline."""
@@ -264,10 +255,9 @@ class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
 
         :param p_persist: persistent form for outline content.
         """
-        pass
-        # for path_str, item in (p_persist.items()):
-        #     position = int(path_str)
-        #     self._model.insert(position, [item])
+        for path_str, item in (p_persist.items()):
+            position = int(path_str)
+            self._ui_model.insert(position, [item])
 
 
 class ModelOutlineMulti(ModelOutline[UiModelOutlineMulti, ItemOpaque],
