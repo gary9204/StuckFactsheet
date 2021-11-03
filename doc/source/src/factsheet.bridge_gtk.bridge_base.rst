@@ -1,5 +1,5 @@
-``bridge_base`` GTK Bridge Module
-=================================
+``bridge_base`` Module
+======================
 
 .. automodule:: factsheet.bridge_gtk.bridge_base
    :members:

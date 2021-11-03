@@ -1,5 +1,5 @@
-``bridge_ui`` GTK Bridge User Interface Module
-==============================================
+``bridge_ui`` User Interface Module
+===================================
 
 .. automodule:: factsheet.bridge_ui
    :members:

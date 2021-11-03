@@ -71,9 +71,9 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
-ItemOpaque = typing.TypeVar('ItemOpaque')
 
 ChooserOutline = typing.Union[Gtk.ComboBox]
+ItemOpaque = typing.TypeVar('ItemOpaque')
 LineOutline = typing.Union[Gtk.TreeIter]
 PersistOutline = typing.MutableMapping[str, ItemOpaque]
 UiModelOutlineMulti = typing.Union[Gtk.TreeStore]
@@ -82,15 +82,9 @@ UiModelOutline = typing.TypeVar(
     'UiModelOutline', UiModelOutlineMulti, UiModelOutlineSingle)
 ViewOutline = typing.Union[Gtk.TreeView]
 
-# LineOpaque = typing.TypeVar('LineOpaque')
-# ModelOutline = typing.Union[Gtk.TreeModel]
-# ModelOutlineMulti = typing.Union[Gtk.TreeStore]
-# ModelOutlineSingle = typing.Union[Gtk.ListStore]
-# ViewOutlineOpaque = typing.TypeVar(
-#     'ViewOutlineOpaque', ViewOutlineColumnar, ViewOutlineSelect)
 
-
-class FactoryChooserOutline(typing.Generic[UiModelOutline, ItemOpaque]):
+class FactoryChooserOutline(BBASE.FactoryUiViewAbstract[UiModelOutline],
+                            typing.Generic[UiModelOutline, ItemOpaque]):
     """Chooser factory for an outline.
 
     A call to the factory takes no arguments and returns
@@ -111,7 +105,8 @@ class FactoryChooserOutline(typing.Generic[UiModelOutline, ItemOpaque]):
         return chooser
 
 
-class FactoryViewOutline(typing.Generic[UiModelOutline, ItemOpaque]):
+class FactoryViewOutline(BBASE.FactoryUiViewAbstract[UiModelOutline],
+                         typing.Generic[UiModelOutline, ItemOpaque]):
     """View factory for an outline.
 
     A call to the factory takes no arguments and returns :data:`.ViewOutline`.

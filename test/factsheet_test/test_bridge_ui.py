@@ -5,7 +5,7 @@ widget toolkit.  See :mod:`~.bridge_ui`.
 import pytest  # type: ignore[import]
 
 import factsheet.bridge_gtk.bridge_base as BBASE
-# import factsheet.bridge_gtk.bridge_outline as BOUTLINE
+import factsheet.bridge_gtk.bridge_outline as BOUTLINE
 import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.bridge_ui as BUI
 
@@ -17,13 +17,13 @@ class TestBridgeTypes:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (BUI.TimeEvent, BBASE.TimeEvent),
-        # (BUI.BridgeOutlineColumnar, BOUTLINE.BridgeOutlineColumnar),
-        # (BUI.BridgeOutlineMultiColumnar, BOUTLINE.BridgeOutlineMultiColumnar),
-        # (BUI.BridgeOutlineMultiSelect, BOUTLINE.BridgeOutlineMultiSelect),
-        # (BUI.BridgeOutlineSelect, BOUTLINE.BridgeOutlineSelect),
-        # (BUI.LineOutline, BOUTLINE.LineOutline),
-        # (BUI.ViewOutlineColumnar, BOUTLINE.ViewOutlineColumnar),
-        # (BUI.ViewOutlineSelect, BOUTLINE.ViewOutlineSelect),
+        (BUI.ChooserOutline, BOUTLINE.ChooserOutline),
+        (BUI.FactoryChooserOutline, BOUTLINE.FactoryChooserOutline),
+        (BUI.FactoryViewOutline, BOUTLINE.FactoryViewOutline),
+        (BUI.LineOutline, BOUTLINE.LineOutline),
+        (BUI.ModelOutlineMulti, BOUTLINE.ModelOutlineMulti),
+        (BUI.ModelOutlineSingle, BOUTLINE.ModelOutlineSingle),
+        (BUI.ViewOutline, BOUTLINE.ViewOutline),
         (BUI.ModelTextMarkup, BTEXT.ModelTextMarkup),
         (BUI.DisplayTextMarkup, BTEXT.DisplayTextMarkup),
         (BUI.FactoryDisplayTextMarkup, BTEXT.FactoryDisplayTextMarkup),

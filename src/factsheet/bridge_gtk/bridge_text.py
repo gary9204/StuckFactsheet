@@ -75,11 +75,9 @@ from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 from gi.repository import Pango    # type: ignore[import]    # noqa: E402
 
-ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
-
-PersistText = str
-
 IdDisplay = typing.NewType('IdDisplay', int)
+ModelTextOpaque = typing.TypeVar('ModelTextOpaque')
+PersistText = str
 
 UiTextMarkup = typing.Union[Gtk.EntryBuffer]
 DisplayTextMarkup = typing.Union[Gtk.Label]

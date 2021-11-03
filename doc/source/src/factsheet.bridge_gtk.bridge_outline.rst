@@ -1,5 +1,5 @@
-``bridge_outline`` GTK Bridge Module
-====================================
+``bridge_outline`` Module
+=========================
 
 .. automodule:: factsheet.bridge_gtk.bridge_outline
    :members:

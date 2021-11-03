@@ -1,5 +1,5 @@
-``bridge_gtk`` GTK Bridges Package
-==================================
+``bridge_gtk`` Package
+======================
 
 .. automodule:: factsheet.bridge_gtk
    :members:

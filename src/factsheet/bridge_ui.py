@@ -1,21 +1,26 @@
 """
-Encapsulates user interface classes from widget toolkit.
+Encapsulates user interface classes from widget toolkit.  The following
+models define the classes.
+
+    * :mod:`.bridge_base`
+    * :mod:`.bridge_outline`
+    * :mod:`.bridge_text`
 """
 
 import factsheet.bridge_gtk.bridge_base as BBASE
-# import factsheet.bridge_gtk.bridge_outline as BOUTLINE
+import factsheet.bridge_gtk.bridge_outline as BOUTLINE
 import factsheet.bridge_gtk.bridge_text as BTEXT
 
 TimeEvent = BBASE.TimeEvent
 TIME_EVENT_CURRENT = BBASE.TIME_EVENT_CURRENT
 
-# BridgeOutlineColumnar = BOUTLINE.BridgeOutlineColumnar
-# BridgeOutlineMultiColumnar = BOUTLINE.BridgeOutlineMultiColumnar
-# BridgeOutlineMultiSelect = BOUTLINE.BridgeOutlineMultiSelect
-# BridgeOutlineSelect = BOUTLINE.BridgeOutlineSelect
-# LineOutline = BOUTLINE.LineOutline
-# ViewOutlineColumnar = BOUTLINE.ViewOutlineColumnar
-# ViewOutlineSelect = BOUTLINE.ViewOutlineSelect
+ChooserOutline = BOUTLINE.ChooserOutline
+FactoryChooserOutline = BOUTLINE.FactoryChooserOutline
+FactoryViewOutline = BOUTLINE.FactoryViewOutline
+LineOutline = BOUTLINE.LineOutline
+ModelOutlineMulti = BOUTLINE.ModelOutlineMulti
+ModelOutlineSingle = BOUTLINE.ModelOutlineSingle
+ViewOutline = BOUTLINE.ViewOutline
 
 escape_text_markup = BTEXT.escape_text_markup
 ModelTextMarkup = BTEXT.ModelTextMarkup

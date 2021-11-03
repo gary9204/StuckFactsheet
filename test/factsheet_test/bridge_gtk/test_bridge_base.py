@@ -3,7 +3,6 @@ Unit tests for base of classes that encapsulate widget toolkit classes.
 See :mod:`~.bridge_base`.
 """
 import gi   # type: ignore[import]
-# import logging
 from pathlib import Path
 import pickle
 import pytest  # type: ignore[import]
@@ -18,9 +17,6 @@ from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
 class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any]):
     """Class with test stubs for abstract :class:`~.BridgeBase` methods."""
 
-    # def __init__(self):
-    #     super().__init__()
-    #     self._ui_model = 'Oops! incomplete test initialization.'
     MODEL_INIT = 'A Norwegian Blue'
 
     def _get_persist(self): return self._ui_model

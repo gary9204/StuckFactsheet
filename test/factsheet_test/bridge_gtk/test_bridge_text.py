@@ -658,16 +658,11 @@ class TestTypes:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (BTEXT.IdDisplay.__qualname__, 'NewType.<locals>.new_type'),
         (BTEXT.IdDisplay.__dict__['__supertype__'], int),
-        # (type(BTEXT.ModelTextOpaque), typing.TypeVar),
-        # (BTEXT.ModelTextOpaque.__constraints__, ()),
-        # # (BTEXT.ModelTextStatic, str),
-        # (BTEXT.ViewTextTagged, Gtk.TextView),
-        # (BTEXT.ViewTextMarkup, Gtk.Entry),
-        # (type(BTEXT.ViewTextOpaque), typing.TypeVar),
-        # (BTEXT.ViewTextOpaque.__constraints__, ()),
-        # (type(BTEXT.ViewTextOpaquePassive), typing.TypeVar),
-        # (BTEXT.ViewTextOpaquePassive.__constraints__, ()),
-        # (BTEXT.ViewTextDisplay, Gtk.Label),
+        (BTEXT.PersistText, str),
+        (BTEXT.DisplayTextMarkup, Gtk.Label),
+        (BTEXT.EditorTextMarkup, Gtk.Entry),
+        (BTEXT.DisplayTextStyled, Gtk.TextView),
+        (BTEXT.EditorTextStyled, Gtk.TextView),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.
