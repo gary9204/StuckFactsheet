@@ -171,7 +171,7 @@ Circular imports
 When a user makes a request in a view, view calls controller to
 service the request.   Contoller calls model to change state to complete
 the request.  Model calls the view to update the presentation to the
-user.  A fix is need to prevent circular imports view |larr| controller <-
+user.  A fix is need to prevent circular imports view <- controller <-
 model <- view.
 
 .. _`Observer pattern`: https://en.wikipedia.org/wiki/Observer_pattern

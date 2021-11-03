@@ -1,6 +1,8 @@
 """
 Unit tests for bridge classes to encapsulate witget toolkit outline
 classes. See :mod:`.bridge_outline`.
+
+.. include:: /test/refs_include_pytest.txt
 """
 import dataclasses as DC
 import gi   # type: ignore[import]
@@ -14,13 +16,19 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-def gtk_model_to_names(p_tree_model):
-    """Return dictionary of names in an outline indexed by line."""
+def gtk_model_to_names(p_model):
+    """Return dictionary of names in a `Gtk.TreeModel`_ indexed by line.
+
+    :param p_model: model to extract names from.
+
+    .. _Gtk.TreeModel:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeModel.html
+    """
     C_ITEM = 0
     persist = dict()
-    for row in iter_section(p_tree_model):
-        path_str = p_tree_model.get_string_from_iter(row)
-        item = p_tree_model[row][C_ITEM]
+    for row in iter_section(p_model):
+        path_str = p_model.get_string_from_iter(row)
+        item = p_model[row][C_ITEM]
         persist[path_str] = item.name
     return persist
 
@@ -31,9 +39,6 @@ def iter_section(p_model, p_it=None):
 
     :param p_model: model containing rows.
     :param p_it: iterate over this row and all of its descendants.
-
-    _Gtk.TreeModel: https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
-    TreeModel.html#Gtk.TreeModel
     """
     if p_it is not None:
         yield p_it
@@ -43,9 +48,99 @@ def iter_section(p_model, p_it=None):
         it_child = p_model.iter_next(it_child)
 
 
+def insert_snippet_children(p_model, p_path) -> BOUTLINE.LineOutline:
+    """Insert snippet into :data:`.UiModelOutlineMulti` at given path.
+
+    The snippet includes a line with children as shown below.
+
+        |     Item cxx
+        |         Item cax
+        |         Item cbx
+
+    The function places the snipppet as the last child of line at given
+    path.  If line is None, the snippet is placed at the end of the
+    outline.
+
+    :param p_model: model in which to insert snippet.
+    :param p_path: path to parent for snippet.
+    :returns: line of snippet root in model.
+    """
+    line = None
+    if p_path is not None:
+        line = p_model.get_iter_from_string(p_path)
+    item = PatchItem('Item cxx', 'Children')
+    i_cxx = p_model.append(line, [item])
+    item = PatchItem('Item cax', 'Children')
+    _i_cax = p_model.append(i_cxx, [item])
+    item = PatchItem('Item cbx', 'Children')
+    _i_cbx = p_model.append(i_cxx, [item])
+    return i_cxx
+
+
+def insert_snippet_multiple(p_model, p_path) -> BOUTLINE.LineOutline:
+    """Insert snippet into :data:`.UiModelOutlineMulti` at given path.
+
+    The snippet includes multiple levels as shown below.
+
+        | Item mxx
+        |     Item max
+        |         Item maa
+        |         Item mab
+
+    The function places the snipppet as the last child of line at given
+    path.  If line is None, the snippet is placed at the end of the
+    outline.
+
+    :param p_model: model in which to insert snippet.
+    :param p_path: path to parent for snippet.
+    :returns: line of snippet root in model.
+    """
+    line = None
+    if p_path is not None:
+        line = p_model.get_iter_from_string(p_path)
+    item = PatchItem('Item mxx', 'Multiple')
+    i_mxx = p_model.append(line, [item])
+    item = PatchItem('Item max', 'Multiple')
+    i_max = p_model.append(i_mxx, [item])
+    item = PatchItem('Item maa', 'Multiple')
+    _i_maa = p_model.append(i_max, [item])
+    item = PatchItem('Item mab', 'Multiple')
+    _i_mab = p_model.append(i_max, [item])
+    return i_mxx
+
+
+def insert_snippet_single(p_model, p_path) -> BOUTLINE.LineOutline:
+    """Insert snippet into :data:`.UiModelOutlineMulti` at given path.
+
+    The snippet includes a single line as shown below.
+
+        | Item sxx
+
+    The function places the snipppet as the last child of line at given
+    path.  If line is None, the snippet is placed at the end of the
+    outline.
+
+    :param p_model: model in which to insert snippet.
+    :param p_path: path to parent for snippet.
+    :returns: line of snippet root in model.
+    """
+    line = None
+    if p_path is not None:
+        line = p_model.get_iter_from_string(p_path)
+    item = PatchItem('Item sxx', 'Single')
+    i_sxx = p_model.append(line, [item])
+    return i_sxx
+
+
 @pytest.fixture
 def NAMES(request, new_names_model_multi, new_names_model_single):
-    """Pytest fixture: Return dictionary of names for identified outline."""
+    """Pytest fixture: Return names of items in outline.
+
+    :param request: built-in fixture `Pytest request`_ identifies type
+        of outline.
+    :param new_names_model_multi: fixture :func:`.new_names_model_multi`.
+    :param new_names_model_single: fixture :func:`.new_names_model_single`.
+    """
     # Setup
     FACTORY = dict(MULTI=new_names_model_multi, SINGLE=new_names_model_single)
     names = FACTORY[request.param]()
@@ -55,9 +150,8 @@ def NAMES(request, new_names_model_multi, new_names_model_single):
 @pytest.fixture
 def new_gtk_model_multi():
     """Pytest fixture: Return `Gtk.TreeStore`_ model factory.
-    The structure of each model is as shown below.
 
-    :param tag: identifies model (default is 'Target').
+    The structure of each model is as shown below.
 
         | Item 0xx
         |     Item 00x
@@ -69,6 +163,11 @@ def new_gtk_model_multi():
         |         Item 110
         |         Item 111
         |         Item 112
+
+    :param factory p_tag: identifies model (default is 'Target').
+
+    .. _`Gtk.TreeStore`:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeStore.html
     """
     def new_model(p_tag='Target'):
         model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
@@ -98,35 +197,21 @@ def new_gtk_model_multi():
 
 
 @pytest.fixture
-def new_gtk_model_multi_snippet():
-    """Pytest fixture: Return `Gtk.TreeStore`_ model snippet.
-    The structure of the snippet is as shown below.
-
-    :param tag: identifies snippet (default is 'Snippet').
-
-        | Item axx
-        |     Item aax
-        |         Item aab
-        |         Item aaa
-    """
-    model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
-    item = PatchItem('Item axx', 'Snippet')
-    i_axx = model.append(None, [item])
-    item = PatchItem('Item aax', 'Snippet')
-    i_aax = model.append(i_axx, [item])
-    item = PatchItem('Item aaa', 'Snippet')
-    _i_aaa = model.append(i_aax, [item])
-    item = PatchItem('Item aab', 'Snippet')
-    _i_aab = model.append(i_aax, [item])
-    return model
-
-
-@pytest.fixture
 def new_gtk_model_single():
     """Pytest fixture: Return `Gtk.ListStore`_ model factory.
 
-    :param p_n_items: number of items in model (default is 5).
-    :param p_tag: identifies model (default is 'Target').
+    The structure of each model is as shown below.
+
+        | Item 0
+        | Item 1
+        | Item 2
+        | ...
+
+    :param factory p_n_items: number of items in model (default is 5).
+    :param factory p_tag: identifies model (default is 'Target').
+
+    .. _`Gtk.ListStore`:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ListStore.html
     """
     def new_model(p_n_items=5, p_tag='Target'):
         model = Gtk.ListStore(GO.TYPE_PYOBJECT)
@@ -150,16 +235,16 @@ def new_names_model_multi():
     """
     def new_names():
         names = {
-            '0': 'Item 0xx',
-            '0:0': 'Item 00x',
-            '0:0:0': 'Item 000',
-            '0:1': 'Item 01x',
-            '1': 'Item 1xx',
-            '1:0': 'Item 10x',
-            '1:1': 'Item 11x',
-            '1:1:0': 'Item 110',
-            '1:1:1': 'Item 111',
-            '1:1:2': 'Item 112',
+            '0': 'Item 0xx',            # Position 0
+            '0:0': 'Item 00x',          # Position 1
+            '0:0:0': 'Item 000',        # Position 2
+            '0:1': 'Item 01x',          # Position 3
+            '1': 'Item 1xx',            # Position 4
+            '1:0': 'Item 10x',          # Position 5
+            '1:1': 'Item 11x',          # Position 6
+            '1:1:0': 'Item 110',        # Position 7
+            '1:1:1': 'Item 111',        # Position 8
+            '1:1:2': 'Item 112',        # Position 9
             }
         return names
 
@@ -192,6 +277,8 @@ def new_patch_multi(new_gtk_model_multi):
     """Pytest fixture: Return factory for multi-level outlines.
 
     Each outline is patched with non-empty model.
+
+    :param new_gtk_model_multi: fixture :func:`.new_gtk_model_multi`.
     """
     def new_multi():
         outline = BOUTLINE.ModelOutlineMulti[PatchItem]()
@@ -206,6 +293,8 @@ def new_patch_single(new_gtk_model_single):
     """Pytest fixture: Return factory for single-level outlines.
 
     Each outline is patched with non-empty model.
+
+    :param new_gtk_model_single: fixture :func:`.new_gtk_model_single`.
     """
     def new_single():
         outline = BOUTLINE.ModelOutlineSingle[PatchItem]()
@@ -217,7 +306,11 @@ def new_patch_single(new_gtk_model_single):
 
 @DC.dataclass
 class PatchItem:
-    """Placeholder item class for unit tests."""
+    """Placeholder item class for unit tests.
+
+    :param name: name to identify an item.
+    :param tag: string to identify all items in a section or model.
+    """
     name: str
     tag: str = 'Target'
 
@@ -226,7 +319,11 @@ class TestCheckFixtures:
     """Unit tests to check test fixtures and test module functions."""
 
     def test_model_multi(self, new_gtk_model_multi, new_names_model_multi):
-        """Confirm multi-level model structure and content."""
+        """Confirm multi-level model structure and content.
+
+        :param new_gtk_model_multi: fixture :func:`.new_gtk_model_multi`.
+        :param new_names_model_multi: fixture :func:`.new_names_model_multi`.
+        """
         # Setup
         model = new_gtk_model_multi()
         names = new_names_model_multi()
@@ -236,7 +333,11 @@ class TestCheckFixtures:
 
     def test_model_single(
             self, new_gtk_model_single, new_names_model_single):
-        """Confirm single-level model structure and content."""
+        """Confirm single-level model structure and content.
+
+        :param new_gtk_model_single: fixture :func:`.new_gtk_model_single`.
+        :param new_names_model_single: fixture :func:`.new_names_model_single`.
+        """
         # Setup
         model = new_gtk_model_single()
         names = new_names_model_single()
@@ -255,7 +356,11 @@ class TestModelOutline:
         (BOUTLINE.ModelOutline, '_set_persist'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
+        """Confirm each abstract method is specified.
+
+        :param CLASS: abstract class under test.
+        :param NAME_METHOD: confirm method with this name is abstract.
+        """
         # Setup
         # Test
         assert hasattr(CLASS, '__abstractmethods__')
@@ -267,7 +372,11 @@ class TestModelOutline:
             BOUTLINE.UiModelOutlineSingle),
         ])
     def test_init(self, SUBCLASS, MODEL):
-        """Confirm initialization for each subclass."""
+        """Confirm initialization for each subclass.
+
+        :param SUBCLASS: outline model subclass under test.
+        :param MODEL: GTK model for outline model subclass under test.
+        """
         # Setup
         # Test
         target = SUBCLASS()
@@ -279,7 +388,10 @@ class TestModelOutline:
         'SINGLE',
         ], indirect=['SUBTYPE'])
     def test_clear(self, SUBTYPE):
-        """Confirm all lines removed from outline."""
+        """Confirm all lines removed from outline.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        """
         # Setup
         target = SUBTYPE
         # Test
@@ -295,7 +407,12 @@ class TestModelOutline:
         ('SINGLE', '4', 'Item 4'),
         ], indirect=['SUBTYPE'])
     def test_get_item(self, SUBTYPE, LINE, NAME):
-        """Confirm all lines removed from outline."""
+        """Confirm all lines removed from outline.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param LINE: path to line containing item to get.
+        :param NAME: name in item to get.
+        """
         # Setup
         target = SUBTYPE
         model = target._ui_model
@@ -313,7 +430,12 @@ class TestModelOutline:
         ('SINGLE', '4', 'Item 4'),
         ], indirect=['SUBTYPE'])
     def test_get_item_direct(self, SUBTYPE, LINE, NAME):
-        """Confirm all lines removed from outline."""
+        """Confirm all lines removed from outline.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param LINE: path to line containing item to get.
+        :param NAME: name in item to get.
+        """
         # Setup
         target = SUBTYPE
         model = target._ui_model
@@ -327,27 +449,28 @@ class TestModelOutline:
         ('SINGLE', )*2,
         ], indirect=True)
     def test_get_persist(self, SUBTYPE, NAMES):
-        """Confirm iterator over lines."""
+        """Confirm iterator over lines.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param NAME: fixture that returns names of items in outline.
+        """
         # Setup
         target = SUBTYPE
         # Test
         persist = target._get_persist()
         names_persist = {i: item.name for (i, item) in persist.items()}
         assert NAMES == names_persist
-        # names_outline = dict()
-        # for line in target.lines():
-        #     path_str = model.get_string_from_iter(line)
-        #     item = target.get_item(line)
-        #     names_items =
-        # names_item = {i, i.name for i in target.items()}
-        # assert names_expect == names_item
 
     @pytest.mark.parametrize('SUBTYPE, NAMES', [
         ('MULTI', )*2,
         ('SINGLE', )*2,
         ], indirect=True)
     def test_items(self, SUBTYPE, NAMES):
-        """Confirm iterator over lines."""
+        """Confirm iterator over items.
+
+        :param SUBCLASS: identifies outline model subclass under test.
+        :param NAME: fixture that returns names of items in outline.
+        """
         # Setup
         names_expect = list(NAMES.values())
         target = SUBTYPE
@@ -360,7 +483,11 @@ class TestModelOutline:
         ('SINGLE', )*2,
         ], indirect=True)
     def test_lines(self, SUBTYPE, NAMES):
-        """Confirm iterator over lines."""
+        """Confirm iterator over lines.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param NAME: fixture that returns names of items in outline.
+        """
         # Setup
         target = SUBTYPE
         model = target._ui_model
@@ -381,7 +508,14 @@ class TestModelOutline:
         ('SINGLE', 'SINGLE', '4', 4, 5),
         ], indirect=['SUBTYPE', 'NAMES'])
     def test_remove(self, SUBTYPE, NAMES, PATH, BEGIN, END):
-        """Confirm section removal."""
+        """Confirm section removal.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param NAME: fixture that returns names of items in outline.
+        :param PATH: path for line to remove.
+        :param BEGIN: slice [BEGIN:END) contains names of lines removed.
+        :param END: slice [BEGIN:END) contains names of lines removed.
+        """
         # Setup
         names_before = list(NAMES.values())
         names_after = names_before[:BEGIN] + names_before[END:]
@@ -401,6 +535,101 @@ class TestModelOutline:
 class TestModelOutlineMulti:
     """Unit tests for :class:`.ModelOutlineMulti`."""
 
+    @pytest.mark.parametrize('METHOD, PATH, POSITION, PATH_NEW', [
+            ('insert_after', None, 0, '0'),
+            ('insert_after', '0', 4, '1'),
+            ('insert_after', '1:0', 6, '1:1'),
+            ('insert_after', '1:1:2', 10, '1:1:3'),
+            ('insert_before', '0',  0, '0'),
+            ('insert_before', '0:1',  3, '0:1'),
+            ('insert_before', '1:1:0', 7,  '1:1:0'),
+            ('insert_before', None, 10, '2'),
+            ('insert_child', '0',  4, '0:2'),
+            ('insert_child', '0:0',  3, '0:0:1'),
+            ('insert_child', '1:1:1',  9, '1:1:1:0'),
+            ('insert_child', None, 10, '2'),
+            ])
+    def test_insert(self, new_patch_multi, new_names_model_multi,
+                    METHOD, PATH, POSITION, PATH_NEW):
+        """Confirm item insertion.
+
+        :param new_patch_multi: fixture :func:`.new_patch_multi`.
+        :param new_names_model_multi: fixture
+            :func:`.new_names_model_multi`.
+        :param METHOD: insert method under test.
+        :param PATH: path for line after which to insert item.
+        :param POSITION: position of new name in list of names.
+        :param PATH_NEW: path for line containing new item.
+        """
+        # Setup
+        target = new_patch_multi()
+        insert_target = getattr(target, METHOD)
+        model = target._ui_model
+        ITEM_NEW = PatchItem('Item New', 'Inserted')
+        names = list(new_names_model_multi().values())
+        _ = names.insert(POSITION, ITEM_NEW.name)
+        line = None
+        if PATH is not None:
+            line = model.get_iter_from_string(PATH)
+        # Test
+        line_new = insert_target(ITEM_NEW, line)
+        assert ITEM_NEW == target.get_item(line_new)
+        assert PATH_NEW == model.get_string_from_iter(line_new)
+        assert names == [item.name for item in target.items()]
+
+    @pytest.mark.parametrize('SNIPPET, PATH_SOURCE, PATH_TARGET', [
+        (insert_snippet_children, '0:0:0', None),
+        (insert_snippet_multiple, '1', '1:0'),
+        (insert_snippet_single, None, '0'),
+        ])
+    def test_insert_section(
+            self, new_patch_multi, SNIPPET, PATH_SOURCE, PATH_TARGET):
+        """| Confirm insertion of sections with representative structures.
+        | Case: section is part of source outline.
+
+        :param SNIPPET: funtion that returns section to copy.
+        :param PATH_SOURCE: path to parent of snippet in source.
+        :param PATH_TARGET: path in parent of section copy in target.
+        """
+        # Setup
+        source = new_patch_multi()
+        line_section = SNIPPET(source._ui_model, PATH_SOURCE)
+        expect = new_patch_multi()
+        _ = SNIPPET(expect._ui_model, PATH_TARGET)
+        target = new_patch_multi()
+        line_parent = None
+        if PATH_TARGET is not None:
+            line_parent = target._ui_model.get_iter_from_string(PATH_TARGET)
+        # Test
+        target.insert_section(source, line_parent, line_section)
+        assert expect._get_persist() == target._get_persist()
+
+    @pytest.mark.parametrize('SNIPPET, PATH_TARGET', [
+        (insert_snippet_children, '1'),
+        (insert_snippet_multiple, '0:0:0'),
+        (insert_snippet_single, None),
+        ])
+    def test_insert_section_all(self, new_patch_multi, SNIPPET, PATH_TARGET):
+        """| Confirm insertion of sections with representative structures.
+        | Case: section is all of source outline.
+
+        :param SNIPPET: funtion that returns section to copy.
+        :param PATH_TARGET: path in parent of section copy in target.
+        """
+        # Setup
+        source = BOUTLINE.ModelOutlineMulti()
+        _ = SNIPPET(source._ui_model, None)
+        line_section = None
+        expect = new_patch_multi()
+        _ = SNIPPET(expect._ui_model, PATH_TARGET)
+        target = new_patch_multi()
+        line_parent = None
+        if PATH_TARGET is not None:
+            line_parent = target._ui_model.get_iter_from_string(PATH_TARGET)
+        # Test
+        target.insert_section(source, line_parent, line_section)
+        assert expect._get_persist() == target._get_persist()
+
     @pytest.mark.parametrize('ROOT, BEGIN, END', [
         (None, 0, 11),
         ('1', 4, 11),
@@ -409,7 +638,11 @@ class TestModelOutlineMulti:
         ])
     def test_lines_section(self, new_patch_multi, new_names_model_multi,
                            ROOT, BEGIN, END):
-        """Confirm iterator over lines in section."""
+        """Confirm iterator over lines in section.
+
+        :param ROOT: path to root line of section.
+        :param END: slice [BEGIN:END) contains names of lines in section.
+        """
         # Setup
         target = new_patch_multi()
         model = target._ui_model
@@ -423,19 +656,22 @@ class TestModelOutlineMulti:
                           for l in target.lines_section(root)]
         assert paths_str_section == paths_str_line
 
+    def test_set_persist(self, new_patch_multi):
+        """Confirm import from persistent form.
 
-class TestModelOutlineSingle:
-    """Unit tests for :class:`.ModelOutlineSingle`."""
-
-    def test_set_persist(self, new_patch_single):
-        """Confirm import from persistent form."""
+        :param new_patch_multi: fixture :func:`.new_patch_multi`.
+        """
         # Setup
-        source = new_patch_single()
+        source = new_patch_multi()
         persist = source._get_persist()
-        target = BOUTLINE.ModelOutlineSingle()
+        target = BOUTLINE.ModelOutlineMulti()
         # Test
         target._set_persist(persist)
         assert persist == target._get_persist()
+
+
+class TestModelOutlineSingle:
+    """Unit tests for :class:`.ModelOutlineSingle`."""
 
     @pytest.mark.parametrize('AFTER', [
             None,
@@ -481,7 +717,7 @@ class TestModelOutlineSingle:
         :param new_patch_single: fixture :func:`.new_patch_single`.
         :param new_names_model_single: fixture
             :func:`.new_names_model_single`.
-        :param BEFORE: position after which to insert item.
+        :param BEFORE: position before which to insert item.
         """
         # Setup
         target = new_patch_single()
@@ -499,87 +735,18 @@ class TestModelOutlineSingle:
         assert ITEM_NEW == target.get_item(line_new)
         assert names == [item.name for item in target.items()]
 
+    def test_set_persist(self, new_patch_single):
+        """Confirm import from persistent form.
 
-@pytest.mark.skip(reason='Refactor in progress')
-class TestBridgeOutline:
-    """Unit tests for :class:`~.BridgeOutline`."""
-
-    def test_eq(self, patch_class_outline, patch_gtk_model_single):
-        """Confirm equality comparison.
-
-        #. Case: type difference.
-        #. Case: lines difference.
-        #. Case: items difference.
-        #. Case: equivalent.
+        :param new_patch_single: fixture :func:`.new_patch_single`.
         """
         # Setup
-        source = patch_class_outline()
-        source._model = patch_gtk_model_single()
-        ITEM_DIFFER = PatchItem(name='Something completely different.')
-        PATH_DIFFER = '2'
-        # Test: type difference.
-        assert not source.__eq__(ITEM_DIFFER)
-        # Test: lines difference.
-        target = patch_class_outline()
-        target._model = patch_gtk_model_single()
-        target._model.append([ITEM_DIFFER])
-        assert not source.__eq__(target)
-        # Test: items difference.
-        target = patch_class_outline()
-        target._model = patch_gtk_model_single()
-        iter_differ = target._model.get_iter_from_string(PATH_DIFFER)
-        target._model.set_value(
-            iter_differ, patch_class_outline._C_ITEM, ITEM_DIFFER)
-        assert not source.__eq__(target)
-        # Test: equivalent.
-        target = patch_class_outline()
-        target._model = patch_gtk_model_single()
-        assert source.__eq__(target)
-        assert not source.__ne__(target)
-
-    @pytest.mark.parametrize(
-        'N_ITEMS, METHOD, INSERT, PARENT, BEFORE, AFTER', [
-            (5, 'insert_after',  None, None, None, '0'),
-            (5, 'insert_after',  '0',  None, '0',  '1'),
-            (5, 'insert_after',  '2',  None, '2',  '3'),
-            (5, 'insert_after',  '4',  None, '4',  None),
-            (5, 'insert_before', '0',  None, None, '0'),
-            (5, 'insert_before', '2',  None, '1',  '2'),
-            (5, 'insert_before', '4',  None, '3',  '4'),
-            (5, 'insert_before', None, None, '4',  None),
-            ])
-    def test_insert(self, patch_gtk_model_single, N_ITEMS,
-                    METHOD, INSERT, PARENT, BEFORE, AFTER):
-        """Confirm item insertion."""
-        # Setup
-        target = PatchOutlineSingle()
-        model = patch_gtk_model_single(N_ITEMS)
-        target._model = model
-        expect = list()
-        for place in [PARENT, BEFORE, AFTER]:
-            item = None
-            if place is not None:
-                line = model.get_iter_from_string(place)
-                item = model.get_value(line, PatchOutlineSingle._C_ITEM)
-            expect.append((place, item))
-        NAME = 'Something completely different'
-        item_new = PatchItem(name=NAME)
-        line_insert = None
-        if INSERT is not None:
-            line_insert = model.get_iter_from_string(INSERT)
-        method_target = getattr(target, METHOD)
+        source = new_patch_single()
+        persist = source._get_persist()
+        target = BOUTLINE.ModelOutlineSingle()
         # Test
-        line_new = method_target(item_new, line_insert)
-        assert item_new == model.get_value(line_new, PatchOutlineSingle._C_ITEM)
-        line_parent = model.iter_parent(line_new)
-        line_before = model.iter_previous(line_new)
-        line_after = model.iter_next(line_new)
-        actual = [line_parent, line_before, line_after]
-        for (place, item), line in zip(expect, actual):
-            if line is None:
-                assert place is None
-            else:
-                assert item is model.get_value(line, PatchOutlineSingle._C_ITEM)
+        target._set_persist(persist)
+        assert persist == target._get_persist()
 
 
 # @pytest.mark.skip(reason='Refactor in progress')
@@ -608,268 +775,6 @@ class TestBridgeOutline:
 #         view = target.new_view()
 #         assert isinstance(view, BOUTLINE.ViewOutlineSelect)
 #         assert target._model is view.get_model()
-
-
-@pytest.mark.skip(reason='Refactor in progress')
-class TestBridgeOutlineMulti:
-    """Unit tests for :class:`~.BridgeOutlineMulti`."""
-
-    def test_eq(self, patch_class_outlinemulti, patch_gtk_model_multi):
-        """Confirm equality comparison.
-
-        #. Case: type difference.
-        #. Case: lines difference.
-        #. Case: items difference.
-        #. Case: equivalent.
-        """
-        # Setup
-        source = patch_class_outlinemulti()
-        source._model = patch_gtk_model_multi()
-        ITEM_DIFFER = PatchItem(name='Something completely different.')
-        PATH_DIFFER = '1:0'
-        # Test: type difference.
-        assert not source.__eq__(ITEM_DIFFER)
-        # Test: lines difference.
-        target = patch_class_outlinemulti()
-        target._model = patch_gtk_model_multi()
-        target._model.append(None, [ITEM_DIFFER])
-        assert not source.__eq__(target)
-        # Test: items difference.
-        target = patch_class_outlinemulti()
-        target._model = patch_gtk_model_multi()
-        iter_differ = target._model.get_iter_from_string(PATH_DIFFER)
-        target._model.set_value(
-            iter_differ, patch_class_outlinemulti._C_ITEM, ITEM_DIFFER)
-        assert not source.__eq__(target)
-        # Test: equivalent.
-        target = patch_class_outlinemulti()
-        target._model = patch_gtk_model_multi()
-        assert source.__eq__(target)
-        assert not source.__ne__(target)
-
-    @pytest.mark.parametrize(
-        'METHOD, INSERT, PARENT, BEFORE, AFTER, CHILD', [
-            ('insert_after',  None, None, None, '0', None),
-            ('insert_after',  '0',  None, '0',  '1', None),
-            ('insert_after',  '1:0',  '1', '1:0',  '1:1', None),
-            ('insert_after',  '1:1:2',  '1:1', '1:1:2', None, None),
-            ('insert_before', '0',  None, None, '0', None),
-            ('insert_before', '0:1',  '0', '0:0',  '0:1', None),
-            ('insert_before', '1:1:0',  '1:1', None,  '1:1:0', None),
-            ('insert_before', None, None, '1',  None, None),
-            ('insert_child', '0',  '0', '0:1', None, None),
-            ('insert_child', '0:0',  '0:0', '0:0:0',  None, None),
-            ('insert_child', '1:1:1',  '1:1:1', None,  None, None),
-            ('insert_child', None, None, '1',  None, None),
-            ])
-    def test_insert(self, patch_gtk_model_multi,
-                    METHOD, INSERT, PARENT, BEFORE, AFTER, CHILD):
-        """Confirm item insertion."""
-        # Setup
-        target = PatchOutlineMulti()
-        model = patch_gtk_model_multi()
-        target._model = model
-        expect = list()
-        for place in [PARENT, BEFORE, AFTER, CHILD]:
-            item = None
-            if place is not None:
-                line = model.get_iter_from_string(place)
-                item = model.get_value(line, PatchOutlineMulti._C_ITEM)
-            expect.append((place, item))
-        NAME = 'Something completely different'
-        item_new = PatchItem(name=NAME)
-        line_insert = None
-        if INSERT is not None:
-            line_insert = model.get_iter_from_string(INSERT)
-        method_target = getattr(target, METHOD)
-        # Test
-        line_new = method_target(item_new, line_insert)
-        assert item_new == model.get_value(line_new, PatchOutlineMulti._C_ITEM)
-        line_parent = model.iter_parent(line_new)
-        line_before = model.iter_previous(line_new)
-        line_after = model.iter_next(line_new)
-        line_child = model.iter_children(line_new)
-        actual = [line_parent, line_before, line_after, line_child]
-        for (place, item), line in zip(expect, actual):
-            if line is None:
-                assert place is None
-            else:
-                assert item is model.get_value(line, PatchOutlineMulti._C_ITEM)
-
-    @pytest.mark.parametrize('PATH_TARGET', [
-        None,
-        '1',
-        '0:0',
-        '0:1',
-        ])
-    def test_insert_section(self, patch_gtk_model_multi, PATH_TARGET):
-        """| Confirm section insertion at all target levels.
-        | Case: source section of None.
-        """
-        # Setup
-        source = PatchOutlineMulti()
-        item_a = PatchItem('Item axx', 'source')
-        it_axx = source._model.append(None, [item_a])
-        item_aa = PatchItem('Item aax', 'source')
-        _it_aax = source._model.append(it_axx, [item_aa])
-        item_b = PatchItem('Item bxx', 'source')
-        _it_bxx = source._model.append(None, [item_b])
-
-        expect = PatchOutlineMulti()
-        expect._model = patch_gtk_model_multi()
-        it_expect = None
-        if PATH_TARGET is not None:
-            it_expect = expect._model.get_iter_from_string(PATH_TARGET)
-        it_a = expect._model.append(it_expect, [item_a])
-        _ = expect._model.append(it_a, [item_aa])
-        _ = expect._model.append(it_expect, [item_b])
-
-        target = PatchOutlineMulti()
-        target._model = patch_gtk_model_multi()
-        it_target = None
-        if PATH_TARGET is not None:
-            it_target = target._model.get_iter_from_string(PATH_TARGET)
-        # Test
-        target.insert_section(source, it_target, None)
-        assert expect._get_persist() == target._get_persist()
-
-    @pytest.mark.parametrize('PATH_TARGET', [
-        None,
-        '0',
-        '1:1',
-        '0:0:0',
-        ])
-    def test_insert_section_leaf(
-            self, patch_gtk_model_multi, PATH_TARGET, snippet_gtk_model_multi):
-        """| Confirm section insertion at all target levels.
-        | Case: source section has parent and has no children.
-        """
-        # Setup
-        source = PatchOutlineMulti()
-        snippet = snippet_gtk_model_multi
-        source._model = snippet
-
-        expect = PatchOutlineMulti()
-        expect._model = patch_gtk_model_multi()
-        it_expect = None
-        if PATH_TARGET is not None:
-            it_expect = expect._model.get_iter_from_string(PATH_TARGET)
-        PATH_LEAF_2 = '0:0:1'
-        it_leaf_2 = snippet.get_iter_from_string(PATH_LEAF_2)
-        row = list(snippet[it_leaf_2])
-        _ = expect._model.append(it_expect, row)
-
-        target = PatchOutlineMulti()
-        target._model = patch_gtk_model_multi()
-        it_target = None
-        if PATH_TARGET is not None:
-            it_target = target._model.get_iter_from_string(PATH_TARGET)
-        # Test
-        target.insert_section(source, it_target, it_leaf_2)
-        assert expect._get_persist() == target._get_persist()
-
-    @pytest.mark.parametrize('PATH_TARGET', [
-        None,
-        '1',
-        '0:0',
-        '1:1:1',
-        ])
-    def test_insert_section_mid(
-            self, patch_gtk_model_multi, PATH_TARGET, snippet_gtk_model_multi):
-        """| Confirm section insertion at all target levels.
-        | Case: source section has parent and has children.
-        """
-        # Setup
-        source = PatchOutlineMulti()
-        snippet = snippet_gtk_model_multi
-        source._model = snippet
-
-        expect = PatchOutlineMulti()
-        expect._model = patch_gtk_model_multi()
-        it_expect = None
-        if PATH_TARGET is not None:
-            it_expect = expect._model.get_iter_from_string(PATH_TARGET)
-        PATH_MID = '0:0'
-        it_mid = snippet.get_iter_from_string(PATH_MID)
-        row = list(snippet[it_mid])
-        it = expect._model.append(it_expect, row)
-        PATH_LEAF_1 = '0:0:0'
-        it_leaf_1 = snippet.get_iter_from_string(PATH_LEAF_1)
-        row = list(snippet[it_leaf_1])
-        _ = expect._model.append(it, row)
-        PATH_LEAF_2 = '0:0:1'
-        it_leaf_2 = snippet.get_iter_from_string(PATH_LEAF_2)
-        row = list(snippet[it_leaf_2])
-        _ = expect._model.append(it, row)
-
-        target = PatchOutlineMulti()
-        target._model = patch_gtk_model_multi()
-        it_target = None
-        if PATH_TARGET is not None:
-            it_target = target._model.get_iter_from_string(PATH_TARGET)
-        # Test
-        target.insert_section(source, it_target, it_mid)
-        assert expect._get_persist() == target._get_persist()
-
-    @pytest.mark.parametrize('PATH_TARGET', [
-        None,
-        '0',
-        '1:1',
-        '1:0',
-        ])
-    def test_insert_section_top(
-            self, patch_gtk_model_multi, PATH_TARGET, snippet_gtk_model_multi):
-        """| Confirm section insertion at all target levels.
-        | Case: source section has no parent and has children.
-        """
-        source = PatchOutlineMulti()
-        snippet = snippet_gtk_model_multi
-        source._model = snippet
-
-        expect = PatchOutlineMulti()
-        expect._model = patch_gtk_model_multi()
-        it_expect = None
-        if PATH_TARGET is not None:
-            it_expect = expect._model.get_iter_from_string(PATH_TARGET)
-        PATH_TOP = '0'
-        it_top = snippet.get_iter_from_string(PATH_TOP)
-        row = list(snippet[it_top])
-        it = expect._model.append(it_expect, row)
-        PATH_MID = '0:0'
-        it_mid = snippet.get_iter_from_string(PATH_MID)
-        row = list(snippet[it_mid])
-        it = expect._model.append(it, row)
-        PATH_LEAF_1 = '0:0:0'
-        it_leaf_1 = snippet.get_iter_from_string(PATH_LEAF_1)
-        row = list(snippet[it_leaf_1])
-        _ = expect._model.append(it, row)
-        PATH_LEAF_2 = '0:0:1'
-        it_leaf_2 = snippet.get_iter_from_string(PATH_LEAF_2)
-        row = list(snippet[it_leaf_2])
-        _ = expect._model.append(it, row)
-
-        target = PatchOutlineMulti()
-        target._model = patch_gtk_model_multi()
-        it_target = None
-        if PATH_TARGET is not None:
-            it_target = target._model.get_iter_from_string(PATH_TARGET)
-        # Test
-        target.insert_section(source, it_target, it_top)
-        assert expect._get_persist() == target._get_persist()
-
-    def test_set_persist(self, patch_class_outlinemulti, patch_gtk_model_multi):
-        """Confirm import from persistent form."""
-        # Setup
-        target = patch_class_outlinemulti()
-        model = patch_gtk_model_multi()
-        persist = dict()
-        for it in iter_section(model):
-            path_str = model.get_string_from_iter(it)
-            item = model.get_value(it, patch_class_outlinemulti._C_ITEM)
-            persist[path_str] = item
-        # Test
-        target._set_persist(persist)
-        assert persist == target._get_persist()
 
 
 # @pytest.mark.skip(reason='Refactor in progress')
@@ -930,96 +835,13 @@ class TestBridgeOutlineTypes:
 
 
 @pytest.fixture
-def patch_gtk_model_multi():
-    """Pytest fixture: Return :data:`.ModelOutlineMulti` model factory.
-    The structure of each model is as shown below.
-
-    :param tag: identifies model (default is 'Target').
-
-        | Item 0xx
-        |     Item 00x
-        |         Item 000
-        |     Item 01x
-        | Item 1xx
-        |     Item 10x
-        |     Item 11x
-        |         Item 110
-        |         Item 111
-        |         Item 112
-    """
-    def new_model(p_tag='Target'):
-        model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
-        item = PatchItem('Item 0xx', p_tag)
-        i_0xx = model.append(None, [item])
-        item = PatchItem('Item 00x', p_tag)
-        i_00x = model.append(i_0xx, [item])
-        item = PatchItem('Item 000', p_tag)
-        _i_000 = model.append(i_00x, [item])
-        item = PatchItem('Item 01x', p_tag)
-        i_0xx = model.append(i_0xx, [item])
-        item = PatchItem('Item 1xx', p_tag)
-        i_1xx = model.append(None, [item])
-        item = PatchItem('Item 10x', p_tag)
-        _i_10x = model.append(i_1xx, [item])
-        item = PatchItem('Item 11x', p_tag)
-        i_11x = model.append(i_1xx, [item])
-        item = PatchItem('Item 110', p_tag)
-        _i_110 = model.append(i_11x, [item])
-        item = PatchItem('Item 111', p_tag)
-        _i_111 = model.append(i_11x, [item])
-        item = PatchItem('Item 112', p_tag)
-        _i_112 = model.append(i_11x, [item])
-        return model
-
-    return new_model
-
-
-@pytest.fixture
-def patch_gtk_model_single():
-    """Pytest fixture: Return :data:`.ModelOutlineSingle` model factory.
-
-    :param p_n_items: number of items in model (default is 5).
-    :param p_tag: identifies model (default is 'Target').
-    """
-    def new_model(p_n_items=5, p_tag='Target'):
-        model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
-        for i in range(p_n_items):
-            name = 'Item {}'.format(i)
-            item = PatchItem(name=name, tag=p_tag)
-            row = [item]
-            _ = model.append(row)
-        return model
-
-    return new_model
-
-
-@pytest.fixture
-def snippet_gtk_model_multi():
-    """Pytest fixture: Return :data:`.ModelOutlineMulti` model snippet.
-    The structure of the snippet is as shown below.
-
-    :param tag: identifies snippet (default is 'Snippet').
-
-        | Item axx
-        |     Item aax
-        |         Item aab
-        |         Item aaa
-    """
-    model = BOUTLINE.ModelOutline(GO.TYPE_PYOBJECT)
-    item = PatchItem('Item axx', 'Snippet')
-    i_axx = model.append(None, [item])
-    item = PatchItem('Item aax', 'Snippet')
-    i_aax = model.append(i_axx, [item])
-    item = PatchItem('Item aaa', 'Snippet')
-    _i_aaa = model.append(i_aax, [item])
-    item = PatchItem('Item aab', 'Snippet')
-    _i_aab = model.append(i_aax, [item])
-    return model
-
-
-@pytest.fixture
 def SUBTYPE(request, new_patch_multi, new_patch_single):
-    """Pytest fixture: Return outline of type identified in request."""
+    """Pytest fixture: Return outline of type identified in request.
+
+    :param request: built-in fixture `Pytest request`_.
+    :param new_patch_multi: fixture :func:`.new_patch_multi`.
+    :param new_patch_single: fixture :func:`.new_patch_single`.
+    """
     FACTORY = dict(MULTI=new_patch_multi, SINGLE=new_patch_single)
     outline = FACTORY[request.param]()
     return outline

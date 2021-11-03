@@ -54,6 +54,11 @@ add_module_names = False
 # an autoclass directive.
 # autoclass_content = 'both'
 
+# This value selects if automatically documented members are sorted
+# alphabetical (value 'alphabetical'), by member type (value 'groupwise')
+# or by source order (value 'bysource'). The default is alphabetical.
+autodoc_member_order = 'bysource'
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
