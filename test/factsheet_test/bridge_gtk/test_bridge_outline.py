@@ -16,6 +16,38 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
+class TestFactoryChooserOutline:
+    """Unit tests for :class:`.FactoryChooserOutline`."""
+
+    @pytest.mark.parametrize('SUBTYPE, UI_MODEL', [
+        ('MULTI', BOUTLINE.UiModelOutlineMulti),
+        ('SINGLE', BOUTLINE.UiModelOutlineSingle),
+        ], indirect=['SUBTYPE'])
+    def test_init(self, SUBTYPE, UI_MODEL):
+        """Confirm storage initialization."""
+        # Setup
+        outline = SUBTYPE
+        # Test
+        target_type = BOUTLINE.FactoryChooserOutline[UI_MODEL, PatchItem]
+        target = target_type(p_model_outline=outline)
+        assert target._ui_model is outline.ui_model
+
+    @pytest.mark.parametrize('SUBTYPE, UI_MODEL', [
+        ('MULTI', BOUTLINE.UiModelOutlineMulti),
+        ('SINGLE', BOUTLINE.UiModelOutlineSingle),
+        ], indirect=['SUBTYPE'])
+    def test_call(self, SUBTYPE, UI_MODEL):
+        """Confirm return is a view for choosing from model."""
+        # Setup
+        outline = SUBTYPE
+        target_type = BOUTLINE.FactoryChooserOutline[UI_MODEL, PatchItem]
+        target = target_type(p_model_outline=outline)
+        # Test
+        chooser = target()
+        assert isinstance(chooser, Gtk.ComboBox)
+        assert chooser.get_model() is outline.ui_model
+
+
 def gtk_model_to_names(p_model):
     """Return dictionary of names in a `Gtk.TreeModel`_ indexed by line.
 

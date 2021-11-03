@@ -1,5 +1,5 @@
-``bridge_gtk`` GTK Bridge Test Package
-======================================
+``bridge_gtk`` Test Package
+===========================
 
 .. automodule:: factsheet_test.bridge_gtk
    :members:

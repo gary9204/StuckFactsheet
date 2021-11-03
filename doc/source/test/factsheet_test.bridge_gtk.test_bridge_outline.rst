@@ -1,5 +1,5 @@
-``test_bridge_outline`` GTK Bridge Test Module
-==============================================
+``test_bridge_outline`` Test Module
+===================================
 
 .. automodule:: factsheet_test.bridge_gtk.test_bridge_outline
    :members:

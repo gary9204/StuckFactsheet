@@ -76,7 +76,6 @@ ItemOpaque = typing.TypeVar('ItemOpaque')
 ChooserItem = typing.Union[Gtk.ComboBox]
 LineOutline = typing.Union[Gtk.TreeIter]
 PersistOutline = typing.MutableMapping[str, ItemOpaque]
-# UiModelOutline = typing.Union[Gtk.TreeModel]
 UiModelOutlineMulti = typing.Union[Gtk.TreeStore]
 UiModelOutlineSingle = typing.Union[Gtk.ListStore]
 UiModelOutline = typing.TypeVar(
@@ -91,10 +90,29 @@ ViewOutline = typing.Union[Gtk.TreeView]
 #     'ViewOutlineOpaque', ViewOutlineColumnar, ViewOutlineSelect)
 
 
+class FactoryChooserOutline(typing.Generic[UiModelOutline, ItemOpaque]):
+    """Chooser factory for a given outline.
+
+    A call to the factory takes no arguments.
+    """
+
+    def __init__(self, p_model_outline:
+                 'ModelOutline[UiModelOutline, ItemOpaque]') -> None:
+        """Initialize outline for choosers.
+
+        :param p_model_outline: outline model.
+        """
+        self._ui_model = p_model_outline.ui_model
+
+    def __call__(self) -> ChooserItem:
+        """Return chooser for outline."""
+        chooser = Gtk.ComboBox(model=self._ui_model)
+        return chooser
+
+
 class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
                    typing.Generic[UiModelOutline, ItemOpaque]):
-    """
-    Common ancestor of bridge classes for outlines.
+    """Common ancestor of bridge classes for outlines.
 
     .. admonition:: About Equality
 
