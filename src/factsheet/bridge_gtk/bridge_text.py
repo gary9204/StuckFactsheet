@@ -1,6 +1,9 @@
 """
 Defines bridge classes that encapsulate widget toolkit text classes.
 
+Constants and Type Hints
+========================
+
 .. data:: DisplayTextMarkup
 
     Type hint for GTK element to display a text attribute.  The element
@@ -56,6 +59,9 @@ Defines bridge classes that encapsulate widget toolkit text classes.
 
 .. _Gtk.TextBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html
+
+Classes and Functions
+=====================
 """
 import gi   # type: ignore[import]
 import logging

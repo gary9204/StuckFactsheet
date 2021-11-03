@@ -19,33 +19,81 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 class TestFactoryChooserOutline:
     """Unit tests for :class:`.FactoryChooserOutline`."""
 
-    @pytest.mark.parametrize('SUBTYPE, UI_MODEL', [
+    @pytest.mark.parametrize('SUBTYPE, TYPE_UI_MODEL', [
         ('MULTI', BOUTLINE.UiModelOutlineMulti),
         ('SINGLE', BOUTLINE.UiModelOutlineSingle),
         ], indirect=['SUBTYPE'])
-    def test_init(self, SUBTYPE, UI_MODEL):
-        """Confirm storage initialization."""
+    def test_init(self, SUBTYPE, TYPE_UI_MODEL):
+        """Confirm storage initialization.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param TYPE_UI_MODEL: user interface model type for outline.
+        """
         # Setup
         outline = SUBTYPE
         # Test
-        target_type = BOUTLINE.FactoryChooserOutline[UI_MODEL, PatchItem]
+        target_type = BOUTLINE.FactoryChooserOutline[TYPE_UI_MODEL, PatchItem]
         target = target_type(p_model_outline=outline)
         assert target._ui_model is outline.ui_model
 
-    @pytest.mark.parametrize('SUBTYPE, UI_MODEL', [
+    @pytest.mark.parametrize('SUBTYPE, TYPE_UI_MODEL', [
         ('MULTI', BOUTLINE.UiModelOutlineMulti),
         ('SINGLE', BOUTLINE.UiModelOutlineSingle),
         ], indirect=['SUBTYPE'])
-    def test_call(self, SUBTYPE, UI_MODEL):
-        """Confirm return is a view for choosing from model."""
+    def test_call(self, SUBTYPE, TYPE_UI_MODEL):
+        """Confirm return is a view for choosing from model.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param TYPE_UI_MODEL: user interface model type for outline.
+        """
         # Setup
         outline = SUBTYPE
-        target_type = BOUTLINE.FactoryChooserOutline[UI_MODEL, PatchItem]
+        target_type = BOUTLINE.FactoryChooserOutline[TYPE_UI_MODEL, PatchItem]
         target = target_type(p_model_outline=outline)
         # Test
         chooser = target()
         assert isinstance(chooser, Gtk.ComboBox)
         assert chooser.get_model() is outline.ui_model
+
+
+class TestViewChooserOutline:
+    """Unit tests for :class:`.FactoryViewOutline`."""
+
+    @pytest.mark.parametrize('SUBTYPE, TYPE_UI_MODEL', [
+        ('MULTI', BOUTLINE.UiModelOutlineMulti),
+        ('SINGLE', BOUTLINE.UiModelOutlineSingle),
+        ], indirect=['SUBTYPE'])
+    def test_init(self, SUBTYPE, TYPE_UI_MODEL):
+        """Confirm storage initialization.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param TYPE_UI_MODEL: user interface model type for outline.
+        """
+        # Setup
+        outline = SUBTYPE
+        # Test
+        target_type = BOUTLINE.FactoryViewOutline[TYPE_UI_MODEL, PatchItem]
+        target = target_type(p_model_outline=outline)
+        assert target._ui_model is outline.ui_model
+
+    @pytest.mark.parametrize('SUBTYPE, TYPE_UI_MODEL', [
+        ('MULTI', BOUTLINE.UiModelOutlineMulti),
+        ('SINGLE', BOUTLINE.UiModelOutlineSingle),
+        ], indirect=['SUBTYPE'])
+    def test_call(self, SUBTYPE, TYPE_UI_MODEL):
+        """Confirm return is a view for outline.
+
+        :param SUBTYPE: identifies outline model subclass under test.
+        :param TYPE_UI_MODEL: user interface model type for outline.
+        """
+        # Setup
+        outline = SUBTYPE
+        target_type = BOUTLINE.FactoryViewOutline[TYPE_UI_MODEL, PatchItem]
+        target = target_type(p_model_outline=outline)
+        # Test
+        view = target()
+        assert isinstance(view, Gtk.TreeView)
+        assert view.get_model() is outline.ui_model
 
 
 def gtk_model_to_names(p_model):
@@ -843,7 +891,7 @@ class TestBridgeOutlineTypes:
     """
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (BOUTLINE.ChooserItem, Gtk.ComboBox),
+        (BOUTLINE.ChooserOutline, Gtk.ComboBox),
         (BOUTLINE.LineOutline, Gtk.TreeIter),
         (BOUTLINE.PersistOutline,
             typing.MutableMapping[str, BOUTLINE.ItemOpaque]),

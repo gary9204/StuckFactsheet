@@ -1,6 +1,9 @@
 """
 Defines base for model classes that encapsulate widget toolkit classes.
 
+Constants and Type Hints
+========================
+
 .. data:: ModelUiOpaque
 
     Placeholder type hint for a toolkit-specific storage element.  A GTK
@@ -40,6 +43,9 @@ Defines base for model classes that encapsulate widget toolkit classes.
 
 .. _Gtk.TextView:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
+
+Classes and Functions
+=====================
 """
 import abc
 import gi   # type: ignore[import]

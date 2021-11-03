@@ -10,6 +10,14 @@ level.
 Constants and Type Hints
 ========================
 
+.. data:: ChooserOutline
+
+    Type hint for GTK element to view an outline and choose a line.
+    See `Gtk.ComboBox`_.
+
+.. _`Gtk.ComboBox`:
+    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ComboBox.html
+
 .. data:: ItemOpaque
 
     Placeholder type hint for an item at a line.
@@ -50,14 +58,6 @@ Constants and Type Hints
 .. _`Gtk.TreeView`:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeView.html
 
-.. data:: ChooserOutline
-
-    Type hint for GTK element to view an outline and choose a line.
-    See `Gtk.ComboBox`_.
-
-.. _`Gtk.ComboBox`:
-    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ComboBox.html
-
 Classes and Functions
 =====================
     """
@@ -73,7 +73,7 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 ItemOpaque = typing.TypeVar('ItemOpaque')
 
-ChooserItem = typing.Union[Gtk.ComboBox]
+ChooserOutline = typing.Union[Gtk.ComboBox]
 LineOutline = typing.Union[Gtk.TreeIter]
 PersistOutline = typing.MutableMapping[str, ItemOpaque]
 UiModelOutlineMulti = typing.Union[Gtk.TreeStore]
@@ -91,9 +91,10 @@ ViewOutline = typing.Union[Gtk.TreeView]
 
 
 class FactoryChooserOutline(typing.Generic[UiModelOutline, ItemOpaque]):
-    """Chooser factory for a given outline.
+    """Chooser factory for an outline.
 
-    A call to the factory takes no arguments.
+    A call to the factory takes no arguments and returns
+    :data:`.ChooserOutline`.
     """
 
     def __init__(self, p_model_outline:
@@ -104,9 +105,29 @@ class FactoryChooserOutline(typing.Generic[UiModelOutline, ItemOpaque]):
         """
         self._ui_model = p_model_outline.ui_model
 
-    def __call__(self) -> ChooserItem:
+    def __call__(self) -> ChooserOutline:
         """Return chooser for outline."""
         chooser = Gtk.ComboBox(model=self._ui_model)
+        return chooser
+
+
+class FactoryViewOutline(typing.Generic[UiModelOutline, ItemOpaque]):
+    """View factory for an outline.
+
+    A call to the factory takes no arguments and returns :data:`.ViewOutline`.
+    """
+
+    def __init__(self, p_model_outline:
+                 'ModelOutline[UiModelOutline, ItemOpaque]') -> None:
+        """Initialize outline for views.
+
+        :param p_model_outline: outline model.
+        """
+        self._ui_model = p_model_outline.ui_model
+
+    def __call__(self) -> ViewOutline:
+        """Return view for outline."""
+        chooser = Gtk.TreeView(model=self._ui_model)
         return chooser
 
 
