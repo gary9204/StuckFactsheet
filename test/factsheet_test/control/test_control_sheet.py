@@ -1015,9 +1015,9 @@ class TestGlobal:
 
 
 class TestIdFactsheet:
-    """unit tests for :func:`.id_view_sheet`."""
+    """Unit tests for :func:`.id_factsheet`."""
 
-    def test_id_factsheetsheet(self):
+    def test_id_factsheet(self):
         """Confirm id returned."""
         # Setup
         control_sheet = CSHEET.ControlSheet()
@@ -1026,7 +1026,7 @@ class TestIdFactsheet:
 
 
 class TestIdViewSheet:
-    """unit tests for :func:`.id_view_sheet`."""
+    """Unit tests for :func:`.id_view_sheet`."""
 
     def test_id_view_sheet(self):
         """Confirm id returned."""

@@ -65,7 +65,7 @@ class TestSheet:
 
     def test_init(self, new_id_args):
         """| Confirm initialization.
-        | Case: nominal.
+        | Case: explicit arguments.
 
         :param new_id_args: fixture :func:`.new_id_args`.
         """

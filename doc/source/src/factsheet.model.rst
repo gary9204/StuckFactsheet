@@ -13,9 +13,9 @@ Submodules
 
    factsheet.model.idcore
    factsheet.model.sheet
+   factsheet.model.topic
 ..   factsheet.model.array
 ..   factsheet.model.element
 ..   factsheet.model.fact
 ..   factsheet.model.setindexed
-..   factsheet.model.topic
 ..   factsheet.model.types_model

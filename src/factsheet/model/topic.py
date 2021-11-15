@@ -10,44 +10,66 @@ specialize the model for sets, operations, and so on.
 import typing   # noqa
 
 import factsheet.bridge_ui as BUI
-import factsheet.model.fact as MFACT
+# import factsheet.model.fact as MFACT
 import factsheet.model.idcore as MIDCORE
 
+IdTopic = typing.NewType('IdTopic', int)
 LineOutline = BUI.LineOutline
-# NameTopic = MFACT.NameTopic
-OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]
-# SummaryTopic = MFACT.SummaryTopic
-TagTopic = typing.NewType('TagTopic', int)  # was: MFACT.TagTopic
-# TitleTopic = MFACT.TitleTopic
+# OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]
 
-ViewNameTopicActive = BUI.ViewTextMarkup
-ViewNameTopicPassive = BUI.ViewTextDisplay
-ViewSummaryTopicActive = BUI.ViewTextTagged
-ViewSummaryTopicPassive = BUI.ViewTextTagged
-ViewTitleTopicActive = BUI.ViewTextMarkup
-ViewTitleTopicPassive = BUI.ViewTextDisplay
+Name = BUI.ModelTextMarkup
+DisplayName = BUI.DisplayTextMarkup
+FactoryDisplayName = BUI.FactoryDisplayTextMarkup
+EditorName = BUI.EditorTextMarkup
+FactoryEditorName = BUI.FactoryEditorTextMarkup
+
+Summary = BUI.ModelTextStyled
+DisplaySummary = BUI.DisplayTextStyled
+FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
+EditorSummary = BUI.EditorTextStyled
+FactoryEditorSummary = BUI.FactoryEditorTextStyled
+
+Title = BUI.ModelTextMarkup
+DisplayTitle = BUI.DisplayTextMarkup
+FactoryDisplayTitle = BUI.FactoryDisplayTextMarkup
+EditorTitle = BUI.EditorTextMarkup
+FactoryEditorTitle = BUI.FactoryEditorTextMarkup
 
 
-class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
-                           ViewSummaryTopicActive, ViewSummaryTopicPassive,
-                           ViewTitleTopicActive, ViewTitleTopicPassive]):
+def id_topic(p_topic: 'Topic') -> IdTopic:
+    """Return unique identifier for a topic.
+
+    The identifier is unique during the lifetime of the topic.  An
+    identifier may be reused if a topic is destroyed.
+
+    :param p_topic: topic to identify.
+    """
+    return IdTopic(id(p_topic))
+
+
+class Topic(MIDCORE.IdCore[Name, Summary, Title]):
     """Topic component of Factsheet :mod:`~factsheet.model`.
 
-    Class ``Topic`` represents a specific subject within a Factsheet.
+    Class :class:`Topic` represents a specific subject within a Factsheet.
     A model topic consists of an outline of facts along with
-    identification information (see :class:`.InfoId`.) Each fact
-    represents statement about the topic's subject.
+    identification information (see :class:`.IdCore`).  Each fact
+    represents a statement about the topic's subject.
 
     .. admonition:: About Equality
 
-        Two topics are equivalent when they have the equal facts
-        outlines and identification information. Transient aspects of
-        the topics (like topic forms) are not compared and may be
-        different.
+        Each topic model has persistent identification information
+        and a fact outline.  In addition, a topic model may have
+        transient aspects such as change state with respect to file
+        storage,
+
+        Two topics are equal when their identification information
+        are equal and their fact outlines are equal.  Transient
+        aspects of the factsheets are not compared and may be different.
     """
 
-    def __contains__(self, p_fact: MFACT.Fact) -> bool:
+    def __contains__(self, p_fact) -> bool:
         """Return True when fact is in facts outline."""
+        raise NotImplementedError
         for fact in self:
             if p_fact is fact:
                 return True
@@ -59,6 +81,7 @@ class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
 
         :param p_other: object to compare with self.
         """
+        raise NotImplementedError
         if not super().__eq__(p_other):
             return False
 
@@ -67,51 +90,60 @@ class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
 
         return True
 
-    def __getstate__(self) -> typing.Dict:
-        """Return topic model in form pickle can persist.
-
-        Persistent form of topic excludes run-time information.
-        """
-        state = super().__getstate__()
-        del state['_tag']
-        return state
+    # def __getstate__(self) -> typing.Dict:
+    #     """Return topic model in form pickle can persist.
+    #
+    #     Persistent form of topic excludes run-time information.
+    #     """
+    #     raise NotImplementedError
+    #     state = super().__getstate__()
+    #     del state['_tag']
+    #     return state
 
     def __init__(self, *, p_name: str, p_summary: str, p_title: str,
                  **kwargs: typing.Any) -> None:
-        super().__init__(p_name=p_name, p_summary=p_summary,
-                         p_title=p_title, **kwargs)
-        self._facts = OutlineFacts()
-        # self._name = NameTopic()
-        # self._summary = SummaryTopic()
-        # self._title = TitleTopic()
-        self._tag = TagTopic(id(self))
+        """Initialize topic with given identity and no facts.
 
-    def __iter__(self) -> typing.Iterator[MFACT.Fact]:
+        :param p_name: name of topic.
+        :param p_summary: summary of topic.
+        :param p_title: title of topic.
+        :param kwargs: superclass keyword parameters.
+        """
+        self._name = Name(p_text=p_name)
+        self._summary = Summary(p_text=p_summary)
+        self._title = Title(p_text=p_title)
+        super().__init__(**kwargs)
+        # self._facts = OutlineFacts()
+
+    def __iter__(self) -> typing.Iterator:
         """Return iterator over facts in facts outline.
 
         Iterator skips lines that contain None.
         """
+        raise NotImplementedError
         for fact in self._facts.items():
             if fact is not None:
                 yield fact
 
-    def __setstate__(self, p_state: typing.Dict) -> None:
-        """Reconstruct topic model from state pickle loads.
+    # def __setstate__(self, p_state: typing.Dict) -> None:
+    #     """Reconstruct topic model from state pickle loads.
+    #
+    #     Reconstructed attribute is marked fresh.
+    #
+    #     :param p_state: unpickled state of stored topic model.
+    #     """
+    #     raise NotImplementedError
+    #     super().__setstate__(p_state)
+    #     self._tag = IdTopic(id(self))
 
-        Reconstructed attribute is marked fresh.
-
-        :param p_state: unpickled state of stored topic model.
-        """
-        super().__setstate__(p_state)
-        self._tag = TagTopic(id(self))
-
-    def append_fact(self, p_fact: MFACT.Fact) -> None:
+    def append_fact(self, p_fact) -> None:
         """Add new fact to the end of facts outline.
 
         Do not add a fact already in the outline.
 
         :param p_fact: new fact to add.
         """
+        raise NotImplementedError
         if p_fact in self:
             return
 
@@ -125,6 +157,7 @@ class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
 
         :param p_topic: topic containing facts outline to add.
         """
+        raise NotImplementedError
         for fact in p_topic:
             self.append_fact(fact)
 
@@ -133,12 +166,14 @@ class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
 
         :param p_line: line of fact to check.
         """
+        raise NotImplementedError
         fact = self._facts.get_item(p_line)
         assert fact is not None
         fact.check()
 
     def clear(self) -> None:
         """Clear each fact in facts outline. """
+        raise NotImplementedError
         for line in self._facts.lines():
             self.clear_fact(line)
 
@@ -147,13 +182,15 @@ class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
 
         :param p_i: line of fact to clear.
         """
+        raise NotImplementedError
         fact = self._facts.get_item(p_i)
         assert fact is not None
         fact.clear()
 
     @property
-    def facts(self) -> OutlineFacts:
+    def facts(self):
         """Return facts outline."""
+        raise NotImplementedError
         return self._facts
 
     def is_stale(self) -> bool:
@@ -163,35 +200,21 @@ class Topic(MIDCORE.IdCore[ViewNameTopicActive, ViewNameTopicPassive,
         if super().is_stale():
             return True
 
-        for fact in self:
-            if fact.is_stale():
-                self._stale = True
-                return True
+        # for fact in self:
+        #     if fact.is_stale():
+        #         self._stale = True
+        #         return True
 
         return False
-
-    # @property
-    # def name(self) -> NameTopic:
-    #     """Return topic name."""
-    #     return self._name
 
     def set_fresh(self) -> None:
         """Mark topic in memory consistent with file contents."""
         super().set_fresh()
-        for fact in self:
-            fact.set_fresh()
+        # for fact in self:
+        #     fact.set_fresh()
 
     # @property
-    # def summary(self) -> SummaryTopic:
-    #     """Return topic summary."""
-    #     return self._summary
-
-    @property
-    def tag(self) -> TagTopic:
-        """Return topic identifier. """
-        return self._tag
-
-    # @property
-    # def title(self) -> TitleTopic:
-    #     """Return topic title."""
-    #     return self._title
+    # def tag(self) -> IdTopic:
+    #     """Return topic identifier. """
+    #     raise NotImplementedError
+    #     return self._tag
