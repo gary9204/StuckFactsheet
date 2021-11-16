@@ -254,12 +254,12 @@ class ControlSheet:
 
     @property
     def new_display_summary(self) -> MSHEET.DisplaySummary:
-        """Return factory for displays of sheet summarys."""
+        """Return factory for displays of sheet summaries."""
         return self._factory_display_summary
 
     @property
     def new_editor_summary(self) -> MSHEET.EditorSummary:
-        """Return factory for editors of sheet summarys."""
+        """Return factory for editors of sheet summaries."""
         return self._factory_editor_summary
 
     @property

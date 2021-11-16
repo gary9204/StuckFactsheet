@@ -13,37 +13,17 @@ import factsheet.bridge_ui as BUI
 import factsheet.model.topic as MTOPIC
 
 
-# def new_target_topic(patch_class_fact):
-@pytest.fixture
-def new_target_topic(new_id_args):
-    """Pytest fixture: Return factory for topic with non-empty facts
-    outline.
-    """
-    def new_target(n_facts):
-        ID_ARGS = new_id_args()
-        target = MTOPIC.Topic(**ID_ARGS)
-        # PatchFact = patch_class_fact
-        # for i in range(n_facts):
-        #     fact = PatchFact(p_topic=target)
-        #     fact.name.text = 'Fact {:02}'.format(i)
-        #     target.append_fact(fact)
-        target.set_fresh()
-        return target
-
-    return new_target
-
-
 class TestIdTopic:
     """Unit tests for :func:`.id_topic`."""
 
-    def test_id_topic(self, new_target_topic):
+    def test_id_topic(self, new_model_topic):
         """Confirm id returned.
 
-        :param new_target_topic: fixture :func:`.new_target_topic`.
+        :param new_model_topic: fixture :func:`.new_model_topic`.
         """
         # Setup
         N_FACTS = 5
-        topic = new_target_topic(N_FACTS)
+        topic = new_model_topic(N_FACTS)
         # Test
         assert id(topic) == MTOPIC.id_topic(topic)
 
@@ -224,16 +204,16 @@ class TestTopic:
         # ('_tag', 'tag'),
         ('_title', 'title'),
         ])
-    def test_property(self, new_target_topic, NAME_ATTR, NAME_PROP):
+    def test_property(self, new_model_topic, NAME_ATTR, NAME_PROP):
         """Confirm values and access limits of properties.
 
-        :param new_target_topic: fixture :func:`.new_target_topic`.
+        :param new_model_topic: fixture :func:`.new_model_topic`.
         :param NAME_ATTR: name of attribute under test.
         :param NAME_PROP: name of property under test.
         """
         # Setup
         N_FACTS = 5
-        target = new_target_topic(N_FACTS)
+        target = new_model_topic(N_FACTS)
         target_prop = getattr(MTOPIC.Topic, NAME_PROP)
         value_attr = getattr(target, NAME_ATTR)
         # Test
@@ -323,12 +303,12 @@ class TestTopic:
         #     assert fact is fact_target
 
     @pytest.mark.skip
-    def test_check_fact(self, new_target_topic, patch_class_fact):
+    def test_check_fact(self, new_model_topic, patch_class_fact):
         """Confirm fact checked."""
         # # Setup
         # PatchFact = patch_class_fact
         # N_FACTS = 5
-        # target = new_target_topic(N_FACTS)
+        # target = new_model_topic(N_FACTS)
         # I_FACT = 2
         # line_fact = list(target._facts.lines())[I_FACT]
         # fact = target._facts.get_item(line_fact)
@@ -339,12 +319,12 @@ class TestTopic:
         # assert target.is_stale()
 
     @pytest.mark.skip
-    def test_clear(self, new_target_topic, patch_class_fact):
+    def test_clear(self, new_model_topic, patch_class_fact):
         """Confirm all facts cleared."""
         # # Setup
         # PatchFact = patch_class_fact
         # N_FACTS = 5
-        # target = new_target_topic(N_FACTS)
+        # target = new_model_topic(N_FACTS)
         # # Test
         # target.clear()
         # for fact in target:
@@ -353,12 +333,12 @@ class TestTopic:
         # assert target.is_stale()
 
     @pytest.mark.skip
-    def test_clear_fact(self, new_target_topic, patch_class_fact):
+    def test_clear_fact(self, new_model_topic, patch_class_fact):
         """Confirm fact cleared."""
         # # Setup
         # PatchFact = patch_class_fact
         # N_FACTS = 5
-        # target = new_target_topic(N_FACTS)
+        # target = new_model_topic(N_FACTS)
         # I_FACT = 2
         # line_fact = list(target._facts.lines())[I_FACT]
         # fact = target._facts.get_item(line_fact)
@@ -369,7 +349,7 @@ class TestTopic:
         # assert fact.status is PatchFact.STATUS_CLEARED
         # assert target.is_stale()
 
-    def test_is_stale(self, new_target_topic):
+    def test_is_stale(self, new_model_topic):
         """Confirm fresh/stale check with facts.
 
         #. Case: Topic stale, identity fresh, facts fresh.
@@ -377,11 +357,11 @@ class TestTopic:
         #. Case: Sheet fresh, identity fresh, facts fresh.
         #. Case: Topic fresh, identity fresh, a fact stale.
 
-        :param new_target_topic: fixture :func:`.new_target_topic`.
+        :param new_model_topic: fixture :func:`.new_model_topic`.
         """
         # Setup
         N_FACTS = 5
-        target = new_target_topic(N_FACTS)
+        target = new_model_topic(N_FACTS)
         # Test: Topic stale, identity fresh, facts fresh.
         target._stale = True
         target.summary.set_fresh()
@@ -414,18 +394,18 @@ class TestTopic:
         # assert target._stale
         # assert not target.is_fresh()
 
-    def test_is_stale_no_facts(self, new_target_topic):
+    def test_is_stale_no_facts(self, new_model_topic):
         """Confirm fresh/stale check without facts.
 
         #. Case: Topic stale, identity fresh, no facts.
         #. Case: Topic fresh, identity stale, no facts.
         #. Case: Topic fresh, identity fresh, no facts.
 
-        :param new_target_topic: fixture :func:`.new_target_topic`.
+        :param new_model_topic: fixture :func:`.new_model_topic`.
         """
         # Setup
         N_FACTS = 5
-        target = new_target_topic(N_FACTS)
+        target = new_model_topic(N_FACTS)
         # Test: Topic stale, identity fresh, no facts.
         target._stale = True
         target.summary.set_fresh()
@@ -445,7 +425,7 @@ class TestTopic:
         assert not target._stale
         assert target.is_fresh()
 
-    def test_set_fresh(self, new_target_topic):
+    def test_set_fresh(self, new_model_topic):
         """Confirm frest set at all levels.
 
         #. Case: Topic fresh, identity fresh, facts fresh.
@@ -454,11 +434,11 @@ class TestTopic:
         #. Case: Topic fresh, identity fresh, facts stale.
         #. Case: Sheet stale, identity stale, facts stale
 
-        :param new_target_topic: fixture :func:`.new_target_topic`.
+        :param new_model_topic: fixture :func:`.new_model_topic`.
         """
         # Setup
         N_FACTS = 5
-        target = new_target_topic(N_FACTS)
+        target = new_model_topic(N_FACTS)
         # N_FACTS = 5
         # facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
         # for fact in facts_target:

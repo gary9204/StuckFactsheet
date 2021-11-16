@@ -10,7 +10,7 @@ import typing
 # import factsheet.model.fact as MFACT
 # import factsheet.model.setindexed as MSET
 # import factsheet.model.table as MTABLE
-# import factsheet.model.topic as MTOPIC
+import factsheet.model.topic as MTOPIC
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
@@ -92,6 +92,26 @@ def new_id_args():
         return id_args
 
     return new_args
+
+
+# def new_model_topic(patch_class_fact):
+@pytest.fixture
+def new_model_topic(new_id_args):
+    """Pytest fixture: Return factory for topic with non-empty facts
+    outline.
+    """
+    def new_target(n_facts):
+        ID_ARGS = new_id_args()
+        target = MTOPIC.Topic(**ID_ARGS)
+        # PatchFact = patch_class_fact
+        # for i in range(n_facts):
+        #     fact = PatchFact(p_topic=target)
+        #     fact.name.text = 'Fact {:02}'.format(i)
+        #     target.append_fact(fact)
+        target.set_fresh()
+        return target
+
+    return new_target
 
 
 # @pytest.fixture
