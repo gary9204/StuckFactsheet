@@ -10,7 +10,7 @@ class representing the control of a topic.
 # import logging
 import typing   # noqa
 
-import factsheet.bridge_ui as BUI
+# import factsheet.bridge_ui as BUI
 import factsheet.model.topic as MTOPIC
 # import factsheet.control.control_fact as CFACT
 # import factsheet.control.control_idcore as CIDCORE

@@ -178,21 +178,21 @@ HELP_SHEET = get_object_guide_sheet('ui_help_sheet')
 # HELP_SHEET_FILE = get_object_guide_sheet('ui_help_sheet_file')
 # HELP_SHEET_TOPICS = get_object_guide_sheet('ui_help_sheet_topics')
 
-del builder_guide_sheet
 del get_object_guide_sheet
+del builder_guide_sheet
 
 # Topic-level definitions
 
-# # Topic-level guidance dialogs
-# NAME_FILE_GUIDE_TOPIC_UI = str(DIR_UI / 'guide_topic.ui')
-# builder_guide_topic = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_TOPIC_UI)
-# get_object_guide_topic = builder_guide_topic.get_object
-#
-# HELP_TOPIC = get_object_guide_topic('ui_help_topic')
-# HELP_TOPIC_DISPLAY = get_object_guide_topic('ui_help_topic_display')
-#
-# del builder_guide_topic
-# del get_object_guide_topic
+# Topic-level guidance dialogs
+NAME_FILE_GUIDE_TOPIC_UI = str(DIR_UI / 'guide_topic.ui')
+builder_guide_topic = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_TOPIC_UI)
+get_object_guide_topic = builder_guide_topic.get_object
+
+HELP_TOPIC = get_object_guide_topic('ui_help_topic')
+HELP_TOPIC_DISPLAY = get_object_guide_topic('ui_help_topic_display')
+
+del get_object_guide_topic
+del builder_guide_topic
 
 
 # Fact-level definitions

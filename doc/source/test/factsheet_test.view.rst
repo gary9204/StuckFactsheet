@@ -22,9 +22,9 @@ Submodules
    factsheet_test.view.test_ui
    factsheet_test.view.test_view_markup
    factsheet_test.view.test_view_sheet
+   factsheet_test.view.test_view_topic
 ..   factsheet_test.view.conftest
 ..   factsheet_test.view.manual_scene_table
-..   factsheet_test.view.test_form_topic
 ..   factsheet_test.view.test_query_place
 ..   factsheet_test.view.test_query_template
 ..   factsheet_test.view.test_scenes

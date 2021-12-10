@@ -24,6 +24,8 @@ class TestUiItems:
         ('HELP_APP', Gtk.Dialog),
         ('INTRO_APP', Gtk.Dialog),
         ('HELP_SHEET', Gtk.Dialog),
+        ('HELP_TOPIC', Gtk.Dialog),
+        ('HELP_TOPIC_DISPLAY', Gtk.Dialog),
         ])
     def test_defined(self, NAME, TYPE):
         """Confirm module defines constants and shared objects."""

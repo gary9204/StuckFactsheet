@@ -421,9 +421,9 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
     def _init_summary_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
         """Initialize view for factsheet summary."""
-        view_summary_active = self._control.new_editor_summary()
+        editor_summary = self._control.new_editor_summary()
         site_summary_sheet = p_get_object('ui_site_summary_sheet')
-        site_summary_sheet.add(view_summary_active)
+        site_summary_sheet.add(editor_summary)
 
         button_show = p_get_object('ui_button_show_summary_sheet')
         expander = p_get_object('ui_expander_summary_sheet')

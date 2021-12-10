@@ -538,7 +538,7 @@ class TestViewSheet:
         # Test
         assert target._window.lookup_action(ACTION) is not None
 
-    def test_init_helper_summary(self, monkeypatch):
+    def test_helper_init_summary(self, monkeypatch):
         """Confirm helper creates summary field in sheet view.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
@@ -613,7 +613,7 @@ class TestViewSheet:
         ('_init_name_sheet', 'Name', 'ui_site_name_sheet'),
         ('_init_title_sheet', 'Title', 'ui_site_title_sheet'),
         ])
-    def test_init_helper_view(self, monkeypatch, HELPER, CONTENT, SITE):
+    def test_helper_init_view(self, monkeypatch, HELPER, CONTENT, SITE):
         """Confirm helper creates name and title fields in sheet view.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.

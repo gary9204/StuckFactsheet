@@ -23,7 +23,7 @@ Submodules
    factsheet.view.ui
    factsheet.view.view_markup
    factsheet.view.view_sheet
-..   factsheet.view.form_topic
+   factsheet.view.view_topic
 ..   factsheet.view.query_place
 ..   factsheet.view.query_template
 ..   factsheet.view.scenes

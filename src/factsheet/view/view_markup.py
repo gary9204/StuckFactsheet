@@ -93,7 +93,7 @@ class ViewMarkup:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="site_active">
+                  <object class="GtkBox" id="site_editor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
@@ -140,8 +140,8 @@ class ViewMarkup:
         label_type = get_object('label_type')
         label_type.set_label('<b>{}</b>:'.format(p_type))
 
-        site_active = get_object('site_active')
-        site_active.pack_start(
+        site_editor = get_object('site_editor')
+        site_editor.pack_start(
             p_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
         _ = p_editor.connect('icon-press', self.on_icon_press)
         _ = p_editor.connect(
