@@ -15,10 +15,10 @@ Subpackages
    factsheet.bridge_gtk
    factsheet.control
    factsheet.model
+   factsheet.spec
    factsheet.view
 ..   factsheet.abc_types
 ..   factsheet.adapt_gtk
-..   factsheet.content
 
 Submodules
 ----------

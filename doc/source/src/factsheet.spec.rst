@@ -1,4 +1,4 @@
-``content`` Package
+``spec`` Package
 ===================
 
 .. automodule:: factsheet.content
@@ -12,9 +12,9 @@ Subpackages
 .. toctree::
    :maxdepth: 1
 
-   factsheet.content.note
-   factsheet.content.ops
-   factsheet.content.sets
+..   factsheet.spec.note
+..   factsheet.spec.ops
+..   factsheet.spec.sets
 
 Submodules
 -----------
@@ -22,5 +22,5 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
-   factsheet.content.heading
-   factsheet.content.spec
+..   factsheet.spec.heading
+..   factsheet.spec.spec

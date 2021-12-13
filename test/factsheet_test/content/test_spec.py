@@ -7,7 +7,7 @@ import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 import typing
 
-import factsheet.content.spec as XSPEC
+# import factsheet.content.spec as XSPEC
 import factsheet.model.fact as MFACT
 import factsheet.model.topic as MTOPIC
 import factsheet.view.block.block_fact as VFACT
