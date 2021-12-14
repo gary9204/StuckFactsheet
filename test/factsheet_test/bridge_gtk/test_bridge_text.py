@@ -464,10 +464,13 @@ class TestModelText:
         target = target_class()
         TEXT = 'The Parrot Sketch'
         target._set_persist(TEXT)
+        TEXT_NEW = 'Something completely different.'
         # Test
         assert target_class.text.fget is not None
         assert TEXT == target.text
-        assert target_class.text.fset is None
+        assert target_class.text.fset is not None
+        target.text = TEXT_NEW
+        assert TEXT_NEW == target._get_persist()
         assert target_class.text.fdel is None
 
 
