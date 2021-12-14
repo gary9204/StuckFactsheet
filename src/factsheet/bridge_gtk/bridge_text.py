@@ -336,6 +336,11 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         """Return model text."""
         return self._get_persist()
 
+    @text.setter
+    def text(self, p_text: str) -> None:
+        """Set model text."""
+        self._set_persist(p_text)
+
 
 class ModelTextMarkup(ModelText[UiTextMarkup]):
     """Text storage with support for editing and `Pango markup`_.  See
