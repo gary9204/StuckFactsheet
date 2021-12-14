@@ -94,7 +94,6 @@ def new_id_args():
     return new_args
 
 
-# def new_model_topic(patch_class_fact):
 @pytest.fixture
 def new_model_topic(new_id_args):
     """Pytest fixture: Return factory for topic with non-empty facts

@@ -22,6 +22,6 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   factsheet_test.spec.test_base_s
 ..   factsheet_test.spec.test_content
 ..   factsheet_test.spec.test_heading
-..   factsheet_test.spec.test_spec

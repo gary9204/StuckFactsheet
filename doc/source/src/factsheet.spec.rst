@@ -1,7 +1,7 @@
 ``spec`` Package
-===================
+================
 
-.. automodule:: factsheet.content
+.. automodule:: factsheet.spec
    :members:
    :undoc-members:
    :show-inheritance:
@@ -22,5 +22,5 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   factsheet.spec.base_s
 ..   factsheet.spec.heading
-..   factsheet.spec.spec

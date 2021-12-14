@@ -1,7 +1,7 @@
-``spec`` Module
-===============
+``base_s`` Module
+=================
 
-.. automodule:: factsheet.content.spec
+.. automodule:: factsheet.spec.base_s
    :members:
    :special-members: __call__
    :undoc-members:
