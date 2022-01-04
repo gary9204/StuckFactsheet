@@ -11,6 +11,7 @@ import gi   # type: ignore[import]
 import factsheet.bridge_ui as BUI
 import factsheet.model.topic as MTOPIC
 import factsheet.spec.base_s as SBASE
+import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
@@ -50,71 +51,98 @@ class TestBase:
         assert target._new_editor_name_topic._ui_model is (
             target._name_topic._ui_model)
 
-    @pytest.mark.skip(reason='next')
-    def test_add_page_intro(self):
-        """Confirm assistant construction."""
+    def test_new_page_identify_sites(self, monkeypatch):
+        """Confirm builder populates page sites."""
+        # Setup
+        PATCH_UI_PAGE_IDENTITY = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.22.1 -->
+        <interface>
+          <requires lib="gtk+" version="3.20"/>
+          <object class="GtkBox" id="ui_page_identify">
+            <child>
+              <object class="GtkBox" id="ui_identify_site_name">
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="ui_identify_site_title">
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="ui_identify_site_summary">
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+        </interface>
+        """
+        monkeypatch.setattr(SBASE, 'UI_PAGE_IDENTIFY', PATCH_UI_PAGE_IDENTITY)
+
+        NAME_SPEC = 'Parrot'
+        target = SBASE.Base(p_name=NAME_SPEC)
+        sites = list()
+        display_name = target._new_display_name_topic()
+        editor_name = target._new_editor_name_topic()
+        view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
+        sites.append(view_name)
+        FIRST = 0
+        # Test
+        new_page = target.new_page_identify(view_name)
+        children = new_page.get_children()
+        for index in range(len(sites)):
+            site = children[index]
+            view = site.get_children()[FIRST]
+            assert view is sites[index].ui_view
+
+    def test_new_page_identify_parse(self):
+        """Confirm builder can parse page description."""
         # Setup
         NAME_SPEC = 'Parrot'
         target = SBASE.Base(p_name=NAME_SPEC)
-        assist = target.new_assistant()
+        NAME = MTOPIC.Name()
+        NEW_DISPLAY_NAME = MTOPIC.FactoryDisplayName(NAME)
+        DISPLAY_NAME = NEW_DISPLAY_NAME()
+        NEW_EDITOR_NAME = MTOPIC.FactoryEditorName(NAME)
+        EDITOR_NAME = NEW_EDITOR_NAME()
+        VIEW_NAME = VMARKUP.ViewMarkup(DISPLAY_NAME, EDITOR_NAME, 'Name')
         # Test
-        target.add_page_intro(p_assist=assist)
+        new_page = target.new_page_identify(VIEW_NAME)
+        assert isinstance(new_page, SBASE.PageAssist)
+
+    def test_new_page_intro_parse(self):
+        """Confirm builder can parse page description."""
+        # Setup
+        NAME_SPEC = 'Parrot'
+        target = SBASE.Base(p_name=NAME_SPEC)
+        # Test
+        new_page = target.new_page_intro()
+        assert isinstance(new_page, SBASE.PageAssist)
 
     def test_new_assistant(self):
-        """| Confirm assistant construction.
-        | Case: assistant file accessible and consistent.
-        """
+        """Confirm assistant construction."""
         # Setup
         NAME_SPEC = 'Parrot'
         target = SBASE.Base(p_name=NAME_SPEC)
         # Test
         assist = target.new_assistant()
         assert isinstance(assist, Gtk.Assistant)
-
-    @pytest.mark.skip(reason="GTK.Builder aborts on invalid file contents.")
-    def test_new_assistant_error(self, monkeypatch):
-        """| Confirm assistant construction.
-        | Case: assistant file error.
-        """
-        # Setup
-        patch_ui = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <!-- Generated with glade 3.22.1 -->
-            <interface>
-              <requires lib="gtk+" version="3.20"/>
-              <object class="GtkAssistant">
-                <property name="can_focus">False</property>
-                <property name="use_header_bar">1</property>
-                <badkey>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Introduction page</property>
-                  </object>
-                  <packing>
-                    <property name="page_type">intro</property>
-                    <property name="has_padding">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-            </interface>
-            """
-
-        def new_from_file(_path):
-            return Gtk.Builder.new_from_string(patch_ui, len(patch_ui))
-
-        monkeypatch.setattr(Gtk.Builder, 'new_from_file', new_from_file)
-        NAME_SPEC = 'Parrot'
-        target = SBASE.Base(p_name=NAME_SPEC)
-        # Test
-        assert target.new_assistant() is None
 
 
 class TestExceptions:
@@ -141,14 +169,14 @@ def ui_desc_minimal():
     """Pytest fixture: Return minimal user interface description.
 
     :returns: DESC - user interface description as string.
-    :returns: ID_OBJECT - ID of a `Gtk.Label`_ object.
+    :returns: ID_ELEMENT - ID of a `Gtk.Label`_ object.
     :returns: TEXT_ITEM - Sof label object.
 
     .. _`Gtk.Label`:
         https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
     """
-    ID_OBJECT = 'ui_object'
-    TEXT_OBJECT = 'Test Item'
+    ID_ELEMENT = 'ui_object'
+    TEXT_ELEMENT = 'Test Item'
     DESC = """
     <?xml version="1.0" encoding="UTF-8"?>
     <!-- Generated with glade 3.22.1 -->
@@ -160,8 +188,8 @@ def ui_desc_minimal():
         <property name="label" translatable="yes">{}</property>
       </object>
     </interface>
-    """.format(ID_OBJECT, TEXT_OBJECT)
-    return DESC, ID_OBJECT, TEXT_OBJECT
+    """.format(ID_ELEMENT, TEXT_ELEMENT)
+    return DESC, ID_ELEMENT, TEXT_ELEMENT
 
 
 @pytest.fixture
@@ -178,72 +206,112 @@ def set_logger_debug():
 class TestGetUiObject:
     """Unit tests for :class:`.GetUiObject`."""
 
-    def test_init_path(
-            self, ui_desc_minimal, tmp_path, caplog, set_logger_debug):
+    class PatchGetUiObject(SBASE.GetUiObject):
+        """Patch subclass for testing abstract :class;`.GetUiObject`."""
+
+        def __init__(self, p_description, **kwargs):
+            super().__init__(**kwargs)
+            ALL = -1
+            self._builder = Gtk.Builder.new_from_string(p_description, ALL)
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (SBASE.GetUiObject, '__init__'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+    def test_init(self, ui_desc_minimal, caplog, set_logger_debug):
+        """Confirm initialization.
+
+        :param ui_desc_minimal: fixture :func:`.ui_desc_minimal`.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        :param set_logger_debug: fixture :func:`.set_logger_debug`.
+        """
+        # Setup
+        DESC, ID_ELEMENT, TEXT_ELEMENT = ui_desc_minimal
+        N_LOGS = 1
+        LAST = -1
+        log_message = 'Building UI description ...'
+        # Test
+        target = TestGetUiObject.PatchGetUiObject(p_description=DESC)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'DEBUG' == record.levelname
+        label = target._builder.get_object(ID_ELEMENT)
+        assert isinstance(label, Gtk.Label)
+        assert TEXT_ELEMENT == label.get_text()
+
+    def test_call(self, ui_desc_minimal):
+        """| Confirm user interface element retrieval.
+        | Case: ID matches an element.
+        """
+        # Setup
+        DESC, ID_ELEMENT, TEXT_ELEMENT = ui_desc_minimal
+        target = TestGetUiObject.PatchGetUiObject(p_description=DESC)
+        # Test
+        ui_object = target(ID_ELEMENT)
+        assert isinstance(ui_object, Gtk.Label)
+        assert TEXT_ELEMENT == ui_object.get_text()
+
+    def test_call_no_element(self, ui_desc_minimal):
+        """| Confirm user interface element retrieval.
+        | Case: ID does not matches an element.
+        """
+        # Setup
+        DESC, _ID_ELEMENT, _TEXT_ELEMENT = ui_desc_minimal
+        ID_NONE = 'ui_oops'
+        VALUE = 'No element found for ID {}.'.format(ID_NONE)
+        target = TestGetUiObject.PatchGetUiObject(p_description=DESC)
+        # Test
+        with pytest.raises(SBASE.UiObjectNotFoundError, match=VALUE):
+            _ui_element = target(ID_NONE)
+
+
+class TestGetUiObjectPath:
+    """Unit tests for :class:`.GetUiObjectPath`."""
+
+    def test_init(self, ui_desc_minimal, tmp_path, caplog, set_logger_debug):
         """| Confirm initialization.
         | Case: description provided by path.
 
         :param ui_desc_minimal: fixture :func:`.ui_desc_minimal`.
         :param caplog: built-in fixture `Pytest caplog`_.
         :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        :param set_logger_debug: fixture :func:`.set_logger_debug`.
         """
         # Setup
-        DESC, ID_OBJECT, TEXT_OBJECT = ui_desc_minimal
+        DESC, ID_ELEMENT, TEXT_ELEMENT = ui_desc_minimal
         FILE_NAME = 'test.ui'
         PATH = tmp_path / FILE_NAME
         _ = PATH.write_text(DESC)
-        N_LOGS = 1
+        N_LOGS = 2
         LAST = -1
-        log_message = 'Building UI description from {}.'.format(str(PATH))
+        log_message = '... from file {}.'.format(str(PATH))
         # Test
-        target = SBASE.GetUiObject(p_path=PATH)
+        target = SBASE.GetUiObjectPath(p_path=PATH)
         assert N_LOGS == len(caplog.records)
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'DEBUG' == record.levelname
-        label = target._builder.get_object(ID_OBJECT)
+        label = target(ID_ELEMENT)
         assert isinstance(label, Gtk.Label)
-        assert TEXT_OBJECT == label.get_text()
+        assert TEXT_ELEMENT == label.get_text()
 
-    def test_init_string(self, ui_desc_minimal, caplog, set_logger_debug):
-        """| Confirm initialization.
-        | Case: description provided by path.
-
-        :param ui_desc_minimal: fixture :func:`.ui_desc_minimal`.
-        :param caplog: built-in fixture `Pytest caplog`_.
-        :param tmp_path: built-in fixture `Pytest tmp_path`_.
-        """
-        # Setup
-        DESC, ID_OBJECT, TEXT_OBJECT = ui_desc_minimal
-        N_LOGS = 1
-        LAST = -1
-        log_message = 'Building UI description from string.'
-        # Test
-        target = SBASE.GetUiObject(p_string=DESC)
-        assert N_LOGS == len(caplog.records)
-        record = caplog.records[LAST]
-        assert log_message == record.message
-        assert 'DEBUG' == record.levelname
-        label = target._builder.get_object(ID_OBJECT)
-        assert isinstance(label, Gtk.Label)
-        assert TEXT_OBJECT == label.get_text()
-
-    def test_init_none(self):
-        """| Confirm initialization.
-        | Case: no description provided.
-        """
-        # Setup
-        ERROR = 'No user interface description provided.'
-        # Test
-        with pytest.raises(SBASE.UiDescriptionError, match=ERROR):
-            _target = SBASE.GetUiObject()
-
-    def test_init_file_error(self, tmp_path, caplog, set_logger_debug):
+    def test_init_file_error(self, tmp_path):
         """| Confirm initialization.
         | Case: error accessing description provided by path.
 
-        :param caplog: built-in fixture `Pytest caplog`_.
         :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        :param set_logger_debug: fixture :func:`.set_logger_debug`.
         """
         # Setup
         FILE_NAME = 'no.ui'
@@ -251,34 +319,36 @@ class TestGetUiObject:
         MATCH = 'Could not access description file "{}".'.format(PATH.name)
         # Test
         with pytest.raises(SBASE.UiDescriptionError, match=MATCH) as exc_info:
-            _target = SBASE.GetUiObject(p_path=PATH)
+            _target = SBASE.GetUiObjectPath(p_path=PATH)
         cause = exc_info.value.__cause__
         assert isinstance(cause, FileNotFoundError)
 
-    def test_call(self, ui_desc_minimal):
-        """| Confirm object retrieval.
-        | Case: ID matches an object.
-        """
-        # Setup
-        DESC, ID_OBJECT, TEXT_OBJECT = ui_desc_minimal
-        target = SBASE.GetUiObject(p_string=DESC)
-        # Test
-        ui_object = target(ID_OBJECT)
-        assert isinstance(ui_object, Gtk.Label)
-        assert TEXT_OBJECT == ui_object.get_text()
 
-    def test_call_no_object(self, ui_desc_minimal):
-        """| Confirm object retrieval.
-        | Case: ID does not matches an object.
+class TestGetUiObjectStr:
+    """Unit tests for :class:`.GetUiObjectStr`."""
+
+    def test_init(self, ui_desc_minimal, caplog, set_logger_debug):
+        """| Confirm initialization.
+        | Case: description provided by path.
+
+        :param ui_desc_minimal: fixture :func:`.ui_desc_minimal`.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
         # Setup
-        DESC, _ID_OBJECT, _TEXT_OBJECT = ui_desc_minimal
-        ID_NONE = 'ui_oops'
-        VALUE = 'No object found for ID {}.'.format(ID_NONE)
-        target = SBASE.GetUiObject(p_string=DESC)
+        DESC, ID_ELEMENT, TEXT_ELEMENT = ui_desc_minimal
+        N_LOGS = 2
+        LAST = -1
+        log_message = '... from string.'
         # Test
-        with pytest.raises(SBASE.UiObjectNotFoundError, match=VALUE):
-            _ui_object = target(ID_NONE)
+        target = SBASE.GetUiObjectStr(p_string=DESC)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'DEBUG' == record.levelname
+        label = target(ID_ELEMENT)
+        assert isinstance(label, Gtk.Label)
+        assert TEXT_ELEMENT == label.get_text()
 
 
 class TestModule:

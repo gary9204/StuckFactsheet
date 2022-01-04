@@ -383,7 +383,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="halign">start</property>
-        <property name="label" translatable="yes">Click &lt;b&gt;Apply&lt;/b&gt; to accept the note information below or &lt;b&gt;Back&lt;/b&gt; to change the information.</property>
+        <property name="label" translatable="yes">Click &lt;b&gt;Apply&lt;/b&gt; to accept the topic information below or &lt;b&gt;Back&lt;/b&gt; to change the information.</property>
         <property name="use_markup">True</property>
         <property name="justify">fill</property>
         <property name="wrap">True</property>
@@ -619,7 +619,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkBox" id="ui_page_desc">
+  <object class="GtkBox" id="ui_page_identify">
     <property name="width_request">500</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -632,7 +632,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="halign">start</property>
-        <property name="label" translatable="yes">Enter a name, a title, and content for the new note </property>
+        <property name="label" translatable="yes">Enter a name, a title, and summary for the new topic </property>
         <property name="use_markup">True</property>
         <property name="justify">fill</property>
         <property name="wrap">True</property>
@@ -690,7 +690,7 @@
             <property name="can_focus">False</property>
             <property name="halign">end</property>
             <property name="valign">start</property>
-            <property name="label" translatable="yes">&lt;i&gt;Content:&lt;/i&gt;</property>
+            <property name="label" translatable="yes">&lt;i&gt;Summary:&lt;/i&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -706,7 +706,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="label" translatable="yes">short identifier for the note.</property>
+            <property name="label" translatable="yes">short identifier for the topic.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -722,7 +722,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="label" translatable="yes">one-line description of the note.</property>
+            <property name="label" translatable="yes">one-line description of the topic.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -738,7 +738,7 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="label" translatable="yes">information you want to record in the note.</property>
+            <property name="label" translatable="yes">Description of topic that adds detail to title.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -796,7 +796,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="ui_desc_site_name">
+          <object class="GtkBox" id="ui_identify_site_name">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
@@ -810,7 +810,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="ui_desc_site_title">
+          <object class="GtkBox" id="ui_identify_site_title">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
@@ -835,7 +835,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_top">6</property>
-        <property name="label" translatable="yes">&lt;b&gt;Content&lt;/b&gt;</property>
+        <property name="label" translatable="yes">&lt;b&gt;Summary&lt;/b&gt;</property>
         <property name="use_markup">True</property>
         <property name="justify">fill</property>
         <property name="wrap">True</property>
@@ -847,7 +847,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkScrolledWindow" id="ui_desc_site_summary">
+      <object class="GtkScrolledWindow" id="ui_identify_site_summary">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="shadow_type">in</property>
@@ -877,7 +877,7 @@
         <property name="can_focus">False</property>
         <property name="halign">start</property>
         <property name="valign">start</property>
-        <property name="label" translatable="yes">Use this assistant to add a note to the &lt;i&gt;Topics &lt;/i&gt;outline. Also, you may group topics within the outline by adding a note and then adding or moving topics underneath it. The steps for adding a note are as follows.</property>
+        <property name="label" translatable="yes">Use this assistant to add a topic to the &lt;i&gt;Topics &lt;/i&gt;outline. Also, you may group topics within the outline by adding a topic and then adding or moving topics underneath it. The steps for adding a topic are as follows.</property>
         <property name="use_markup">True</property>
         <property name="justify">fill</property>
         <property name="wrap">True</property>
@@ -928,7 +928,7 @@
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Customize identification information for the new note.  A note is identified by the name, title, and content that you enter.</property>
+            <property name="label" translatable="yes">Customize identification information for the new topic.  A topic is identified by the name, title, and summary that you enter.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -944,7 +944,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">Confirm the note information is correct.</property>
+            <property name="label" translatable="yes">Confirm the topic information is correct.</property>
             <property name="use_markup">True</property>
             <property name="justify">fill</property>
             <property name="wrap">True</property>
@@ -998,7 +998,7 @@
         <property name="can_focus">False</property>
         <property name="halign">start</property>
         <property name="margin_top">6</property>
-        <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt;to proceed.  Click &lt;b&gt;Cancel &lt;/b&gt;at any time to abandon the new note.</property>
+        <property name="label" translatable="yes">Click &lt;b&gt;Next &lt;/b&gt;to proceed.  Click &lt;b&gt;Cancel &lt;/b&gt;at any time to abandon the new topic.</property>
         <property name="use_markup">True</property>
         <property name="justify">fill</property>
         <property name="wrap">True</property>
