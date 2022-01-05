@@ -4,7 +4,7 @@ Unit tests for base classes for topic specification.  See
 
 .. include:: /test/refs_include_pytest.txt
 """
-from pathlib import Path
+# from pathlib import Path
 import pytest  # type: ignore[import]
 import gi   # type: ignore[import]
 
@@ -14,32 +14,95 @@ import factsheet.spec.base_s as SBASE
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
+from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+@pytest.fixture
+def new_identity_spec():
+    """Pytest fixture: returns specification identity factory.
+
+    Factory returns name, summary, and title for specification.
+    """
+    def new_identity():
+        NAME_SPEC = 'Cheese Shop'
+        TITLE_SPEC = 'Cheese Specification'
+        SUMMARY_SPEC = 'Please select any cheese in the shop!'
+        return NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC
+
+    return new_identity
 
 
 class TestBase:
     """Unit tests for :class:`~.spec.base_s.Base`."""
 
-    def test_init(self):
+    def test_call(self, new_identity_spec, monkeypatch):
+        """Confirm orchestration for topic creation and placement."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        target.add_pages(p_assistant=assistant)
+
+        called_new_assistant = False
+        called_add_pages = False
+        assistant_add_pages = None
+        called_run_assistant = False
+        assistant_run = None
+
+        def patch_new_assistant(self):
+            nonlocal called_new_assistant
+            called_new_assistant = True  # pylint: disable=unused-variable
+            nonlocal assistant
+            return assistant
+
+        def patch_add_pages(self, p_assist):
+            nonlocal called_add_pages
+            called_add_pages = True  # pylint: disable=unused-variable
+            nonlocal assistant_add_pages
+            assistant_add_pages = p_assist  # pylint: disable=unused-variable
+
+        def patch_run_assistant(self, p_assistant):
+            nonlocal called_run_assistant
+            called_run_assistant = True  # pylint: disable=unused-variable
+            nonlocal assistant_run
+            assistant_run = p_assistant  # pylint: disable=unused-variable
+
+        monkeypatch.setattr(SBASE.Base, 'new_assistant', patch_new_assistant)
+        monkeypatch.setattr(SBASE.Base, 'add_pages', patch_add_pages)
+        monkeypatch.setattr(SBASE.Base, 'run_assistant', patch_run_assistant)
+        # Test
+        target()
+        assert called_new_assistant
+        assert called_add_pages
+        assert assistant_add_pages is assistant
+        assert called_run_assistant
+        assert assistant_run is assistant
+
+    def test_init(self, new_identity_spec):
         """| Confirm initialization.
         | Case: TBD
         """
         # Setup
-        NAME_SPEC = 'Parrot'
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
         # Test
-        target = SBASE.Base(p_name=NAME_SPEC)
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         assert isinstance(target._name_spec, BUI.ModelTextMarkup)
         assert NAME_SPEC == target._name_spec.text
+        assert target._response is None
 
-    def test_init_name_topic(self):
+    def test_init_name_topic(self, new_identity_spec):
         """| Confirm initialization.
         | Case: topic name store and view factories
         """
         # Setup
         BLANK = ''
-        NAME_SPEC = 'Parrot'
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
         # Test
-        target = SBASE.Base(p_name=NAME_SPEC)
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         assert isinstance(target._name_topic, MTOPIC.Name)
         assert BLANK == target._name_topic.text
         assert isinstance(
@@ -51,7 +114,64 @@ class TestBase:
         assert target._new_editor_name_topic._ui_model is (
             target._name_topic._ui_model)
 
-    def test_new_page_identify_sites(self, monkeypatch):
+    @pytest.mark.parametrize('I_PAGE, TITLE', [
+        (0, 'Introduction'),
+        (1, 'Identify'),
+        ])
+    def test_add_pages(self, new_identity_spec, I_PAGE, TITLE):
+        """Confirm pages added to assistant."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        N_PAGES = 2
+        # Test
+        target.add_pages(p_assistant=assistant)
+        page = assistant.get_nth_page(I_PAGE)
+        assert TITLE == assistant.get_page_title(page)
+        assert N_PAGES == assistant.get_n_pages()
+
+    def test_new_assistant(self, new_identity_spec):
+        """Confirm assistant construction."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        # Test
+        assist = target.new_assistant()
+        assert isinstance(assist, Gtk.Assistant)
+
+    @pytest.mark.parametrize('NAME_SIGNAL, ORIGIN, N_DEFAULT', [
+            ('apply', Gtk.Assistant, 0),
+            ('cancel', Gtk.Assistant, 0),
+            ('destroy', Gtk.Assistant, 0),
+            ('prepare', Gtk.Assistant, 0),
+            ])
+    def test_new_assistant_signals(
+            self, new_identity_spec, NAME_SIGNAL, ORIGIN, N_DEFAULT):
+        """Confirm initialization of signal connections."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        # Test
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                assistant, GO.SignalMatchType.ID, signal, 0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(assistant, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
+
+    def test_new_page_identify_sites(self, monkeypatch, new_identity_spec):
         """Confirm builder populates page sites."""
         # Setup
         PATCH_UI_PAGE_IDENTITY = """
@@ -95,8 +215,9 @@ class TestBase:
         """
         monkeypatch.setattr(SBASE, 'UI_PAGE_IDENTIFY', PATCH_UI_PAGE_IDENTITY)
 
-        NAME_SPEC = 'Parrot'
-        target = SBASE.Base(p_name=NAME_SPEC)
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         sites = list()
         display_name = target._new_display_name_topic()
         editor_name = target._new_editor_name_topic()
@@ -111,38 +232,86 @@ class TestBase:
             view = site.get_children()[FIRST]
             assert view is sites[index].ui_view
 
-    def test_new_page_identify_parse(self):
+    def test_new_page_identify_parse(self, new_identity_spec):
         """Confirm builder can parse page description."""
         # Setup
-        NAME_SPEC = 'Parrot'
-        target = SBASE.Base(p_name=NAME_SPEC)
-        NAME = MTOPIC.Name()
-        NEW_DISPLAY_NAME = MTOPIC.FactoryDisplayName(NAME)
-        DISPLAY_NAME = NEW_DISPLAY_NAME()
-        NEW_EDITOR_NAME = MTOPIC.FactoryEditorName(NAME)
-        EDITOR_NAME = NEW_EDITOR_NAME()
-        VIEW_NAME = VMARKUP.ViewMarkup(DISPLAY_NAME, EDITOR_NAME, 'Name')
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        display_name = target._new_display_name_topic()
+        editor_name = target._new_editor_name_topic()
+        view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
         # Test
-        new_page = target.new_page_identify(VIEW_NAME)
+        new_page = target.new_page_identify(view_name)
         assert isinstance(new_page, SBASE.PageAssist)
 
-    def test_new_page_intro_parse(self):
+    def test_new_page_intro_parse(self, new_identity_spec):
         """Confirm builder can parse page description."""
         # Setup
-        NAME_SPEC = 'Parrot'
-        target = SBASE.Base(p_name=NAME_SPEC)
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         # Test
         new_page = target.new_page_intro()
         assert isinstance(new_page, SBASE.PageAssist)
 
-    def test_new_assistant(self):
-        """Confirm assistant construction."""
+    def test_on_apply(self, new_identity_spec):
+        """Confirm assistant hidden and response set."""
         # Setup
-        NAME_SPEC = 'Parrot'
-        target = SBASE.Base(p_name=NAME_SPEC)
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        # assistant.show()
         # Test
-        assist = target.new_assistant()
-        assert isinstance(assist, Gtk.Assistant)
+        target.on_apply(assistant)
+        # assert not assistant.get_visible()
+        assert target._response is Gtk.ResponseType.APPLY
+
+    def test_on_cancel(self, new_identity_spec):
+        """Confirm assistant hidden and response set."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        # assistant.show()
+        # Test
+        target.on_cancel(assistant)
+        # assert not assistant.get_visible()
+        assert target._response is Gtk.ResponseType.CANCEL
+
+    def test_on_prepare(self, new_identity_spec):
+        """Confirm class defines method."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        page = Gtk.Box()
+        _i_page = assistant.append_page(page)
+        # Test
+        target.on_prepare(p_assistant=assistant, p_page=page)
+        # Successful call makes no state change.
+
+    def test_run_assistant(self, new_identity_spec, monkeypatch):
+        """Confirm presentation of assistant."""
+        # Setup
+        NAME_SPEC, TITLE_SPEC, SUMMARY_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        assistant.hide()
+
+        def patch_main_iteration():
+            nonlocal target
+            target._response = Gtk.ResponseType.APPLY
+
+        monkeypatch.setattr(Gtk, 'main_iteration', patch_main_iteration)
+        # Test
+        target.run_assistant(p_assistant=assistant)
+        assert target._response is Gtk.ResponseType.APPLY
+        assert not assistant.get_visible()
 
 
 class TestExceptions:

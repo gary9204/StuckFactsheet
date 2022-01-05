@@ -145,14 +145,17 @@ class Base:
     outline of topics.
     """
 
-    def __init__(self, *, p_name: str) -> None:
+    def __init__(self, *, p_name: str, p_summary: str, p_title: str) -> None:
         """Initialize spec identity and topic identity including location.
 
         :param p_name: name of specification.
+        :param p_summary: description of specification.
+        :param p_title: descriptive title for specification.
         """
         self._name_spec = BUI.ModelTextMarkup(p_text=p_name)
 
         self._init_name_topic()
+        self._response = None
 
     def _init_name_topic(self) -> None:
         """ Initialize"""
@@ -163,17 +166,37 @@ class Base:
             BUI.FactoryEditorTextMarkup(p_model=self._name_topic))
 
     def __call__(self):
-        """TBD"""
-        # assist = self.new_assistant()
-        # self.add_pages(p_assist=assist)
-        # run assistant
+        """Orchestrate creation and placement of new topic.
+
+        The user specializes the specification to create the topic.  The
+        user may confirm or cancel the topic.
+        """
+        assist = self.new_assistant()
+        self.add_pages(p_assist=assist)
+        self.run_assistant(p_assistant=assist)
         # construct topic (or exit)
         # place topic (or exit)
-        pass
+        # Issue #245: patch pending completion of assistant
+        logger.warning('New Topic')
+        logger.warning('Name: {}'.format(self._name_topic.text))
 
-    def add_pages(self, p_assist: Gtk.Assistant) -> None:
-        """TBD"""
-        pass
+    def add_pages(self, p_assistant: Gtk.Assistant) -> None:
+        """Add pages to assistant.
+
+        :param p_assistant: assistant to gather topic parameters.
+        """
+        page_intro = self.new_page_intro()
+        _i_new = p_assistant.append_page(page_intro)
+        p_assistant.set_page_title(page_intro, 'Introduction')
+
+        identify_display_name = self._new_display_name_topic()
+        identify_editor_name = self._new_editor_name_topic()
+        identify_view_name = VMARKUP.ViewMarkup(
+            identify_display_name, identify_editor_name, 'Name')
+        page_identify = self.new_page_identify(
+            identify_view_name)
+        _i_new = p_assistant.append_page(page_identify)
+        p_assistant.set_page_title(page_identify, 'Identify')
 
     def add_page_confirm(self, p_assist: Gtk.Assistant) -> None:
         """TBD"""
@@ -191,6 +214,10 @@ class Base:
         """Return an assistant from user interface definition."""
         get_ui_object = GetUiObjectStr(p_string=UI_ASSIST)
         assist = get_ui_object('ui_assistant')
+        _ = assist.connect('apply', self.on_apply)
+        _ = assist.connect('cancel', self.on_cancel)
+        _ = assist.connect('destroy', self.on_cancel)
+        _ = assist.connect('prepare', self.on_prepare)
         return assist
 
     def new_page_identify(
@@ -216,17 +243,46 @@ class Base:
         new_page = get_ui_object('ui_page_intro')
         return new_page
 
-    def on_apply(self, p_assistant) -> None:
-        """TBD"""
+    def on_apply(self, p_assistant: Gtk.Assistant) -> None:
+        """Hide assistant and record user confirmed new topic.
+
+        Recording user's response unblocks call method.
+        """
+        # p_assistant.hide()
+        self._response = Gtk.ResponseType.APPLY
+
+    def on_cancel(self, p_assistant: Gtk.Assistant) -> None:
+        """Hide assistant and record user cancelled new topic.
+
+        Recording user's response unblocks call method.
+        """
+        # p_assistant.hide()
+        self._response = Gtk.ResponseType.CANCEL
+
+    def on_prepare(self, p_assistant: Gtk.Assistant, p_page: PageAssist,
+                   **_kwargs) -> None:
+        """Prepare page contents for presentation in assistant.
+
+        This method has no effect in the base class.
+
+        :param p_assistant: assistant presenting page.
+        :param p_page: page to present.
+        """
         pass
 
-    def on_cancel(self, p_assistant) -> None:
-        """TBD"""
-        pass
+    def run_assistant(self, p_assistant: Gtk.Assistant) -> None:
+        """Present assistant to the user and wait for user's responses.
 
-    def on_prepare(self, p_assistant, p_page) -> None:
-        """TBD"""
-        pass
+        The user navigates the assistant and fills in assistant's
+        fields.  The user may confirm or cancel their selections.
+
+        :param p_assistant: assistant to present.
+        """
+        self._response = None
+        p_assistant.show()
+        while self._response is None:
+            _ = Gtk.main_iteration()
+        p_assistant.hide()
 
     def summary(self) -> str:
         """TBD"""
