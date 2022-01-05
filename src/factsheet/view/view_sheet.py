@@ -20,6 +20,9 @@ import factsheet.view.view_markup as VMARKUP
 import factsheet.view.ui as UI
 from factsheet.control.control_sheet import g_control_app
 
+# Issue #249 stub
+import factsheet.spec.base_s as SBASE
+
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
@@ -344,15 +347,17 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     self.on_show_dialog, UI.HELP_SHEET_FILE)
 
         # Topics Outline Toolbar
-        # search_bar = get_object('ui_search_bar')
+        # Issue #249 stub
+        search_bar = get_object('ui_search_bar')
         # button_find = get_object('ui_find_topic')
         # _binding = button_find.bind_property(
         #     'active', search_bar, 'search-mode-enabled',
         #     GO.BindingFlags.BIDIRECTIONAL)
         # entry_find = get_object('ui_find_topic_entry')
         # self._view_topics.gtk_view.set_search_entry(entry_find)
-        # UI.new_action_active(
-        #     self._window, 'new-topic', self.on_new_topic)
+        # Issue #249 stub
+        UI.new_action_active(
+            self._window, 'new-topic', self.on_new_topic)
         # UI.new_action_active(
         #     self._window, 'go-first-topic', self.on_go_first_topic)
         # UI.new_action_active(
@@ -688,6 +693,13 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         for the topic, and topic contents.  The user may cancel at any
         of the queries.
         """
+        # Issue #249 stub
+        spec = SBASE.Base(p_name='Cheese Shop',
+                          p_summary='Please select any cheese in the shop!',
+                          p_title='Cheese Specification')
+        spec()
+        return
+
         raise NotImplementedError
         # gtk_model = self._view_topics.gtk_view.get_model()
         # if len(gtk_model):
