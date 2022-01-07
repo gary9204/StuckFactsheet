@@ -12,15 +12,14 @@ import factsheet.model.topic as MTOPIC
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
-# from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.SBASE')
 
-SUFFIX_SPEC = '.py'
-SUFFIX_ASSIST = '.ui'
-
+NameSpec = BUI.ModelTextMarkup
 PageAssist = typing.Union[Gtk.Box]
+SummarySpec = BUI.ModelTextStyled
+TitleSpec = BUI.ModelTextMarkup
 
 
 class ExceptionSpec(Exception):
@@ -45,6 +44,257 @@ class UiObjectNotFoundError(ExceptionSpec):
     """Raise for when no object found for a given user interface ID."""
 
     pass
+
+
+class Base:
+    """Base spec for Factsheet topics.
+
+    A spec provides a user the means to create a class of topics.  A
+    spec embodies a template for the class.  It queries the user to
+    complete the template for a specific topic.  The spec also queries
+    the user of the location of the new topic in the Factsheet's
+    outline of topics.
+    """
+
+    def __call__(self):
+        """Orchestrate creation and placement of new topic.
+
+        The user specializes the specification to create the topic.  The
+        user may confirm or cancel the topic.
+        """
+        assist = self.new_assistant()
+        self.add_pages(p_assistant=assist)
+        self.run_assistant(p_assistant=assist)
+        # construct topic (or exit)
+        # place topic (or exit)
+        # Issue #245: patch pending completion of assistant
+        logger.info('New Topic')
+        logger.info('Name:    {}'.format(self._name_topic.text))
+        logger.info('Summary: {}'.format(self._summary_topic.text))
+        logger.info('Title:   {}'.format(self._title_topic.text))
+        response = 'None'
+        if self._response is not None:
+            response = self._response.value_name
+        logger.info('Response: {}'.format(response))
+
+    def __init__(self, *, p_name: str, p_summary: str, p_title: str) -> None:
+        """Initialize spec identity and topic identity including location.
+
+        :param p_name: name of specification.
+        :param p_summary: description of specification.
+        :param p_title: descriptive title for specification.
+        """
+        self._name_spec = NameSpec(p_text=p_name)
+        self._summary_spec = SummarySpec(p_text=p_summary)
+        self._title_spec = TitleSpec(p_text=p_title)
+
+        self._init_name_topic()
+        self._init_summary_topic()
+        self._init_title_topic()
+        self._response = None
+
+    def _init_name_topic(self) -> None:
+        """ Initialize attributes for a topic name and view factories."""
+        self._name_topic = MTOPIC.Name(p_text='')
+        self._new_display_name_topic = (
+            MTOPIC.FactoryDisplayName(p_model=self._name_topic))
+        self._new_editor_name_topic = (
+            MTOPIC.FactoryEditorName(p_model=self._name_topic))
+
+    def _init_summary_topic(self) -> None:
+        """ Initialize attributes for a topic summary and view factories."""
+        self._summary_topic = MTOPIC.Summary(p_text='')
+        self._new_display_summary_topic = (
+            MTOPIC.FactoryDisplaySummary(p_model=self._summary_topic))
+        self._new_editor_summary_topic = (
+            MTOPIC.FactoryEditorSummary(p_model=self._summary_topic))
+
+    def _init_title_topic(self) -> None:
+        """ Initialize attributes for a topic title and view factories."""
+        self._title_topic = MTOPIC.Title(p_text='')
+        self._new_display_title_topic = (
+            MTOPIC.FactoryDisplayTitle(p_model=self._title_topic))
+        self._new_editor_title_topic = (
+            MTOPIC.FactoryEditorTitle(p_model=self._title_topic))
+
+    def add_pages(self, p_assistant: Gtk.Assistant) -> None:
+        """Add pages to assistant.
+
+        :param p_assistant: assistant to populate.
+        """
+        self.append_page_intro(p_assistant)
+        self.append_page_identify(p_assistant)
+        self.append_page_confirm(p_assistant)
+
+    def append_page_confirm(self, p_assistant: Gtk.Assistant) -> None:
+        """Append confirmation page to assistant.
+
+        :param p_assistant: assistant to append to.
+        """
+        confirm_display_name = self._new_display_name_topic()
+        confirm_display_summary = self._new_display_summary_topic()
+        confirm_display_title = self._new_display_title_topic()
+        page_confirm = self.new_page_confirm(confirm_display_name,
+                                             confirm_display_summary,
+                                             confirm_display_title)
+        _i_new = p_assistant.append_page(page_confirm)
+        p_assistant.set_page_title(page_confirm, 'Confirm')
+        p_assistant.set_page_type(page_confirm, Gtk.AssistantPageType.CONFIRM)
+        p_assistant.set_page_complete(page_confirm, True)
+
+    def append_page_identify(self, p_assistant: Gtk.Assistant) -> None:
+        """Append identify page to assistant.
+
+        :param p_assistant: assistant to append to.
+        """
+        identify_display_name = self._new_display_name_topic()
+        identify_editor_name = self._new_editor_name_topic()
+        identify_view_name = VMARKUP.ViewMarkup(
+            identify_display_name, identify_editor_name, 'Name')
+        identify_editor_summary = self._new_editor_summary_topic()
+        identify_display_title = self._new_display_title_topic()
+        identify_editor_title = self._new_editor_title_topic()
+        identify_view_title = VMARKUP.ViewMarkup(
+            identify_display_title, identify_editor_title, 'Title')
+        page_identify = self.new_page_identify(
+            identify_view_name, identify_editor_summary, identify_view_title)
+        _i_new = p_assistant.append_page(page_identify)
+        p_assistant.set_page_title(page_identify, 'Identify')
+        p_assistant.set_page_type(page_identify, Gtk.AssistantPageType.CONTENT)
+        p_assistant.set_page_complete(page_identify, True)
+
+    def append_page_intro(self, p_assistant: Gtk.Assistant) -> None:
+        """Append introduction page to assistant.
+
+        :param p_assistant: assistant to append to.
+        """
+        page_intro = self.new_page_intro()
+        _i_new = p_assistant.append_page(page_intro)
+        p_assistant.set_page_title(page_intro, 'Introduction')
+        p_assistant.set_page_type(page_intro, Gtk.AssistantPageType.INTRO)
+        p_assistant.set_page_complete(page_intro, True)
+
+    def add_page_locate(self, p_assist: Gtk.Assistant) -> None:
+        """TBD"""
+        pass
+
+    @property
+    def name(self) -> NameSpec:
+        """Return spec name."""
+        return self._name_spec
+
+    def new_assistant(self) -> typing.Optional[Gtk.Assistant]:
+        """Return an assistant from user interface definition."""
+        get_ui_object = GetUiObjectStr(p_string=UI_ASSIST)
+        assist = get_ui_object('ui_assistant')
+        _ = assist.connect('apply', self.on_apply)
+        _ = assist.connect('cancel', self.on_cancel)
+        _ = assist.connect('destroy', self.on_cancel)
+        _ = assist.connect('prepare', self.on_prepare)
+        return assist
+
+    def new_page_confirm(self, p_display_name: MTOPIC.DisplayName,
+                         p_display_summary: MTOPIC.DisplaySummary,
+                         p_display_title: MTOPIC.DisplayTitle) -> PageAssist:
+        """Return a confirmation page.
+
+        :param p_display_name: display for topic name.
+        :param p_display_summary: display for topic summary.
+        :param p_display_title: display for topic title.
+        """
+        get_ui_object = GetUiObjectStr(p_string=UI_PAGE_CONFIRM)
+        new_page = get_ui_object('ui_page_confirm')
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+        site_name = get_ui_object('ui_confirm_site_name')
+        site_name.pack_start(p_display_name, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        site_summary = get_ui_object('ui_confirm_site_summary')
+        site_summary.add(p_display_summary)
+        site_title = get_ui_object('ui_confirm_site_title')
+        site_title.pack_start(
+            p_display_title, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        return new_page
+
+    def new_page_identify(self, p_view_name: VMARKUP.ViewMarkup,
+                          p_editor_summary: MTOPIC.EditorSummary,
+                          p_view_title: VMARKUP.ViewMarkup) -> PageAssist:
+        """Return an identification page.
+
+        :param p_view_name: view to display and edit topic name.
+        :param p_editor_summary: view to display and edit topic summary.
+        :param p_view_title: view to display and edit topic title.
+        """
+        get_ui_object = GetUiObjectStr(p_string=UI_PAGE_IDENTIFY)
+        new_page = get_ui_object('ui_page_identify')
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+        site_name = get_ui_object('ui_identify_site_name')
+        site_name.pack_start(
+            p_view_name.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        site_summary = get_ui_object('ui_identify_site_summary')
+        site_summary.add(p_editor_summary)
+        site_title = get_ui_object('ui_identify_site_title')
+        site_title.pack_start(
+            p_view_title.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        return new_page
+
+    def new_page_intro(self) -> PageAssist:
+        """Return an introduction page."""
+        get_ui_object = GetUiObjectStr(p_string=UI_PAGE_INTRO)
+        new_page = get_ui_object('ui_page_intro')
+        return new_page
+
+    def on_apply(self, p_assistant: Gtk.Assistant) -> None:
+        """Hide assistant and record user confirmed new topic.
+
+        Recording user's response unblocks call method.
+        """
+        del p_assistant  # Unused in base method
+        self._response = Gtk.ResponseType.APPLY
+
+    def on_cancel(self, p_assistant: Gtk.Assistant) -> None:
+        """Hide assistant and record user cancelled new topic.
+
+        Recording user's response unblocks call method.
+        """
+        del p_assistant  # Unused in base method
+        self._response = Gtk.ResponseType.CANCEL
+
+    def on_prepare(self, p_assistant: Gtk.Assistant, p_page: PageAssist,
+                   **_kwargs) -> None:
+        """Prepare page contents for presentation in assistant.
+
+        :param p_assistant: assistant presenting page.
+        :param p_page: page to present.
+        """
+        del p_assistant  # Unused in base method
+        p_page.show_all()
+
+    def run_assistant(self, p_assistant: Gtk.Assistant) -> None:
+        """Present assistant to the user and wait for user's responses.
+
+        The user navigates the assistant and fills in assistant's
+        fields.  The user may confirm or cancel their selections.
+
+        :param p_assistant: assistant to present.
+        """
+        self._response = None
+        p_assistant.show()
+        while self._response is None:
+            _ = Gtk.main_iteration()
+        p_assistant.hide()
+
+    @property
+    def summary(self) -> SummarySpec:
+        """Return spec summary."""
+        return self._summary_spec
+
+    @property
+    def title(self) -> TitleSpec:
+        """Return spec title."""
+        return self._title_spec
 
 
 class GetUiObject(abc.ABC):
@@ -134,228 +384,6 @@ class GetUiObjectStr(GetUiObject):
             MESSAGE = 'No object found for ID {}.'.format(p_id)
             raise UiObjectNotFoundError(MESSAGE)
         return ui_object
-
-
-class Base:
-    """Base spec for Factsheet topics.
-
-    A spec provides a user the means to create a class of topics.  A
-    spec embodies a template for the class.  It queries the user to
-    complete the template for a specific topic.  The spec also queries
-    the user of the location of the new topic in the Factsheet's
-    outline of topics.
-    """
-
-    def __init__(self, *, p_name: str, p_summary: str, p_title: str) -> None:
-        """Initialize spec identity and topic identity including location.
-
-        :param p_name: name of specification.
-        :param p_summary: description of specification.
-        :param p_title: descriptive title for specification.
-        """
-        self._name_spec = BUI.ModelTextMarkup(p_text=p_name)
-        self._summary_spec = BUI.ModelTextStyled(p_text=p_summary)
-
-        self._init_name_topic()
-        self._init_summary_topic()
-        self._response = None
-
-    def _init_name_topic(self) -> None:
-        """ Initialize store for a topic name and view factories."""
-        self._name_topic = MTOPIC.Name(p_text='')
-        self._new_display_name_topic = (
-            MTOPIC.FactoryDisplayName(p_model=self._name_topic))
-        self._new_editor_name_topic = (
-            MTOPIC.FactoryEditorName(p_model=self._name_topic))
-
-    def _init_summary_topic(self) -> None:
-        """ Initialize store for a topic summary and view factories."""
-        self._summary_topic = MTOPIC.Summary(p_text='')
-        self._new_display_summary_topic = (
-            MTOPIC.FactoryDisplaySummary(p_model=self._summary_topic))
-        self._new_editor_summary_topic = (
-            MTOPIC.FactoryEditorSummary(p_model=self._summary_topic))
-
-    def __call__(self):
-        """Orchestrate creation and placement of new topic.
-
-        The user specializes the specification to create the topic.  The
-        user may confirm or cancel the topic.
-        """
-        assist = self.new_assistant()
-        self.add_pages(p_assistant=assist)
-        self.run_assistant(p_assistant=assist)
-        # construct topic (or exit)
-        # place topic (or exit)
-        # Issue #245: patch pending completion of assistant
-        logger.info('New Topic')
-        logger.info('Name:    {}'.format(self._name_topic.text))
-        logger.info('Summary: {}'.format(self._summary_topic.text))
-        response = 'None'
-        if self._response is not None:
-            response = self._response.value_name
-        logger.info('Response: {}'.format(response))
-
-    def add_pages(self, p_assistant: Gtk.Assistant) -> None:
-        """Add pages to assistant.
-
-        :param p_assistant: assistant to populate.
-        """
-        self.append_page_intro(p_assistant)
-        self.append_page_identify(p_assistant)
-        self.append_page_confirm(p_assistant)
-
-    def append_page_confirm(self, p_assistant: Gtk.Assistant) -> None:
-        """Append confirmation page to assistant.
-
-        :param p_assistant: assistant to append to.
-        """
-        confirm_display_name = self._new_display_name_topic()
-        confirm_display_summary = self._new_display_summary_topic()
-        page_confirm = self.new_page_confirm(
-            confirm_display_name, confirm_display_summary)
-        _i_new = p_assistant.append_page(page_confirm)
-        p_assistant.set_page_title(page_confirm, 'Confirm')
-        p_assistant.set_page_type(page_confirm, Gtk.AssistantPageType.CONFIRM)
-        p_assistant.set_page_complete(page_confirm, True)
-
-    def append_page_identify(self, p_assistant: Gtk.Assistant) -> None:
-        """Append identify page to assistant.
-
-        :param p_assistant: assistant to append to.
-        """
-        identify_display_name = self._new_display_name_topic()
-        identify_editor_name = self._new_editor_name_topic()
-        identify_view_name = VMARKUP.ViewMarkup(
-            identify_display_name, identify_editor_name, 'Name')
-        identify_editor_summary = self._new_editor_summary_topic()
-        page_identify = self.new_page_identify(
-            identify_view_name, identify_editor_summary)
-        _i_new = p_assistant.append_page(page_identify)
-        p_assistant.set_page_title(page_identify, 'Identify')
-        p_assistant.set_page_type(page_identify, Gtk.AssistantPageType.CONTENT)
-        p_assistant.set_page_complete(page_identify, True)
-
-    def append_page_intro(self, p_assistant: Gtk.Assistant) -> None:
-        """Append introduction page to assistant.
-
-        :param p_assistant: assistant to append to.
-        """
-        page_intro = self.new_page_intro()
-        _i_new = p_assistant.append_page(page_intro)
-        p_assistant.set_page_title(page_intro, 'Introduction')
-        p_assistant.set_page_type(page_intro, Gtk.AssistantPageType.INTRO)
-        p_assistant.set_page_complete(page_intro, True)
-
-    def add_page_locate(self, p_assist: Gtk.Assistant) -> None:
-        """TBD"""
-        pass
-
-    def name(self) -> str:
-        """TBD"""
-        pass
-
-    def new_assistant(self) -> typing.Optional[Gtk.Assistant]:
-        """Return an assistant from user interface definition."""
-        get_ui_object = GetUiObjectStr(p_string=UI_ASSIST)
-        assist = get_ui_object('ui_assistant')
-        _ = assist.connect('apply', self.on_apply)
-        _ = assist.connect('cancel', self.on_cancel)
-        _ = assist.connect('destroy', self.on_cancel)
-        _ = assist.connect('prepare', self.on_prepare)
-        return assist
-
-    def new_page_confirm(self, p_display_name: MTOPIC.DisplayName,
-                         p_display_summary: MTOPIC.DisplaySummary
-                         ) -> PageAssist:
-        """Return a confirmation page.
-
-        :param p_display_name: display for topic name.
-        :param p_display_name: display for topic summary.
-        """
-        get_ui_object = GetUiObjectStr(p_string=UI_PAGE_CONFIRM)
-        new_page = get_ui_object('ui_page_confirm')
-        EXPAND_OKAY = True
-        FILL_OKAY = True
-        N_PADDING = 6
-        site_name = get_ui_object('ui_confirm_site_name')
-        site_name.pack_start(p_display_name, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-        site_summary = get_ui_object('ui_confirm_site_summary')
-        site_summary.add(p_display_summary)
-        return new_page
-
-    def new_page_identify(self, p_view_name: VMARKUP.ViewMarkup,
-                          p_editor_summary: MTOPIC.EditorSummary
-                          ) -> PageAssist:
-        """Return an identification page.
-
-        :param p_view_name: view to display and edit topic name.
-        :param p_editor_summary: view to display and edit topic summary.
-        """
-        get_ui_object = GetUiObjectStr(p_string=UI_PAGE_IDENTIFY)
-        new_page = get_ui_object('ui_page_identify')
-        EXPAND_OKAY = True
-        FILL_OKAY = True
-        N_PADDING = 6
-        site_name = get_ui_object('ui_identify_site_name')
-        site_name.pack_start(
-            p_view_name.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-        site_summary = get_ui_object('ui_identify_site_summary')
-        site_summary.add(p_editor_summary)
-        return new_page
-
-    def new_page_intro(self) -> PageAssist:
-        """Return an introduction page."""
-        get_ui_object = GetUiObjectStr(p_string=UI_PAGE_INTRO)
-        new_page = get_ui_object('ui_page_intro')
-        return new_page
-
-    def on_apply(self, p_assistant: Gtk.Assistant) -> None:
-        """Hide assistant and record user confirmed new topic.
-
-        Recording user's response unblocks call method.
-        """
-        # p_assistant.hide()
-        self._response = Gtk.ResponseType.APPLY
-
-    def on_cancel(self, p_assistant: Gtk.Assistant) -> None:
-        """Hide assistant and record user cancelled new topic.
-
-        Recording user's response unblocks call method.
-        """
-        # p_assistant.hide()
-        self._response = Gtk.ResponseType.CANCEL
-
-    def on_prepare(self, p_assistant: Gtk.Assistant, p_page: PageAssist,
-                   **_kwargs) -> None:
-        """Prepare page contents for presentation in assistant.
-
-        :param p_assistant: assistant presenting page.
-        :param p_page: page to present.
-        """
-        p_page.show_all()
-
-    def run_assistant(self, p_assistant: Gtk.Assistant) -> None:
-        """Present assistant to the user and wait for user's responses.
-
-        The user navigates the assistant and fills in assistant's
-        fields.  The user may confirm or cancel their selections.
-
-        :param p_assistant: assistant to present.
-        """
-        self._response = None
-        p_assistant.show()
-        while self._response is None:
-            _ = Gtk.main_iteration()
-        p_assistant.hide()
-
-    def summary(self) -> str:
-        """TBD"""
-        pass
-
-    def title(self) -> str:
-        """TBD"""
-        pass
 
 
 UI_ASSIST = """
@@ -783,7 +811,7 @@ UI_PAGE_IDENTIFY = (
     '            <property name="can_focus">False</property>\n'
     '            <property name="halign">start</property>\n'
     '            <property name="valign">start</property>\n'
-    '            <property name="label" translatable="yes">Description of '
+    '            <property name="label" translatable="yes">description of '
     'topic that adds detail to title.</property>\n'
     '            <property name="use_markup">True</property>\n'
     '            <property name="justify">fill</property>\n'
@@ -936,9 +964,10 @@ UI_PAGE_INTRO = (
     '        <property name="halign">start</property>\n'
     '        <property name="valign">start</property>\n'
     '        <property name="label" translatable="yes">Use this assistant '
-    'to add a topic to the &lt;i&gt;Topics &lt;/i&gt;outline. Also, you '
-    'may group topics within the outline by adding a topic and then adding '
-    'or moving topics underneath it. The steps for adding a topic are as '
+    'to add a minimal topic to the &lt;i&gt;Topics &lt;/i&gt;outline. You '
+    'may use a minimal topic to add a note or group topics within the '
+    'outline. To group topics, add a minimal topic and then add or move '
+    'topics underneath it. The steps for adding a minimal topic are as '
     'follows.</property>\n'
     '        <property name="use_markup">True</property>\n'
     '        <property name="justify">fill</property>\n'
@@ -1043,7 +1072,7 @@ UI_PAGE_INTRO = (
     '            <property name="can_focus">False</property>\n'
     '            <property name="halign">start</property>\n'
     '            <property name="label" translatable="yes">Pick location '
-    'for new topic.</property>\n'
+    'in the the &lt;i&gt;Topics &lt;/i&gt;outline for new topic.</property>\n'
     '            <property name="use_markup">True</property>\n'
     '            <property name="justify">fill</property>\n'
     '            <property name="wrap">True</property>\n'

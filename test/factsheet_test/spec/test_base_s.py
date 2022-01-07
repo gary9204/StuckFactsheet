@@ -33,11 +33,56 @@ def new_identity_spec():
     return new_identity
 
 
+@pytest.fixture
+def set_logger_debug():
+    """Pytest fixture with teardown: temporarily set SBASE log level to
+    DEBUG.
+    """
+    level = SBASE.logger.getEffectiveLevel()
+    SBASE.logger.setLevel('DEBUG')
+    yield
+    SBASE.logger.setLevel(level)
+
+
+@pytest.fixture
+def ui_desc_minimal():
+    """Pytest fixture: Return minimal user interface description.
+
+    :returns:
+
+        * DESC - user interface description as string.
+        * ID_ELEMENT - ID of a `Gtk.Label`_ object.
+        * TEXT_ITEM - contents of label object.
+
+    .. _`Gtk.Label`:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
+    """
+    ID_ELEMENT = 'ui_object'
+    TEXT_ELEMENT = 'Test Item'
+    DESC = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!-- Generated with glade 3.22.1 -->
+    <interface>
+      <requires lib="gtk+" version="3.20"/>
+      <object class="GtkLabel" id="{}">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">{}</property>
+      </object>
+    </interface>
+    """.format(ID_ELEMENT, TEXT_ELEMENT)
+    return DESC, ID_ELEMENT, TEXT_ELEMENT
+
+
 class TestBase:
     """Unit tests for :class:`~.spec.base_s.Base`."""
 
     def test_call(self, new_identity_spec, monkeypatch):
-        """Confirm orchestration for topic creation and placement."""
+        """Confirm orchestration for topic creation and placement.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -83,7 +128,9 @@ class TestBase:
 
     def test_init(self, new_identity_spec):
         """| Confirm initialization.
-        | Case: TBD
+        | Case: non-topic attributes
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
@@ -93,11 +140,14 @@ class TestBase:
         assert isinstance(target._name_spec, BUI.ModelTextMarkup)
         assert NAME_SPEC == target._name_spec.text
         assert SUMMARY_SPEC == target._summary_spec.text
+        assert TITLE_SPEC == target._title_spec.text
         assert target._response is None
 
     def test_init_name_topic(self, new_identity_spec):
         """| Confirm initialization.
-        | Case: store for topic name and view factories
+        | Case: attributes for topic name and view factories.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
         BLANK = ''
@@ -118,7 +168,9 @@ class TestBase:
 
     def test_init_summary_topic(self, new_identity_spec):
         """| Confirm initialization.
-        | Case: store for topic summary and view factories
+        | Case: attributes for topic summary and view factories.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
         BLANK = ''
@@ -137,13 +189,41 @@ class TestBase:
         assert target._new_editor_summary_topic._ui_model is (
             target._summary_topic._ui_model)
 
+    def test_init_title_topic(self, new_identity_spec):
+        """| Confirm initialization.
+        | Case: attributes for topic title and view factories.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
+        # Setup
+        BLANK = ''
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        # Test
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assert isinstance(target._title_topic, MTOPIC.Title)
+        assert BLANK == target._title_topic.text
+        assert isinstance(
+            target._new_display_title_topic, MTOPIC.FactoryDisplayTitle)
+        assert target._new_display_title_topic._ui_model is (
+            target._title_topic._ui_model)
+        assert isinstance(
+            target._new_editor_title_topic, MTOPIC.FactoryEditorTitle)
+        assert target._new_editor_title_topic._ui_model is (
+            target._title_topic._ui_model)
+
     @pytest.mark.parametrize('I_PAGE, TITLE', [
         (0, 'Introduction'),
         (1, 'Identify'),
         (2, 'Confirm'),
         ])
     def test_add_pages(self, new_identity_spec, I_PAGE, TITLE):
-        """Confirm pages added to assistant."""
+        """Confirm pages added to assistant.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param I_PAGE: index of page in assistant.
+        :param TITLE: assistant's title for page.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -166,7 +246,17 @@ class TestBase:
         ])
     def test_append_page(
             self, new_identity_spec, METHOD, TITLE, TYPE, COMPLETE):
-        """Confirm pages added to assistant."""
+        """Confirm pages added to assistant.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :parem METHOD: append method under test.
+        :param TITLE: assistant's title for page.
+        :param TYPE: `Gtk.AssistantPageType`_ of page.
+
+        .. _`Gtk.AssistantPageType`:
+            https://lazka.github.io/pgi-docs/#Gtk-3.0/
+            enums.html#Gtk.AssistantPageType
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -182,7 +272,10 @@ class TestBase:
         assert assistant.get_page_complete(page) is COMPLETE
 
     def test_new_assistant(self, new_identity_spec):
-        """Confirm assistant construction."""
+        """Confirm assistant construction.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -199,7 +292,13 @@ class TestBase:
             ])
     def test_new_assistant_signals(
             self, new_identity_spec, NAME_SIGNAL, ORIGIN, N_DEFAULT):
-        """Confirm initialization of signal connections."""
+        """Confirm initialization of signal connections.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param NAME_SIGNAL: name of signal under test.
+        :param ORIGIN: source class of signal.
+        :param N_DEFAULT: number of default handlers for signal.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
@@ -221,7 +320,11 @@ class TestBase:
         assert N_DEFAULT + 1 == n_handlers
 
     def test_new_page_confirm_sites(self, monkeypatch, new_identity_spec):
-        """Confirm builder populates page sites."""
+        """Confirm builder populates page sites.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         PATCH_UI_PAGE_CONFIRM = """
         <?xml version="1.0" encoding="UTF-8"?>
@@ -272,9 +375,12 @@ class TestBase:
         sites.append(display_name)
         display_summary = target._new_display_summary_topic()
         sites.append(display_summary)
+        display_title = target._new_display_title_topic()
+        sites.append(display_title)
         FIRST = 0
         # Test
-        new_page = target.new_page_confirm(display_name, display_summary)
+        new_page = target.new_page_confirm(
+            display_name, display_summary, display_title)
         children = new_page.get_children()
         for index in range(len(sites)):
             site = children[index]
@@ -282,19 +388,28 @@ class TestBase:
             assert view is sites[index]
 
     def test_new_page_confirm_parse(self, new_identity_spec):
-        """Confirm builder can parse page description."""
+        """Confirm builder can parse page description.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         display_name = target._new_display_name_topic()
         display_summary = target._new_display_summary_topic()
+        display_title = target._new_display_title_topic()
         # Test
-        new_page = target.new_page_confirm(display_name, display_summary)
+        new_page = target.new_page_confirm(
+            display_name, display_summary, display_title)
         assert isinstance(new_page, SBASE.PageAssist)
 
     def test_new_page_identify_sites(self, monkeypatch, new_identity_spec):
-        """Confirm builder populates page sites."""
+        """Confirm builder populates page sites.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         PATCH_UI_PAGE_IDENTITY = """
         <?xml version="1.0" encoding="UTF-8"?>
@@ -347,9 +462,14 @@ class TestBase:
         sites.append(view_name.ui_view)
         editor_summary = target._new_editor_summary_topic()
         sites.append(editor_summary)
+        display_title = target._new_display_title_topic()
+        editor_title = target._new_editor_title_topic()
+        view_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
+        sites.append(view_title.ui_view)
         FIRST = 0
         # Test
-        new_page = target.new_page_identify(view_name, editor_summary)
+        new_page = target.new_page_identify(
+            view_name, editor_summary, view_title)
         children = new_page.get_children()
         for index in range(len(sites)):
             site = children[index]
@@ -357,7 +477,10 @@ class TestBase:
             assert view is sites[index]
 
     def test_new_page_identify_parse(self, new_identity_spec):
-        """Confirm builder can parse page description."""
+        """Confirm builder can parse page description.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -366,12 +489,19 @@ class TestBase:
         editor_name = target._new_editor_name_topic()
         view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
         editor_summary = target._new_editor_summary_topic()
+        display_title = target._new_display_title_topic()
+        editor_title = target._new_editor_title_topic()
+        view_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
         # Test
-        new_page = target.new_page_identify(view_name, editor_summary)
+        new_page = target.new_page_identify(
+            view_name, editor_summary, view_title)
         assert isinstance(new_page, SBASE.PageAssist)
 
     def test_new_page_intro_parse(self, new_identity_spec):
-        """Confirm builder can parse page description."""
+        """Confirm builder can parse page description.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -381,7 +511,10 @@ class TestBase:
         assert isinstance(new_page, SBASE.PageAssist)
 
     def test_on_apply(self, new_identity_spec):
-        """Confirm assistant hidden and response set."""
+        """Confirm assistant hidden and response set.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -394,7 +527,10 @@ class TestBase:
         assert target._response is Gtk.ResponseType.APPLY
 
     def test_on_cancel(self, new_identity_spec):
-        """Confirm assistant hidden and response set."""
+        """Confirm assistant hidden and response set.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -407,7 +543,11 @@ class TestBase:
         assert target._response is Gtk.ResponseType.CANCEL
 
     def test_on_prepare(self, new_identity_spec, monkeypatch):
-        """Confirm class defines method."""
+        """Confirm class defines method.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -426,8 +566,37 @@ class TestBase:
         target.on_prepare(p_assistant=assistant, p_page=page)
         assert called_show_all
 
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
+        ('name', '_name_spec'),
+        ('summary', '_summary_spec'),
+        ('title', '_title_spec'),
+        ])
+    def test_property_access(self, new_identity_spec, NAME_PROP, NAME_ATTR):
+        """Confirm access limits of each property.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param NAME_PROP: name of property.
+        :param NAME_ATTR: name of attribute.
+        """
+        # Setup
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        attr = getattr(target, NAME_ATTR)
+        CLASS = SBASE.Base
+        target_prop = getattr(CLASS, NAME_PROP)
+        # Test
+        assert target_prop.fget is not None
+        assert target_prop.fget(target) is attr
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
     def test_run_assistant(self, new_identity_spec, monkeypatch):
-        """Confirm presentation of assistant."""
+        """Confirm presentation of assistant.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
@@ -465,45 +634,6 @@ class TestExceptions:
         assert issubclass(TARGET, SUPER)
 
 
-@pytest.fixture
-def ui_desc_minimal():
-    """Pytest fixture: Return minimal user interface description.
-
-    :returns: DESC - user interface description as string.
-    :returns: ID_ELEMENT - ID of a `Gtk.Label`_ object.
-    :returns: TEXT_ITEM - Sof label object.
-
-    .. _`Gtk.Label`:
-        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
-    """
-    ID_ELEMENT = 'ui_object'
-    TEXT_ELEMENT = 'Test Item'
-    DESC = """
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!-- Generated with glade 3.22.1 -->
-    <interface>
-      <requires lib="gtk+" version="3.20"/>
-      <object class="GtkLabel" id="{}">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">{}</property>
-      </object>
-    </interface>
-    """.format(ID_ELEMENT, TEXT_ELEMENT)
-    return DESC, ID_ELEMENT, TEXT_ELEMENT
-
-
-@pytest.fixture
-def set_logger_debug():
-    """Pytest fixture with teardown: temporarily set SBASE log level to
-    DEBUG.
-    """
-    level = SBASE.logger.getEffectiveLevel()
-    SBASE.logger.setLevel('DEBUG')
-    yield
-    SBASE.logger.setLevel(level)
-
-
 class TestGetUiObject:
     """Unit tests for :class:`.GetUiObject`."""
 
@@ -533,6 +663,7 @@ class TestGetUiObject:
         """Confirm initialization.
 
         :param ui_desc_minimal: fixture :func:`.ui_desc_minimal`.
+        :param caplog: built-in fixture `Pytest caplog`_.
         :param caplog: built-in fixture `Pytest caplog`_.
         :param set_logger_debug: fixture :func:`.set_logger_debug`.
         """
@@ -655,16 +786,18 @@ class TestGetUiObjectStr:
 class TestModule:
     """Unit tests for module-level components of :mod:`.base_s`."""
 
-    @pytest.mark.parametrize('CONSTANT, VALUE', [
-        (SBASE.SUFFIX_SPEC, '.py'),
-        (SBASE.SUFFIX_ASSIST, '.ui'),
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (SBASE.NameSpec, BUI.ModelTextMarkup),
+        (SBASE.PageAssist, Gtk.Box),
+        (SBASE.SummarySpec, BUI.ModelTextStyled),
+        (SBASE.TitleSpec, BUI.ModelTextMarkup),
         ])
-    def test_constants(self, CONSTANT, VALUE):
-        """Confirm class contant definitions.
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
 
-        :param CONSTANT: constant under test.
-        :param VALUE: expected value of constant.
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
         """
         # Setup
         # Test
-        assert CONSTANT == VALUE
+        assert TYPE_TARGET == TYPE_EXPECT
