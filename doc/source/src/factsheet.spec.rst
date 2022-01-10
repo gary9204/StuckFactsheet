@@ -12,9 +12,8 @@ Subpackages
 .. toctree::
    :maxdepth: 1
 
-..   factsheet.spec.note
-..   factsheet.spec.ops
-..   factsheet.spec.sets
+   factsheet.spec.sets
+   factsheet.spec.ops
 
 Submodules
 -----------

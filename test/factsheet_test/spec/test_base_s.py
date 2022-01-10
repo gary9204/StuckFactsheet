@@ -786,6 +786,15 @@ class TestGetUiObjectStr:
 class TestModule:
     """Unit tests for module-level components of :mod:`.base_s`."""
 
+    def test_g_spec_basic(self):
+        """Confirm specification fo Basic Topic."""
+        # Setup
+        target = SBASE.g_spec_basic
+        TITLE = 'Basic Topic'
+        # Test
+        assert isinstance(target, SBASE.Base)
+        assert TITLE == target.title.text
+
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (SBASE.NameSpec, BUI.ModelTextMarkup),
         (SBASE.PageAssist, Gtk.Box),
