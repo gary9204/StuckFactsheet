@@ -258,27 +258,27 @@ class TestControlSheet:
 
         model_name = target._model.name
         factory_display_name = target._factory_display_name
-        assert isinstance(factory_display_name, MSHEET.FactoryDisplayName)
+        assert isinstance(factory_display_name, CSHEET.FactoryDisplayName)
         assert factory_display_name._ui_model is model_name._ui_model
         factory_editor_name = target._factory_editor_name
-        assert isinstance(factory_editor_name, MSHEET.FactoryEditorName)
+        assert isinstance(factory_editor_name, CSHEET.FactoryEditorName)
         assert factory_editor_name._ui_model is model_name._ui_model
 
         model_summary = target._model.summary
         factory_display_summary = target._factory_display_summary
         assert isinstance(
-            factory_display_summary, MSHEET.FactoryDisplaySummary)
+            factory_display_summary, CSHEET.FactoryDisplaySummary)
         assert factory_display_summary._ui_model is model_summary._ui_model
         factory_editor_summary = target._factory_editor_summary
-        assert isinstance(factory_editor_summary, MSHEET.FactoryEditorSummary)
+        assert isinstance(factory_editor_summary, CSHEET.FactoryEditorSummary)
         assert factory_editor_summary._ui_model is model_summary._ui_model
 
         model_title = target._model.title
         factory_display_title = target._factory_display_title
-        assert isinstance(factory_display_title, MSHEET.FactoryDisplayTitle)
+        assert isinstance(factory_display_title, CSHEET.FactoryDisplayTitle)
         assert factory_display_title._ui_model is model_title._ui_model
         factory_editor_title = target._factory_editor_title
-        assert isinstance(factory_editor_title, MSHEET.FactoryEditorTitle)
+        assert isinstance(factory_editor_title, CSHEET.FactoryEditorTitle)
         assert factory_editor_title._ui_model is model_title._ui_model
 
         assert isinstance(target._roster_views, dict)
@@ -1041,6 +1041,18 @@ class TestTypes:
     """Unit tests for type hint definitions in :mod:`.control_sheet`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (CSHEET.DisplayName, BUI.DisplayTextMarkup),
+        (CSHEET.DisplaySummary, BUI.DisplayTextStyled),
+        (CSHEET.DisplayTitle, BUI.DisplayTextMarkup),
+        (CSHEET.EditorName, BUI.EditorTextMarkup),
+        (CSHEET.EditorSummary, BUI.EditorTextStyled),
+        (CSHEET.EditorTitle, BUI.EditorTextMarkup),
+        (CSHEET.FactoryDisplayName, BUI.FactoryDisplayTextMarkup),
+        (CSHEET.FactoryDisplaySummary, BUI.FactoryDisplayTextStyled),
+        (CSHEET.FactoryDisplayTitle, BUI.FactoryDisplayTextMarkup),
+        (CSHEET.FactoryEditorName, BUI.FactoryEditorTextMarkup),
+        (CSHEET.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
+        (CSHEET.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
         (CSHEET.IdFactsheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdFactsheet.__dict__['__supertype__'], int),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),

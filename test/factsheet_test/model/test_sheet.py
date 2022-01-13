@@ -3,37 +3,35 @@ Unit tests for factsheet-level model.  See :mod:`~factsheet.model`.
 
 .. include:: /test/refs_include_pytest.txt
 """
-# import logging
-# from pathlib import Path
-# import pickle
 import pytest   # type: ignore[import]
-# import re
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.sheet as MSHEET
-# from factsheet.model import topic as MTOPIC
-#
-#
-# @pytest.fixture
-# def new_id_args():
-#     """Pytest fixture: factory for stock identity arguments for
-#     :class:`.Sheet`.
-#     """
-#     def new_args():
-#         id_args = dict(
-#             p_name='Parrot',
-#             p_summary='The parrot is a Norwegian Blue.',
-#             p_title='The Parrot Sketch',
-#             )
-#         return id_args
-#
-#     return new_args
+import factsheet.model.topic as MTOPIC
+
+
+class TestModule:
+    """Unit tests for module-level components of :mod:`.sheet`."""
+
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (MSHEET.Name, BUI.ModelTextMarkup),
+        (MSHEET.Summary, BUI.ModelTextStyled),
+        (MSHEET.Title, BUI.ModelTextMarkup),
+        ])
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type hint definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert TYPE_TARGET == TYPE_EXPECT
 
 
 class TestSheet:
     """Unit tests for :class:`~.model.sheet.Sheet`."""
 
-    @pytest.mark.skip(reason='Topic outline check is incomplete.')
     def test_eq(self):
         """Confirm equivalence operator
 
@@ -51,13 +49,11 @@ class TestSheet:
         TITLE_TARGET = 'Something completely different.'
         target = MSHEET.Sheet(p_title=TITLE_TARGET)
         assert not source.__eq__(target)
-        # # Test: topic outline difference
-        # target = MSHEET.Sheet(p_title=TITLE_SOURCE)
-        # topic = MTOPIC.Topic()
-        # topic.init_identity(p_name='Killer Rabbit')
-        # _index = target._topics.insert_child(topic, None)
-        #
-        # assert not source.__eq__(target)
+        # Test: topic outline difference
+        target = MSHEET.Sheet(p_title=TITLE_SOURCE)
+        topic = MTOPIC.Topic(p_name='Killer Rabbit', p_summary='', p_title='')
+        _index = target._topics.insert_child(topic, None)
+        assert not source.__eq__(target)
         # Test: Equivalence
         target = MSHEET.Sheet(p_title=TITLE_SOURCE)
         assert source.__eq__(target)
@@ -76,7 +72,8 @@ class TestSheet:
         assert ID_ARGS['p_name'] == target.name.text
         assert ID_ARGS['p_summary'] == target.summary.text
         assert ID_ARGS['p_title'] == target.title.text
-        # assert isinstance(target._topics, ABC_OUTLINE.AbstractOutline)
+        assert isinstance(target._topics, BUI.ModelOutlineMulti)
+        assert not list(target._topics.items())
         assert not target._stale
 
     def test_init_default(self):
@@ -93,236 +90,119 @@ class TestSheet:
         assert SUMMARY_DEFAULT == target.summary.text
         assert TITLE_DEFAULT == target.title.text
 
-    # @pytest.mark.skip(reason='Method marked for deletion')
-    # def test_attach_view_topics(self):
-    #     """Confirm topics outline view addition."""
-    #     # # Setup
-    #     # TITLE_MODEL = 'Something completely different.'
-    #     # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-    #     # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-    #     # # Test
-    #     # target.attach_view_topics(VIEW_TOPICS)
-    #     # assert target._topics._gtk_model is VIEW_TOPICS.gtk_view.get_model()
-
-    @pytest.mark.skip
     def test_clear(self, monkeypatch):
-        """| Confirm topics outline removal.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # # Setup
-        # class PatchClear:
-        #     def __init__(self): self.called = False
-        #
-        #     def clear(self): self.called = True
-        #
-        # patch_outline = PatchClear()
-        # monkeypatch.setattr(
-        #     ASHEET.AdaptTreeStoreTopic, 'clear', patch_outline.clear)
-        #
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        #
-        # N_PAGES = 3
-        # pages = [interface_page_sheet() for _ in range(N_PAGES)]
-        # for page in pages:
-        #     target.attach_page(page)
-        #
-        # N_TOPICS = 5
-        # topics = [MTOPIC.Topic() for _ in range(N_TOPICS)]
-        # parent = None
-        # for topic in topics:
-        #     parent = target.insert_topic_child(topic, parent)
-        #
-        # N_REMOVE = 5
-        # ids_extracted = [t.tag for t in topics]
-        # target.set_fresh()
-        # # Test
-        # target.clear()
-        # assert target.is_stale()
-        # for page in pages:
-        #     assert page.called_close_topic == N_REMOVE
-        #     assert ids_extracted == page.closed_topics
-        # assert patch_outline.called
-
-    # @pytest.mark.skip(reason='Method marked for deletion')
-    # def test_detach_view_topics(self):
-    #     """Confirm topics outline view removal."""
-    #     # # Setup
-    #     # TITLE_MODEL = 'Something completely different.'
-    #     # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-    #     # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-    #     # target.attach_view_topics(VIEW_TOPICS)
-    #     # # Test
-    #     # target.detach_view_topics(VIEW_TOPICS)
-    #     # assert VIEW_TOPICS.gtk_view.get_model() is None
-
-    @pytest.mark.skip
-    def test_extract_topic(self, monkeypatch):
-        """| Confirm method request relay to outline.
-        | Case: relay index.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # # Setup
-        # class PatchExtract:
-        #     def __init__(self): self.called = False
-        #
-        #     def extract_section(self, _index): self.called = True
-        #
-        # patch_outline = PatchExtract()
-        # monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic, 'extract_section',
-        #                     patch_outline.extract_section)
-        #
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        #
-        # N_PAGES = 3
-        # pages = [interface_page_sheet() for _ in range(N_PAGES)]
-        # for page in pages:
-        #     target.attach_page(page)
-        #
-        # N_TOPICS = 5
-        # topics = [MTOPIC.Topic() for _ in range(N_TOPICS)]
-        # parent = None
-        # for topic in topics:
-        #     parent = target.insert_topic_child(topic, parent)
-        #
-        # N_REMOVE = 2
-        # N_START = 3
-        # gtk_model = target._topics._gtk_model
-        # i_start = gtk_model.get_iter_first()
-        # for _ in range(N_START):
-        #     i_start = gtk_model.iter_children(i_start)
-        # ids_extracted = [t.tag for t in topics[N_START:]]
-        # target.set_fresh()
-        # # Test
-        # target.extract_topic(i_start)
-        # assert target.is_stale()
-        # for page in pages:
-        #     assert page.called_close_topic == N_REMOVE
-        #     assert ids_extracted == page.closed_topics
-        # assert patch_outline.called
-
-    @pytest.mark.skip
-    def test_extract_topic_none(self, monkeypatch):
-        """| Confirm method request relay to outline.
-        | Case: drop None.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # # Setup
-        # class PatchExtract:
-        #     def __init__(self): self.called = False
-        #
-        #     def extract_section(self, _index): self.called = True
-        #
-        # patch_outline = PatchExtract()
-        # monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic, 'extract_section',
-        #                     patch_outline.extract_section)
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # # Test
-        # _ = target.extract_topic(None)
-        # assert not patch_outline.called
-        # assert target.is_fresh()
-
-    @pytest.mark.skip
-    def test_insert_topic_after(self, monkeypatch):
-        """Confirm method passes request to outline.
+        """Confirm outline marked stale and method passes request to outline.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        # class PatchInsertAfter:
-        #     def __init__(self): self.called = False
-        #
-        #     def insert_after(self, _item, _index): self.called = True
-        #
-        # patch_outline = PatchInsertAfter()
-        # monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic,
-        #                     'insert_after', patch_outline.insert_after)
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # target.set_fresh()
-        # # Test
-        # _ = target.insert_topic_after(None, None)
-        # assert patch_outline.called
-        # assert target.is_stale()
+        clear_called = False
 
-    @pytest.mark.skip
-    def test_insert_topic_before(self, monkeypatch):
+        def clear(self):
+            nonlocal clear_called
+            clear_called = True  # pylint: disable=unused-variable
+
+        monkeypatch.setattr(BUI.ModelOutlineMulti, 'clear', clear)
+
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        # Test
+        target.clear()
+        assert target.is_stale()
+        assert clear_called
+
+    @pytest.mark.parametrize('PATCH, METHOD', [
+        ('insert_after', 'insert_topic_after'),
+        ('insert_before', 'insert_topic_before'),
+        ('insert_child', 'insert_topic_child'),
+        ])
+    def test_insert_topic(self, monkeypatch, PATCH, METHOD):
         """Confirm method passes request to outline.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # # Setup
-        # class PatchInsertBefore:
-        #     def __init__(self): self.called = False
-        #
-        #     def insert_before(self, _item, _index): self.called = True
-        #
-        # patch_outline = PatchInsertBefore()
-        # monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic,
-        #                     'insert_before', patch_outline.insert_before)
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # target.set_fresh()
-        # # Test
-        # _ = target.insert_topic_before(None, None)
-        # assert patch_outline.called
-        # assert target.is_stale()
-
-    @pytest.mark.skip
-    def test_insert_topic_child(self, monkeypatch):
-        """Confirm method passes request to outline.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param PATCH: outline method to patch.
+        :param METHOD: method under test.
         """
         # Setup
-        # class PatchInsertChild:
-        #     def __init__(self): self.called = False
-        #
-        #     def insert_child(self, _item, _index): self.called = True
-        #
-        # patch_outline = PatchInsertChild()
-        # monkeypatch.setattr(ASHEET.AdaptTreeStoreTopic,
-        #                     'insert_child', patch_outline.insert_child)
-        # TITLE_MODEL = 'Something completely different.'
-        # target = MSHEET.Sheet(p_title=TITLE_MODEL)
-        # target.set_fresh()
-        # # Test
-        # _ = target.insert_topic_child(None, None)
-        # assert patch_outline.called
-        # assert target.is_stale()
+        class PatchInsert:
+            def __init__(self):
+                self.called = False
+                self.topic = None
+                self.line = 'Oops'
+
+            def insert(self, p_topic, p_line):
+                self.called = True
+                self.topic = p_topic
+                self.line = p_line
+
+        patch_insert = PatchInsert()
+        monkeypatch.setattr(
+            BUI.ModelOutlineMulti, PATCH, patch_insert.insert)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        target.set_fresh()
+        target_method = getattr(target, METHOD)
+        TOPIC = MTOPIC.Topic(p_name='', p_summary='', p_title='')
+        # Test
+        _ = target_method(TOPIC, None)
+        assert patch_insert.called
+        assert patch_insert.topic is TOPIC
+        assert patch_insert.line is None
+        assert target.is_stale()
 
     def test_is_fresh(self, new_id_args):
         """Confirm return is accurate.
 
-        #. Case: Sheet stale, ID info fresh
-        #. Case: Sheet fresh, ID info stale
-        #. Case: Sheet fresh, ID info fresh
+        #. Case: Sheet stale, ID info fresh, topics fresh
+        #. Case: Sheet fresh, ID info stale, topics fresh
+        #. Case: Sheet fresh, ID info fresh, topics fresh
+        #. Case: Sheet fresh, ID info fresh, topics stale
 
         :param new_id_args: fixture :func:`.new_id_args`.
         """
         # Setup
         ID_ARGS = new_id_args()
         target = MSHEET.Sheet(**ID_ARGS)
-        # Test: Sheet stale, ID info fresh, no topics
+
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        parent = target._topics._ui_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            parent = target.insert_topic_child(topic, parent)
+        for topic in target._topics.items():
+            topic.set_fresh()
+        I_MIDDLE = 1
+        # Test: Sheet stale, ID info fresh, topics fresh
         target._stale = True
         target._summary.set_fresh()
         assert not target.is_fresh()
         assert target._stale
-        # Test: Sheet fresh, ID info stale, no topics
+        # Test: Sheet fresh, ID info stale, topics fresh
         target._stale = False
         target._summary.set_stale()
         assert not target.is_fresh()
         assert target._stale
-        # Test: Sheet fresh, ID info fresh, no topics
+        # Test: Sheet fresh, ID info fresh, topics fresh
         target._stale = False
         target._summary.set_fresh()
         assert target.is_fresh()
         assert not target._stale
+        # Test: Sheet fresh, ID info fresh, topics fresh
+        target._stale = False
+        target._summary.set_fresh()
+        for i, topic in enumerate(target._topics.items()):
+            if i == I_MIDDLE:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        assert target.is_stale()
+        assert target._stale
 
     def test_is_stale(self, new_id_args):
         """Confirm return is accurate.
@@ -339,21 +219,20 @@ class TestSheet:
         ID_ARGS = new_id_args()
         target = MSHEET.Sheet(**ID_ARGS)
 
-        # N_TOPICS = 3
-        # for i in range(N_TOPICS):
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name='Topic {}'.format(i))
-        #     target.insert_topic_before(topic, None)
-        # N_DESCEND = 2
-        # parent = target._topics._gtk_model.get_iter_first()
-        # for j in range(N_DESCEND):
-        #     name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name=name)
-        #     parent = target.insert_topic_child(topic, parent)
-        # I_LEAF = 2
-        # I_LAST = 4
-        # # Test: Sheet stale, ID info fresh
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        parent = target._topics._ui_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            parent = target.insert_topic_child(topic, parent)
+        I_LEAF = 2
+        I_LAST = 4
+        # Test: Sheet stale, ID info fresh
         target._stale = True
         target._name.set_fresh()
         assert target.is_stale()
@@ -368,237 +247,224 @@ class TestSheet:
         target._name.set_fresh()
         assert not target.is_stale()
         assert not target._stale
-        # # Test: Sheet fresh, ID info fresh, leaf topic stale
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # for i, index in enumerate(target._topics.indices()):
-        #     topic = target._topics.get_item(index)
-        #     if i == I_LEAF:
-        #         topic.set_stale()
-        #     else:
-        #         topic.set_fresh()
-        # assert target.is_stale()
-        # assert target._stale
-        # # Test: Sheet fresh, ID info fresh, last topic stale
-        # target._stale = False
-        # target._infoid.set_fresh()
-        # for i, index in enumerate(target._topics.indices()):
-        #     topic = target._topics.get_item(index)
-        #     if i == I_LAST:
-        #         topic.set_stale()
-        #     else:
-        #         topic.set_fresh()
-        # assert target.is_stale()
-        # assert target._stale
+        # Test: Sheet fresh, ID info fresh, leaf topic stale
+        target._stale = False
+        target._name.set_fresh()
+        for i, topic in enumerate(target._topics.items()):
+            if i == I_LEAF:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        assert target.is_stale()
+        assert target._stale
+        # Test: Sheet fresh, ID info fresh, last topic stale
+        target._stale = False
+        target._name.set_fresh()
+        for i, topic in enumerate(target._topics.items()):
+            if i == I_LAST:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        assert target.is_stale()
+        assert target._stale
 
-    # def test_new_model(self, new_id_args):
-    #     """Confirm store for identity components.
-    #
-    #     :param new_id_args: fixture: factory for stock identity
-    #         keyword arguments.
-    #     """
-    #     # Setup
-    #     ID_ARGS = new_id_args()
-    #     target = MSHEET.Sheet(**ID_ARGS)
-    #     # Test
-    #     name, summary, title = target._new_model()
-    #     assert isinstance(name, MSHEET.NameSheet)
-    #     assert isinstance(summary, MSHEET.SummarySheet)
-    #     assert isinstance(title, MSHEET.TitleSheet)
+    def test_is_stale_warn(self, new_id_args, caplog):
+        """Confirm warning when topics outline contains line with None.
+
+        :param new_id_args: fixture :func:`.new_id_args`.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        target._topics._ui_model.append(None, [None])
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Topics outline contains line with no topic ('
+                       'Sheet.is_stale)')
+        # Test
+        result = target.is_stale()
+        assert not result
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+
+    def test_remove_topic(self, monkeypatch):
+        """Confirm outline marked stale and method passes request to outline.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        remove_called = False
+        remove_line = None
+
+        def remove(self, p_line):
+            nonlocal remove_called
+            remove_called = True  # pylint: disable=unused-variable
+            nonlocal remove_line
+            remove_line = p_line  # pylint: disable=unused-variable
+
+        monkeypatch.setattr(BUI.ModelOutlineMulti, 'remove', remove)
+        TITLE_MODEL = 'Something completely different.'
+        target = MSHEET.Sheet(p_title=TITLE_MODEL)
+        target.set_fresh()
+        LINE = BUI.LineOutline()
+        # Test
+        target.remove_topic(LINE)
+        assert target.is_stale()
+        assert remove_called
+        assert remove_line is LINE
 
     def test_set_fresh(self, new_id_args):
         """Confirm all attributes marked fresh.
 
-        #. Case: Sheet fresh, ID info fresh
-        #. Case: Sheet stale, ID info fresh
-        #. Case: Sheet fresh, ID info stale
-        #. Case: Sheet stale, ID info stale
-        #. Case: Sheet fresh, topics stale
-        #. Case: Sheet stale, topics stale
+        #. Case: Sheet fresh, ID info fresh, topics fresh
+        #. Case: Sheet stale, ID info fresh, topics fresh
+        #. Case: Sheet fresh, ID info stale, topics fresh
+        #. Case: Sheet stale, ID info stale, topics fresh
+        #. Case: Sheet fresh, ID info fresh, topics stale
+        #. Case: Sheet stale, ID info fresh, topics stale
 
         :param new_id_args: fixture :func:`.new_id_args`.
         """
         # Setup
         ID_ARGS = new_id_args()
         target = MSHEET.Sheet(**ID_ARGS)
-        # TEXT_TITLE = 'Something completely different'
-        # target = MSHEET.Sheet(p_title=TEXT_TITLE)
 
-        # N_TOPICS = 3
-        # for i in range(N_TOPICS):
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name='Topic {}'.format(i))
-        #     target.insert_topic_before(topic, None)
-        # N_DESCEND = 2
-        # parent = target._topics._gtk_model.get_iter_first()
-        # for j in range(N_DESCEND):
-        #     name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name=name)
-        #     parent = target.insert_topic_child(topic, parent)
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        parent = target._topics._ui_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            parent = target.insert_topic_child(topic, parent)
         # Test: Sheet fresh, ID info fresh
         target._stale = False
         target._title.set_fresh()
+        for topic in target._topics.items():
+            topic.set_fresh()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # Test: Sheet stale, ID info fresh
+        # Test: Sheet stale, ID info fresh, topics fresh
         target._stale = True
         target._title.set_fresh()
+        for topic in target._topics.items():
+            topic.set_fresh()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # Test: Sheet fresh, ID info stale
+        # Test: Sheet fresh, ID info stale, topics fresh
         target._stale = False
         target._title.set_stale()
+        for topic in target._topics.items():
+            topic.set_fresh()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # Test: Sheet stale, ID info stale
+        # Test: Sheet stale, ID info stale, topics fresh
         target._stale = True
         target._title.set_stale()
+        for topic in target._topics.items():
+            topic.set_fresh()
         target.set_fresh()
         assert not target._stale
         assert target._title.is_fresh()
-        # # Test: Sheet fresh, topics stale
-        # target._stale = False
-        # target._infoid.set_stale()
-        # for i, index in enumerate(target._topics.indices()):
-        #     topic = target._topics.get_item(index)
-        #     if i % 2:
-        #         topic.set_stale()
-        #     else:
-        #         topic.set_fresh()
-        # target.set_fresh()
-        # assert not target._stale
-        # assert target._infoid.is_fresh()
-        # for index in target._topics.indices():
-        #     topic = target._topics.get_item(index)
-        #     assert topic.is_fresh()
-        # # Test: Sheet stale, topics stale
-        # target._stale = True
-        # target._infoid.set_stale()
-        # for i, index in enumerate(target._topics.indices()):
-        #     topic = target._topics.get_item(index)
-        #     if not i % 2:
-        #         topic.set_stale()
-        #     else:
-        #         topic.set_fresh()
-        # target.set_fresh()
-        # assert not target._stale
-        # assert target._infoid.is_fresh()
-        # for index in target._topics.indices():
-        #     topic = target._topics.get_item(index)
-        #     assert topic.is_fresh()
+        # Test: Sheet fresh, ID infor fresh, topics stale
+        target._stale = False
+        target._title.set_stale()
+        for i, topic in enumerate(target._topics.items()):
+            if i % 2:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._title.is_fresh()
+        for topic in target._topics.items():
+            assert topic.is_fresh()
+        # Test: Sheet stale, ID info fresh, topics stale
+        target._stale = True
+        target._title.set_stale()
+        for i, topic in enumerate(target._topics.items()):
+            if not i % 2:
+                topic.set_stale()
+            else:
+                topic.set_fresh()
+        target.set_fresh()
+        assert not target._stale
+        assert target._title.is_fresh()
+        for topic in target._topics.items():
+            assert topic.is_fresh()
 
-    # @pytest.mark.skip(reason='No need to extend inherited method')
-    # def test_set_stale(self):
-    #     """Confirm all attributes set.
-    #
-    #     #. Case: Sheet fresh, ID info fresh, no topics.
-    #     #. Case: Sheet stale, ID info fresh, no topics.
-    #     #. Case: Sheet fresh, ID info stale, no topics.
-    #     #. Case: Sheet stale, ID info stale, no topics.
-    #     #. Case: Sheet fresh, ID info fresh, topics fresh
-    #      """
-    #     # # Setup
-    #     # TEXT_TITLE = 'Something completely different'
-    #     # target = MSHEET.Sheet(p_title=TEXT_TITLE)
-    #     #
-    #     # N_TOPICS = 3
-    #     # for i in range(N_TOPICS):
-    #     #     topic = MTOPIC.Topic()
-    #     #     topic.init_identity(p_name='Topic {}'.format(i))
-    #     #     target.insert_topic_before(topic, None)
-    #     # N_DESCEND = 2
-    #     # parent = target._topics._gtk_model.get_iter_first()
-    #     # for j in range(N_DESCEND):
-    #     #     name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
-    #     #     topic = MTOPIC.Topic()
-    #     #     topic.init_identity(p_name=name)
-    #     #     parent = target.insert_topic_child(topic, parent)
-    #     # # Test: Sheet fresh, ID info fresh, no topics.
-    #     # target._stale = False
-    #     # target._infoid.set_fresh()
-    #     # target.set_stale()
-    #     # assert target._stale
-    #     # assert target._infoid.is_fresh()
-    #     # # Test: Sheet stale, ID info fresh, no topics.
-    #     # target._stale = True
-    #     # target._infoid.set_fresh()
-    #     # target.set_stale()
-    #     # assert target._stale
-    #     # assert target._infoid.is_fresh()
-    #     # # Test: Sheet fresh, ID info stale, no topics.
-    #     # target._stale = False
-    #     # target._infoid.set_stale()
-    #     # target.set_stale()
-    #     # assert target._stale
-    #     # assert target._infoid.is_stale()
-    #     # # Test: Sheet stale, ID info stale, no topics.
-    #     # target._stale = True
-    #     # target._infoid.set_stale()
-    #     # target.set_stale()
-    #     # assert target._stale
-    #     # assert target._infoid.is_stale()
-    #     # # Test: Sheet fresh, ID info fresh, topics fresh.
-    #     # target._stale = False
-    #     # target._infoid.set_fresh()
-    #     # for index in target._topics.indices():
-    #     #     topic = target._topics.get_item(index)
-    #     #     topic.set_fresh()
-    #     # target.set_stale()
-    #     # assert target._stale
-    #     # assert target._infoid.is_fresh()
-    #     # for index in target._topics.indices():
-    #     #     topic = target._topics.get_item(index)
-    #     #     assert topic.is_fresh()
+    def test_set_fresh_warn(self, new_id_args, caplog):
+        """Confirm warning when topics outline contains line with None.
 
-    @pytest.mark.skip
-    def test_topics(self):
-        """Confirm iterations over topics."""
-        # # Setup
-        # TEXT_TITLE = 'Something completely different'
-        # target = MSHEET.Sheet(p_title=TEXT_TITLE)
-        # N_TOPICS = 3
-        # TOPICS = list()
-        # for i in range(N_TOPICS):
-        #     topic = MTOPIC.Topic()
-        #     topic.init_identity(p_name='Topic {}'.format(i))
-        # parent = None
-        # for topic in TOPICS:
-        #     parent = target.insert_topic_child(topic, parent)
-        # # Test
-        # assert TOPICS == list(target.topics())
-        # assert TOPICS[2:] == list(target.topics(parent))
-
-
-class TestSheetTypes:
-    """Unit tests for type hint definitions in :mod:`.sheet`."""
-
-    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (MSHEET.Name, BUI.ModelTextMarkup),
-        (MSHEET.DisplayName, BUI.DisplayTextMarkup),
-        (MSHEET.FactoryDisplayName, BUI.FactoryDisplayTextMarkup),
-        (MSHEET.EditorName, BUI.EditorTextMarkup),
-        (MSHEET.FactoryEditorName, BUI.FactoryEditorTextMarkup),
-        (MSHEET.Summary, BUI.ModelTextStyled),
-        (MSHEET.DisplaySummary, BUI.DisplayTextStyled),
-        (MSHEET.FactoryDisplaySummary, BUI.FactoryDisplayTextStyled),
-        (MSHEET.EditorSummary, BUI.EditorTextStyled),
-        (MSHEET.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
-        (MSHEET.Title, BUI.ModelTextMarkup),
-        (MSHEET.DisplayTitle, BUI.DisplayTextMarkup),
-        (MSHEET.FactoryDisplayTitle, BUI.FactoryDisplayTextMarkup),
-        (MSHEET.EditorTitle, BUI.EditorTextMarkup),
-        (MSHEET.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
-        ])
-    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
-        """Confirm type hint definitions.
-
-        :param TYPE_TARGET: type hint under test.
-        :param TYPE_EXPECT: type expected.
+        :param new_id_args: fixture :func:`.new_id_args`.
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        target._topics._ui_model.append(None, [None])
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Topics outline contains line with no topic ('
+                       'Sheet.set_fresh)')
         # Test
-        assert TYPE_TARGET == TYPE_EXPECT
+        target.set_fresh()
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+
+    def test_topics(self, new_id_args):
+        """Confirm iterations over topics."""
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        N_TOPICS = 5
+        TOPICS = list()
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            TOPICS.append(topic)
+        I_TAIL = 2
+        parent = None
+        line_tail = None
+        for i, topic in enumerate(TOPICS):
+            parent = target.insert_topic_child(topic, parent)
+            if I_TAIL == i:
+                line_tail = parent
+        line_last = parent
+        # Test
+        assert TOPICS == list(target.topics())
+        assert TOPICS[2:] == list(target.topics(line_tail))
+        assert TOPICS[4:] == list(target.topics(line_last))
+
+    def test_topics_warn(self, new_id_args, caplog):
+        """Confirm warning when topics outline contains line with None.
+
+        :param new_id_args: fixture :func:`.new_id_args`.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        target._topics._ui_model.append(None, [None])
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Topics outline contains line with no topic ('
+                       'Sheet.topics)')
+        # Test
+        with pytest.raises(StopIteration):
+            _ = next(target.topics())
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname

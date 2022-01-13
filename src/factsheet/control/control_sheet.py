@@ -6,6 +6,105 @@ on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`
 defines classes representing control components for a factsheet as a
 whole.
 
+.. data:: DisplayName
+
+    Type hint for user interface element to display Factsheet
+    :data:`~.sheet.Name`.  See :class:`~.control_sheet.FactoryDisplayName`.
+
+.. data:: DisplaySummary
+
+    Type hint for user interface element to display Factsheet
+    :data:`~.sheet.Summary`.  See
+    :class:`~.control_sheet.FactoryDisplaySummary`.
+
+.. data:: DisplayTitle
+
+    Type hint for user interface element to display Factsheet
+    :data:`~.sheet.Title`.  See :class:`~.control_sheet.FactoryDisplayTitle`.
+
+.. data:: EditorName
+
+    Type hint for user interface element to edit Factsheet
+    :data:`~.sheet.Name`.  See :class:`~.control_sheet.FactoryEditorName`.
+
+.. data:: EditorSummary
+
+    Type hint for user interface element to edit Factsheet
+    :data:`~.sheet.Summary`.  See
+    :class:`~.control_sheet.FactoryEditorSummary`.
+
+.. data:: EditorTitle
+
+    Type hint for user interface element to edit Factsheet
+    :data:`~.sheet.Title`.  See
+    :class:`~.control_sheet.FactoryEditorTitle`.
+
+.. class:: FactoryDisplayName(p_name: Name)
+
+    Alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.DisplayName` for the Factsheet
+    :data:`~.sheet.Name`.
+
+    :param p_name: name of Factsheet.
+    :type p_name: :data:`~.sheet.Name`
+
+.. class:: FactoryDisplaySummary(p_summary: Summary)
+
+    Alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.DisplaySummary` for the Factsheet
+    :data:`~.sheet.Summary`.
+
+    :param p_summary: summary of Factsheet.
+    :type p_summary: :data:`~.sheet.Summary`
+
+.. class:: FactoryDisplayTitle(p_title: Title)
+
+    Alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.DisplayTitle` for the Factsheet
+    :data:`~.sheet.Title`.
+
+    :param p_title: title of Factsheet.
+    :type p_title: :data:`~.sheet.Title`
+
+.. class:: FactoryEditorName(p_name: Name)
+
+    Alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.EditorName` for the Factsheet
+    :data:`~.sheet.Name`.
+
+    :param p_name: name of Factsheet.
+    :type p_name: :data:`~.sheet.Name`
+
+.. class:: FactoryEditorSummary(p_summary: Summary)
+
+    Alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.EditorSummary` for the Factsheet
+    :data:`~.sheet.Summary`.
+
+    :param p_summary: summary of Factsheet.
+    :type p_summary: :data:`~.sheet.Summary`
+
+.. class:: FactoryEditorTitle(p_title: Title)
+
+    Alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.EditorTitle` for the Factsheet
+    :data:`~.sheet.Title`.
+
+    :param p_title: title of Factsheet.
+    :type p_title: :data:`~.sheet.Title`
+
 .. data:: g_control_app
 
     Application-level collection of open factsheets.
@@ -36,6 +135,21 @@ import factsheet.model.sheet as MSHEET
 
 logger = logging.getLogger('Main.CSHEET')
 
+DisplayName = BUI.DisplayTextMarkup
+DisplaySummary = BUI.DisplayTextStyled
+DisplayTitle = BUI.DisplayTextMarkup
+
+EditorName = BUI.EditorTextMarkup
+EditorSummary = BUI.EditorTextStyled
+EditorTitle = BUI.EditorTextMarkup
+
+FactoryDisplayName = BUI.FactoryDisplayTextMarkup
+FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
+FactoryDisplayTitle = BUI.FactoryDisplayTextMarkup
+
+FactoryEditorName = BUI.FactoryEditorTextMarkup
+FactoryEditorSummary = BUI.FactoryEditorTextStyled
+FactoryEditorTitle = BUI.FactoryEditorTextMarkup
 
 IdFactsheet = typing.NewType('IdFactsheet', int)
 IdViewSheet = typing.NewType('IdViewSheet', int)
@@ -138,20 +252,16 @@ class ControlSheet:
         self._path = p_path
         self._model = self._model_from_path(p_path)
 
-        self._factory_display_name = (
-            MSHEET.FactoryDisplayName(self._model.name))
-        self._factory_editor_name = (
-            MSHEET.FactoryEditorName(self._model.name))
+        self._factory_display_name = FactoryDisplayName(self._model.name)
+        self._factory_editor_name = FactoryEditorName(self._model.name)
 
         self._factory_display_summary = (
-            MSHEET.FactoryDisplaySummary(self._model.summary))
+            FactoryDisplaySummary(self._model.summary))
         self._factory_editor_summary = (
-            MSHEET.FactoryEditorSummary(self._model.summary))
+            FactoryEditorSummary(self._model.summary))
 
-        self._factory_display_title = (
-            MSHEET.FactoryDisplayTitle(self._model.title))
-        self._factory_editor_title = (
-            MSHEET.FactoryEditorTitle(self._model.title))
+        self._factory_display_title = FactoryDisplayTitle(self._model.title)
+        self._factory_editor_title = FactoryEditorTitle(self._model.title)
 
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()
@@ -243,33 +353,33 @@ class ControlSheet:
         return name
 
     @property
-    def new_display_name(self) -> MSHEET.DisplayName:
-        """Return factory for displays of sheet names."""
+    def new_display_name(self) -> DisplayName:
+        """Return factory for displays of sheet name."""
         return self._factory_display_name
 
     @property
-    def new_editor_name(self) -> MSHEET.EditorName:
-        """Return factory for editors of sheet names."""
+    def new_editor_name(self) -> EditorName:
+        """Return factory for editors of sheet name."""
         return self._factory_editor_name
 
     @property
-    def new_display_summary(self) -> MSHEET.DisplaySummary:
-        """Return factory for displays of sheet summaries."""
+    def new_display_summary(self) -> DisplaySummary:
+        """Return factory for displays of sheet summary."""
         return self._factory_display_summary
 
     @property
-    def new_editor_summary(self) -> MSHEET.EditorSummary:
-        """Return factory for editors of sheet summaries."""
+    def new_editor_summary(self) -> EditorSummary:
+        """Return factory for editors of sheet summary."""
         return self._factory_editor_summary
 
     @property
-    def new_display_title(self) -> MSHEET.DisplayTitle:
-        """Return factory for displays of sheet titles."""
+    def new_display_title(self) -> DisplayTitle:
+        """Return factory for displays of sheet title."""
         return self._factory_display_title
 
     @property
-    def new_editor_title(self) -> MSHEET.EditorTitle:
-        """Return factory for editors of sheet titles."""
+    def new_editor_title(self) -> EditorTitle:
+        """Return factory for editors of sheet title."""
         return self._factory_editor_title
 
     def _open_file_save(self) -> typing.BinaryIO:

@@ -208,7 +208,7 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
         """Remove item at given line from outline.
 
         :param p_line: line to remove along with all descendants.  If
-            line is None, remove no items.
+            line is None or invalid, remove no items.
         """
         if p_line is not None:
             _ = self._ui_model.remove(p_line)
