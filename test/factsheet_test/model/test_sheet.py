@@ -17,11 +17,13 @@ class TestModule:
         (MSHEET.Name, BUI.ModelTextMarkup),
         (MSHEET.Summary, BUI.ModelTextStyled),
         (MSHEET.Title, BUI.ModelTextMarkup),
+        (MSHEET.TagSheet.__qualname__, 'NewType.<locals>.new_type'),
+        (MSHEET.TagSheet.__dict__['__supertype__'], int),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
-        """Confirm type hint definitions.
+        """Confirm type alias definitions.
 
-        :param TYPE_TARGET: type hint under test.
+        :param TYPE_TARGET: type alias under test.
         :param TYPE_EXPECT: type expected.
         """
         # Setup
@@ -289,6 +291,21 @@ class TestSheet:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    def test_property_tag(self, new_id_args):
+        """Confirm value and access limits of tag property.
+
+        :param new_id_args: fixture :func:`.new_id_args`.
+        """
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        target_prop = getattr(MSHEET.Sheet, 'tag')
+        # Test
+        assert target_prop.fget is not None
+        assert id(target) == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
 
     def test_remove_topic(self, monkeypatch):
         """Confirm outline marked stale and method passes request to outline.

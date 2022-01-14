@@ -6,6 +6,17 @@ Defines control to mediate topic-level interaction from
 on a Model-View-Controller (MVC) design.  The design is partitioned into
 factsheet, topic, and fact layers.  Module ``topic`` defines
 class representing the control of a topic.
+
+Types and Type Aliases
+----------------------
+
+.. data:: IdTopic
+
+    Distinct type for unique identifier of a topic.  See
+    :func:`.id_topic`.
+
+Classes
+-------
 """
 # import logging
 import typing   # noqa
@@ -21,6 +32,8 @@ import factsheet.model.topic as MTOPIC
 # from factsheet.view.types_view import ViewOutlineFacts
 
 # logger = logging.getLogger('Main.control_fact')
+
+IdTopic = typing.NewType('IdTopic', int)
 
 # ViewNameTopic = BUI.ViewTextMarkup
 # ViewSummaryTopic = BUI.ViewTextTagged
@@ -143,7 +156,7 @@ class ControlTopic:
     #     """Return topic."""
     #     return self._model
 
-    # @property
-    # def idcore(self) -> MIDCORE.IdCore:
-    #     """Return identity of topic."""
-    #     return self._model
+    @property
+    def tag(self) -> MTOPIC.TagTopic:
+        """Return unique identifier of topic."""
+        return self._model.tag

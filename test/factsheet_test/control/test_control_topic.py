@@ -90,6 +90,22 @@ class TestControlTopic:
         # Test: no delete
         assert target_prop.fdel is None
 
+    def test_property_tag(self, new_model_topic):
+        """Confirm values and access limits of tag property.
+
+        :param new_model_topic: fixture :func:`.new_model_topic`.
+        """
+        # Setup
+        N_FACTS = 5
+        MODEL = new_model_topic(N_FACTS)
+        target = CTOPIC.ControlTopic(p_model=MODEL)
+        target_prop = getattr(CTOPIC.ControlTopic, 'tag')
+        # Test
+        assert target_prop.fget is not None
+        assert target._model.tag == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
     # @pytest.mark.parametrize('NAME, ESCAPED', [
     #     ('<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
     #     ('<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
@@ -145,18 +161,20 @@ class TestControlTopic:
     #     assert target_prop.fdel is None
 
 
-class TestTypes:
-    """Unit tests for type definitions in :mod:`.control_topic`."""
+class TestModule:
+    """Unit tests for module-level components of :mod:`.control_topic`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        # (CTOPIC.IdTopic.__qualname__, 'NewType.<locals>.new_type'),
+        # (CTOPIC.IdTopic.__dict__['__supertype__'], int),
         # (CTOPIC.ViewNameTopic, BUI.ViewTextMarkup),
         # (CTOPIC.ViewSummaryTopic, BUI.ViewTextTagged),
         # (CTOPIC.ViewTitleTopic, BUI.ViewTextMarkup),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
-        """Confirm type hint definitions.
+        """Confirm type alias definitions.
 
-        :param TYPE_TARGET: type hint under test.
+        :param TYPE_TARGET: type alias under test.
         :param TYPE_EXPECT: type expected.
         """
         # Setup

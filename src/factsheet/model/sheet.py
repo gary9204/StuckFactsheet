@@ -8,19 +8,20 @@ class representing the model of a factsheet.
 
 .. data:: Name
 
-    Type hint for name of Factsheet.  See :data:`~.control_sheet.DisplayName`
+    Type alias for name of Factsheet.  See :data:`~.control_sheet.DisplayName`
     and :data:`~.control_sheet.EditorName`.
 
 .. data:: Summary
 
-    Type hint for summary of Factsheet.  See
+    Type alias for summary of Factsheet.  See
     :data:`~.control_sheet.DisplaySummary` and
     :data:`~.control_sheet.EditorSummary`.
 
 .. data:: Title
 
-    Type hint for title of Factsheet.  See :data:`~.control_sheet.DisplayTitle`
-    and :data:`~.control_sheet.EditorTitle`.
+    Type alias for title of Factsheet.  See
+    :data:`~.control_sheet.DisplayTitle` and
+    :data:`~.control_sheet.EditorTitle`.
 """
 import logging
 import typing   # noqa
@@ -34,6 +35,7 @@ logger = logging.getLogger('Main.model.sheet')
 Name = BUI.ModelTextMarkup
 Summary = BUI.ModelTextStyled
 Title = BUI.ModelTextMarkup
+TagSheet = typing.NewType('TagSheet', int)
 
 
 class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
@@ -177,6 +179,11 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
                                                       self.set_fresh.__name__))
             else:
                 topic.set_fresh()
+
+    @property
+    def tag(self) -> TagSheet:
+        """Return unique identifier of sheet."""
+        return TagSheet(id(self))
 
     def topics(self, p_line: BUI.LineOutline = None
                ) -> typing.Iterator[MTOPIC.Topic]:

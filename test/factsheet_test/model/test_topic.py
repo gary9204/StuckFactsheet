@@ -13,21 +13,6 @@ import factsheet.bridge_ui as BUI
 import factsheet.model.topic as MTOPIC
 
 
-class TestIdTopic:
-    """Unit tests for :func:`.id_topic`."""
-
-    def test_id_topic(self, new_model_topic):
-        """Confirm id returned.
-
-        :param new_model_topic: fixture :func:`.new_model_topic`.
-        """
-        # Setup
-        N_FACTS = 5
-        topic = new_model_topic(N_FACTS)
-        # Test
-        assert id(topic) == MTOPIC.id_topic(topic)
-
-
 class TestTopic:
     """Unit tests for :class:`.Topic`."""
 
@@ -219,6 +204,21 @@ class TestTopic:
         # Test
         assert target_prop.fget is not None
         assert value_attr is target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+    def test_property_tag(self, new_model_topic):
+        """Confirm values and access limits of tag property.
+
+        :param new_model_topic: fixture :func:`.new_model_topic`.
+        """
+        # Setup
+        N_FACTS = 5
+        target = new_model_topic(N_FACTS)
+        target_prop = getattr(MTOPIC.Topic, 'tag')
+        # Test
+        assert target_prop.fget is not None
+        assert id(target) == target_prop.fget(target)
         assert target_prop.fset is None
         assert target_prop.fdel is None
 
@@ -504,8 +504,8 @@ class TestTopic:
         #     assert fact.is_fresh()
 
 
-class TestTypes:
-    """Unit tests for type hint definitions in :mod:`.topic`."""
+class TestModule:
+    """Unit tests for module-level components of :mod:`.topic`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (MTOPIC.LineOutline, BUI.LineOutline),
@@ -525,8 +525,8 @@ class TestTypes:
         (MTOPIC.FactoryDisplayTitle, BUI.FactoryDisplayTextMarkup),
         (MTOPIC.EditorTitle, BUI.EditorTextMarkup),
         (MTOPIC.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
-        (MTOPIC.IdTopic.__qualname__, 'NewType.<locals>.new_type'),
-        (MTOPIC.IdTopic.__dict__['__supertype__'], int),
+        (MTOPIC.TagTopic.__qualname__, 'NewType.<locals>.new_type'),
+        (MTOPIC.TagTopic.__dict__['__supertype__'], int),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.

@@ -13,7 +13,7 @@ import factsheet.bridge_ui as BUI
 # import factsheet.model.fact as MFACT
 import factsheet.model.idcore as MIDCORE
 
-IdTopic = typing.NewType('IdTopic', int)
+TagTopic = typing.NewType('TagTopic', int)
 LineOutline = BUI.LineOutline
 # OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]
 
@@ -34,17 +34,6 @@ DisplayTitle = BUI.DisplayTextMarkup
 FactoryDisplayTitle = BUI.FactoryDisplayTextMarkup
 EditorTitle = BUI.EditorTextMarkup
 FactoryEditorTitle = BUI.FactoryEditorTextMarkup
-
-
-def id_topic(p_topic: 'Topic') -> IdTopic:
-    """Return unique identifier for a topic.
-
-    The identifier is unique during the lifetime of the topic.  An
-    identifier may be reused if a topic is destroyed.
-
-    :param p_topic: topic to identify.
-    """
-    return IdTopic(id(p_topic))
 
 
 class Topic(MIDCORE.IdCore[Name, Summary, Title]):
@@ -134,7 +123,7 @@ class Topic(MIDCORE.IdCore[Name, Summary, Title]):
     #     """
     #     raise NotImplementedError
     #     super().__setstate__(p_state)
-    #     self._tag = IdTopic(id(self))
+    #     self._tag = TagTopic(id(self))
 
     def append_fact(self, p_fact) -> None:
         """Add new fact to the end of facts outline.
@@ -193,6 +182,11 @@ class Topic(MIDCORE.IdCore[Name, Summary, Title]):
         raise NotImplementedError
         return self._facts
 
+    @property
+    def tag(self) -> TagTopic:
+        """Return unique identifier of topic."""
+        return TagTopic(id(self))
+
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         topic.
@@ -214,7 +208,7 @@ class Topic(MIDCORE.IdCore[Name, Summary, Title]):
         #     fact.set_fresh()
 
     # @property
-    # def tag(self) -> IdTopic:
+    # def tag(self) -> TagTopic:
     #     """Return topic identifier. """
     #     raise NotImplementedError
     #     return self._tag

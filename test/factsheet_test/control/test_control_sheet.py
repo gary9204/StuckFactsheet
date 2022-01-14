@@ -1,26 +1,20 @@
 """
-Unit tests for class that mediates factsheet-level interactions from
+Unit tests for classes that mediates factsheet-level interactions from
 :mod:`~factsheet.view` to :mod:`~factsheet.model`.  See
 :mod:`~.control_sheet`.
-
-Unit tests for class that tracks and maintains pool of active
-factsheets.  See :mod:`.pool`.
 
 .. include:: /test/refs_include_pytest.txt
 """
 import io
-# import logging
 from pathlib import Path
 import pickle
 import pytest   # type: ignore[import]
-# import typing
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
+import factsheet.control.control_topic as CTOPIC
 import factsheet.model.sheet as MSHEET
-# from factsheet.control import control_topic as CTOPIC
-# from factsheet.control import pool as CPOOL
-# from factsheet.model import topic as MTOPIC
+import factsheet.model.topic as MTOPIC
 
 
 class PatchObserverControlSheet(CSHEET.ObserverControlSheet):
@@ -99,8 +93,7 @@ class TestControlApp:
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         assert N_FACTSHEETS == len(target._roster_sheets)
         assert isinstance(control_sheet, CSHEET.ControlSheet)
-        id_control_sheet = CSHEET.id_factsheet(control_sheet)
-        assert target._roster_sheets[id_control_sheet] is control_sheet
+        assert target._roster_sheets[control_sheet.tag] is control_sheet
 
     def test_open_factsheet_match(self, monkeypatch, tmp_path):
         """| Confirm factsheet return.
@@ -125,7 +118,7 @@ class TestControlApp:
         for i in range(N_FACTSHEETS):
             path = PATH_BASE / '/factsheet{}.fsg'.format(i)
             control = CSHEET.ControlSheet(p_path=path)
-            target._roster_sheets[id(control)] = control
+            target._roster_sheets[control.tag] = control
             if i == I_MATCH:
                 path_match = path
         # Test
@@ -147,7 +140,7 @@ class TestControlApp:
         for i in range(N_FACTSHEETS):
             path = PATH_BASE / '/factsheet{}.fsg'.format(i)
             control = CSHEET.ControlSheet(p_path=path)
-            target._roster_sheets[id(control)] = control
+            target._roster_sheets[control.tag] = control
         PATH_DIFF = PATH_BASE / '/diff.fsg'
         # Test
         control_sheet = target.open_factsheet(
@@ -155,7 +148,7 @@ class TestControlApp:
         assert isinstance(control_sheet, CSHEET.ControlSheet)
         assert PATH_DIFF == control_sheet._path
         assert N_FACTSHEETS + 1 == len(target._roster_sheets)
-        assert control_sheet is target._roster_sheets[id(control_sheet)]
+        assert control_sheet is target._roster_sheets[control_sheet.tag]
 
     @pytest.mark.skip
     def test_open_factsheet_except(self):
@@ -255,35 +248,35 @@ class TestControlSheet:
         target = CSHEET.ControlSheet(p_path=None)
         assert target._path is None
         assert MODEL_DEFAULT == target._model
-
         model_name = target._model.name
+        model_summary = target._model.summary
+        model_title = target._model.title
+
         factory_display_name = target._factory_display_name
         assert isinstance(factory_display_name, CSHEET.FactoryDisplayName)
         assert factory_display_name._ui_model is model_name._ui_model
-        factory_editor_name = target._factory_editor_name
-        assert isinstance(factory_editor_name, CSHEET.FactoryEditorName)
-        assert factory_editor_name._ui_model is model_name._ui_model
-
-        model_summary = target._model.summary
         factory_display_summary = target._factory_display_summary
         assert isinstance(
             factory_display_summary, CSHEET.FactoryDisplaySummary)
         assert factory_display_summary._ui_model is model_summary._ui_model
-        factory_editor_summary = target._factory_editor_summary
-        assert isinstance(factory_editor_summary, CSHEET.FactoryEditorSummary)
-        assert factory_editor_summary._ui_model is model_summary._ui_model
-
-        model_title = target._model.title
         factory_display_title = target._factory_display_title
         assert isinstance(factory_display_title, CSHEET.FactoryDisplayTitle)
         assert factory_display_title._ui_model is model_title._ui_model
+
+        factory_editor_name = target._factory_editor_name
+        assert isinstance(factory_editor_name, CSHEET.FactoryEditorName)
+        assert factory_editor_name._ui_model is model_name._ui_model
+        factory_editor_summary = target._factory_editor_summary
+        assert isinstance(factory_editor_summary, CSHEET.FactoryEditorSummary)
+        assert factory_editor_summary._ui_model is model_summary._ui_model
         factory_editor_title = target._factory_editor_title
         assert isinstance(factory_editor_title, CSHEET.FactoryEditorTitle)
         assert factory_editor_title._ui_model is model_title._ui_model
 
         assert isinstance(target._roster_views, dict)
         assert not target._roster_views
-        # assert not target._controls_topic
+        assert isinstance(target._roster_topics, dict)
+        assert not target._roster_topics
 
     def test_add_view(self):
         """| Confirm tracking of given sheet view.
@@ -308,8 +301,7 @@ class TestControlSheet:
         view = PatchObserverControlSheet(p_control=target)
         id_view = CSHEET.id_view_sheet(p_view_sheet=view)
         log_message = ('Duplicate: sheet 0x{:X} add view 0x{:X}  '
-                       '(ControlSheet.add_view)'
-                       ''.format(id(target), id_view))
+                       '(ControlSheet.add_view)'.format(target.tag, id_view))
         N_LOGS = 1
         LAST = -1
         target.add_view(view)
@@ -320,6 +312,50 @@ class TestControlSheet:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    @pytest.mark.skip
+    @pytest.mark.parametrize('METHOD', [
+        # 'insert_topic_after',
+        # 'insert_topic_before',
+        # 'insert_topic_child',
+        ])
+    def test_insert_topic(self, monkeypatch, METHOD):
+        """Confirm each insert method passes request to model."""
+        # Setup
+        class PatchInsert:
+            def __init__(self):
+                self.called = False
+                self.topic = None
+                self.line = 'Oops'
+
+            def insert(self, p_topic, p_line):
+                self.called = True
+                self.topic = p_topic
+                self.line = p_line
+
+        patch_insert = PatchInsert()
+        monkeypatch.setattr(MSHEET.Sheet, METHOD, patch_insert.insert)
+
+        target = CSHEET.ControlSheet(p_path=None)
+        target_method = getattr(target, METHOD)
+        TOPIC = MTOPIC.Topic(p_name='', p_summary='', p_title='')
+        # Test
+        target_method(TOPIC, None)
+        control_new = target._roster_topics[TOPIC.tag]
+        assert control_new._model is TOPIC
+        assert patch_insert.called
+        assert patch_insert.topic is TOPIC
+        assert patch_insert.line is None
+
+    def test_isert_topic_control(self):
+        """Confirm topic added to roster."""
+        # Setup
+        TOPIC = MTOPIC.Topic(p_name='', p_summary='', p_title='')
+        CONTROL = CTOPIC.ControlTopic(p_model=TOPIC)
+        target = CSHEET.ControlSheet(p_path=None)
+        # Test
+        target._insert_topic_control(p_control=CONTROL)
+        assert target._roster_topics[TOPIC.tag] is CONTROL
 
     def test_remove_all_views(self, monkeypatch):
         """Confirm tracking stops for all sheet views.
@@ -444,7 +480,7 @@ class TestControlSheet:
         LAST = -1
         log_message = ('Missing: sheet 0x{:X} remove view 0x{:X}  '
                        '(ControlSheet.remove_view)'
-                       ''.format(id(target), id_view))
+                       ''.format(target.tag, id_view))
         # Test
         target.remove_view(view)
         assert N_LOGS == len(caplog.records)
@@ -577,40 +613,6 @@ class TestControlSheet:
         # # Test
         # control_actual = target.get_control_topic(topic_absent)
         # assert control_actual is None
-
-    @pytest.mark.skip
-    @pytest.mark.parametrize('NAME_METHOD', [
-        # 'insert_topic_after',
-        # 'insert_topic_before',
-        # 'insert_topic_child',
-        ])
-    def test_insert_topic(self, monkeypatch, NAME_METHOD):
-        """Confirm each insert method passes request to model."""
-        # # Setup
-        # class PatchInsert:
-        #     def __init__(self): self.called = False
-        #
-        #     def insert_topic(self, _item, index):
-        #         self.called = True
-        #         return index
-        #
-        # patch_insert = PatchInsert()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, NAME_METHOD, patch_insert.insert_topic)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # method = getattr(target, NAME_METHOD)
-        #
-        # TITLE = 'Something completely different.'
-        # TOPIC = MTOPIC.Topic(pm_title=TITLE)
-        # id_topic = TOPIC.tag
-        # I_TOPIC = 'Parrot'
-        # # Test
-        # index_new, control_new = method(TOPIC, I_TOPIC)
-        # assert patch_insert.called
-        # assert index_new is I_TOPIC
-        # assert isinstance(control_new, CTOPIC.ControlTopic)
-        # assert target._controls_topic[id_topic] is control_new
 
     @pytest.mark.parametrize('METHOD, MODEL_IS_STALE', [
         ('is_fresh', False),
@@ -834,6 +836,17 @@ class TestControlSheet:
         # Test: no delete
         assert target_prop.fdel is None
 
+    def test_property_tag(self):
+        """Confirm value and access limits of tag property."""
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target_prop = getattr(CSHEET.ControlSheet, 'tag')
+        # Test
+        assert target_prop.fget is not None
+        assert target._model.tag == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
     def test_save(self, tmp_path):
         """| Confirm write to file.
         | Case: file does not exist.
@@ -1014,19 +1027,22 @@ class TestGlobal:
         assert isinstance(CSHEET.g_control_app, CSHEET.ControlApp)
 
 
-class TestIdFactsheet:
-    """Unit tests for :func:`.id_factsheet`."""
+class TestModule:
+    """Unit tests for module-level components of :mod:`.control_sheet`."""
 
-    def test_id_factsheet(self):
-        """Confirm id returned."""
+    @pytest.mark.parametrize('TARGET, SUPER', [
+        (CSHEET.FactsheetError, Exception),
+        (CSHEET.BackupFileError, CSHEET.FactsheetError),
+        (CSHEET.DumpFileError, CSHEET.FactsheetError),
+        # (CSHEET.LoadFileError, CSHEET.FactsheetError),
+        (CSHEET.NoFileError, CSHEET.FactsheetError),
+        (CSHEET.OpenFileError, CSHEET.FactsheetError),
+        ])
+    def test_exceptions(self, TARGET, SUPER):
+        """Confirm presence of exceptions."""
         # Setup
-        control_sheet = CSHEET.ControlSheet()
         # Test
-        assert id(control_sheet) == CSHEET.id_factsheet(control_sheet)
-
-
-class TestIdViewSheet:
-    """Unit tests for :func:`.id_view_sheet`."""
+        assert issubclass(TARGET, SUPER)
 
     def test_id_view_sheet(self):
         """Confirm id returned."""
@@ -1035,10 +1051,6 @@ class TestIdViewSheet:
         view_sheet = PatchObserverControlSheet(p_control=control)
         # Test
         assert id(view_sheet) == CSHEET.id_view_sheet(p_view_sheet=view_sheet)
-
-
-class TestTypes:
-    """Unit tests for type hint definitions in :mod:`.control_sheet`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (CSHEET.DisplayName, BUI.DisplayTextMarkup),
@@ -1053,18 +1065,13 @@ class TestTypes:
         (CSHEET.FactoryEditorName, BUI.FactoryEditorTextMarkup),
         (CSHEET.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
         (CSHEET.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
-        (CSHEET.IdFactsheet.__qualname__, 'NewType.<locals>.new_type'),
-        (CSHEET.IdFactsheet.__dict__['__supertype__'], int),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdViewSheet.__dict__['__supertype__'], int),
-        # (type(MIDCORE.ViewTitlePassive), typing.TypeVar),
-        # (MIDCORE.ViewTitlePassive.__constraints__, (
-        #     BUI.ViewTextTagged, BUI.ViewTextDisplay)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
-        """Confirm type hint definitions.
+        """Confirm type alias definitions.
 
-        :param TYPE_TARGET: type hint under test.
+        :param TYPE_TARGET: type alias under test.
         :param TYPE_EXPECT: type expected.
         """
         # Setup
@@ -1072,26 +1079,8 @@ class TestTypes:
         assert TYPE_TARGET == TYPE_EXPECT
 
 
-class TestExceptions:
-    """Unit tests for exceptions defined in :mod:`.control_sheet`."""
-
-    @pytest.mark.parametrize('TARGET, SUPER', [
-        (CSHEET.ExceptionSheet, Exception),
-        (CSHEET.BackupFileError, CSHEET.ExceptionSheet),
-        (CSHEET.DumpFileError, CSHEET.ExceptionSheet),
-        # (CSHEET.LoadFileError, CSHEET.ExceptionSheet),
-        (CSHEET.NoFileError, CSHEET.ExceptionSheet),
-        (CSHEET.OpenFileError, CSHEET.ExceptionSheet),
-        ])
-    def test_exceptions(self, TARGET, SUPER):
-        """Confirm presence of exceptions."""
-        # Setup
-        # Test
-        assert issubclass(TARGET, SUPER)
-
-
 class TestObserverControlSheet:
-    """Unit tests for :class:`ObserverControlSheet`."""
+    """Unit tests for :class:`.ObserverControlSheet`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (CSHEET.ObserverControlSheet, 'erase'),

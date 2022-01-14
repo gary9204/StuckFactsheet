@@ -6,42 +6,86 @@ on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`
 defines classes representing control components for a factsheet as a
 whole.
 
+Exceptions
+----------
+
+.. exception:: BackupFileError
+
+    Bases: :exc:`.FactsheetError`
+
+    Raise for errors when making backup copy of file during save
+    operation.
+
+.. exception:: DumpFileError
+
+    Bases: :exc:`.FactsheetError`
+
+    Raise for errors dumping sheet to a file.
+
+.. exception:: FactsheetError
+
+    Bases: :exc:`.Exception`
+
+    Base class for Factsheet exceptions.
+
+.. exception:: NoFileError
+
+    Bases: :exc:`.FactsheetError`
+
+    Raise for file operations when when factsheet has no file path.
+
+.. exception:: OpenFileError
+
+    Bases: :exc:`.FactsheetError`
+
+    Raise for errors when opening a factsheet file.
+
+Global Variables
+----------------
+
+.. data:: g_control_app
+
+    Application-level collection of open factsheets.
+
+Types and Type Aliases
+----------------------
+
 .. data:: DisplayName
 
-    Type hint for user interface element to display Factsheet
+    Type alias for user interface element to display Factsheet
     :data:`~.sheet.Name`.  See :class:`~.control_sheet.FactoryDisplayName`.
 
 .. data:: DisplaySummary
 
-    Type hint for user interface element to display Factsheet
+    Type alias for user interface element to display Factsheet
     :data:`~.sheet.Summary`.  See
     :class:`~.control_sheet.FactoryDisplaySummary`.
 
 .. data:: DisplayTitle
 
-    Type hint for user interface element to display Factsheet
+    Type alias for user interface element to display Factsheet
     :data:`~.sheet.Title`.  See :class:`~.control_sheet.FactoryDisplayTitle`.
 
 .. data:: EditorName
 
-    Type hint for user interface element to edit Factsheet
+    Type alias for user interface element to edit Factsheet
     :data:`~.sheet.Name`.  See :class:`~.control_sheet.FactoryEditorName`.
 
 .. data:: EditorSummary
 
-    Type hint for user interface element to edit Factsheet
+    Type alias for user interface element to edit Factsheet
     :data:`~.sheet.Summary`.  See
     :class:`~.control_sheet.FactoryEditorSummary`.
 
 .. data:: EditorTitle
 
-    Type hint for user interface element to edit Factsheet
+    Type alias for user interface element to edit Factsheet
     :data:`~.sheet.Title`.  See
     :class:`~.control_sheet.FactoryEditorTitle`.
 
 .. class:: FactoryDisplayName(p_name: Name)
 
-    Alias of factory for user interface elements.
+    Type alias of factory for user interface elements.
 
     A call to the factory takes no arguments and returns a
     :data:`~.control_sheet.DisplayName` for the Factsheet
@@ -52,7 +96,7 @@ whole.
 
 .. class:: FactoryDisplaySummary(p_summary: Summary)
 
-    Alias of factory for user interface elements.
+    Type alias of factory for user interface elements.
 
     A call to the factory takes no arguments and returns a
     :data:`~.control_sheet.DisplaySummary` for the Factsheet
@@ -63,7 +107,7 @@ whole.
 
 .. class:: FactoryDisplayTitle(p_title: Title)
 
-    Alias of factory for user interface elements.
+    Type alias of factory for user interface elements.
 
     A call to the factory takes no arguments and returns a
     :data:`~.control_sheet.DisplayTitle` for the Factsheet
@@ -74,7 +118,7 @@ whole.
 
 .. class:: FactoryEditorName(p_name: Name)
 
-    Alias of factory for user interface elements.
+    Type alias of factory for user interface elements.
 
     A call to the factory takes no arguments and returns a
     :data:`~.control_sheet.EditorName` for the Factsheet
@@ -85,7 +129,7 @@ whole.
 
 .. class:: FactoryEditorSummary(p_summary: Summary)
 
-    Alias of factory for user interface elements.
+    Type alias of factory for user interface elements.
 
     A call to the factory takes no arguments and returns a
     :data:`~.control_sheet.EditorSummary` for the Factsheet
@@ -96,7 +140,7 @@ whole.
 
 .. class:: FactoryEditorTitle(p_title: Title)
 
-    Alias of factory for user interface elements.
+    Type alias of factory for user interface elements.
 
     A call to the factory takes no arguments and returns a
     :data:`~.control_sheet.EditorTitle` for the Factsheet
@@ -105,17 +149,13 @@ whole.
     :param p_title: title of Factsheet.
     :type p_title: :data:`~.sheet.Title`
 
-.. data:: g_control_app
-
-    Application-level collection of open factsheets.
-
-.. data:: IdFactsheet
-
-    Distinct type for unique identifier of a factsheet.
-
 .. data:: IdViewSheet
 
-    Distinct type for unique identifier of a sheet view.
+    Distinct type for unique identifier of a sheet view. See
+    :func:`.id_view_sheet`.
+
+Classes
+-------
 """
 import abc
 import logging
@@ -126,14 +166,34 @@ import typing   # noqa
 
 
 import factsheet.bridge_ui as BUI
+import factsheet.control.control_topic as CTOPIC
 import factsheet.model.sheet as MSHEET
-# from factsheet.control import control_topic as CTOPIC
-# from factsheet.model import topic as MTOPIC
-# from factsheet.model import types_model as MTYPES
-# from factsheet.view import types_view as VTYPES
-# from factsheet.view import ui as UI
+import factsheet.model.topic as MTOPIC
 
 logger = logging.getLogger('Main.CSHEET')
+
+
+class FactsheetError(Exception):
+    pass
+
+
+class BackupFileError(FactsheetError):
+    pass
+
+
+class DumpFileError(FactsheetError):
+    pass
+
+
+class NoFileError(FactsheetError):
+    pass
+
+
+class OpenFileError(FactsheetError):
+    """Raise for errors opening a file."""
+
+    pass
+
 
 DisplayName = BUI.DisplayTextMarkup
 DisplaySummary = BUI.DisplayTextStyled
@@ -151,22 +211,7 @@ FactoryEditorName = BUI.FactoryEditorTextMarkup
 FactoryEditorSummary = BUI.FactoryEditorTextStyled
 FactoryEditorTitle = BUI.FactoryEditorTextMarkup
 
-IdFactsheet = typing.NewType('IdFactsheet', int)
 IdViewSheet = typing.NewType('IdViewSheet', int)
-
-
-class ExceptionSheet(Exception):
-    """Base class for Factsheet exceptions."""
-
-    pass
-
-
-class BackupFileError(ExceptionSheet):
-    """Raise for errors when making backup copy of file during save
-    operation.
-    """
-
-    pass
 
 
 class ControlApp:
@@ -179,7 +224,7 @@ class ControlApp:
     def __init__(self) -> None:
         """Initialize empty roster for factsheets."""
         self._roster_sheets: typing.MutableMapping[
-            IdFactsheet, 'ControlSheet'] = dict()
+            MSHEET.TagSheet, 'ControlSheet'] = dict()
 
     def close_all_factsheets(self) -> None:
         """TBD"""
@@ -215,8 +260,8 @@ class ControlApp:
                         control.present_views(p_time)
                         return None
         control = ControlSheet(p_path)
-        id_control = id_factsheet(control)
-        self._roster_sheets[id_control] = control
+        # id_control = id_factsheet(control)
+        self._roster_sheets[control.tag] = control
         return control
 
     def remove_factsheet(self, p_control: 'ControlSheet') -> None:
@@ -226,12 +271,11 @@ class ControlApp:
 
         :param p_control: factsheet to remove.
         """
-        id_control = id_factsheet(p_control)
         try:
-            _ = self._roster_sheets.pop(id_control)
+            _ = self._roster_sheets.pop(p_control.tag)
         except KeyError:
             logger.warning('Missing control: 0x{:X} ({}.{})'.format(
-                id_control, self.__class__.__name__,
+                p_control.tag, self.__class__.__name__,
                 self.remove_factsheet.__name__))
 
 
@@ -253,20 +297,19 @@ class ControlSheet:
         self._model = self._model_from_path(p_path)
 
         self._factory_display_name = FactoryDisplayName(self._model.name)
-        self._factory_editor_name = FactoryEditorName(self._model.name)
-
         self._factory_display_summary = (
             FactoryDisplaySummary(self._model.summary))
+        self._factory_display_title = FactoryDisplayTitle(self._model.title)
+
         self._factory_editor_summary = (
             FactoryEditorSummary(self._model.summary))
-
-        self._factory_display_title = FactoryDisplayTitle(self._model.title)
+        self._factory_editor_name = FactoryEditorName(self._model.name)
         self._factory_editor_title = FactoryEditorTitle(self._model.title)
 
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()
-        # self._controls_topic: typing.Dict[
-        #     MTYPES.TagTopic, CTOPIC.ControlTopic] = dict()
+        self._roster_topics: typing.MutableMapping[
+            MTOPIC.TagTopic, CTOPIC.ControlTopic] = dict()
 
     def add_view(self, p_view: 'ObserverControlSheet') -> None:
         """Add given view to collection of active views.
@@ -278,7 +321,7 @@ class ControlSheet:
         id_view = id_view_sheet(p_view_sheet=p_view)
         if id_view in self._roster_views:
             logger.warning('Duplicate: sheet 0x{:X} add view 0x{:X}  '
-                           '({}.{})'.format(id_factsheet(self), id_view,
+                           '({}.{})'.format(self.tag, id_view,
                                             self.__class__.__name__,
                                             self.add_view.__name__))
         self._roster_views[id_view_sheet(p_view)] = p_view
@@ -288,6 +331,29 @@ class ControlSheet:
         raise NotImplementedError
         # assert self._model is not None
         # self._model.clear()
+
+    def insert_topic_after(
+            self, p_topic: MTOPIC.Topic, p_line: BUI.LineOutline) -> None:
+        """Add topic to topics outline and roster of topics.
+
+        Add topic to topics outline after topic at given index.  Create
+        corresponding :class:`.ControlTopic` for roster of topics.
+
+        :param x_topic: new topic to add.
+        :param x_line: line of topic to precede new topic.
+        """
+        pass
+        # assert self._model is not None
+        # index_new = self._model.insert_topic_after(px_topic, px_i)
+        # control_new = self._add_new_control_topic(px_topic)
+        # return index_new, control_new
+
+    def _insert_topic_control(self, p_control: CTOPIC.ControlTopic) -> None:
+        """Add topic to roster of topics.
+
+        :param p_control: topic control to add.
+        """
+        self._roster_topics[p_control.tag] = p_control
 
     def is_fresh(self) -> bool:
         """Return True when there are no unsaved changes to factsheet."""
@@ -358,24 +424,24 @@ class ControlSheet:
         return self._factory_display_name
 
     @property
-    def new_editor_name(self) -> EditorName:
-        """Return factory for editors of sheet name."""
-        return self._factory_editor_name
-
-    @property
     def new_display_summary(self) -> DisplaySummary:
         """Return factory for displays of sheet summary."""
         return self._factory_display_summary
 
     @property
-    def new_editor_summary(self) -> EditorSummary:
-        """Return factory for editors of sheet summary."""
-        return self._factory_editor_summary
-
-    @property
     def new_display_title(self) -> DisplayTitle:
         """Return factory for displays of sheet title."""
         return self._factory_display_title
+
+    @property
+    def new_editor_name(self) -> EditorName:
+        """Return factory for editors of sheet name."""
+        return self._factory_editor_name
+
+    @property
+    def new_editor_summary(self) -> EditorSummary:
+        """Return factory for editors of sheet summary."""
+        return self._factory_editor_summary
 
     @property
     def new_editor_title(self) -> EditorTitle:
@@ -387,7 +453,7 @@ class ControlSheet:
 
         Backup provides (minimal) guard against inadvertent overwrite.
 
-        :raises ExceptionSheet: see :meth:`~.ControlSheet.save`.
+        :raises FactsheetError: see :meth:`~.ControlSheet.save`.
         :returns: Open file object at control's path.
         """
         if self._path is None:
@@ -462,7 +528,7 @@ class ControlSheet:
             self._roster_views.pop(id_view)
         except KeyError:
             logger.warning('Missing: sheet 0x{:X} remove view 0x{:X}  '
-                           '({}.{})'.format(id_factsheet(self), id_view,
+                           '({}.{})'.format(self.tag, id_view,
                                             self.__class__.__name__,
                                             self.remove_view.__name__))
             return
@@ -515,22 +581,6 @@ class ControlSheet:
     #         return self._controls_topic[id_control]
     #     except KeyError:
     #         return None
-
-    # def insert_topic_after(
-    #         self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
-    #         ) -> typing.Tuple[MTYPES.IndexTopic, CTOPIC.ControlTopic]:
-    #     """Request topics outline add topic after topic at given index.
-    #
-    #     See :meth:`.Sheet.insert_topic_after`.
-    #
-    #     :param px_topic: new topic to add.
-    #     :param px_i: index of topic to precede new topic.
-    #     :returns: index of and control for newly-added topic.
-    #     """
-    #     assert self._model is not None
-    #     index_new = self._model.insert_topic_after(px_topic, px_i)
-    #     control_new = self._add_new_control_topic(px_topic)
-    #     return index_new, control_new
 
     # def insert_topic_before(
     #         self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
@@ -624,17 +674,21 @@ class ControlSheet:
                 raise DumpFileError from err_dump
         self._model.set_fresh()
 
+    @property
+    def tag(self) -> MSHEET.TagSheet:
+        """Return unique identifier of sheet."""
+        return self._model.tag
 
-class DumpFileError(ExceptionSheet):
-    """Raise for errors dumping sheet to a file."""
 
-    pass
+def id_view_sheet(p_view_sheet: 'ObserverControlSheet') -> IdViewSheet:
+    """Return unique identifier for a sheet view.
 
+    The identifier is unique during the lifetime of the sheet view.  An
+    identifier may be reused if a sheet view is destroyed.
 
-class NoFileError(ExceptionSheet):
-    """Raise for file operations when when factsheet has no file path."""
-
-    pass
+    :param p_view_sheet: sheet view to identify.
+    """
+    return IdViewSheet(id(p_view_sheet))
 
 
 class ObserverControlSheet(abc.ABC):
@@ -658,33 +712,3 @@ class ObserverControlSheet(abc.ABC):
         :param p_time: time stamp to order multiple requests.
         """
         raise NotImplementedError
-
-
-class OpenFileError(ExceptionSheet):
-    """Raise for errors opening a file."""
-
-    pass
-
-
-def id_factsheet(p_control_sheet: 'ControlSheet') -> IdFactsheet:
-    """Return unique identifier for a factsheet.
-
-    There is a one-to-one correspondence between factsheets and sheet
-    controls.  The identifier is unique during the lifetime of the
-    factsheet.  An identifier may be reused if a factsheet is
-    destroyed.
-
-    :param p_control_sheet: sheet control used to identify factsheet.
-    """
-    return IdFactsheet(id(p_control_sheet))
-
-
-def id_view_sheet(p_view_sheet: 'ObserverControlSheet') -> IdViewSheet:
-    """Return unique identifier for a sheet view.
-
-    The identifier is unique during the lifetime of the sheet view.  An
-    identifier may be reused if a sheet view is destroyed.
-
-    :param p_view_sheet: sheet view to identify.
-    """
-    return IdViewSheet(id(p_view_sheet))

@@ -899,7 +899,7 @@ class TestViewSheet:
 
             def _make_file_chooser(self, p_action):
                 self.action = p_action
-                raise CSHEET.ExceptionSheet('Oops!')
+                raise CSHEET.FactsheetError('Oops!')
 
         patch_dialog = PatchDialog()
         monkeypatch.setattr(VSHEET.ViewSheet, '_make_file_chooser',
@@ -908,7 +908,7 @@ class TestViewSheet:
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
         target = VSHEET.ViewSheet(p_control=control)
         # Test
-        with pytest.raises(CSHEET.ExceptionSheet):
+        with pytest.raises(CSHEET.FactsheetError):
             _path = target.get_path(p_action=ACTION)
         assert ACTION == patch_dialog.action
 
