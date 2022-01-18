@@ -113,6 +113,50 @@ class TestSheet:
         assert target.is_stale()
         assert clear_called
 
+    def test_get_tag(self, new_id_args):
+        """| Confirm tag is for topic at line.
+        | Case: line contains topic.
+
+        :param new_id_args: fixture :func:`.new_id_args`.
+        """
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+
+        N_TOPICS = 3
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            target.insert_topic_before(topic, None)
+        N_DESCEND = 2
+        I_TOPIC = 0
+        parent = target._topics._ui_model.get_iter_first()
+        for j in range(N_DESCEND):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOPICS)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            parent = target.insert_topic_child(topic, parent)
+            if I_TOPIC == j:
+                tag_topic = topic.tag
+                line_topic = parent
+        # Test
+        result = target.get_tag(line_topic)
+        assert tag_topic == result
+
+    def test_get_tag_none(self, new_id_args):
+        """| Confirm tag is for topic at line.
+        | Case: line contains None.
+
+        :param new_id_args: fixture :func:`.new_id_args`.
+        """
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        NO_TAG = 0
+        line_none = target.insert_topic_before(None, None)
+        # Test
+        result = target.get_tag(line_none)
+        assert NO_TAG == result
+
     @pytest.mark.parametrize('PATCH, METHOD', [
         ('insert_after', 'insert_topic_after'),
         ('insert_before', 'insert_topic_before'),

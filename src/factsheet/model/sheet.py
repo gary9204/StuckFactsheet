@@ -94,6 +94,18 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
         self.set_stale()
         self._topics.clear()
 
+    def get_tag(self, p_line: BUI.LineOutline) -> MTOPIC.TagTopic:
+        """Return tag of topic at given line in topics outline.
+
+        :param p_line: line of desired topic.
+        """
+        NO_TOPIC = 0
+        tag = MTOPIC.TagTopic(NO_TOPIC)
+        topic = self._topics.get_item(p_line)
+        if topic is not None:
+            tag = topic.tag
+        return tag
+
     def insert_topic_after(self, p_topic: MTOPIC.Topic,
                            p_line: BUI.LineOutline) -> BUI.LineOutline:
         """Adds topic to topics outline after topic at given line.

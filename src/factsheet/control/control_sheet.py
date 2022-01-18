@@ -190,8 +190,6 @@ class NoFileError(FactsheetError):
 
 
 class OpenFileError(FactsheetError):
-    """Raise for errors opening a file."""
-
     pass
 
 
@@ -260,7 +258,6 @@ class ControlApp:
                         control.present_views(p_time)
                         return None
         control = ControlSheet(p_path)
-        # id_control = id_factsheet(control)
         self._roster_sheets[control.tag] = control
         return control
 
@@ -327,26 +324,63 @@ class ControlSheet:
         self._roster_views[id_view_sheet(p_view)] = p_view
 
     def clear(self) -> None:
-        """Requests topics outline to remove all topics."""
-        raise NotImplementedError
-        # assert self._model is not None
-        # self._model.clear()
+        """Remobe contents of topics roster and topics outline."""
+        self._roster_topics.clear()
+        self._model.clear()
 
-    def insert_topic_after(
-            self, p_topic: MTOPIC.Topic, p_line: BUI.LineOutline) -> None:
+    def get_control_topic(self, p_line: BUI.LineOutline
+                          ) -> typing.Optional[CTOPIC.ControlTopic]:
+        """Return contents of topics outline at given line.
+
+        :param p_line: line corresponding to desired control.
+        """
+        tag = self._model.get_tag(p_line)
+        return self._roster_topics.get(tag, None)
+
+    def insert_topic_after(self, p_topic: MTOPIC.Topic,
+                           p_line: BUI.LineOutline) -> BUI.LineOutline:
         """Add topic to topics outline and roster of topics.
 
         Add topic to topics outline after topic at given index.  Create
         corresponding :class:`.ControlTopic` for roster of topics.
 
-        :param x_topic: new topic to add.
-        :param x_line: line of topic to precede new topic.
+        :param p_topic: new topic to add.
+        :param p_line: line of topic to precede new topic.
+        :returns: line containing new topic.
         """
-        pass
-        # assert self._model is not None
-        # index_new = self._model.insert_topic_after(px_topic, px_i)
-        # control_new = self._add_new_control_topic(px_topic)
-        # return index_new, control_new
+        control_new = CTOPIC.ControlTopic(p_model=p_topic)
+        self._insert_topic_control(p_control=control_new)
+        return self._model.insert_topic_after(p_topic, p_line)
+
+    def insert_topic_before(self, p_topic: MTOPIC.Topic,
+                            p_line: BUI.LineOutline) -> BUI.LineOutline:
+        """Add topic to topics outline and roster of topics.
+
+        Add topic to topics outline before topic at given index.  Create
+        corresponding :class:`.ControlTopic` for roster of topics.
+
+        :param p_topic: new topic to add.
+        :param p_line: line of topic to follow new topic.
+        :returns: line containing new topic.
+        """
+        control_new = CTOPIC.ControlTopic(p_model=p_topic)
+        self._insert_topic_control(p_control=control_new)
+        return self._model.insert_topic_before(p_topic, p_line)
+
+    def insert_topic_child(self, p_topic: MTOPIC.Topic,
+                           p_line: BUI.LineOutline) -> BUI.LineOutline:
+        """Add topic to topics outline and roster of topics.
+
+        Add topic to topics outline as child of topic at given index.
+        Create corresponding :class:`.ControlTopic` for roster of topics.
+
+        :param p_topic: new topic to add.
+        :param p_line: line of parent topic for new topic.
+        :returns: line containing new topic.
+        """
+        control_new = CTOPIC.ControlTopic(p_model=p_topic)
+        self._insert_topic_control(p_control=control_new)
+        return self._model.insert_topic_child(p_topic, p_line)
 
     def _insert_topic_control(self, p_control: CTOPIC.ControlTopic) -> None:
         """Add topic to roster of topics.
@@ -486,25 +520,6 @@ class ControlSheet:
         for view in self._roster_views.values():
             view.present(p_time)
 
-    # def _add_new_control_topic(self, px_topic: MTOPIC.Topic
-    #                            ) -> CTOPIC.ControlTopic:
-    #     """Return a new topic control after adding it to the collection.
-    #
-    #     :param px_topic: topic model for new control.
-    #     """
-    #     control_new = CTOPIC.ControlTopic(px_topic)
-    #     id_topic = px_topic.tag
-    #     self._controls_topic[id_topic] = control_new
-    #     return control_new
-
-    # def attach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
-    #     """Add view of topics outline to model.
-    #
-    #     :param p_view: topics outline view to add.
-    #     """
-    #     assert self._model is not None
-    #     self._model.attach_view_topics(p_view)
-
     def remove_all_views(self) -> None:
         """Remove all views of the collection of active views."""
         views = self._roster_views.values()
@@ -512,6 +527,17 @@ class ControlSheet:
             view = next(iter(views))
             view.erase()
             self.remove_view(p_view=view)
+
+    def remove_topic(self, p_line: BUI.LineOutline) -> None:
+        """Remove topic from roster of topic and from topics outline.
+
+        :param p_line: line of topic to remove along with all its
+            descendants.  If line is None, remove no topics.
+        """
+        if p_line is not None:
+            for topic in self._model.topics(p_line):
+                _ = self._roster_topics.pop(topic.tag)
+            self._model.remove_topic(p_line)
 
     def remove_view(self, p_view: 'ObserverControlSheet') -> None:
         """Remove given view from collection of active views.
@@ -552,108 +578,6 @@ class ControlSheet:
             return False
 
         return True
-
-    # def detach_view_topics(self, p_view: VTYPES.ViewOutlineTopics) -> None:
-    #     """Remove view of topics outline from model.
-    #
-    #     :param p_view: topics outline view to remove.
-    #     """
-    #     assert self._model is not None
-    #     self._model.detach_view_topics(p_view)
-
-    # def extract_topic(self, px_i: MTYPES.IndexTopic) -> None:
-    #     """Requests topics outline to remove topic and all descendants.
-    #
-    #     :param px_i: index of parent topic to remove along with all
-    #         descendants.  If index is None, remove no topics.
-    #     """
-    #     assert self._model is not None
-    #     self._model.extract_topic(px_i)
-
-    # def get_control_topic(self, px_topic: MTOPIC.Topic
-    #                       ) -> typing.Optional[CTOPIC.ControlTopic]:
-    #     """Return topic control for given topic or None when no control.
-    #
-    #     :param px_topic: topic corresponding to desired control.
-    #     """
-    #     id_control = px_topic.tag
-    #     try:
-    #         return self._controls_topic[id_control]
-    #     except KeyError:
-    #         return None
-
-    # def insert_topic_before(
-    #         self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
-    #         ) -> typing.Tuple[MTYPES.IndexTopic, CTOPIC.ControlTopic]:
-    #     """Request topics outline add topic before topic at given index.
-    #
-    #     See :meth:`.Sheet.insert_topic_before`.
-    #
-    #     :param px_topic: new topic to add.
-    #     :param px_i: index of topic to follow new topic.
-    #     :returns: index of and control for newly-added topic.
-    #     """
-    #     assert self._model is not None
-    #     index_new = self._model.insert_topic_before(px_topic, px_i)
-    #     control_new = self._add_new_control_topic(px_topic)
-    #     return index_new, control_new
-
-    # def insert_topic_child(
-    #         self, px_topic: MTOPIC.Topic, px_i: MTYPES.IndexTopic
-    #         ) -> typing.Tuple[MTYPES.IndexTopic, CTOPIC.ControlTopic]:
-    #     """Request topics outline add topic as child of topic at given
-    #     index.
-    #
-    #     See :meth:`.Sheet.insert_topic_child`.
-    #
-    #     :param px_topic: new topic to add.
-    #     :param px_i: index of parent topic for new topic.
-    #     :returns: index of and control for newly-added topic.
-    #     """
-    #     assert self._model is not None
-    #     index_new = self._model.insert_topic_child(px_topic, px_i)
-    #     control_new = self._add_new_control_topic(px_topic)
-    #     return index_new, control_new
-
-    # @property
-    # def model(self) -> MSHEET.Sheet:
-    #     """Return sheet model."""
-    #     return self._model
-
-    # @classmethod
-    # def new(cls, pm_sheets_active: CPOOL.PoolSheets) -> 'ControlSheet':
-    #     """Create and return control with default model.
-    #
-    #     :param pm_sheets_active: collection of open factsheet documents.
-    #     :returns: Newly created control.
-    #     """
-    #     control = ControlSheet(pm_sheets_active)
-    #     control._model = MSHEET.Sheet()
-    #     return control
-
-    # def new_view_name_active(self) -> MSHEET.ViewNameSheetActive:
-    #     """Return editable view of name."""
-    #     return self._model.new_view_name_active()
-    #
-    # def new_view_name_passive(self) -> MSHEET.ViewNameSheetPassive:
-    #     """Return display-only view of name."""
-    #     return self._model.new_view_name_passive()
-    #
-    # def new_view_summary_active(self) -> MSHEET.ViewSummarySheetActive:
-    #     """Return editable view of summary."""
-    #     return self._model.new_view_summary_active()
-    #
-    # def new_view_summary_passive(self) -> MSHEET.ViewSummarySheetPassive:
-    #     """Return display-only view of summary."""
-    #     return self._model.new_view_summary_passive()
-    #
-    # def new_view_title_active(self) -> MSHEET.ViewTitleSheetActive:
-    #     """Return editable view of title."""
-    #     return self._model.new_view_title_active()
-    #
-    # def new_view_title_passive(self) -> MSHEET.ViewTitleSheetPassive:
-    #     """Return display-only view of title."""
-    #     return self._model.new_view_title_passive()
 
     def save(self, p_path: typing.Optional[Path] = None) -> None:
         """Save factsheet contents to file at factsheet's path.

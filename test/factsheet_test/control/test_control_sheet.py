@@ -55,7 +55,9 @@ class TestControlApp:
 
     def test_close_factsheet(self, patch_g_control_app):
         """| Confirm tracking stops for given sheet with views removed.
-        | Case: sheet tracked
+        | Case: sheet tracked.
+
+        :param patch_g_control_app: fixture :func:`patch_g_control_app`.
         """
         # Setup
         target = patch_g_control_app
@@ -83,7 +85,7 @@ class TestControlApp:
 
     def test_open_factsheet_none(self):
         """| Confirm factsheet return.
-        | Case: path is None
+        | Case: path is None.
         """
         # Setup
         target = CSHEET.ControlApp()
@@ -97,7 +99,10 @@ class TestControlApp:
 
     def test_open_factsheet_match(self, monkeypatch, tmp_path):
         """| Confirm factsheet return.
-        | Case: path matches an existing file
+        | Case: path matches an existing file.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
         # Setup
         class PatchPresent:
@@ -131,7 +136,9 @@ class TestControlApp:
 
     def test_open_factsheet_no_match(self, tmp_path):
         """| Confirm factsheet return.
-        | Case: path does not match an existing file
+        | Case: path does not match an existing file.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
         # Setup
         target = CSHEET.ControlApp()
@@ -153,7 +160,7 @@ class TestControlApp:
     @pytest.mark.skip
     def test_open_factsheet_except(self):
         """| Confirm factsheet open and return.
-        | Case: file at path cannot be read
+        | Case: file at path cannot be read.
         """
         # # Setup
         # N_CONTROLS = 3
@@ -168,7 +175,7 @@ class TestControlApp:
     @pytest.mark.skip
     def test_open_factsheet_multiple(self):
         """| Confirm factsheet open and return.
-        | Case: file at path cannot be read
+        | Case: file at path cannot be read.
         """
         # # Setup
         # N_CONTROLS = 3
@@ -182,7 +189,7 @@ class TestControlApp:
 
     def test_remove_factsheet(self):
         """| Confirm tracking stops for given sheet.
-        | Case: sheet tracked
+        | Case: sheet tracked.
         """
         # Setup
         target = CSHEET.ControlApp()
@@ -204,7 +211,7 @@ class TestControlApp:
 
     def test_remove_factsheet_warn(self, caplog):
         """| Confirm tracking stops for given sheet.
-        | Case: sheet not tracked
+        | Case: sheet not tracked.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
@@ -313,25 +320,84 @@ class TestControlSheet:
         assert log_message == record.message
         assert 'WARNING' == record.levelname
 
-    @pytest.mark.skip
+    def test_clear(self, factory_control_sheet):
+        """Confirm all controls and topics removed.
+
+        :param factory_control_sheet: fixture :func:`factory_control_sheet`.
+        """
+        # Setup
+        target = factory_control_sheet()
+        # Test
+        target.clear()
+        assert not target._roster_topics
+        with pytest.raises(StopIteration):
+            _ = next(target._model.topics())
+
+    def test_get_control_topic(self, factory_control_sheet):
+        """| Confirm topic control returned
+        | Case: topic at given line.
+
+        :param factory_control_sheet: fixture :func:`factory_control_sheet`.
+        """
+        # Setup
+        I_GET = 2
+        target = factory_control_sheet()
+        topics = list(target._model.topics())
+        topic_get = topics[I_GET]
+        control_get = target._roster_topics[topic_get.tag]
+        for i, line_get in enumerate(target._model._topics.lines()):
+            if i == I_GET:
+                break
+        # Test
+        result = target.get_control_topic(line_get)
+        assert result is control_get
+
+    def test_get_control_topic_absent(
+            self, monkeypatch, factory_control_sheet):
+        """| Confirm topic control returned
+        | Case: None at given line.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param factory_control_sheet: fixture :func:`factory_control_sheet`.
+        """
+        # Setup
+        def patch_get_tag(self, p_line):
+            del p_line
+            NO_TAG = 0
+            return NO_TAG
+
+        monkeypatch.setattr(MSHEET.Sheet, 'get_tag', patch_get_tag)
+        target = factory_control_sheet()
+        line_get = next(target._model._topics.lines())
+        # Test
+        result = target.get_control_topic(line_get)
+        assert result is None
+
     @pytest.mark.parametrize('METHOD', [
-        # 'insert_topic_after',
-        # 'insert_topic_before',
-        # 'insert_topic_child',
+        'insert_topic_after',
+        'insert_topic_before',
+        'insert_topic_child',
         ])
     def test_insert_topic(self, monkeypatch, METHOD):
-        """Confirm each insert method passes request to model."""
+        """Confirm each method adds control and relays request to model.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param METHOD: insert method under test.
+        """
         # Setup
         class PatchInsert:
             def __init__(self):
                 self.called = False
                 self.topic = None
                 self.line = 'Oops'
+                self.result = 'Done'
 
             def insert(self, p_topic, p_line):
                 self.called = True
                 self.topic = p_topic
                 self.line = p_line
+                self.result = 'Done'
+                return self.result
 
         patch_insert = PatchInsert()
         monkeypatch.setattr(MSHEET.Sheet, METHOD, patch_insert.insert)
@@ -340,14 +406,15 @@ class TestControlSheet:
         target_method = getattr(target, METHOD)
         TOPIC = MTOPIC.Topic(p_name='', p_summary='', p_title='')
         # Test
-        target_method(TOPIC, None)
+        result = target_method(TOPIC, None)
         control_new = target._roster_topics[TOPIC.tag]
         assert control_new._model is TOPIC
         assert patch_insert.called
         assert patch_insert.topic is TOPIC
         assert patch_insert.line is None
+        assert result is patch_insert.result
 
-    def test_isert_topic_control(self):
+    def test_insert_topic_control(self):
         """Confirm topic added to roster."""
         # Setup
         TOPIC = MTOPIC.Topic(p_name='', p_summary='', p_title='')
@@ -356,263 +423,6 @@ class TestControlSheet:
         # Test
         target._insert_topic_control(p_control=CONTROL)
         assert target._roster_topics[TOPIC.tag] is CONTROL
-
-    def test_remove_all_views(self, monkeypatch):
-        """Confirm tracking stops for all sheet views.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        class PatchControlApp:
-            def __init__(self):
-                self.called = False
-                self.control_sheet = None
-
-            def remove_factsheet(self, p_control):
-                self.called = True
-                self.control_sheet = p_control
-
-        patch = PatchControlApp()
-        monkeypatch.setattr(
-            CSHEET.ControlApp, 'remove_factsheet', patch.remove_factsheet)
-        target = CSHEET.ControlSheet(p_path=None)
-        N_VIEWS = 5
-        for _ in range(N_VIEWS):
-            view = PatchObserverControlSheet(p_control=target)
-            target.add_view(p_view=view)
-        # Test
-        target.remove_all_views()
-        assert not target._roster_views
-        assert patch.called
-        assert target is patch.control_sheet
-
-    def test_remove_view_is_safe_fresh(self):
-        """| Confirm return shows safe to erase.
-        | Case: no unsaved changes
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        target.add_view(view)
-        target._model.set_fresh()
-        # Test
-        assert target.remove_view_is_safe()
-
-    def test_remove_view_is_safe_multi(self):
-        """| Confirm return shows safe to erase.
-        | Case: multiple windows
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        target.add_view(view)
-        view_extra = PatchObserverControlSheet(p_control=target)
-        target.add_view(view_extra)
-        target._model.set_stale()
-        # Test
-        assert target.remove_view_is_safe()
-
-    def test_remove_view_is_safe_unsafe(self):
-        """Confirm return shows  not safe to erase."""
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        target.add_view(view)
-        target._model.set_stale()
-        # Test
-        assert not target.remove_view_is_safe()
-
-    def test_remove_view_multi(self):
-        """| Confirm tracking stops for given sheet view.
-        | Case: multiple views tracked
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
-        target.add_view(view)
-        view_extra = PatchObserverControlSheet(p_control=target)
-        target.add_view(view_extra)
-        # Test
-        target.remove_view(view)
-        assert id_view not in target._roster_views
-
-    def test_remove_view_single(self, monkeypatch):
-        """| Confirm tracking stops for given sheet view.
-        | Case: single view tracked
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        class PatchControlApp:
-            def __init__(self):
-                self.called = False
-                self.control_sheet = None
-
-            def remove_factsheet(self, p_control):
-                self.called = True
-                self.control_sheet = p_control
-
-        patch = PatchControlApp()
-        monkeypatch.setattr(
-            CSHEET.ControlApp, 'remove_factsheet', patch.remove_factsheet)
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
-        target.add_view(view)
-        # Test
-        target.remove_view(view)
-        assert id_view not in target._roster_views
-        assert patch.called
-        assert target is patch.control_sheet
-
-    def test_remove_view_warn(self, caplog):
-        """| Confirm tracking stops for given sheet view.
-        | Case: view not tracked
-
-        :param caplog: built-in fixture `Pytest caplog`_.
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
-        N_LOGS = 1
-        LAST = -1
-        log_message = ('Missing: sheet 0x{:X} remove view 0x{:X}  '
-                       '(ControlSheet.remove_view)'
-                       ''.format(target.tag, id_view))
-        # Test
-        target.remove_view(view)
-        assert N_LOGS == len(caplog.records)
-        record = caplog.records[LAST]
-        assert log_message == record.message
-        assert 'WARNING' == record.levelname
-
-    @pytest.mark.skip
-    def test_attach_view_topics(self, monkeypatch):
-        """Confirm topics outline view addition."""
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self):
-        #         self.called_attach_page = False
-        #
-        #     def attach_view_topics(self, _view):
-        #         self.called_attach_view_topics = True
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'attach_view_topics',
-        #     patch_model.attach_view_topics)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # # Test
-        # target.attach_view_topics(None)
-        # assert patch_model.called_attach_view_topics
-
-    @pytest.mark.skip
-    def test_detach_view_topics(self, monkeypatch):
-        """Confirm topics outline view removal."""
-        # # Setup
-        # class PatchModel:
-        #     def __init__(self):
-        #         self.called_detach_page = False
-        #
-        #     def detach_view_topics(self, _view):
-        #         self.called_detach_view_topics = True
-        #
-        # patch_model = PatchModel()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'detach_view_topics',
-        #     patch_model.detach_view_topics)
-        #
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # # Test
-        # target.detach_view_topics(None)
-        # assert patch_model.called_detach_view_topics
-
-    @pytest.mark.skip
-    def test_clear(self, monkeypatch):
-        """Confirm method passes request to model."""
-        # # Setup
-        # class PatchClear:
-        #     def __init__(self): self.called = False
-        #
-        #     def clear(self): self.called = True
-        #
-        # patch_clear = PatchClear()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'clear', patch_clear.clear)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # # Test
-        # target.clear()
-        # assert patch_clear.called
-
-    @pytest.mark.skip
-    def test_extract_topic(self, monkeypatch):
-        """Confirm method passes request to model."""
-        # # Setup
-        # class PatchExtract:
-        #     def __init__(self): self.called = False
-        #
-        #     def extract_topic(self, _index): self.called = True
-        #
-        # patch_extract = PatchExtract()
-        # monkeypatch.setattr(
-        #     MSHEET.Sheet, 'extract_topic', patch_extract.extract_topic)
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        # # Test
-        # _ = target.extract_topic(None)
-        # assert patch_extract.called
-
-    @pytest.mark.skip
-    def test_get_control_topic(self):
-        """| Confirm
-        | Case: topic in model
-        """
-        # # Setup
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        #
-        # N_TOPICS = 3
-        # topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
-        #           for i in range(N_TOPICS)]
-        # for topic in topics:
-        #     control_topic = CTOPIC.ControlTopic(p_model=topic)
-        #     key_topic = topic.tag
-        #     target._controls_topic[key_topic] = control_topic
-        #
-        # N_EXPECT = 1
-        # topic_expect = topics[N_EXPECT]
-        # id_expect = topic_expect.tag
-        # # Test
-        # control_actual = target.get_control_topic(topic_expect)
-        # assert control_actual is target._controls_topic[id_expect]
-
-    @pytest.mark.skip
-    def test_get_control_topic_absent(self):
-        """| Confirm
-        | Case: topic in model
-        """
-        # # Setup
-        # sheets_active = CPOOL.PoolSheets()
-        # target = CSHEET.ControlSheet.new(sheets_active)
-        #
-        # N_TOPICS = 3
-        # topics = [MTOPIC.Topic(p_name='Topic {}'.format(i))
-        #           for i in range(N_TOPICS)]
-        # for topic in topics:
-        #     control_topic = CTOPIC.ControlTopic(p_model=topic)
-        #     key_topic = topic.tag
-        #     target._controls_topic[key_topic] = control_topic
-        #
-        # topic_absent = MTOPIC.Topic(p_title="Spanish Inquisition")
-        # # Test
-        # control_actual = target.get_control_topic(topic_absent)
-        # assert control_actual is None
 
     @pytest.mark.parametrize('METHOD, MODEL_IS_STALE', [
         ('is_fresh', False),
@@ -623,8 +433,6 @@ class TestControlSheet:
     def test_is_fresh_stale(self, METHOD, MODEL_IS_STALE):
         """Confirm model and control report same state of change.
 
-        :param new_kwargs_idcore: fixture: factory for stock identity
-            keyword arguments.
         :param METHOD: method to test, which is ``is_fresh`` or ``is_stale``.
         :param MODEL_IS_STALE: state of change in model.
         """
@@ -670,7 +478,9 @@ class TestControlSheet:
 
     def test_model_from_path(self, tmp_path):
         """| Confirm model creation.
-        | Case: file at path location constains factsheet model
+        | Case: file at path location constains factsheet model.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -686,7 +496,9 @@ class TestControlSheet:
 
     def test_model_from_path_empty(self, tmp_path):
         """| Confirm model creation.
-        | Case: no file at path location
+        | Case: no file at path location.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -703,12 +515,12 @@ class TestControlSheet:
     def test_model_from_path_except(
             self, ERROR, MESSAGE, monkeypatch, tmp_path):
         """| Confirm model creation.
-        | Case: file at path location cannot be opened or loaded
+        | Case: file at path location cannot be opened or loaded.
 
         :param ERROR: identifies where to raise exception.
         :param MESSAGE: first line of summary in error model.
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param tmp_path: built-in fixture `Pytest tmp_path`_
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
         """
         # Setup
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
@@ -735,7 +547,7 @@ class TestControlSheet:
 
     def test_model_from_path_none(self):
         """| Confirm model creation.
-        | Case: no path
+        | Case: no path.
         """
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
@@ -744,173 +556,11 @@ class TestControlSheet:
         model = target._model_from_path(p_path=None)
         assert model_default == model
 
-    def test_present_views(self):
-        """Confirm sheet control notifies all its views."""
-        # Setup
-        class PatchObserver(CSHEET.ObserverControlSheet):
-            def __init__(self, _control):
-                self.called_present = False
-                self.time = None
-
-            def erase(self): pass
-
-            def present(self, p_time):
-                self.called_present = True
-                self.time = p_time
-
-        target = CSHEET.ControlSheet(p_path=None)
-        N_VIEWS = 5
-        for _ in range(N_VIEWS):
-            view = PatchObserver(target)
-            target.add_view(p_view=view)
-        assert N_VIEWS == len(target._roster_views)
-        # Test
-        target.present_views(BUI.TIME_EVENT_CURRENT)
-        for view in target._roster_views.values():
-            assert view.called_present
-            assert BUI.TIME_EVENT_CURRENT == view.time
-
-    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-        # ('_model', 'model'),
-        ('_factory_display_name', 'new_display_name'),
-        ('_factory_editor_name', 'new_editor_name'),
-        ('_factory_display_summary', 'new_display_summary'),
-        ('_factory_editor_summary', 'new_editor_summary'),
-        ('_factory_display_title', 'new_display_title'),
-        ('_factory_editor_title', 'new_editor_title'),
-        ('_path', 'path'),
-        ])
-    def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
-        """Confirm model property is get-only.
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-
-        :param NAME_ATTR: name of attribute.
-        :param NAME_PROP: name of property.
-        :param tmp_path: built-in fixture `Pytest tmp_path`_
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        view = PatchObserverControlSheet(p_control=target)
-        target.add_view(view)
-        PATH = Path(tmp_path / 'path_factsheet.fsg')
-        target._path = PATH
-        value_attr = getattr(target, NAME_ATTR)
-        target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
-        value_prop = getattr(target, NAME_PROP)
-        # Test: get
-        assert target_prop.fget is not None
-        assert str(value_attr) == str(value_prop)
-        # Test: no set
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
-    @pytest.mark.parametrize('NAME, ESCAPED', [
-        ('<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
-        ('<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
-        ])
-    def test_property_name(self, NAME, ESCAPED):
-        """| Confirm model name property is get-only without markup errors.
-        | Case: name does not contain markup errors
-
-        #. Case: get
-        #. Case: no set
-        #. Case: no delete
-
-        :param NAME: name of factsheet.
-        :param ESCAPED: name of factsheet with markup errors escaped.
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        target_prop = getattr(CSHEET.ControlSheet, 'name')
-        model_name = target._model.name
-        model_name._set_persist(NAME)
-        # Test: get
-        assert target_prop.fget is not None
-        assert ESCAPED == target.name
-        # Test: no set
-        assert target_prop.fset is None
-        # Test: no delete
-        assert target_prop.fdel is None
-
-    def test_property_tag(self):
-        """Confirm value and access limits of tag property."""
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        target_prop = getattr(CSHEET.ControlSheet, 'tag')
-        # Test
-        assert target_prop.fget is not None
-        assert target._model.tag == target_prop.fget(target)
-        assert target_prop.fset is None
-        assert target_prop.fdel is None
-
-    def test_save(self, tmp_path):
-        """| Confirm write to file.
-        | Case: file does not exist.
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        target._path = PATH
-        target._model.set_stale()
-        assert not PATH.exists()
-        # Test
-        target.save()
-        assert target._model.is_fresh()
-        assert PATH.exists()
-        with PATH.open(mode='rb') as io_in:
-            model_disk = pickle.load(io_in)
-        assert model_disk is not None
-        assert target._model == model_disk
-
-    def test_save_except(self, monkeypatch, tmp_path):
-        """| Confirm write to file.
-        | Case: dump to file fails.
-
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param tmp_path: built-in fixture `Pytest tmp_path`_
-        """
-        # Setup
-        ERROR = 'Random Error'
-
-        def patch_dump(_object, _file):
-            raise pickle.PicklingError(ERROR)
-
-        monkeypatch.setattr(pickle, 'dump', patch_dump)
-        target = CSHEET.ControlSheet(p_path=None)
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        target._path = PATH
-        target._model.set_stale()
-        assert not PATH.exists()
-        # Test
-        with pytest.raises(CSHEET.DumpFileError) as exc_info:
-            target.save()
-        cause = exc_info.value.__cause__
-        assert isinstance(cause, pickle.PicklingError)
-        assert (ERROR,) == cause.args
-        assert ERROR == str(cause)
-
-    def test_save_new_path(self, tmp_path):
-        """| Confirm write to file.
-        | Case: replace path to save file.
-        """
-        # Setup
-        target = CSHEET.ControlSheet(p_path=None)
-        target._model.set_stale()
-        PATH = Path(tmp_path / 'saved_factsheet.fsg')
-        assert not PATH.exists()
-        # Test
-        target.save(p_path=PATH)
-        assert PATH is target.path
-        assert target._model.is_fresh()
-        assert PATH.exists()
-
     def test_open_file_save(self, tmp_path):
         """| Confirm file open.
         | Case: file does not exist.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
         """
         # Setup
         MODE = 'xb'
@@ -986,6 +636,8 @@ class TestControlSheet:
     def test_open_file_save_exists(self, tmp_path):
         """| Confirm file open.
         | Case: file exists.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
         """
         PATH = Path(tmp_path / 'saved_factsheet.fsg')
         TEXT = 'What, the curtains?'
@@ -1016,15 +668,345 @@ class TestControlSheet:
         with pytest.raises(CSHEET.NoFileError, match=MESSAGE):
             _io = target._open_file_save()
 
-
-class TestGlobal:
-    """Unit tests for :data:`.g_roster_factsheets`."""
-
-    def test_define(self):
-        """Confirm global definition."""
+    def test_present_views(self):
+        """Confirm sheet control notifies all its views."""
         # Setup
+        class PatchObserver(CSHEET.ObserverControlSheet):
+            def __init__(self, _control):
+                self.called_present = False
+                self.time = None
+
+            def erase(self): pass
+
+            def present(self, p_time):
+                self.called_present = True
+                self.time = p_time
+
+        target = CSHEET.ControlSheet(p_path=None)
+        N_VIEWS = 5
+        for _ in range(N_VIEWS):
+            view = PatchObserver(target)
+            target.add_view(p_view=view)
+        assert N_VIEWS == len(target._roster_views)
         # Test
-        assert isinstance(CSHEET.g_control_app, CSHEET.ControlApp)
+        target.present_views(BUI.TIME_EVENT_CURRENT)
+        for view in target._roster_views.values():
+            assert view.called_present
+            assert BUI.TIME_EVENT_CURRENT == view.time
+
+    @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
+        # ('_model', 'model'),
+        ('_factory_display_name', 'new_display_name'),
+        ('_factory_editor_name', 'new_editor_name'),
+        ('_factory_display_summary', 'new_display_summary'),
+        ('_factory_editor_summary', 'new_editor_summary'),
+        ('_factory_display_title', 'new_display_title'),
+        ('_factory_editor_title', 'new_editor_title'),
+        ('_path', 'path'),
+        ])
+    def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
+        """Confirm model property is get-only.
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
+        :param NAME_ATTR: name of attribute.
+        :param NAME_PROP: name of property.
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        target.add_view(view)
+        PATH = Path(tmp_path / 'path_factsheet.fsg')
+        target._path = PATH
+        value_attr = getattr(target, NAME_ATTR)
+        target_prop = getattr(CSHEET.ControlSheet, NAME_PROP)
+        value_prop = getattr(target, NAME_PROP)
+        # Test: get
+        assert target_prop.fget is not None
+        assert str(value_attr) == str(value_prop)
+        # Test: no set
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
+    @pytest.mark.parametrize('NAME, ESCAPED', [
+        ('<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
+        ('<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
+        ])
+    def test_property_name(self, NAME, ESCAPED):
+        """| Confirm model name property is get-only without markup errors.
+        | Case: name does not contain markup errors
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param NAME: name of factsheet.
+        :param ESCAPED: name of factsheet with markup errors escaped.
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target_prop = getattr(CSHEET.ControlSheet, 'name')
+        model_name = target._model.name
+        model_name._set_persist(NAME)
+        # Test: get
+        assert target_prop.fget is not None
+        assert ESCAPED == target.name
+        # Test: no set
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
+
+    def test_property_tag(self):
+        """Confirm value and access limits of tag property."""
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target_prop = getattr(CSHEET.ControlSheet, 'tag')
+        # Test
+        assert target_prop.fget is not None
+        assert target._model.tag == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+    def test_remove_all_views(self, monkeypatch):
+        """Confirm tracking stops for all sheet views.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        class PatchControlApp:
+            def __init__(self):
+                self.called = False
+                self.control_sheet = None
+
+            def remove_factsheet(self, p_control):
+                self.called = True
+                self.control_sheet = p_control
+
+        patch = PatchControlApp()
+        monkeypatch.setattr(
+            CSHEET.ControlApp, 'remove_factsheet', patch.remove_factsheet)
+        target = CSHEET.ControlSheet(p_path=None)
+        N_VIEWS = 5
+        for _ in range(N_VIEWS):
+            view = PatchObserverControlSheet(p_control=target)
+            target.add_view(p_view=view)
+        # Test
+        target.remove_all_views()
+        assert not target._roster_views
+        assert patch.called
+        assert target is patch.control_sheet
+
+    @pytest.mark.parametrize('I_REMOVE, I_REMOVE_END', [
+        (0, 3),
+        (3, 4),
+        (1, 3),
+        ])
+    def test_remove_topic(self, factory_control_sheet, I_REMOVE, I_REMOVE_END):
+        """Confirm method removes controls and relays request to model.
+
+        :param factory_control_sheet: fixture :func:`factory_control_sheet`.
+        :param I_REMOVE: index in list of topics fo topic to remove.
+        :param I_REMOVE_END: index of first topic after removed topics.
+        """
+        # Setup
+        target = factory_control_sheet()
+        tags_before = [t.tag for t in target._model.topics()]
+        for i, line_remove in enumerate(target._model._topics.lines()):
+            if i == I_REMOVE:
+                break
+        tags_after = set(tags_before[:I_REMOVE] + tags_before[I_REMOVE_END:])
+        # Test
+        target.remove_topic(line_remove)
+        tags_control = target._roster_topics.keys()
+        assert tags_control == tags_after
+        tags_model = {topic.tag for topic in target._model.topics()}
+        assert tags_model == tags_after
+
+    def test_remove_topic_none(self, factory_control_sheet):
+        """Confirm topics and controls unchanged when line is None.
+
+        :param factory_control_sheet: fixture :func:`factory_control_sheet`.
+        """
+        # Setup
+        target = factory_control_sheet()
+        tags_before = {t.tag for t in target._model.topics()}
+        # Test
+        target.remove_topic(None)
+        tags_control = target._roster_topics.keys()
+        assert tags_control == tags_before
+        tags_model = {topic.tag for topic in target._model.topics()}
+        assert tags_model == tags_before
+
+    def test_remove_view_is_safe_fresh(self):
+        """| Confirm return shows safe to erase.
+        | Case: no unsaved changes
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        target.add_view(view)
+        target._model.set_fresh()
+        # Test
+        assert target.remove_view_is_safe()
+
+    def test_remove_view_is_safe_multi(self):
+        """| Confirm return shows safe to erase.
+        | Case: multiple windows
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        target.add_view(view)
+        view_extra = PatchObserverControlSheet(p_control=target)
+        target.add_view(view_extra)
+        target._model.set_stale()
+        # Test
+        assert target.remove_view_is_safe()
+
+    def test_remove_view_is_safe_unsafe(self):
+        """Confirm return shows  not safe to erase."""
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        target.add_view(view)
+        target._model.set_stale()
+        # Test
+        assert not target.remove_view_is_safe()
+
+    def test_remove_view_multi(self):
+        """| Confirm tracking stops for given sheet view.
+        | Case: multiple views tracked.
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        target.add_view(view)
+        view_extra = PatchObserverControlSheet(p_control=target)
+        target.add_view(view_extra)
+        # Test
+        target.remove_view(view)
+        assert id_view not in target._roster_views
+
+    def test_remove_view_single(self, monkeypatch):
+        """| Confirm tracking stops for given sheet view.
+        | Case: single view tracked.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        class PatchControlApp:
+            def __init__(self):
+                self.called = False
+                self.control_sheet = None
+
+            def remove_factsheet(self, p_control):
+                self.called = True
+                self.control_sheet = p_control
+
+        patch = PatchControlApp()
+        monkeypatch.setattr(
+            CSHEET.ControlApp, 'remove_factsheet', patch.remove_factsheet)
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        target.add_view(view)
+        # Test
+        target.remove_view(view)
+        assert id_view not in target._roster_views
+        assert patch.called
+        assert target is patch.control_sheet
+
+    def test_remove_view_warn(self, caplog):
+        """| Confirm tracking stops for given sheet view.
+        | Case: view not tracked.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        view = PatchObserverControlSheet(p_control=target)
+        id_view = CSHEET.id_view_sheet(p_view_sheet=view)
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Missing: sheet 0x{:X} remove view 0x{:X}  '
+                       '(ControlSheet.remove_view)'
+                       ''.format(target.tag, id_view))
+        # Test
+        target.remove_view(view)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+
+    def test_save(self, tmp_path):
+        """| Confirm write to file.
+        | Case: file does not exist.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target._path = PATH
+        target._model.set_stale()
+        assert not PATH.exists()
+        # Test
+        target.save()
+        assert target._model.is_fresh()
+        assert PATH.exists()
+        with PATH.open(mode='rb') as io_in:
+            model_disk = pickle.load(io_in)
+        assert model_disk is not None
+        assert target._model == model_disk
+
+    def test_save_except(self, monkeypatch, tmp_path):
+        """| Confirm write to file.
+        | Case: dump to file fails.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
+        """
+        # Setup
+        ERROR = 'Random Error'
+
+        def patch_dump(_object, _file):
+            raise pickle.PicklingError(ERROR)
+
+        monkeypatch.setattr(pickle, 'dump', patch_dump)
+        target = CSHEET.ControlSheet(p_path=None)
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        target._path = PATH
+        target._model.set_stale()
+        assert not PATH.exists()
+        # Test
+        with pytest.raises(CSHEET.DumpFileError) as exc_info:
+            target.save()
+        cause = exc_info.value.__cause__
+        assert isinstance(cause, pickle.PicklingError)
+        assert (ERROR,) == cause.args
+        assert ERROR == str(cause)
+
+    def test_save_new_path(self, tmp_path):
+        """| Confirm write to file.
+        | Case: replace path to save file.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_
+        """
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target._model.set_stale()
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        assert not PATH.exists()
+        # Test
+        target.save(p_path=PATH)
+        assert PATH is target.path
+        assert target._model.is_fresh()
+        assert PATH.exists()
 
 
 class TestModule:
@@ -1034,18 +1016,27 @@ class TestModule:
         (CSHEET.FactsheetError, Exception),
         (CSHEET.BackupFileError, CSHEET.FactsheetError),
         (CSHEET.DumpFileError, CSHEET.FactsheetError),
-        # (CSHEET.LoadFileError, CSHEET.FactsheetError),
         (CSHEET.NoFileError, CSHEET.FactsheetError),
         (CSHEET.OpenFileError, CSHEET.FactsheetError),
         ])
     def test_exceptions(self, TARGET, SUPER):
-        """Confirm presence of exceptions."""
+        """Confirm presence of exceptions.
+
+        :param TARGET: exception under test.
+        :param SUPER: superclass of target exception.
+        """
         # Setup
         # Test
         assert issubclass(TARGET, SUPER)
 
+    def test_globals(self):
+        """Confirm global definitions."""
+        # Setup
+        # Test
+        assert isinstance(CSHEET.g_control_app, CSHEET.ControlApp)
+
     def test_id_view_sheet(self):
-        """Confirm id returned."""
+        """Confirm ID returned."""
         # Setup
         control = CSHEET.ControlSheet()
         view_sheet = PatchObserverControlSheet(p_control=control)
@@ -1087,7 +1078,11 @@ class TestObserverControlSheet:
         (CSHEET.ObserverControlSheet, 'present'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
-        """Confirm each abstract method is specified."""
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class under test.
+        :param NAME_METHOD: name of method under test.
+        """
         # Setup
         # Test
         assert hasattr(CLASS, '__abstractmethods__')

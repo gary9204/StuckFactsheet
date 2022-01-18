@@ -10,6 +10,7 @@ import typing
 # import factsheet.model.fact as MFACT
 # import factsheet.model.setindexed as MSET
 # import factsheet.model.table as MTABLE
+import factsheet.control.control_sheet as CSHEET
 import factsheet.model.topic as MTOPIC
 
 import gi   # type: ignore[import]
@@ -172,6 +173,33 @@ def new_model_topic(new_id_args):
 #         return sample
 #
 #     return _new_fact
+
+
+@pytest.fixture
+def factory_control_sheet():
+    """Pytest fixture: return factory for :class:`ControlSheet` with
+    model that includes sample topics outline.
+
+    :param p_top_facts: number of top-level facts.
+    :param p_depth_facts: number of outline levels below top level.
+    """
+    def new_sheet(*, p_n_top_facts=4, p_n_depth_facts=2):
+        TITLE_SHEET = 'Something completely different.'
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet._model.name.text = TITLE_SHEET
+        for i in range(p_n_top_facts):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            result = control_sheet.insert_topic_before(topic, None)
+            if 0 == i:
+                parent = result
+        for j in range(p_n_depth_facts):
+            name = '\t'*(j+1) + 'Topic {}'.format(j + p_n_top_facts)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            parent = control_sheet.insert_topic_child(topic, parent)
+        return control_sheet
+
+    return new_sheet
 
 
 # @pytest.fixture
