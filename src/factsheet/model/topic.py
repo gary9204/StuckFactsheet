@@ -70,12 +70,11 @@ class Topic(MIDCORE.IdCore[Name, Summary, Title]):
 
         :param p_other: object to compare with self.
         """
-        raise NotImplementedError
         if not super().__eq__(p_other):
             return False
 
-        if self._facts != p_other._facts:
-            return False
+        # if self._facts != p_other._facts:
+        #     return False
 
         return True
 

@@ -62,7 +62,6 @@ class TestTopic:
         # # Test
         # assert item_test not in target
 
-    @pytest.mark.skip
     def test_eq(self):
         """Confirm equivalence operator.
 
@@ -71,36 +70,36 @@ class TestTopic:
         #. Case: facts outline diffrence.
         #. Case: Equivalence
         """
-        # # Setup
-        # source = MTOPIC.Topic()
-        # TITLE = 'The Parrot Sketch'
-        # source.title.text = TITLE
-        # TEXT = 'Something completely different'
+        # Setup
+        source = MTOPIC.Topic(p_name='', p_summary='', p_title='')
+        TITLE = 'The Parrot Sketch'
+        source.title.text = TITLE
+        TEXT = 'Something completely different'
         # N_FACTS = 5
         # facts_source = [MFACT.Fact(p_topic=source) for _ in range(N_FACTS)]
         # for fact in facts_source:
         #     _ = source._facts.insert_before(fact)
-        # # Test: type difference
-        # assert not source.__eq__(TITLE)
-        # # Test: identity difference
-        # target = MTOPIC.Topic()
-        # target.title.text = TEXT
-        # assert not source.__eq__(target)
-        # # Test: Facts outline diffrence
+        # Test: type difference
+        assert not source.__eq__(TITLE)
+        # Test: identity difference
+        target = MTOPIC.Topic(p_name='', p_summary='', p_title='')
+        target.title.text = TEXT
+        assert not source.__eq__(target)
+        # Test: Facts outline diffrence
         # target = MTOPIC.Topic()
         # target.title.text = TITLE
         # facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]
         # for fact in facts_target:
         #     _ = target._facts.insert_before(fact)
         # assert not source.__eq__(target)
-        # # Test: Equivalence
-        # target = MTOPIC.Topic()
-        # target._stale = True
-        # target.title.text = TITLE
+        # Test: Equivalence
+        target = MTOPIC.Topic(p_name='', p_summary='', p_title='')
+        target._stale = True
+        target.title.text = TITLE
         # for fact in facts_source:
         #     _ = target._facts.insert_before(fact)
-        # assert source.__eq__(target)
-        # assert not source.__ne__(target)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
 
     # def test_get_set_state(self, new_id_args, tmp_path):
     #     """Confirm conversion to and from pickle format."""
