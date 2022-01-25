@@ -16,6 +16,8 @@ class TestModule:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (MSHEET.Name, BUI.ModelTextMarkup),
         (MSHEET.Summary, BUI.ModelTextStyled),
+        (MSHEET.OutlineTopics.__dict__['__origin__'], BUI.ModelOutlineMulti),
+        (MSHEET.OutlineTopics.__dict__['__args__'], (MTOPIC.Topic, )),
         (MSHEET.Title, BUI.ModelTextMarkup),
         (MSHEET.TagSheet.__qualname__, 'NewType.<locals>.new_type'),
         (MSHEET.TagSheet.__dict__['__supertype__'], int),
@@ -335,6 +337,28 @@ class TestSheet:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
+        ('outline_topics', '_topics'),
+        ])
+    def test_property_access(self, new_id_args, NAME_PROP, NAME_ATTR):
+        """Confirm access limits of each property.
+
+        :param new_id_args: fixture :func:`.new_id_args`.
+        :param NAME_PROP: name of property.
+        :param NAME_ATTR: name of attribute.
+        """
+        # Setup
+        ID_ARGS = new_id_args()
+        target = MSHEET.Sheet(**ID_ARGS)
+        attr = getattr(target, NAME_ATTR)
+        CLASS = MSHEET.Sheet
+        target_prop = getattr(CLASS, NAME_PROP)
+        # Test
+        assert target_prop.fget is not None
+        assert target_prop.fget(target) is attr
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
 
     def test_property_tag(self, new_id_args):
         """Confirm value and access limits of tag property.

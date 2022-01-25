@@ -209,6 +209,9 @@ FactoryEditorName = BUI.FactoryEditorTextMarkup
 FactoryEditorSummary = BUI.FactoryEditorTextStyled
 FactoryEditorTitle = BUI.FactoryEditorTextMarkup
 
+FactoryViewOutlineTopics = BUI.FactoryViewOutline[
+    BUI.ViewOutline, MTOPIC.Topic]
+
 IdViewSheet = typing.NewType('IdViewSheet', int)
 
 
@@ -298,10 +301,13 @@ class ControlSheet:
             FactoryDisplaySummary(self._model.summary))
         self._factory_display_title = FactoryDisplayTitle(self._model.title)
 
+        self._factory_editor_name = FactoryEditorName(self._model.name)
         self._factory_editor_summary = (
             FactoryEditorSummary(self._model.summary))
-        self._factory_editor_name = FactoryEditorName(self._model.name)
         self._factory_editor_title = FactoryEditorTitle(self._model.title)
+
+        self._factory_view_outline_topics = (
+            FactoryViewOutlineTopics(self._model.outline_topics))
 
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()

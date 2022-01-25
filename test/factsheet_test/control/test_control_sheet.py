@@ -260,6 +260,7 @@ class TestControlSheet:
         model_name = target._model.name
         model_summary = target._model.summary
         model_title = target._model.title
+        model_topics = target._model.outline_topics
 
         factory_display_name = target._factory_display_name
         assert isinstance(factory_display_name, CSHEET.FactoryDisplayName)
@@ -281,6 +282,10 @@ class TestControlSheet:
         factory_editor_title = target._factory_editor_title
         assert isinstance(factory_editor_title, CSHEET.FactoryEditorTitle)
         assert factory_editor_title._ui_model is model_title._ui_model
+
+        factory_view_outline_topics = target._factory_view_outline_topics
+        assert (
+            factory_view_outline_topics._ui_model is model_topics.ui_model)
 
         assert isinstance(target._roster_views, dict)
         assert not target._roster_views
@@ -1060,6 +1065,10 @@ class TestModule:
         (CSHEET.FactoryEditorName, BUI.FactoryEditorTextMarkup),
         (CSHEET.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
         (CSHEET.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
+        (CSHEET.FactoryViewOutlineTopics.__dict__['__origin__'],
+            BUI.FactoryViewOutline),
+        (CSHEET.FactoryViewOutlineTopics.__dict__['__args__'],
+            (BUI.ViewOutline, MTOPIC.Topic)),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdViewSheet.__dict__['__supertype__'], int),
         ])

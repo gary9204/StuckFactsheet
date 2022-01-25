@@ -122,8 +122,8 @@ class FactoryViewOutline(BBASE.FactoryUiViewAbstract[UiModelOutline],
 
     def __call__(self) -> ViewOutline:
         """Return view for outline."""
-        chooser = Gtk.TreeView(model=self._ui_model)
-        return chooser
+        view = Gtk.TreeView(model=self._ui_model)
+        return view
 
 
 class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],

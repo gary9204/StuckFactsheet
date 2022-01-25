@@ -34,6 +34,7 @@ logger = logging.getLogger('Main.model.sheet')
 
 Name = BUI.ModelTextMarkup
 Summary = BUI.ModelTextStyled
+OutlineTopics = BUI.ModelOutlineMulti[MTOPIC.Topic]
 Title = BUI.ModelTextMarkup
 TagSheet = typing.NewType('TagSheet', int)
 
@@ -86,7 +87,7 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
         self._name = Name(p_text=p_name)
         self._summary = Summary(p_text=p_summary)
         self._title = Title(p_text=p_title)
-        self._topics = BUI.ModelOutlineMulti[MTOPIC.Topic]()
+        self._topics = OutlineTopics()
         super().__init__(**kwargs)
 
     def clear(self) -> None:
@@ -169,6 +170,11 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
                 return True
 
         return False
+
+    @property
+    def outline_topics(self) -> OutlineTopics:
+        """Return topics outline."""
+        return self._topics
 
     def remove_topic(self, p_line: BUI.LineOutline) -> None:
         """Mark topics outline stale and remove topic from outline.
