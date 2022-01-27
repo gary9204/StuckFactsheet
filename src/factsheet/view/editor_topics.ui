@@ -627,7 +627,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkFrame" id="ui_outline_topics">
+  <object class="GtkFrame" id="ui_editor_topics">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="label_xalign">0.5</property>

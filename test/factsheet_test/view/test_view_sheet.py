@@ -504,6 +504,44 @@ class TestViewSheet:
         # assert not target._close_window
         assert target._window.is_visible()
 
+    @pytest.mark.parametrize('NAME_HELPER', [
+        '_init_name_sheet',
+        '_init_summary_sheet',
+        '_init_title_sheet',
+        '_init_topics',
+        ])
+    def test_init_helpers(self, NAME_HELPER, monkeypatch, patch_set_app):
+        """| Confirm initialization.
+        | Case: helper function calls.
+
+        :param NAME_HELPER: name of helper under test.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param patch_set_app: fixture :func:`.patch_set_app`.
+        """
+        # Setup
+        class PatchHelper:
+            def __init__(self):
+                self.called = False
+                self.name_get = 'Oops'
+
+            def helper(self, p_get_object):
+                self.called = True
+                self.name_get = p_get_object.__name__
+
+        patch_helper = PatchHelper()
+        monkeypatch.setattr(
+            VSHEET.ViewSheet, NAME_HELPER, patch_helper.helper)
+
+        patch = patch_set_app
+        control = CSHEET.g_control_app.open_factsheet(
+            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
+        NAME_GET = 'get_object'
+        # Test
+        _target = VSHEET.ViewSheet(p_control=control)
+        assert patch.called
+        assert patch_helper.called
+        assert NAME_GET == patch_helper.name_get
+
     @pytest.mark.parametrize('ACTION', [
         'show-about-app',
         'show-help-app',
@@ -537,6 +575,65 @@ class TestViewSheet:
         target = VSHEET.ViewSheet(p_control=control)
         # Test
         assert target._window.lookup_action(ACTION) is not None
+
+    def test_helper_init_topics(self, monkeypatch):
+        """Confirm helper creates topics editor in sheet view.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        class PatchGetObject:
+            def __init__(self):
+                self.called = False
+                self.ui = 'Oops'
+                self.ui_view = Gtk.Box()
+
+            def get_object(self, p_ui):
+                self.called = True
+                self.ui = p_ui
+                return self.ui_view
+
+        patch_get_object = PatchGetObject()
+
+        class PatchSite:
+            def __init__(self):
+                self.clear()
+
+            def clear(self):
+                self.called = False
+                self.ui_view = None
+                self.expand_okay = None
+                self.fill_okay = None
+                self.n_padding = -1
+
+            def pack_start(
+                    self, p_view, p_exapnd_okay, p_fill_okay, p_n_padding):
+                self.called = True
+                self.ui_view = p_view
+                self.expand_okay = p_exapnd_okay
+                self.fill_okay = p_fill_okay
+                self.n_padding = p_n_padding
+
+        patch_site = PatchSite()
+        monkeypatch.setattr(Gtk.Box, 'pack_start', patch_site.pack_start)
+
+        SITE_UI = 'ui_site_topics'
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 0
+        control = CSHEET.g_control_app.open_factsheet(
+            p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
+        target = VSHEET.ViewSheet(p_control=control)
+        patch_site.clear()
+        # Test
+        target._init_topics(patch_get_object.get_object)
+        assert patch_get_object.called
+        assert SITE_UI == patch_get_object.ui
+        assert patch_site.called
+        assert isinstance(patch_site.ui_view, Gtk.Frame)
+        assert EXPAND_OKAY == patch_site.expand_okay
+        assert FILL_OKAY == patch_site.fill_okay
+        assert N_PADDING == patch_site.n_padding
 
     def test_helper_init_summary(self, monkeypatch):
         """Confirm helper creates summary field in sheet view.
@@ -1394,7 +1491,7 @@ class TestViewSheet:
         # Setup
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
-        id_control = CSHEET.id_factsheet(p_control_sheet=control)
+        id_control = control.tag
         target = VSHEET.ViewSheet(p_control=control)
         # Test
         target.on_delete_sheet(None, None)
@@ -1414,7 +1511,7 @@ class TestViewSheet:
             Gtk.Dialog, 'run', lambda _s: Gtk.ResponseType.APPLY)
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
-        id_control = CSHEET.id_factsheet(p_control_sheet=control)
+        id_control = control.tag
         target = VSHEET.ViewSheet(p_control=control)
         # Test
         target.on_delete_sheet(None, None)
@@ -1434,7 +1531,7 @@ class TestViewSheet:
             Gtk.Dialog, 'run', lambda _s: Gtk.ResponseType.CANCEL)
         control = CSHEET.g_control_app.open_factsheet(
             p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
-        id_control = CSHEET.id_factsheet(p_control_sheet=control)
+        id_control = control.tag
         target = VSHEET.ViewSheet(p_control=control)
         id_target = CSHEET.id_view_sheet(p_view_sheet=target)
         # Test
@@ -2014,7 +2111,7 @@ class TestViewSheet:
                 self.called = True
                 self.time = p_time
                 sheet = CSHEET.ControlSheet(p_path=p_path)
-                self.id_sheet = CSHEET.id_factsheet(sheet)
+                self.id_sheet = sheet.tag
                 CSHEET.g_control_app._roster_sheets[self.id_sheet] = sheet
                 return sheet
 
@@ -2085,7 +2182,7 @@ class TestViewSheet:
                 self.called = True
                 self.time = p_time
                 sheet = CSHEET.ControlSheet(p_path=p_path)
-                self.id_sheet = CSHEET.id_factsheet(sheet)
+                self.id_sheet = sheet.tag
                 CSHEET.g_control_app._roster_sheets[self.id_sheet] = sheet
                 return None
 

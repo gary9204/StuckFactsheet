@@ -6,12 +6,12 @@ import logging
 from pathlib import Path
 import traceback as TB
 import typing   # noqa
-import warnings
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 # from factsheet.view import query_place as QPLACE
 # from factsheet.view import query_template as QTEMPLATE
+import factsheet.view.editor_topics as VTOPICS
 import factsheet.view.view_markup as VMARKUP
 # from factsheet.view import scenes as VSCENES
 # from factsheet.view import view_infoid as VINFOID
@@ -275,6 +275,7 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         self._init_name_sheet(get_object)
         self._init_summary_sheet(get_object)
         self._init_title_sheet(get_object)
+        self._init_topics(get_object)
 
         # Components
         # self._context_summary = get_object('ui_context_summary')
@@ -448,6 +449,17 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         site_title_sheet = p_get_object('ui_site_title_sheet')
         site_title_sheet.pack_start(
             view_title.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+
+    def _init_topics(self, p_get_object: 'gi.FunctionInfo') -> None:
+        """Initialize editor for topics outline."""
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 0
+
+        site_topics = p_get_object('ui_site_topics')
+        editor_topics = VTOPICS.EditorTopics(p_control_sheet=self._control)
+        site_topics.pack_start(
+            editor_topics.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def close_topic(self, p_id) -> None:
         # def close_topic(self, p_id: VTYPES.TagTopic) -> None:

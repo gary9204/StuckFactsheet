@@ -331,6 +331,7 @@ class ControlSheet:
             name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOP_TOPICS)
             topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
             parent = self.insert_topic_child(topic, parent)
+        self._model.set_fresh()
 
     def add_view(self, p_view: 'ObserverControlSheet') -> None:
         """Add given view to collection of active views.

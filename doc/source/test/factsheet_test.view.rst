@@ -19,6 +19,7 @@ Submodules
 
 .. toctree::
 
+   factsheet_test.view.test_editor_topics
    factsheet_test.view.test_ui
    factsheet_test.view.test_view_markup
    factsheet_test.view.test_view_sheet
