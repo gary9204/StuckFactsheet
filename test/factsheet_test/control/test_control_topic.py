@@ -106,36 +106,39 @@ class TestControlTopic:
         assert target_prop.fset is None
         assert target_prop.fdel is None
 
-    # @pytest.mark.parametrize('NAME, ESCAPED', [
-    #     ('<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
-    #     ('<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
-    #     ])
-    # def test_property_name(self, new_model_topic, NAME, ESCAPED):
-    #     """| Confirm model name property is get-only without markup errors.
-    #     | Case: name does not contain markup errors
-    #
-    #     #. Case: get
-    #     #. Case: no set
-    #     #. Case: no delete
-    #
-    #     :param new_model_topic: fixture :func:`.new_model_topic`.
-    #     :param NAME: name of factsheet.
-    #     :param ESCAPED: name of factsheet with markup errors escaped.
-    #     """
-    #     # Setup
-    #     N_FACTS = 5
-    #     MODEL = new_model_topic(N_FACTS)
-    #     target = CTOPIC.ControlTopic(p_model=MODEL)
-    #     target_prop = getattr(CTOPIC.ControlTopic, 'name')
-    #     model_name = target._model.name
-    #     model_name._set_persist(NAME)
-    #     # Test: get
-    #     assert target_prop.fget is not None
-    #     assert ESCAPED == target.name
-    #     # Test: no set
-    #     assert target_prop.fset is None
-    #     # Test: no delete
-    #     assert target_prop.fdel is None
+    @pytest.mark.parametrize('NAME, TEXT, ESCAPED', [
+        ('name', '<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
+        ('name', '<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
+        ('title', '<b>Parrot</b> Sketch', '<b>Parrot</b> Sketch'),
+        ('title', '<b>Parrot<b Sketch', '&lt;b&gt;Parrot&lt;b Sketch'),
+        ])
+    def test_property_name(self, new_model_topic, NAME, TEXT, ESCAPED):
+        """| Confirm model name property is get-only without markup errors.
+        | Case: name does not contain markup errors
+
+        #. Case: get
+        #. Case: no set
+        #. Case: no delete
+
+        :param new_model_topic: fixture :func:`.new_model_topic`.
+        :param NAME: name property to check.
+        :param TEXT: contents of property
+        :param ESCAPED: name of factsheet with markup errors escaped.
+        """
+        # Setup
+        N_FACTS = 5
+        MODEL = new_model_topic(N_FACTS)
+        target = CTOPIC.ControlTopic(p_model=MODEL)
+        target_prop = getattr(CTOPIC.ControlTopic, NAME)
+        model_prop = getattr(target._model, NAME)
+        model_prop._set_persist(TEXT)
+        # Test: get
+        assert target_prop.fget is not None
+        assert ESCAPED == target_prop.fget(target)
+        # Test: no set
+        assert target_prop.fset is None
+        # Test: no delete
+        assert target_prop.fdel is None
 
     # @pytest.mark.parametrize('NAME_ATTR, NAME_PROP, HAS_SETTER', [
     #     ('_topic', 'topic', False),

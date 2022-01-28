@@ -21,7 +21,7 @@ Classes
 # import logging
 import typing   # noqa
 
-# import factsheet.bridge_ui as BUI
+import factsheet.bridge_ui as BUI
 import factsheet.model.topic as MTOPIC
 # import factsheet.control.control_fact as CFACT
 # import factsheet.control.control_idcore as CIDCORE
@@ -115,11 +115,17 @@ class ControlTopic:
         # except KeyError:
         #     return None
 
-    # @property
-    # def name(self) -> str:
-    #     """Return sheet name without markup errors."""
-    #     name = BUI.escape_text_markup(self._model.name.text)
-    #     return name
+    @property
+    def name(self) -> str:
+        """Return topic name without markup errors."""
+        name = BUI.escape_text_markup(self._model.name.text)
+        return name
+
+    @property
+    def title(self) -> str:
+        """Return topic title without markup errors."""
+        title = BUI.escape_text_markup(self._model.title.text)
+        return title
 
     @property
     def new_display_name(self) -> MTOPIC.DisplayName:
