@@ -14,6 +14,27 @@ Factsheets.
 
    Path to directory that contains user interface definition files.
 
+Exceptions
+----------
+
+.. exception:: ExceptionUi
+
+    Bases: :exc:`.Exception`
+
+    Base class for exceptions acessing user interface elements.
+
+.. exception:: UiDescriptionError
+
+    Bases: :exc:`.ExceptionUi`
+
+    Raise when user interface description is not accessible.
+
+.. exception:: UiObjectNotFoundError
+
+    Bases: :exc:`.ExceptionUi`
+
+    Raise when no object found for a given user interface ID.
+
 Sheet Dialogs
 -------------
 All factsheet pages share guidance dialogs.
@@ -147,6 +168,8 @@ implementation-specific details.
 .. note:: No fact type aliases yet.
 
 """
+import abc
+import logging
 import typing
 
 from pathlib import Path
@@ -157,6 +180,20 @@ import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+logger = logging.getLogger('Main.UI')
+
+
+class ExceptionUi(Exception):
+    pass
+
+
+class UiDescriptionError(ExceptionUi):
+    pass
+
+
+class UiObjectNotFoundError(ExceptionUi):
+    pass
 
 # Factshet-level Definitions
 # CLOSE_GTK = False
@@ -248,3 +285,92 @@ def new_action_active_dialog(p_group: Gio.SimpleActionGroup,
     action = Gio.SimpleAction.new(p_name, None)
     p_group.add_action(action)
     action.connect('activate', p_handler, p_dialog)
+
+
+class GetUiView(abc.ABC):
+    """Get user interface element with supplemental failure information.
+
+    `Gtk.Builder`_ aborts if there is an error opening a user interface
+    description file or parsing a description.
+    `Gtk.Builder.get_object()`_ returns None when the method cannot find
+    the object for a given ID.  Class :class:`GetUiView` augments
+    `Gtk.Builder`_ to provide more information when a failure occurs.
+
+    .. _`Gtk.Builder`:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html
+
+    .. _`Gtk.Builder.get_object()`:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/
+        Builder.html#Gtk.Builder.get_object
+    """
+    _builder: Gtk.Builder
+
+    @abc.abstractmethod
+    def __init__(self, **_kwargs) -> None:
+        """Log start of user interface construction.
+
+        Each subclass must extend this method by initializing the
+        underlying builder attribute (`_builder`).
+        """
+        logger.debug('Building UI description ...')
+
+    def __call__(self, p_id_ui: str) -> typing.Any:
+        """Return user interface element with given ID.
+
+        :param p_id_ui: ID of desired element.
+        :raises UiObjectNotFoundError: when no element matches ID.
+        """
+        ui_element = self._builder.get_object(p_id_ui)
+        if ui_element is None:
+            MESSAGE = 'No element found for ID {}.'.format(p_id_ui)
+            raise UiObjectNotFoundError(MESSAGE)
+        return ui_element
+
+
+class GetUiViewByPath(GetUiView):
+    """Extend :class:`.GetUiView` with 'Gtk.Bujilder`_ from file."""
+
+    def __init__(self, *, p_path: Path, **kwargs) -> None:
+        """Initialize underlying builder and log source of description.
+
+        :param p_path: location of user interface description file.
+        :raises UiDescriptionError: when user interface description is
+            missing or inaccessible.
+        """
+        super().__init__(**kwargs)
+        logger.debug('... from file {}.'.format(str(p_path)))
+        try:    # Reduce potential for new_from_file() abort.
+            with p_path.open() as _io_none:
+                pass
+        except Exception as err_access:
+            MESSAGE = ('Could not access description file "{}".'
+                       ''.format(p_path.name))
+            raise UiDescriptionError(MESSAGE) from err_access
+        self._builder = Gtk.Builder.new_from_file(str(p_path))
+
+
+class GetUiViewByStr(GetUiView):
+    """Extend :class:`.GetUiView` with 'Gtk.Bujilder`_ from file."""
+
+    def __init__(self, *, p_string: str, **kwargs) -> None:
+        """Initialize underlying builder and log source of description.
+
+        :param p_string: string containing user interface description.
+        :param kwargs: superclass keyword parameters.
+        """
+        super().__init__(**kwargs)
+        logger.debug('... from string.')
+        ALL = -1
+        self._builder = Gtk.Builder.new_from_string(p_string, ALL)
+
+    def __call__(self, p_id: str) -> typing.Any:
+        """Return object with given ID.
+
+        :param p_id: ID of desired object.
+        :raises UiObjectNotFoundError: when no object matches ID.
+        """
+        ui_object = self._builder.get_object(p_id)
+        if ui_object is None:
+            MESSAGE = 'No object found for ID {}.'.format(p_id)
+            raise UiObjectNotFoundError(MESSAGE)
+        return ui_object
