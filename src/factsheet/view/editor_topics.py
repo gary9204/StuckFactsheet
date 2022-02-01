@@ -53,6 +53,19 @@ class EditorTopics:
         self._ui_outline_topics.append_column(column_name)
         column_title = self._new_column_title()
         self._ui_outline_topics.append_column(column_title)
+        self._init_buttons_depth(get_ui_view)
+
+    def _init_buttons_depth(self, p_get_ui_view: UI.GetUiView) -> None:
+        """Initialize buttons to expand and collapse the topics outline.
+
+        :param p_get_ui_view: method to get user interface element.
+        """
+        button_collapse = p_get_ui_view('ui_tool_collapse_outline')
+        _ = button_collapse.connect(
+            'clicked', lambda _button: self._ui_outline_topics.collapse_all())
+        button_expand = p_get_ui_view('ui_tool_expand_outline')
+        _ = button_expand.connect(
+            'clicked', lambda _button: self._ui_outline_topics.expand_all())
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,

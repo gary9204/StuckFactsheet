@@ -8,6 +8,7 @@ import gi   # type: ignore[import]
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.model.topic as MTOPIC
+import factsheet.view.ui as UI
 import factsheet.view.editor_topics as VTOPICS
 
 gi.require_version('Gtk', '3.0')
@@ -36,6 +37,36 @@ class TestEditorTopics:
         assert N_COLUMNS == len(columns)
         assert TITLE_C_NAME == columns[C_NAME].get_title()
         assert TITLE_C_TITLE == columns[C_TITLE].get_title()
+
+    def test_init_buttons_depth(self, monkeypatch):
+        """Confirm initialization of expand and contract buttons."""
+        # Setup
+        EXPECT = dict(ui_tool_collapse_outline='clicked',
+                      ui_tool_expand_outline='clicked')
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        get_ui_view = UI.GetUiViewByStr(p_string_ui='')
+
+        class PatchCalls:
+            def __init__(self):
+                self.signals = dict()
+
+            def get_ui_view(self, p_id_button):
+                self.signals[p_id_button] = None
+                return Gtk.Button
+
+            def connect(self, p_signal, _handler):
+                id_button, _ = self.signals.popitem()
+                self.signals[id_button] = p_signal
+
+        patch_calls = PatchCalls()
+        monkeypatch.setattr(
+            UI.GetUiViewByStr, '__call__', patch_calls.get_ui_view)
+        monkeypatch.setattr(Gtk.Button, 'connect', patch_calls.connect)
+        # Test
+        target._init_buttons_depth(get_ui_view)
+        for id_button, signal in EXPECT.items():
+            assert signal == patch_calls.signals[id_button]
 
     @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
         ('_markup_cell_name', 0, 'Name 0'),
