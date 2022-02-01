@@ -7,6 +7,7 @@ import gi   # type: ignore[import]
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
+import factsheet.model.topic as MTOPIC
 import factsheet.view.editor_topics as VTOPICS
 
 gi.require_version('Gtk', '3.0')
@@ -20,10 +21,113 @@ class TestEditorTopics:
         """Confirm initialization."""
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
+        N_COLUMNS = 2
+        C_NAME = 0
+        TITLE_C_NAME = 'Name'
+        C_TITLE = 1
+        TITLE_C_TITLE = 'Title'
         # Test
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
         assert target._control_sheet is control_sheet
         assert isinstance(target._ui_view, Gtk.Frame)
+        assert target._ui_outline_topics.get_model() is (
+            target._control_sheet.new_view_topics._ui_model)
+        columns = target._ui_outline_topics.get_columns()
+        assert N_COLUMNS == len(columns)
+        assert TITLE_C_NAME == columns[C_NAME].get_title()
+        assert TITLE_C_TITLE == columns[C_TITLE].get_title()
+
+    @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
+        ('_markup_cell_name', 0, 'Name 0'),
+        ('_markup_cell_name', 3, 'Name 3'),
+        ('_markup_cell_title', 2, 'Title 2'),
+        ('_markup_cell_title', 4, 'Title 4'),
+        ])
+    def test_markup_cell(self, METHOD, I_LINE, EXPECT):
+        """Confirm cell data function updates column text."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet.clear()
+        N_TOPICS = 5
+        for i in range(N_TOPICS):
+            name = 'Name {}'.format(i)
+            title = 'Title {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
+            control_sheet.insert_topic_before(p_topic=topic, p_line=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        target_method = getattr(target, METHOD)
+        column = Gtk.TreeViewColumn()
+        render = Gtk.CellRendererText()
+        column.pack_start(render, expand=True)
+        ui_model_topics = control_sheet._model._topics.ui_model
+        line = ui_model_topics.get_iter_from_string(str(I_LINE))
+        # Test
+        target_method(None, render, None, line, None)
+        assert EXPECT == render.get_property('text')
+
+    @pytest.mark.parametrize('METHOD', [
+        ('_markup_cell_name'),
+        ('_markup_cell_title'),
+        ])
+    def test_markup_cell_none(self, METHOD):
+        """Confirm cell data function updates column text."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet.clear()
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        target_method = getattr(target, METHOD)
+        column = Gtk.TreeViewColumn()
+        render = Gtk.CellRendererText()
+        column.pack_start(render, expand=True)
+        ui_model_topics = control_sheet._model._topics.ui_model
+        ui_model_topics.append(None, [None])
+        line = ui_model_topics.get_iter_first()
+        EXPECT = 'Missing'
+        # Test
+        target_method(None, render, None, line, None)
+        assert EXPECT == render.get_property('text')
+
+    def test_new_column_name(self):
+        """Confirm name column construction."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet.clear()
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        TITLE = 'Name'
+        I_NAME = 0
+        WIDTH_MIN = 12
+        # Test
+        column = target._new_column_name()
+        assert isinstance(column, Gtk.TreeViewColumn)
+        assert TITLE == column.get_title()
+        cells = column.get_cells()
+        render = cells[I_NAME]
+        assert isinstance(render, Gtk.CellRendererText)
+        assert column.get_clickable()
+        assert WIDTH_MIN == column.get_min_width()
+        assert column.get_resizable()
+        assert column.get_reorderable()
+
+    def test_new_column_title(self):
+        """Confirm title column construction."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet.clear()
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        TITLE = 'Title'
+        I_TITLE = 0
+        WIDTH_MIN = 12
+        # Test
+        column = target._new_column_title()
+        assert isinstance(column, Gtk.TreeViewColumn)
+        assert TITLE == column.get_title()
+        cells = column.get_cells()
+        render = cells[I_TITLE]
+        assert isinstance(render, Gtk.CellRendererText)
+        assert column.get_clickable()
+        assert WIDTH_MIN == column.get_min_width()
+        assert column.get_resizable()
+        assert column.get_reorderable()
 
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
         ('ui_view', '_ui_view'),

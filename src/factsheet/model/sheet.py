@@ -22,6 +22,11 @@ class representing the model of a factsheet.
     Type alias for title of Factsheet.  See
     :data:`~.control_sheet.DisplayTitle` and
     :data:`~.control_sheet.EditorTitle`.
+
+.. data:: Topics
+
+    Type alias for topics of Factsheet.  See
+    :data:`~.control_sheet.ViewTopics`.
 """
 import logging
 import typing   # noqa

@@ -866,7 +866,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow" id="ui_site_outline_topics">
+                  <object class="GtkScrolledWindow" id="ui_site_topics">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="shadow_type">in</property>
@@ -888,7 +888,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkStack" id="ui_site_topics">
+              <object class="GtkStack" id="ui_stack_topics">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>

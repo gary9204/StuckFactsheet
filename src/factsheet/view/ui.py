@@ -328,40 +328,40 @@ class GetUiView(abc.ABC):
 
 
 class GetUiViewByPath(GetUiView):
-    """Extend :class:`.GetUiView` with 'Gtk.Bujilder`_ from file."""
+    """Extend :class:`.GetUiView` with `Gtk.Builder`_ from file."""
 
-    def __init__(self, *, p_path: Path, **kwargs) -> None:
+    def __init__(self, *, p_path_ui: Path, **kwargs) -> None:
         """Initialize underlying builder and log source of description.
 
-        :param p_path: location of user interface description file.
+        :param p_path_ui: location of user interface description file.
         :raises UiDescriptionError: when user interface description is
             missing or inaccessible.
         """
         super().__init__(**kwargs)
-        logger.debug('... from file {}.'.format(str(p_path)))
+        logger.debug('... from file {}.'.format(str(p_path_ui)))
         try:    # Reduce potential for new_from_file() abort.
-            with p_path.open() as _io_none:
+            with p_path_ui.open() as _io_none:
                 pass
         except Exception as err_access:
             MESSAGE = ('Could not access description file "{}".'
-                       ''.format(p_path.name))
+                       ''.format(p_path_ui.name))
             raise UiDescriptionError(MESSAGE) from err_access
-        self._builder = Gtk.Builder.new_from_file(str(p_path))
+        self._builder = Gtk.Builder.new_from_file(str(p_path_ui))
 
 
 class GetUiViewByStr(GetUiView):
-    """Extend :class:`.GetUiView` with 'Gtk.Bujilder`_ from file."""
+    """Extend :class:`.GetUiView` with `Gtk.Builder`_ from string."""
 
-    def __init__(self, *, p_string: str, **kwargs) -> None:
+    def __init__(self, *, p_string_ui: str, **kwargs) -> None:
         """Initialize underlying builder and log source of description.
 
-        :param p_string: string containing user interface description.
+        :param p_string_ui: string containing user interface description.
         :param kwargs: superclass keyword parameters.
         """
         super().__init__(**kwargs)
         logger.debug('... from string.')
         ALL = -1
-        self._builder = Gtk.Builder.new_from_string(p_string, ALL)
+        self._builder = Gtk.Builder.new_from_string(p_string_ui, ALL)
 
     def __call__(self, p_id: str) -> typing.Any:
         """Return object with given ID.

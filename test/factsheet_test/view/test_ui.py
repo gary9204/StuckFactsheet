@@ -240,7 +240,7 @@ class TestGetUiObjectPath:
         LAST = -1
         log_message = '... from file {}.'.format(str(PATH))
         # Test
-        target = UI.GetUiViewByPath(p_path=PATH)
+        target = UI.GetUiViewByPath(p_path_ui=PATH)
         assert N_LOGS == len(caplog.records)
         record = caplog.records[LAST]
         assert log_message == record.message
@@ -262,7 +262,7 @@ class TestGetUiObjectPath:
         MATCH = 'Could not access description file "{}".'.format(PATH.name)
         # Test
         with pytest.raises(UI.UiDescriptionError, match=MATCH) as exc_info:
-            _target = UI.GetUiViewByPath(p_path=PATH)
+            _target = UI.GetUiViewByPath(p_path_ui=PATH)
         cause = exc_info.value.__cause__
         assert isinstance(cause, FileNotFoundError)
 
@@ -284,7 +284,7 @@ class TestGetUiObjectStr:
         LAST = -1
         log_message = '... from string.'
         # Test
-        target = UI.GetUiViewByStr(p_string=DESC)
+        target = UI.GetUiViewByStr(p_string_ui=DESC)
         assert N_LOGS == len(caplog.records)
         record = caplog.records[LAST]
         assert log_message == record.message

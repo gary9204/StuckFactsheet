@@ -149,10 +149,28 @@ Types and Type Aliases
     :param p_title: title of Factsheet.
     :type p_title: :data:`~.sheet.Title`
 
+.. class:: FactoryViewTopics(p_topics: Topics)
+
+    Type alias of factory for user interface elements.
+
+    A call to the factory takes no arguments and returns a
+    :data:`~.control_sheet.ViewTopics` for the Factsheet
+    :data:`~.sheet.Topics`.
+
+    :param p_topics: topics outline of Factsheet.
+    :type p_topics: :data:`~.sheet.Topics`
+
 .. data:: IdViewSheet
 
     Distinct type for unique identifier of a sheet view. See
     :func:`.id_view_sheet`.
+
+.. data:: ViewTopics
+
+    Type alias for user interface element to view outline of
+    :data:`~.sheet.Topics`.  See
+    :class:`~.control_sheet.FactoryViewTopics`.
+
 
 Classes
 -------
@@ -209,10 +227,11 @@ FactoryEditorName = BUI.FactoryEditorTextMarkup
 FactoryEditorSummary = BUI.FactoryEditorTextStyled
 FactoryEditorTitle = BUI.FactoryEditorTextMarkup
 
-FactoryViewOutlineTopics = BUI.FactoryViewOutline[
-    BUI.ViewOutline, MTOPIC.Topic]
+FactoryViewTopics = BUI.FactoryViewOutline[BUI.ViewOutline, MTOPIC.Topic]
 
 IdViewSheet = typing.NewType('IdViewSheet', int)
+
+ViewTopics = BUI.ViewOutline
 
 
 class ControlApp:
@@ -306,8 +325,8 @@ class ControlSheet:
             FactoryEditorSummary(self._model.summary))
         self._factory_editor_title = FactoryEditorTitle(self._model.title)
 
-        self._factory_view_outline_topics = (
-            FactoryViewOutlineTopics(self._model.outline_topics))
+        self._factory_view_topics = (
+            FactoryViewTopics(self._model.outline_topics))
 
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()
@@ -322,14 +341,16 @@ class ControlSheet:
         N_TOP_TOPICS = 4
         N_DEPTH_TOPICS = 2
         for i in range(N_TOP_TOPICS):
-            name = 'Topic {}'.format(i)
-            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            name = 'Name: Topic {}'.format(i)
+            title = 'Title: Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
             result = self.insert_topic_before(topic, None)
             if 0 == i:
                 parent = result
         for j in range(N_DEPTH_TOPICS):
-            name = '\t'*(j+1) + 'Topic {}'.format(j + N_TOP_TOPICS)
-            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            name = '\t'*(j+1) + 'Name: Topic {}'.format(j + N_TOP_TOPICS)
+            title = '\t'*(j+1) + 'Title: Topic {}'.format(j + N_TOP_TOPICS)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
             parent = self.insert_topic_child(topic, parent)
         self._model.set_fresh()
 
@@ -349,7 +370,7 @@ class ControlSheet:
         self._roster_views[id_view_sheet(p_view)] = p_view
 
     def clear(self) -> None:
-        """Remobe contents of topics roster and topics outline."""
+        """Remove contents of topics roster and topics outline."""
         self._roster_topics.clear()
         self._model.clear()
 
@@ -506,6 +527,11 @@ class ControlSheet:
     def new_editor_title(self) -> EditorTitle:
         """Return factory for editors of sheet title."""
         return self._factory_editor_title
+
+    @property
+    def new_view_topics(self) -> ViewTopics:
+        """Return factory for editors of sheet title."""
+        return self._factory_view_topics
 
     def _open_file_save(self) -> typing.BinaryIO:
         """Return an open file object after backing up any existing file.

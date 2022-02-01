@@ -283,7 +283,7 @@ class TestControlSheet:
         assert isinstance(factory_editor_title, CSHEET.FactoryEditorTitle)
         assert factory_editor_title._ui_model is model_title._ui_model
 
-        factory_view_outline_topics = target._factory_view_outline_topics
+        factory_view_outline_topics = target._factory_view_topics
         assert (
             factory_view_outline_topics._ui_model is model_topics.ui_model)
 
@@ -711,6 +711,7 @@ class TestControlSheet:
         ('_factory_editor_summary', 'new_editor_summary'),
         ('_factory_display_title', 'new_display_title'),
         ('_factory_editor_title', 'new_editor_title'),
+        ('_factory_view_topics', 'new_view_topics'),
         ('_path', 'path'),
         ])
     def test_property(self, tmp_path, NAME_ATTR, NAME_PROP):
@@ -1065,12 +1066,13 @@ class TestModule:
         (CSHEET.FactoryEditorName, BUI.FactoryEditorTextMarkup),
         (CSHEET.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
         (CSHEET.FactoryEditorTitle, BUI.FactoryEditorTextMarkup),
-        (CSHEET.FactoryViewOutlineTopics.__dict__['__origin__'],
+        (CSHEET.FactoryViewTopics.__dict__['__origin__'],
             BUI.FactoryViewOutline),
-        (CSHEET.FactoryViewOutlineTopics.__dict__['__args__'],
+        (CSHEET.FactoryViewTopics.__dict__['__args__'],
             (BUI.ViewOutline, MTOPIC.Topic)),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdViewSheet.__dict__['__supertype__'], int),
+        (CSHEET.ViewTopics, BUI.ViewOutline),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type alias definitions.
