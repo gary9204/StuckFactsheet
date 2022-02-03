@@ -743,10 +743,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="ui_tool_expand_outline">
+                  <object class="GtkToolButton" id="tool_expand_outline">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Expand outline levels.</property>
+                    <property name="action_name">outline_topics.expand-outline</property>
                     <property name="label" translatable="yes">Expand outline</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">format-indent-more-symbolic</property>
