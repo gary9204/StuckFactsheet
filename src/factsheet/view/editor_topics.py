@@ -60,7 +60,7 @@ class EditorTopics:
         self._ui_outline_topics.append_column(column_name)
         column_title = self._new_column_title()
         self._ui_outline_topics.append_column(column_title)
-        # self._init_buttons_depth(get_ui_view)
+        self._ui_selection = self._ui_outline_topics.get_selection()
 
     def _init_actions(self):
         """Initialize actions for buttons on topics outline toolbar."""
@@ -68,6 +68,8 @@ class EditorTopics:
         self._ui_view.insert_action_group('outline_topics', actions)
         handlers = {'collapse-outline': self.on_change_depth,
                     'expand-outline': self.on_change_depth,
+                    'go-first-topic': self.on_go_first_topic,
+                    'go-last-topic': self.on_go_last_topic,
                     }
         actions = self._ui_view.get_action_group('outline_topics')
         for name, handler in handlers.items():
@@ -150,6 +152,41 @@ class EditorTopics:
             logger.warning('Unexpected action: {} ({}.{})'
                            ''.format(name, self.__class__.__name__,
                                      self.on_change_depth.__name__))
+
+    def on_go_first_topic(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Change selected topic to first topic in the outline.
+
+        :param _action: user activated this action (unused).
+        :param _target: target of action (unused).
+        """
+        model, _ = self._ui_selection.get_selected()
+        line_first = model.get_iter_first()
+        if line_first is not None:
+            self._ui_selection.select_iter(line_first)
+
+    def on_go_last_topic(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Change selected topic to last topic in the outline.
+
+        :param _action: user activated this action (unused).
+        :param _target: target of action (unused).
+        """
+        model, _ = self._ui_selection.get_selected()
+        line_last = None
+        n_children = model.iter_n_children(line_last)
+        while 0 < n_children:
+            line_last = model.iter_nth_child(line_last, n_children - 1)
+            n_children = model.iter_n_children(line_last)
+        if line_last is not None:
+            path = model.get_path(line_last)
+            view = self._ui_selection.get_tree_view()
+            view.expand_to_path(path)
+            self._ui_selection.select_iter(line_last)
+            NO_COLUMN = None
+            NO_ALIGN = False
+            IGNORED = 0
+            view.scroll_to_cell(path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
 
     def on_new_topic(self, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:

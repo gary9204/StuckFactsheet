@@ -715,10 +715,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="ui_tool_go_first_topic">
+                  <object class="GtkToolButton" id="tool_go_first_topic">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Go to first topic in outline.</property>
+                    <property name="action_name">outline_topics.go-first-topic</property>
                     <property name="label" translatable="yes">First topic</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">go-top-symbolic</property>
@@ -729,10 +730,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="ui_tool_go_last_topic">
+                  <object class="GtkToolButton" id="tool_go_last_topic">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Go to last topci in outline.</property>
+                    <property name="action_name">outline_topics.go-last-topic</property>
                     <property name="label" translatable="yes">Last topic</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">go-bottom-symbolic</property>
@@ -758,10 +760,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="ui_tool_collapse_outline">
+                  <object class="GtkToolButton" id="tool_collapse_outline">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Collapse outline levels.</property>
+                    <property name="action_name">outline_topics.collapse-outline</property>
                     <property name="label" translatable="yes">Collapse outline</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">format-indent-less-symbolic</property>

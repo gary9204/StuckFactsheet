@@ -13,11 +13,35 @@ import factsheet.control.control_sheet as CSHEET
 import factsheet.model.topic as MTOPIC
 import factsheet.view.ui as UI
 import factsheet.view.editor_topics as VTOPICS
+from factsheet import control
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+
+
+def fill_topics(p_control_sheet, p_n_width, p_n_depth) -> BUI.LineOutline:
+    """Clears control's topic outline and refills with stub content.
+
+    :param p_control_sheet: ControlSheet to modify.
+    :param p_n_width: number of top-level topics.
+    :param p_n_depth: number of descendant levels under last top-level topic.
+    :returns: line of last topic added to outline.
+    """
+    p_control_sheet.clear()
+    line = None
+    for i in range(p_n_width):
+        name = 'Name {}'.format(i)
+        title = 'Title {}'.format(i)
+        topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
+        line = p_control_sheet.insert_topic_after(p_topic=topic, p_line=line)
+    for j in range(p_n_depth):
+        name = 'Name {}'.format(p_n_width + j)
+        title = 'Title {}'.format(p_n_width + 1)
+        topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
+        line = p_control_sheet.insert_topic_child(p_topic=topic, p_line=line)
+    return line
 
 
 class TestEditorTopics:
@@ -45,10 +69,14 @@ class TestEditorTopics:
         assert N_COLUMNS == len(columns)
         assert TITLE_C_NAME == columns[C_NAME].get_title()
         assert TITLE_C_TITLE == columns[C_TITLE].get_title()
+        assert (target._ui_selection is
+                target._ui_outline_topics.get_selection())
 
     @pytest.mark.parametrize('NAME_ACTION', [
         'collapse-outline',
         'expand-outline',
+        'go-first-topic',
+        'go-last-topic',
         ])
     def test_init_actions(self, NAME_ACTION):
         """Confirm initialization of actions for toolbar buttons."""
@@ -284,6 +312,77 @@ class TestEditorTopics:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    def test_on_go_first_topic(self):
+        """| Confirm first topic selection.
+        | Case: Topic outline is not empty.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        model, _ = target._ui_selection.get_selected()
+        PATH_START = '3:0:0'
+        line_start = model.get_iter_from_string(PATH_START)
+        target._ui_selection.select_iter(line_start)
+        EXPECT_NAME = 'Name 0'
+        # Test
+        target.on_go_first_topic(None, None)
+        model, line = target._ui_selection.get_selected()
+        assert line is not None
+        control_topic = control_sheet.get_control_topic(line)
+        assert EXPECT_NAME == control_topic.name
+
+    def test_on_go_first_topic_none(self):
+        """| Confirm first topic selection.
+        | Case: topic outline is empty.
+        """
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        control_sheet.clear()
+        # Test
+        target.on_go_first_topic(None, None)
+        _, line = target._ui_selection.get_selected()
+        assert line is None
+
+    def test_on_go_last_topic(self):
+        """| Confirm last topic selection.
+        | Case: Topic outline is not empty; last topic is not top level.
+        """
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        model, _ = target._ui_selection.get_selected()
+        PATH_START = '3:0:0'
+        line_start = model.get_iter_from_string(PATH_START)
+        target._ui_selection.select_iter(line_start)
+        EXPECT_NAME = 'Name {}'.format(str(N_WIDTH + N_DEPTH - 1))
+        # Test
+        target.on_go_last_topic(None, None)
+        model, line = target._ui_selection.get_selected()
+        assert line is not None
+        control_topic = control_sheet.get_control_topic(line)
+        assert EXPECT_NAME == control_topic.name
+
+    def test_on_go_last_topic_none(self, monkeypatch, capfd):
+        """| Confirm last topic selection.
+        | Case: topic outline is empty.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param capfd: built-in fixture `Pytest capfd`_.
+        """
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        control_sheet.clear()
+        # Test
+        target.on_go_last_topic(None, None)
+        _, line = target._ui_selection.get_selected()
+        assert line is None
+
 
     @pytest.mark.skip(reason='stub method pending implementation')
     def test_on_new_topic(self, capfd):
