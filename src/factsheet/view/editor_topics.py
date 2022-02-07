@@ -70,6 +70,7 @@ class EditorTopics:
                     'expand-outline': self.on_change_depth,
                     'go-first-topic': self.on_go_first_topic,
                     'go-last-topic': self.on_go_last_topic,
+                    'new-topic': self.on_new_topic,
                     }
         actions = self._ui_view.get_action_group('outline_topics')
         for name, handler in handlers.items():

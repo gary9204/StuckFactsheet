@@ -77,6 +77,7 @@ class TestEditorTopics:
         'expand-outline',
         'go-first-topic',
         'go-last-topic',
+        'new-topic',
         ])
     def test_init_actions(self, NAME_ACTION):
         """Confirm initialization of actions for toolbar buttons."""
@@ -382,7 +383,6 @@ class TestEditorTopics:
         target.on_go_last_topic(None, None)
         _, line = target._ui_selection.get_selected()
         assert line is None
-
 
     @pytest.mark.skip(reason='stub method pending implementation')
     def test_on_new_topic(self, capfd):
