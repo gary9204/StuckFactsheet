@@ -73,6 +73,7 @@ class TestEditorTopics:
                 target._ui_outline_topics.get_selection())
 
     @pytest.mark.parametrize('NAME_ACTION', [
+        'clear-topics',
         'collapse-outline',
         'expand-outline',
         'go-first-topic',
@@ -313,6 +314,18 @@ class TestEditorTopics:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    def test_on_clear_topics(self):
+        """Confirm all topics removed from topics outline."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        # Test
+        target.on_clear_topics(None, None)
+        assert not target._control_sheet._roster_topics
 
     def test_on_go_first_topic(self):
         """| Confirm first topic selection.

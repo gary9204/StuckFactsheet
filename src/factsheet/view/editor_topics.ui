@@ -585,7 +585,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">win.clear-topics</property>
+            <property name="action_name">outline_topics.clear-topics</property>
             <property name="text" translatable="yes">Clear  all  topics</property>
             <property name="use_markup">True</property>
           </object>

@@ -66,7 +66,8 @@ class EditorTopics:
         """Initialize actions for buttons on topics outline toolbar."""
         actions = Gio.SimpleActionGroup()
         self._ui_view.insert_action_group('outline_topics', actions)
-        handlers = {'collapse-outline': self.on_change_depth,
+        handlers = {'clear-topics': self.on_clear_topics,
+                    'collapse-outline': self.on_change_depth,
                     'expand-outline': self.on_change_depth,
                     'go-first-topic': self.on_go_first_topic,
                     'go-last-topic': self.on_go_last_topic,
@@ -153,6 +154,11 @@ class EditorTopics:
             logger.warning('Unexpected action: {} ({}.{})'
                            ''.format(name, self.__class__.__name__,
                                      self.on_change_depth.__name__))
+
+    def on_clear_topics(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Remove all topics from the topics outline."""
+        self._control_sheet.clear()
 
     def on_go_first_topic(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
