@@ -18,6 +18,10 @@
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
+        <property name="margin_left">12</property>
+        <property name="margin_right">12</property>
+        <property name="margin_top">6</property>
+        <property name="margin_bottom">6</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
@@ -28,7 +32,17 @@
               <placeholder/>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="button_close">
+                <property name="label" translatable="yes">Close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -41,8 +55,6 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_top">6</property>
-            <property name="margin_bottom">6</property>
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
@@ -269,8 +281,10 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">center</property>
+                    <property name="valign">start</property>
                     <property name="label" translatable="yes">&lt;b&gt;Factsheet Topics Toolbar&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
+                    <property name="justify">fill</property>
                     <property name="wrap">True</property>
                   </object>
                   <packing>
@@ -508,6 +522,9 @@
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-7">button_close</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkPopoverMenu" id="site_menu_topics">
     <property name="can_focus">False</property>
@@ -542,7 +559,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="topics_new">
+          <object class="GtkModelButton" id="topic_new">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -556,7 +573,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="topics_delete">
+          <object class="GtkModelButton" id="topic_delete">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -607,11 +624,11 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="outline_topics_help">
+          <object class="GtkModelButton" id="outline_topics_show_help">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">outline_topics.help</property>
+            <property name="action_name">outline_topics.show-help</property>
             <property name="text" translatable="yes">Help</property>
           </object>
           <packing>

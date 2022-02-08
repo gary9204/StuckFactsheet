@@ -52,7 +52,8 @@ class EditorTopics:
         path_ui = Path(__file__).with_suffix('.ui')
         get_ui_view = UI.GetUiViewByPath(p_path_ui=path_ui)
         self._ui_view = get_ui_view('ui_editor_topics')
-        self._init_actions()
+        actions = self._init_actions()
+        self._dialog_help = get_ui_view('ui_help_outline_topics')
         self._ui_outline_topics = self._control_sheet.new_view_topics()
         site_topics = get_ui_view('ui_site_topics')
         site_topics.add(self._ui_outline_topics)
@@ -62,21 +63,24 @@ class EditorTopics:
         self._ui_outline_topics.append_column(column_title)
         self._ui_selection = self._ui_outline_topics.get_selection()
 
-    def _init_actions(self):
+    def _init_actions(self) -> Gio.SimpleActionGroup:
         """Initialize actions for buttons on topics outline toolbar."""
         actions = Gio.SimpleActionGroup()
         self._ui_view.insert_action_group('outline_topics', actions)
         handlers = {'clear-topics': self.on_clear_topics,
                     'collapse-outline': self.on_change_depth,
+                    'delete-topic': self.on_delete_topic,
                     'expand-outline': self.on_change_depth,
                     'go-first-topic': self.on_go_first_topic,
                     'go-last-topic': self.on_go_last_topic,
                     'new-topic': self.on_new_topic,
+                    'show-help': self.on_show_help,
                     }
         actions = self._ui_view.get_action_group('outline_topics')
         for name, handler in handlers.items():
             UI.new_action_active(
                 p_group=actions, p_name=name, p_handler=handler)
+        return actions
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
@@ -159,6 +163,15 @@ class EditorTopics:
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
         """Remove all topics from the topics outline."""
         self._control_sheet.clear()
+
+    def on_delete_topic(self, _action: Gio.SimpleAction,
+                        _target: GLib.Variant) -> None:
+        """Remove selected topic from the topics outline.
+
+        If no topic is selected, then the topics outline is unchanged.
+        """
+        _model, line = self._ui_selection.get_selected()
+        self._control_sheet.remove_topic(line)
 
     def on_go_first_topic(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
@@ -247,6 +260,16 @@ class EditorTopics:
         # path = gtk_model.get_path(index)
         # self._view_topics.gtk_view.expand_to_path(path)
         # self._cursor_topics.select_iter(index)
+
+    def on_show_help(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Display help dialog."""
+        if self._dialog_help.get_transient_for() is None:
+            parent = self._ui_view.get_toplevel()
+            if parent.is_toplevel():
+                self._dialog_help.set_transient_for(parent)
+        _ = self._dialog_help.run()
+        self._dialog_help.hide()
 
     @property
     def ui_view(self) -> UiEditorTopics:

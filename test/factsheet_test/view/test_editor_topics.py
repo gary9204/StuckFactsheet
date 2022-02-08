@@ -4,6 +4,7 @@ See :mod:`.editor_topics`.
 
 .. include:: /test/refs_include_pytest.txt
 """
+import copy
 import gi   # type: ignore[import]
 import logging
 import pytest  # type: ignore[import]
@@ -13,7 +14,6 @@ import factsheet.control.control_sheet as CSHEET
 import factsheet.model.topic as MTOPIC
 import factsheet.view.ui as UI
 import factsheet.view.editor_topics as VTOPICS
-from factsheet import control
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
@@ -71,10 +71,13 @@ class TestEditorTopics:
         assert TITLE_C_TITLE == columns[C_TITLE].get_title()
         assert (target._ui_selection is
                 target._ui_outline_topics.get_selection())
+        assert isinstance(target._dialog_help, Gtk.Dialog)
+        assert actions.lookup_action('show-help') is not None
 
     @pytest.mark.parametrize('NAME_ACTION', [
         'clear-topics',
         'collapse-outline',
+        'delete-topic',
         'expand-outline',
         'go-first-topic',
         'go-last-topic',
@@ -87,8 +90,8 @@ class TestEditorTopics:
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
         NAME_ACTIONS = 'outline_topics'
         # Test
-        target._init_actions()
-        actions = target._ui_view.get_action_group(NAME_ACTIONS)
+        actions = target._init_actions()
+        assert actions is target._ui_view.get_action_group(NAME_ACTIONS)
         assert isinstance(actions, Gio.SimpleActionGroup)
         assert actions.lookup_action(NAME_ACTION) is not None
 
@@ -327,6 +330,30 @@ class TestEditorTopics:
         target.on_clear_topics(None, None)
         assert not target._control_sheet._roster_topics
 
+    def test_on_delete_topic(self):
+        """| Confirm topic removal.
+        | Case: Topic selected.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        model, _ = target._ui_selection.get_selected()
+        PATH_DELETE = '3:0:0'
+        line_delete = model.get_iter_from_string(PATH_DELETE)
+        target._ui_selection.get_tree_view().expand_all()
+        target._ui_selection.select_iter(line_delete)
+        EXPECT_ROSTER_TOPICS = copy.copy(control_sheet._roster_topics)
+        for topic in control_sheet._model.topics(p_line=line_delete):
+            _ = EXPECT_ROSTER_TOPICS.pop(topic.tag)
+        # Test
+        target.on_delete_topic(None, None)
+        _model, line = target._ui_selection.get_selected()
+        assert line is None
+        assert EXPECT_ROSTER_TOPICS == control_sheet._roster_topics
+
     def test_on_go_first_topic(self):
         """| Confirm first topic selection.
         | Case: Topic outline is not empty.
@@ -460,6 +487,47 @@ class TestEditorTopics:
         # target._window.destroy()
         # del target._window
         # del factsheet
+
+    def test_on_show_dialog(self, monkeypatch):
+        """Confirm handler displays dialog.
+
+        See manual tests for dialog content checks.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param gtk_app_window: fixture :func:`.gtk_app_window`.
+        """
+        # Setup
+        class PatchDialog:
+            def __init__(self):
+                self.called_hide = False
+                self.called_run = False
+                self.called_set = False
+                self.parent = 'Oops'
+
+            def hide(self): self.called_hide = True
+
+            def run(self): self.called_run = True
+
+            def set_transient_for(self, p_parent):
+                self.called_set = True
+                self.parent = p_parent
+
+        patch_dialog = PatchDialog()
+        monkeypatch.setattr(Gtk.Dialog, 'hide', patch_dialog.hide)
+        monkeypatch.setattr(Gtk.Dialog, 'run', patch_dialog.run)
+        monkeypatch.setattr(
+            Gtk.Dialog, 'set_transient_for', patch_dialog.set_transient_for)
+
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        parent = Gtk.Window()
+        parent.add(target.ui_view)
+        # Test
+        target.on_show_help(None, None)
+        assert patch_dialog.called_set
+        assert patch_dialog.parent is parent
+        assert patch_dialog.called_run
+        assert patch_dialog.called_hide
 
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
         ('ui_view', '_ui_view'),

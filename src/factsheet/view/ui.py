@@ -179,6 +179,7 @@ import factsheet as FS
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
+from gi.repository import GLib   # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 logger = logging.getLogger('Main.UI')
