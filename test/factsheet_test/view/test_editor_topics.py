@@ -67,8 +67,10 @@ class TestEditorTopics:
             target._control_sheet.new_view_topics._ui_model)
         columns = target._ui_outline_topics.get_columns()
         assert N_COLUMNS == len(columns)
-        assert TITLE_C_NAME == columns[C_NAME].get_title()
-        assert TITLE_C_TITLE == columns[C_TITLE].get_title()
+        assert target._column_name is columns[C_NAME]
+        assert TITLE_C_NAME == target._column_name.get_title()
+        assert target._column_title is columns[C_TITLE]
+        assert TITLE_C_TITLE == target._column_title.get_title()
         assert (target._ui_selection is
                 target._ui_outline_topics.get_selection())
         assert isinstance(target._dialog_help, Gtk.Dialog)
@@ -82,6 +84,8 @@ class TestEditorTopics:
         'go-first-topic',
         'go-last-topic',
         'new-topic',
+        'show-help',
+        'switch-columns',
         ])
     def test_init_actions(self, NAME_ACTION):
         """Confirm initialization of actions for toolbar buttons."""
@@ -238,8 +242,9 @@ class TestEditorTopics:
         assert isinstance(render, Gtk.CellRendererText)
         assert column.get_clickable()
         assert WIDTH_MIN == column.get_min_width()
-        assert column.get_resizable()
         assert column.get_reorderable()
+        assert column.get_sizing() is Gtk.TreeViewColumnSizing.AUTOSIZE
+        assert not column.get_resizable()
 
     def test_new_column_title(self):
         """Confirm title column construction."""
@@ -259,8 +264,10 @@ class TestEditorTopics:
         assert isinstance(render, Gtk.CellRendererText)
         assert column.get_clickable()
         assert WIDTH_MIN == column.get_min_width()
-        assert column.get_resizable()
         assert column.get_reorderable()
+        assert not column.get_visible()
+        assert column.get_sizing() is Gtk.TreeViewColumnSizing.AUTOSIZE
+        assert not column.get_resizable()
 
     @pytest.mark.parametrize('NAME, COLLAPSE', [
         ('collapse-outline', True),
@@ -494,7 +501,6 @@ class TestEditorTopics:
         See manual tests for dialog content checks.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
         class PatchDialog:
@@ -528,6 +534,23 @@ class TestEditorTopics:
         assert patch_dialog.parent is parent
         assert patch_dialog.called_run
         assert patch_dialog.called_hide
+
+    def test_on_switch_columns(self):
+        """Confirm visual column switches."""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        I_COLUMN_NAME = 0
+        I_COLUMN_TITLE = 1
+        column_name = target._ui_outline_topics.get_column(I_COLUMN_NAME)
+        column_title = target._ui_outline_topics.get_column(I_COLUMN_TITLE)
+        # Test
+        target.on_switch_columns(None, None)
+        assert not column_name.get_visible()
+        assert column_title.get_visible()
+        target.on_switch_columns(None, None)
+        assert column_name.get_visible()
+        assert not column_title.get_visible()
 
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
         ('ui_view', '_ui_view'),

@@ -653,166 +653,39 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkMenuButton" id="open_menu_topics">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Menu of topic outline actions.</property>
-                <property name="relief">none</property>
-                <property name="popover">site_menu_topics</property>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">format-justify-fill-symbolic</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="ui_find_topic">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Find topic in outline shown.</property>
-                <property name="image">image_find_topic</property>
-                <property name="relief">none</property>
-                <property name="always_show_image">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolbar" id="tools_outline_topics">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="orientation">vertical</property>
-                <property name="toolbar_style">icons</property>
-                <property name="icon_size">2</property>
-                <child>
-                  <object class="GtkToolButton" id="tool_new_topic">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Add new topic to outline.</property>
-                    <property name="action_name">outline_topics.new-topic</property>
-                    <property name="label" translatable="yes">New topic ...</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_name">document-new-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="ui_tool_switch_columns">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Switch outline between topic name and title.</property>
-                    <property name="label" translatable="yes">Switch</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_name">network-transmit-receive-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="tool_go_first_topic">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Go to first topic in outline.</property>
-                    <property name="action_name">outline_topics.go-first-topic</property>
-                    <property name="label" translatable="yes">First topic</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_name">go-top-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="tool_go_last_topic">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Go to last topci in outline.</property>
-                    <property name="action_name">outline_topics.go-last-topic</property>
-                    <property name="label" translatable="yes">Last topic</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_name">go-bottom-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="tool_expand_outline">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Expand outline levels.</property>
-                    <property name="action_name">outline_topics.expand-outline</property>
-                    <property name="label" translatable="yes">Expand outline</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_name">format-indent-more-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="tool_collapse_outline">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Collapse outline levels.</property>
-                    <property name="action_name">outline_topics.collapse-outline</property>
-                    <property name="label" translatable="yes">Collapse outline</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_name">format-indent-less-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkPaned">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkStack" id="ui_stack_topics">
                 <property name="width_request">240</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="valign">start</property>
+                    <property name="label" translatable="yes">
+Select a topic from the &lt;i&gt;Topics&lt;/i&gt; outline.
+</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="name">Default</property>
+                    <property name="title" translatable="yes">Default</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -890,6 +763,8 @@
                   <object class="GtkScrolledWindow" id="ui_site_topics">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">always</property>
+                    <property name="window_placement">top-right</property>
                     <property name="shadow_type">in</property>
                     <property name="min_content_height">60</property>
                     <child>
@@ -899,6 +774,7 @@
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
+                    <property name="pack_type">end</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -908,30 +784,158 @@
                 <property name="shrink">True</property>
               </packing>
             </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkStack" id="ui_stack_topics">
+              <object class="GtkMenuButton" id="open_menu_topics">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Menu of topic outline actions.</property>
+                <property name="relief">none</property>
+                <property name="popover">site_menu_topics</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">
-Select a topic from the &lt;i&gt;Topics&lt;/i&gt; outline.
-</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
+                    <property name="icon_name">format-justify-fill-symbolic</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="ui_find_topic">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Find topic in outline shown.</property>
+                <property name="image">image_find_topic</property>
+                <property name="relief">none</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolbar" id="tools_outline_topics">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="toolbar_style">icons</property>
+                <property name="icon_size">2</property>
+                <child>
+                  <object class="GtkToolButton" id="tool_new_topic">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Add new topic to outline.</property>
+                    <property name="action_name">outline_topics.new-topic</property>
+                    <property name="label" translatable="yes">New topic ...</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">document-new-symbolic</property>
                   </object>
                   <packing>
-                    <property name="name">Default</property>
-                    <property name="title" translatable="yes">Default</property>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="tool_switch_columns">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Switch outline between topic name and title.</property>
+                    <property name="action_name">outline_topics.switch-columns</property>
+                    <property name="label" translatable="yes">Switch</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">network-transmit-receive-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="tool_go_first_topic">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Go to first topic in outline.</property>
+                    <property name="action_name">outline_topics.go-first-topic</property>
+                    <property name="label" translatable="yes">First topic</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">go-top-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="tool_go_last_topic">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Go to last topci in outline.</property>
+                    <property name="action_name">outline_topics.go-last-topic</property>
+                    <property name="label" translatable="yes">Last topic</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">go-bottom-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="tool_expand_outline">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Expand outline levels.</property>
+                    <property name="action_name">outline_topics.expand-outline</property>
+                    <property name="label" translatable="yes">Expand outline</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">format-indent-more-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="tool_collapse_outline">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Collapse outline levels.</property>
+                    <property name="action_name">outline_topics.collapse-outline</property>
+                    <property name="label" translatable="yes">Collapse outline</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">format-indent-less-symbolic</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
               </object>
               <packing>
-                <property name="resize">True</property>
-                <property name="shrink">False</property>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

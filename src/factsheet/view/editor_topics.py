@@ -22,7 +22,9 @@ import factsheet.view.ui as UI
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GLib  # type: ignore[import]    # noqa: E402
+from gi.repository import GObject as GO  # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 UiEditorTopics = typing.Union[Gtk.Frame]
@@ -52,15 +54,15 @@ class EditorTopics:
         path_ui = Path(__file__).with_suffix('.ui')
         get_ui_view = UI.GetUiViewByPath(p_path_ui=path_ui)
         self._ui_view = get_ui_view('ui_editor_topics')
-        actions = self._init_actions()
+        _actions = self._init_actions()
         self._dialog_help = get_ui_view('ui_help_outline_topics')
         self._ui_outline_topics = self._control_sheet.new_view_topics()
         site_topics = get_ui_view('ui_site_topics')
         site_topics.add(self._ui_outline_topics)
-        column_name = self._new_column_name()
-        self._ui_outline_topics.append_column(column_name)
-        column_title = self._new_column_title()
-        self._ui_outline_topics.append_column(column_title)
+        self._column_name = self._new_column_name()
+        self._ui_outline_topics.append_column(self._column_name)
+        self._column_title = self._new_column_title()
+        self._ui_outline_topics.append_column(self._column_title)
         self._ui_selection = self._ui_outline_topics.get_selection()
 
     def _init_actions(self) -> Gio.SimpleActionGroup:
@@ -75,6 +77,7 @@ class EditorTopics:
                     'go-last-topic': self.on_go_last_topic,
                     'new-topic': self.on_new_topic,
                     'show-help': self.on_show_help,
+                    'switch-columns': self.on_switch_columns,
                     }
         actions = self._ui_view.get_action_group('outline_topics')
         for name, handler in handlers.items():
@@ -125,8 +128,8 @@ class EditorTopics:
         column.set_clickable(True)
         WIDTH_MIN = 12
         column.set_min_width(WIDTH_MIN)
-        column.set_resizable(True)
         column.set_reorderable(True)
+        column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         return column
 
     def _new_column_title(self) -> Gtk.TreeViewColumn:
@@ -138,8 +141,9 @@ class EditorTopics:
         column.set_clickable(True)
         WIDTH_MIN = 12
         column.set_min_width(WIDTH_MIN)
-        column.set_resizable(True)
         column.set_reorderable(True)
+        column.set_visible(False)
+        column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         return column
 
     def on_change_depth(
@@ -270,6 +274,13 @@ class EditorTopics:
                 self._dialog_help.set_transient_for(parent)
         _ = self._dialog_help.run()
         self._dialog_help.hide()
+
+    def on_switch_columns(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Display help dialog."""
+        visible_old = self._column_name.get_visible()
+        self._column_name.set_visible(not visible_old)
+        self._column_title.set_visible(visible_old)
 
     @property
     def ui_view(self) -> UiEditorTopics:
