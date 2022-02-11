@@ -199,7 +199,7 @@ class TestBlockFact:
         actions_fact = target._block_gtk.get_action_group('fact')
         assert isinstance(actions_fact, Gio.SimpleActionGroup)
 
-        assert isinstance(target._aspects, VSCENES.Scenes)
+        assert isinstance(target._aspects, VSCENES.ViewStack)
         assert isinstance(target._new_aspect, dict)
         assert target.synopsis == target._new_aspect['Synopsis']
         assert target.plain == target._new_aspect['Plain']
@@ -207,7 +207,7 @@ class TestBlockFact:
         assert isinstance(target._names, VFACT.SelectorName)
         assert NAME_SELECT == target._name_default
         assert NAMES == list(target._names)
-        assert NAME_SELECT == target._aspects.get_scene_visible()
+        assert NAME_SELECT == target._aspects.get_name_visible()
         assert target._block_gtk.is_visible()
         assert target in fact._blocks.values()
 
@@ -284,11 +284,11 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_scene(target.plain(), 'Plain')
+        target._aspects.add_view_item(target.plain(), 'Plain')
         NAME_SELECT = 'Synopsis'
         # Test
         target.select_aspect(NAME_SELECT)
-        assert NAME_SELECT == target._aspects.get_scene_visible()
+        assert NAME_SELECT == target._aspects.get_name_visible()
 
     def test_select_aspect_absent(self, patch_control_fact):
         """| Confirm value and aspect updates.
@@ -297,12 +297,12 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_scene(target.plain(), 'Plain')
-        # view_init = target._aspects.show_scene('Plain')
+        target._aspects.add_view_item(target.plain(), 'Plain')
+        # view_init = target._aspects.show_view_item('Plain')
         NAME_SELECT = 'Synopsis'
         # Test
         target.select_aspect(NAME_SELECT)
-        assert NAME_SELECT == target._aspects.get_scene_visible()
+        assert NAME_SELECT == target._aspects.get_name_visible()
 
     @pytest.mark.parametrize('NAME_SELECT', [
         'Something completely different',
@@ -318,8 +318,8 @@ class TestBlockFact:
         target = VFACT.BlockFact(p_control=CONTROL)
         VALUE_INIT = 'A Norwegian Blue'
         target._value = VALUE_INIT
-        target._aspects.add_scene(target.plain(), 'Plain')
-        scene_init = target._aspects.show_scene('Plain')
+        target._aspects.add_view_item(target.plain(), 'Plain')
+        scene_init = target._aspects.show_view_item('Plain')
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(
@@ -329,7 +329,7 @@ class TestBlockFact:
         assert not patch_logger.called
         # Test
         target.select_aspect(NAME_SELECT)
-        assert scene_init == target._aspects.get_scene_visible()
+        assert scene_init == target._aspects.get_name_visible()
         assert patch_logger.called
         assert PatchLogger.T_WARNING == patch_logger.level
         assert log_message == patch_logger.message
@@ -369,7 +369,7 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_scene(target.plain(), 'Plain')
+        target._aspects.add_view_item(target.plain(), 'Plain')
         target._names.select(NAME_CURRENT)
         STATUS_NEW = ABC_FACT.StatusOfFact.DEFINED
         VALUE_NEW = 'Something completely different'
@@ -379,7 +379,7 @@ class TestBlockFact:
         assert target._status is STATUS_NEW
         assert VALUE_NEW == target._value
         assert N_ASPECTS == len(target._aspects._stack_gtk)
-        assert target._name_default == target._aspects.get_scene_visible()
+        assert target._name_default == target._aspects.get_name_visible()
 
 
 class TestSelectorName:

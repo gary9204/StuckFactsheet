@@ -24,10 +24,10 @@ Submodules
    factsheet.view.ui
    factsheet.view.view_markup
    factsheet.view.view_sheet
+   factsheet.view.view_stack
    factsheet.view.view_topic
 ..   factsheet.view.query_place
 ..   factsheet.view.query_template
-..   factsheet.view.scenes
 ..   factsheet.view.scene_int
 ..   factsheet.view.scene_table
 ..   factsheet.view.scene_value

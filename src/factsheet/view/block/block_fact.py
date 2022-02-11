@@ -78,7 +78,7 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOpaque]):
         self._block_gtk.insert_action_group('fact', actions_fact)
 
         aspects_gtk = get_object('ui_aspects_fact')
-        self._aspects = VSCENES.Scenes(aspects_gtk)
+        self._aspects = VSCENES.ViewStack(aspects_gtk)
         self._new_aspect = dict(
             Synopsis=self.synopsis,
             Plain=self.plain
@@ -177,7 +177,7 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOpaque]):
 
         :param p_name_aspect: aspect to show
         """
-        name_visible = self._aspects.show_scene(p_name_aspect)
+        name_visible = self._aspects.show_view_item(p_name_aspect)
         if name_visible == p_name_aspect:
             return
 
@@ -189,8 +189,8 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOpaque]):
                                      self.select_aspect.__name__))
             return
 
-        self._aspects.add_scene(aspect, p_name_aspect)
-        _ = self._aspects.show_scene(p_name_aspect)
+        self._aspects.add_view_item(aspect, p_name_aspect)
+        _ = self._aspects.show_view_item(p_name_aspect)
 
     def synopsis(self) -> Aspect:
         """Return formatted text summary of fact value."""
