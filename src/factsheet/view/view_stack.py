@@ -100,23 +100,20 @@ class ViewStack:
 
         :param p_name: name of the item view to remove.
         """
-        print('Enter: remove_view_item')
-        # if p_name == self._name_fixed:
-        #     logger.warning(
-        #         'Pinned view \'{}\' cannot be removed. ({}.{})'.format(
-        #             p_name, type(self).__name__,
-        #             self.remove_view_item.__name__))
-        #     return
+        if p_name in self._pinned:
+            logger.warning('Pinned item view named \'{}\' cannot be removed '
+                           '({}.{})'.format(p_name, type(self).__name__,
+                                            self.remove_view_item.__name__))
+            return
 
-        # item = self._ui_stack.get_child_by_name(p_name)
-        # if item is None:
-        #     logger.warning(
-        #         'Missing view named \'{}\' ({}.{})'.format(
-        #             p_name, type(self).__name__,
-        #             self.remove_view_item.__name__))
-        #     return
+        view_item = self._ui_stack.get_child_by_name(p_name)
+        if view_item is None:
+            logger.warning('No item view named \'{}\' ({}.{})'
+                           ''.format(p_name, type(self).__name__,
+                                     self.remove_view_item.__name__))
+            return
 
-        # self._ui_stack.remove(item)
+        self._ui_stack.remove(view_item)
 
     def show_view_item(self, p_name: NameView) -> typing.Optional[NameView]:
         """Attempt to show an item view and return item name of

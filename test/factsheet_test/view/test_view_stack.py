@@ -215,14 +215,13 @@ class TestViewStack:
         assert 'WARNING' == record.levelname
         assert n_pinned == len(target._pinned)
 
-    @pytest.mark.skip(reason='Update in progress.')
     def test_remove_view_item(self):
         """| Confirm view removed from collection.
         | Case: view in collection and not pinned.
         """
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 3
         views = dict()
         for i in range(N_VIEWS):
             views[i] = Gtk.Label(label='Item {}'.format(i))
@@ -237,79 +236,59 @@ class TestViewStack:
         for key, view in views.items():
             assert view is target._ui_stack.get_child_by_name(hex(key))
 
-    @pytest.mark.skip(reason='Update in progress.')
-    def test_remove_view_item_absent(self, PatchLogger, monkeypatch):
+    def test_remove_view_item_absent(self, caplog):
         """| Confirm view removed from collection.
         | Case: view not in collection.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 3
         views = dict()
         for i in range(N_VIEWS):
             views[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_view_item(views[i], hex(i))
-
-        ID_ABSENT = 1
-        _ = views.pop(ID_ABSENT)
-        name_absent = hex(ID_ABSENT)
-        target.remove_view_item(name_absent)
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = (
-            'Missing view named \'{}\' (ViewStack.remove_view_item)'
-            ''.format(name_absent))
-
-        class PatchRemove:
-            def __init__(self): self.called = False
-
-            def remove(self, _n): self.called = True
-
-        patch_remove = PatchRemove()
-        monkeypatch.setattr(
-            Gtk.Stack, 'remove', patch_remove.remove)
+        N_LOGS = 1
+        LAST = -1
+        NAME_ABSENT = 'Parrot'
+        log_message = ('No item view named \'{}\' '
+                       '(ViewStack.remove_view_item)'.format(NAME_ABSENT))
         # Test
-        target.remove_view_item(name_absent)
-        assert not patch_remove.called
-        assert len(views) == len(target._ui_stack)
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
+        target.remove_view_item(NAME_ABSENT)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+        assert N_VIEWS == len(target._ui_stack)
 
-    @pytest.mark.skip(reason='Update in progress.')
-    def test_remove_view_item_pinned(self, PatchLogger, monkeypatch):
+    def test_remove_view_item_pinned(self, caplog):
         """| Confirm view removed from collection.
-        | Case: pinned in collection.
+        | Case: view in collection but pinned.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
-        NAME = 'Parrot'
-        VIEW = Gtk.Label(label=NAME)
-        target = VSTACK.ViewStack(p_name_fixed=NAME, p_view_fixed=VIEW)
-
-        patch_logger = PatchLogger()
-        monkeypatch.setattr(
-            logging.Logger, 'warning', patch_logger.warning)
-        log_message = (
-            'Fixed view \'{}\' cannot be removed. (ViewStack.remove_view_item)'
-            ''.format(NAME))
-
-        class PatchRemove:
-            def __init__(self): self.called = False
-
-            def remove(self, _n): self.called = True
-
-        patch_remove = PatchRemove()
-        monkeypatch.setattr(
-            Gtk.Stack, 'remove', patch_remove.remove)
+        target = VSTACK.ViewStack()
+        N_VIEWS = 3
+        views = dict()
+        for i in range(N_VIEWS):
+            views[i] = Gtk.Label(label='Item {}'.format(i))
+            target.add_view_item(views[i], hex(i))
+        I_PINNED = 2
+        NAME_PINNED = hex(I_PINNED)
+        target.pin_view_item(NAME_PINNED)
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Pinned item view named \'{}\' cannot be removed '
+                       '(ViewStack.remove_view_item)'.format(NAME_PINNED))
         # Test
-        target.remove_view_item(NAME)
-        assert not patch_remove.called
-        assert target._ui_stack.get_child_by_name(NAME) is VIEW
-        assert patch_logger.called
-        assert PatchLogger.T_WARNING == patch_logger.level
-        assert log_message == patch_logger.message
+        target.remove_view_item(NAME_PINNED)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+        assert N_VIEWS == len(target._ui_stack)
 
     @pytest.mark.skip(reason='Update in progress.')
     def test_show_view_item(self):
