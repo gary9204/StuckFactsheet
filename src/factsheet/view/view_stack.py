@@ -60,14 +60,13 @@ class ViewStack:
 
     def clear(self) -> None:
         """Remove all unpinned item views from collection."""
-        print('Enter: clear')
-        # for view in self._ui_stack:
-        #     self._ui_stack.remove(view)
+        for view in self._ui_stack:
+            name = self._ui_stack.child_get_property(view, 'name')
+            self.remove_view_item(name)
 
     def get_name_visible(self) -> typing.Optional[NameView]:
         """Return name of visible item view or None when no view is visible."""
-        print('Enter: get_name_visible')
-        # return self._ui_stack.get_visible_child_name()
+        return self._ui_stack.get_visible_child_name()
 
     def pin_view_item(self, p_name: NameView) -> None:
         """Pin an item view so that it cannot be replaced or removed.

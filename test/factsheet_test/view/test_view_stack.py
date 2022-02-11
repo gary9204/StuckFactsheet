@@ -104,54 +104,60 @@ class TestViewStack:
         view = target._ui_stack.get_child_by_name(name_dup)
         assert view is views[ID_PRESENT]
 
-    @pytest.mark.skip(reason='Update in progress.')
     def test_clear(self):
         """Confirm collection contains only pinned item views."""
         # Setup
         target = VSTACK.ViewStack()
         N_VIEWS = 5
+        I_PINNED = [1, 3, 4]
         views = dict()
+        pinned = list()
         for i in range(N_VIEWS):
-            views[i] = Gtk.Label(label='Item {}'.format(i))
+            view = Gtk.Label(label='Item {}'.format(i))
+            view.show()
+            views[i] = view
             target.add_view_item(views[i], hex(i))
+            if i in I_PINNED:
+                pinned.append(views[i])
+                target.pin_view_item(hex(i))
         # Test
         target.clear()
-        assert not len(target._ui_stack)
+        assert len(pinned) == len(target._ui_stack.get_children())
+        assert pinned == list(target._ui_stack.get_children())
 
-    @pytest.mark.skip(reason='Update in progress.')
     def test_get_view_visible(self):
         """| Confirm return of visible view.
         | Case: a view is visible.
         """
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 5
         views = dict()
         for i in range(N_VIEWS):
+            view = Gtk.Label(label='Item {}'.format(i))
+            view.show()
             views[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_view_item(views[i], hex(i))
-
-        ID_VISIBLE = MTOPIC.TagTopic(1)
-        name_visible = hex(ID_VISIBLE)
-        view_visible = views[ID_VISIBLE]
+        I_VISIBLE = 1
+        name_visible = hex(I_VISIBLE)
+        view_visible = views[I_VISIBLE]
         target._ui_stack.set_visible_child(view_visible)
-
         # Test
         assert name_visible == target.get_name_visible()
 
-    @pytest.mark.skip(reason='Update in progress.')
     def test_get_view_visible_none(self):
         """| Confirm return of visible view.
         | Case: no view is visible.
         """
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 5
         views = dict()
         for i in range(N_VIEWS):
-            views[i] = Gtk.Label(label='Item {}'.format(i))
+            view = Gtk.Label(label='Item {}'.format(i))
+            views[i] = view
             target.add_view_item(views[i], hex(i))
-            views[i].hide()
+            view.hide()
         # Test
         assert target.get_name_visible() is None
 
