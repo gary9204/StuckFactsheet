@@ -59,7 +59,7 @@ class ViewStack:
         p_view.show()
 
     def clear(self) -> None:
-        """Remove all item views from collection."""
+        """Remove all unpinned item views from collection."""
         print('Enter: clear')
         # for view in self._ui_stack:
         #     self._ui_stack.remove(view)
@@ -121,15 +121,15 @@ class ViewStack:
 
         :param p_name: name of item view to show to show.
         """
-        print('Enter: show_view_item')
-        # name = p_name if p_name else self._name_fixed
-        # if name is not None:
-        #     item = self._ui_stack.get_child_by_name(name)
-        #     if item is not None:
-        #         self._ui_stack.set_visible_child(item)
-
-        # name_visible = self._ui_stack.get_visible_child_name()
-        # return name_visible
+        item = self._ui_stack.get_child_by_name(p_name)
+        if item is not None:
+            self._ui_stack.set_visible_child(item)
+        else:
+            logger.warning('No item view named \'{}\' ({}.{})'
+                           ''.format(p_name, type(self).__name__,
+                                     self.show_view_item.__name__))
+        name_visible = self._ui_stack.get_visible_child_name()
+        return name_visible
 
     def unpin_view_item(self, p_name: NameView) -> None:
         """Unpin an item view so that it can be replaced or removed.

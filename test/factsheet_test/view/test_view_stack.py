@@ -106,10 +106,10 @@ class TestViewStack:
 
     @pytest.mark.skip(reason='Update in progress.')
     def test_clear(self):
-        """Confirm collection empty."""
+        """Confirm collection contains only pinned item views."""
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 5
         views = dict()
         for i in range(N_VIEWS):
             views[i] = Gtk.Label(label='Item {}'.format(i))
@@ -290,17 +290,18 @@ class TestViewStack:
         assert 'WARNING' == record.levelname
         assert N_VIEWS == len(target._ui_stack)
 
-    @pytest.mark.skip(reason='Update in progress.')
     def test_show_view_item(self):
         """| Confirm view selection.
         | Case: view in collection.
         """
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 3
         views = dict()
         for i in range(N_VIEWS):
-            views[i] = Gtk.Label(label='Item {}'.format(i))
+            view = Gtk.Label(label='Item {}'.format(i))
+            view.show()
+            views[i] = view
             target.add_view_item(views[i], hex(i))
         ID_VISIBLE = 0
         target._ui_stack.set_visible_child(views[ID_VISIBLE])
@@ -311,68 +312,37 @@ class TestViewStack:
         assert name_show == name_shown
         assert target._ui_stack.get_visible_child() is views[ID_SHOW]
 
-    @pytest.mark.skip(reason='Update in progress.')
-    def test_show_view_item_absent(self):
+    def test_show_view_item_absent(self, caplog):
         """| Confirm view selection.
         | Case: view not in collection.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
         N_VIEWS = 3
         target = VSTACK.ViewStack()
         views = dict()
         for i in range(N_VIEWS):
+            view = Gtk.Label(label='Item {}'.format(i))
+            view.show()
             views[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_view_item(views[i], hex(i))
         ID_VISIBLE = 0
-        name_visible = hex(ID_VISIBLE)
-        target._ui_stack.set_visible_child_name(name_visible)
-        name_show = 'Something completely different'
+        NAME_VISIBLE = hex(ID_VISIBLE)
+        target._ui_stack.set_visible_child_name(NAME_VISIBLE)
+        NAME_SHOW = 'Something completely different'
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('No item view named \'{}\' '
+                       '(ViewStack.show_view_item)'.format(NAME_SHOW))
         # Test
-        name_shown = target.show_view_item(name_show)
-        assert name_visible == name_shown
+        name_shown = target.show_view_item(NAME_SHOW)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+        assert NAME_VISIBLE == name_shown
         assert target._ui_stack.get_visible_child() is views[ID_VISIBLE]
-
-    @pytest.mark.skip(reason='Update in progress.')
-    def test_show_view_item_none(self):
-        """| Confirm view selection.
-        | Case: no name without pinned view.
-        """
-        # Setup
-        N_VIEWS = 3
-        target = VSTACK.ViewStack()
-        views = dict()
-        for i in range(N_VIEWS):
-            views[i] = Gtk.Label(label='Item {}'.format(i))
-            target.add_view_item(views[i], hex(i))
-        ID_VISIBLE = 0
-        name_visible = hex(ID_VISIBLE)
-        target._ui_stack.set_visible_child_name(name_visible)
-        # Test
-        name_shown = target.show_view_item(None)
-        assert name_visible == name_shown
-        assert target._ui_stack.get_visible_child() is views[ID_VISIBLE]
-
-    @pytest.mark.skip(reason='Update in progress.')
-    def test_show_view_scene_none_fixed(self):
-        """| Confirm view selection.
-        | Case: no name with pinned view.
-        """
-        # Setup
-        NAME = 'Parrot'
-        VIEW = Gtk.Label(label=NAME)
-        target = VSTACK.ViewStack(p_name_fixed=NAME, p_view_fixed=VIEW)
-        views = dict()
-        N_VIEWS = 3
-        for i in range(N_VIEWS):
-            views[i] = Gtk.Label(label='Item {}'.format(i))
-            target.add_view_item(views[i], hex(i))
-        ID_VISIBLE = 0
-        name_visible = hex(ID_VISIBLE)
-        target._ui_stack.set_visible_child_name(name_visible)
-        # Test
-        name_shown = target.show_view_item(None)
-        assert NAME == name_shown
-        assert target._ui_stack.get_visible_child() is VIEW
 
     def test_unpin_view_item(self):
         """| Confirm view marked as unpinned.
