@@ -22,26 +22,22 @@ class ViewStack:
     """Displays view at a time from a collection of views.
 
     Each view is a presentation element for an item (such as a topic,
-    fact, or fact value).  Each view is identified by a name,
-    which methods use to show or remove the view.  The class supports
-    pinning names so that the corresponding views cannot be replaced
-    or removed.
+    fact, or fact value).  Each item view is identified by a name.
+    Methods use view name to add, show, pin, or remove the item view.
+    The class supports pinning names. When a name is pinned, the
+    corresponding view cannot be removed.
     """
 
     def __init__(self) -> None:
-        """Initilize collection of item views.
-
-        :param p_views: pre-defined collection of item views.  If None,
-            :class:`.ViewStack` creates an empty collection.
-        """
+        """Initilize collection of item views."""
         self._ui_stack = Gtk.Stack()
         self._pinned: typing.MutableSequence[NameView] = list()
 
     def add_view_item(self, p_view: ViewItem, p_name: NameView) -> None:
-        """Add an item view to the collection.
+        """Add an item view with the given name to the collection.
 
-        Do not change the collection and log a warning when the
-        collection contains a view with the given name.
+        When the collection contains a view with the given name,  log a
+        warning and do not change the collection.
 
         :param p_view: item view to add.
         :param p_name: name of view.  A name may appear at most once in
@@ -50,8 +46,8 @@ class ViewStack:
         child = self._ui_stack.get_child_by_name(p_name)
         if child is not None:
             logger.warning(
-                'Duplicate name \'{}\' with view {} ({}.{})'
-                ''.format(p_name, p_view, type(self).__name__,
+                'Duplicate view \'{}\' for name {} ({}.{})'
+                ''.format(p_view, p_name, type(self).__name__,
                           self.add_view_item.__name__))
             return
 
@@ -69,10 +65,10 @@ class ViewStack:
         return self._ui_stack.get_visible_child_name()
 
     def pin_view_item(self, p_name: NameView) -> None:
-        """Pin an item view so that it cannot be replaced or removed.
+        """Pin an item view name so that the view cannot be removed.
 
-        Log a warning when the name does correspond to an item view in
-        the collection or when the named view is pinned..
+        When the name does correspond to an item view in the collection
+        or when the named view is pinned, log a warning.
 
         :param p_name: name of the item view to pin.
         """
@@ -115,10 +111,11 @@ class ViewStack:
         self._ui_stack.remove(view_item)
 
     def show_view_item(self, p_name: NameView) -> typing.Optional[NameView]:
-        """Attempt to show an item view and return item name of
-        resulting visible view.
+        """Attempt to show an item view and return name of visible view.
 
-        :param p_name: name of item view to show to show.
+        Log a warning when no item view has given name.
+
+        :param p_name: name of item view to show.
         """
         item = self._ui_stack.get_child_by_name(p_name)
         if item is not None:
@@ -131,7 +128,7 @@ class ViewStack:
         return name_visible
 
     def unpin_view_item(self, p_name: NameView) -> None:
-        """Unpin an item view so that it can be replaced or removed.
+        """Unpin an item view so that it can be removed.
 
         Log a warning when the named view is not pinned..
 

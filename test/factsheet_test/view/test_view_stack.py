@@ -1,28 +1,24 @@
 """
-Unit tests for class for collection of presentations.
+Unit tests for class for collection of views.
 See :mod:`.view_stack`.
 
 .. include:: /test/refs_include_pytest.txt
 """
+import gi   # type: ignore[import]
 import logging
 import pytest  # type: ignore[import]
-import typing
 
-import factsheet.model.topic as MTOPIC
 import factsheet.view.view_stack as VSTACK
 
-import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 class TestViewStack:
-    """Unit tests for :class:`ViewStack`."""
+    """Unit tests for :class:`.ViewStack`."""
 
     def test_init(self):
-        """| Confirm initialization.
-        | Case: pre-defined collection.
-        """
+        """Confirm initialization."""
         # Setup
         # Test
         target = VSTACK.ViewStack()
@@ -31,42 +27,15 @@ class TestViewStack:
         assert isinstance(target._pinned, list)
         assert not target._pinned
 
-    # def test_init_fixed_name(self):
-    #     """| Confirm initialization.
-    #     | Case: default collection with fixed name.
-    #     """
-    #     # Setup
-    #     NAME = 'Parrot'
-    #     # Test
-    #     target = VSTACK.ViewStack(p_name_fixed=NAME)
-    #     assert isinstance(target._ui_stack, Gtk.Stack)
-    #     assert NAME == target._name_fixed
-    #     scene_fixed = target._ui_stack.get_child_by_name(target._name_fixed)
-    #     assert scene_fixed is None
-
-    # def test_init_fixed_scene(self):
-    #     """| Confirm initialization.
-    #     | Case: default collection with fixed name and scene.
-    #     """
-    #     # Setup
-    #     NAME = 'Parrot'
-    #     SCENE = Gtk.Label(label=NAME)
-    #     # Test
-    #     target = VSTACK.ViewStack(p_name_fixed=NAME, p_scene_fixed=SCENE)
-    #     assert isinstance(target._ui_stack, Gtk.Stack)
-    #     assert NAME == target._name_fixed
-    #     scene_fixed = target._ui_stack.get_child_by_name(target._name_fixed)
-    #     assert scene_fixed is SCENE
-
     def test_add_view_item(self):
-        """| Confirm view added to collection.
+        """| Confirm add view with name.
         | Case: view not in collection.
         """
         # Setup
+        target = VSTACK.ViewStack()
         NAME = 'Parrot'
         VIEW = Gtk.Label(label=NAME)
         VIEW.hide()
-        target = VSTACK.ViewStack()
         # Test
         target.add_view_item(VIEW, NAME)
         child = target._ui_stack.get_child_by_name(NAME)
@@ -74,15 +43,15 @@ class TestViewStack:
         assert child.get_visible()
         assert NAME == target._ui_stack.get_visible_child_name()
 
-    def test_add_view_item_present(self, caplog):
-        """| Confirm view added to collection.
+    def test_add_view_item_warn(self, caplog):
+        """| Confirm add view with name.
         | Case: view in collection.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
-        N_VIEWS = 3
         target = VSTACK.ViewStack()
+        N_VIEWS = 3
         views = dict()
         for i in range(N_VIEWS):
             views[i] = Gtk.Label(label='Item {}'.format(i))
@@ -92,8 +61,8 @@ class TestViewStack:
         view_dup = Gtk.Label(label='Parrot')
         N_LOGS = 1
         LAST = -1
-        log_message = ('Duplicate name \'{}\' with view {} '
-                       '(ViewStack.add_view_item)'.format(name_dup, view_dup))
+        log_message = ('Duplicate view \'{}\' for name {} '
+                       '(ViewStack.add_view_item)'.format(view_dup, name_dup))
         # Test
         target.add_view_item(view_dup, name_dup)
         assert N_LOGS == len(caplog.records)
@@ -113,9 +82,7 @@ class TestViewStack:
         views = dict()
         pinned = list()
         for i in range(N_VIEWS):
-            view = Gtk.Label(label='Item {}'.format(i))
-            view.show()
-            views[i] = view
+            views[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_view_item(views[i], hex(i))
             if i in I_PINNED:
                 pinned.append(views[i])
@@ -126,7 +93,7 @@ class TestViewStack:
         assert pinned == list(target._ui_stack.get_children())
 
     def test_get_view_visible(self):
-        """| Confirm return of visible view.
+        """| Confirm name of visible view.
         | Case: a view is visible.
         """
         # Setup
@@ -134,8 +101,6 @@ class TestViewStack:
         N_VIEWS = 5
         views = dict()
         for i in range(N_VIEWS):
-            view = Gtk.Label(label='Item {}'.format(i))
-            view.show()
             views[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_view_item(views[i], hex(i))
         I_VISIBLE = 1
@@ -146,7 +111,7 @@ class TestViewStack:
         assert name_visible == target.get_name_visible()
 
     def test_get_view_visible_none(self):
-        """| Confirm return of visible view.
+        """| Confirm name of visible view.
         | Case: no view is visible.
         """
         # Setup
@@ -154,21 +119,19 @@ class TestViewStack:
         N_VIEWS = 5
         views = dict()
         for i in range(N_VIEWS):
-            view = Gtk.Label(label='Item {}'.format(i))
-            views[i] = view
+            views[i] = Gtk.Label(label='Item {}'.format(i))
             target.add_view_item(views[i], hex(i))
-            view.hide()
+            views[i].hide()
         # Test
         assert target.get_name_visible() is None
 
     def test_pin_view_item(self):
-        """| Confirm view marked as pinned.
-        | Case: view in collection and not pinned.
+        """| Confirm pinning of view by name.
+        | Case: collection contains view with name unpinned.
         """
         # Setup
         NAME = 'Parrot'
         VIEW = Gtk.Label(label=NAME)
-        VIEW.hide()
         target = VSTACK.ViewStack()
         target.add_view_item(VIEW, NAME)
         # Test
@@ -176,8 +139,8 @@ class TestViewStack:
         assert NAME in target._pinned
 
     def test_pin_view_item_absent(self, caplog):
-        """| Confirm view marked as pinned.
-        | Case: view not in collection.
+        """| Confirm pinning of view by name.
+        | Case: collection does not contains view with given name.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
@@ -197,8 +160,8 @@ class TestViewStack:
         assert not target._pinned
 
     def test_pin_view_item_pinned(self, caplog):
-        """| Confirm view marked as pinned.
-        | Case: view in collection and pinned.
+        """| Confirm pinning of view by name.
+        | Case: collection contains view with name pinned.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
@@ -222,7 +185,7 @@ class TestViewStack:
         assert n_pinned == len(target._pinned)
 
     def test_remove_view_item(self):
-        """| Confirm view removed from collection.
+        """| Confirm removal of view from collection.
         | Case: view in collection and not pinned.
         """
         # Setup
@@ -243,7 +206,7 @@ class TestViewStack:
             assert view is target._ui_stack.get_child_by_name(hex(key))
 
     def test_remove_view_item_absent(self, caplog):
-        """| Confirm view removed from collection.
+        """| Confirm removal of view from collection.
         | Case: view not in collection.
 
         :param caplog: built-in fixture `Pytest caplog`_.
@@ -269,7 +232,7 @@ class TestViewStack:
         assert N_VIEWS == len(target._ui_stack)
 
     def test_remove_view_item_pinned(self, caplog):
-        """| Confirm view removed from collection.
+        """| Confirm removal of view from collection.
         | Case: view in collection but pinned.
 
         :param caplog: built-in fixture `Pytest caplog`_.
@@ -298,7 +261,7 @@ class TestViewStack:
 
     def test_show_view_item(self):
         """| Confirm view selection.
-        | Case: view in collection.
+        | Case: named view in collection.
         """
         # Setup
         target = VSTACK.ViewStack()
@@ -320,7 +283,7 @@ class TestViewStack:
 
     def test_show_view_item_absent(self, caplog):
         """| Confirm view selection.
-        | Case: view not in collection.
+        | Case: named view not in collection.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
@@ -351,8 +314,8 @@ class TestViewStack:
         assert target._ui_stack.get_visible_child() is views[ID_VISIBLE]
 
     def test_unpin_view_item(self):
-        """| Confirm view marked as unpinned.
-        | Case: view in collection and pinned.
+        """| Confirm unpinning of item view.
+        | Case: named view is pinned.
         """
         # Setup
         NAME = 'Parrot'
@@ -365,8 +328,8 @@ class TestViewStack:
         assert NAME not in target._pinned
 
     def test_unpin_view_item_unpinned(self, caplog):
-        """| Confirm view marked as unpinned.
-        | Case: view in collection and not pinned.
+        """| Confirm unpinning of item view.
+        | Case: named view is not pinned.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
@@ -395,7 +358,7 @@ class TestModule:
         (VSTACK.logger, logging.Logger),
         ])
     def test_attributes(self, ATTR, TYPE_EXPECT):
-        """Confirm type alias definitions.
+        """Confirm global attribute definitions.
 
         :param ATTR: attribute under test.
         :param TYPE_EXPECT: type expected.
@@ -409,7 +372,7 @@ class TestModule:
         (VSTACK.ViewItem, Gtk.Widget),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
-        """Confirm type hint definitions.
+        """Confirm type and type alias definitions.
 
         :param TYPE_TARGET: type or type alias under test.
         :param TYPE_EXPECT: type expected.
