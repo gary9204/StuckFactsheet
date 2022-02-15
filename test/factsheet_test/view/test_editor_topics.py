@@ -1,5 +1,5 @@
 """
-Unit etsts for class to display and edit topics outline of a factsheet.
+Unit tests for class to display and edit topics outline of a factsheet.
 See :mod:`.editor_topics`.
 
 .. include:: /test/refs_include_pytest.txt
@@ -14,6 +14,7 @@ import factsheet.control.control_sheet as CSHEET
 import factsheet.model.topic as MTOPIC
 import factsheet.view.editor_topics as VTOPICS
 import factsheet.view.view_stack as VSTACK
+import factsheet.view.view_topic as VTOPIC
 import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -152,7 +153,7 @@ class TestEditorTopics:
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
         N_VIEWS_DEFAULT = 1
-        NAME_DEFAULT = hex(0)
+        NAME_DEFAULT = VTOPICS.EditorTopics.name_tag(0)
         # Test
         assert isinstance(target._views_topics, VSTACK.ViewStack)
         assert NAME_DEFAULT == target._name_view_default
@@ -215,12 +216,13 @@ class TestEditorTopics:
         target_method(None, render, None, line, None)
         assert EXPECT == render.get_property('text')
 
-    @pytest.mark.skip(reason='pending implementation')
-    def test_name_view_topic(self):
-        """TBD"""
+    def test_name_tag(self):
+        """Confirm name matches tag."""
         # Setup
+        TAG = CSHEET.TagTopic(42)
+        NAME = hex(TAG)
         # Test
-        assert False
+        assert NAME == VTOPICS.EditorTopics.name_tag(TAG)
 
     def test_new_column_name(self):
         """Confirm name column construction."""
@@ -323,16 +325,115 @@ class TestEditorTopics:
         assert log_message == record.message
         assert 'WARNING' == record.levelname
 
-    @pytest.mark.skip
-    def test_on_changed_selection(self):
-        """| Confirm outline and stack updates when user changes selection.
-        | Case: no topic selected.
-        | Case: selected topic not in stack.
-        | Case: selected topic in stack.
+    def test_on_changed_selection_in(self):
+        """| Confirm view shown after selection changes.
+        | Case: view of selected topic in stack.
         """
         # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        ui_model_topics = target._ui_outline_topics.get_model()
+        line_topic = ui_model_topics.get_iter_from_string('3:0')
+        control_topic = target._control_sheet.get_control_topic(line_topic)
+        view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+        name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+        target._views_topics.add_view(view_topic.ui_view, name_topic)
+        target._ui_outline_topics.expand_all()
         # Test
-        assert False
+        target._ui_selection.select_iter(line_topic)
+        name_visible = target._views_topics.ui_view.get_visible_child_name()
+        assert name_topic == name_visible
+
+    def test_on_changed_selection_none(self):
+        """| Confirm view shown after selection changes.
+        | Case: no topic selected.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        ui_model_topics = target._ui_outline_topics.get_model()
+        line_topic = ui_model_topics.get_iter_from_string('3:0')
+        control_topic = target._control_sheet.get_control_topic(line_topic)
+        view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+        name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+        target._views_topics.add_view(view_topic.ui_view, name_topic)
+        _ = target._views_topics.show_view(name_topic)
+        target._ui_outline_topics.expand_all()
+        target._ui_selection.select_iter(line_topic)
+        # Test
+        target._ui_selection.unselect_all()
+        name_visible = target._views_topics.ui_view.get_visible_child_name()
+        assert target._name_view_default == name_visible
+
+    def test_on_changed_selection_not_in(self):
+        """| Confirm view shown after selection changes.
+        | Case: view of selected topic not in stack.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        ui_model_topics = target._ui_outline_topics.get_model()
+        line_topic = ui_model_topics.get_iter_from_string('3:0')
+        control_topic = target._control_sheet.get_control_topic(line_topic)
+        name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+        target._ui_outline_topics.expand_all()
+        # Test
+        target._ui_selection.select_iter(line_topic)
+        name_visible = target._views_topics.ui_view.get_visible_child_name()
+        assert name_topic == name_visible
+
+    def test_on_changed_selection_warn(self, monkeypatch, caplog):
+        """| Confirm view shown after selection changes.
+        | Case: topic control roster inconsistent with model topics outline.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        ui_model_topics = target._ui_outline_topics.get_model()
+        line_topic = ui_model_topics.get_iter_from_string('3:0')
+        control_topic = target._control_sheet.get_control_topic(line_topic)
+        view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+        name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+        target._views_topics.add_view(view_topic.ui_view, name_topic)
+        _ = target._views_topics.show_view(name_topic)
+        target._ui_outline_topics.expand_all()
+        target._ui_selection.select_iter(line_topic)
+        assert name_topic == target._views_topics.ui_view.get_visible_child_name()
+
+        def get_control_topic(self, p_line):
+            return None
+
+        monkeypatch.setattr(
+            CSHEET.ControlSheet, 'get_control_topic', get_control_topic)
+        line_trigger = ui_model_topics.get_iter_from_string('2')
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Topic control roster inconsistent with model topics '
+                       'outline. (EditorTopics.on_changed_selection)')
+        # Test
+        target._ui_selection.select_iter(line_trigger)
+        name_visible = target._views_topics.ui_view.get_visible_child_name()
+        assert target._name_view_default == name_visible
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'CRITICAL' == record.levelname
+
 
     def test_on_clear_topics(self):
         """Confirm all topics removed from topics outline."""

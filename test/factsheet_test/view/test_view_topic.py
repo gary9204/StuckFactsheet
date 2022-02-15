@@ -37,9 +37,9 @@ def new_model_control_view(request, new_model_topic):
     control = CTOPIC.ControlTopic(p_model=model)
     view = VTOPIC.ViewTopic(p_control=control)
     yield model, control, view
-    view._ui_pane.hide()
-    # view._ui_pane.destroy()
-    # del view._ui_pane
+    view._ui_view.hide()
+    # view._ui_view.destroy()
+    # del view._ui_view
 
 
 class TestViewTopic:
@@ -56,9 +56,9 @@ class TestViewTopic:
         # Test
         _model, control, target = new_model_control_view
         assert target._control is control
-        assert isinstance(target._ui_pane, Gtk.Box)
-        assert target._ui_pane.is_visible()
-        actions_topic = target._ui_pane.get_action_group('topic')
+        assert isinstance(target._ui_view, Gtk.Box)
+        assert target._ui_view.is_visible()
+        actions_topic = target._ui_view.get_action_group('topic')
         assert isinstance(actions_topic, Gio.SimpleActionGroup)
 
         # Components: see helper tests.
@@ -85,8 +85,8 @@ class TestViewTopic:
     #         0, None, None, None)
     #     assert 0 != activate_id
     #     # Teardown
-    #     target._ui_pane.destroy()
-    #     del target._ui_pane
+    #     target._ui_view.destroy()
+    #     del target._ui_view
 
     def test_helper_init_menu_display(self, new_model_control_view):
         """Confirm helper binds display menu buttons to topic components.
@@ -277,7 +277,7 @@ class TestViewTopic:
 
     # @pytest.mark.skip
     # @pytest.mark.parametrize('NAME_ATTR, NAME_PROP', [
-    #     ['_ui_pane', 'gtk_pane'],
+    #     ['_ui_view', 'gtk_pane'],
     #     ])
     # def test_property(self, patch_control_topic, NAME_ATTR, NAME_PROP):
     #     """Confirm properties are get-only.
@@ -353,7 +353,7 @@ class TestViewTopic:
         _model, _control, target = new_model_control_view
 
         monkeypatch.setattr(
-            Gtk.Widget, 'get_toplevel', lambda *_args: target._ui_pane)
+            Gtk.Widget, 'get_toplevel', lambda *_args: target._ui_view)
         window = Gtk.ApplicationWindow()
         dialog = Gtk.Dialog()
         dialog.set_transient_for(window)

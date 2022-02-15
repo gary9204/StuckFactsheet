@@ -38,19 +38,19 @@ class ViewTopic:
         get_object = builder.get_object
 
         # Components
-        self._ui_pane = get_object('ui_view_topic')
+        self._ui_view = get_object('ui_view_topic')
         self._init_name_topic(get_object)
         self._init_summary_topic(get_object)
         self._init_title_topic(get_object)
         self._init_menu_display(p_get_object=get_object)
-        self._ui_pane.show_all()
+        self._ui_view.show_all()
 
         # Dialogs
         dialogs = [('show-help-topic', UI.HELP_TOPIC),
                    ('show-help-topic-display', UI.HELP_TOPIC_DISPLAY),
                    ]
         actions_topic = Gio.SimpleActionGroup()
-        self._ui_pane.insert_action_group('topic', actions_topic)
+        self._ui_view.insert_action_group('topic', actions_topic)
         for name, dialog in dialogs:
             UI.new_action_active_dialog(
                 actions_topic, name, self.on_show_dialog, dialog)
@@ -116,11 +116,13 @@ class ViewTopic:
         site_title_sheet.pack_start(
             view_title.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-    # @property
-    # def gtk_pane(self) -> Gtk.Box:
-    #     """Return underlying presentation element."""
-    #     raise NotImplementedError
-    #     return self._ui_pane
+    @property
+    def ui_view(self) -> Gtk.Box:
+        """Return underlying presentation element.
+
+        This is a stub method. It is untested.
+        """
+        return self._ui_view
 
     def on_show_dialog(self, _action: Gio.SimpleAction,
                        _target: GLib.Variant, p_dialog: Gtk.Dialog
@@ -143,7 +145,7 @@ class ViewTopic:
            #Gtk-3.0/classes/Widget.html#Gtk.Widget.get_toplevel
         """
         p_dialog.set_transient_for(None)
-        window_top = self._ui_pane.get_toplevel()
+        window_top = self._ui_view.get_toplevel()
         if isinstance(window_top, Gtk.Window):
             if window_top.get_window_type() is Gtk.WindowType.TOPLEVEL:
                 p_dialog.set_transient_for(window_top)

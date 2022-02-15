@@ -231,6 +231,8 @@ FactoryViewTopics = BUI.FactoryViewOutline[BUI.ViewOutline, MTOPIC.Topic]
 
 IdViewSheet = typing.NewType('IdViewSheet', int)
 
+TagTopic = MTOPIC.TagTopic
+
 ViewTopics = BUI.ViewOutline
 
 
@@ -331,7 +333,7 @@ class ControlSheet:
         self._roster_views: typing.MutableMapping[
             IdViewSheet, ObserverControlSheet] = dict()
         self._roster_topics: typing.MutableMapping[
-            MTOPIC.TagTopic, CTOPIC.ControlTopic] = dict()
+            TagTopic, CTOPIC.ControlTopic] = dict()
         # Issue #253
         self._stub_topics()
 

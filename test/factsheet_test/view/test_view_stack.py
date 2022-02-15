@@ -99,7 +99,7 @@ class TestViewStack:
         ('0x3', True),
         ])
     def test_contains(self, VALUE, EXPECT):
-        """| Confirm containment for in operator.
+        """| Confirm containment by name.
 
         :param VALUE: value to test for containment.
         :param EXPECT: expected result.

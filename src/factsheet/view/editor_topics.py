@@ -6,7 +6,7 @@ Types and Type Aliases
 
 .. data:: UiEditorTopics
 
-    TBD
+    Type alias for 
 """
 import gi   # type: ignore[import]
 import logging
@@ -18,6 +18,7 @@ import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.spec.base_s as SBASE
 import factsheet.view.view_stack as VSTACK
+import factsheet.view.view_topic as VTOPIC
 import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -34,22 +35,12 @@ logger = logging.getLogger('Main.VTOPICS')
 
 
 class EditorTopics:
-    """TBD"""
+    """Displays topics outline along with current topic."""
 
     def __init__(self, p_control_sheet: CSHEET.ControlSheet) -> None:
         """Initialize topics outline, topics stack, and communication.
 
-        Initialize topics outline.
-            Get view of outline
-            Make name column
-            Add name to outline view as visible column
-            Make title column
-            Add to outline view as tooltip column
-            Configure outline navigation
-
-        Initialize topics stack
-        Configuration communication between outline and stack
-
+        :param p_control_sheet: control for factsheet content to display.
         """
         self._control_sheet = p_control_sheet
         path_ui = Path(__file__).with_suffix('.ui')
@@ -97,7 +88,7 @@ class EditorTopics:
     def _init_views_topics(self) -> None:
         """Initialize stack of topic views."""
         self._views_topics = VSTACK.ViewStack()
-        self._name_view_default = hex(0)
+        self._name_view_default = self.name_tag(CSHEET.TagTopic(0))
         view_default = Gtk.Label(
             label='Select a topic from the <i>Topics</i> outline.')
         view_default.set_use_markup(True)
@@ -138,6 +129,14 @@ class EditorTopics:
         if control_topic is not None:
             title = control_topic.title
         p_render.set_property('markup', title)
+
+    @classmethod
+    def name_tag(cls, p_tag: CSHEET.TagTopic) -> VSTACK.NameView:
+        """Return view name corresponding to topic tag.
+
+        :param p_tag: tag of topic to name.
+        """
+        return hex(p_tag)
 
     def _new_column_name(self) -> Gtk.TreeViewColumn:
         """Return column for topic names."""
@@ -184,11 +183,30 @@ class EditorTopics:
                                      self.on_change_depth.__name__))
 
     def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
-        """Expand outline
+        """Update item view shown when topics outline selection chenges.
 
         :param _selection: selection that may have changed.
         """
-        print('Enter on_change_selection')
+        _model, line_current = self._ui_selection.get_selected()
+        if line_current is None:
+            self._views_topics.show_view(self._name_view_default)
+            return
+
+        control_topic = self._control_sheet.get_control_topic(line_current)
+        if control_topic is None:
+            self._views_topics.show_view(self._name_view_default)
+            logger.critical('Topic control roster inconsistent with '
+                            'model topics outline. ({}.{})'
+                            ''.format(self.__class__.__name__,
+                                      self.on_changed_selection.__name__))
+            return
+
+        name_topic = self.name_tag(control_topic.tag)
+        if name_topic not in self._views_topics:
+            view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+            self._views_topics.add_view(view_topic.ui_view, name_topic)
+        _ = self._views_topics.show_view(name_topic)
+        return
 
     def on_clear_topics(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
@@ -286,7 +304,7 @@ class EditorTopics:
         #     raise NotImplementedError
         #
         # pane = VTOPIC.FormTopic(pm_control=control)
-        # name_topic = hex(topic.id_topic)
+        # name_topic = self.name_tag(topic.id_topic)
         # self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
         # path = gtk_model.get_path(index)
         # self._view_topics.gtk_view.expand_to_path(path)

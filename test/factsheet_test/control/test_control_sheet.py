@@ -1087,6 +1087,8 @@ class TestModule:
             (BUI.ViewOutline, MTOPIC.Topic)),
         (CSHEET.IdViewSheet.__qualname__, 'NewType.<locals>.new_type'),
         (CSHEET.IdViewSheet.__dict__['__supertype__'], int),
+        (CSHEET.TagTopic.__qualname__, 'NewType.<locals>.new_type'),
+        (CSHEET.TagTopic.__dict__['__supertype__'], int),
         (CSHEET.ViewTopics, BUI.ViewOutline),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
