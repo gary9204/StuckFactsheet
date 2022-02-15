@@ -654,6 +654,11 @@ class ControlSheet:
         """Return unique identifier of sheet."""
         return self._model.tag
 
+    def topics(self) -> typing.Iterator[CTOPIC.ControlTopic]:
+        """Return iterator over topic controls in factsheet."""
+        for control in self._roster_topics.values():
+            yield control
+
 
 def id_view_sheet(p_view_sheet: 'ObserverControlSheet') -> IdViewSheet:
     """Return unique identifier for a sheet view.

@@ -17,6 +17,7 @@ from pathlib import Path
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.spec.base_s as SBASE
+import factsheet.view.view_stack as VSTACK
 import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -56,14 +57,12 @@ class EditorTopics:
         self._ui_view = get_ui_view('ui_editor_topics')
         _actions = self._init_actions()
         self._dialog_help = get_ui_view('ui_help_outline_topics')
-        self._ui_outline_topics = self._control_sheet.new_view_topics()
+        self._init_outline_topics()
         site_topics = get_ui_view('ui_site_topics')
         site_topics.add(self._ui_outline_topics)
-        self._column_name = self._new_column_name()
-        self._ui_outline_topics.append_column(self._column_name)
-        self._column_title = self._new_column_title()
-        self._ui_outline_topics.append_column(self._column_title)
-        self._ui_selection = self._ui_outline_topics.get_selection()
+        self._init_views_topics()
+        site_views = get_ui_view('ui_site_views')
+        site_views.add(self._views_topics.ui_view)
 
     def _init_actions(self) -> Gio.SimpleActionGroup:
         """Initialize actions for buttons on topics outline toolbar."""
@@ -84,6 +83,27 @@ class EditorTopics:
             UI.new_action_active(
                 p_group=actions, p_name=name, p_handler=handler)
         return actions
+
+    def _init_outline_topics(self) -> None:
+        """Initialize topics outline."""
+        self._ui_outline_topics = self._control_sheet.new_view_topics()
+        self._ui_selection = self._ui_outline_topics.get_selection()
+        _id = self._ui_selection.connect('changed', self.on_changed_selection)
+        self._column_name = self._new_column_name()
+        self._ui_outline_topics.append_column(self._column_name)
+        self._column_title = self._new_column_title()
+        self._ui_outline_topics.append_column(self._column_title)
+
+    def _init_views_topics(self) -> None:
+        """Initialize stack of topic views."""
+        self._views_topics = VSTACK.ViewStack()
+        self._name_view_default = hex(0)
+        view_default = Gtk.Label(
+            label='Select a topic from the <i>Topics</i> outline.')
+        view_default.set_use_markup(True)
+        view_default.set_line_wrap(True)
+        self._views_topics.add_view(view_default, self._name_view_default)
+        self._views_topics.pin_view(self._name_view_default)
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
@@ -148,7 +168,7 @@ class EditorTopics:
 
     def on_change_depth(
             self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Expand outline
+        """Expand or collapse topics outline.
 
         :param p_action: user activated this action.
         :param _target: target of action (unused).
@@ -162,6 +182,13 @@ class EditorTopics:
             logger.warning('Unexpected action: {} ({}.{})'
                            ''.format(name, self.__class__.__name__,
                                      self.on_change_depth.__name__))
+
+    def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
+        """Expand outline
+
+        :param _selection: selection that may have changed.
+        """
+        print('Enter on_change_selection')
 
     def on_clear_topics(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:

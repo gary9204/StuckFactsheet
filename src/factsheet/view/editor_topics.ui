@@ -658,25 +658,13 @@
             <property name="can_focus">True</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkStack" id="ui_stack_topics">
-                <property name="width_request">240</property>
+              <object class="GtkBox" id="ui_site_views">
+                <property name="width_request">10</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">
-Select a topic from the &lt;i&gt;Topics&lt;/i&gt; outline.
-</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="name">Default</property>
-                    <property name="title" translatable="yes">Default</property>
-                  </packing>
+                  <placeholder/>
                 </child>
               </object>
               <packing>

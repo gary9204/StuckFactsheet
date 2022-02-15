@@ -284,7 +284,7 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_view_item(target.plain(), 'Plain')
+        target._aspects.add_view(target.plain(), 'Plain')
         NAME_SELECT = 'Synopsis'
         # Test
         target.select_aspect(NAME_SELECT)
@@ -297,8 +297,8 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_view_item(target.plain(), 'Plain')
-        # view_init = target._aspects.show_view_item('Plain')
+        target._aspects.add_view(target.plain(), 'Plain')
+        # view_init = target._aspects.show_view('Plain')
         NAME_SELECT = 'Synopsis'
         # Test
         target.select_aspect(NAME_SELECT)
@@ -318,8 +318,8 @@ class TestBlockFact:
         target = VFACT.BlockFact(p_control=CONTROL)
         VALUE_INIT = 'A Norwegian Blue'
         target._value = VALUE_INIT
-        target._aspects.add_view_item(target.plain(), 'Plain')
-        scene_init = target._aspects.show_view_item('Plain')
+        target._aspects.add_view(target.plain(), 'Plain')
+        scene_init = target._aspects.show_view('Plain')
 
         patch_logger = PatchLogger()
         monkeypatch.setattr(
@@ -369,7 +369,7 @@ class TestBlockFact:
         # Setup
         CONTROL = patch_control_fact
         target = VFACT.BlockFact(p_control=CONTROL)
-        target._aspects.add_view_item(target.plain(), 'Plain')
+        target._aspects.add_view(target.plain(), 'Plain')
         target._names.select(NAME_CURRENT)
         STATUS_NEW = ABC_FACT.StatusOfFact.DEFINED
         VALUE_NEW = 'Something completely different'

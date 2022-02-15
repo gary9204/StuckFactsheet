@@ -177,7 +177,7 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOpaque]):
 
         :param p_name_aspect: aspect to show
         """
-        name_visible = self._aspects.show_view_item(p_name_aspect)
+        name_visible = self._aspects.show_view(p_name_aspect)
         if name_visible == p_name_aspect:
             return
 
@@ -189,8 +189,8 @@ class BlockFact(ABC_FACT.InterfaceBlockFact[ValueOpaque]):
                                      self.select_aspect.__name__))
             return
 
-        self._aspects.add_view_item(aspect, p_name_aspect)
-        _ = self._aspects.show_view_item(p_name_aspect)
+        self._aspects.add_view(aspect, p_name_aspect)
+        _ = self._aspects.show_view(p_name_aspect)
 
     def synopsis(self) -> Aspect:
         """Return formatted text summary of fact value."""

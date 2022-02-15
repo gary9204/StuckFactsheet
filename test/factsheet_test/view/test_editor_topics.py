@@ -12,13 +12,15 @@ import pytest  # type: ignore[import]
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.model.topic as MTOPIC
-import factsheet.view.ui as UI
 import factsheet.view.editor_topics as VTOPICS
+import factsheet.view.view_stack as VSTACK
+import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 def fill_topics(p_control_sheet, p_n_width, p_n_depth) -> BUI.LineOutline:
@@ -52,29 +54,17 @@ class TestEditorTopics:
         # Setup
         NAME_ACTIONS = 'outline_topics'
         control_sheet = CSHEET.ControlSheet(p_path=None)
-        N_COLUMNS = 2
-        C_NAME = 0
-        TITLE_C_NAME = 'Name'
-        C_TITLE = 1
-        TITLE_C_TITLE = 'Title'
         # Test
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
         assert target._control_sheet is control_sheet
         assert isinstance(target._ui_view, Gtk.Frame)
         actions = target._ui_view.get_action_group(NAME_ACTIONS)
         assert isinstance(actions, Gio.SimpleActionGroup)
+        assert actions.lookup_action('show-help') is not None
+        assert isinstance(target._dialog_help, Gtk.Dialog)
         assert target._ui_outline_topics.get_model() is (
             target._control_sheet.new_view_topics._ui_model)
-        columns = target._ui_outline_topics.get_columns()
-        assert N_COLUMNS == len(columns)
-        assert target._column_name is columns[C_NAME]
-        assert TITLE_C_NAME == target._column_name.get_title()
-        assert target._column_title is columns[C_TITLE]
-        assert TITLE_C_TITLE == target._column_title.get_title()
-        assert (target._ui_selection is
-                target._ui_outline_topics.get_selection())
-        assert isinstance(target._dialog_help, Gtk.Dialog)
-        assert actions.lookup_action('show-help') is not None
+        assert isinstance(target._views_topics, VSTACK.ViewStack)
 
     @pytest.mark.parametrize('NAME_ACTION', [
         'clear-topics',
@@ -99,46 +89,34 @@ class TestEditorTopics:
         assert isinstance(actions, Gio.SimpleActionGroup)
         assert actions.lookup_action(NAME_ACTION) is not None
 
-    @pytest.mark.skip(reason='transitioning to actions from signals')
-    def test_init_buttons_depth(self, monkeypatch):
-        """Confirm initialization of expand and contract buttons."""
+    def test_init_outline_topics(self):
+        """Confirm initialization of topics outline>"""
         # Setup
-        EXPECT = dict(ui_tool_collapse_outline='clicked',
-                      ui_tool_expand_outline='clicked')
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
-        get_ui_view = UI.GetUiViewByStr(p_string_ui='')
-
-        class PatchCalls:
-            def __init__(self):
-                self.signals = dict()
-
-            def get_ui_view(self, p_id_button):
-                self.signals[p_id_button] = None
-                return Gtk.Button
-
-            def connect(self, p_signal, _handler):
-                id_button, _ = self.signals.popitem()
-                self.signals[id_button] = p_signal
-
-        patch_calls = PatchCalls()
-        monkeypatch.setattr(
-            UI.GetUiViewByStr, '__call__', patch_calls.get_ui_view)
-        monkeypatch.setattr(Gtk.Button, 'connect', patch_calls.connect)
+        N_COLUMNS = 2
+        C_NAME = 0
+        TITLE_C_NAME = 'Name'
+        C_TITLE = 1
+        TITLE_C_TITLE = 'Title'
         # Test
-        target._init_buttons_depth(get_ui_view)
-        for id_button, signal in EXPECT.items():
-            assert signal == patch_calls.signals[id_button]
+        assert target._ui_outline_topics.get_model() is (
+            target._control_sheet.new_view_topics._ui_model)
+        assert (target._ui_selection is
+                target._ui_outline_topics.get_selection())
+        columns = target._ui_outline_topics.get_columns()
+        assert N_COLUMNS == len(columns)
+        assert target._column_name is columns[C_NAME]
+        assert TITLE_C_NAME == target._column_name.get_title()
+        assert target._column_title is columns[C_TITLE]
+        assert TITLE_C_TITLE == target._column_title.get_title()
 
-    @pytest.mark.skip(reason='pending signal implemenation')
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
-            # ('closed', '_context_name', Gtk.Popover, 0),
-            # ('delete-event', '_window', Gtk.ApplicationWindow, 0),
-            # ('changed', '_cursor_topics', Gtk.TreeSelection, 0),
+            ('changed', '_ui_selection', Gtk.TreeSelection, 0),
             ])
-    def test_init_signals(self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN,
-                          N_DEFAULT, gtk_app_window):
+    def test_init_signals(
+            self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT):
         """| Confirm initialization.
         | Case: signal connections
 
@@ -148,31 +126,44 @@ class TestEditorTopics:
         :param N_DEFAULT: number of default handlers
         :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
-        # # Setup
-        # assert False
-        # origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
-        # signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        # control = CSHEET.g_control_app.open_factsheet(
-        #     p_path=None, p_time=BUI.TIME_EVENT_CURRENT)
-        # target = VSHEET.ViewSheet(p_control=control)
-        # # Test
-        # # # target._window.set_skip_pager_hint(True)
-        # # # target._window.set_skip_taskbar_hint(True)
-        # target._window.set_transient_for(gtk_app_window)
-        #
-        # attribute = getattr(target, NAME_ATTRIBUTE)
-        # n_handlers = 0
-        # while True:
-        #     id_signal = GO.signal_handler_find(
-        #         attribute, GO.SignalMatchType.ID, signal,
-        #         0, None, None, None)
-        #     if 0 == id_signal:
-        #         break
-        #
-        #     n_handlers += 1
-        #     GO.signal_handler_disconnect(attribute, id_signal)
-        #
-        # assert N_DEFAULT + 1 == n_handlers
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        # Test
+        attribute = getattr(target, NAME_ATTRIBUTE)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                attribute, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(attribute, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
+
+    def test_init_views_topics(self):
+        """Confirm initialization of stack of topic views>"""
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_VIEWS_DEFAULT = 1
+        NAME_DEFAULT = hex(0)
+        # Test
+        assert isinstance(target._views_topics, VSTACK.ViewStack)
+        assert NAME_DEFAULT == target._name_view_default
+        ui_view_stack = target._views_topics.ui_view
+        assert N_VIEWS_DEFAULT == len(ui_view_stack)
+        assert NAME_DEFAULT == target._views_topics.get_name_visible()
+        assert [NAME_DEFAULT] == target._views_topics._pinned
+        default_view = ui_view_stack.get_visible_child()
+        assert isinstance(default_view, Gtk.Label)
+        assert default_view.get_use_markup()
+        assert default_view.get_line_wrap()
 
     @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
         ('_markup_cell_name', 0, 'Name 0'),
@@ -223,6 +214,13 @@ class TestEditorTopics:
         # Test
         target_method(None, render, None, line, None)
         assert EXPECT == render.get_property('text')
+
+    @pytest.mark.skip(reason='pending implementation')
+    def test_name_view_topic(self):
+        """TBD"""
+        # Setup
+        # Test
+        assert False
 
     def test_new_column_name(self):
         """Confirm name column construction."""
@@ -324,6 +322,17 @@ class TestEditorTopics:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    @pytest.mark.skip
+    def test_on_changed_selection(self):
+        """| Confirm outline and stack updates when user changes selection.
+        | Case: no topic selected.
+        | Case: selected topic not in stack.
+        | Case: selected topic in stack.
+        """
+        # Setup
+        # Test
+        assert False
 
     def test_on_clear_topics(self):
         """Confirm all topics removed from topics outline."""

@@ -1018,6 +1018,21 @@ class TestControlSheet:
         assert target._model.is_fresh()
         assert PATH.exists()
 
+    def test_topics(self):
+        """Confirm iteration ofver topic controls."""
+        # Setup
+        target = CSHEET.ControlSheet(p_path=None)
+        target._roster_topics.clear()
+        N_TOPICS = 5
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            TOPIC = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            CONTROL = CTOPIC.ControlTopic(p_model=TOPIC)
+            target._insert_topic_control(CONTROL)
+        # Test
+        topics = set(target.topics())
+        assert topics == set(target._roster_topics.values())
+
 
 class TestModule:
     """Unit tests for module-level components of :mod:`.control_sheet`."""
