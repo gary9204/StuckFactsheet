@@ -337,31 +337,9 @@ class ControlSheet:
             IdViewSheet, ObserverControlSheet] = dict()
         self._roster_topics: typing.MutableMapping[
             TagTopic, CTOPIC.ControlTopic] = dict()
-        # Untested fix for issue #256
         for topic in self._model.topics():
             control_new = CTOPIC.ControlTopic(p_model=topic)
             self._insert_topic_control(p_control=control_new)
-        # Issue #253
-        self._stub_topics()
-
-    def _stub_topics(self):
-        """Stub topics outline and roster for development.  See Issue #253.
-        """
-        N_TOP_TOPICS = 4
-        N_DEPTH_TOPICS = 2
-        for i in range(N_TOP_TOPICS):
-            name = 'Name: Topic {}'.format(i)
-            title = 'Title: Topic {}'.format(i)
-            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
-            result = self.insert_topic_before(topic, None)
-            if 0 == i:
-                parent = result
-        for j in range(N_DEPTH_TOPICS):
-            name = '\t'*(j+1) + 'Name: Topic {}'.format(j + N_TOP_TOPICS)
-            title = '\t'*(j+1) + 'Title: Topic {}'.format(j + N_TOP_TOPICS)
-            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title=title)
-            parent = self.insert_topic_child(topic, parent)
-        self._model.set_fresh()
 
     def add_view(self, p_view: 'ObserverControlSheet') -> None:
         """Add given view to collection of active views.

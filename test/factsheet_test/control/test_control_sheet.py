@@ -157,36 +157,6 @@ class TestControlApp:
         assert N_FACTSHEETS + 1 == len(target._roster_sheets)
         assert control_sheet is target._roster_sheets[control_sheet.tag]
 
-    @pytest.mark.skip
-    def test_open_factsheet_except(self):
-        """| Confirm factsheet open and return.
-        | Case: file at path cannot be read.
-        """
-        # # Setup
-        # N_CONTROLS = 3
-        # controls = [patch_sheet() for _ in range(N_CONTROLS)]
-        # # Test
-        # for control in controls:
-        #     target.add(control)
-        # assert len(controls) == len(target._controls)
-        # for control in controls:
-        #     assert target._controls[id(control)] is control
-
-    @pytest.mark.skip
-    def test_open_factsheet_multiple(self):
-        """| Confirm factsheet open and return.
-        | Case: file at path cannot be read.
-        """
-        # # Setup
-        # N_CONTROLS = 3
-        # controls = [patch_sheet() for _ in range(N_CONTROLS)]
-        # # Test
-        # for control in controls:
-        #     target.add(control)
-        # assert len(controls) == len(target._controls)
-        # for control in controls:
-        #     assert target._controls[id(control)] is control
-
     def test_remove_factsheet(self):
         """| Confirm tracking stops for given sheet.
         | Case: sheet tracked.
@@ -248,15 +218,15 @@ class TestControlSheet:
     """Unit tests for :class:`~.ControlSheet`."""
 
     def test_init(self):
-        """Confirm initialization."""
+        """| Confirm initialization.
+        | Case: new model.
+        """
         # Setup
-        # Restore next line when stub removed.  See issue #253.
-        # MODEL_DEFAULT = MSHEET.Sheet()
+        MODEL_DEFAULT = MSHEET.Sheet()
         # Test
         target = CSHEET.ControlSheet(p_path=None)
         assert target._path is None
-        # Restore next line when stub removed.  See issue #253.
-        # assert MODEL_DEFAULT == target._model
+        assert MODEL_DEFAULT == target._model
         model_name = target._model.name
         model_summary = target._model.summary
         model_title = target._model.title
@@ -290,9 +260,31 @@ class TestControlSheet:
         assert isinstance(target._roster_views, dict)
         assert not target._roster_views
         assert isinstance(target._roster_topics, dict)
-        # Restore next line when stub removed.  See issue #253.
-        # assert not target._roster_topics
-        assert False   # Add model topics to topics roster on open
+        assert not target._roster_topics
+
+    def test_init_nonempty(self, tmp_path):
+        """| Confirm initialization.
+        | Case: non-empty model from path.
+        """
+        # Setup
+        PATH = Path(tmp_path / 'saved_factsheet.fsg')
+        source = CSHEET.ControlSheet(p_path=None)
+        N_TOPICS = 5
+        names_source = set()
+        for i in range(N_TOPICS):
+            name = 'Topic {}'.format(i)
+            topic = MTOPIC.Topic(p_name=name, p_summary='', p_title='')
+            source.insert_topic_before(topic, None)
+            names_source.add(topic.name.text)
+        source.save(p_path=PATH)
+        assert PATH.exists()
+        # Test
+        target = CSHEET.ControlSheet(p_path=PATH)
+        assert PATH == target._path
+        assert source._model == target._model
+        names_target = {control.name for
+                        control in target._roster_topics.values()}
+        assert names_source == names_target
 
     def test_add_view(self):
         """| Confirm tracking of given sheet view.
@@ -382,7 +374,6 @@ class TestControlSheet:
         result = target.get_control_topic(line_get)
         assert result is None
 
-    @pytest.mark.skip(reason='stub in place for issue #253.')
     @pytest.mark.parametrize('METHOD', [
         'insert_topic_after',
         'insert_topic_before',
@@ -1020,7 +1011,7 @@ class TestControlSheet:
         assert PATH.exists()
 
     def test_topics(self):
-        """Confirm iteration ofver topic controls."""
+        """Confirm iteration over topic controls."""
         # Setup
         target = CSHEET.ControlSheet(p_path=None)
         target._roster_topics.clear()
