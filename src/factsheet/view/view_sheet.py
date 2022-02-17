@@ -281,17 +281,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         # self._context_summary = get_object('ui_context_summary')
         # self._flip_summary = get_object('ui_flip_summary')
 
-        # self._view_topics = VTYPES.ViewOutlineTopics()
-        # self._view_topics.scope_search = ~ASHEET.FieldsTopic.VOID
-        # self._view_topics.gtk_view.set_reorderable(True)
-        # context_view_topics = get_object('ui_context_topics')
-        # context_view_topics.add(self._view_topics.gtk_view)
-        # self._cursor_topics = self._view_topics.gtk_view.get_selection()
-
-        # gtk_scenes_topic = get_object('ui_scenes_topic')
-        # self._scenes_topic = VSCENES.Scenes(
-        #     gtk_scenes_topic, p_name_fixed='Default')
-
         # self._dialog_data_loss, self._warning_data_loss = (
         #     self._init_dialog_warn())
         # self._query_place: typing.Optional[QPLACE.QueryPlace] = None
@@ -303,20 +292,12 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         self._window.show_all()
 
         # Signals
-        # view_name = self._infoid.get_view_name()
-        # _id = view_name.connect(
-        #     'activate', lambda _entry: self._context_name.popdown())
-        # _id = self._context_name.connect('closed', self.on_popdown_name)
-        # _id = self._cursor_topics.connect('changed', self.on_changed_cursor)
         _id = self._window.connect('delete-event', self.on_close_view_sheet)
 
         # Application Title
-        UI.new_action_active(
-            self._window, 'open-sheet', self.on_open_sheet)
-        UI.new_action_active(
-            self._window, 'new-sheet', self.on_new_sheet)
-        UI.new_action_active(
-            self._window, 'save-sheet', self.on_save_sheet)
+        UI.new_action_active(self._window, 'open-sheet', self.on_open_sheet)
+        UI.new_action_active(self._window, 'new-sheet', self.on_new_sheet)
+        UI.new_action_active(self._window, 'save-sheet', self.on_save_sheet)
         UI.new_action_active(
             self._window, 'save-as-sheet', self.on_save_as_sheet)
 
@@ -356,26 +337,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         #     GO.BindingFlags.BIDIRECTIONAL)
         # entry_find = get_object('ui_find_topic_entry')
         # self._view_topics.gtk_view.set_search_entry(entry_find)
-        # Issue #249 stub
-        UI.new_action_active(
-            self._window, 'new-topic', self.on_new_topic)
-        # UI.new_action_active(
-        #     self._window, 'go-first-topic', self.on_go_first_topic)
-        # UI.new_action_active(
-        #     self._window, 'go-last-topic', self.on_go_last_topic)
-        # button_expand = get_object('ui_tool_expand_topics')
-        # _ = button_expand.connect(
-        #     'clicked', lambda _b: self._view_topics.gtk_view.expand_all())
-        # button_collapse = get_object('ui_tool_collapse_topics')
-        # _ = button_collapse.connect(
-        #     'clicked', lambda _b: self._view_topics.gtk_view.collapse_all())
-        # UI.new_action_active(
-        #     self._window, 'delete-topic', self.on_delete_topic)
-        # UI.new_action_active(
-        #     self._window, 'clear-topics', self.on_clear_topics)
-        # UI.new_action_active_dialog(
-        #     self._window, 'show-help-topics',
-        #     self.on_show_dialog, UI.HELP_SHEET_TOPICS)
 
         # button_by_name = get_object('ui_find_by_name')
         # _ = button_by_name.connect(
@@ -389,12 +350,12 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         Create an action for each application menu dialog.
         """
-        UI.new_action_active_dialog(self._window, 'show-intro-app',
-                                    self.on_show_dialog, UI.INTRO_APP)
-        UI.new_action_active_dialog(self._window, 'show-help-app',
-                                    self.on_show_dialog, UI.HELP_APP)
-        UI.new_action_active_dialog(self._window, 'show-about-app',
-                                    self.on_show_dialog, UI.ABOUT_APP)
+        UI.new_action_active_dialog(
+            self._window, 'show-intro-app', self.on_show_dialog, UI.INTRO_APP)
+        UI.new_action_active_dialog(
+            self._window, 'show-help-app', self.on_show_dialog, UI.HELP_APP)
+        UI.new_action_active_dialog(
+            self._window, 'show-about-app', self.on_show_dialog, UI.ABOUT_APP)
 
     def _init_factsheet_menu(self):
         """Initialize factsheet menu.
@@ -405,7 +366,11 @@ class ViewSheet(CSHEET.ObserverControlSheet):
                                     self.on_show_dialog, UI.HELP_SHEET)
 
     def _init_name_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
-        """Initialize editor for factsheet name."""
+        """Initialize editor for factsheet name.
+
+        :param p_get_object: method to get visual element from user
+            interface description.
+        """
         EXPAND_OKAY = True
         FILL_OKAY = True
         N_PADDING = 6
@@ -426,7 +391,11 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         headerbar.set_custom_title(title)
 
     def _init_summary_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
-        """Initialize view for factsheet summary."""
+        """Initialize view for factsheet summary.
+
+        :param p_get_object: method to get visual element from user
+            interface description.
+        """
         editor_summary = self._control.new_editor_summary()
         site_summary_sheet = p_get_object('ui_site_summary_sheet')
         site_summary_sheet.add(editor_summary)
@@ -438,7 +407,11 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             'active', expander, 'visible', SYNC)
 
     def _init_title_sheet(self, p_get_object: 'gi.FunctionInfo') -> None:
-        """Initialize editor for factsheet title."""
+        """Initialize editor for factsheet title.
+
+        :param p_get_object: method to get visual element from user
+            interface description.
+        """
         EXPAND_OKAY = True
         FILL_OKAY = True
         N_PADDING = 6
@@ -451,7 +424,11 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             view_title.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def _init_topics(self, p_get_object: 'gi.FunctionInfo') -> None:
-        """Initialize editor for topics outline."""
+        """Initialize editor for topics outline.
+
+        :param p_get_object: method to get visual element from user
+            interface description.
+        """
         EXPAND_OKAY = True
         FILL_OKAY = True
         N_PADDING = 0
@@ -460,18 +437,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
         editor_topics = VTOPICS.EditorTopics(p_control_sheet=self._control)
         site_topics.pack_start(
             editor_topics.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
-
-    def close_topic(self, p_id) -> None:
-        # def close_topic(self, p_id: VTYPES.TagTopic) -> None:
-        """Close topic pane in response to notice from model.
-
-        Closing a topic pane removes the pane from the factsheet page.
-
-        :param p_id: identity of topic pane to close.
-        """
-        raise NotImplementedError
-        # name_scene = hex(p_id)
-        # self._scenes_topic.remove_scene(name_scene)
 
     def confirm_close(self):
         """Return :data:`ALLOW_CLOSE` when user approves closing view.
@@ -509,11 +474,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             path_new = Path(dialog.get_filename())
         del dialog
         return path_new
-
-    def get_view_topics(self):  # -> ASHEET.AdaptTreeViewTopic:
-        """Return view of factsheet's topic outline."""
-        raise NotImplementedError
-        # return self._view_topics
 
     def _make_file_chooser(self, p_action: Gtk.FileChooserAction
                            ) -> Gtk.FileChooserDialog:
@@ -574,51 +534,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         return dialog
 
-    # def new_view_topics(self) -> VTYPES.ViewOutlineTopics:
-    #     """Return new, unattached view of topics outline. """
-    #     view_topics_new = VTYPES.ViewOutlineTopics()
-    #     assert self._control is not None
-    #     self._control.attach_view_topics(view_topics_new)
-    #     return view_topics_new
-
-    def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
-        """Changes topic view to match current topic.
-
-        :param px_cursor: identifies now-current topic.
-        """
-        raise NotImplementedError
-        # # id_none = self._scenes_topic.ID_NONE
-        # model, index = px_cursor.get_selected()
-        # if index is None:
-        #     _ = self._scenes_topic.show_scene(None)
-        #     return
-        #
-        # topic = AOUTLINE.get_item_gtk(model, index)
-        # if topic is None:
-        #     _ = self._scenes_topic.show_scene(None)
-        #     return
-        #
-        # name_topic = hex(topic.id_topic)
-        # name_visible = self._scenes_topic.show_scene(name_topic)
-        # if name_topic == name_visible:
-        #     return
-        #
-        # control = self._control.get_control_topic(topic)
-        # if control is None:
-        #     _ = self._scenes_topic.show_scene(None)
-        #     return
-        #
-        # pane = VTOPIC.FormTopic(pm_control=control)
-        # self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
-        # _ = self._scenes_topic.show_scene(name_topic)
-
-    def on_clear_topics(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Remove all topics from the topics outline."""
-        raise NotImplementedError
-        # assert self._control is not None
-        # self._control.clear()
-
     def on_close_view_sheet(
             self, _widget: Gtk.Widget, _event: Gdk.Event) -> bool:
         """Close view of factsheet."""
@@ -644,45 +559,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
 
         CSHEET.g_control_app.close_factsheet(p_control=self._control)
 
-    def on_delete_topic(self, _action: Gio.SimpleAction,
-                        _target: GLib.Variant) -> None:
-        """Remove selected topic from the topics outline.
-
-        If no topic is selected, then the topics outline is unchanged.
-        """
-        raise NotImplementedError
-        # _model, index = self._cursor_topics.get_selected()
-        # if index is not None:
-        #     assert self._control is not None
-        #     self._control.extract_topic(index)
-
-    def on_go_first_topic(self, _action: Gio.SimpleAction,
-                          _target: GLib.Variant) -> None:
-        """Change selected topic to first topic."""
-        raise NotImplementedError
-        # gtk_model = self._view_topics.gtk_view.get_model()
-        # i_first = gtk_model.get_iter_first()
-        # if i_first is not None:
-        #     self._cursor_topics.select_iter(i_first)
-
-    def on_go_last_topic(self, _action: Gio.SimpleAction,
-                         _target: GLib.Variant) -> None:
-        """Change selected topic to last topic."""
-        raise NotImplementedError
-        # gtk_view = self._view_topics.gtk_view
-        # gtk_model = gtk_view.get_model()
-        # i_last = None
-        # n_children = gtk_model.iter_n_children(i_last)
-        # while 0 < n_children:
-        #     i_last = gtk_model.iter_nth_child(i_last, n_children - 1)
-        #     n_children = gtk_model.iter_n_children(i_last)
-        # if i_last is not None:
-        #     path = gtk_model.get_path(i_last)
-        #     gtk_view.expand_to_path(path)
-        #     self._cursor_topics.select_iter(i_last)
-        #     IGNORE = 0
-        #     gtk_view.scroll_to_cell(path, None, False, IGNORE, IGNORE)
-
     @classmethod
     def on_new_sheet(cls, _action: Gio.SimpleAction,
                      _target: GLib.Variant) -> None:
@@ -696,59 +572,6 @@ class ViewSheet(CSHEET.ObserverControlSheet):
             return
 
         _view = ViewSheet(p_control=control_sheet)
-
-    def on_new_topic(self, _action: Gio.SimpleAction,
-                     _target: GLib.Variant) -> None:
-        """Specify a new topic and add to topic outline.
-
-        The method queries for the placement of new topic, the template
-        for the topic, and topic contents.  The user may cancel at any
-        of the queries.
-        """
-        # Issue #249 stub
-        spec = SBASE.Base(p_name='Cheese Shop',
-                          p_summary='Please select any cheese in the shop!',
-                          p_title='Cheese Specification')
-        spec()
-        return
-
-        raise NotImplementedError
-        # gtk_model = self._view_topics.gtk_view.get_model()
-        # if len(gtk_model):
-        #     assert self._query_place is not None
-        #     placement = self._query_place()
-        # else:
-        #     placement = QPLACE.Placement(None, QPLACE.Order.CHILD)
-        # if placement is None:
-        #     return
-        #
-        # template = self._query_template()
-        # if template is None:
-        #     return
-        #
-        # topic = template()
-        # if topic is None:
-        #     return
-        #
-        # assert self._control is not None
-        # if placement.order is QPLACE.Order.AFTER:
-        #     index, control = self._control.insert_topic_after(
-        #         topic, placement.anchor)
-        # elif placement.order is QPLACE.Order.BEFORE:
-        #     index, control = self._control.insert_topic_before(
-        #         topic, placement.anchor)
-        # elif placement.order is QPLACE.Order.CHILD:
-        #     index, control = self._control.insert_topic_child(
-        #         topic, placement.anchor)
-        # else:
-        #     raise NotImplementedError
-        #
-        # pane = VTOPIC.FormTopic(pm_control=control)
-        # name_topic = hex(topic.id_topic)
-        # self._scenes_topic.add_scene(pane.gtk_pane, name_topic)
-        # path = gtk_model.get_path(index)
-        # self._view_topics.gtk_view.expand_to_path(path)
-        # self._cursor_topics.select_iter(index)
 
     def on_open_sheet(self, _action: Gio.SimpleAction,
                       _target: GLib.Variant) -> None:
