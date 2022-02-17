@@ -15,17 +15,15 @@ import factsheet.model.topic as MTOPIC
 import factsheet.view.editor_topics as VTOPICS
 import factsheet.view.view_stack as VSTACK
 import factsheet.view.view_topic as VTOPIC
-import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GObject as GO  # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 def fill_topics(p_control_sheet, p_n_width, p_n_depth) -> BUI.LineOutline:
-    """Clears control's topic outline and refills with stub content.
+    """Clears control's topics outline and refills with stub content.
 
     :param p_control_sheet: ControlSheet to modify.
     :param p_n_width: number of top-level topics.
@@ -79,7 +77,10 @@ class TestEditorTopics:
         'switch-columns',
         ])
     def test_init_actions(self, NAME_ACTION):
-        """Confirm initialization of actions for toolbar buttons."""
+        """Confirm initialization of actions for toolbar buttons.
+
+        :param NAME_ACTION: name of action under test.
+        """
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
@@ -91,7 +92,7 @@ class TestEditorTopics:
         assert actions.lookup_action(NAME_ACTION) is not None
 
     def test_init_outline_topics(self):
-        """Confirm initialization of topics outline>"""
+        """Confirm initialization of topics outline."""
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
@@ -118,14 +119,12 @@ class TestEditorTopics:
             ])
     def test_init_signals(
             self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT):
-        """| Confirm initialization.
-        | Case: signal connections
+        """Confirm initialization of signal connections.
 
         :param NAME_SIGNAL: name of signal.
         :param NAME_ATTRIBUTE: name of attribute connected to signal.
         :param ORIGIN: GTK class of connected attribute.
         :param N_DEFAULT: number of default handlers
-        :param gtk_app_window: fixture :func:`.gtk_app_window`.
         """
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
@@ -148,7 +147,7 @@ class TestEditorTopics:
         assert N_DEFAULT + 1 == n_handlers
 
     def test_init_views_topics(self):
-        """Confirm initialization of stack of topic views>"""
+        """Confirm initialization of stack of topic views."""
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
@@ -173,7 +172,12 @@ class TestEditorTopics:
         ('_markup_cell_title', 4, 'Title 4'),
         ])
     def test_markup_cell(self, METHOD, I_LINE, EXPECT):
-        """Confirm cell data function updates column text."""
+        """Confirm cell data function updates column text.
+
+        :param METHOD: markup method under test.
+        :param I_LINE: index in outline of sample line.
+        :param EXPECT: text to expect in cell.
+        """
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
         control_sheet.clear()
@@ -199,7 +203,10 @@ class TestEditorTopics:
         ('_markup_cell_title'),
         ])
     def test_markup_cell_none(self, METHOD):
-        """Confirm cell data function updates column text."""
+        """Confirm cell data function updates column text.
+
+        :param METHOD: markup method under test.
+        """
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
         control_sheet.clear()
@@ -413,9 +420,8 @@ class TestEditorTopics:
         _ = target._views_topics.show_view(name_topic)
         target._ui_outline_topics.expand_all()
         target._ui_selection.select_iter(line_topic)
-        assert name_topic == target._views_topics.ui_view.get_visible_child_name()
 
-        def get_control_topic(self, p_line):
+        def get_control_topic(self, _line):
             return None
 
         monkeypatch.setattr(
@@ -433,7 +439,6 @@ class TestEditorTopics:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'CRITICAL' == record.levelname
-
 
     def test_on_clear_topics(self):
         """Confirm all topics removed from topics outline."""
@@ -473,7 +478,7 @@ class TestEditorTopics:
 
     def test_on_go_first_topic(self):
         """| Confirm first topic selection.
-        | Case: Topic outline is not empty.
+        | Case: topics outline is not empty.
         """
         # Setup
         control_sheet = CSHEET.ControlSheet(p_path=None)
@@ -495,7 +500,7 @@ class TestEditorTopics:
 
     def test_on_go_first_topic_none(self):
         """| Confirm first topic selection.
-        | Case: topic outline is empty.
+        | Case: topics outline is empty.
         """
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
@@ -507,7 +512,7 @@ class TestEditorTopics:
 
     def test_on_go_last_topic(self):
         """| Confirm last topic selection.
-        | Case: Topic outline is not empty; last topic is not top level.
+        | Case: topics outline is not empty; last topic is not top level.
         """
         control_sheet = CSHEET.ControlSheet(p_path=None)
         target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
@@ -526,9 +531,9 @@ class TestEditorTopics:
         control_topic = control_sheet.get_control_topic(line)
         assert EXPECT_NAME == control_topic.name
 
-    def test_on_go_last_topic_none(self, monkeypatch, capfd):
+    def test_on_go_last_topic_none(self):
         """| Confirm last topic selection.
-        | Case: topic outline is empty.
+        | Case: topics outline is empty.
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         :param capfd: built-in fixture `Pytest capfd`_.

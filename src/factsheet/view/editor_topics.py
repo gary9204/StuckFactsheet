@@ -6,7 +6,10 @@ Types and Type Aliases
 
 .. data:: UiEditorTopics
 
-    Type alias for 
+    Type alias for visual element for :class:`.EditorTopics`.
+
+Classes
+-------
 """
 import gi   # type: ignore[import]
 import logging
@@ -24,9 +27,7 @@ import factsheet.view.ui as UI
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio   # type: ignore[import]    # noqa: E402
 from gi.repository import GLib  # type: ignore[import]    # noqa: E402
-from gi.repository import GObject as GO  # type: ignore[import]    # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-from gi.repository import Pango   # type: ignore[import]    # noqa: E402
 
 
 UiEditorTopics = typing.Union[Gtk.Frame]
@@ -185,7 +186,7 @@ class EditorTopics:
     def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
         """Update item view shown when topics outline selection chenges.
 
-        :param _selection: selection that may have changed.
+        :param _selection: selection that may have changed (unused).
         """
         _model, line_current = self._ui_selection.get_selected()
         if line_current is None:
@@ -210,7 +211,11 @@ class EditorTopics:
 
     def on_clear_topics(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Remove all topics from the topics outline."""
+        """Remove all topics from the topics outline.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
         self._control_sheet.clear()
 
     def on_delete_topic(self, _action: Gio.SimpleAction,
@@ -218,16 +223,19 @@ class EditorTopics:
         """Remove selected topic from the topics outline.
 
         If no topic is selected, then the topics outline is unchanged.
+        
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
         """
         _model, line = self._ui_selection.get_selected()
         self._control_sheet.remove_topic(line)
 
     def on_go_first_topic(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Change selected topic to first topic in the outline.
+        """Make the first topic in the outline the selected topic.
 
         :param _action: user activated this action (unused).
-        :param _target: target of action (unused).
+        :param _target: parameter GTK provides with activation (unused).
         """
         model, _ = self._ui_selection.get_selected()
         line_first = model.get_iter_first()
@@ -236,10 +244,10 @@ class EditorTopics:
 
     def on_go_last_topic(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Change selected topic to last topic in the outline.
+        """Make the last topic in the outline the selected topic.
 
         :param _action: user activated this action (unused).
-        :param _target: target of action (unused).
+        :param _target: parameter GTK provides with activation (unused).
         """
         model, _ = self._ui_selection.get_selected()
         line_last = None
@@ -264,6 +272,9 @@ class EditorTopics:
         The method queries for the placement of new topic, the template
         for the topic, and topic contents.  The user may cancel at any
         of the queries.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
         """
         # Issue #249 stub
         spec = SBASE.Base(p_name='Cheese Shop',
@@ -312,7 +323,11 @@ class EditorTopics:
 
     def on_show_help(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Display help dialog."""
+        """Display help dialog.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
         if self._dialog_help.get_transient_for() is None:
             parent = self._ui_view.get_toplevel()
             if parent.is_toplevel():
@@ -322,12 +337,16 @@ class EditorTopics:
 
     def on_switch_columns(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Display help dialog."""
+        """Switch between showing name column and title column.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
         visible_old = self._column_name.get_visible()
         self._column_name.set_visible(not visible_old)
         self._column_title.set_visible(visible_old)
 
     @property
     def ui_view(self) -> UiEditorTopics:
-        """Return user interface element of topics editor."""
+        """Return visual element of topics editor."""
         return self._ui_view

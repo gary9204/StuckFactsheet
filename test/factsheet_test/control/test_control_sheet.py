@@ -292,6 +292,7 @@ class TestControlSheet:
         assert isinstance(target._roster_topics, dict)
         # Restore next line when stub removed.  See issue #253.
         # assert not target._roster_topics
+        assert False   # Add model topics to topics roster on open
 
     def test_add_view(self):
         """| Confirm tracking of given sheet view.

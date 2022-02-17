@@ -313,7 +313,10 @@ class ControlSheet:
     """
 
     def __init__(self, p_path: Path = None) -> None:
-        """Initialize instance from given file or with default attributes."""
+        """Initialize instance from given file or with default attributes.
+
+        :param p_path: location of file for factsheet model.
+        """
         self._path = p_path
         self._model = self._model_from_path(p_path)
 
@@ -334,6 +337,10 @@ class ControlSheet:
             IdViewSheet, ObserverControlSheet] = dict()
         self._roster_topics: typing.MutableMapping[
             TagTopic, CTOPIC.ControlTopic] = dict()
+        # Untested fix for issue #256
+        for topic in self._model.topics():
+            control_new = CTOPIC.ControlTopic(p_model=topic)
+            self._insert_topic_control(p_control=control_new)
         # Issue #253
         self._stub_topics()
 
