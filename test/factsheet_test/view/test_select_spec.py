@@ -5,12 +5,12 @@ import gi   # type: ignore[import]
 from pathlib import Path
 import pytest   # type: ignore[import]
 
-from factsheet.content import heading as XHEADING
-from factsheet.content import spec as XSPEC
-from factsheet.content.note import spec_note as XSPEC_NOTE
-from factsheet.content.note import topic_note as XNOTE
-from factsheet.model import types_model as MTYPES
-from factsheet.view import query_template as QTEMPLATES
+# from factsheet.content import heading as XHEADING
+# from factsheet.content import spec as XSPEC
+# from factsheet.content.note import spec_note as XSPEC_NOTE
+# from factsheet.content.note import topic_note as XNOTE
+# from factsheet.model import types_model as MTYPES
+import factsheet.view.select_spec as SELECT_SPEC
 # from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -35,66 +35,67 @@ def new_outline_model():
         |         name_112 | title_112 | summary_112
     """
     def new_model():
-        CLASS_TOPIC = XNOTE.Note
-        PATH_ASSIST = XSPEC.StrAssist(
-            str(Path(XSPEC_NOTE.__file__).parent / 'spec_note.ui'))
-        # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-
-        def ATTACH_VIEW_TOPICS(_view): pass
-
-        model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
-
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_0xx', p_title='title_0xx', p_summary='summary_0xx',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        i_0xx = model.append(None, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_00x', p_title='title_00x', p_summary='summary_00x',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        i_00x = model.append(
-            i_0xx, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_000', p_title='title_000', p_summary='summary_000',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        _i_000 = model.append(i_00x, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_01x', p_title='title_01x', p_summary='summary_01x',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        i_0xx = model.append(i_0xx, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_1xx', p_title='title_1xx', p_summary='summary_1xx',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        i_1xx = model.append(None, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_10x', p_title='title_10x', p_summary='summary_10x',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        _i_10x = model.append(i_1xx, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_11x', p_title='title_11x', p_summary='summary_11x',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        i_11x = model.append(i_1xx, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_110', p_title='title_110', p_summary='summary_110',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        _i_110 = model.append(i_11x, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_111', p_title='title_111', p_summary='summary_111',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        _i_111 = model.append(i_11x, [item])
-        item = XSPEC_NOTE.SpecNote(
-            p_name='name_112', p_title='title_112', p_summary='summary_112',
-            p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-            p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        _i_112 = model.append(i_11x, [item])
+        model = None
+        # CLASS_TOPIC = XNOTE.Note
+        # PATH_ASSIST = XSPEC.StrAssist(
+        #     str(Path(XSPEC_NOTE.__file__).parent / 'spec_note.ui'))
+        # # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+        #
+        # def ATTACH_VIEW_TOPICS(_view): pass
+        #
+        # model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
+        #
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_0xx', p_title='title_0xx', p_summary='summary_0xx',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # i_0xx = model.append(None, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_00x', p_title='title_00x', p_summary='summary_00x',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # i_00x = model.append(
+        #     i_0xx, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_000', p_title='title_000', p_summary='summary_000',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # _i_000 = model.append(i_00x, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_01x', p_title='title_01x', p_summary='summary_01x',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # i_0xx = model.append(i_0xx, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_1xx', p_title='title_1xx', p_summary='summary_1xx',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # i_1xx = model.append(None, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_10x', p_title='title_10x', p_summary='summary_10x',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # _i_10x = model.append(i_1xx, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_11x', p_title='title_11x', p_summary='summary_11x',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # i_11x = model.append(i_1xx, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_110', p_title='title_110', p_summary='summary_110',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # _i_110 = model.append(i_11x, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_111', p_title='title_111', p_summary='summary_111',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # _i_111 = model.append(i_11x, [item])
+        # item = XSPEC_NOTE.SpecNote(
+        #     p_name='name_112', p_title='title_112', p_summary='summary_112',
+        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
+        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
+        # _i_112 = model.append(i_11x, [item])
         return model
 
     return new_model
@@ -102,14 +103,16 @@ def new_outline_model():
 
 @pytest.fixture
 def patch_outline(new_outline_model):
-    outline = MTYPES.OutlineTemplates()
-    outline._ui_model = new_outline_model()
+    outline = None
+    # outline = MTYPES.OutlineTemplates()
+    # outline._ui_model = new_outline_model()
     return outline
 
 
 class TestQueryTemplate:
     """Unit tests for :class:`.QueryTemplate`."""
 
+    @pytest.mark.skip
     def test_attr(self):
         """Confirm class attributes are defined."""
         # Setup
@@ -120,6 +123,7 @@ class TestQueryTemplate:
         assert isinstance(target.NAME_FILE_QUERY_UI, str)
         assert target.NAME_FILE_QUERY_UI
 
+    @pytest.mark.skip
     def test_init(self):
         """Confirm initialization."""
         # Setup
@@ -173,6 +177,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
             ('changed', '_cursor', Gtk.TreeSelection, 0),
@@ -204,6 +209,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_call(self, patch_dialog_run, monkeypatch, patch_outline):
         """| Confirm template selection.
         | Case: template selected.
@@ -232,6 +238,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_call_cancel(
             self, patch_dialog_run, monkeypatch, patch_outline):
         """| Confirm template selection.
@@ -262,6 +269,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_on_changed_cursor(self, patch_outline):
         """| Confirm updates when current template changes.
         | Case: change to specification template
@@ -289,6 +297,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_on_changed_cursor_to_heading(self, patch_outline):
         """| Confirm updates when current template changes.
         | Case: change to heading template.
@@ -322,6 +331,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_on_changed_cursor_to_empty(self, patch_outline):
         """| Confirm updates when current template changes.
         | Case: change to template None.
@@ -351,6 +361,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_on_changed_cursor_to_none(self, patch_outline):
         """| Confirm updates when current template changes.
         | Case: change to no current template
@@ -376,6 +387,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_on_toggle_search_field_inactive(self, patch_outline):
         """| Confirm search field set.
         | Case: button inactive
@@ -395,6 +407,7 @@ class TestQueryTemplate:
         # Teardown
         del WIN
 
+    @pytest.mark.skip
     def test_on_toggle_search_field_active(self, patch_outline):
         """| Confirm search field set.
         | Case: button inactive

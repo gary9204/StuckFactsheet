@@ -1,14 +1,14 @@
-``query_template`` View Module
-==============================
+``select_spec`` View Module
+===========================
 
-.. automodule:: factsheet.view.query_template
+.. automodule:: factsheet.view.select_spec
    :members:
    :special-members: __call__
-   :exclude-members: QueryTemplate
+   :exclude-members: SelectSpec
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: QueryTemplate
+.. autoclass:: SelectSpec
    :members:
    :special-members: __call__
    :exclude-members: NAME_FILE_QUERY_UI, NO_SUMMARY
