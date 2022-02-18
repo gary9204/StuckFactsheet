@@ -288,13 +288,13 @@ def new_action_active_dialog(p_group: Gio.SimpleActionGroup,
     action.connect('activate', p_handler, p_dialog)
 
 
-class GetUiView(abc.ABC):
+class GetUiElement(abc.ABC):
     """Get user interface element with supplemental failure information.
 
     `Gtk.Builder`_ aborts if there is an error opening a user interface
     description file or parsing a description.
     `Gtk.Builder.get_object()`_ returns None when the method cannot find
-    the object for a given ID.  Class :class:`GetUiView` augments
+    the object for a given ID.  Class :class:`GetUiElement` augments
     `Gtk.Builder`_ to provide more information when a failure occurs.
 
     .. _`Gtk.Builder`:
@@ -328,8 +328,8 @@ class GetUiView(abc.ABC):
         return ui_element
 
 
-class GetUiViewByPath(GetUiView):
-    """Extend :class:`.GetUiView` with `Gtk.Builder`_ from file."""
+class GetUiElementByPath(GetUiElement):
+    """Extend :class:`.GetUiElement` with `Gtk.Builder`_ from file."""
 
     def __init__(self, *, p_path_ui: Path, **kwargs) -> None:
         """Initialize underlying builder and log source of description.
@@ -350,8 +350,8 @@ class GetUiViewByPath(GetUiView):
         self._builder = Gtk.Builder.new_from_file(str(p_path_ui))
 
 
-class GetUiViewByStr(GetUiView):
-    """Extend :class:`.GetUiView` with `Gtk.Builder`_ from string."""
+class GetUiElementByStr(GetUiElement):
+    """Extend :class:`.GetUiElement` with `Gtk.Builder`_ from string."""
 
     def __init__(self, *, p_string_ui: str, **kwargs) -> None:
         """Initialize underlying builder and log source of description.
@@ -375,3 +375,22 @@ class GetUiViewByStr(GetUiView):
             MESSAGE = 'No object found for ID {}.'.format(p_id)
             raise UiObjectNotFoundError(MESSAGE)
         return ui_object
+
+
+def new_column_stock(p_title: str, p_data_func: 'Gtk.TreeCellDataFunc'
+                     ) -> Gtk.TreeViewColumn:
+    """Return column with stock properties.
+
+    :param p_title: title for column.
+    :param p_cell_data_func: function to format column contents.
+    """
+    column = Gtk.TreeViewColumn(title=p_title)
+    render = Gtk.CellRendererText()
+    column.pack_start(render, expand=True)
+    column.set_cell_data_func(render, p_data_func)
+    column.set_clickable(True)
+    WIDTH_MIN = 12
+    column.set_min_width(WIDTH_MIN)
+    column.set_reorderable(True)
+    column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
+    return column

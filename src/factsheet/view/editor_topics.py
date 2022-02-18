@@ -45,15 +45,15 @@ class EditorTopics:
         """
         self._control_sheet = p_control_sheet
         path_ui = Path(__file__).with_suffix('.ui')
-        get_ui_view = UI.GetUiViewByPath(p_path_ui=path_ui)
-        self._ui_view = get_ui_view('ui_editor_topics')
+        get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
+        self._ui_view = get_ui_element('ui_editor_topics')
         _actions = self._init_actions()
-        self._dialog_help = get_ui_view('ui_help_outline_topics')
+        self._dialog_help = get_ui_element('ui_help_outline_topics')
         self._init_outline_topics()
-        site_topics = get_ui_view('ui_site_topics')
+        site_topics = get_ui_element('ui_site_topics')
         site_topics.add(self._ui_outline_topics)
         self._init_views_topics()
-        site_views = get_ui_view('ui_site_views')
+        site_views = get_ui_element('ui_site_views')
         site_views.add(self._views_topics.ui_view)
 
     def _init_actions(self) -> Gio.SimpleActionGroup:
@@ -81,9 +81,12 @@ class EditorTopics:
         self._ui_outline_topics = self._control_sheet.new_view_topics()
         self._ui_selection = self._ui_outline_topics.get_selection()
         _id = self._ui_selection.connect('changed', self.on_changed_selection)
-        self._column_name = self._new_column_name()
+        # self._column_name = self._new_column_name()
+        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
         self._ui_outline_topics.append_column(self._column_name)
-        self._column_title = self._new_column_title()
+        # self._column_title = self._new_column_title()
+        self._column_title = UI.new_column_stock(
+            'Title', self._markup_cell_title)
         self._ui_outline_topics.append_column(self._column_title)
 
     def _init_views_topics(self) -> None:
@@ -138,33 +141,6 @@ class EditorTopics:
         :param p_tag: tag of topic to name.
         """
         return hex(p_tag)
-
-    def _new_column_name(self) -> Gtk.TreeViewColumn:
-        """Return column for topic names."""
-        column = Gtk.TreeViewColumn(title='Name')
-        render = Gtk.CellRendererText()
-        column.pack_start(render, expand=True)
-        column.set_cell_data_func(render, self._markup_cell_name)
-        column.set_clickable(True)
-        WIDTH_MIN = 12
-        column.set_min_width(WIDTH_MIN)
-        column.set_reorderable(True)
-        column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        return column
-
-    def _new_column_title(self) -> Gtk.TreeViewColumn:
-        """Return column for topic titles."""
-        column = Gtk.TreeViewColumn(title='Title')
-        render = Gtk.CellRendererText()
-        column.pack_start(render, expand=True)
-        column.set_cell_data_func(render, self._markup_cell_title)
-        column.set_clickable(True)
-        WIDTH_MIN = 12
-        column.set_min_width(WIDTH_MIN)
-        column.set_reorderable(True)
-        column.set_visible(False)
-        column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        return column
 
     def on_change_depth(
             self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
@@ -223,7 +199,7 @@ class EditorTopics:
         """Remove selected topic from the topics outline.
 
         If no topic is selected, then the topics outline is unchanged.
-        
+
         :param _action: user activated this action (unused).
         :param _target: parameter GTK provides with activation (unused).
         """

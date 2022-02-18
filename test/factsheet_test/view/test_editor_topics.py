@@ -231,51 +231,6 @@ class TestEditorTopics:
         # Test
         assert NAME == VTOPICS.EditorTopics.name_tag(TAG)
 
-    def test_new_column_name(self):
-        """Confirm name column construction."""
-        # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
-        control_sheet.clear()
-        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
-        TITLE = 'Name'
-        I_NAME = 0
-        WIDTH_MIN = 12
-        # Test
-        column = target._new_column_name()
-        assert isinstance(column, Gtk.TreeViewColumn)
-        assert TITLE == column.get_title()
-        cells = column.get_cells()
-        render = cells[I_NAME]
-        assert isinstance(render, Gtk.CellRendererText)
-        assert column.get_clickable()
-        assert WIDTH_MIN == column.get_min_width()
-        assert column.get_reorderable()
-        assert column.get_sizing() is Gtk.TreeViewColumnSizing.AUTOSIZE
-        assert not column.get_resizable()
-
-    def test_new_column_title(self):
-        """Confirm title column construction."""
-        # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
-        control_sheet.clear()
-        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
-        TITLE = 'Title'
-        I_TITLE = 0
-        WIDTH_MIN = 12
-        # Test
-        column = target._new_column_title()
-        assert isinstance(column, Gtk.TreeViewColumn)
-        assert TITLE == column.get_title()
-        cells = column.get_cells()
-        render = cells[I_TITLE]
-        assert isinstance(render, Gtk.CellRendererText)
-        assert column.get_clickable()
-        assert WIDTH_MIN == column.get_min_width()
-        assert column.get_reorderable()
-        assert not column.get_visible()
-        assert column.get_sizing() is Gtk.TreeViewColumnSizing.AUTOSIZE
-        assert not column.get_resizable()
-
     @pytest.mark.parametrize('NAME, COLLAPSE', [
         ('collapse-outline', True),
         ('expand-outline', False),

@@ -1,8 +1,8 @@
 """
-Defines class for selecting a template.
+Defines class for selecting a specification of a new topic.
 """
 import gi   # type: ignore[import]
-# from pathlib import Path
+from pathlib import Path
 import typing
 
 # import factsheet.content.man_content as XMAN_CONTENT
@@ -10,8 +10,10 @@ import typing
 # from factsheet.view import types_view as VTYPES
 import factsheet.view.ui as UI
 
+from factsheet.spec import g_specs
+
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
+# from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
@@ -34,16 +36,22 @@ class SelectSpec:
        Summary text query displays when no template is current.
     """
 
-    NO_SUMMARY = 'Oops'  # 'Please select a <b>template.</b>'
+    NO_SUMMARY = 'Please select a <b>topic specification.</b>'
 
     # STUB Glade patch - begin
     #    <property name="use-header-bar">1</property>
     # STUB Glade patch - end
-    NAME_FILE_QUERY_UI = 'Oops!'  # str(UI.DIR_UI / 'query_template.ui')
+    # NAME_FILE_QUERY_UI = 'Oops!'  # str(UI.DIR_UI / 'query_template.ui')
 
     def __init__(self, p_parent: Gtk.Window,
                  p_new_view_topics: typing.Any) -> None:
         print('Enter: __init__')
+        path_ui = Path(__file__).with_suffix('.ui')
+        get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
+
+    def _init_dialog(self) -> None:
+        """Initialize the top-level visual element."""
+        print('Enter: ')
         # builder = Gtk.Builder.new_from_file(self.NAME_FILE_QUERY_UI)
         # get_object = builder.get_object
         # self._dialog = get_object('ui_dialog_select_template')

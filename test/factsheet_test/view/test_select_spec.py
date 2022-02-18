@@ -1,5 +1,6 @@
 """
-Unit tests for template selection class.  See :mod:`.query_template`.
+Unit tests for class to select a topic specification.  See
+:mod:`.select_spec`.
 """
 import gi   # type: ignore[import]
 from pathlib import Path
@@ -10,7 +11,8 @@ import pytest   # type: ignore[import]
 # from factsheet.content.note import spec_note as XSPEC_NOTE
 # from factsheet.content.note import topic_note as XNOTE
 # from factsheet.model import types_model as MTYPES
-import factsheet.view.select_spec as SELECT_SPEC
+import factsheet.bridge_ui as BUI
+import factsheet.view.select_spec as VSELECT_SPEC
 # from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
@@ -112,70 +114,68 @@ def patch_outline(new_outline_model):
 class TestQueryTemplate:
     """Unit tests for :class:`.QueryTemplate`."""
 
-    @pytest.mark.skip
-    def test_attr(self):
-        """Confirm class attributes are defined."""
+    def test_no_summary(self):
+        """Confirm class attribute definition."""
         # Setup
-        target = QTEMPLATES.QueryTemplate
+        target = VSELECT_SPEC.SelectSpec
+        EXPECT = 'Please select a <b>topic specification.</b>'
         # Test
         assert isinstance(target.NO_SUMMARY, str)
-        assert target.NO_SUMMARY
-        assert isinstance(target.NAME_FILE_QUERY_UI, str)
-        assert target.NAME_FILE_QUERY_UI
+        assert EXPECT == target.NO_SUMMARY
 
-    @pytest.mark.skip
     def test_init(self):
         """Confirm initialization."""
         # Setup
-        WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        NAME_CANCEL = 'Cancel'
-        NAME_SPEC = 'Specify'
-        NAME_SEARCH = 'edit-find-symbolic'
-        NAME_INFO = 'dialog-information-symbolic'
-        # Test
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        assert isinstance(target._dialog, Gtk.Dialog)
-        dialog = target._dialog
-        assert dialog.get_transient_for() is WIN
-        assert dialog.get_destroy_with_parent()
+        assert False
+        # WIN = Gtk.Window()
+        # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+        # NAME_CANCEL = 'Cancel'
+        # NAME_SPEC = 'Specify'
+        # NAME_SEARCH = 'edit-find-symbolic'
+        # NAME_INFO = 'dialog-information-symbolic'
+        # # Test
+        # target = QTEMPLATES.QueryTemplate(
+        #     p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
+        # assert isinstance(target._dialog, Gtk.Dialog)
+        # dialog = target._dialog
+        # assert dialog.get_transient_for() is WIN
+        # assert dialog.get_destroy_with_parent()
 
-        header_bar = dialog.get_header_bar()
-        button_cancel, button_spec, button_search, button_info = (
-            tuple(header_bar.get_children()))
+        # header_bar = dialog.get_header_bar()
+        # button_cancel, button_spec, button_search, button_info = (
+        #     tuple(header_bar.get_children()))
 
-        assert isinstance(button_cancel, Gtk.Button)
-        assert NAME_CANCEL == button_cancel.get_label()
+        # assert isinstance(button_cancel, Gtk.Button)
+        # assert NAME_CANCEL == button_cancel.get_label()
 
-        assert isinstance(target._button_specify, Gtk.Button)
-        assert target._button_specify is button_spec
-        assert NAME_SPEC == button_spec.get_label()
-        assert not target._button_specify.get_sensitive()
-        style = target._button_specify.get_style_context()
-        assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+        # assert isinstance(target._button_specify, Gtk.Button)
+        # assert target._button_specify is button_spec
+        # assert NAME_SPEC == button_spec.get_label()
+        # assert not target._button_specify.get_sensitive()
+        # style = target._button_specify.get_style_context()
+        # assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
 
-        assert isinstance(button_info, Gtk.ToggleButton)
-        assert button_info.get_visible()
-        image = button_info.get_image()
-        name_image, _size_image = image.get_icon_name()
-        assert NAME_INFO == name_image
+        # assert isinstance(button_info, Gtk.ToggleButton)
+        # assert button_info.get_visible()
+        # image = button_info.get_image()
+        # name_image, _size_image = image.get_icon_name()
+        # assert NAME_INFO == name_image
 
-        assert isinstance(button_search, Gtk.ToggleButton)
-        assert button_search.get_visible()
-        image = button_search.get_image()
-        name_image, _size_image = image.get_icon_name()
-        assert NAME_SEARCH == name_image
+        # assert isinstance(button_search, Gtk.ToggleButton)
+        # assert button_search.get_visible()
+        # image = button_search.get_image()
+        # name_image, _size_image = image.get_icon_name()
+        # assert NAME_SEARCH == name_image
 
-        assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
-        assert target._outline.scope_search is ~ASHEET.FieldsTemplate.VOID
-        assert target._outline.gtk_view.get_search_entry() is not None
-        assert isinstance(target._cursor, Gtk.TreeSelection)
+        # assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
+        # assert target._outline.scope_search is ~ASHEET.FieldsTemplate.VOID
+        # assert target._outline.gtk_view.get_search_entry() is not None
+        # assert isinstance(target._cursor, Gtk.TreeSelection)
 
-        assert isinstance(target._summary_current, Gtk.Label)
-        assert target._summary_current.get_label() == target.NO_SUMMARY
-        # Teardown
-        del WIN
+        # assert isinstance(target._summary_current, Gtk.Label)
+        # assert target._summary_current.get_label() == target.NO_SUMMARY
+        # # Teardown
+        # del WIN
 
     @pytest.mark.skip
     @pytest.mark.parametrize(
@@ -426,3 +426,33 @@ class TestQueryTemplate:
         assert not target._outline.scope_search & ASHEET.FieldsTemplate.NAME
         # Teardown
         del WIN
+
+
+class TestModule:
+    """Unit tests for module-level components of :mod:`.editor_topics`."""
+
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        # (VTOPICS.UiEditorTopics, Gtk.Frame),
+        ])
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type alias definitions.
+
+        :param TYPE_TARGET: type alias under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert TYPE_TARGET == TYPE_EXPECT
+
+    @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
+        (VSELECT_SPEC.g_specs, BUI.ModelOutlineMulti),
+        ])
+    def test_attributes(self, ATTR, TYPE_EXPECT):
+        """Confirm type alias definitions.
+
+        :param TYPE_TARGET: type alias under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert isinstance(ATTR, TYPE_EXPECT)

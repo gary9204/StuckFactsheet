@@ -146,10 +146,10 @@ class TestUiActions:
 
 
 class TestGetUiObject:
-    """Unit tests for :class:`.GetUiView`."""
+    """Unit tests for :class:`.GetUiElement`."""
 
-    class PatchGetUiObject(UI.GetUiView):
-        """Patch subclass for testing abstract :class;`.GetUiView`."""
+    class PatchGetUiObject(UI.GetUiElement):
+        """Patch subclass for testing abstract :class;`.GetUiElement`."""
 
         def __init__(self, p_description, **kwargs):
             super().__init__(**kwargs)
@@ -157,7 +157,7 @@ class TestGetUiObject:
             self._builder = Gtk.Builder.new_from_string(p_description, ALL)
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (UI.GetUiView, '__init__'),
+        (UI.GetUiElement, '__init__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.
@@ -220,7 +220,7 @@ class TestGetUiObject:
 
 
 class TestGetUiObjectPath:
-    """Unit tests for :class:`.GetUiViewByPath`."""
+    """Unit tests for :class:`.GetUiElementByPath`."""
 
     def test_init(self, ui_desc_minimal, tmp_path, caplog, set_logger_debug):
         """| Confirm initialization.
@@ -240,7 +240,7 @@ class TestGetUiObjectPath:
         LAST = -1
         log_message = '... from file {}.'.format(str(PATH))
         # Test
-        target = UI.GetUiViewByPath(p_path_ui=PATH)
+        target = UI.GetUiElementByPath(p_path_ui=PATH)
         assert N_LOGS == len(caplog.records)
         record = caplog.records[LAST]
         assert log_message == record.message
@@ -262,13 +262,13 @@ class TestGetUiObjectPath:
         MATCH = 'Could not access description file "{}".'.format(PATH.name)
         # Test
         with pytest.raises(UI.UiDescriptionError, match=MATCH) as exc_info:
-            _target = UI.GetUiViewByPath(p_path_ui=PATH)
+            _target = UI.GetUiElementByPath(p_path_ui=PATH)
         cause = exc_info.value.__cause__
         assert isinstance(cause, FileNotFoundError)
 
 
 class TestGetUiObjectStr:
-    """Unit tests for :class:`.GetUiViewByStr`."""
+    """Unit tests for :class:`.GetUiElementByStr`."""
 
     def test_init(self, ui_desc_minimal, caplog, set_logger_debug):
         """| Confirm initialization.
@@ -284,7 +284,7 @@ class TestGetUiObjectStr:
         LAST = -1
         log_message = '... from string.'
         # Test
-        target = UI.GetUiViewByStr(p_string_ui=DESC)
+        target = UI.GetUiElementByStr(p_string_ui=DESC)
         assert N_LOGS == len(caplog.records)
         record = caplog.records[LAST]
         assert log_message == record.message
@@ -311,6 +311,42 @@ class TestModule:
         # Setup
         # Test
         assert issubclass(TARGET, SUPER)
+
+    def test_new_column_stock(self, monkeypatch):
+        """Confirm column construction.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        class PatchSetFunc:
+            def __init__(self):
+                self.called_set_func = False
+                self.data_func = 'Oops'
+
+            def set_func(self, _render, p_data_func):
+                self.called_set_func = True
+                self.data_func = p_data_func
+
+        patch = PatchSetFunc()
+        monkeypatch.setattr(
+            Gtk.TreeViewColumn, 'set_cell_data_func', patch.set_func)
+        TITLE = 'Cheeses'
+        I_FIRST = 0
+        WIDTH_MIN = 12
+        # Test
+        column = UI.new_column_stock(TITLE, None)
+        assert isinstance(column, Gtk.TreeViewColumn)
+        assert TITLE == column.get_title()
+        cells = column.get_cells()
+        render = cells[I_FIRST]
+        assert isinstance(render, Gtk.CellRendererText)
+        assert patch.called_set_func
+        assert patch.data_func is None
+        assert column.get_clickable()
+        assert WIDTH_MIN == column.get_min_width()
+        assert column.get_reorderable()
+        assert column.get_sizing() is Gtk.TreeViewColumnSizing.AUTOSIZE
+
 
 #     @pytest.mark.skip(reason='Not currently needed.')
 #     def test_new_action_bool_active(self):

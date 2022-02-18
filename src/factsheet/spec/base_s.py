@@ -161,7 +161,7 @@ class Base:
 
     def new_assistant(self) -> typing.Optional[Gtk.Assistant]:
         """Return an assistant from user interface definition."""
-        get_ui_object = UI.GetUiViewByStr(p_string_ui=UI_ASSIST)
+        get_ui_object = UI.GetUiElementByStr(p_string_ui=UI_ASSIST)
         assist = get_ui_object('ui_assistant')
         _ = assist.connect('apply', self.on_apply)
         _ = assist.connect('cancel', self.on_cancel)
@@ -178,7 +178,7 @@ class Base:
         :param p_display_summary: display for topic summary.
         :param p_display_title: display for topic title.
         """
-        get_ui_object = UI.GetUiViewByStr(p_string_ui=UI_PAGE_CONFIRM)
+        get_ui_object = UI.GetUiElementByStr(p_string_ui=UI_PAGE_CONFIRM)
         new_page = get_ui_object('ui_page_confirm')
         EXPAND_OKAY = True
         FILL_OKAY = True
@@ -201,7 +201,7 @@ class Base:
         :param p_editor_summary: view to display and edit topic summary.
         :param p_view_title: view to display and edit topic title.
         """
-        get_ui_object = UI.GetUiViewByStr(p_string_ui=UI_PAGE_IDENTIFY)
+        get_ui_object = UI.GetUiElementByStr(p_string_ui=UI_PAGE_IDENTIFY)
         new_page = get_ui_object('ui_page_identify')
         EXPAND_OKAY = True
         FILL_OKAY = True
@@ -218,7 +218,7 @@ class Base:
 
     def new_page_intro(self) -> PageAssist:
         """Return an introduction page."""
-        get_ui_object = UI.GetUiViewByStr(p_string_ui=UI_PAGE_INTRO)
+        get_ui_object = UI.GetUiElementByStr(p_string_ui=UI_PAGE_INTRO)
         new_page = get_ui_object('ui_page_intro')
         return new_page
 

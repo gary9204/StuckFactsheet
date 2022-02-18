@@ -2,8 +2,7 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkDialog" id="ui_dialog_select_template">
-    <property name="use-header-bar">1</property>
+  <object class="GtkDialog" id="ui_select_spec">
     <property name="can_focus">False</property>
     <property name="modal">True</property>
     <property name="default_width">500</property>
@@ -135,7 +134,7 @@
                     <property name="label_xalign">0.10000000149011612</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkScrolledWindow" id="ui_context_outline_templates">
+                      <object class="GtkScrolledWindow" id="ui_context_outline_specs">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="margin_left">6</property>
@@ -242,7 +241,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="label" translatable="yes">Select a template for new topic.  The table lists the names and titles of available templates.  Click on a row to select a template and show its summary.  Click the &lt;b&gt;search &lt;/b&gt;button in the dialog title to search for a template by name or by title.</property>
+                        <property name="label" translatable="yes">Select a specification for new topic.  The table lists the names and titles of available topic specifications.  Click on a row to select a specification and show its summary.  Click the &lt;b&gt;search &lt;/b&gt;button in the dialog title to search for a specification by name or by title.</property>
                         <property name="use_markup">True</property>
                         <property name="justify">fill</property>
                         <property name="wrap">True</property>
@@ -259,7 +258,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="label" translatable="yes">Once you have selected a template, click &lt;b&gt;Specify &lt;/b&gt;to create a topic from the template.  Otherwise, click &lt;b&gt;Cancel &lt;/b&gt;to return to the factsheet.</property>
+                        <property name="label" translatable="yes">Once you have selected a topic specification, click &lt;b&gt;Specify &lt;/b&gt;button to create a topic from the specification.  Otherwise, click &lt;b&gt;Cancel &lt;/b&gt;to return to the factsheet.</property>
                         <property name="use_markup">True</property>
                         <property name="justify">fill</property>
                         <property name="wrap">True</property>
