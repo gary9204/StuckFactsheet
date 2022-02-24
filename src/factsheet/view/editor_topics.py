@@ -19,7 +19,7 @@ from pathlib import Path
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
-import factsheet.spec.base_s as SBASE
+import factsheet.view.select_spec as VSELECT_SPEC
 import factsheet.view.view_stack as VSTACK
 import factsheet.view.view_topic as VTOPIC
 import factsheet.view.ui as UI
@@ -252,11 +252,11 @@ class EditorTopics:
         :param _action: user activated this action (unused).
         :param _target: parameter GTK provides with activation (unused).
         """
-        # Issue #249 stub
-        spec = SBASE.Base(p_name='Cheese Shop',
-                          p_summary='Please select any cheese in the shop!',
-                          p_title='Cheese Specification')
-        spec()
+        parent = self.ui_view.get_toplevel()
+        select_spec = VSELECT_SPEC.SelectSpec(parent)
+        spec = select_spec()
+        if spec is not None:
+            spec()
         return
 
         raise NotImplementedError

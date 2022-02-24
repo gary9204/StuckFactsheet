@@ -12,6 +12,8 @@ import pytest   # type: ignore[import]
 # from factsheet.content.note import topic_note as XNOTE
 # from factsheet.model import types_model as MTYPES
 import factsheet.bridge_ui as BUI
+import factsheet.spec as SPECS
+import factsheet.spec.base_s as SBASE
 import factsheet.view.select_spec as VSELECT_SPEC
 # from factsheet.view import ui as UI
 
@@ -111,8 +113,29 @@ def patch_outline(new_outline_model):
     return outline
 
 
-class TestQueryTemplate:
-    """Unit tests for :class:`.QueryTemplate`."""
+# @pytest.fixture
+# def patch_g_specs():
+#     """Pytest fixture with teardown: Reset :data:`.g_specs`."""
+#     g_specs = SPECS.g_specs
+#     SPECS.g_specs = SPECS.BUI.ModelOutlineMulti[SBASE.Base]()
+#     yield
+#     SPECS.g_specs = g_specs
+
+
+@pytest.fixture
+def patch_g_specs():
+    """Pytest fixture with teardown: Reset :data:`.g_specs`."""
+    g_specs = SPECS.g_specs
+    g_specs_saved = SPECS.BUI.ModelOutlineMulti[SBASE.Base]()
+    g_specs_saved.insert_section(SPECS.g_specs)
+    g_specs.clear()
+    yield
+    g_specs.clear()
+    g_specs.insert_section(g_specs_saved)
+
+
+class TestSelectSpec:
+    """Unit tests for :class:`.SelectSpec`."""
 
     def test_no_summary(self):
         """Confirm class attribute definition."""
@@ -124,36 +147,44 @@ class TestQueryTemplate:
         assert EXPECT == target.NO_SUMMARY
 
     def test_init(self):
-        """Confirm initialization."""
+        """Confirm initialization orchestration."""
         # Setup
-        assert False
-        # WIN = Gtk.Window()
-        # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        # NAME_CANCEL = 'Cancel'
-        # NAME_SPEC = 'Specify'
+        WIN = Gtk.Window()
         # NAME_SEARCH = 'edit-find-symbolic'
         # NAME_INFO = 'dialog-information-symbolic'
-        # # Test
-        # target = QTEMPLATES.QueryTemplate(
-        #     p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        # assert isinstance(target._dialog, Gtk.Dialog)
-        # dialog = target._dialog
-        # assert dialog.get_transient_for() is WIN
-        # assert dialog.get_destroy_with_parent()
+        # Test
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        assert target._specs is SPECS.g_specs
+        assert target._dialog is not None
+        assert target._ui_outline_specs is not None
 
-        # header_bar = dialog.get_header_bar()
-        # button_cancel, button_spec, button_search, button_info = (
-        #     tuple(header_bar.get_children()))
+    def test_init_dialog(self):
+        """Confirm initialization of top-level visual element."""
+        # Setup
+        WIN = Gtk.Window()
+        I_CANCEL = 0
+        NAME_CANCEL = 'Cancel'
+        I_SELECT = 1
+        NAME_SELECT = 'Select'
+        # Test
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        assert isinstance(target._dialog, Gtk.Dialog)
+        dialog = target._dialog
+        assert dialog.get_transient_for() is WIN
+        assert dialog.get_destroy_with_parent()
 
-        # assert isinstance(button_cancel, Gtk.Button)
-        # assert NAME_CANCEL == button_cancel.get_label()
-
-        # assert isinstance(target._button_specify, Gtk.Button)
-        # assert target._button_specify is button_spec
-        # assert NAME_SPEC == button_spec.get_label()
-        # assert not target._button_specify.get_sensitive()
-        # style = target._button_specify.get_style_context()
-        # assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+        header_bar = dialog.get_header_bar()
+        buttons = header_bar.get_children()
+        button_cancel = buttons[I_CANCEL]
+        assert isinstance(button_cancel, Gtk.Button)
+        assert NAME_CANCEL == button_cancel.get_label()
+        button_select = buttons[I_SELECT]
+        assert isinstance(target._button_select, Gtk.Button)
+        assert target._button_select is button_select
+        assert NAME_SELECT == button_select.get_label()
+        style = target._button_select.get_style_context()
+        assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+        assert not target._button_select.get_sensitive()
 
         # assert isinstance(button_info, Gtk.ToggleButton)
         # assert button_info.get_visible()
@@ -166,6 +197,85 @@ class TestQueryTemplate:
         # image = button_search.get_image()
         # name_image, _size_image = image.get_icon_name()
         # assert NAME_SEARCH == name_image
+
+    def test_init_outline_specs(self):
+        """Confirm initialization of spec outline."""
+        # Setup
+        WIN = Gtk.Window()
+        N_COLUMNS = 2
+        C_NAME = 0
+        TITLE_C_NAME = 'Name'
+        C_TITLE = 1
+        TITLE_C_TITLE = 'Title'
+        # Test
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        assert target._ui_outline_specs.get_model() is target._specs.ui_model
+        assert target._ui_outline_specs.get_visible()
+        assert target._ui_selection is target._ui_outline_specs.get_selection()
+        columns = target._ui_outline_specs.get_columns()
+        assert N_COLUMNS == len(columns)
+        assert target._column_name is columns[C_NAME]
+        assert TITLE_C_NAME == target._column_name.get_title()
+        assert target._column_title is columns[C_TITLE]
+        assert TITLE_C_TITLE == target._column_title.get_title()
+
+    @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
+        ('_markup_cell_name', 0, 'Name 0'),
+        ('_markup_cell_name', 3, 'Name 3'),
+        ('_markup_cell_title', 2, 'Title 2'),
+        ('_markup_cell_title', 4, 'Title 4'),
+        ])
+    def test_markup_cell(self, patch_g_specs, METHOD, I_LINE, EXPECT):
+        """Confirm cell data function updates column text.
+
+        :param METHOD: markup method under test.
+        :param I_LINE: index in outline of sample line.
+        :param EXPECT: text to expect in cell.
+        """
+        # Setup
+        WIN = Gtk.Window()
+        specs = SPECS.g_specs
+        N_SPECS = 5
+        for i in range(N_SPECS):
+            name = 'Name {}'.format(i)
+            title = 'Title {}'.format(i)
+            spec = SBASE.Base(p_name=name, p_summary='', p_title=title)
+            _ = specs.insert_before(p_item=spec, p_line=None)
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target_method = getattr(target, METHOD)
+        column = Gtk.TreeViewColumn()
+        render = Gtk.CellRendererText()
+        column.pack_start(render, expand=True)
+        ui_model_specs = specs.ui_model
+        line = ui_model_specs.get_iter_from_string(str(I_LINE))
+        # Test
+        target_method(None, render, ui_model_specs, line, None)
+        assert EXPECT == render.get_property('text')
+
+    @pytest.mark.parametrize('METHOD', [
+        ('_markup_cell_name'),
+        ('_markup_cell_title'),
+        ])
+    def test_markup_cell_none(self, patch_g_specs, METHOD):
+        """Confirm cell data function updates column text.
+
+        :param METHOD: markup method under test.
+        """
+        # Setup
+        WIN = Gtk.Window()
+        specs = SPECS.g_specs
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target_method = getattr(target, METHOD)
+        column = Gtk.TreeViewColumn()
+        render = Gtk.CellRendererText()
+        column.pack_start(render, expand=True)
+        ui_model_specs = specs.ui_model
+        ui_model_specs.append(None, [None])
+        line = ui_model_specs.get_iter_first()
+        EXPECT = 'Missing'
+        # Test
+        target_method(None, render, None, line, None)
+        assert EXPECT == render.get_property('text')
 
         # assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
         # assert target._outline.scope_search is ~ASHEET.FieldsTemplate.VOID
@@ -433,6 +543,7 @@ class TestModule:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         # (VTOPICS.UiEditorTopics, Gtk.Frame),
+        (VSELECT_SPEC.ViewOutlineSpec, BUI.ViewOutline),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type alias definitions.
@@ -445,7 +556,7 @@ class TestModule:
         assert TYPE_TARGET == TYPE_EXPECT
 
     @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
-        (VSELECT_SPEC.g_specs, BUI.ModelOutlineMulti),
+        # (VSELECT_SPEC.g_specs, BUI.ModelOutlineMulti),
         ])
     def test_attributes(self, ATTR, TYPE_EXPECT):
         """Confirm type alias definitions.

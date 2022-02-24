@@ -377,7 +377,7 @@ class GetUiElementByStr(GetUiElement):
         return ui_object
 
 
-def new_column_stock(p_title: str, p_data_func: 'Gtk.TreeCellDataFunc'
+def new_column_stock(p_title: str, p_data_func  # : 'Gtk.TreeCellDataFunc'
                      ) -> Gtk.TreeViewColumn:
     """Return column with stock properties.
 
