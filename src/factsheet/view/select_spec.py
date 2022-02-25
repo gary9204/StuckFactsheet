@@ -56,8 +56,22 @@ class SelectSpec:
     #    <property name="use-header-bar">1</property>
     # STUB Glade patch - end
 
+    def __call__(self) -> typing.Optional[SBASE.Base]:
+        """Return spec user chooses from Select Specification dialog.
+
+        Return None when user cancels without selecting a specification..
+        """
+        response = self._dialog.run()
+        self._dialog.hide()
+        _model, line = self._ui_selection.get_selected()
+        spec = None
+        if response == Gtk.ResponseType.APPLY:
+            spec = self._specs.get_item(line)
+        self._ui_selection.unselect_all()
+        return spec
+
     def __init__(self, p_parent: Gtk.Window) -> None:
-        """Initialize
+        """Initialize Select Specification dialog with its fields.
 
         :param p_parent: parent window for Select Specification dialog.
         """
@@ -84,20 +98,6 @@ class SelectSpec:
         style_specify = self._button_select.get_style_context()
         style_specify.add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
         self._button_select.set_sensitive(False)
-
-    # def _init_instructions(self) -> None:
-    #     """Initialize instructions for specification selection."""
-    #     print('Enter: _init_instructions')
-    #     # instructions = get_object('ui_info')
-    #     # instructions.hide()
-    #     # image_show_info = Gtk.Image.new_from_icon_name(
-    #     #     'dialog-information-symbolic', Gtk.IconSize.SMALL_TOOLBAR)
-    #     # button_show_info = Gtk.ToggleButton()
-    #     # button_show_info.set_image(image_show_info)
-    #     # _binding = button_show_info.bind_property(
-    #     #     'active', instructions, 'visible',
-    #     #     GO.BindingFlags.BIDIRECTIONAL)
-    #     # button_show_info.show()
 
     def _init_outline_specs(self, p_get_ui_element: UI.GetUiElement):
         """Initialize specifications outline.
@@ -171,25 +171,6 @@ class SelectSpec:
         # button_by_title = get_object('ui_search_by_title')
         # _ = button_by_title.connect('toggled', self.on_toggle_search_field,
         #                             ASHEET.FieldsTemplate.TITLE)
-
-    def __call__(self) -> typing.Optional[SBASE.Base]:
-        """Return spec user chooses from Select Specification dialog.
-
-        Return None when user cancels without selecting a specification..
-        """
-        print('Enter: __call__')
-        # Issue #249 stub
-        spec = SBASE.Base(p_name='Cheese Shop',
-                          p_summary='Please select any cheese in the shop!',
-                          p_title='Cheese Specification')
-        response = self._dialog.run()
-        self._dialog.hide()
-        # item = None
-        # if response == Gtk.ResponseType.APPLY:
-        #     model, index = self._cursor.get_selected()
-        #     item = AOUTLINE.get_item_gtk(model, index)
-        #     self._cursor.unselect_all()
-        return spec
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,

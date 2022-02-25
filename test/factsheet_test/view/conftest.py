@@ -74,23 +74,23 @@ import pytest   # type: ignore[import]
 #     return new_model
 
 
-# @pytest.fixture
-# def patch_dialog_run():
-#     """Pytest fixture returns stub `GtkDialog <GtkDialog_>`_.
-#
-#     .. _GtkDialog: https://lazka.github.io/pgi-docs/
-#        #Gtk-3.0/classes/Dialog.html
-#     """
-#     class PatchDialog:
-#         def __init__(self, p_response):
-#             self.called = False
-#             self.response = p_response
-#
-#         def run(self):
-#             self.called = True
-#             return self.response
-#
-#     return PatchDialog
+@pytest.fixture
+def patch_dialog_run():
+    """Pytest fixture returns stub `GtkDialog <GtkDialog_>`_.
+
+    .. _GtkDialog: https://lazka.github.io/pgi-docs/
+       #Gtk-3.0/classes/Dialog.html
+    """
+    class PatchDialog:
+        def __init__(self, p_response):
+            self.called = False
+            self.response = p_response
+
+        def run(self):
+            self.called = True
+            return self.response
+
+    return PatchDialog
 
 
 # @DC.dataclass
