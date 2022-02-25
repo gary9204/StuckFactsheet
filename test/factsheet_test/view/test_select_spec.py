@@ -270,6 +270,35 @@ class TestSelectSpec:
         # # Teardown
         # del WIN
 
+    @pytest.mark.parametrize(
+        'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
+            ('changed', '_ui_selection', Gtk.TreeSelection, 0),
+            ])
+    def test_init_signals(
+            self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT):
+        """Confirm initialization of signal connections."""
+        # Setup
+        WIN = Gtk.Window()
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        # Test
+        attribute = getattr(target, NAME_ATTRIBUTE)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                attribute, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(attribute, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
+        # Teardown
+        del WIN
+
     def test_init_summary(self, monkeypatch):
         """Confirm initialization of spec summary.
 
@@ -299,38 +328,7 @@ class TestSelectSpec:
         view_summary = patch_get.site.get_child()
         assert view_summary.get_visible()
         assert target._summary.ui_model is view_summary.get_buffer()
-
-    @pytest.mark.skip
-    @pytest.mark.parametrize(
-        'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
-            ('changed', '_cursor', Gtk.TreeSelection, 0),
-            ])
-    def test_init_signals(
-            self, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT):
-        """Confirm initialization of signal connections."""
-        # Setup
-        WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
-        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        # Test
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        attribute = getattr(target, NAME_ATTRIBUTE)
-        n_handlers = 0
-        while True:
-            id_signal = GO.signal_handler_find(
-                attribute, GO.SignalMatchType.ID, signal,
-                0, None, None, None)
-            if 0 == id_signal:
-                break
-
-            n_handlers += 1
-            GO.signal_handler_disconnect(attribute, id_signal)
-
-        assert N_DEFAULT + 1 == n_handlers
-        # Teardown
-        del WIN
+        assert view_summary.get_wrap_mode() is Gtk.WrapMode.WORD_CHAR
 
     @pytest.mark.skip
     def test_call(self, patch_dialog_run, monkeypatch, patch_outline):
@@ -450,30 +448,52 @@ class TestSelectSpec:
         target_method(None, render, None, line, None)
         assert EXPECT == render.get_property('text')
 
-    @pytest.mark.skip
-    def test_on_changed_selection(self):
+    def test_on_changed_selection(self, patch_g_specs):
         """| Confirm summary shown matches chosen spec.
-        | Case: a spec is choosen.
+        | Case: a spec at line choosen.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
-        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
-        N_WIDTH = 4
-        N_DEPTH = 5
-        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
-        ui_model_topics = target._ui_outline_topics.get_model()
-        line_topic = ui_model_topics.get_iter_from_string('3:0')
-        control_topic = target._control_sheet.get_control_topic(line_topic)
-        view_topic = VTOPIC.ViewTopic(p_control=control_topic)
-        name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
-        target._views_topics.add_view(view_topic.ui_view, name_topic)
-        target._ui_outline_topics.expand_all()
+        WIN = Gtk.Window()
+        specs = SPECS.g_specs
+        N_SPECS = 5
+        I_SPEC = 3
+        for i in range(N_SPECS):
+            summary = 'Summary {}'.format(i)
+            spec = SBASE.Base(p_name='', p_summary=summary, p_title='')
+            line = specs.insert_before(p_item=spec, p_line=None)
+            if I_SPEC == i:
+                summary_expect = summary
+                line_spec = line
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target._ui_outline_specs.expand_all()
+        target._ui_selection.select_iter(line_spec)
+        # target._ui_selection.unselect_all()
+        target._summary.text = 'Oops'
+        target._button_select.set_sensitive(False)
         # Test
-        target._ui_selection.select_iter(line_topic)
-        name_visible = target._views_topics.ui_view.get_visible_child_name()
-        assert name_topic == name_visible
+        target.on_changed_selection(None)
+        # Test
+        assert summary_expect == target._summary.text
+        assert target._button_select.get_sensitive()
 
-    @pytest.mark.skip(reason='Next')
+    def test_on_changed_selection_absent(self, patch_g_specs):
+        """| Confirm summary shown matches chosen spec.
+        | Case: no spec at line choosen.
+        """
+        # Setup
+        WIN = Gtk.Window()
+        specs = SPECS.g_specs
+        line = specs.ui_model.append(None, [None])
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target._ui_outline_specs.expand_all()
+        target._ui_selection.select_iter(line)
+        target._summary.text = 'Oops'
+        target._button_select.set_sensitive(True)
+        # Test
+        target.on_changed_selection(None)
+        assert target.NO_SUMMARY == target._summary.text
+        assert not target._button_select.get_sensitive()
+
     def test_on_changed_selection_none(self, patch_g_specs):
         """| Confirm summary shown matches chosen spec.
         | Case: no spec is choosen.
@@ -485,30 +505,53 @@ class TestSelectSpec:
         for i in range(N_SPECS):
             summary = 'Summary {}'.format(i)
             spec = SBASE.Base(p_name='', p_summary=summary, p_title='')
-            _ = specs.insert_before(p_item=spec, p_line=None)
+            _line = specs.insert_before(p_item=spec, p_line=None)
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
-        # Test
+        target._ui_outline_specs.expand_all()
         target._ui_selection.unselect_all()
-        assert False
+        target._summary.text = 'Oops'
+        target._button_select.set_sensitive(True)
+        # Test
+        target.on_changed_selection(None)
         assert target.NO_SUMMARY == target._summary.text
-        # control_sheet = CSHEET.ControlSheet(p_path=None)
-        # target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
-        # N_WIDTH = 4
-        # N_DEPTH = 5
-        # _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
-        # ui_model_topics = target._ui_outline_topics.get_model()
-        # line_topic = ui_model_topics.get_iter_from_string('3:0')
-        # control_topic = target._control_sheet.get_control_topic(line_topic)
-        # view_topic = VTOPIC.ViewTopic(p_control=control_topic)
-        # name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
-        # target._views_topics.add_view(view_topic.ui_view, name_topic)
-        # _ = target._views_topics.show_view(name_topic)
-        # target._ui_outline_topics.expand_all()
-        # target._ui_selection.select_iter(line_topic)
-        # # Test
-        # target._ui_selection.unselect_all()
-        # name_visible = target._views_topics.ui_view.get_visible_child_name()
-        # assert target._name_view_default == name_visible
+        assert not target._button_select.get_sensitive()
+
+    # @pytest.mark.skip(reason='Next')
+    # def test_on_changed_selection_none(self, patch_g_specs):
+    #     """| Confirm summary shown matches chosen spec.
+    #     | Case: no spec is choosen.
+    #     """
+    #     # Setup
+    #     WIN = Gtk.Window()
+    #     specs = SPECS.g_specs
+    #     N_SPECS = 5
+    #     for i in range(N_SPECS):
+    #         summary = 'Summary {}'.format(i)
+    #         spec = SBASE.Base(p_name='', p_summary=summary, p_title='')
+    #         _ = specs.insert_before(p_item=spec, p_line=None)
+    #     target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+    #     # Test
+    #     target._ui_selection.unselect_all()
+    #     assert False
+    #     assert target.NO_SUMMARY == target._summary.text
+    #     # control_sheet = CSHEET.ControlSheet(p_path=None)
+    #     # target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+    #     # N_WIDTH = 4
+    #     # N_DEPTH = 5
+    #     # _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+    #     # ui_model_topics = target._ui_outline_topics.get_model()
+    #     # line_topic = ui_model_topics.get_iter_from_string('3:0')
+    #     # control_topic = target._control_sheet.get_control_topic(line_topic)
+    #     # view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+    #     # name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+    #     # target._views_topics.add_view(view_topic.ui_view, name_topic)
+    #     # _ = target._views_topics.show_view(name_topic)
+    #     # target._ui_outline_topics.expand_all()
+    #     # target._ui_selection.select_iter(line_topic)
+    #     # # Test
+    #     # target._ui_selection.unselect_all()
+    #     # name_visible = target._views_topics.ui_view.get_visible_child_name()
+    #     # assert target._name_view_default == name_visible
 
     # @pytest.mark.skip
     # def test_on_changed_cursor(self, patch_outline):
@@ -668,13 +711,25 @@ class TestSelectSpec:
         # Teardown
         del WIN
 
+    def test_set_no_spec(self):
+        """Confirm summary content and Specify button state."""
+        # Setup
+        WIN = Gtk.Window()
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target._summary.text = 'Oops'
+        target._button_select.set_sensitive(True)
+        # Test
+        target._set_no_spec()
+        assert target.NO_SUMMARY == target._summary.text
+        assert not target._button_select.get_sensitive()
+
 
 class TestModule:
     """Unit tests for module-level components of :mod:`.editor_topics`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         # (VTOPICS.UiEditorTopics, Gtk.Frame),
-        (VSELECT_SPEC.DisplaySummary, BUI.DisplayTextStyled),
+        (VSELECT_SPEC.FactoryDisplaySummary, BUI.FactoryDisplayTextStyled),
         (VSELECT_SPEC.ModelSummary, BUI.ModelTextStyled),
         (VSELECT_SPEC.ViewOutlineSpec, BUI.ViewOutline),
         ])

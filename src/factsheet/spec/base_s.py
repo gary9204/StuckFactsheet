@@ -275,11 +275,11 @@ class Base:
 
 g_spec_basic = Base(
     p_name='Basic',
-    p_summary=('Lets you customize the Topics outline of a Factsheet.'
-               'A Basic topic has a name, title, and summary, but no facts.'
-               'Specify a Basic topic to add a note to the Topics outline.'
-               'Also, you may group topics within the outline by adding a'
-               'Basic topic and then adding or moving topics underneath it.'
+    p_summary=('Lets you customize the Topics outline of a Factsheet. '
+               'A Basic topic has a name, title, and summary, but no facts. '
+               'Specify a Basic topic to add a note to the Topics outline. '
+               'Also, you may group topics within the outline by adding a '
+               'Basic topic and then adding or moving topics underneath it. '
                ),
     p_title='Basic Topic')
 

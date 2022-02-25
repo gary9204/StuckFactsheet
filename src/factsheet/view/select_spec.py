@@ -1,7 +1,7 @@
 """
 Defines class for selecting a specification of a new topic.
 
-.. data:: DisplaySummary
+.. data:: FactoryDisplaySummary
 
     TBD
 
@@ -32,7 +32,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-DisplaySummary = BUI.DisplayTextStyled
+FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
 ModelSummary = BUI.ModelTextStyled
 ViewOutlineSpec = BUI.ViewOutline
 
@@ -116,6 +116,7 @@ class SelectSpec:
             UI.new_column_stock('Title', self._markup_cell_title))
         self._ui_outline_specs.append_column(self._column_title)
         self._ui_selection = self._ui_outline_specs.get_selection()
+        self._ui_selection.connect('changed', self.on_changed_selection)
 
         # # self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         # self._outline = VTYPES.ViewOutlineTemplates()
@@ -139,10 +140,13 @@ class SelectSpec:
         :param p_get_ui_element: gets visual element from UI description.
         """
         self._summary = ModelSummary(p_text=SelectSpec.NO_SUMMARY)
-        view_summary = DisplaySummary(buffer=self._summary.ui_model)
-        view_summary.show()
+        factory_display = FactoryDisplaySummary(self._summary)
+        display_summary = factory_display()
+        # display_summary = DisplaySummary(buffer=self._summary.ui_model)
+        display_summary.show()
+        display_summary.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
         site_summary = p_get_ui_element('ui_site_summary')
-        site_summary.add(view_summary)
+        site_summary.add(display_summary)
 
     def _init_search(self):
         """Initialize search bar and buttons."""
@@ -226,29 +230,23 @@ class SelectSpec:
 
         :param _selection: identifies chosen spec (unused).
         """
-        print('Enter: on_changed_cursor')
-        # model, index = px_cursor.get_selected()
-        # if index is None:
-        #     self._on_changed_cursor_invalid()
-        #     return
-        #
-        # item = AOUTLINE.get_item_gtk(model, index)
-        # if item is None:
-        #     self._on_changed_cursor_invalid()
-        #     return
-        #
-        # self._summary_current.set_markup(item.summary)
-        # is_template = not isinstance(item, XHEADING.Heading)
-        # self._button_specify.set_sensitive(is_template)
+        _model, line = self._ui_selection.get_selected()
+        if line is None:
+            self._set_no_spec()
+            return
 
-    def _on_changed_cursor_invalid(self) -> None:
-        """Changes summary text and Specify button if there is no template.
+        spec = self._specs.get_item(line)
+        if spec is None:
+            self._set_no_spec()
+            return
 
-        This is a helper method to consistently handle multiple cases.
-        """
-        print('Enter: _on_changed_cursor_invalid')
-        # self._summary_current.set_markup(self.NO_SUMMARY)
-        # self._button_specify.set_sensitive(False)
+        self._summary.text = spec.summary.text
+        self._button_select.set_sensitive(True)
+
+    def _set_no_spec(self) -> None:
+        """Set summary and Specify button if no spec chosen."""
+        self._summary.text = self.NO_SUMMARY
+        self._button_select.set_sensitive(False)
 
     def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
                                typing.Any) -> None:
