@@ -1,6 +1,15 @@
 """
 Defines class for selecting a specification of a new topic.
 
+.. data:: DisplaySummary
+
+    TBD
+
+
+.. data:: ModelSummary
+
+    TBD
+
 .. data:: ViewOutlineSpec
 
     TBD
@@ -23,6 +32,8 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
+DisplaySummary = BUI.DisplayTextStyled
+ModelSummary = BUI.ModelTextStyled
 ViewOutlineSpec = BUI.ViewOutline
 
 
@@ -39,7 +50,7 @@ class SelectSpec:
        Summary text displayed when no specification is selected.
     """
 
-    NO_SUMMARY = 'Please select a <b>topic specification.</b>'
+    NO_SUMMARY = 'Please choose a specification for a new topic.'
 
     # STUB Glade patch - begin
     #    <property name="use-header-bar">1</property>
@@ -54,17 +65,15 @@ class SelectSpec:
         get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
         self._specs = SPECS.g_specs
         self._init_dialog(p_parent, get_ui_element)
-        self._init_outline_specs()
-        site_specs = get_ui_element('ui_site_outline_specs')
-        site_specs.add(self._ui_outline_specs)
-        # self._summary_current = get_object('ui_summary_current')
-        # self._summary_current.set_markup(self.NO_SUMMARY)
+        self._init_outline_specs(get_ui_element)
+        self._init_summary(get_ui_element)
 
     def _init_dialog(self, p_parent: Gtk.Window, p_get_ui_element:
                      UI.GetUiElement) -> None:
         """Initialize the top-level visual element.
 
         :param p_parent: parent window for Select Specification dialog.
+        :param p_get_ui_element: gets visual element from UI description.
         """
         self._dialog = p_get_ui_element('ui_select_spec')
         self._dialog.set_transient_for(p_parent)
@@ -90,17 +99,24 @@ class SelectSpec:
     #     #     GO.BindingFlags.BIDIRECTIONAL)
     #     # button_show_info.show()
 
-    def _init_outline_specs(self):
-        """Initialize specification outline."""
+    def _init_outline_specs(self, p_get_ui_element: UI.GetUiElement):
+        """Initialize specifications outline.
+
+        :param p_get_ui_element: gets visual element from UI description.
+        """
         self._ui_outline_specs = ViewOutlineSpec()
         self._ui_outline_specs.set_model(self._specs.ui_model)
-        self._ui_selection = self._ui_outline_specs.get_selection()
+        self._ui_outline_specs.show()
+        site_specs = p_get_ui_element('ui_site_outline_specs')
+        site_specs.add(self._ui_outline_specs)
+
         self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
         self._ui_outline_specs.append_column(self._column_name)
         self._column_title = (
             UI.new_column_stock('Title', self._markup_cell_title))
         self._ui_outline_specs.append_column(self._column_title)
-        self._ui_outline_specs.show()
+        self._ui_selection = self._ui_outline_specs.get_selection()
+
         # # self._outline = UI.FACTORY_SHEET.new_view_outline_templates()
         # self._outline = VTYPES.ViewOutlineTemplates()
         # self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID
@@ -116,6 +132,17 @@ class SelectSpec:
         #
         # search_entry = get_object('ui_search_entry')
         # view.set_search_entry(search_entry)
+
+    def _init_summary(self, p_get_ui_element: UI.GetUiElement):
+        """Initialize display for summary of chosen specification.
+
+        :param p_get_ui_element: gets visual element from UI description.
+        """
+        self._summary = ModelSummary(p_text=SelectSpec.NO_SUMMARY)
+        view_summary = DisplaySummary(buffer=self._summary.ui_model)
+        view_summary.show()
+        site_summary = p_get_ui_element('ui_site_summary')
+        site_summary.add(view_summary)
 
     def _init_search(self):
         """Initialize search bar and buttons."""
@@ -194,11 +221,10 @@ class SelectSpec:
             title = spec.title.text
         p_render.set_property('markup', title)
 
-    def on_changed_cursor(self, px_cursor: Gtk.TreeSelection) -> None:
-        """Changes summary text and Specify button to match current
-        template.
+    def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
+        """Changes summary text and Specify button to match chosen spec.
 
-        :param px_cursor: identifies now-current template.
+        :param _selection: identifies chosen spec (unused).
         """
         print('Enter: on_changed_cursor')
         # model, index = px_cursor.get_selected()

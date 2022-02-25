@@ -1,6 +1,8 @@
 """
 Unit tests for class to select a topic specification.  See
 :mod:`.select_spec`.
+
+.. include:: /test/refs_include_pytest.txt
 """
 import gi   # type: ignore[import]
 from pathlib import Path
@@ -15,7 +17,7 @@ import factsheet.bridge_ui as BUI
 import factsheet.spec as SPECS
 import factsheet.spec.base_s as SBASE
 import factsheet.view.select_spec as VSELECT_SPEC
-# from factsheet.view import ui as UI
+import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
@@ -141,7 +143,7 @@ class TestSelectSpec:
         """Confirm class attribute definition."""
         # Setup
         target = VSELECT_SPEC.SelectSpec
-        EXPECT = 'Please select a <b>topic specification.</b>'
+        EXPECT = 'Please choose a specification for a new topic.'
         # Test
         assert isinstance(target.NO_SUMMARY, str)
         assert EXPECT == target.NO_SUMMARY
@@ -157,23 +159,41 @@ class TestSelectSpec:
         assert target._specs is SPECS.g_specs
         assert target._dialog is not None
         assert target._ui_outline_specs is not None
+        assert target.NO_SUMMARY == target._summary.text
 
-    def test_init_dialog(self):
-        """Confirm initialization of top-level visual element."""
+    def test_init_dialog(self, monkeypatch):
+        """Confirm initialization of top-level visual element.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
+        class PatchGet:
+            def __init__(self):
+                self.id_ui = 'Oops!'
+                self.dialog = Gtk.Dialog(use_header_bar=True)
+
+            def __call__(self, p_id_ui):
+                self.id_ui = p_id_ui
+                return self.dialog
+
         WIN = Gtk.Window()
         I_CANCEL = 0
         NAME_CANCEL = 'Cancel'
         I_SELECT = 1
         NAME_SELECT = 'Select'
-        # Test
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
-        assert isinstance(target._dialog, Gtk.Dialog)
-        dialog = target._dialog
-        assert dialog.get_transient_for() is WIN
-        assert dialog.get_destroy_with_parent()
 
-        header_bar = dialog.get_header_bar()
+        patch_get = PatchGet()
+        monkeypatch.setattr(
+            UI.GetUiElementByStr, '__call__', patch_get.__call__)
+        get_ui_element = UI.GetUiElementByStr(p_string_ui='')
+        # Test
+        target._init_dialog(p_parent=WIN, p_get_ui_element=get_ui_element)
+        assert isinstance(patch_get.dialog, Gtk.Dialog)
+        assert patch_get.dialog.get_transient_for() is WIN
+        assert patch_get.dialog.get_destroy_with_parent()
+
+        header_bar = patch_get.dialog.get_header_bar()
         buttons = header_bar.get_children()
         button_cancel = buttons[I_CANCEL]
         assert isinstance(button_cancel, Gtk.Button)
@@ -198,84 +218,47 @@ class TestSelectSpec:
         # name_image, _size_image = image.get_icon_name()
         # assert NAME_SEARCH == name_image
 
-    def test_init_outline_specs(self):
-        """Confirm initialization of spec outline."""
+    def test_init_outline_specs(self, monkeypatch):
+        """Confirm initialization of spec outline.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
         # Setup
+        class PatchGet:
+            def __init__(self):
+                self.id_ui = 'Oops!'
+                self.site = Gtk.Viewport()
+
+            def __call__(self, p_id_ui):
+                self.id_ui = p_id_ui
+                return self.site
+
         WIN = Gtk.Window()
+        UI_ID = 'ui_site_outline_specs'
         N_COLUMNS = 2
         C_NAME = 0
         TITLE_C_NAME = 'Name'
         C_TITLE = 1
         TITLE_C_TITLE = 'Title'
-        # Test
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+
+        patch_get = PatchGet()
+        monkeypatch.setattr(
+            UI.GetUiElementByStr, '__call__', patch_get.__call__)
+        get_ui_element = UI.GetUiElementByStr(p_string_ui='')
+        # Test
+        target._init_outline_specs(get_ui_element)
         assert target._ui_outline_specs.get_model() is target._specs.ui_model
+        assert UI_ID == patch_get.id_ui
+        assert target._ui_outline_specs is patch_get.site.get_child()
         assert target._ui_outline_specs.get_visible()
-        assert target._ui_selection is target._ui_outline_specs.get_selection()
         columns = target._ui_outline_specs.get_columns()
-        assert N_COLUMNS == len(columns)
         assert target._column_name is columns[C_NAME]
         assert TITLE_C_NAME == target._column_name.get_title()
         assert target._column_title is columns[C_TITLE]
         assert TITLE_C_TITLE == target._column_title.get_title()
-
-    @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
-        ('_markup_cell_name', 0, 'Name 0'),
-        ('_markup_cell_name', 3, 'Name 3'),
-        ('_markup_cell_title', 2, 'Title 2'),
-        ('_markup_cell_title', 4, 'Title 4'),
-        ])
-    def test_markup_cell(self, patch_g_specs, METHOD, I_LINE, EXPECT):
-        """Confirm cell data function updates column text.
-
-        :param METHOD: markup method under test.
-        :param I_LINE: index in outline of sample line.
-        :param EXPECT: text to expect in cell.
-        """
-        # Setup
-        WIN = Gtk.Window()
-        specs = SPECS.g_specs
-        N_SPECS = 5
-        for i in range(N_SPECS):
-            name = 'Name {}'.format(i)
-            title = 'Title {}'.format(i)
-            spec = SBASE.Base(p_name=name, p_summary='', p_title=title)
-            _ = specs.insert_before(p_item=spec, p_line=None)
-        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
-        target_method = getattr(target, METHOD)
-        column = Gtk.TreeViewColumn()
-        render = Gtk.CellRendererText()
-        column.pack_start(render, expand=True)
-        ui_model_specs = specs.ui_model
-        line = ui_model_specs.get_iter_from_string(str(I_LINE))
-        # Test
-        target_method(None, render, ui_model_specs, line, None)
-        assert EXPECT == render.get_property('text')
-
-    @pytest.mark.parametrize('METHOD', [
-        ('_markup_cell_name'),
-        ('_markup_cell_title'),
-        ])
-    def test_markup_cell_none(self, patch_g_specs, METHOD):
-        """Confirm cell data function updates column text.
-
-        :param METHOD: markup method under test.
-        """
-        # Setup
-        WIN = Gtk.Window()
-        specs = SPECS.g_specs
-        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
-        target_method = getattr(target, METHOD)
-        column = Gtk.TreeViewColumn()
-        render = Gtk.CellRendererText()
-        column.pack_start(render, expand=True)
-        ui_model_specs = specs.ui_model
-        ui_model_specs.append(None, [None])
-        line = ui_model_specs.get_iter_first()
-        EXPECT = 'Missing'
-        # Test
-        target_method(None, render, None, line, None)
-        assert EXPECT == render.get_property('text')
+        assert N_COLUMNS == len(columns)
+        assert target._ui_selection is target._ui_outline_specs.get_selection()
 
         # assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
         # assert target._outline.scope_search is ~ASHEET.FieldsTemplate.VOID
@@ -286,6 +269,36 @@ class TestSelectSpec:
         # assert target._summary_current.get_label() == target.NO_SUMMARY
         # # Teardown
         # del WIN
+
+    def test_init_summary(self, monkeypatch):
+        """Confirm initialization of spec summary.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        class PatchGet:
+            def __init__(self):
+                self.id_ui = 'Oops!'
+                self.site = Gtk.Viewport()
+
+            def __call__(self, p_id_ui):
+                self.id_ui = p_id_ui
+                return self.site
+
+        WIN = Gtk.Window()
+        UI_ID = 'ui_site_summary'
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+
+        patch_get = PatchGet()
+        monkeypatch.setattr(
+            UI.GetUiElementByStr, '__call__', patch_get.__call__)
+        get_ui_element = UI.GetUiElementByStr(p_string_ui='')
+        # Test
+        target._init_summary(get_ui_element)
+        assert UI_ID == patch_get.id_ui
+        view_summary = patch_get.site.get_child()
+        assert view_summary.get_visible()
+        assert target._summary.ui_model is view_summary.get_buffer()
 
     @pytest.mark.skip
     @pytest.mark.parametrize(
@@ -379,123 +392,241 @@ class TestSelectSpec:
         # Teardown
         del WIN
 
-    @pytest.mark.skip
-    def test_on_changed_cursor(self, patch_outline):
-        """| Confirm updates when current template changes.
-        | Case: change to specification template
+    @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
+        ('_markup_cell_name', 0, 'Name 0'),
+        ('_markup_cell_name', 3, 'Name 3'),
+        ('_markup_cell_title', 2, 'Title 2'),
+        ('_markup_cell_title', 4, 'Title 4'),
+        ])
+    def test_markup_cell(self, patch_g_specs, METHOD, I_LINE, EXPECT):
+        """Confirm cell data function updates column text.
+
+        :param METHOD: markup method under test.
+        :param I_LINE: index in outline of sample line.
+        :param EXPECT: text to expect in cell.
         """
         # Setup
         WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        OUTLINE = patch_outline
-        OUTLINE.attach_view(target._outline)
-        target._outline.gtk_view.expand_all()
-
-        PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
-        target._cursor.select_iter(i_item)
-        item = OUTLINE.get_item(i_item)
-
-        target._button_specify.set_sensitive(False)
-        target._summary_current.set_markup(target.NO_SUMMARY)
+        specs = SPECS.g_specs
+        N_SPECS = 5
+        for i in range(N_SPECS):
+            name = 'Name {}'.format(i)
+            title = 'Title {}'.format(i)
+            spec = SBASE.Base(p_name=name, p_summary='', p_title=title)
+            _ = specs.insert_before(p_item=spec, p_line=None)
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target_method = getattr(target, METHOD)
+        column = Gtk.TreeViewColumn()
+        render = Gtk.CellRendererText()
+        column.pack_start(render, expand=True)
+        ui_model_specs = specs.ui_model
+        line = ui_model_specs.get_iter_from_string(str(I_LINE))
         # Test
-        target.on_changed_cursor(target._cursor)
-        assert item.summary == target._summary_current.get_label()
-        assert target._button_specify.get_sensitive()
-        # Teardown
-        del WIN
+        target_method(None, render, ui_model_specs, line, None)
+        assert EXPECT == render.get_property('text')
 
-    @pytest.mark.skip
-    def test_on_changed_cursor_to_heading(self, patch_outline):
-        """| Confirm updates when current template changes.
-        | Case: change to heading template.
+    @pytest.mark.parametrize('METHOD', [
+        ('_markup_cell_name'),
+        ('_markup_cell_title'),
+        ])
+    def test_markup_cell_none(self, patch_g_specs, METHOD):
+        """Confirm cell data function updates column text.
+
+        :param METHOD: markup method under test.
         """
         # Setup
         WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        OUTLINE = patch_outline
-        OUTLINE.attach_view(target._outline)
-        target._outline.gtk_view.expand_all()
-
-        BLANK = ''
-        SUMMARY = 'Something completely different.'
-        heading = XHEADING.Heading(
-            p_name=BLANK, p_summary=SUMMARY, p_title=BLANK)
-        PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
-        OUTLINE._ui_model.set_value(
-            i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, heading)
-        target._cursor.select_iter(i_item)
-
-        TEXT = 'The Spanish Inquisition'
-        target._summary_current.set_markup(TEXT)
-        target._button_specify.set_sensitive(True)
+        specs = SPECS.g_specs
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target_method = getattr(target, METHOD)
+        column = Gtk.TreeViewColumn()
+        render = Gtk.CellRendererText()
+        column.pack_start(render, expand=True)
+        ui_model_specs = specs.ui_model
+        ui_model_specs.append(None, [None])
+        line = ui_model_specs.get_iter_first()
+        EXPECT = 'Missing'
         # Test
-        target.on_changed_cursor(target._cursor)
-        assert SUMMARY == target._summary_current.get_label()
-        assert not target._button_specify.get_sensitive()
-        # Teardown
-        del WIN
+        target_method(None, render, None, line, None)
+        assert EXPECT == render.get_property('text')
 
     @pytest.mark.skip
-    def test_on_changed_cursor_to_empty(self, patch_outline):
-        """| Confirm updates when current template changes.
-        | Case: change to template None.
+    def test_on_changed_selection(self):
+        """| Confirm summary shown matches chosen spec.
+        | Case: a spec is choosen.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        N_WIDTH = 4
+        N_DEPTH = 5
+        _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        ui_model_topics = target._ui_outline_topics.get_model()
+        line_topic = ui_model_topics.get_iter_from_string('3:0')
+        control_topic = target._control_sheet.get_control_topic(line_topic)
+        view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+        name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+        target._views_topics.add_view(view_topic.ui_view, name_topic)
+        target._ui_outline_topics.expand_all()
+        # Test
+        target._ui_selection.select_iter(line_topic)
+        name_visible = target._views_topics.ui_view.get_visible_child_name()
+        assert name_topic == name_visible
+
+    @pytest.mark.skip(reason='Next')
+    def test_on_changed_selection_none(self, patch_g_specs):
+        """| Confirm summary shown matches chosen spec.
+        | Case: no spec is choosen.
         """
         # Setup
         WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        OUTLINE = patch_outline
-        OUTLINE.attach_view(target._outline)
-        target._outline.gtk_view.expand_all()
-
-        PATH_ITEM = '0:0:0'
-        i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
-        OUTLINE._ui_model.set_value(
-            i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, None)
-        target._cursor.select_iter(i_item)
-
-        TEXT = 'The Spanish Inquisition'
-        target._summary_current.set_markup(TEXT)
-        target._button_specify.set_sensitive(True)
+        specs = SPECS.g_specs
+        N_SPECS = 5
+        for i in range(N_SPECS):
+            summary = 'Summary {}'.format(i)
+            spec = SBASE.Base(p_name='', p_summary=summary, p_title='')
+            _ = specs.insert_before(p_item=spec, p_line=None)
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
         # Test
-        target.on_changed_cursor(target._cursor)
-        assert target.NO_SUMMARY == target._summary_current.get_label()
-        assert not target._button_specify.get_sensitive()
-        # Teardown
-        del WIN
+        target._ui_selection.unselect_all()
+        assert False
+        assert target.NO_SUMMARY == target._summary.text
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
+        # target = VTOPICS.EditorTopics(p_control_sheet=control_sheet)
+        # N_WIDTH = 4
+        # N_DEPTH = 5
+        # _ = fill_topics(control_sheet, N_WIDTH, N_DEPTH)
+        # ui_model_topics = target._ui_outline_topics.get_model()
+        # line_topic = ui_model_topics.get_iter_from_string('3:0')
+        # control_topic = target._control_sheet.get_control_topic(line_topic)
+        # view_topic = VTOPIC.ViewTopic(p_control=control_topic)
+        # name_topic = VTOPICS.EditorTopics.name_tag(control_topic.tag)
+        # target._views_topics.add_view(view_topic.ui_view, name_topic)
+        # _ = target._views_topics.show_view(name_topic)
+        # target._ui_outline_topics.expand_all()
+        # target._ui_selection.select_iter(line_topic)
+        # # Test
+        # target._ui_selection.unselect_all()
+        # name_visible = target._views_topics.ui_view.get_visible_child_name()
+        # assert target._name_view_default == name_visible
 
-    @pytest.mark.skip
-    def test_on_changed_cursor_to_none(self, patch_outline):
-        """| Confirm updates when current template changes.
-        | Case: change to no current template
-        """
-        # Setup
-        WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        OUTLINE = patch_outline
-        OUTLINE.attach_view(target._outline)
-        target._outline.gtk_view.expand_all()
+    # @pytest.mark.skip
+    # def test_on_changed_cursor(self, patch_outline):
+    #     """| Confirm updates when current template changes.
+    #     | Case: change to specification template
+    #     """
+    #     # Setup
+    #     WIN = Gtk.Window()
+    #     VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+    #     target = QTEMPLATES.QueryTemplate(
+    #         p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
+    #     OUTLINE = patch_outline
+    #     OUTLINE.attach_view(target._outline)
+    #     target._outline.gtk_view.expand_all()
+    #
+    #     PATH_ITEM = '0:0:0'
+    #     i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
+    #     target._cursor.select_iter(i_item)
+    #     item = OUTLINE.get_item(i_item)
+    #
+    #     target._button_specify.set_sensitive(False)
+    #     target._summary_current.set_markup(target.NO_SUMMARY)
+    #     # Test
+    #     target.on_changed_cursor(target._cursor)
+    #     assert item.summary == target._summary_current.get_label()
+    #     assert target._button_specify.get_sensitive()
+    #     # Teardown
+    #     del WIN
 
-        TEXT = 'The Spanish Inquisition'
-        target._cursor.unselect_all()
+    # @pytest.mark.skip
+    # def test_on_changed_cursor_to_heading(self, patch_outline):
+    #     """| Confirm updates when current template changes.
+    #     | Case: change to heading template.
+    #     """
+    #     # Setup
+    #     WIN = Gtk.Window()
+    #     VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+    #     target = QTEMPLATES.QueryTemplate(
+    #         p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
+    #     OUTLINE = patch_outline
+    #     OUTLINE.attach_view(target._outline)
+    #     target._outline.gtk_view.expand_all()
+    #
+    #     BLANK = ''
+    #     SUMMARY = 'Something completely different.'
+    #     heading = XHEADING.Heading(
+    #         p_name=BLANK, p_summary=SUMMARY, p_title=BLANK)
+    #     PATH_ITEM = '0:0:0'
+    #     i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
+    #     OUTLINE._ui_model.set_value(
+    #         i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, heading)
+    #     target._cursor.select_iter(i_item)
+    #
+    #     TEXT = 'The Spanish Inquisition'
+    #     target._summary_current.set_markup(TEXT)
+    #     target._button_specify.set_sensitive(True)
+    #     # Test
+    #     target.on_changed_cursor(target._cursor)
+    #     assert SUMMARY == target._summary_current.get_label()
+    #     assert not target._button_specify.get_sensitive()
+    #     # Teardown
+    #     del WIN
 
-        target._button_specify.set_sensitive(True)
-        target._summary_current.set_markup(TEXT)
-        # Test
-        target.on_changed_cursor(target._cursor)
-        assert target.NO_SUMMARY == target._summary_current.get_label()
-        assert not target._button_specify.get_sensitive()
-        # Teardown
-        del WIN
+    # @pytest.mark.skip
+    # def test_on_changed_cursor_to_empty(self, patch_outline):
+    #     """| Confirm updates when current template changes.
+    #     | Case: change to template None.
+    #     """
+    #     # Setup
+    #     WIN = Gtk.Window()
+    #     VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+    #     target = QTEMPLATES.QueryTemplate(
+    #         p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
+    #     OUTLINE = patch_outline
+    #     OUTLINE.attach_view(target._outline)
+    #     target._outline.gtk_view.expand_all()
+    #
+    #     PATH_ITEM = '0:0:0'
+    #     i_item = OUTLINE._ui_model.get_iter_from_string(PATH_ITEM)
+    #     OUTLINE._ui_model.set_value(
+    #         i_item, AOUTLINE.AdaptTreeStore.N_COLUMN_ITEM, None)
+    #     target._cursor.select_iter(i_item)
+    #
+    #     TEXT = 'The Spanish Inquisition'
+    #     target._summary_current.set_markup(TEXT)
+    #     target._button_specify.set_sensitive(True)
+    #     # Test
+    #     target.on_changed_cursor(target._cursor)
+    #     assert target.NO_SUMMARY == target._summary_current.get_label()
+    #     assert not target._button_specify.get_sensitive()
+    #     # Teardown
+    #     del WIN
+
+    # @pytest.mark.skip
+    # def test_on_changed_cursor_to_none(self, patch_outline):
+    #     """| Confirm updates when current template changes.
+    #     | Case: change to no current template
+    #     """
+    #     # Setup
+    #     WIN = Gtk.Window()
+    #     VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
+    #     target = QTEMPLATES.QueryTemplate(
+    #         p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
+    #     OUTLINE = patch_outline
+    #     OUTLINE.attach_view(target._outline)
+    #     target._outline.gtk_view.expand_all()
+    #
+    #     TEXT = 'The Spanish Inquisition'
+    #     target._cursor.unselect_all()
+    #
+    #     target._button_specify.set_sensitive(True)
+    #     target._summary_current.set_markup(TEXT)
+    #     # Test
+    #     target.on_changed_cursor(target._cursor)
+    #     assert target.NO_SUMMARY == target._summary_current.get_label()
+    #     assert not target._button_specify.get_sensitive()
+    #     # Teardown
+    #     del WIN
 
     @pytest.mark.skip
     def test_on_toggle_search_field_inactive(self, patch_outline):
@@ -543,6 +674,8 @@ class TestModule:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         # (VTOPICS.UiEditorTopics, Gtk.Frame),
+        (VSELECT_SPEC.DisplaySummary, BUI.DisplayTextStyled),
+        (VSELECT_SPEC.ModelSummary, BUI.ModelTextStyled),
         (VSELECT_SPEC.ViewOutlineSpec, BUI.ViewOutline),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):

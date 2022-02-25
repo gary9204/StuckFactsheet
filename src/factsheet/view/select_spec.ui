@@ -245,23 +245,11 @@
                         <property name="shadow_type">in</property>
                         <property name="min_content_height">60</property>
                         <child>
-                          <object class="GtkViewport">
+                          <object class="GtkViewport" id="ui_site_summary">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="ui_summary_current">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">start</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="label" translatable="yes">Placeholder for &lt;b&gt;summary &lt;/b&gt; of &lt;i&gt;template.&lt;/i&gt;</property>
-                                <property name="use_markup">True</property>
-                                <property name="justify">fill</property>
-                                <property name="wrap">True</property>
-                              </object>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
