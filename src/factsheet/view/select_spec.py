@@ -14,6 +14,7 @@ Defines class for selecting a specification of a new topic.
 
     TBD
 """
+import enum
 import gi   # type: ignore[import]
 from pathlib import Path
 import typing
@@ -28,13 +29,38 @@ import factsheet.view.ui as UI
 
 
 gi.require_version('Gtk', '3.0')
-# from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
+from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
 ModelSummary = BUI.ModelTextStyled
 ViewOutlineSpec = BUI.ViewOutline
+
+
+class FieldsId(enum.Flag):
+    """Identifies IdCore fields, which may be combined.
+
+    .. data:: NAME
+
+       Denotes name field.
+
+    .. data:: TITLE
+
+       Denotes title field.
+
+    .. data:: SUMMARY
+
+       Denotes summary field.
+
+    .. data:: VOID
+
+       Denotes no field.
+    """
+    VOID = 0
+    NAME = enum.auto()
+    SUMMARY = enum.auto()
+    TITLE = enum.auto()
 
 
 class SelectSpec:
@@ -81,6 +107,7 @@ class SelectSpec:
         self._init_dialog(p_parent, get_ui_element)
         self._init_outline_specs(get_ui_element)
         self._init_summary(get_ui_element)
+        self._init_search(get_ui_element)
 
     def _init_dialog(self, p_parent: Gtk.Window, p_get_ui_element:
                      UI.GetUiElement) -> None:
@@ -134,7 +161,7 @@ class SelectSpec:
         # search_entry = get_object('ui_search_entry')
         # view.set_search_entry(search_entry)
 
-    def _init_summary(self, p_get_ui_element: UI.GetUiElement):
+    def _init_summary(self, p_get_ui_element: UI.GetUiElement) -> None:
         """Initialize display for summary of chosen specification.
 
         :param p_get_ui_element: gets visual element from UI description.
@@ -142,35 +169,36 @@ class SelectSpec:
         self._summary = ModelSummary(p_text=SelectSpec.NO_SUMMARY)
         factory_display = FactoryDisplaySummary(self._summary)
         display_summary = factory_display()
-        # display_summary = DisplaySummary(buffer=self._summary.ui_model)
         display_summary.show()
         display_summary.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
         site_summary = p_get_ui_element('ui_site_summary')
         site_summary.add(display_summary)
 
-    def _init_search(self):
-        """Initialize search bar and buttons."""
-        print('Enter: _init_search')
-        # search_bar = get_object('ui_search_bar')
-        # image_show_search = Gtk.Image.new_from_icon_name(
-        #     'edit-find-symbolic', Gtk.IconSize.SMALL_TOOLBAR)
-        # button_show_search = Gtk.ToggleButton()
-        # button_show_search.set_image(image_show_search)
-        # _binding = button_show_search.bind_property(
-        #     'active', search_bar, 'search-mode-enabled',
-        #     GO.BindingFlags.BIDIRECTIONAL)
-        # button_show_search.show()
-        #
-        # header_bar = get_object('ui_header_bar')
-        # header_bar.pack_end(button_show_search)
-        # header_bar.pack_end(button_show_info)
-        #
-        # button_by_name = get_object('ui_search_by_name')
-        # _ = button_by_name.connect('toggled', self.on_toggle_search_field,
-        #                            ASHEET.FieldsTemplate.NAME)
-        # button_by_title = get_object('ui_search_by_title')
-        # _ = button_by_title.connect('toggled', self.on_toggle_search_field,
-        #                             ASHEET.FieldsTemplate.TITLE)
+    def _init_search(self, p_get_ui_element: UI.GetUiElement) -> None:
+        """Initialize search bar and buttons.
+
+        :param p_get_ui_element: gets visual element from UI description.
+        """
+        self._scope_search = FieldsId.NAME
+        search_bar = p_get_ui_element('ui_search')
+        button_find = Gtk.ToggleButton(label='Find')
+        _binding = button_find.bind_property(
+            'active', search_bar, 'search-mode-enabled',
+            GO.BindingFlags.BIDIRECTIONAL)
+        button_find.show()
+
+        header_bar = p_get_ui_element('ui_header')
+        header_bar.pack_start(button_find)
+
+        button_in_name = p_get_ui_element('ui_search_in_name')
+        _ = button_in_name.connect(
+            'toggled', self.on_changed_search_scope, FieldsId.NAME)
+        button_in_summary = p_get_ui_element('ui_search_in_summary')
+        _ = button_in_summary.connect(
+            'toggled', self.on_changed_search_scope, FieldsId.SUMMARY)
+        button_in_title = p_get_ui_element('ui_search_in_title')
+        _ = button_in_title.connect(
+            'toggled', self.on_changed_search_scope, FieldsId.TITLE)
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
@@ -229,15 +257,14 @@ class SelectSpec:
         self._summary.text = self.NO_SUMMARY
         self._button_select.set_sensitive(False)
 
-    def on_toggle_search_field(self, px_button: Gtk.ToggleButton, p_field:
-                               typing.Any) -> None:
-        """Sets search to match active field button.
+    def on_changed_search_scope(
+            self, p_button: Gtk.ToggleButton, p_field: FieldsId) -> None:
+        """Sets search scope to match requested change.
 
-        :param px_button: button user toggled.
-        :param p_field: search field of toggled button.
+        :param p_button: search scope button changed by user.
+        :param p_field: search field of corresponding to changed button.
         """
-        print('Enter: on_toggle_search_field')
-        # if px_button.get_active():
-        #     self._outline.scope_search |= p_field
-        # else:
-        #     self._outline.scope_search &= ~p_field
+        if p_button.get_active():
+            self._scope_search |= p_field
+        else:
+            self._scope_search &= ~p_field

@@ -136,6 +136,19 @@ def patch_g_specs():
     g_specs.insert_section(g_specs_saved)
 
 
+class TestFieldsIdCore:
+    """Unit tests for :class:`.FieldsId`."""
+
+    def test_members(self):
+        """Confirm member definitions."""
+        # Setup
+        # Test
+        assert not bool(VSELECT_SPEC.FieldsId.VOID)
+        assert VSELECT_SPEC.FieldsId.NAME
+        assert VSELECT_SPEC.FieldsId.SUMMARY
+        assert VSELECT_SPEC.FieldsId.TITLE
+
+
 class TestSelectSpec:
     """Unit tests for :class:`.SelectSpec`."""
 
@@ -160,6 +173,7 @@ class TestSelectSpec:
         assert target._dialog is not None
         assert target._ui_outline_specs is not None
         assert target.NO_SUMMARY == target._summary.text
+        assert VSELECT_SPEC.FieldsId.NAME == target._scope_search
 
     def test_init_dialog(self, monkeypatch):
         """Confirm initialization of top-level visual element.
@@ -167,7 +181,7 @@ class TestSelectSpec:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        class PatchGet:
+        class PatchCall:
             def __init__(self):
                 self.id_ui = 'Oops!'
                 self.dialog = Gtk.Dialog(use_header_bar=True)
@@ -183,17 +197,17 @@ class TestSelectSpec:
         NAME_SELECT = 'Select'
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
 
-        patch_get = PatchGet()
+        patch_call = PatchCall()
         monkeypatch.setattr(
-            UI.GetUiElementByStr, '__call__', patch_get.__call__)
+            UI.GetUiElementByStr, '__call__', patch_call.__call__)
         get_ui_element = UI.GetUiElementByStr(p_string_ui='')
         # Test
         target._init_dialog(p_parent=WIN, p_get_ui_element=get_ui_element)
-        assert isinstance(patch_get.dialog, Gtk.Dialog)
-        assert patch_get.dialog.get_transient_for() is WIN
-        assert patch_get.dialog.get_destroy_with_parent()
+        assert isinstance(patch_call.dialog, Gtk.Dialog)
+        assert patch_call.dialog.get_transient_for() is WIN
+        assert patch_call.dialog.get_destroy_with_parent()
 
-        header_bar = patch_get.dialog.get_header_bar()
+        header_bar = patch_call.dialog.get_header_bar()
         buttons = header_bar.get_children()
         button_cancel = buttons[I_CANCEL]
         assert isinstance(button_cancel, Gtk.Button)
@@ -224,7 +238,7 @@ class TestSelectSpec:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        class PatchGet:
+        class PatchCall:
             def __init__(self):
                 self.id_ui = 'Oops!'
                 self.site = Gtk.Viewport()
@@ -242,15 +256,15 @@ class TestSelectSpec:
         TITLE_C_TITLE = 'Title'
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
 
-        patch_get = PatchGet()
+        patch_call = PatchCall()
         monkeypatch.setattr(
-            UI.GetUiElementByStr, '__call__', patch_get.__call__)
+            UI.GetUiElementByStr, '__call__', patch_call.__call__)
         get_ui_element = UI.GetUiElementByStr(p_string_ui='')
         # Test
         target._init_outline_specs(get_ui_element)
         assert target._ui_outline_specs.get_model() is target._specs.ui_model
-        assert UI_ID == patch_get.id_ui
-        assert target._ui_outline_specs is patch_get.site.get_child()
+        assert UI_ID == patch_call.id_ui
+        assert target._ui_outline_specs is patch_call.site.get_child()
         assert target._ui_outline_specs.get_visible()
         columns = target._ui_outline_specs.get_columns()
         assert target._column_name is columns[C_NAME]
@@ -260,15 +274,114 @@ class TestSelectSpec:
         assert N_COLUMNS == len(columns)
         assert target._ui_selection is target._ui_outline_specs.get_selection()
 
-        # assert isinstance(target._outline, ASHEET.AdaptTreeViewTemplate)
-        # assert target._outline.scope_search is ~ASHEET.FieldsTemplate.VOID
-        # assert target._outline.gtk_view.get_search_entry() is not None
-        # assert isinstance(target._cursor, Gtk.TreeSelection)
+    def test_init_search(self, monkeypatch):
+        """Confirm initialization of search bar.
 
-        # assert isinstance(target._summary_current, Gtk.Label)
-        # assert target._summary_current.get_label() == target.NO_SUMMARY
-        # # Teardown
-        # del WIN
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        class PatchCall:
+            def __call__(self, p_id_ui):
+                stub = self.stubs.get(p_id_ui)
+                return stub
+
+            def __init__(self):
+                self.binding = None
+                self.connections = list()
+                self.stubs = dict(
+                    ui_search=Gtk.SearchBar(),
+                    ui_header=Gtk.HeaderBar(),
+                    ui_search_in_name=Gtk.CheckButton(),
+                    ui_search_in_summary=Gtk.CheckButton(),
+                    ui_search_in_title=Gtk.CheckButton(),
+                    )
+
+            def bind_property(self, *args):
+                self.binding = args
+
+        WIN = Gtk.Window()
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+
+        patch_call = PatchCall()
+        monkeypatch.setattr(
+            UI.GetUiElementByStr, '__call__', patch_call.__call__)
+        monkeypatch.setattr(
+            Gtk.ToggleButton, 'bind_property', patch_call.bind_property)
+        get_ui_element = UI.GetUiElementByStr(p_string_ui='')
+        PROP_SOURCE = 'active'
+        PROP_TARGET = 'search-mode-enabled'
+        I_FIND = 0
+        LABEL_FIND = 'Find'
+        # Test
+        target._init_search(get_ui_element)
+        assert VSELECT_SPEC.FieldsId.NAME == target._scope_search
+        prop_source, target, prop_target, flags = patch_call.binding
+        assert PROP_SOURCE == prop_source
+        assert isinstance(target, Gtk.SearchBar)
+        assert PROP_TARGET == prop_target
+        assert GO.BindingFlags.BIDIRECTIONAL == flags
+        header_bar = patch_call.stubs['ui_header']
+        buttons = header_bar.get_children()
+        button_find = buttons[I_FIND]
+        assert LABEL_FIND == button_find.get_label()
+        assert isinstance(button_find, Gtk.ToggleButton)
+        assert button_find.get_visible()
+
+    @pytest.mark.parametrize('NAME_SIGNAL, NAME_BUTTON, ORIGIN, N_DEFAULT', [
+        ('toggled', 'ui_search_in_name', Gtk.CheckButton, 0),
+        ('toggled', 'ui_search_in_summary', Gtk.CheckButton, 0),
+        ('toggled', 'ui_search_in_title', Gtk.CheckButton, 0),
+        ])
+    def test_init_search_signals(
+            self, monkeypatch, NAME_SIGNAL, NAME_BUTTON, ORIGIN, N_DEFAULT):
+        """Confirm initialization of signal connections.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param NAME_SIGNAL: name of signal.
+        :param NAME_BUTTON: name of search button connected to signal.
+        :param ORIGIN: GTK class of connected attribute.
+        :param N_DEFAULT: number of default handlers.
+        """
+        # Setup
+        class PatchCall:
+            def __call__(self, p_id_ui):
+                stub = self.stubs.get(p_id_ui)
+                return stub
+
+            def __init__(self):
+                self.stubs = dict(
+                    ui_search=Gtk.SearchBar(),
+                    ui_header=Gtk.HeaderBar(),
+                    ui_search_in_name=Gtk.CheckButton(),
+                    ui_search_in_summary=Gtk.CheckButton(),
+                    ui_search_in_title=Gtk.CheckButton(),
+                    )
+
+        WIN = Gtk.Window()
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+
+        patch_call = PatchCall()
+        monkeypatch.setattr(
+            UI.GetUiElementByStr, '__call__', patch_call.__call__)
+        get_ui_element = UI.GetUiElementByStr(p_string_ui='')
+
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        # Test
+        target._init_search(get_ui_element)
+        button = patch_call.stubs[NAME_BUTTON]
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                button, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(button, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
 
     @pytest.mark.parametrize(
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
@@ -281,7 +394,7 @@ class TestSelectSpec:
         :param NAME_SIGNAL: name of signal.
         :param NAME_ATTRIBUTE: name of attribute connected to signal.
         :param ORIGIN: GTK class of connected attribute.
-        :param N_DEFAULT: number of default handlers
+        :param N_DEFAULT: number of default handlers.
         """
         # Setup
         WIN = Gtk.Window()
@@ -302,8 +415,6 @@ class TestSelectSpec:
             GO.signal_handler_disconnect(attribute, id_signal)
 
         assert N_DEFAULT + 1 == n_handlers
-        # Teardown
-        del WIN
 
     def test_init_summary(self, monkeypatch):
         """Confirm initialization of spec summary.
@@ -311,7 +422,7 @@ class TestSelectSpec:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        class PatchGet:
+        class PatchCall:
             def __init__(self):
                 self.id_ui = 'Oops!'
                 self.site = Gtk.Viewport()
@@ -324,14 +435,14 @@ class TestSelectSpec:
         UI_ID = 'ui_site_summary'
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
 
-        patch_get = PatchGet()
+        patch_call = PatchCall()
         monkeypatch.setattr(
-            UI.GetUiElementByStr, '__call__', patch_get.__call__)
+            UI.GetUiElementByStr, '__call__', patch_call.__call__)
         get_ui_element = UI.GetUiElementByStr(p_string_ui='')
         # Test
         target._init_summary(get_ui_element)
-        assert UI_ID == patch_get.id_ui
-        view_summary = patch_get.site.get_child()
+        assert UI_ID == patch_call.id_ui
+        view_summary = patch_call.site.get_child()
         assert view_summary.get_visible()
         assert target._summary.ui_model is view_summary.get_buffer()
         assert view_summary.get_wrap_mode() is Gtk.WrapMode.WORD_CHAR
@@ -517,43 +628,26 @@ class TestSelectSpec:
         assert target.NO_SUMMARY == target._summary.text
         assert not target._button_select.get_sensitive()
 
-    @pytest.mark.skip
-    def test_on_toggle_search_field_inactive(self, patch_outline):
-        """| Confirm search field set.
-        | Case: button inactive
-        """
+    @pytest.mark.parametrize('SCOPE, BUTTON, FIELD, EXPECT', [
+        (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.NAME,
+         VSELECT_SPEC.FieldsId.NAME),
+        (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.SUMMARY,
+         VSELECT_SPEC.FieldsId.SUMMARY),
+        (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.TITLE,
+         VSELECT_SPEC.FieldsId.TITLE),
+        (~VSELECT_SPEC.FieldsId.VOID, False, VSELECT_SPEC.FieldsId.NAME,
+         VSELECT_SPEC.FieldsId.SUMMARY | VSELECT_SPEC.FieldsId.TITLE),
+        ])
+    def test_on_changed_search_scope(self, SCOPE, BUTTON, FIELD, EXPECT):
+        """| Confirm change in search scope."""
         # Setup
         WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        SEARCH_ALL = ~ASHEET.FieldsTemplate.VOID
-        target._outline.scope_search = SEARCH_ALL
-        button = Gtk.ToggleButton(active=False)
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target._scope_search = SCOPE
+        button = Gtk.ToggleButton(active=BUTTON)
         # Test
-        target.on_toggle_search_field(button, ASHEET.FieldsTemplate.NAME)
-        assert not target._outline.scope_search & ASHEET.FieldsTemplate.NAME
-        assert target._outline.scope_search & ASHEET.FieldsTemplate.TITLE
-        # Teardown
-        del WIN
-
-    @pytest.mark.skip
-    def test_on_toggle_search_field_active(self, patch_outline):
-        """| Confirm search field set.
-        | Case: button inactive
-        """
-        # Setup
-        WIN = Gtk.Window()
-        VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        target = QTEMPLATES.QueryTemplate(
-            p_parent=WIN, p_attach_view_topics=VIEW_TOPICS)
-        SEARCH_NONE = ASHEET.FieldsTemplate.VOID
-        target._outline.scope_search = SEARCH_NONE
-        button = Gtk.ToggleButton(active=True)
-        # Test
-        target.on_toggle_search_field(button, ASHEET.FieldsTemplate.TITLE)
-        assert target._outline.scope_search & ASHEET.FieldsTemplate.TITLE
-        assert not target._outline.scope_search & ASHEET.FieldsTemplate.NAME
+        target.on_changed_search_scope(button, FIELD)
+        assert EXPECT == target._scope_search
         # Teardown
         del WIN
 
