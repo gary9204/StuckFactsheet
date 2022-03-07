@@ -130,13 +130,17 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
                    typing.Generic[UiModelOutline, ItemOpaque]):
     """Common ancestor of bridge classes for outlines.
 
+    .. data:: C_ITEM
+
+        Column containing outline items.
+
     .. admonition:: About Equality
 
         Two outlines are equivalent when they have the same structure
         (fields, items, and sections) and corresponding items are equal.
     """
 
-    _C_ITEM = 0
+    C_ITEM = 0
 
     def clear(self) -> None:
         """Remove all items from outline."""
@@ -157,7 +161,7 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
         :param p_model: outline storage element.
         :param p_line: line containing desired item.
         """
-        return p_model.get_value(p_line, cls._C_ITEM)
+        return p_model.get_value(p_line, cls.C_ITEM)
 
     def _get_persist(self) -> PersistOutline:
         """Return outline in form suitable for persistent storage."""

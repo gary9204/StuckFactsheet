@@ -5,14 +5,9 @@ Unit tests for class to select a topic specification.  See
 .. include:: /test/refs_include_pytest.txt
 """
 import gi   # type: ignore[import]
-from pathlib import Path
+import logging
 import pytest   # type: ignore[import]
 
-# from factsheet.content import heading as XHEADING
-# from factsheet.content import spec as XSPEC
-# from factsheet.content.note import spec_note as XSPEC_NOTE
-# from factsheet.content.note import topic_note as XNOTE
-# from factsheet.model import types_model as MTYPES
 import factsheet.bridge_ui as BUI
 import factsheet.spec as SPECS
 import factsheet.spec.base_s as SBASE
@@ -25,9 +20,22 @@ from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
-def new_outline_model():
-    """Pytest fixture returns outline model factory.  The structure of
-    each model is as follows.
+def g_specs_empty():
+    """Pytest fixture with teardown: Clear :data:`.g_specs`."""
+    g_specs = SPECS.g_specs
+    g_specs_saved = SPECS.BUI.ModelOutlineMulti[SBASE.Base]()
+    g_specs_saved.insert_section(SPECS.g_specs)
+    g_specs.clear()
+    yield
+    g_specs.clear()
+    g_specs.insert_section(g_specs_saved)
+
+
+@pytest.fixture
+def g_specs_stub(g_specs_empty):
+    """Pytest fixture returns :data:`.g_specs` outline with stub specs.
+
+    The outline is as follows.
 
         | name_0xx | title_0xx | summary_0xx
         |     name_00x | title_00x | summary_00x
@@ -39,101 +47,40 @@ def new_outline_model():
         |         name_110 | title_110 | summary_110
         |         name_111 | title_111 | summary_111
         |         name_112 | title_112 | summary_112
+
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
     """
-    def new_model():
-        model = None
-        # CLASS_TOPIC = XNOTE.Note
-        # PATH_ASSIST = XSPEC.StrAssist(
-        #     str(Path(XSPEC_NOTE.__file__).parent / 'spec_note.ui'))
-        # # VIEW_TOPICS = ASHEET.AdaptTreeViewTopic()
-        #
-        # def ATTACH_VIEW_TOPICS(_view): pass
-        #
-        # model = Gtk.TreeStore(GO.TYPE_PYOBJECT)
-        #
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_0xx', p_title='title_0xx', p_summary='summary_0xx',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # i_0xx = model.append(None, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_00x', p_title='title_00x', p_summary='summary_00x',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # i_00x = model.append(
-        #     i_0xx, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_000', p_title='title_000', p_summary='summary_000',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # _i_000 = model.append(i_00x, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_01x', p_title='title_01x', p_summary='summary_01x',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # i_0xx = model.append(i_0xx, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_1xx', p_title='title_1xx', p_summary='summary_1xx',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # i_1xx = model.append(None, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_10x', p_title='title_10x', p_summary='summary_10x',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # _i_10x = model.append(i_1xx, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_11x', p_title='title_11x', p_summary='summary_11x',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # i_11x = model.append(i_1xx, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_110', p_title='title_110', p_summary='summary_110',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # _i_110 = model.append(i_11x, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_111', p_title='title_111', p_summary='summary_111',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # _i_111 = model.append(i_11x, [item])
-        # item = XSPEC_NOTE.SpecNote(
-        #     p_name='name_112', p_title='title_112', p_summary='summary_112',
-        #     p_path_assist=PATH_ASSIST, p_class_topic=CLASS_TOPIC,
-        #     p_attach_view_topics=ATTACH_VIEW_TOPICS)
-        # _i_112 = model.append(i_11x, [item])
-        return model
-
-    return new_model
-
-
-@pytest.fixture
-def patch_outline(new_outline_model):
-    outline = None
-    # outline = MTYPES.OutlineTemplates()
-    # outline._ui_model = new_outline_model()
-    return outline
-
-
-# @pytest.fixture
-# def patch_g_specs():
-#     """Pytest fixture with teardown: Reset :data:`.g_specs`."""
-#     g_specs = SPECS.g_specs
-#     SPECS.g_specs = SPECS.BUI.ModelOutlineMulti[SBASE.Base]()
-#     yield
-#     SPECS.g_specs = g_specs
-
-
-@pytest.fixture
-def patch_g_specs():
-    """Pytest fixture with teardown: Reset :data:`.g_specs`."""
-    g_specs = SPECS.g_specs
-    g_specs_saved = SPECS.BUI.ModelOutlineMulti[SBASE.Base]()
-    g_specs_saved.insert_section(SPECS.g_specs)
-    g_specs.clear()
-    yield
-    g_specs.clear()
-    g_specs.insert_section(g_specs_saved)
+    specs = SPECS.g_specs
+    spec = SBASE.Base(
+        p_name='name_0xx', p_title='title_0xx', p_summary='summary_0xx')
+    line_0xx = specs.insert_after(spec, None)
+    spec = SBASE.Base(
+        p_name='name_00x', p_title='title_00x', p_summary='summary_00x')
+    line_00x = specs.insert_child(spec, line_0xx)
+    spec = SBASE.Base(
+        p_name='name_000', p_title='title_000', p_summary='summary_000')
+    _line_000 = specs.insert_child(spec, line_00x)
+    spec = SBASE.Base(
+        p_name='name_01x', p_title='title_01x', p_summary='summary_01x')
+    _line_01x = specs.insert_child(spec, line_0xx)
+    spec = SBASE.Base(
+        p_name='name_1xx', p_title='title_1xx', p_summary='summary_1xx')
+    line_1xx = specs.insert_after(spec, line_0xx)
+    spec = SBASE.Base(
+        p_name='name_10x', p_title='title_10x', p_summary='summary_10x')
+    _line_10x = specs.insert_child(spec, line_1xx)
+    spec = SBASE.Base(
+        p_name='name_11x', p_title='title_11x', p_summary='summary_11x')
+    line_11x = specs.insert_child(spec, line_1xx)
+    spec = SBASE.Base(
+        p_name='name_110', p_title='title_110', p_summary='summary_110')
+    _line_110 = specs.insert_child(spec, line_11x)
+    spec = SBASE.Base(
+        p_name='name_111', p_title='title_111', p_summary='summary_111')
+    _line_111 = specs.insert_child(spec, line_11x)
+    spec = SBASE.Base(
+        p_name='name_112', p_title='title_112', p_summary='summary_112')
+    _line_112 = specs.insert_child(spec, line_11x)
 
 
 class TestFieldsIdCore:
@@ -165,8 +112,6 @@ class TestSelectSpec:
         """Confirm initialization orchestration."""
         # Setup
         WIN = Gtk.Window()
-        # NAME_SEARCH = 'edit-find-symbolic'
-        # NAME_INFO = 'dialog-information-symbolic'
         # Test
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
         assert target._specs is SPECS.g_specs
@@ -219,18 +164,6 @@ class TestSelectSpec:
         style = target._button_select.get_style_context()
         assert style.has_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
         assert not target._button_select.get_sensitive()
-
-        # assert isinstance(button_info, Gtk.ToggleButton)
-        # assert button_info.get_visible()
-        # image = button_info.get_image()
-        # name_image, _size_image = image.get_icon_name()
-        # assert NAME_INFO == name_image
-
-        # assert isinstance(button_search, Gtk.ToggleButton)
-        # assert button_search.get_visible()
-        # image = button_search.get_image()
-        # name_image, _size_image = image.get_icon_name()
-        # assert NAME_SEARCH == name_image
 
     def test_init_outline_specs(self, monkeypatch):
         """Confirm initialization of spec outline.
@@ -288,16 +221,21 @@ class TestSelectSpec:
             def __init__(self):
                 self.binding = None
                 self.connections = list()
+                self.equal_func_args = None
                 self.stubs = dict(
                     ui_search=Gtk.SearchBar(),
                     ui_header=Gtk.HeaderBar(),
                     ui_search_in_name=Gtk.CheckButton(),
                     ui_search_in_summary=Gtk.CheckButton(),
                     ui_search_in_title=Gtk.CheckButton(),
+                    ui_search_entry=Gtk.Entry(),
                     )
 
             def bind_property(self, *args):
-                self.binding = args
+                self.binding_args = args
+
+            def set_equal_func(self, *args):
+                self.equal_func_args = args
 
         WIN = Gtk.Window()
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
@@ -307,17 +245,20 @@ class TestSelectSpec:
             UI.GetUiElementByStr, '__call__', patch_call.__call__)
         monkeypatch.setattr(
             Gtk.ToggleButton, 'bind_property', patch_call.bind_property)
+        monkeypatch.setattr(
+            Gtk.TreeView, 'set_search_equal_func', patch_call.set_equal_func)
         get_ui_element = UI.GetUiElementByStr(p_string_ui='')
         PROP_SOURCE = 'active'
         PROP_TARGET = 'search-mode-enabled'
         I_FIND = 0
         LABEL_FIND = 'Find'
+        C_FIRST = 0
         # Test
         target._init_search(get_ui_element)
         assert VSELECT_SPEC.FieldsId.NAME == target._scope_search
-        prop_source, target, prop_target, flags = patch_call.binding
+        prop_source, target_bind, prop_target, flags = patch_call.binding_args
         assert PROP_SOURCE == prop_source
-        assert isinstance(target, Gtk.SearchBar)
+        assert isinstance(target_bind, Gtk.SearchBar)
         assert PROP_TARGET == prop_target
         assert GO.BindingFlags.BIDIRECTIONAL == flags
         header_bar = patch_call.stubs['ui_header']
@@ -326,6 +267,13 @@ class TestSelectSpec:
         assert LABEL_FIND == button_find.get_label()
         assert isinstance(button_find, Gtk.ToggleButton)
         assert button_find.get_visible()
+        assert target._ui_outline_specs.get_enable_search()
+        assert C_FIRST == target._ui_outline_specs.get_search_column()
+        assert target._ui_outline_specs.get_search_entry(
+            ) is patch_call.stubs['ui_search_entry']
+        equal_func, extra = patch_call.equal_func_args
+        assert target._match_spec_ne == equal_func
+        assert extra is None
 
     @pytest.mark.parametrize('NAME_SIGNAL, NAME_BUTTON, ORIGIN, N_DEFAULT', [
         ('toggled', 'ui_search_in_name', Gtk.CheckButton, 0),
@@ -338,8 +286,8 @@ class TestSelectSpec:
 
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         :param NAME_SIGNAL: name of signal.
-        :param NAME_BUTTON: name of search button connected to signal.
-        :param ORIGIN: GTK class of connected attribute.
+        :param NAME_BUTTON: name of scope button connected to signal.
+        :param ORIGIN: GTK class of connected button.
         :param N_DEFAULT: number of default handlers.
         """
         # Setup
@@ -355,6 +303,7 @@ class TestSelectSpec:
                     ui_search_in_name=Gtk.CheckButton(),
                     ui_search_in_summary=Gtk.CheckButton(),
                     ui_search_in_title=Gtk.CheckButton(),
+                    ui_search_entry=Gtk.Entry(),
                     )
 
         WIN = Gtk.Window()
@@ -447,9 +396,13 @@ class TestSelectSpec:
         assert target._summary.ui_model is view_summary.get_buffer()
         assert view_summary.get_wrap_mode() is Gtk.WrapMode.WORD_CHAR
 
-    def test_call(self, patch_dialog_run, monkeypatch, patch_g_specs):
+    def test_call(self, patch_dialog_run, monkeypatch, g_specs_empty):
         """| Confirm spec selection.
         | Case: spec chosen.
+
+        :param patch_dialog_run: fixture :func:`.patch_dialog_run`.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
         # Setup
         patch_dialog = patch_dialog_run(Gtk.ResponseType.APPLY)
@@ -476,9 +429,13 @@ class TestSelectSpec:
         assert not target._dialog.get_visible()
         assert target.NO_SUMMARY == target._summary.text
 
-    def test_call_cancel(self, patch_dialog_run, monkeypatch, patch_g_specs):
+    def test_call_cancel(self, patch_dialog_run, monkeypatch, g_specs_empty):
         """| Confirm spec selection.
         | Case: no spec chosen.
+
+        :param patch_dialog_run: fixture :func:`.patch_dialog_run`.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
         # Setup
         patch_dialog = patch_dialog_run(Gtk.ResponseType.CANCEL)
@@ -508,9 +465,10 @@ class TestSelectSpec:
         ('_markup_cell_title', 2, 'Title 2'),
         ('_markup_cell_title', 4, 'Title 4'),
         ])
-    def test_markup_cell(self, patch_g_specs, METHOD, I_LINE, EXPECT):
+    def test_markup_cell(self, g_specs_empty, METHOD, I_LINE, EXPECT):
         """Confirm cell data function updates column text.
 
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         :param METHOD: markup method under test.
         :param I_LINE: index in outline of sample line.
         :param EXPECT: text to expect in cell.
@@ -539,9 +497,10 @@ class TestSelectSpec:
         ('_markup_cell_name'),
         ('_markup_cell_title'),
         ])
-    def test_markup_cell_none(self, patch_g_specs, METHOD):
+    def test_markup_cell_none(self, g_specs_empty, METHOD):
         """Confirm cell data function updates column text.
 
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         :param METHOD: markup method under test.
         """
         # Setup
@@ -560,9 +519,11 @@ class TestSelectSpec:
         target_method(None, render, None, line, None)
         assert EXPECT == render.get_property('text')
 
-    def test_on_changed_selection(self, patch_g_specs):
+    def test_on_changed_selection(self, g_specs_empty):
         """| Confirm summary shown matches chosen spec.
         | Case: a spec at line choosen.
+
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
         # Setup
         WIN = Gtk.Window()
@@ -579,7 +540,6 @@ class TestSelectSpec:
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
         target._ui_outline_specs.expand_all()
         target._ui_selection.select_iter(line_spec)
-        # target._ui_selection.unselect_all()
         target._summary.text = 'Oops'
         target._button_select.set_sensitive(False)
         # Test
@@ -588,9 +548,11 @@ class TestSelectSpec:
         assert summary_expect == target._summary.text
         assert target._button_select.get_sensitive()
 
-    def test_on_changed_selection_absent(self, patch_g_specs):
+    def test_on_changed_selection_absent(self, g_specs_empty):
         """| Confirm summary shown matches chosen spec.
         | Case: no spec at line choosen.
+
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
         # Setup
         WIN = Gtk.Window()
@@ -606,9 +568,11 @@ class TestSelectSpec:
         assert target.NO_SUMMARY == target._summary.text
         assert not target._button_select.get_sensitive()
 
-    def test_on_changed_selection_none(self, patch_g_specs):
+    def test_on_changed_selection_none(self, g_specs_empty):
         """| Confirm summary shown matches chosen spec.
         | Case: no spec is choosen.
+
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
         # Setup
         WIN = Gtk.Window()
@@ -628,7 +592,7 @@ class TestSelectSpec:
         assert target.NO_SUMMARY == target._summary.text
         assert not target._button_select.get_sensitive()
 
-    @pytest.mark.parametrize('SCOPE, BUTTON, FIELD, EXPECT', [
+    @pytest.mark.parametrize('SCOPE, ACTIVE, FIELD, EXPECT', [
         (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.NAME,
          VSELECT_SPEC.FieldsId.NAME),
         (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.SUMMARY,
@@ -638,18 +602,22 @@ class TestSelectSpec:
         (~VSELECT_SPEC.FieldsId.VOID, False, VSELECT_SPEC.FieldsId.NAME,
          VSELECT_SPEC.FieldsId.SUMMARY | VSELECT_SPEC.FieldsId.TITLE),
         ])
-    def test_on_changed_search_scope(self, SCOPE, BUTTON, FIELD, EXPECT):
-        """| Confirm change in search scope."""
+    def test_on_changed_search_scope(self, SCOPE, ACTIVE, FIELD, EXPECT):
+        """Confirm change in search scope.
+
+        :param SCOPE: fields identifying scope of search.
+        :param ACTIVE: True when scope button set to active.
+        :param FIELD: changed scope field.
+        :param EXPECT: expected result.
+        """
         # Setup
         WIN = Gtk.Window()
         target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
         target._scope_search = SCOPE
-        button = Gtk.ToggleButton(active=BUTTON)
+        button = Gtk.ToggleButton(active=ACTIVE)
         # Test
         target.on_changed_search_scope(button, FIELD)
         assert EXPECT == target._scope_search
-        # Teardown
-        del WIN
 
     def test_set_no_spec(self):
         """Confirm summary content and Specify button state."""
@@ -663,9 +631,104 @@ class TestSelectSpec:
         assert target.NO_SUMMARY == target._summary.text
         assert not target._button_select.get_sensitive()
 
+    @pytest.mark.parametrize('SCOPE, PATH_ITEM, MATCH_KEY, EXPECT, EXPANDED', [
+        (VSELECT_SPEC.FieldsId.VOID, '1:0', 'name 01x', True, False),
+        (VSELECT_SPEC.FieldsId.NAME, '0:1', 'name_01x', False, False),
+        (VSELECT_SPEC.FieldsId.NAME, '0', 'e_0x', False, False),
+        (VSELECT_SPEC.FieldsId.NAME, '0', '$e_0x', True, True),
+        (VSELECT_SPEC.FieldsId.VOID, '1', 'summary_1xx', True, False),
+        (VSELECT_SPEC.FieldsId.SUMMARY, '1', 'summary_1xx', False, False),
+        (VSELECT_SPEC.FieldsId.SUMMARY, '1:1:1', 'y_111', False, False),
+        (VSELECT_SPEC.FieldsId.SUMMARY, '1:1:1', 'y_11$', True, True),
+        (VSELECT_SPEC.FieldsId.VOID, '0:0:0', 'title_000', True, False),
+        (VSELECT_SPEC.FieldsId.TITLE, '0:0:0', 'title_000', False, False),
+        (VSELECT_SPEC.FieldsId.TITLE, '1:1', 'le_1', False, False),
+        (VSELECT_SPEC.FieldsId.TITLE, '1:1', 'le_11', False, False),
+        (VSELECT_SPEC.FieldsId.TITLE, '1:1', 'le$11', True, True),
+            ])
+    def test_match_spec_ne(self, monkeypatch, g_specs_stub,
+                           SCOPE, PATH_ITEM, MATCH_KEY, EXPECT, EXPANDED):
+        """Confirm method returns False when field matches search key.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param g_specs_stub: fixture :func:`.g_specs_stub`.
+        :param SCOPE: field identifying scope of search.
+        :param PATH_SPEC: path to spec to match.
+        :param MATCH_KEY: value to match in spec field.
+        :param EXPECT: expected result.
+        :param EXPANDED: True when method should expand spec outline.
+        """
+        # Setup
+        class PatchExpand:
+            def __init__(self):
+                self.called = False
+                self.path = None
+
+            def expand_row(self, p, _a):
+                self.called = True
+                self.path = p
+
+        patch_expand = PatchExpand()
+        monkeypatch.setattr(
+            Gtk.TreeView, 'expand_row', patch_expand.expand_row)
+
+        specs = SPECS.g_specs
+        WIN = Gtk.Window()
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        target._scope_search = SCOPE
+        line = specs.ui_model.get_iter_from_string(PATH_ITEM)
+        # Test
+        actual = target._match_spec_ne(
+            specs.ui_model, None, MATCH_KEY, line, None)
+        assert actual is EXPECT
+        assert patch_expand.called is EXPANDED
+        if EXPANDED:
+            assert PATH_ITEM == patch_expand.path.to_string()
+
+
+    def test_match_spec_ne_absent(self, g_specs_empty, caplog):
+        """Confirm method returns True and logs warning when spec is None.
+
+        :param g_specs_empty: fixture :func:`.g_specs_empty`.
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        WIN = Gtk.Window()
+        specs = SPECS.g_specs
+        target = VSELECT_SPEC.SelectSpec(p_parent=WIN)
+        MATCH_KEY = 'name'
+        ui_model_specs = specs.ui_model
+        ui_model_specs.append(None, [None])
+        line = ui_model_specs.get_iter_first()
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Spec outline contains None for spec'
+                       ' (SelectSpec._match_spec_ne)')
+        # Test
+        actual = target._match_spec_ne(
+            specs.ui_model, None, MATCH_KEY, line, None)
+        assert actual
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+
 
 class TestModule:
-    """Unit tests for module-level components of :mod:`.editor_topics`."""
+    """Unit tests for module-level components of :mod:`.select_spec`."""
+
+    @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
+        (VSELECT_SPEC.logger, logging.Logger),
+        ])
+    def test_attributes(self, ATTR, TYPE_EXPECT):
+        """Confirm global attribute definitions.
+
+        :param ATTR: global attibute under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert isinstance(ATTR, TYPE_EXPECT)
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         # (VTOPICS.UiEditorTopics, Gtk.Frame),
@@ -682,16 +745,3 @@ class TestModule:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_EXPECT
-
-    # @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
-    #     # (VSELECT_SPEC.g_specs, BUI.ModelOutlineMulti),
-    #     ])
-    # def test_attributes(self, ATTR, TYPE_EXPECT):
-    #     """Confirm type alias definitions.
-    #
-    #     :param TYPE_TARGET: type alias under test.
-    #     :param TYPE_EXPECT: type expected.
-    #     """
-    #     # Setup
-    #     # Test
-    #     assert isinstance(ATTR, TYPE_EXPECT)

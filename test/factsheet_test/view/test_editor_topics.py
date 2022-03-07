@@ -648,6 +648,19 @@ class TestEditorTopics:
 class TestModule:
     """Unit tests for module-level components of :mod:`.editor_topics`."""
 
+    @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
+        (VTOPICS.logger, logging.Logger),
+        ])
+    def test_attributes(self, ATTR, TYPE_EXPECT):
+        """Confirm global attribute definitions.
+
+        :param ATTR: global attibute under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert isinstance(ATTR, TYPE_EXPECT)
+
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (VTOPICS.UiEditorTopics, Gtk.Frame),
         ])
@@ -660,16 +673,3 @@ class TestModule:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_EXPECT
-
-    @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
-        (VTOPICS.logger, logging.Logger),
-        ])
-    def test_attributes(self, ATTR, TYPE_EXPECT):
-        """Confirm type alias definitions.
-
-        :param TYPE_TARGET: type alias under test.
-        :param TYPE_EXPECT: type expected.
-        """
-        # Setup
-        # Test
-        assert isinstance(ATTR, TYPE_EXPECT)

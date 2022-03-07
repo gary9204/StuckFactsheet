@@ -458,7 +458,9 @@ class TestModelOutline:
         :param MODEL: GTK model for outline model subclass under test.
         """
         # Setup
+        C_ITEM = 0
         # Test
+        assert C_ITEM == BOUTLINE.ModelOutline.C_ITEM
         target = SUBCLASS()
         assert isinstance(target._ui_model, MODEL)
         assert 0 == len(target._ui_model)

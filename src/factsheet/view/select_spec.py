@@ -3,25 +3,22 @@ Defines class for selecting a specification of a new topic.
 
 .. data:: FactoryDisplaySummary
 
-    TBD
-
+    Factory class for display of specification summary.
 
 .. data:: ModelSummary
 
-    TBD
+    Type for model of specification summary.
 
 .. data:: ViewOutlineSpec
 
-    TBD
+    Type for view of specification outline.
 """
 import enum
 import gi   # type: ignore[import]
+import logging
 from pathlib import Path
 import typing
 
-# import factsheet.content.man_content as XMAN_CONTENT
-# from factsheet.content import heading as XHEADING
-# from factsheet.view import types_view as VTYPES
 import factsheet.bridge_ui as BUI
 import factsheet.spec as SPECS
 import factsheet.spec.base_s as SBASE
@@ -37,9 +34,13 @@ FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
 ModelSummary = BUI.ModelTextStyled
 ViewOutlineSpec = BUI.ViewOutline
 
+logger = logging.getLogger('Main.VSELECT_SPEC')
+
 
 class FieldsId(enum.Flag):
-    """Identifies IdCore fields, which may be combined.
+    """Identifies search fields for :class:`.IdCore`.
+
+    A search may combine fields using logical operators.
 
     .. data:: NAME
 
@@ -68,7 +69,7 @@ class SelectSpec:
 
     Select Specification dialog allows a user to select the
     specification for a new topic from an outline of available
-    speciications.  A user may cancel the dialog without selecting a
+    specications.  A user may cancel the dialog without selecting a
     specification.
 
     .. attribute:: NO_SUMMARY
@@ -200,6 +201,14 @@ class SelectSpec:
         _ = button_in_title.connect(
             'toggled', self.on_changed_search_scope, FieldsId.TITLE)
 
+        self._ui_outline_specs.set_enable_search(True)
+        C_FIRST = 0
+        self._ui_outline_specs.set_search_column(C_FIRST)
+        entry_search = p_get_ui_element('ui_search_entry')
+        self._ui_outline_specs.set_search_entry(entry_search)
+        self._ui_outline_specs.set_search_equal_func(
+            self._match_spec_ne, None)
+
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
             _ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
@@ -234,8 +243,52 @@ class SelectSpec:
             title = spec.title.text
         p_render.set_property('markup', title)
 
+    def _match_spec_ne(
+            self, _model: Gtk.TreeModel, _n_column: int, p_match_key: str,
+            p_line: BUI.LineOutline, _extra: None):
+        """Return False when given key is found with scope of search.
+
+        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
+        include any combination of spec name, summary, or title.
+
+        :param _model: storage for spec outline visual element (unused).
+        :param _n_column: model column to match (unused).
+        :param p_match_key: key to match within search field(s).
+        :param p_line: line to check for key.
+        :param _extra: optional extra parameter (unused)
+
+        .. _`Gtk.TreeViewSearchEqualFunc`::
+            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
+            Gtk.TreeViewSearchEqualFunc
+        """
+        if not self._scope_search:
+            return True
+
+        spec = self._specs.get_item(p_line)
+        if spec is None:
+            logger.warning('Spec outline contains None for spec ({}.{})'
+                           ''.format(self.__class__.__name__,
+                                     self._match_spec_ne.__name__))
+            return True
+
+        if (self._scope_search & FieldsId.NAME):
+            if p_match_key in spec.name.text:
+                return False
+
+        if (self._scope_search & FieldsId.SUMMARY):
+            if p_match_key in spec.summary.text:
+                return False
+
+        if (self._scope_search & FieldsId.TITLE):
+            if p_match_key in spec.title.text:
+                return False
+
+        path = self._specs.ui_model.get_path(p_line)
+        _ = self._ui_outline_specs.expand_row(path, False)
+        return True
+
     def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
-        """Changes summary text and Specify button to match chosen spec.
+        """Changes summary text and Select button to match chosen spec.
 
         :param _selection: identifies chosen spec (unused).
         """
@@ -253,7 +306,7 @@ class SelectSpec:
         self._button_select.set_sensitive(True)
 
     def _set_no_spec(self) -> None:
-        """Set summary and Specify button if no spec chosen."""
+        """Set summary and Select button if no spec chosen."""
         self._summary.text = self.NO_SUMMARY
         self._button_select.set_sensitive(False)
 
@@ -262,7 +315,7 @@ class SelectSpec:
         """Sets search scope to match requested change.
 
         :param p_button: search scope button changed by user.
-        :param p_field: search field of corresponding to changed button.
+        :param p_field: search field corresponding to changed button.
         """
         if p_button.get_active():
             self._scope_search |= p_field

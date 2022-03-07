@@ -1,5 +1,9 @@
 """
 Specifications to define topics with facts for Factsheet content.
+
+.. data:: g_specs
+
+    Singleton containing specification outline.
 """
 import factsheet.bridge_ui as BUI
 import factsheet.spec.base_s as SBASE

@@ -13,7 +13,7 @@
       <object class="GtkHeaderBar" id="ui_header">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="title" translatable="yes">Select Template</property>
+        <property name="title" translatable="yes">Select Specification</property>
         <child>
           <placeholder/>
         </child>
@@ -81,7 +81,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="label" translatable="yes">Select a specification for new topic.  The table lists the names and titles of available topic specifications.  Click on a row to select a specification and show its summary.  Click the &lt;b&gt;search &lt;/b&gt;button in the dialog title to search for a specification by name or by title.</property>
+                        <property name="label" translatable="yes">Select a specification for new topic.  The table lists the names and titles of available topic specifications.  Click on a row to select a specification and show its summary.</property>
                         <property name="use_markup">True</property>
                         <property name="justify">fill</property>
                         <property name="wrap">True</property>
@@ -98,7 +98,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="label" translatable="yes">Once you have selected a topic specification, click &lt;b&gt;Specify &lt;/b&gt;button to create a topic from the specification.  Otherwise, click &lt;b&gt;Cancel &lt;/b&gt;to return to the factsheet.</property>
+                        <property name="label" translatable="yes">Click the &lt;b&gt;Find &lt;/b&gt;button in the dialog title to search for a text in the specification name,  title, or summary fields. Select one or more fields to search by checking corresponding box(es) below the search bar.</property>
                         <property name="use_markup">True</property>
                         <property name="justify">fill</property>
                         <property name="wrap">True</property>
@@ -107,6 +107,23 @@
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="label" translatable="yes">Once you have selected a topic specification, click &lt;b&gt;Select &lt;/b&gt;button to create a topic from the specification.  Otherwise, click &lt;b&gt;Cancel &lt;/b&gt;to return to the factsheet.</property>
+                        <property name="use_markup">True</property>
+                        <property name="justify">fill</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
