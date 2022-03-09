@@ -23,13 +23,13 @@ progress.
 
 The plan needs to accommodate the following.
 
-  * A graphical user interface (GUI).  The look and behavior of the
+  * **A graphical user interface (GUI).**  The look and behavior of the
     application will change considerably over time.  The underlying
     widget toolkit may change, too.
-  * Calculations and persistent data.  The core of the application
+  * **Calculations and persistent data.**  The core of the application
     should be independent of the GUI to the extent possible.  It should
     be as easy as possible to extend content.
-  * Document and window management.  Rich visualization entails the
+  * **Document and window management.**  Rich visualization entails the
     capability to compare data sets and to view a single data set in
     different ways.
 
@@ -38,14 +38,14 @@ The plan needs to accommodate the following.
 
 `Model-View-Controller`_
 presents a basic structure for an application that meets the initial
-needs.  This Wikipedia page identifies variations that might be more
-appropriate as development progresses.  Thus, the plan starts with the
-following together with a willingness to adapt as needed.
+needs.  Page `Model-View-Controller`_ identifies variations that might
+be more appropriate as development progresses.  Thus, the plan starts
+with the following together with a willingness to adapt as needed.
 
   * **Model** -- persistent data with supporting calculations.
   * **View** -- widget toolkit display elements with supporting code.
   * **Controller** -- create, track, store, and load multiple Model
-    data sets as well as multiple View windows for each data set, 
+    data sets as well as multiple Views for each data set, 
 
 Ideally, change to any one component would have minimal effect on the
 other two.  Practicallly, I expect tradeoffs would be needed.  My
@@ -65,7 +65,7 @@ layers.
 Using model-view-control structure and layering adds overhead to the
 project that may not be needed.  However, the primary purpose of the
 application is to explore techniques and tools.  Practice will show the
-benefits and costs of these techniques more clearly than simply reading
+benefits and costs of these techniques more clearly than only reading
 about them.
 
 Feedback Strategies
@@ -125,12 +125,13 @@ time.
 
     #. Foster consistency
     
-        Establish and use naming and layout conventions. See **TBD**.
+        Establish and use naming and layout conventions. See
+        :doc:`./conventions`.
 
     #. Facilitate recovery
 
         Use Git_ version control to make it easier to try out ideas and
-        recover from ones that do not work out.  See `Factsheet
+        recover from ones that do not work out.  See `Factsheet GitHub
         repository <https://github.com/gary9204/Factsheet>`_.
 
         .. _Git: https://git-scm.com/
@@ -175,38 +176,48 @@ model <- view.
 
 .. _`Observer pattern`: https://en.wikipedia.org/wiki/Observer_pattern
 
-The `Observer pattern`_ provides a fix.  A view registers a callback
-with its model to receive updates when the model changes.  The model
-defines an abstract interface for callbacks.  The model does not need to
+The `Observer pattern`_ provides a fix.  A view registers with its model
+to be notified when the model changes.  The model does not need to
 import from the view.
 
+GTK, Observers, and Coupling
+""""""""""""""""""""""""""""
+As described in `Observer pattern`_, a subject class provides a
+registration method for object classes to use. GTK widgets go beyond
+basic registration.
+
+For example, a `Gtk.EntryBuffer`_ may provide storage for multiple
+`Gtk.Entry`_ widgets.  A call to `Gtk.Entry.set_buffer`_ establishes the
+connection between an ``Entry`` and an ``EntryBuffer``.  An ``Entry``
+updates its ``EntryBuffer`` in response to user actions.  The
+``EntryBuffer`` emits signals to notify connected ``Entry`` widgets of
+the changes.
+
+Initial versions of Factsheet wrapped `Gtk.EntryBuffer`_ widgets in
+model classes and wrapped `Gtk.Entry`_ widgets in view classes.
+Consequently, the model was explicitly coupled with the view.
+
+The `Bridge pattern`_ and `Factory method pattern`_ provide a means to
+isolate the coupling.  Now, Factsheet wraps `Gtk.EntryBuffer`_ widgets
+in bridge classes and provides factories to produce `Gtk.Entry`_
+widgets.  See :mod:`~.factsheet.bridge_gtk`.
+
+.. _`Bridge pattern`: https://en.wikipedia.org/wiki/Bridge_pattern
+
+.. _`Gtk.Entry`: https://lazka.github.io/pgi-docs/
+        #Gtk-3.0/classes/Entry.html
+
+.. _`Gtk.Entry.set_buffer`: https://lazka.github.io/pgi-docs/#Gtk-3.0
+        /classes/Entry.html#Gtk.Entry.set_buffer
+
+.. _`Gtk.EntryBuffer`: https://lazka.github.io/pgi-docs/
+        #Gtk-3.0/classes/EntryBuffer.html
+
+.. _`Factory method pattern`: https://en.wikipedia.org/wiki
+        /Factory_method_pattern
 
 .. warning:: The text after this point is under review. Portions of
     the text are inaccurate and incomplete.
-
-Tradeoffs
----------
-
-Observers
-^^^^^^^^^
-In general, view classes call control class methods, control classes
-call model methods, and model classes call view methods.  In a few
-cases, it seems appropriate for a control class to call view class
-methods.  For example, when the user closes a factsheet from one view,
-a control notifies all views of the factsheet to close.  This
-arrangement rasise several issues.
-
-* Circular imports
-* Forward references
-* Fail-safe operation
-* Widget toolkit elements
-
-Possible approaches to creating observers include the following.
-
-* Factory
-* Registration
-
-
 
 
 
@@ -259,13 +270,7 @@ reliable.
 
 Consequently, the Factsheet model uses GTK classes and mechanisms to
 avoid duplication.  To accommodate porting, the implementation
-encapsulates dependencies via abstract classes.  It uses GTK components
-for the initial implementation of the abstract classes.  Doing so
-mitigates coupling between :mod:`~factsheet.model` and GTK.  Subpackage
-:mod:`~factsheet.abc_types` specifies abstract classes and interfaces
-that the :mod:`~factsheet.model` and :mod:`~factsheet.view` share.
-Subpackage :mod:`~factsheet.adapt_gtk` defines the GTK implementations
-of the abstract classes.
+encapsulates dependencies via TBD.
 
 .. _Wikipedia_Glade:
    https://en.wikipedia.org/wiki/Glade_Interface_Designer
@@ -285,28 +290,15 @@ Modularity
 Python packages and modules partition Factsheet code.  The main
 partitions are packages :mod:`factsheet` and :mod:`factsheet_test`.  The
 former package contains source code while the latter contains unit test
-code.  Each main package has a subpackage for abstractions
-(:mod:`factsheet.abc_types` and :mod:`factsheet_test.abc_types`,
-respectively), model components (:mod:`factsheet.model` and
-:mod:`factsheet_test.model`), view components (:mod:`factsheet.view` and
-:mod:`factsheet_test.view`), and control components
-(:mod:`factsheet.control` and :mod:`factsheet_test.control`).  Package
-:mod:`factsheet.content` contains templates and forms for model content
-with corresponding unit tests in :mod:`factsheet_test.content`.
+code.
 
-Python modules partition related classes within each subpackage.  The
-figure below contains a box representing each Factsheet module at the
-application and factsheet level.
-
-.. figure:: ../images/imports.png
-   :align: center
-   :alt: Factsheet modules, classes, and imports.
-
-   Factsheet Modules and Imports
-
-   Each box represents a Factsheet module. The module's name is in
-   **bold**. The list below the module name consists of classes the
-   module defines. An arrow points from module A to B when A imports B.
+Each main package has a subpackage for model components
+(:mod:`factsheet.model` and :mod:`factsheet_test.model`), view
+components (:mod:`factsheet.view` and :mod:`factsheet_test.view`), and
+control components (:mod:`factsheet.control` and
+:mod:`factsheet_test.control`).  Package :mod:`factsheet.spec` contains
+specifications for model content with corresponding unit tests in
+:mod:`factsheet_test.spec`.
 
 
 Layering

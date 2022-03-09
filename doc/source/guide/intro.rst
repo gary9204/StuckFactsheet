@@ -12,10 +12,11 @@ consists of a hierarchy of *topics.*  Each topic includes a collection of
 exmple of a topic.  The subset of divisors of zero is an example of a
 fact.
 
-Factsheet includes a collection of templates, which you can use to
-construct topics and facts.  For example, Factsheet has a template for
-contructing a group of integers module *n*.  You choose the value of *n,*
-say 6, to construct the topic the group of intergers modulo 6.
+Factsheet includes a collection of templates (called *specifications*),
+which you can use to construct topics and facts.  For example, Factsheet
+has a specification for contructing a group of integers module *n*.  You
+choose the value of *n,* say 6, to construct the topic the group of
+intergers modulo 6.
 
 When you create a topic, all the topic's facts are undetermined.  You
 select which facts you wish to check.  You also select how you want

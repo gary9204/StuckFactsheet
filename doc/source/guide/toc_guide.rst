@@ -5,4 +5,5 @@ Documentation
    :maxdepth: 2
 
    intro
+   conventions
    devel_notes
