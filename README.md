@@ -32,7 +32,7 @@ following.
   * Linux (Debian 4.19.208-1 (2021-09-29) x86_64)
   * GNU bash, version 5.0.3(1)-release
   * Python 3.7.3
-  * Python packages listed in [reminders.txt](./reminders.txt)
+  * Python packages listed in [requirements.txt](./requirements.txt)
   * Environment configuration [pyvenv.cfg](./pyvenv.cfg)
   * Eclipse version 2021-12 (4.22.0)
 
