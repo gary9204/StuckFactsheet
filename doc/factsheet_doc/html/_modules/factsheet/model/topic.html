@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.model.topic &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.model.topic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.model.topic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines topic-level model.</span>
+
+<span class="sd">:doc:`../guide/devel_notes` explains how application Factsheet is based</span>
+<span class="sd">on a Model-View-Controller (MVC) design.  The design is partitioned into</span>
+<span class="sd">factsheet, topic, and fact layers.  Module ``topic`` defines</span>
+<span class="sd">the base class representing the model of a topic.  Additional classes</span>
+<span class="sd">specialize the model for sets, operations, and so on.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">typing</span>   <span class="c1"># noqa</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="c1"># import factsheet.model.fact as MFACT</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.idcore</span> <span class="k">as</span> <span class="nn">MIDCORE</span>
+
+<span class="n">TagTopic</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">NewType</span><span class="p">(</span><span class="s1">&#39;TagTopic&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">LineOutline</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span>
+<span class="c1"># OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]</span>
+
+<span class="n">Name</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span>
+<span class="n">DisplayName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span>
+<span class="n">FactoryDisplayName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span>
+<span class="n">EditorName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span>
+<span class="n">FactoryEditorName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span>
+
+<span class="n">Summary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span>
+<span class="n">DisplaySummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextStyled</span>
+<span class="n">FactoryDisplaySummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span>
+<span class="n">EditorSummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextStyled</span>
+<span class="n">FactoryEditorSummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span>
+
+<span class="n">Title</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span>
+<span class="n">DisplayTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span>
+<span class="n">FactoryDisplayTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span>
+<span class="n">EditorTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span>
+<span class="n">FactoryEditorTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span>
+
+
+<div class="viewcode-block" id="Topic"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic">[docs]</a><span class="k">class</span> <span class="nc">Topic</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">IdCore</span><span class="p">[</span><span class="n">Name</span><span class="p">,</span> <span class="n">Summary</span><span class="p">,</span> <span class="n">Title</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Topic component of Factsheet :mod:`~factsheet.model`.</span>
+
+<span class="sd">    Class :class:`Topic` represents a specific subject within a Factsheet.</span>
+<span class="sd">    A model topic consists of an outline of facts along with</span>
+<span class="sd">    identification information (see :class:`.IdCore`).  Each fact</span>
+<span class="sd">    represents a statement about the topic&#39;s subject.</span>
+
+<span class="sd">    .. admonition:: About Equality</span>
+
+<span class="sd">        Each topic model has persistent identification information</span>
+<span class="sd">        and a fact outline.  In addition, a topic model may have</span>
+<span class="sd">        transient aspects such as change state with respect to file</span>
+<span class="sd">        storage,</span>
+
+<span class="sd">        Two topics are equal when their identification information</span>
+<span class="sd">        are equal and their fact outlines are equal.  Transient</span>
+<span class="sd">        aspects of the factsheets are not compared and may be different.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_fact</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when fact is in facts outline.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">for</span> <span class="n">fact</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p_fact</span> <span class="ow">is</span> <span class="n">fact</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_other</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when p_other has same facts and topic information.</span>
+
+<span class="sd">        :param p_other: object to compare with self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">p_other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># if self._facts != p_other._facts:</span>
+        <span class="c1">#     return False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># def __getstate__(self) -&gt; typing.Dict:</span>
+    <span class="c1">#     &quot;&quot;&quot;Return topic model in form pickle can persist.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     Persistent form of topic excludes run-time information.</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     raise NotImplementedError</span>
+    <span class="c1">#     state = super().__getstate__()</span>
+    <span class="c1">#     del state[&#39;_tag&#39;]</span>
+    <span class="c1">#     return state</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">p_summary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">p_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize topic with given identity and no facts.</span>
+
+<span class="sd">        :param p_name: name of topic.</span>
+<span class="sd">        :param p_summary: summary of topic.</span>
+<span class="sd">        :param p_title: title of topic.</span>
+<span class="sd">        :param kwargs: superclass keyword parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">Name</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span> <span class="o">=</span> <span class="n">Summary</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_summary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">Title</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_title</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># self._facts = OutlineFacts()</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over facts in facts outline.</span>
+
+<span class="sd">        Iterator skips lines that contain None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">for</span> <span class="n">fact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_facts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">fact</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">fact</span>
+
+    <span class="c1"># def __setstate__(self, p_state: typing.Dict) -&gt; None:</span>
+    <span class="c1">#     &quot;&quot;&quot;Reconstruct topic model from state pickle loads.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     Reconstructed attribute is marked fresh.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     :param p_state: unpickled state of stored topic model.</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     raise NotImplementedError</span>
+    <span class="c1">#     super().__setstate__(p_state)</span>
+    <span class="c1">#     self._tag = TagTopic(id(self))</span>
+
+<div class="viewcode-block" id="Topic.append_fact"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.append_fact">[docs]</a>    <span class="k">def</span> <span class="nf">append_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_fact</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add new fact to the end of facts outline.</span>
+
+<span class="sd">        Do not add a fact already in the outline.</span>
+
+<span class="sd">        :param p_fact: new fact to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">if</span> <span class="n">p_fact</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_facts</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_fact</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Topic.append_outline_facts"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.append_outline_facts">[docs]</a>    <span class="k">def</span> <span class="nf">append_outline_facts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="s1">&#39;Topic&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add other topic&#39;s facts outline to the end of facts outline.</span>
+
+<span class="sd">        Do not add any fact already in the outline.</span>
+
+<span class="sd">        :param p_topic: topic containing facts outline to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">for</span> <span class="n">fact</span> <span class="ow">in</span> <span class="n">p_topic</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">append_fact</span><span class="p">(</span><span class="n">fact</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Topic.check_fact"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.check_fact">[docs]</a>    <span class="k">def</span> <span class="nf">check_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check a fact.</span>
+
+<span class="sd">        :param p_line: line of fact to check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="n">fact</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_facts</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">fact</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">fact</span><span class="o">.</span><span class="n">check</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Topic.clear"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear each fact in facts outline. &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_facts</span><span class="o">.</span><span class="n">lines</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear_fact</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Topic.clear_fact"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.clear_fact">[docs]</a>    <span class="k">def</span> <span class="nf">clear_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_i</span><span class="p">:</span> <span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear a fact.</span>
+
+<span class="sd">        :param p_i: line of fact to clear.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="n">fact</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_facts</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_i</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">fact</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">fact</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">facts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return facts outline.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_facts</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TagTopic</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return unique identifier of topic.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TagTopic</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Topic.is_stale"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there is at least one unsaved change to</span>
+<span class="sd">        topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_stale</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># for fact in self:</span>
+        <span class="c1">#     if fact.is_stale():</span>
+        <span class="c1">#         self._stale = True</span>
+        <span class="c1">#         return True</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Topic.set_fresh"><a class="viewcode-back" href="../../../src/factsheet.model.topic.html#factsheet.model.topic.Topic.set_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">set_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mark topic in memory consistent with file contents.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span></div></div>
+        <span class="c1"># for fact in self:</span>
+        <span class="c1">#     fact.set_fresh()</span>
+
+    <span class="c1"># @property</span>
+    <span class="c1"># def tag(self) -&gt; TagTopic:</span>
+    <span class="c1">#     &quot;&quot;&quot;Return topic identifier. &quot;&quot;&quot;</span>
+    <span class="c1">#     raise NotImplementedError</span>
+    <span class="c1">#     return self._tag</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

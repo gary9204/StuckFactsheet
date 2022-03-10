@@ -1,0 +1,886 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.control.control_sheet &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.control.control_sheet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.control.control_sheet</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines classes to mediate factsheet-level interactions.</span>
+
+<span class="sd">:doc:`../guide/devel_notes` explains how application Factsheet is based</span>
+<span class="sd">on a Model-View-Controller (MVC) design.  Module :mod:`control_sheet`</span>
+<span class="sd">defines classes representing control components for a factsheet as a</span>
+<span class="sd">whole.</span>
+
+<span class="sd">Exceptions</span>
+<span class="sd">----------</span>
+
+<span class="sd">.. exception:: BackupFileError</span>
+
+<span class="sd">    Bases: :exc:`.FactsheetError`</span>
+
+<span class="sd">    Raise for errors when making backup copy of file during save</span>
+<span class="sd">    operation.</span>
+
+<span class="sd">.. exception:: DumpFileError</span>
+
+<span class="sd">    Bases: :exc:`.FactsheetError`</span>
+
+<span class="sd">    Raise for errors dumping sheet to a file.</span>
+
+<span class="sd">.. exception:: FactsheetError</span>
+
+<span class="sd">    Bases: :exc:`.Exception`</span>
+
+<span class="sd">    Base class for Factsheet exceptions.</span>
+
+<span class="sd">.. exception:: NoFileError</span>
+
+<span class="sd">    Bases: :exc:`.FactsheetError`</span>
+
+<span class="sd">    Raise for file operations when when factsheet has no file path.</span>
+
+<span class="sd">.. exception:: OpenFileError</span>
+
+<span class="sd">    Bases: :exc:`.FactsheetError`</span>
+
+<span class="sd">    Raise for errors when opening a factsheet file.</span>
+
+<span class="sd">Global Variables</span>
+<span class="sd">----------------</span>
+
+<span class="sd">.. data:: g_control_app</span>
+
+<span class="sd">    Application-level collection of open factsheets.</span>
+
+<span class="sd">Types and Type Aliases</span>
+<span class="sd">----------------------</span>
+
+<span class="sd">.. data:: DisplayName</span>
+
+<span class="sd">    Type alias for user interface element to display Factsheet</span>
+<span class="sd">    :data:`~.sheet.Name`.  See :class:`~.control_sheet.FactoryDisplayName`.</span>
+
+<span class="sd">.. data:: DisplaySummary</span>
+
+<span class="sd">    Type alias for user interface element to display Factsheet</span>
+<span class="sd">    :data:`~.sheet.Summary`.  See</span>
+<span class="sd">    :class:`~.control_sheet.FactoryDisplaySummary`.</span>
+
+<span class="sd">.. data:: DisplayTitle</span>
+
+<span class="sd">    Type alias for user interface element to display Factsheet</span>
+<span class="sd">    :data:`~.sheet.Title`.  See :class:`~.control_sheet.FactoryDisplayTitle`.</span>
+
+<span class="sd">.. data:: EditorName</span>
+
+<span class="sd">    Type alias for user interface element to edit Factsheet</span>
+<span class="sd">    :data:`~.sheet.Name`.  See :class:`~.control_sheet.FactoryEditorName`.</span>
+
+<span class="sd">.. data:: EditorSummary</span>
+
+<span class="sd">    Type alias for user interface element to edit Factsheet</span>
+<span class="sd">    :data:`~.sheet.Summary`.  See</span>
+<span class="sd">    :class:`~.control_sheet.FactoryEditorSummary`.</span>
+
+<span class="sd">.. data:: EditorTitle</span>
+
+<span class="sd">    Type alias for user interface element to edit Factsheet</span>
+<span class="sd">    :data:`~.sheet.Title`.  See</span>
+<span class="sd">    :class:`~.control_sheet.FactoryEditorTitle`.</span>
+
+<span class="sd">.. class:: FactoryDisplayName(p_name: Name)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.DisplayName` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Name`.</span>
+
+<span class="sd">    :param p_name: name of Factsheet.</span>
+<span class="sd">    :type p_name: :data:`~.sheet.Name`</span>
+
+<span class="sd">.. class:: FactoryDisplaySummary(p_summary: Summary)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.DisplaySummary` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Summary`.</span>
+
+<span class="sd">    :param p_summary: summary of Factsheet.</span>
+<span class="sd">    :type p_summary: :data:`~.sheet.Summary`</span>
+
+<span class="sd">.. class:: FactoryDisplayTitle(p_title: Title)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.DisplayTitle` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Title`.</span>
+
+<span class="sd">    :param p_title: title of Factsheet.</span>
+<span class="sd">    :type p_title: :data:`~.sheet.Title`</span>
+
+<span class="sd">.. class:: FactoryEditorName(p_name: Name)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.EditorName` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Name`.</span>
+
+<span class="sd">    :param p_name: name of Factsheet.</span>
+<span class="sd">    :type p_name: :data:`~.sheet.Name`</span>
+
+<span class="sd">.. class:: FactoryEditorSummary(p_summary: Summary)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.EditorSummary` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Summary`.</span>
+
+<span class="sd">    :param p_summary: summary of Factsheet.</span>
+<span class="sd">    :type p_summary: :data:`~.sheet.Summary`</span>
+
+<span class="sd">.. class:: FactoryEditorTitle(p_title: Title)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.EditorTitle` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Title`.</span>
+
+<span class="sd">    :param p_title: title of Factsheet.</span>
+<span class="sd">    :type p_title: :data:`~.sheet.Title`</span>
+
+<span class="sd">.. class:: FactoryViewTopics(p_topics: Topics)</span>
+
+<span class="sd">    Type alias of factory for user interface elements.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns a</span>
+<span class="sd">    :data:`~.control_sheet.ViewTopics` for the Factsheet</span>
+<span class="sd">    :data:`~.sheet.Topics`.</span>
+
+<span class="sd">    :param p_topics: topics outline of Factsheet.</span>
+<span class="sd">    :type p_topics: :data:`~.sheet.Topics`</span>
+
+<span class="sd">.. data:: IdViewSheet</span>
+
+<span class="sd">    Distinct type for unique identifier of a sheet view. See</span>
+<span class="sd">    :func:`.id_view_sheet`.</span>
+
+<span class="sd">.. data:: ViewTopics</span>
+
+<span class="sd">    Type alias for user interface element to view outline of</span>
+<span class="sd">    :data:`~.sheet.Topics`.  See</span>
+<span class="sd">    :class:`~.control_sheet.FactoryViewTopics`.</span>
+
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">traceback</span> <span class="k">as</span> <span class="nn">TB</span>
+<span class="kn">import</span> <span class="nn">typing</span>   <span class="c1"># noqa</span>
+
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_topic</span> <span class="k">as</span> <span class="nn">CTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.sheet</span> <span class="k">as</span> <span class="nn">MSHEET</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.CSHEET&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FactsheetError"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.FactsheetError">[docs]</a><span class="k">class</span> <span class="nc">FactsheetError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BackupFileError"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.BackupFileError">[docs]</a><span class="k">class</span> <span class="nc">BackupFileError</span><span class="p">(</span><span class="n">FactsheetError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DumpFileError"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.DumpFileError">[docs]</a><span class="k">class</span> <span class="nc">DumpFileError</span><span class="p">(</span><span class="n">FactsheetError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="NoFileError"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.NoFileError">[docs]</a><span class="k">class</span> <span class="nc">NoFileError</span><span class="p">(</span><span class="n">FactsheetError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="OpenFileError"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.OpenFileError">[docs]</a><span class="k">class</span> <span class="nc">OpenFileError</span><span class="p">(</span><span class="n">FactsheetError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">DisplayName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span>
+<span class="n">DisplaySummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextStyled</span>
+<span class="n">DisplayTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span>
+
+<span class="n">EditorName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span>
+<span class="n">EditorSummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextStyled</span>
+<span class="n">EditorTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span>
+
+<span class="n">FactoryDisplayName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span>
+<span class="n">FactoryDisplaySummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span>
+<span class="n">FactoryDisplayTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span>
+
+<span class="n">FactoryEditorName</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span>
+<span class="n">FactoryEditorSummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span>
+<span class="n">FactoryEditorTitle</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span>
+
+<span class="n">FactoryViewTopics</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryViewOutline</span><span class="p">[</span><span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">]</span>
+
+<span class="n">IdViewSheet</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">NewType</span><span class="p">(</span><span class="s1">&#39;IdViewSheet&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+<span class="n">TagTopic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">TagTopic</span>
+
+<span class="n">ViewTopics</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span>
+
+
+<div class="viewcode-block" id="ControlApp"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlApp">[docs]</a><span class="k">class</span> <span class="nc">ControlApp</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Maintains collection of open factsheets.</span>
+
+<span class="sd">    A user may open a factsheet by requesting a new, empty factsheet or</span>
+<span class="sd">    opening a factsheet file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ControlApp.__init__"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlApp.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize empty roster for factsheets.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">[</span>
+            <span class="n">MSHEET</span><span class="o">.</span><span class="n">TagSheet</span><span class="p">,</span> <span class="s1">&#39;ControlSheet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ControlApp.close_all_factsheets"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlApp.close_all_factsheets">[docs]</a>    <span class="k">def</span> <span class="nf">close_all_factsheets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;TBD&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ControlApp.close_factsheet"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlApp.close_factsheet">[docs]</a>    <span class="k">def</span> <span class="nf">close_factsheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_control</span><span class="p">:</span> <span class="s1">&#39;ControlSheet&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Close all views of the given factsheet.</span>
+
+<span class="sd">        :param p_control: factsheet whose views to close.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_control</span><span class="o">.</span><span class="n">remove_all_views</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ControlApp.open_factsheet"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlApp.open_factsheet">[docs]</a>    <span class="k">def</span> <span class="nf">open_factsheet</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">p_path</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="n">p_time</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TimeEvent</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;ControlSheet&#39;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return factsheet for the given path or None if factsheet is</span>
+<span class="sd">        open already.</span>
+
+<span class="sd">        If the path corresponds to an open factsheet, present the sheet</span>
+<span class="sd">        views to the user and return None.  Otherwise, return factsheet</span>
+<span class="sd">        with the given path.</span>
+
+<span class="sd">        See :meth:`.ControlSheet.open` regarding file load failure.</span>
+
+<span class="sd">        :param p_path: location for factsheet file.</span>
+<span class="sd">        :param p_time: timestamp to order open requests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path_absolute</span> <span class="o">=</span> <span class="n">p_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">control</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">path_absolute</span> <span class="o">==</span> <span class="n">control</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">():</span>
+                        <span class="n">control</span><span class="o">.</span><span class="n">present_views</span><span class="p">(</span><span class="n">p_time</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">control</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">control</span>
+        <span class="k">return</span> <span class="n">control</span></div>
+
+<div class="viewcode-block" id="ControlApp.remove_factsheet"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlApp.remove_factsheet">[docs]</a>    <span class="k">def</span> <span class="nf">remove_factsheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_control</span><span class="p">:</span> <span class="s1">&#39;ControlSheet&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove factsheet from collection of open factsheets.</span>
+
+<span class="sd">        Log a warning when the control is not in the collection.</span>
+
+<span class="sd">        :param p_control: factsheet to remove.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">p_control</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Missing control: 0x</span><span class="si">{:X}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">p_control</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_factsheet</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span></div></div>
+
+
+<span class="n">g_control_app</span> <span class="o">=</span> <span class="n">ControlApp</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ControlSheet"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet">[docs]</a><span class="k">class</span> <span class="nc">ControlSheet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Mediates between user actions at factsheet view and factsheet model.</span>
+
+<span class="sd">    Class :class:`ControlSheet` maintains a collection of active views</span>
+<span class="sd">    of a factsheet. The class translates user requests in a factsheet</span>
+<span class="sd">    view into changes in the factsheet model (such as save or delete) or</span>
+<span class="sd">    in the collection of factsheet views (such as add or remove a view).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ControlSheet.__init__"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize instance from given file or with default attributes.</span>
+
+<span class="sd">        :param p_path: location of file for factsheet model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">p_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_from_path</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_display_name</span> <span class="o">=</span> <span class="n">FactoryDisplayName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_display_summary</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">FactoryDisplaySummary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">summary</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_display_title</span> <span class="o">=</span> <span class="n">FactoryDisplayTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_editor_name</span> <span class="o">=</span> <span class="n">FactoryEditorName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_editor_summary</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">FactoryEditorSummary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">summary</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_editor_title</span> <span class="o">=</span> <span class="n">FactoryEditorTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_view_topics</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">FactoryViewTopics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">outline_topics</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">[</span>
+            <span class="n">IdViewSheet</span><span class="p">,</span> <span class="n">ObserverControlSheet</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">[</span>
+            <span class="n">TagTopic</span><span class="p">,</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">():</span>
+            <span class="n">control_new</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">topic</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_insert_topic_control</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_new</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.add_view"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.add_view">[docs]</a>    <span class="k">def</span> <span class="nf">add_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_view</span><span class="p">:</span> <span class="s1">&#39;ObserverControlSheet&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add given view to collection of active views.</span>
+
+<span class="sd">        Log a warning for a duplicate addition.</span>
+
+<span class="sd">        :param p_view: view to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">p_view</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">id_view</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Duplicate: sheet 0x</span><span class="si">{:X}</span><span class="s1"> add view 0x</span><span class="si">{:X}</span><span class="s1">  &#39;</span>
+                           <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">id_view</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">add_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">[</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view</span><span class="p">)]</span> <span class="o">=</span> <span class="n">p_view</span></div>
+
+<div class="viewcode-block" id="ControlSheet.clear"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove contents of topics roster and topics outline.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ControlSheet.get_control_topic"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.get_control_topic">[docs]</a>    <span class="k">def</span> <span class="nf">get_control_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span>
+                          <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return contents of topics outline at given line.</span>
+
+<span class="sd">        :param p_line: line corresponding to desired control.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">get_tag</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.insert_topic_after"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.insert_topic_after">[docs]</a>    <span class="k">def</span> <span class="nf">insert_topic_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span>
+                           <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add topic to topics outline and roster of topics.</span>
+
+<span class="sd">        Add topic to topics outline after topic at given index.  Create</span>
+<span class="sd">        corresponding :class:`.ControlTopic` for roster of topics.</span>
+
+<span class="sd">        :param p_topic: new topic to add.</span>
+<span class="sd">        :param p_line: line of topic to precede new topic.</span>
+<span class="sd">        :returns: line containing new topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">control_new</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">p_topic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_insert_topic_control</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_new</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">insert_topic_after</span><span class="p">(</span><span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.insert_topic_before"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.insert_topic_before">[docs]</a>    <span class="k">def</span> <span class="nf">insert_topic_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span>
+                            <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add topic to topics outline and roster of topics.</span>
+
+<span class="sd">        Add topic to topics outline before topic at given index.  Create</span>
+<span class="sd">        corresponding :class:`.ControlTopic` for roster of topics.</span>
+
+<span class="sd">        :param p_topic: new topic to add.</span>
+<span class="sd">        :param p_line: line of topic to follow new topic.</span>
+<span class="sd">        :returns: line containing new topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">control_new</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">p_topic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_insert_topic_control</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_new</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">insert_topic_before</span><span class="p">(</span><span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.insert_topic_child"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.insert_topic_child">[docs]</a>    <span class="k">def</span> <span class="nf">insert_topic_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span>
+                           <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add topic to topics outline and roster of topics.</span>
+
+<span class="sd">        Add topic to topics outline as child of topic at given index.</span>
+<span class="sd">        Create corresponding :class:`.ControlTopic` for roster of topics.</span>
+
+<span class="sd">        :param p_topic: new topic to add.</span>
+<span class="sd">        :param p_line: line of parent topic for new topic.</span>
+<span class="sd">        :returns: line containing new topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">control_new</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">p_topic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_insert_topic_control</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_new</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">insert_topic_child</span><span class="p">(</span><span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_insert_topic_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_control</span><span class="p">:</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add topic to roster of topics.</span>
+
+<span class="sd">        :param p_control: topic control to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">[</span><span class="n">p_control</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_control</span>
+
+<div class="viewcode-block" id="ControlSheet.is_fresh"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.is_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">is_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there are no unsaved changes to factsheet.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ControlSheet.is_stale"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there is at least one unsaved change to</span>
+<span class="sd">        factsheet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_model_from_error</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">p_err</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">p_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return sheet model containing error information and log details.</span>
+
+<span class="sd">        :param p_err: error to record.</span>
+<span class="sd">        :param p_message: text for error sheet summary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">p_message</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">TB</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">p_err</span><span class="p">),</span> <span class="n">p_err</span><span class="p">,</span> <span class="n">p_err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;OPEN ERROR&#39;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;Error source is </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">p_err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">p_err</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;Path: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">))</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p_message</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">path</span><span class="p">])</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not opened.&#39;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">_model_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_path</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return sheet model from file at given location or a new model.</span>
+
+<span class="sd">        Return a new, empty sheet model when path is None or when there</span>
+<span class="sd">        is no file at given path. When model cannot be loaded from file</span>
+<span class="sd">        at given path, return a sheet model containing error</span>
+<span class="sd">        information.</span>
+
+<span class="sd">        :param p_path: location of file for factsheet model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">model</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">p_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not open! could not read file.&#39;</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_from_error</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not open! could not open file.&#39;</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_from_error</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return sheet name without markup errors.&quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">escape_text_markup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_display_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisplayName</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for displays of sheet name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_display_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_display_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisplaySummary</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for displays of sheet summary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_display_summary</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_display_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisplayTitle</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for displays of sheet title.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_display_title</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_editor_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EditorName</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for editors of sheet name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_editor_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_editor_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EditorSummary</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for editors of sheet summary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_editor_summary</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_editor_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EditorTitle</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for editors of sheet title.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_editor_title</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_view_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ViewTopics</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return factory for editors of sheet title.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_view_topics</span>
+
+    <span class="k">def</span> <span class="nf">_open_file_save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">BinaryIO</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return an open file object after backing up any existing file.</span>
+
+<span class="sd">        Backup provides (minimal) guard against inadvertent overwrite.</span>
+
+<span class="sd">        :raises FactsheetError: see :meth:`~.ControlSheet.save`.</span>
+<span class="sd">        :returns: Open file object at control&#39;s path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NoFileError</span><span class="p">(</span><span class="s1">&#39;Save: cannot open path None.&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">io_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;xb&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;~&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err_replace</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">BackupFileError</span> <span class="kn">from</span> <span class="nn">err_replace</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">io_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;xb&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err_reopen</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">OpenFileError</span> <span class="kn">from</span> <span class="nn">err_reopen</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err_open</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">OpenFileError</span> <span class="kn">from</span> <span class="nn">err_open</span>
+        <span class="k">return</span> <span class="n">io_out</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return path to file containing factsheet contents.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+
+<div class="viewcode-block" id="ControlSheet.present_views"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.present_views">[docs]</a>    <span class="k">def</span> <span class="nf">present_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_time</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TimeEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Make visible to user all views of the factsheet.</span>
+
+<span class="sd">        :param p_time: timestamp of event requesting presentation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">present</span><span class="p">(</span><span class="n">p_time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.remove_all_views"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_all_views">[docs]</a>    <span class="k">def</span> <span class="nf">remove_all_views</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove all views of the collection of active views.&quot;&quot;&quot;</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">views</span><span class="p">:</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">views</span><span class="p">))</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">erase</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">p_view</span><span class="o">=</span><span class="n">view</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.remove_topic"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_topic">[docs]</a>    <span class="k">def</span> <span class="nf">remove_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove topic from roster of topic and from topics outline.</span>
+
+<span class="sd">        :param p_line: line of topic to remove along with all its</span>
+<span class="sd">            descendants.  If line is None, remove no topics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">(</span><span class="n">p_line</span><span class="p">):</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">topic</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">remove_topic</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.remove_view"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_view">[docs]</a>    <span class="k">def</span> <span class="nf">remove_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_view</span><span class="p">:</span> <span class="s1">&#39;ObserverControlSheet&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove given view from collection of active views.</span>
+
+<span class="sd">        Log a warning for a missing view.</span>
+
+<span class="sd">        If the collection of active views is empty, remove the factsheet</span>
+<span class="sd">        from the collection of open factsheets.</span>
+
+<span class="sd">        :param p_view: view to remove.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">p_view</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">id_view</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Missing: sheet 0x</span><span class="si">{:X}</span><span class="s1"> remove view 0x</span><span class="si">{:X}</span><span class="s1">  &#39;</span>
+                           <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">id_view</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">remove_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">g_control_app</span>
+            <span class="n">g_control_app</span><span class="o">.</span><span class="n">remove_factsheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ControlSheet.remove_view_is_safe"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_view_is_safe">[docs]</a>    <span class="k">def</span> <span class="nf">remove_view_is_safe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when the control can safely remove a view.</span>
+
+<span class="sd">        A factsheet closes when it has no views.  A sheet control may</span>
+<span class="sd">        safely remove a sheet view when:</span>
+
+<span class="sd">        * The factsheet contains no unsaved changes or</span>
+<span class="sd">        * The factsheet has more than one view or</span>
+<span class="sd">        * The user approves closing the factsheet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+                <span class="ow">and</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ControlSheet.save"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_path</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save factsheet contents to file at factsheet&#39;s path.</span>
+
+<span class="sd">        :param p_path: path to replace factsheet&#39;s path.</span>
+
+<span class="sd">        :raises BackupFileError: when backup fails.</span>
+<span class="sd">        :raises DumpFileError: when factsheet cannot be written to file.</span>
+<span class="sd">        :raises OpenFileError: for all other errors.</span>
+<span class="sd">        :raises NoFileError: when path to save file is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">p_path</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_file_save</span><span class="p">()</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">io_out</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err_dump</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DumpFileError</span> <span class="kn">from</span> <span class="nn">err_dump</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">TagSheet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return unique identifier of sheet.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">tag</span>
+
+<div class="viewcode-block" id="ControlSheet.topics"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.topics">[docs]</a>    <span class="k">def</span> <span class="nf">topics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over topic controls in factsheet.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">control</span></div></div>
+
+
+<div class="viewcode-block" id="id_view_sheet"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.id_view_sheet">[docs]</a><span class="k">def</span> <span class="nf">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="p">:</span> <span class="s1">&#39;ObserverControlSheet&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IdViewSheet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return unique identifier for a sheet view.</span>
+
+<span class="sd">    The identifier is unique during the lifetime of the sheet view.  An</span>
+<span class="sd">    identifier may be reused if a sheet view is destroyed.</span>
+
+<span class="sd">    :param p_view_sheet: sheet view to identify.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">IdViewSheet</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ObserverControlSheet"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ObserverControlSheet">[docs]</a><span class="k">class</span> <span class="nc">ObserverControlSheet</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Define interface for sheet control to notify a sheet view.</span>
+
+<span class="sd">    In general, a sheet view requests services from its sheet control.</span>
+<span class="sd">    For a few exceptions, a sheet view acts as an observer of its sheet</span>
+<span class="sd">    control.  A sheet control notifies its views when to present to the</span>
+<span class="sd">    user and when to erase.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ObserverControlSheet.erase"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ObserverControlSheet.erase">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">erase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Destroy visible portion of sheet view.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ObserverControlSheet.present"><a class="viewcode-back" href="../../../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ObserverControlSheet.present">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">present</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_time</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TimeEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Make sheet view visible to user.</span>
+
+<span class="sd">        :param p_time: time stamp to order multiple requests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

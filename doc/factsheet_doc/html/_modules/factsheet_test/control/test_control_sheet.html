@@ -1,0 +1,1318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.control.test_control_sheet &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.control.test_control_sheet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.control.test_control_sheet</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for classes that mediates factsheet-level interactions from</span>
+<span class="sd">:mod:`~factsheet.view` to :mod:`~factsheet.model`.  See</span>
+<span class="sd">:mod:`~.control_sheet`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_sheet</span> <span class="k">as</span> <span class="nn">CSHEET</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_topic</span> <span class="k">as</span> <span class="nn">CTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.sheet</span> <span class="k">as</span> <span class="nn">MSHEET</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+
+
+<div class="viewcode-block" id="PatchObserverControlSheet"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.PatchObserverControlSheet">[docs]</a><span class="k">class</span> <span class="nc">PatchObserverControlSheet</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ObserverControlSheet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:class:`.ObserverControlSheet` subclass with stubs for methods.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_control</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span> <span class="o">=</span> <span class="n">p_control</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_erase</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_present</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="PatchObserverControlSheet.erase"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.PatchObserverControlSheet.erase">[docs]</a>    <span class="k">def</span> <span class="nf">erase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_erase</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="PatchObserverControlSheet.present"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.PatchObserverControlSheet.present">[docs]</a>    <span class="k">def</span> <span class="nf">present</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_time</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_present</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="patch_g_control_app"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.patch_g_control_app">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">patch_g_control_app</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture with teardown: Reset :data:`.g_control_app`.&quot;&quot;&quot;</span>
+    <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span>
+    <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestControlApp"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp">[docs]</a><span class="k">class</span> <span class="nc">TestControlApp</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ControlApp`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestControlApp.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span></div>
+
+<div class="viewcode-block" id="TestControlApp.test_close_factsheet"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_close_factsheet">[docs]</a>    <span class="k">def</span> <span class="nf">test_close_factsheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patch_g_control_app</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking stops for given sheet with views removed.</span>
+<span class="sd">        | Case: sheet tracked.</span>
+
+<span class="sd">        :param patch_g_control_app: fixture :func:`patch_g_control_app`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">patch_g_control_app</span>
+        <span class="k">assert</span> <span class="n">target</span> <span class="ow">is</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span>
+        <span class="n">N_CONTROLS</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_CONTROLS</span><span class="p">):</span>
+            <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+                <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+            <span class="n">control_sheet</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_CONTROLS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+
+        <span class="n">I_REMOVE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">(</span><span class="n">id_removed</span><span class="p">,</span> <span class="n">control_removed</span><span class="p">)</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">I_REMOVE</span><span class="p">)</span>
+        <span class="n">view_removed</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">control_removed</span><span class="o">.</span><span class="n">_roster_views</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">close_factsheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_removed</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">view_removed</span><span class="o">.</span><span class="n">called_erase</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">control_removed</span><span class="o">.</span><span class="n">_roster_views</span>
+        <span class="k">assert</span> <span class="n">id_removed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="n">control</span></div>
+
+<div class="viewcode-block" id="TestControlApp.test_open_factsheet_none"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_open_factsheet_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_open_factsheet_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm factsheet return.</span>
+<span class="sd">        | Case: path is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+        <span class="n">N_FACTSHEETS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># Test</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_FACTSHEETS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">control_sheet</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="ow">is</span> <span class="n">control_sheet</span></div>
+
+<div class="viewcode-block" id="TestControlApp.test_open_factsheet_match"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_open_factsheet_match">[docs]</a>    <span class="k">def</span> <span class="nf">test_open_factsheet_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm factsheet return.</span>
+<span class="sd">        | Case: path matches an existing file.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchPresent</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">def</span> <span class="nf">present_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_time</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">p_time</span>
+
+        <span class="n">patch_present</span> <span class="o">=</span> <span class="n">PatchPresent</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">,</span> <span class="s1">&#39;present_views&#39;</span><span class="p">,</span> <span class="n">patch_present</span><span class="o">.</span><span class="n">present_views</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+        <span class="n">N_FACTSHEETS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">I_MATCH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">PATH_BASE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_FACTSHEETS</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">PATH_BASE</span> <span class="o">/</span> <span class="s1">&#39;/factsheet</span><span class="si">{}</span><span class="s1">.fsg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">control</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">control</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">control</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">I_MATCH</span><span class="p">:</span>
+                <span class="n">path_match</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="c1"># Test</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="n">path_match</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">control_sheet</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">N_FACTSHEETS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">patch_present</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span> <span class="o">==</span> <span class="n">patch_present</span><span class="o">.</span><span class="n">time</span></div>
+
+<div class="viewcode-block" id="TestControlApp.test_open_factsheet_no_match"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_open_factsheet_no_match">[docs]</a>    <span class="k">def</span> <span class="nf">test_open_factsheet_no_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm factsheet return.</span>
+<span class="sd">        | Case: path does not match an existing file.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+        <span class="n">N_FACTSHEETS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">PATH_BASE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_FACTSHEETS</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">PATH_BASE</span> <span class="o">/</span> <span class="s1">&#39;/factsheet</span><span class="si">{}</span><span class="s1">.fsg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">control</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">control</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">control</span>
+        <span class="n">PATH_DIFF</span> <span class="o">=</span> <span class="n">PATH_BASE</span> <span class="o">/</span> <span class="s1">&#39;/diff.fsg&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="n">PATH_DIFF</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH_DIFF</span> <span class="o">==</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">_path</span>
+        <span class="k">assert</span> <span class="n">N_FACTSHEETS</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">control_sheet</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">control_sheet</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestControlApp.test_remove_factsheet"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_remove_factsheet">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_factsheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking stops for given sheet.</span>
+<span class="sd">        | Case: sheet tracked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+        <span class="n">N_CONTROLS</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_CONTROLS</span><span class="p">):</span>
+            <span class="n">_control_sheet</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+                <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_CONTROLS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+
+        <span class="n">I_REMOVE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">(</span><span class="n">id_removed</span><span class="p">,</span> <span class="n">control_removed</span><span class="p">)</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">I_REMOVE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_factsheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_removed</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">id_removed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="n">control</span></div>
+
+<div class="viewcode-block" id="TestControlApp.test_remove_factsheet_warn"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlApp.test_remove_factsheet_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_factsheet_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking stops for given sheet.</span>
+<span class="sd">        | Case: sheet not tracked.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">()</span>
+        <span class="n">N_CONTROLS</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_CONTROLS</span><span class="p">):</span>
+            <span class="n">_control_sheet</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+                <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_CONTROLS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+
+        <span class="n">I_REMOVE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">(</span><span class="n">id_removed</span><span class="p">,</span> <span class="n">control_removed</span><span class="p">)</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">I_REMOVE</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">id_removed</span><span class="p">)</span>
+
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Missing control: 0x</span><span class="si">{:X}</span><span class="s1"> &#39;</span>
+                       <span class="s1">&#39;(ControlApp.remove_factsheet)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">id_removed</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_factsheet</span><span class="p">(</span><span class="n">control_removed</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">id_removed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_sheets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="n">control</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div></div>
+
+
+<div class="viewcode-block" id="TestControlSheet"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet">[docs]</a><span class="k">class</span> <span class="nc">TestControlSheet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`~.ControlSheet`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestControlSheet.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: new model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL_DEFAULT</span> <span class="o">=</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">MODEL_DEFAULT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">model_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">summary</span>
+        <span class="n">model_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">title</span>
+        <span class="n">model_topics</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">outline_topics</span>
+
+        <span class="n">factory_display_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_display_name</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_display_name</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryDisplayName</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_display_name</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_name</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_display_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_display_summary</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">factory_display_summary</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_display_summary</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_summary</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_display_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_display_title</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_display_title</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryDisplayTitle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_display_title</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_title</span><span class="o">.</span><span class="n">_ui_model</span>
+
+        <span class="n">factory_editor_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_editor_name</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_editor_name</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryEditorName</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_editor_name</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_name</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_editor_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_editor_summary</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_editor_summary</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryEditorSummary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_editor_summary</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_summary</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_editor_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_editor_title</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_editor_title</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryEditorTitle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_editor_title</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_title</span><span class="o">.</span><span class="n">_ui_model</span>
+
+        <span class="n">factory_view_outline_topics</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_view_topics</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">factory_view_outline_topics</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_topics</span><span class="o">.</span><span class="n">ui_model</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_init_nonempty"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_init_nonempty">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_nonempty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: non-empty model from path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">N_TOPICS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">names_source</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TOPICS</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Topic </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">source</span><span class="o">.</span><span class="n">insert_topic_before</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">names_source</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">topic</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_path</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_model</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span>
+        <span class="n">names_target</span> <span class="o">=</span> <span class="p">{</span><span class="n">control</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span>
+                        <span class="n">control</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+        <span class="k">assert</span> <span class="n">names_source</span> <span class="o">==</span> <span class="n">names_target</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_add_view"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_add_view">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking of given sheet view.</span>
+<span class="sd">        | Case: view not tracked</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">[</span><span class="n">id_view</span><span class="p">]</span> <span class="ow">is</span> <span class="n">view</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_add_view_warn"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_add_view_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_view_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking of given sheet view.</span>
+<span class="sd">        | Case: duplicate view</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Duplicate: sheet 0x</span><span class="si">{:X}</span><span class="s1"> add view 0x</span><span class="si">{:X}</span><span class="s1">  &#39;</span>
+                       <span class="s1">&#39;(ControlSheet.add_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">id_view</span><span class="p">))</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">[</span><span class="n">id_view</span><span class="p">]</span> <span class="ow">is</span> <span class="n">view</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_clear"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_clear">[docs]</a>    <span class="k">def</span> <span class="nf">test_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory_control_sheet</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all controls and topics removed.</span>
+
+<span class="sd">        :param factory_control_sheet: fixture :func:`factory_control_sheet`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">factory_control_sheet</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">StopIteration</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_get_control_topic"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_get_control_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_control_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory_control_sheet</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm topic control returned</span>
+<span class="sd">        | Case: topic at given line.</span>
+
+<span class="sd">        :param factory_control_sheet: fixture :func:`factory_control_sheet`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">I_GET</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">factory_control_sheet</span><span class="p">()</span>
+        <span class="n">topics</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">())</span>
+        <span class="n">topic_get</span> <span class="o">=</span> <span class="n">topics</span><span class="p">[</span><span class="n">I_GET</span><span class="p">]</span>
+        <span class="n">control_get</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">[</span><span class="n">topic_get</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line_get</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">lines</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">I_GET</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="c1"># Test</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line_get</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="n">control_get</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_get_control_topic_absent"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_get_control_topic_absent">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_control_topic_absent</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">factory_control_sheet</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm topic control returned</span>
+<span class="sd">        | Case: None at given line.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param factory_control_sheet: fixture :func:`factory_control_sheet`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">def</span> <span class="nf">patch_get_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">p_line</span>
+            <span class="n">NO_TAG</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">NO_TAG</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">,</span> <span class="s1">&#39;get_tag&#39;</span><span class="p">,</span> <span class="n">patch_get_tag</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">factory_control_sheet</span><span class="p">()</span>
+        <span class="n">line_get</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">lines</span><span class="p">())</span>
+        <span class="c1"># Test</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line_get</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_insert_topic"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_insert_topic">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;insert_topic_after&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insert_topic_before&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;insert_topic_child&#39;</span><span class="p">,</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_insert_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm each method adds control and relays request to model.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param METHOD: insert method under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchInsert</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;Done&#39;</span>
+
+            <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="n">p_topic</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="n">p_line</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;Done&#39;</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
+
+        <span class="n">patch_insert</span> <span class="o">=</span> <span class="n">PatchInsert</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">,</span> <span class="n">patch_insert</span><span class="o">.</span><span class="n">insert</span><span class="p">)</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">TOPIC</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">target_method</span><span class="p">(</span><span class="n">TOPIC</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">control_new</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">[</span><span class="n">TOPIC</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">control_new</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="n">TOPIC</span>
+        <span class="k">assert</span> <span class="n">patch_insert</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">patch_insert</span><span class="o">.</span><span class="n">topic</span> <span class="ow">is</span> <span class="n">TOPIC</span>
+        <span class="k">assert</span> <span class="n">patch_insert</span><span class="o">.</span><span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="n">patch_insert</span><span class="o">.</span><span class="n">result</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_insert_topic_control"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_insert_topic_control">[docs]</a>    <span class="k">def</span> <span class="nf">test_insert_topic_control</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm topic added to roster.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TOPIC</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">CONTROL</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">TOPIC</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_insert_topic_control</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">CONTROL</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">[</span><span class="n">TOPIC</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="ow">is</span> <span class="n">CONTROL</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_is_fresh_stale"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_is_fresh_stale">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD, MODEL_IS_STALE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;is_fresh&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;is_fresh&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;is_stale&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;is_stale&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_is_fresh_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">,</span> <span class="n">MODEL_IS_STALE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm model and control report same state of change.</span>
+
+<span class="sd">        :param METHOD: method to test, which is ``is_fresh`` or ``is_stale``.</span>
+<span class="sd">        :param MODEL_IS_STALE: state of change in model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">method_model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">method_target</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="n">MODEL_IS_STALE</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">method_model</span><span class="p">()</span> <span class="o">==</span> <span class="n">method_target</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_model_from_error"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_model_from_error">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_from_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return of error sheet.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;One day this will all be yours!&#39;</span>
+        <span class="n">TEXT_ERROR</span> <span class="o">=</span> <span class="s1">&#39;What, the curtains?&#39;</span>
+        <span class="n">ERROR</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">OpenFileError</span><span class="p">(</span><span class="n">TEXT_ERROR</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="n">I_MESSAGE</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">I_ERROR</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="n">MESSAGE</span><span class="p">,</span>
+            <span class="s1">&#39;Error source is OpenFileError: What, the curtains?&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Path: None&#39;</span><span class="p">,</span>
+            <span class="p">])</span>
+        <span class="c1"># Test</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model_from_error</span><span class="p">(</span><span class="n">p_err</span><span class="o">=</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">p_message</span><span class="o">=</span><span class="n">MESSAGE</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">I_MESSAGE</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;ERROR&#39;</span> <span class="o">==</span> <span class="n">log_message</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="n">MESSAGE</span> <span class="o">==</span> <span class="n">log_message</span><span class="o">.</span><span class="n">message</span>
+        <span class="n">log_error</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">I_ERROR</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;ERROR&#39;</span> <span class="o">==</span> <span class="n">log_error</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="n">log_error</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+            <span class="s1">&#39;: &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">ERROR</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">TEXT_ERROR</span><span class="p">]))</span>
+        <span class="k">assert</span> <span class="s1">&#39;OPEN ERROR&#39;</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">SUMMARY</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="s1">&#39;Factsheet not opened.&#39;</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_model_from_path"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_model_from_path">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm model creation.</span>
+<span class="sd">        | Case: file at path location constains factsheet model.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model_from_path</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">model</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_model_from_path_empty"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_model_from_path_empty">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_from_path_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm model creation.</span>
+<span class="sd">        | Case: no file at path location.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">model_default</span> <span class="o">=</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model_from_path</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">model_default</span> <span class="o">==</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_model_from_path_except"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_model_from_path_except">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ERROR, MESSAGE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="s1">&#39;Factsheet not open! could not open file.&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;Factsheet not open! could not read file.&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_model_from_path_except</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">ERROR</span><span class="p">,</span> <span class="n">MESSAGE</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm model creation.</span>
+<span class="sd">        | Case: file at path location cannot be opened or loaded.</span>
+
+<span class="sd">        :param ERROR: identifies where to raise exception.</span>
+<span class="sd">        :param MESSAGE: first line of summary in error model.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">BYTES</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;Something completely different&#39;</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">io_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">BYTES</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">patch_except</span><span class="p">(</span><span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">ERROR</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;open&#39;</span> <span class="o">==</span> <span class="n">ERROR</span><span class="p">:</span>
+            <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="n">patch_except</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="s1">&#39;pickle&#39;</span> <span class="o">==</span> <span class="n">ERROR</span><span class="p">:</span>
+            <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">pickle</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="n">patch_except</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="n">FIRST</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model_from_path</span><span class="p">(</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">MESSAGE</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="n">FIRST</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_model_from_path_none"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_model_from_path_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_from_path_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm model creation.</span>
+<span class="sd">        | Case: no path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">model_default</span> <span class="o">=</span> <span class="n">MSHEET</span><span class="o">.</span><span class="n">Sheet</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model_from_path</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">model_default</span> <span class="o">==</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_open_file_save"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_open_file_save">[docs]</a>    <span class="k">def</span> <span class="nf">test_open_file_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm file open.</span>
+<span class="sd">        | Case: file does not exist.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODE</span> <span class="o">=</span> <span class="s1">&#39;xb&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">PATH</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">target</span><span class="o">.</span><span class="n">_open_file_save</span><span class="p">()</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">io_out</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedWriter</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">MODE</span> <span class="o">==</span> <span class="n">io_out</span><span class="o">.</span><span class="n">mode</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_open_file_save_except"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_open_file_save_except">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;PATCH_EXC, REPLACE, RAISE, I_EXC&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">((</span><span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Error open&#39;</span><span class="p">),</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Oops!&#39;</span><span class="p">),</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Replace&#39;</span><span class="p">)),</span>
+            <span class="kc">False</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">OpenFileError</span><span class="p">),</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">((</span><span class="ne">FileExistsError</span><span class="p">(</span><span class="s1">&#39;Oops!&#39;</span><span class="p">),</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Error reopen&#39;</span><span class="p">),</span>
+            <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Replace&#39;</span><span class="p">)),</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">OpenFileError</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">((</span><span class="ne">FileExistsError</span><span class="p">(</span><span class="s1">&#39;Oops!&#39;</span><span class="p">),</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Oops&#39;</span><span class="p">),</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Replace&#39;</span><span class="p">)),</span>
+            <span class="kc">True</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">BackupFileError</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_open_file_save_except</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">PATCH_EXC</span><span class="p">,</span> <span class="n">REPLACE</span><span class="p">,</span> <span class="n">RAISE</span><span class="p">,</span> <span class="n">I_EXC</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm file open.</span>
+<span class="sd">        | Case: open raises unanticipated exception.</span>
+
+<span class="sd">        :param PATCH_EXE: exceptions to raise in patched methods.</span>
+<span class="sd">        :param REPLACE: when True, raise exception in`replace` patch.</span>
+<span class="sd">        :param RAISE: expected exception.</span>
+<span class="sd">        :param I_EXC: index in PATCH_EXE of expected exception cause.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">I_EXC_OPEN</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">I_EXC_REOPEN</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">I_EXC_REPLACE</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">class</span> <span class="nc">PatchPath</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwa</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">I_EXC_OPEN</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">raise</span> <span class="n">PATCH_EXC</span><span class="p">[</span><span class="n">I_EXC_OPEN</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">I_EXC_REOPEN</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">raise</span> <span class="n">PATCH_EXC</span><span class="p">[</span><span class="n">I_EXC_REOPEN</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_target</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">REPLACE</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">PATCH_EXC</span><span class="p">[</span><span class="n">I_EXC_REPLACE</span><span class="p">]</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">patch_path</span> <span class="o">=</span> <span class="n">PatchPath</span><span class="p">()</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="n">patch_path</span><span class="o">.</span><span class="n">open</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="n">patch_path</span><span class="o">.</span><span class="n">replace</span><span class="p">)</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">PATH</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">RAISE</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">target</span><span class="o">.</span><span class="n">_open_file_save</span><span class="p">()</span> <span class="k">as</span> <span class="n">_io_out</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="n">cause</span> <span class="o">=</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">__cause__</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cause</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">PATCH_EXC</span><span class="p">[</span><span class="n">I_EXC</span><span class="p">]))</span>
+        <span class="k">assert</span> <span class="n">PATCH_EXC</span><span class="p">[</span><span class="n">I_EXC</span><span class="p">]</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">cause</span><span class="o">.</span><span class="n">args</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">PATCH_EXC</span><span class="p">[</span><span class="n">I_EXC</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">cause</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_open_file_save_exists"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_open_file_save_exists">[docs]</a>    <span class="k">def</span> <span class="nf">test_open_file_save_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm file open.</span>
+<span class="sd">        | Case: file exists.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;What, the curtains?&#39;</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">io_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">MODE</span> <span class="o">=</span> <span class="s1">&#39;xb&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">PATH</span>
+        <span class="n">BACKUP</span> <span class="o">=</span> <span class="n">PATH</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">PATH</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;~&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">BACKUP</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">target</span><span class="o">.</span><span class="n">_open_file_save</span><span class="p">()</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">io_out</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedWriter</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">MODE</span> <span class="o">==</span> <span class="n">io_out</span><span class="o">.</span><span class="n">mode</span>
+            <span class="k">assert</span> <span class="n">BACKUP</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">BACKUP</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+                <span class="n">backup_text</span> <span class="o">=</span> <span class="n">io_in</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">TEXT</span> <span class="o">==</span> <span class="n">backup_text</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_open_file_save_no_path"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_open_file_save_no_path">[docs]</a>    <span class="k">def</span> <span class="nf">test_open_file_save_no_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm file open.</span>
+<span class="sd">        | Case: path is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;Save: cannot open path None.&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">NoFileError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">MESSAGE</span><span class="p">):</span>
+            <span class="n">_io</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_open_file_save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_present_views"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_present_views">[docs]</a>    <span class="k">def</span> <span class="nf">test_present_views</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm sheet control notifies all its views.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchObserver</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ObserverControlSheet</span><span class="p">):</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_control</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_present</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">erase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+
+            <span class="k">def</span> <span class="nf">present</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_time</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_present</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">p_time</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserver</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">p_view</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_VIEWS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">present_views</span><span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">view</span><span class="o">.</span><span class="n">called_present</span>
+            <span class="k">assert</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">time</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_property"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_property">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_ATTR, NAME_PROP&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="c1"># (&#39;_model&#39;, &#39;model&#39;),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_display_name&#39;</span><span class="p">,</span> <span class="s1">&#39;new_display_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_editor_name&#39;</span><span class="p">,</span> <span class="s1">&#39;new_editor_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_display_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;new_display_summary&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_editor_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;new_editor_summary&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_display_title&#39;</span><span class="p">,</span> <span class="s1">&#39;new_display_title&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_editor_title&#39;</span><span class="p">,</span> <span class="s1">&#39;new_editor_title&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_view_topics&#39;</span><span class="p">,</span> <span class="s1">&#39;new_view_topics&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_path&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm model property is get-only.</span>
+
+<span class="sd">        #. Case: get</span>
+<span class="sd">        #. Case: no set</span>
+<span class="sd">        #. Case: no delete</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_</span>
+<span class="sd">        :param NAME_ATTR: name of attribute.</span>
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;path_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">PATH</span>
+        <span class="n">value_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="n">value_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test: get</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_attr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_prop</span><span class="p">)</span>
+        <span class="c1"># Test: no set</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># Test: no delete</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_property_name"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_property_name">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME, ESCAPED&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;&lt;b&gt;Parrot&lt;/b&gt; Sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;/b&gt; Sketch&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;&lt;b&gt;Parrot&lt;b Sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;lt;b&amp;gt;Parrot&amp;lt;b Sketch&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">ESCAPED</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm model name property is get-only without markup errors.</span>
+<span class="sd">        | Case: name does not contain markup errors</span>
+
+<span class="sd">        #. Case: get</span>
+<span class="sd">        #. Case: no set</span>
+<span class="sd">        #. Case: no delete</span>
+
+<span class="sd">        :param NAME: name of factsheet.</span>
+<span class="sd">        :param ESCAPED: name of factsheet with markup errors escaped.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">model_name</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="c1"># Test: get</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">ESCAPED</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">name</span>
+        <span class="c1"># Test: no set</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># Test: no delete</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_property_tag"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_property_tag">[docs]</a>    <span class="k">def</span> <span class="nf">test_property_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm value and access limits of tag property.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_all_views"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_all_views">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_all_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm tracking stops for all sheet views.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchControlApp</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">control_sheet</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">remove_factsheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_control</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">control_sheet</span> <span class="o">=</span> <span class="n">p_control</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">PatchControlApp</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">,</span> <span class="s1">&#39;remove_factsheet&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">remove_factsheet</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">p_view</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_all_views</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">target</span> <span class="ow">is</span> <span class="n">patch</span><span class="o">.</span><span class="n">control_sheet</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_topic"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_topic">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;I_REMOVE, I_REMOVE_END&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_remove_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory_control_sheet</span><span class="p">,</span> <span class="n">I_REMOVE</span><span class="p">,</span> <span class="n">I_REMOVE_END</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm method removes controls and relays request to model.</span>
+
+<span class="sd">        :param factory_control_sheet: fixture :func:`factory_control_sheet`.</span>
+<span class="sd">        :param I_REMOVE: index in list of topics fo topic to remove.</span>
+<span class="sd">        :param I_REMOVE_END: index of first topic after removed topics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">factory_control_sheet</span><span class="p">()</span>
+        <span class="n">tags_before</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line_remove</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">lines</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">I_REMOVE</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">tags_after</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">tags_before</span><span class="p">[:</span><span class="n">I_REMOVE</span><span class="p">]</span> <span class="o">+</span> <span class="n">tags_before</span><span class="p">[</span><span class="n">I_REMOVE_END</span><span class="p">:])</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_topic</span><span class="p">(</span><span class="n">line_remove</span><span class="p">)</span>
+        <span class="n">tags_control</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">tags_control</span> <span class="o">==</span> <span class="n">tags_after</span>
+        <span class="n">tags_model</span> <span class="o">=</span> <span class="p">{</span><span class="n">topic</span><span class="o">.</span><span class="n">tag</span> <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">()}</span>
+        <span class="k">assert</span> <span class="n">tags_model</span> <span class="o">==</span> <span class="n">tags_after</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_topic_none"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_topic_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_topic_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory_control_sheet</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm topics and controls unchanged when line is None.</span>
+
+<span class="sd">        :param factory_control_sheet: fixture :func:`factory_control_sheet`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">factory_control_sheet</span><span class="p">()</span>
+        <span class="n">tags_before</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">()}</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_topic</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">tags_control</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">tags_control</span> <span class="o">==</span> <span class="n">tags_before</span>
+        <span class="n">tags_model</span> <span class="o">=</span> <span class="p">{</span><span class="n">topic</span><span class="o">.</span><span class="n">tag</span> <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">()}</span>
+        <span class="k">assert</span> <span class="n">tags_model</span> <span class="o">==</span> <span class="n">tags_before</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_view_is_safe_fresh"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_view_is_safe_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_is_safe_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm return shows safe to erase.</span>
+<span class="sd">        | Case: no unsaved changes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">remove_view_is_safe</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_view_is_safe_multi"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_view_is_safe_multi">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_is_safe_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm return shows safe to erase.</span>
+<span class="sd">        | Case: multiple windows</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">view_extra</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view_extra</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">remove_view_is_safe</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_view_is_safe_unsafe"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_view_is_safe_unsafe">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_is_safe_unsafe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return shows  not safe to erase.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">remove_view_is_safe</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_view_multi"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_view_multi">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking stops for given sheet view.</span>
+<span class="sd">        | Case: multiple views tracked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">view_extra</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view_extra</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">id_view</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_view_single"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_view_single">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking stops for given sheet view.</span>
+<span class="sd">        | Case: single view tracked.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchControlApp</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">control_sheet</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">remove_factsheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_control</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">control_sheet</span> <span class="o">=</span> <span class="n">p_control</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">PatchControlApp</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">,</span> <span class="s1">&#39;remove_factsheet&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">remove_factsheet</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">id_view</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_roster_views</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">target</span> <span class="ow">is</span> <span class="n">patch</span><span class="o">.</span><span class="n">control_sheet</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_remove_view_warn"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_remove_view_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm tracking stops for given sheet view.</span>
+<span class="sd">        | Case: view not tracked.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">id_view</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">view</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Missing: sheet 0x</span><span class="si">{:X}</span><span class="s1"> remove view 0x</span><span class="si">{:X}</span><span class="s1">  &#39;</span>
+                       <span class="s1">&#39;(ControlSheet.remove_view)&#39;</span>
+                       <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">id_view</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_save"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_save">[docs]</a>    <span class="k">def</span> <span class="nf">test_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm write to file.</span>
+<span class="sd">        | Case: file does not exist.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">PATH</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+            <span class="n">model_disk</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">model_disk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span> <span class="o">==</span> <span class="n">model_disk</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_save_except"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_save_except">[docs]</a>    <span class="k">def</span> <span class="nf">test_save_except</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm write to file.</span>
+<span class="sd">        | Case: dump to file fails.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">ERROR</span> <span class="o">=</span> <span class="s1">&#39;Random Error&#39;</span>
+
+        <span class="k">def</span> <span class="nf">patch_dump</span><span class="p">(</span><span class="n">_object</span><span class="p">,</span> <span class="n">_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pickle</span><span class="o">.</span><span class="n">PicklingError</span><span class="p">(</span><span class="n">ERROR</span><span class="p">)</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">pickle</span><span class="p">,</span> <span class="s1">&#39;dump&#39;</span><span class="p">,</span> <span class="n">patch_dump</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">PATH</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">DumpFileError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">cause</span> <span class="o">=</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">__cause__</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cause</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">PicklingError</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">ERROR</span><span class="p">,)</span> <span class="o">==</span> <span class="n">cause</span><span class="o">.</span><span class="n">args</span>
+        <span class="k">assert</span> <span class="n">ERROR</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">cause</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_save_new_path"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_save_new_path">[docs]</a>    <span class="k">def</span> <span class="nf">test_save_new_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm write to file.</span>
+<span class="sd">        | Case: replace path to save file.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;saved_factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">path</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestControlSheet.test_topics"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestControlSheet.test_topics">[docs]</a>    <span class="k">def</span> <span class="nf">test_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm iteration over topic controls.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">N_TOPICS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TOPICS</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Topic </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">TOPIC</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">CONTROL</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">TOPIC</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_insert_topic_control</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">topics</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">topics</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">topics</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_roster_topics</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.control_sheet`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_exceptions"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestModule.test_exceptions">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TARGET, SUPER&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactsheetError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">BackupFileError</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactsheetError</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">DumpFileError</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactsheetError</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">NoFileError</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactsheetError</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">OpenFileError</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">FactsheetError</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TARGET</span><span class="p">,</span> <span class="n">SUPER</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm presence of exceptions.</span>
+
+<span class="sd">        :param TARGET: exception under test.</span>
+<span class="sd">        :param SUPER: superclass of target exception.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">TARGET</span><span class="p">,</span> <span class="n">SUPER</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModule.test_globals"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestModule.test_globals">[docs]</a>    <span class="k">def</span> <span class="nf">test_globals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm global definitions.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="p">,</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlApp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModule.test_id_view_sheet"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestModule.test_id_view_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">test_id_view_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm ID returned.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">()</span>
+        <span class="n">view_sheet</span> <span class="o">=</span> <span class="n">PatchObserverControlSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">id</span><span class="p">(</span><span class="n">view_sheet</span><span class="p">)</span> <span class="o">==</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">id_view_sheet</span><span class="p">(</span><span class="n">p_view_sheet</span><span class="o">=</span><span class="n">view_sheet</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">DisplayName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">DisplaySummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">DisplayTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">EditorName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">EditorSummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">EditorTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryDisplayName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryDisplayTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryEditorName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryEditorSummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryEditorTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryViewTopics</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__origin__&#39;</span><span class="p">],</span>
+            <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryViewOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">FactoryViewTopics</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__args__&#39;</span><span class="p">],</span>
+            <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">IdViewSheet</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span> <span class="s1">&#39;NewType.&lt;locals&gt;.new_type&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">IdViewSheet</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__supertype__&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">TagTopic</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span> <span class="s1">&#39;NewType.&lt;locals&gt;.new_type&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">TagTopic</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__supertype__&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ViewTopics</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type alias definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type alias under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+
+
+<div class="viewcode-block" id="TestObserverControlSheet"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestObserverControlSheet">[docs]</a><span class="k">class</span> <span class="nc">TestObserverControlSheet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ObserverControlSheet`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestObserverControlSheet.test_method_abstract"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_sheet.html#factsheet_test.control.test_control_sheet.TestObserverControlSheet.test_method_abstract">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;CLASS, NAME_METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ObserverControlSheet</span><span class="p">,</span> <span class="s1">&#39;erase&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ObserverControlSheet</span><span class="p">,</span> <span class="s1">&#39;present&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_method_abstract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm each abstract method is specified.</span>
+
+<span class="sd">        :param CLASS: class under test.</span>
+<span class="sd">        :param NAME_METHOD: name of method under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_METHOD</span> <span class="ow">in</span> <span class="n">CLASS</span><span class="o">.</span><span class="n">__abstractmethods__</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

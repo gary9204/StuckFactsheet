@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.view.view_markup &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.view.view_markup</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.view.view_markup</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines view classes for identity information.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gdk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gdk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="ViewMarkup"><a class="viewcode-back" href="../../../src/factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup">[docs]</a><span class="k">class</span> <span class="nc">ViewMarkup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Provides capability to display and edit text with `Pango markup`_.</span>
+
+<span class="sd">    The view contains a display and an editor. Display shows formatted</span>
+<span class="sd">    text when markup is valid.  It shows text with embedded markup when</span>
+<span class="sd">    there is a markup error.  User can popup editor to edit both text</span>
+<span class="sd">    and embedded markup.  The formatted text in the display updates as</span>
+<span class="sd">    the user edits the markup text.  User can cancel edit and discard</span>
+<span class="sd">    changes.</span>
+
+<span class="sd">    .. _Pango markup:</span>
+<span class="sd">        https://developer.gnome.org/pygtk/stable/pango-markup-language.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_UI_VIEW_MARKUP</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s2">        &lt;!-- Generated with glade 3.22.1 --&gt;</span>
+<span class="s2">        &lt;interface&gt;</span>
+<span class="s2">          &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span>
+<span class="s2">          &lt;object class=&quot;GtkBox&quot; id=&quot;view&quot;&gt;</span>
+<span class="s2">            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkMenuButton&quot; id=&quot;button_edit&quot;&gt;</span>
+<span class="s2">                &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;receives_default&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;popover&quot;&gt;editor&lt;/property&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;object class=&quot;GtkImage&quot;&gt;</span>
+<span class="s2">                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property</span>
+<span class="s2">                        name=&quot;icon_name&quot;&gt;document-edit-symbolic&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;icon_size&quot;&gt;2&lt;/property&gt;</span>
+<span class="s2">                  &lt;/object&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot; id=&quot;site_display&quot;&gt;</span>
+<span class="s2">                &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;expand&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">          &lt;/object&gt;</span>
+<span class="s2">          &lt;object class=&quot;GtkPopover&quot; id=&quot;editor&quot;&gt;</span>
+<span class="s2">            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;relative_to&quot;&gt;button_edit&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;position&quot;&gt;bottom&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;constrain_to&quot;&gt;none&lt;/property&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot;&gt;</span>
+<span class="s2">                &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;object class=&quot;GtkLabel&quot; id=&quot;label_type&quot;&gt;</span>
+<span class="s2">                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;label&quot;</span>
+<span class="s2">                        translatable=&quot;yes&quot;&gt;&amp;lt;b&amp;gt;Oops!&amp;lt;/b&amp;gt;&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                  &lt;/object&gt;</span>
+<span class="s2">                  &lt;packing&gt;</span>
+<span class="s2">                    &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span>
+<span class="s2">                  &lt;/packing&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;object class=&quot;GtkBox&quot; id=&quot;site_editor&quot;&gt;</span>
+<span class="s2">                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;child&gt;</span>
+<span class="s2">                      &lt;placeholder/&gt;</span>
+<span class="s2">                    &lt;/child&gt;</span>
+<span class="s2">                  &lt;/object&gt;</span>
+<span class="s2">                  &lt;packing&gt;</span>
+<span class="s2">                    &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">                  &lt;/packing&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">          &lt;/object&gt;</span>
+<span class="s2">        &lt;/interface&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ViewMarkup.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_display</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">,</span> <span class="n">p_editor</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">,</span>
+                 <span class="n">p_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize editor view contents.</span>
+
+<span class="sd">        :param p_display: display for formatted text.</span>
+<span class="sd">        :param p_editor: editor for markup text.</span>
+<span class="sd">        :param p_type: content type of view (for example, &#39;Title&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_UI_VIEW_MARKUP</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">get_object</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_object</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">p_editor</span><span class="o">.</span><span class="n">get_buffer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_button_edit</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;button_edit&#39;</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_toggled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text_restore</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">)</span>
+
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">site_display</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;site_display&#39;</span><span class="p">)</span>
+        <span class="n">site_display</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">p_display</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+        <span class="n">p_display</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">label_type</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;label_type&#39;</span><span class="p">)</span>
+        <span class="n">label_type</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;&lt;b&gt;</span><span class="si">{}</span><span class="s1">&lt;/b&gt;:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_type</span><span class="p">))</span>
+
+        <span class="n">site_editor</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;site_editor&#39;</span><span class="p">)</span>
+        <span class="n">site_editor</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">p_editor</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">p_editor</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;icon-press&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_icon_press</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">p_editor</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="s1">&#39;activate&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">clicked</span><span class="p">())</span>
+        <span class="n">p_editor</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ViewMarkup.on_icon_press"><a class="viewcode-back" href="../../../src/factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup.on_icon_press">[docs]</a>    <span class="k">def</span> <span class="nf">on_icon_press</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">_entry</span><span class="p">,</span> <span class="n">p_icon_position</span><span class="p">,</span> <span class="n">_event</span><span class="p">:</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;End edit and if user cancels edit, restore text.</span>
+
+<span class="sd">        :param _entry: edit view (unused).</span>
+<span class="sd">        :param p_icon_position: identifies icon user clicked.</span>
+<span class="sd">        :param _event: user interface event (unused).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">SECONDARY</span> <span class="o">==</span> <span class="n">p_icon_position</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_text_restore</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_text_restore</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">clicked</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ViewMarkup.on_toggled"><a class="viewcode-back" href="../../../src/factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup.on_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_button</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Button</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Record restore text before edit begins and clear after edit ends.</span>
+
+<span class="sd">        :param _button: edit button (unused).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">get_active</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_text_restore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_text_restore</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ui_view</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return GTK element of markup view.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

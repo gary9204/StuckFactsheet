@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Case Application Dialogs &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Factsheet-level Cases" href="toc_sheet_cases.html" />
+    <link rel="prev" title="Case Application Run" href="case_app_run.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../toc_test_manual.html">Manual Tests</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../tests_manual.html">Manual Tests for Factsheet</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="toc_test_cases.html">Test Cases</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="toc_app_cases.html">Application-level Cases</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="case_app_run.html">Case Application Run</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Case Application Dialogs</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="toc_sheet_cases.html">Factsheet-level Cases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_helpers/toc_test_helpers.html">Test Helpers</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../toc_test_manual.html">Manual Tests</a> &raquo;</li>
+        
+          <li><a href="toc_test_cases.html">Test Cases</a> &raquo;</li>
+        
+          <li><a href="toc_app_cases.html">Application-level Cases</a> &raquo;</li>
+        
+      <li>Case Application Dialogs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/test_manual/test_cases/case_app_dialogs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="case-application-dialogs">
+<h1>Case Application Dialogs<a class="headerlink" href="#case-application-dialogs" title="Permalink to this headline">¶</a></h1>
+<p><strong>Purpose:</strong> demonstrate application dialogs About, Help, and
+Introduction.</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>None</p>
+</div>
+<div class="section" id="steps-about">
+<h2>Steps – About<a class="headerlink" href="#steps-about" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Application displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Application</em> <strong>menu</strong> <img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> item <strong>About</strong> (window
+title on right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Application <em>About</em> dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Review dialog contents (title, version, text, etc.).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Content is current and correct.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click dialog <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" /> (dialog title
+far right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears. Factsheet window reamins visible.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="steps-help">
+<h2>Steps – Help<a class="headerlink" href="#steps-help" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Click <em>Application</em> <strong>menu</strong> <img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> item <strong>Help</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Application <em>Help</em> dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Review dialog contents (title, text, etc.).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Content is current and correct.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click dialog <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" /> (dialog title
+far right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears. Factsheet window remains visible.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="steps-introduction">
+<h2>Steps – Introduction<a class="headerlink" href="#steps-introduction" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Click <em>Application</em> <strong>menu</strong> <img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> item <strong>Introduction</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Application <em>Introduction</em> dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Review dialog contents (title, text, etc.).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Content is current and correct.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click dialog <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" /> (dialog title
+far right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" /> (window title
+far right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears and application closes.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="teardown">
+<h2>Teardown<a class="headerlink" href="#teardown" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Check console for exceptions, GTK errors, and warning messages. There
+should be none.</p></li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="toc_sheet_cases.html" class="btn btn-neutral float-right" title="Factsheet-level Cases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="case_app_run.html" class="btn btn-neutral float-left" title="Case Application Run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

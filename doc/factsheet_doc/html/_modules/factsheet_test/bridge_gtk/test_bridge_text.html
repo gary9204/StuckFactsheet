@@ -1,0 +1,883 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.bridge_gtk.test_bridge_text &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.bridge_gtk.test_bridge_text</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.bridge_gtk.test_bridge_text</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for GTK-based classes that implement abstract identification</span>
+<span class="sd">information classes.  See :mod:`.bridge_text`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_text</span> <span class="k">as</span> <span class="nn">BTEXT</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GLib</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Pango</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="PatchModelText"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.PatchModelText">[docs]</a><span class="k">class</span> <span class="nc">PatchModelText</span><span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelText</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;:class:`.ModelText` subclass with stub text property.</span>
+
+<span class="sd">        :param args: patch and superclass positional parameters.</span>
+<span class="sd">        :param kwargs: patch and superclass keyword parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span>
+
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p_persist</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestEscapeTextMarkup"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestEscapeTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">TestEscapeTextMarkup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for function :func:`.escape_text_markup`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestEscapeTextMarkup.test_escape_text_markup"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestEscapeTextMarkup.test_escape_text_markup">[docs]</a>    <span class="k">def</span> <span class="nf">test_escape_text_markup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm markup errors escaped.</span>
+<span class="sd">        | Case: text does not contain markup error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot Sketch.&lt;/b&gt;&#39;</span>
+        <span class="n">TEXT_ESCAPED</span> <span class="o">=</span> <span class="n">TEXT</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TEXT_ESCAPED</span> <span class="o">==</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">escape_text_markup</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestEscapeTextMarkup.test_escape_text_markup_error"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestEscapeTextMarkup.test_escape_text_markup_error">[docs]</a>    <span class="k">def</span> <span class="nf">test_escape_text_markup_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm markup errors escaped.</span>
+<span class="sd">        | Case: text contains markup error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot &lt;/b Sketch.&#39;</span>
+        <span class="n">TEXT_ESCAPED</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">markup_escape_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEXT</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TEXT_ESCAPED</span> <span class="o">==</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">escape_text_markup</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestEscapeTextMarkup.test_escape_text_markup_except"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestEscapeTextMarkup.test_escape_text_markup_except">[docs]</a>    <span class="k">def</span> <span class="nf">test_escape_text_markup_except</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm markup errors escaped.</span>
+<span class="sd">        | Case: GLib error that is not a markup error.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">QUARK</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">unix_error_quark</span><span class="p">()</span>
+        <span class="n">DOMAIN</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">quark_to_string</span><span class="p">(</span><span class="n">QUARK</span><span class="p">)</span>
+        <span class="n">MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+        <span class="n">CODE</span> <span class="o">=</span> <span class="mi">42</span>
+
+        <span class="k">def</span> <span class="nf">patch_parse</span><span class="p">(</span><span class="n">_text</span><span class="p">,</span> <span class="n">_len</span><span class="p">,</span> <span class="n">_marker</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Error</span><span class="o">.</span><span class="n">new_literal</span><span class="p">(</span><span class="n">QUARK</span><span class="p">,</span> <span class="n">MESSAGE</span><span class="p">,</span> <span class="n">CODE</span><span class="p">)</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Pango</span><span class="p">,</span> <span class="s1">&#39;parse_markup&#39;</span><span class="p">,</span> <span class="n">patch_parse</span><span class="p">)</span>
+
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot &lt;/b Sketch.&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">GLib</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">escape_text_markup</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">exc</span> <span class="o">=</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">assert</span> <span class="n">DOMAIN</span> <span class="o">==</span> <span class="n">exc</span><span class="o">.</span><span class="n">domain</span>
+        <span class="k">assert</span> <span class="n">MESSAGE</span> <span class="o">==</span> <span class="n">exc</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="n">CODE</span> <span class="o">==</span> <span class="n">exc</span><span class="o">.</span><span class="n">code</span></div></div>
+
+
+<div class="viewcode-block" id="TestFactoryEditorTextMarkup"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryEditorTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">TestFactoryEditorTextMarkup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FactoryEditorTextMarkup`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFactoryEditorTextMarkup.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryEditorTextMarkup.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm storage initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">_ui_model</span></div>
+
+<div class="viewcode-block" id="TestFactoryEditorTextMarkup.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryEditorTextMarkup.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return is editable view.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_ICON_PRIMARY</span> <span class="o">=</span> <span class="s1">&#39;emblem-default-symbolic&#39;</span>
+        <span class="n">NAME_ICON_SECONDARY</span> <span class="o">=</span> <span class="s1">&#39;edit-delete-symbolic&#39;</span>
+        <span class="n">TOOLTIP_PRIMARY</span> <span class="o">=</span> <span class="s1">&#39;Click to accept changes.&#39;</span>
+        <span class="n">TOOLTIP_SECONDARY</span> <span class="o">=</span> <span class="s1">&#39;Click to cancel changes.&#39;</span>
+        <span class="n">N_WIDTH_EDIT</span> <span class="o">=</span> <span class="mi">45</span>
+        <span class="n">entry_buffer</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">entry_buffer</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">view</span><span class="o">.</span><span class="n">get_buffer</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Align</span><span class="o">.</span><span class="n">START</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_halign</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">NAME_ICON_PRIMARY</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">get_icon_name</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">PRIMARY</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">NAME_ICON_SECONDARY</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">get_icon_name</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">SECONDARY</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">TOOLTIP_PRIMARY</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">get_icon_tooltip_markup</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">PRIMARY</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">TOOLTIP_SECONDARY</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">get_icon_tooltip_markup</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">SECONDARY</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">N_WIDTH_EDIT</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_width_chars</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestFactoryDisplayTextMarkup"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">TestFactoryDisplayTextMarkup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FactoryDisplayTextMarkup`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextMarkup.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextMarkup.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return is display-only view.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot &lt;/b Sketch.&#39;</span>
+        <span class="n">TEXT_ESCAPED</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">markup_escape_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEXT</span><span class="p">))</span>
+        <span class="n">entry_buffer</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">entry_buffer</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">entry_buffer</span><span class="p">)</span>
+
+        <span class="k">class</span> <span class="nc">PatchConnect</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calls</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_signal</span><span class="p">,</span> <span class="n">p_handler</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calls</span><span class="p">[</span><span class="n">p_signal</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_handler</span>
+
+        <span class="n">patch_label</span> <span class="o">=</span> <span class="n">PatchConnect</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">,</span> <span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="n">patch_label</span><span class="o">.</span><span class="n">connect</span><span class="p">)</span>
+        <span class="n">EXPECT_LABEL</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;destroy&#39;</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">on_destroy</span><span class="p">}</span>
+        <span class="n">patch_entry</span> <span class="o">=</span> <span class="n">PatchConnect</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryBuffer</span><span class="p">,</span> <span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="n">patch_entry</span><span class="o">.</span><span class="n">connect</span><span class="p">)</span>
+        <span class="n">EXPECT_ENTRY_BUFFER</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;deleted-text&#39;</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">on_change</span><span class="p">,</span>
+                               <span class="s1">&#39;inserted-text&#39;</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">on_change</span><span class="p">}</span>
+        <span class="n">N_WIDTH_DISPLAY</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">XALIGN</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># Test</span>
+        <span class="n">display</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">display</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TEXT_ESCAPED</span> <span class="o">==</span> <span class="n">display</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">display</span><span class="p">)]</span> <span class="ow">is</span> <span class="n">display</span>
+        <span class="k">assert</span> <span class="n">EXPECT_LABEL</span> <span class="o">==</span> <span class="n">patch_label</span><span class="o">.</span><span class="n">calls</span>
+        <span class="k">assert</span> <span class="n">EXPECT_ENTRY_BUFFER</span> <span class="o">==</span> <span class="n">patch_entry</span><span class="o">.</span><span class="n">calls</span>
+
+        <span class="k">assert</span> <span class="n">Pango</span><span class="o">.</span><span class="n">EllipsizeMode</span><span class="o">.</span><span class="n">END</span> <span class="ow">is</span> <span class="n">display</span><span class="o">.</span><span class="n">get_ellipsize</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Align</span><span class="o">.</span><span class="n">START</span> <span class="o">==</span> <span class="n">display</span><span class="o">.</span><span class="n">get_halign</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">display</span><span class="o">.</span><span class="n">get_selectable</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">display</span><span class="o">.</span><span class="n">get_use_markup</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_WIDTH_DISPLAY</span> <span class="o">==</span> <span class="n">display</span><span class="o">.</span><span class="n">get_width_chars</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">XALIGN</span><span class="p">,</span> <span class="n">display</span><span class="o">.</span><span class="n">get_xalign</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextMarkup.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextMarkup.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm storage initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_displays</span></div>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextMarkup.test_on_change"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextMarkup.test_on_change">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm refresh of display views.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot &lt;/b Sketch.&#39;</span>
+        <span class="n">TEXT_ESCAPED</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">markup_escape_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEXT</span><span class="p">))</span>
+        <span class="n">entry_buffer</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">entry_buffer</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">p_persist</span><span class="o">=</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">entry_buffer</span><span class="p">)</span>
+
+        <span class="n">N_DISPLAYS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_DISPLAYS</span><span class="p">):</span>
+            <span class="n">display</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">()</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">display</span><span class="p">)]</span> <span class="o">=</span> <span class="n">display</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_change</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_DISPLAYS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">display</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">TEXT_ESCAPED</span> <span class="o">==</span> <span class="n">display</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextMarkup.test_on_destroy"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextMarkup.test_on_destroy">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm display view removal.</span>
+<span class="sd">        | Case: display connected to model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot Sketch.&lt;/b&gt;&#39;</span>
+        <span class="n">entry_buffer</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">entry_buffer</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">p_persist</span><span class="o">=</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">entry_buffer</span><span class="p">)</span>
+        <span class="n">N_DISPLAYS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">I_DESTROY</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_DISPLAYS</span><span class="p">):</span>
+            <span class="n">display</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">()</span>
+            <span class="n">id_display</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">id_display</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">[</span><span class="n">id_display</span><span class="p">]</span> <span class="o">=</span> <span class="n">display</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">I_DESTROY</span><span class="p">:</span>
+                <span class="n">id_destroy</span> <span class="o">=</span> <span class="n">id_display</span>
+                <span class="n">display_destroy</span> <span class="o">=</span> <span class="n">display</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_destroy</span><span class="p">(</span><span class="n">display_destroy</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_DISPLAYS</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">id_destroy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_displays</span></div>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextMarkup.test_on_destroy_warn"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextMarkup.test_on_destroy_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_destroy_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm display view removal.</span>
+<span class="sd">        | Case: display not connected to model.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The &lt;b&gt;Parrot Sketch.&lt;/b&gt;&#39;</span>
+        <span class="n">entry_buffer</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">entry_buffer</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">p_persist</span><span class="o">=</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">entry_buffer</span><span class="p">)</span>
+        <span class="n">N_DISPLAYS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_DISPLAYS</span><span class="p">):</span>
+            <span class="n">display</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">()</span>
+            <span class="n">id_display</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">id_display</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">[</span><span class="n">id_display</span><span class="p">]</span> <span class="o">=</span> <span class="n">display</span>
+        <span class="n">DISPLAY_MISSING</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">()</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Missing display: </span><span class="si">{}</span><span class="s1"> (FactoryDisplayTextMarkup&#39;</span>
+                       <span class="s1">&#39;.on_destroy)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">DISPLAY_MISSING</span><span class="p">))))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_destroy</span><span class="p">(</span><span class="n">DISPLAY_MISSING</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_DISPLAYS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_displays</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div></div>
+
+
+<div class="viewcode-block" id="TestFactoryEditorTextStyled"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryEditorTextStyled">[docs]</a><span class="k">class</span> <span class="nc">TestFactoryEditorTextStyled</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FactoryEditorTextStyled`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFactoryEditorTextStyled.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryEditorTextStyled.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm storage initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">_ui_model</span></div>
+
+<div class="viewcode-block" id="TestFactoryEditorTextStyled.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryEditorTextStyled.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm attributes of display and edit views.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="n">N_MARGIN_LEFT_RIGHT</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">N_MARGIN_TOP_BOTTOM</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">WRAP_MODE</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">WrapMode</span><span class="o">.</span><span class="n">WORD_CHAR</span>
+        <span class="c1"># Test</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">view</span><span class="o">.</span><span class="n">get_buffer</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_MARGIN_TOP_BOTTOM</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_bottom_margin</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_MARGIN_LEFT_RIGHT</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_left_margin</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_MARGIN_LEFT_RIGHT</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_right_margin</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_MARGIN_TOP_BOTTOM</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_top_margin</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">view</span><span class="o">.</span><span class="n">get_vexpand</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">WRAP_MODE</span> <span class="o">==</span> <span class="n">view</span><span class="o">.</span><span class="n">get_wrap_mode</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">view</span><span class="o">.</span><span class="n">get_editable</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestFactoryDisplayTextStyled"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextStyled">[docs]</a><span class="k">class</span> <span class="nc">TestFactoryDisplayTextStyled</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FactoryDisplayTextStyled`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextStyled.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextStyled.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm storage initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_source</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">_ui_model</span></div>
+
+<div class="viewcode-block" id="TestFactoryDisplayTextStyled.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestFactoryDisplayTextStyled.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm attributes of display and edit views.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">view</span><span class="o">.</span><span class="n">get_editable</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestIdDisplay"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestIdDisplay">[docs]</a><span class="k">class</span> <span class="nc">TestIdDisplay</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :func:`.id_display`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestIdDisplay.test_id_display"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestIdDisplay.test_id_display">[docs]</a>    <span class="k">def</span> <span class="nf">test_id_display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm id returned.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">DISPLAY</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">id</span><span class="p">(</span><span class="n">DISPLAY</span><span class="p">)</span> <span class="o">==</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">id_display</span><span class="p">(</span><span class="n">DISPLAY</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TestModelText"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText">[docs]</a><span class="k">class</span> <span class="nc">TestModelText</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ModelText`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModelText.test_method_abstract"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_method_abstract">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;CLASS, NAME_METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelText</span><span class="p">,</span> <span class="s1">&#39;_get_persist&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelText</span><span class="p">,</span> <span class="s1">&#39;_new_ui_model&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelText</span><span class="p">,</span> <span class="s1">&#39;_set_persist&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_method_abstract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm each abstract method is specified.</span>
+
+<span class="sd">        :param CLASS: class that should be abstract.</span>
+<span class="sd">        :param NAME_METHOD: method that should be abstract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_METHOD</span> <span class="ow">in</span> <span class="n">CLASS</span><span class="o">.</span><span class="n">__abstractmethods__</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_eq"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_eq">[docs]</a>    <span class="k">def</span> <span class="nf">test_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm equality comparison.</span>
+
+<span class="sd">        #. Case: not a text attribute.</span>
+<span class="sd">        #. Case: different content.</span>
+<span class="sd">        #. Case: equal</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test: not a text attribute.</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test: different content.</span>
+        <span class="n">TEXT_DIFFER</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT_DIFFER</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: equal</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_get_set_state"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_get_set_state">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm conversion to and from pickle format.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;get_set.fsg&#39;</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io_out</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: non-default text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TEXT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_stale</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_init_default"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_init_default">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: default text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_stale</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_str"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_str">[docs]</a>    <span class="k">def</span> <span class="nf">test_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return is attribute content. &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">p_persist</span><span class="o">=</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">expect</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">expect</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_is_fresh"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_is_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">test_is_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return matches state. &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_is_stale"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">test_is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return matches state. &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_set_freah"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_set_freah">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_freah</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm attribute marked fresh. &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_set_stale"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_set_stale">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm attribute marked stale. &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchModelText</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelText.test_text"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelText.test_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of text property.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target_class</span> <span class="o">=</span> <span class="n">PatchModelText</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target_class</span><span class="p">()</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">TEXT_NEW</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_class</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">TEXT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">target_class</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">TEXT_NEW</span>
+        <span class="k">assert</span> <span class="n">TEXT_NEW</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target_class</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="TestModelTextMarkup"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">TestModelTextMarkup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ModelTextMarkup`.</span>
+
+<span class="sd">    :class:`.TestBridgeTextCommon` contains additional unit tests for</span>
+<span class="sd">    :class:`.ModelTextMarkup`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModelTextMarkup.test_get_set_state"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextMarkup.test_get_set_state">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm conversion to and from pickle format.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;get_set.fsg&#39;</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Something completely different&#39;</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io_out</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelTextMarkup.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextMarkup.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryBuffer</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelTextMarkup.test_get_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextMarkup.test_get_persist">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm export to persistent form.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch.&#39;</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TEXT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelTextMarkup.test_new_model"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextMarkup.test_new_model">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_SIGNAL, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;deleted-text&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;inserted-text&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_new_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm GTK model with signal connections.</span>
+
+<span class="sd">        :param NAME_SIGNAL: signal under test.</span>
+<span class="sd">        :param N_DEFAULT: number of default handlers for signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryBuffer</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="n">NO_SIGNAL</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryBuffer</span><span class="p">)</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">NO_SIGNAL</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestModelTextMarkup.test_set_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextMarkup.test_set_persist">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm import from persistent form.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">()</span>
+        <span class="n">target_buffer</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch.&#39;</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">TEXT_NEW</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT_NEW</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">target_buffer</span>
+        <span class="k">assert</span> <span class="n">TEXT_NEW</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestModelTextStyled"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextStyled">[docs]</a><span class="k">class</span> <span class="nc">TestModelTextStyled</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ModelTextStyled`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModelTextStyled.test_get_set_state"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextStyled.test_get_set_state">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm conversion to and from pickle format.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;get_set.fsg&#39;</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Something completely different&#39;</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io_out</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestModelTextStyled.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextStyled.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">NO_HIDDEN</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextBuffer</span><span class="p">)</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">NO_HIDDEN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModelTextStyled.test_get_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextStyled.test_get_persist">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm export to persistent form.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch.&#39;</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TEXT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelTextStyled.test_new_model"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextStyled.test_new_model">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_SIGNAL, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_new_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm GTK model with signal connections.</span>
+
+<span class="sd">        :param NAME_SIGNAL: signal under test.</span>
+<span class="sd">        :param N_DEFAULT: number of default handlers for signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TextBuffer</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="n">NO_SIGNAL</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextBuffer</span><span class="p">)</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">NO_SIGNAL</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestModelTextStyled.test_set_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestModelTextStyled.test_set_persist">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm import from persistent form.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">()</span>
+        <span class="n">target_buffer</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch.&#39;</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">TEXT_NEW</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT_NEW</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">target_buffer</span>
+        <span class="k">assert</span> <span class="n">TEXT_NEW</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestTypes"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestTypes">[docs]</a><span class="k">class</span> <span class="nc">TestTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for type hint definitions in :mod:`.bridge_text`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestTypes.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_text.html#factsheet_test.bridge_gtk.test_bridge_text.TestTypes.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">IdDisplay</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span> <span class="s1">&#39;NewType.&lt;locals&gt;.new_type&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">IdDisplay</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__supertype__&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">PersistText</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">DisplayTextStyled</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">EditorTextStyled</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type hint definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

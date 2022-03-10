@@ -1,0 +1,434 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.model.sheet &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.model.sheet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.model.sheet</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines factsheet-level model.</span>
+
+<span class="sd">:doc:`../guide/devel_notes` explains how application Factsheet is based</span>
+<span class="sd">on a Model-View-Controller (MVC) design.  The design is partitioned into</span>
+<span class="sd">factsheet, topic, and fact layers.  Module ``sheet`` defines</span>
+<span class="sd">class representing the model of a factsheet.</span>
+
+<span class="sd">.. data:: Name</span>
+
+<span class="sd">    Type alias for name of Factsheet.  See :data:`~.control_sheet.DisplayName`</span>
+<span class="sd">    and :data:`~.control_sheet.EditorName`.</span>
+
+<span class="sd">.. data:: Summary</span>
+
+<span class="sd">    Type alias for summary of Factsheet.  See</span>
+<span class="sd">    :data:`~.control_sheet.DisplaySummary` and</span>
+<span class="sd">    :data:`~.control_sheet.EditorSummary`.</span>
+
+<span class="sd">.. data:: Title</span>
+
+<span class="sd">    Type alias for title of Factsheet.  See</span>
+<span class="sd">    :data:`~.control_sheet.DisplayTitle` and</span>
+<span class="sd">    :data:`~.control_sheet.EditorTitle`.</span>
+
+<span class="sd">.. data:: Topics</span>
+
+<span class="sd">    Type alias for topics of Factsheet.  See</span>
+<span class="sd">    :data:`~.control_sheet.ViewTopics`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>   <span class="c1"># noqa</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.idcore</span> <span class="k">as</span> <span class="nn">MIDCORE</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.model.sheet&#39;</span><span class="p">)</span>
+
+<span class="n">Name</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span>
+<span class="n">Summary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span>
+<span class="n">OutlineTopics</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">[</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">]</span>
+<span class="n">Title</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span>
+<span class="n">TagSheet</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">NewType</span><span class="p">(</span><span class="s1">&#39;TagSheet&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Sheet"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet">[docs]</a><span class="k">class</span> <span class="nc">Sheet</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">IdCore</span><span class="p">[</span><span class="n">Name</span><span class="p">,</span> <span class="n">Summary</span><span class="p">,</span> <span class="n">Title</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Factsheet document :mod:`~factsheet.model`.</span>
+
+<span class="sd">    Class ``Sheet`` represents an entire Factsheet document.  A model</span>
+<span class="sd">    factsheet consists of a outline of topics along with identification</span>
+<span class="sd">    information (see :class:`.IdCore`). Each topic represents a</span>
+<span class="sd">    collection of facts about a specific subject.</span>
+
+<span class="sd">    .. admonition:: About Equality</span>
+
+<span class="sd">        Each factsheet model has persistent identification information</span>
+<span class="sd">        and a topic outline.  In addition, a factsheet model may have</span>
+<span class="sd">        transient aspects such as change state with respect to file</span>
+<span class="sd">        storage,</span>
+
+<span class="sd">        Two factsheet are equal when their identification information</span>
+<span class="sd">        are equal and their topic outlines are equal.  Transient</span>
+<span class="sd">        aspects of the factsheets are not compared and may be different.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_other</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when p_other has same topics and identity</span>
+<span class="sd">        information.</span>
+
+<span class="sd">        :param p_other: object to compare with self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">p_other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span> <span class="o">!=</span> <span class="n">p_other</span><span class="o">.</span><span class="n">_topics</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Sheet.__init__"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Unnamed&#39;</span><span class="p">,</span>
+                 <span class="n">p_summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Edit factsheet description here.&#39;</span><span class="p">,</span>
+                 <span class="n">p_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;New Factsheet&#39;</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize factsheet with given identity and no topics.</span>
+
+<span class="sd">        :param p_name: name of factsheet.</span>
+<span class="sd">        :param p_summary: summary of factsheet.</span>
+<span class="sd">        :param p_title: title of factsheet.</span>
+<span class="sd">        :param kwargs: superclass keyword parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">Name</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span> <span class="o">=</span> <span class="n">Summary</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_summary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">Title</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span> <span class="o">=</span> <span class="n">OutlineTopics</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sheet.clear"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mark topics outline stale and remove all topics from outline.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Sheet.get_tag"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.get_tag">[docs]</a>    <span class="k">def</span> <span class="nf">get_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">TagTopic</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return tag of topic at given line in topics outline.</span>
+
+<span class="sd">        :param p_line: line of desired topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">NO_TOPIC</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">TagTopic</span><span class="p">(</span><span class="n">NO_TOPIC</span><span class="p">)</span>
+        <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">topic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="n">topic</span><span class="o">.</span><span class="n">tag</span>
+        <span class="k">return</span> <span class="n">tag</span></div>
+
+<div class="viewcode-block" id="Sheet.insert_topic_after"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.insert_topic_after">[docs]</a>    <span class="k">def</span> <span class="nf">insert_topic_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span>
+                           <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Adds topic to topics outline after topic at given line.</span>
+
+<span class="sd">        If line is None, adds topic at beginning of outline.</span>
+
+<span class="sd">        :param p_topic: new topic to add.</span>
+<span class="sd">        :param p_line: line of topic to precede new topic.</span>
+<span class="sd">        :returns: line of newly-added topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sheet.insert_topic_before"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.insert_topic_before">[docs]</a>    <span class="k">def</span> <span class="nf">insert_topic_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span>
+                            <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Adds topic to topics outline before topic at given line.</span>
+
+<span class="sd">        If line is None, adds topic at end of outline.</span>
+
+<span class="sd">        :param p_topic: new topic to add.</span>
+<span class="sd">        :param p_line: line of topic to follow new topic.</span>
+<span class="sd">        :returns: line of newly-added topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sheet.insert_topic_child"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.insert_topic_child">[docs]</a>    <span class="k">def</span> <span class="nf">insert_topic_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_topic</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span>
+                           <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Adds topic to topics outline as child of topic at given line.</span>
+
+<span class="sd">        Adds topic after all existing children.  If line is None, it</span>
+<span class="sd">        adds topic at end of outline.</span>
+
+<span class="sd">        :param p_topic: new topic to add.</span>
+<span class="sd">        :param p_line: line of parent topic for new topic.</span>
+<span class="sd">        :returns: line of newly-added topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">p_topic</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sheet.is_fresh"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.is_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">is_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there are no unsaved changes to factsheet.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Sheet.is_stale"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there is at least one unsaved change to</span>
+<span class="sd">        factsheet.</span>
+
+<span class="sd">        Log warning when a topic is missing from the topics outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_stale</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">topic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;Topics outline contains line with no topic (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                    <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stale</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">topic</span><span class="o">.</span><span class="n">is_stale</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outline_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OutlineTopics</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return topics outline.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span>
+
+<div class="viewcode-block" id="Sheet.remove_topic"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.remove_topic">[docs]</a>    <span class="k">def</span> <span class="nf">remove_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mark topics outline stale and remove topic from outline.</span>
+
+<span class="sd">        Removes topic and all its descendents.</span>
+
+<span class="sd">        :param p_line: line of topic to remove.  If line is None or</span>
+<span class="sd">            invalid, remove no topics but mark sheet as stale nonetheless.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sheet.set_fresh"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.set_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">set_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mark factsheet in memory consistent with file contents.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">topic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Topics outline contains line with no &#39;</span>
+                               <span class="s1">&#39;topic (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">set_fresh</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">topic</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TagSheet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return unique identifier of sheet.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TagSheet</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Sheet.topics"><a class="viewcode-back" href="../../../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.topics">[docs]</a>    <span class="k">def</span> <span class="nf">topics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span>
+               <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over topics in section of topics outline.</span>
+
+<span class="sd">        The iterator is recursive (that is, includes topic at given</span>
+<span class="sd">        line along with all its descendants).</span>
+
+<span class="sd">        Log warning when a topic is missing from the topics outline.</span>
+
+<span class="sd">        :param p_line: line of parent item of section.  Default</span>
+<span class="sd">            iterates over entire outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">items_section</span><span class="p">(</span><span class="n">p_line</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">topic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;Topics outline contains line with no topic (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                    <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">topic</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.test_bridge_ui &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.test_bridge_ui</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.test_bridge_ui</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for classes that encapsulates user interface classes from</span>
+<span class="sd">widget toolkit.  See :mod:`~.bridge_ui`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pytest</span>  <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_base</span> <span class="k">as</span> <span class="nn">BBASE</span>
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_outline</span> <span class="k">as</span> <span class="nn">BOUTLINE</span>
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_text</span> <span class="k">as</span> <span class="nn">BTEXT</span>
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+
+
+<div class="viewcode-block" id="TestBridgeTypes"><a class="viewcode-back" href="../../test/factsheet_test.test_bridge_ui.html#factsheet_test.test_bridge_ui.TestBridgeTypes">[docs]</a><span class="k">class</span> <span class="nc">TestBridgeTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for definitions of API classes and type hints in</span>
+<span class="sd">    :mod:`.bridge_ui`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBridgeTypes.test_types"><a class="viewcode-back" href="../../test/factsheet_test.test_bridge_ui.html#factsheet_test.test_bridge_ui.TestBridgeTypes.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">TimeEvent</span><span class="p">,</span> <span class="n">BBASE</span><span class="o">.</span><span class="n">TimeEvent</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ChooserOutline</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ChooserOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">FactoryChooserOutline</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">FactoryChooserOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">FactoryViewOutline</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">FactoryViewOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelOutlineSingle</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineSingle</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextStyled</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">DisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextStyled</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">EditorTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">,</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm API definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+
+
+<div class="viewcode-block" id="TestBridgeConstant"><a class="viewcode-back" href="../../test/factsheet_test.test_bridge_ui.html#factsheet_test.test_bridge_ui.TestBridgeConstant">[docs]</a><span class="k">class</span> <span class="nc">TestBridgeConstant</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for definitions of API classes and type hints in</span>
+<span class="sd">    :mod:`.bridge_ui`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBridgeConstant.test_constants"><a class="viewcode-back" href="../../test/factsheet_test.test_bridge_ui.html#factsheet_test.test_bridge_ui.TestBridgeConstant.test_constants">[docs]</a>    <span class="k">def</span> <span class="nf">test_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm constant definitions.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">BBASE</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span> <span class="o">==</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span>
+        <span class="k">assert</span> <span class="n">BUI</span><span class="o">.</span><span class="n">escape_text_markup</span> <span class="ow">is</span> <span class="n">BTEXT</span><span class="o">.</span><span class="n">escape_text_markup</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

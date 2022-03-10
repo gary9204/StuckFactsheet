@@ -1,0 +1,1134 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.bridge_gtk.test_bridge_outline &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.bridge_gtk.test_bridge_outline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.bridge_gtk.test_bridge_outline</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for bridge classes to encapsulate witget toolkit outline</span>
+<span class="sd">classes. See :mod:`.bridge_outline`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">dataclasses</span> <span class="k">as</span> <span class="nn">DC</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_outline</span> <span class="k">as</span> <span class="nn">BOUTLINE</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="TestFactoryChooserOutline"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline">[docs]</a><span class="k">class</span> <span class="nc">TestFactoryChooserOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FactoryChooserOutline`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFactoryChooserOutline.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline.test_init">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, TYPE_UI_MODEL&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">TYPE_UI_MODEL</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm storage initialization.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param TYPE_UI_MODEL: user interface model type for outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">outline</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">FactoryChooserOutline</span><span class="p">[</span><span class="n">TYPE_UI_MODEL</span><span class="p">,</span> <span class="n">PatchItem</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target_type</span><span class="p">(</span><span class="n">p_model_outline</span><span class="o">=</span><span class="n">outline</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">outline</span><span class="o">.</span><span class="n">ui_model</span></div>
+
+<div class="viewcode-block" id="TestFactoryChooserOutline.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline.test_call">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, TYPE_UI_MODEL&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">TYPE_UI_MODEL</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return is a view for choosing from model.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param TYPE_UI_MODEL: user interface model type for outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">outline</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">FactoryChooserOutline</span><span class="p">[</span><span class="n">TYPE_UI_MODEL</span><span class="p">,</span> <span class="n">PatchItem</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target_type</span><span class="p">(</span><span class="n">p_model_outline</span><span class="o">=</span><span class="n">outline</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">chooser</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chooser</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ComboBox</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">chooser</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="ow">is</span> <span class="n">outline</span><span class="o">.</span><span class="n">ui_model</span></div></div>
+
+
+<div class="viewcode-block" id="TestViewChooserOutline"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline">[docs]</a><span class="k">class</span> <span class="nc">TestViewChooserOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FactoryViewOutline`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestViewChooserOutline.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline.test_init">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, TYPE_UI_MODEL&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">TYPE_UI_MODEL</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm storage initialization.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param TYPE_UI_MODEL: user interface model type for outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">outline</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">FactoryViewOutline</span><span class="p">[</span><span class="n">TYPE_UI_MODEL</span><span class="p">,</span> <span class="n">PatchItem</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target_type</span><span class="p">(</span><span class="n">p_model_outline</span><span class="o">=</span><span class="n">outline</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">outline</span><span class="o">.</span><span class="n">ui_model</span></div>
+
+<div class="viewcode-block" id="TestViewChooserOutline.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline.test_call">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, TYPE_UI_MODEL&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">TYPE_UI_MODEL</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return is a view for outline.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param TYPE_UI_MODEL: user interface model type for outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">outline</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">FactoryViewOutline</span><span class="p">[</span><span class="n">TYPE_UI_MODEL</span><span class="p">,</span> <span class="n">PatchItem</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target_type</span><span class="p">(</span><span class="n">p_model_outline</span><span class="o">=</span><span class="n">outline</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">view</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="ow">is</span> <span class="n">outline</span><span class="o">.</span><span class="n">ui_model</span></div></div>
+
+
+<div class="viewcode-block" id="gtk_model_to_names"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.gtk_model_to_names">[docs]</a><span class="k">def</span> <span class="nf">gtk_model_to_names</span><span class="p">(</span><span class="n">p_model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return dictionary of names in a `Gtk.TreeModel`_ indexed by line.</span>
+
+<span class="sd">    :param p_model: model to extract names from.</span>
+
+<span class="sd">    .. _Gtk.TreeModel:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeModel.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">C_ITEM</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">persist</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">iter_section</span><span class="p">(</span><span class="n">p_model</span><span class="p">):</span>
+        <span class="n">path_str</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">get_string_from_iter</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">p_model</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">C_ITEM</span><span class="p">]</span>
+        <span class="n">persist</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">return</span> <span class="n">persist</span></div>
+
+
+<div class="viewcode-block" id="iter_section"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.iter_section">[docs]</a><span class="k">def</span> <span class="nf">iter_section</span><span class="p">(</span><span class="n">p_model</span><span class="p">,</span> <span class="n">p_it</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return iterator over all rows at or under a given row of</span>
+<span class="sd">    `Gtk.TreeModel`_.</span>
+
+<span class="sd">    :param p_model: model containing rows.</span>
+<span class="sd">    :param p_it: iterate over this row and all of its descendants.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">p_it</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">p_it</span>
+    <span class="n">it_child</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">iter_children</span><span class="p">(</span><span class="n">p_it</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">it_child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="n">iter_section</span><span class="p">(</span><span class="n">p_model</span><span class="p">,</span> <span class="n">it_child</span><span class="p">)</span>
+        <span class="n">it_child</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">iter_next</span><span class="p">(</span><span class="n">it_child</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="insert_snippet_children"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_children">[docs]</a><span class="k">def</span> <span class="nf">insert_snippet_children</span><span class="p">(</span><span class="n">p_model</span><span class="p">,</span> <span class="n">p_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Insert snippet into :data:`.UiModelOutlineMulti` at given path.</span>
+
+<span class="sd">    The snippet includes a line with children as shown below.</span>
+
+<span class="sd">        |     Item cxx</span>
+<span class="sd">        |         Item cax</span>
+<span class="sd">        |         Item cbx</span>
+
+<span class="sd">    The function places the snipppet as the last child of line at given</span>
+<span class="sd">    path.  If line is None, the snippet is placed at the end of the</span>
+<span class="sd">    outline.</span>
+
+<span class="sd">    :param p_model: model in which to insert snippet.</span>
+<span class="sd">    :param p_path: path to parent for snippet.</span>
+<span class="sd">    :returns: line of snippet root in model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">p_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item cxx&#39;</span><span class="p">,</span> <span class="s1">&#39;Children&#39;</span><span class="p">)</span>
+    <span class="n">i_cxx</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item cax&#39;</span><span class="p">,</span> <span class="s1">&#39;Children&#39;</span><span class="p">)</span>
+    <span class="n">_i_cax</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_cxx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item cbx&#39;</span><span class="p">,</span> <span class="s1">&#39;Children&#39;</span><span class="p">)</span>
+    <span class="n">_i_cbx</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_cxx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">i_cxx</span></div>
+
+
+<div class="viewcode-block" id="insert_snippet_multiple"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_multiple">[docs]</a><span class="k">def</span> <span class="nf">insert_snippet_multiple</span><span class="p">(</span><span class="n">p_model</span><span class="p">,</span> <span class="n">p_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Insert snippet into :data:`.UiModelOutlineMulti` at given path.</span>
+
+<span class="sd">    The snippet includes multiple levels as shown below.</span>
+
+<span class="sd">        | Item mxx</span>
+<span class="sd">        |     Item max</span>
+<span class="sd">        |         Item maa</span>
+<span class="sd">        |         Item mab</span>
+
+<span class="sd">    The function places the snipppet as the last child of line at given</span>
+<span class="sd">    path.  If line is None, the snippet is placed at the end of the</span>
+<span class="sd">    outline.</span>
+
+<span class="sd">    :param p_model: model in which to insert snippet.</span>
+<span class="sd">    :param p_path: path to parent for snippet.</span>
+<span class="sd">    :returns: line of snippet root in model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">p_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item mxx&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple&#39;</span><span class="p">)</span>
+    <span class="n">i_mxx</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item max&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple&#39;</span><span class="p">)</span>
+    <span class="n">i_max</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_mxx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item maa&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple&#39;</span><span class="p">)</span>
+    <span class="n">_i_maa</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_max</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item mab&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple&#39;</span><span class="p">)</span>
+    <span class="n">_i_mab</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_max</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">i_mxx</span></div>
+
+
+<div class="viewcode-block" id="insert_snippet_single"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_single">[docs]</a><span class="k">def</span> <span class="nf">insert_snippet_single</span><span class="p">(</span><span class="n">p_model</span><span class="p">,</span> <span class="n">p_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Insert snippet into :data:`.UiModelOutlineMulti` at given path.</span>
+
+<span class="sd">    The snippet includes a single line as shown below.</span>
+
+<span class="sd">        | Item sxx</span>
+
+<span class="sd">    The function places the snipppet as the last child of line at given</span>
+<span class="sd">    path.  If line is None, the snippet is placed at the end of the</span>
+<span class="sd">    outline.</span>
+
+<span class="sd">    :param p_model: model in which to insert snippet.</span>
+<span class="sd">    :param p_path: path to parent for snippet.</span>
+<span class="sd">    :returns: line of snippet root in model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">p_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item sxx&#39;</span><span class="p">,</span> <span class="s1">&#39;Single&#39;</span><span class="p">)</span>
+    <span class="n">i_sxx</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">i_sxx</span></div>
+
+
+<div class="viewcode-block" id="NAMES"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.NAMES">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">NAMES</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">new_names_model_multi</span><span class="p">,</span> <span class="n">new_names_model_single</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return names of items in outline.</span>
+
+<span class="sd">    :param request: built-in fixture `Pytest request`_ identifies type</span>
+<span class="sd">        of outline.</span>
+<span class="sd">    :param new_names_model_multi: fixture :func:`.new_names_model_multi`.</span>
+<span class="sd">    :param new_names_model_single: fixture :func:`.new_names_model_single`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Setup</span>
+    <span class="n">FACTORY</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">MULTI</span><span class="o">=</span><span class="n">new_names_model_multi</span><span class="p">,</span> <span class="n">SINGLE</span><span class="o">=</span><span class="n">new_names_model_single</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">FACTORY</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">]()</span>
+    <span class="k">return</span> <span class="n">names</span></div>
+
+
+<div class="viewcode-block" id="new_gtk_model_multi"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_gtk_model_multi</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return `Gtk.TreeStore`_ model factory.</span>
+
+<span class="sd">    The structure of each model is as shown below.</span>
+
+<span class="sd">        | Item 0xx</span>
+<span class="sd">        |     Item 00x</span>
+<span class="sd">        |         Item 000</span>
+<span class="sd">        |     Item 01x</span>
+<span class="sd">        | Item 1xx</span>
+<span class="sd">        |     Item 10x</span>
+<span class="sd">        |     Item 11x</span>
+<span class="sd">        |         Item 110</span>
+<span class="sd">        |         Item 111</span>
+<span class="sd">        |         Item 112</span>
+
+<span class="sd">    :param factory p_tag: identifies model (default is &#39;Target&#39;).</span>
+
+<span class="sd">    .. _`Gtk.TreeStore`:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeStore.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_model</span><span class="p">(</span><span class="n">p_tag</span><span class="o">=</span><span class="s1">&#39;Target&#39;</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeStore</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">TYPE_PYOBJECT</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 0xx&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">i_0xx</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 00x&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">i_00x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_0xx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 000&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">_i_000</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_00x</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 01x&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">i_0xx</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_0xx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 1xx&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">i_1xx</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 10x&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">_i_10x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_1xx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 11x&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">i_11x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_1xx</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 110&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">_i_110</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_11x</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 111&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">_i_111</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_11x</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item 112&#39;</span><span class="p">,</span> <span class="n">p_tag</span><span class="p">)</span>
+        <span class="n">_i_112</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_11x</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">return</span> <span class="n">new_model</span></div>
+
+
+<div class="viewcode-block" id="new_gtk_model_single"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_gtk_model_single</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return `Gtk.ListStore`_ model factory.</span>
+
+<span class="sd">    The structure of each model is as shown below.</span>
+
+<span class="sd">        | Item 0</span>
+<span class="sd">        | Item 1</span>
+<span class="sd">        | Item 2</span>
+<span class="sd">        | ...</span>
+
+<span class="sd">    :param factory p_n_items: number of items in model (default is 5).</span>
+<span class="sd">    :param factory p_tag: identifies model (default is &#39;Target&#39;).</span>
+
+<span class="sd">    .. _`Gtk.ListStore`:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ListStore.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_model</span><span class="p">(</span><span class="n">p_n_items</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">p_tag</span><span class="o">=</span><span class="s1">&#39;Target&#39;</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ListStore</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">TYPE_PYOBJECT</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p_n_items</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">p_tag</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">]</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">return</span> <span class="n">new_model</span></div>
+
+
+<div class="viewcode-block" id="new_names_model_multi"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_names_model_multi</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return factory for names in model returned by</span>
+<span class="sd">    :func:`.new_gtk_model_multi`.</span>
+
+<span class="sd">    This fixture primarily serves to validate test fixtures and</span>
+<span class="sd">    functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_names</span><span class="p">():</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 0xx&#39;</span><span class="p">,</span>            <span class="c1"># Position 0</span>
+            <span class="s1">&#39;0:0&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 00x&#39;</span><span class="p">,</span>          <span class="c1"># Position 1</span>
+            <span class="s1">&#39;0:0:0&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 000&#39;</span><span class="p">,</span>        <span class="c1"># Position 2</span>
+            <span class="s1">&#39;0:1&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 01x&#39;</span><span class="p">,</span>          <span class="c1"># Position 3</span>
+            <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 1xx&#39;</span><span class="p">,</span>            <span class="c1"># Position 4</span>
+            <span class="s1">&#39;1:0&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 10x&#39;</span><span class="p">,</span>          <span class="c1"># Position 5</span>
+            <span class="s1">&#39;1:1&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 11x&#39;</span><span class="p">,</span>          <span class="c1"># Position 6</span>
+            <span class="s1">&#39;1:1:0&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 110&#39;</span><span class="p">,</span>        <span class="c1"># Position 7</span>
+            <span class="s1">&#39;1:1:1&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 111&#39;</span><span class="p">,</span>        <span class="c1"># Position 8</span>
+            <span class="s1">&#39;1:1:2&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 112&#39;</span><span class="p">,</span>        <span class="c1"># Position 9</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="k">return</span> <span class="n">new_names</span></div>
+
+
+<div class="viewcode-block" id="new_names_model_single"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_names_model_single</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return factory for names in model returned by</span>
+<span class="sd">    :func:`.new_gtk_model_single`.</span>
+
+<span class="sd">    This fixture primarily serves to validate test fixtures and</span>
+<span class="sd">    functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_names</span><span class="p">():</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;2&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;3&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 3&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;4&#39;</span><span class="p">:</span> <span class="s1">&#39;Item 4&#39;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="k">return</span> <span class="n">new_names</span></div>
+
+
+<div class="viewcode-block" id="new_patch_multi"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_patch_multi</span><span class="p">(</span><span class="n">new_gtk_model_multi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return factory for multi-level outlines.</span>
+
+<span class="sd">    Each outline is patched with non-empty model.</span>
+
+<span class="sd">    :param new_gtk_model_multi: fixture :func:`.new_gtk_model_multi`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_multi</span><span class="p">():</span>
+        <span class="n">outline</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">[</span><span class="n">PatchItem</span><span class="p">]()</span>
+        <span class="n">outline</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">new_gtk_model_multi</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">outline</span>
+
+    <span class="k">return</span> <span class="n">new_multi</span></div>
+
+
+<div class="viewcode-block" id="new_patch_single"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_patch_single</span><span class="p">(</span><span class="n">new_gtk_model_single</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return factory for single-level outlines.</span>
+
+<span class="sd">    Each outline is patched with non-empty model.</span>
+
+<span class="sd">    :param new_gtk_model_single: fixture :func:`.new_gtk_model_single`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_single</span><span class="p">():</span>
+        <span class="n">outline</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineSingle</span><span class="p">[</span><span class="n">PatchItem</span><span class="p">]()</span>
+        <span class="n">outline</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">new_gtk_model_single</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">outline</span>
+
+    <span class="k">return</span> <span class="n">new_single</span></div>
+
+
+<div class="viewcode-block" id="PatchItem"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.PatchItem">[docs]</a><span class="nd">@DC</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">PatchItem</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Placeholder item class for unit tests.</span>
+
+<span class="sd">    :param name: name to identify an item.</span>
+<span class="sd">    :param tag: string to identify all items in a section or model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Target&#39;</span></div>
+
+
+<div class="viewcode-block" id="TestCheckFixtures"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures">[docs]</a><span class="k">class</span> <span class="nc">TestCheckFixtures</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests to check test fixtures and test module functions.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestCheckFixtures.test_model_multi"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures.test_model_multi">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_gtk_model_multi</span><span class="p">,</span> <span class="n">new_names_model_multi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm multi-level model structure and content.</span>
+
+<span class="sd">        :param new_gtk_model_multi: fixture :func:`.new_gtk_model_multi`.</span>
+<span class="sd">        :param new_names_model_multi: fixture :func:`.new_names_model_multi`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">new_gtk_model_multi</span><span class="p">()</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">new_names_model_multi</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">gtk_model_to_names</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">names</span> <span class="o">==</span> <span class="n">target</span></div>
+
+<div class="viewcode-block" id="TestCheckFixtures.test_model_single"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures.test_model_single">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_single</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_gtk_model_single</span><span class="p">,</span> <span class="n">new_names_model_single</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm single-level model structure and content.</span>
+
+<span class="sd">        :param new_gtk_model_single: fixture :func:`.new_gtk_model_single`.</span>
+<span class="sd">        :param new_names_model_single: fixture :func:`.new_names_model_single`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">new_gtk_model_single</span><span class="p">()</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">new_names_model_single</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">gtk_model_to_names</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">names</span> <span class="o">==</span> <span class="n">target</span></div></div>
+
+
+<div class="viewcode-block" id="TestModelOutline"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline">[docs]</a><span class="k">class</span> <span class="nc">TestModelOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ModelOutline`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModelOutline.test_method_abstract"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_method_abstract">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;CLASS, NAME_METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutline</span><span class="p">,</span> <span class="s1">&#39;insert_after&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutline</span><span class="p">,</span> <span class="s1">&#39;insert_before&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutline</span><span class="p">,</span> <span class="s1">&#39;lines&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutline</span><span class="p">,</span> <span class="s1">&#39;_set_persist&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_method_abstract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm each abstract method is specified.</span>
+
+<span class="sd">        :param CLASS: abstract class under test.</span>
+<span class="sd">        :param NAME_METHOD: confirm method with this name is abstract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_METHOD</span> <span class="ow">in</span> <span class="n">CLASS</span><span class="o">.</span><span class="n">__abstractmethods__</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_init">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBCLASS, MODEL&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">[</span><span class="n">PatchItem</span><span class="p">],</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineSingle</span><span class="p">[</span><span class="n">PatchItem</span><span class="p">],</span>
+            <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBCLASS</span><span class="p">,</span> <span class="n">MODEL</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization for each subclass.</span>
+
+<span class="sd">        :param SUBCLASS: outline model subclass under test.</span>
+<span class="sd">        :param MODEL: GTK model for outline model subclass under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">C_ITEM</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">C_ITEM</span> <span class="o">==</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutline</span><span class="o">.</span><span class="n">C_ITEM</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBCLASS</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">MODEL</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_clear"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_clear">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;MULTI&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all lines removed from outline.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_get_item"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_item">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, LINE, NAME&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 0xx&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;1:0&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 10x&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;1:1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 111&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 0&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 4&#39;</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">LINE</span><span class="p">,</span> <span class="n">NAME</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all lines removed from outline.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param LINE: path to line containing item to get.</span>
+<span class="sd">        :param NAME: name in item to get.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">LINE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_get_item_direct"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_item_direct">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, LINE, NAME&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 1xx&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;0:1&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 01x&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;0:0:0&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 000&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 0&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;Item 4&#39;</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_get_item_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">LINE</span><span class="p">,</span> <span class="n">NAME</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all lines removed from outline.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param LINE: path to line containing item to get.</span>
+<span class="sd">        :param NAME: name in item to get.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">LINE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_item_direct</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_get_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_persist">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, NAMES&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm iterator over lines.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param NAME: fixture that returns names of items in outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="c1"># Test</span>
+        <span class="n">persist</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="n">names_persist</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="ow">in</span> <span class="n">persist</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">assert</span> <span class="n">NAMES</span> <span class="o">==</span> <span class="n">names_persist</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_items"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_items">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, NAMES&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm iterator over items.</span>
+
+<span class="sd">        :param SUBCLASS: identifies outline model subclass under test.</span>
+<span class="sd">        :param NAME: fixture that returns names of items in outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">names_expect</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">NAMES</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="c1"># Test</span>
+        <span class="n">names_item</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="k">assert</span> <span class="n">names_expect</span> <span class="o">==</span> <span class="n">names_item</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_lines"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_lines">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, NAMES&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm iterator over lines.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param NAME: fixture that returns names of items in outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">paths_str_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">NAMES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="c1"># Test</span>
+        <span class="n">paths_str_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">get_string_from_iter</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">lines</span><span class="p">()]</span>
+        <span class="k">assert</span> <span class="n">paths_str_names</span> <span class="o">==</span> <span class="n">paths_str_lines</span></div>
+
+<div class="viewcode-block" id="TestModelOutline.test_remove"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_remove">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SUBTYPE, NAMES, PATH, BEGIN, END&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;0:0&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;MULTI&#39;</span><span class="p">,</span> <span class="s1">&#39;1:1:1&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SINGLE&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SUBTYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;NAMES&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SUBTYPE</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">,</span> <span class="n">PATH</span><span class="p">,</span> <span class="n">BEGIN</span><span class="p">,</span> <span class="n">END</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm section removal.</span>
+
+<span class="sd">        :param SUBTYPE: identifies outline model subclass under test.</span>
+<span class="sd">        :param NAME: fixture that returns names of items in outline.</span>
+<span class="sd">        :param PATH: path for line to remove.</span>
+<span class="sd">        :param BEGIN: slice [BEGIN:END) contains names of lines removed.</span>
+<span class="sd">        :param END: slice [BEGIN:END) contains names of lines removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">names_before</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">NAMES</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">names_after</span> <span class="o">=</span> <span class="n">names_before</span><span class="p">[:</span><span class="n">BEGIN</span><span class="p">]</span> <span class="o">+</span> <span class="n">names_before</span><span class="p">[</span><span class="n">END</span><span class="p">:]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SUBTYPE</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">PATH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">names_target</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Expect: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">names_after</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Actual: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">names_target</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">names_after</span> <span class="o">==</span> <span class="n">names_target</span></div></div>
+
+
+<div class="viewcode-block" id="TestModelOutlineMulti"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti">[docs]</a><span class="k">class</span> <span class="nc">TestModelOutlineMulti</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ModelOutlineMulti`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModelOutlineMulti.test_insert"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD, PATH, POSITION, PATH_NEW&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;insert_after&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_after&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_after&#39;</span><span class="p">,</span> <span class="s1">&#39;1:0&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;1:1&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_after&#39;</span><span class="p">,</span> <span class="s1">&#39;1:1:2&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;1:1:3&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_before&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_before&#39;</span><span class="p">,</span> <span class="s1">&#39;0:1&#39;</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;0:1&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_before&#39;</span><span class="p">,</span> <span class="s1">&#39;1:1:0&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span>  <span class="s1">&#39;1:1:0&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_before&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_child&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;0:2&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_child&#39;</span><span class="p">,</span> <span class="s1">&#39;0:0&#39;</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;0:0:1&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_child&#39;</span><span class="p">,</span> <span class="s1">&#39;1:1:1&#39;</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;1:1:1:0&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;insert_child&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_multi</span><span class="p">,</span> <span class="n">new_names_model_multi</span><span class="p">,</span>
+                    <span class="n">METHOD</span><span class="p">,</span> <span class="n">PATH</span><span class="p">,</span> <span class="n">POSITION</span><span class="p">,</span> <span class="n">PATH_NEW</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm item insertion.</span>
+
+<span class="sd">        :param new_patch_multi: fixture :func:`.new_patch_multi`.</span>
+<span class="sd">        :param new_names_model_multi: fixture</span>
+<span class="sd">            :func:`.new_names_model_multi`.</span>
+<span class="sd">        :param METHOD: insert method under test.</span>
+<span class="sd">        :param PATH: path for line after which to insert item.</span>
+<span class="sd">        :param POSITION: position of new name in list of names.</span>
+<span class="sd">        :param PATH_NEW: path for line containing new item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">insert_target</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">ITEM_NEW</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item New&#39;</span><span class="p">,</span> <span class="s1">&#39;Inserted&#39;</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_names_model_multi</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span> <span class="n">ITEM_NEW</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">PATH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">line_new</span> <span class="o">=</span> <span class="n">insert_target</span><span class="p">(</span><span class="n">ITEM_NEW</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ITEM_NEW</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line_new</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PATH_NEW</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">get_string_from_iter</span><span class="p">(</span><span class="n">line_new</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">names</span> <span class="o">==</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="TestModelOutlineMulti.test_insert_section"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert_section">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SNIPPET, PATH_SOURCE, PATH_TARGET&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">insert_snippet_children</span><span class="p">,</span> <span class="s1">&#39;0:0:0&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">insert_snippet_multiple</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;1:0&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">insert_snippet_single</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_insert_section</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_multi</span><span class="p">,</span> <span class="n">SNIPPET</span><span class="p">,</span> <span class="n">PATH_SOURCE</span><span class="p">,</span> <span class="n">PATH_TARGET</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm insertion of sections with representative structures.</span>
+<span class="sd">        | Case: section is part of source outline.</span>
+
+<span class="sd">        :param SNIPPET: funtion that returns section to copy.</span>
+<span class="sd">        :param PATH_SOURCE: path to parent of snippet in source.</span>
+<span class="sd">        :param PATH_TARGET: path in parent of section copy in target.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">line_section</span> <span class="o">=</span> <span class="n">SNIPPET</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">PATH_SOURCE</span><span class="p">)</span>
+        <span class="n">expect</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">SNIPPET</span><span class="p">(</span><span class="n">expect</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">PATH_TARGET</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">line_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">PATH_TARGET</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line_parent</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH_TARGET</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">insert_section</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">line_parent</span><span class="p">,</span> <span class="n">line_section</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">expect</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelOutlineMulti.test_insert_section_all"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert_section_all">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SNIPPET, PATH_TARGET&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">insert_snippet_children</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">insert_snippet_multiple</span><span class="p">,</span> <span class="s1">&#39;0:0:0&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">insert_snippet_single</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_insert_section_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_multi</span><span class="p">,</span> <span class="n">SNIPPET</span><span class="p">,</span> <span class="n">PATH_TARGET</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm insertion of sections with representative structures.</span>
+<span class="sd">        | Case: section is all of source outline.</span>
+
+<span class="sd">        :param SNIPPET: funtion that returns section to copy.</span>
+<span class="sd">        :param PATH_TARGET: path in parent of section copy in target.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">()</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">SNIPPET</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">line_section</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">expect</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">SNIPPET</span><span class="p">(</span><span class="n">expect</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">PATH_TARGET</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">line_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">PATH_TARGET</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line_parent</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH_TARGET</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">insert_section</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">line_parent</span><span class="p">,</span> <span class="n">line_section</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">expect</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestModelOutlineMulti.test_lines_section"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_lines_section">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ROOT, BEGIN, END&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;0:0&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;1:1:0&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_lines_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_multi</span><span class="p">,</span> <span class="n">new_names_model_multi</span><span class="p">,</span>
+                           <span class="n">ROOT</span><span class="p">,</span> <span class="n">BEGIN</span><span class="p">,</span> <span class="n">END</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm iterator over lines in section.</span>
+
+<span class="sd">        :param ROOT: path to root line of section.</span>
+<span class="sd">        :param END: slice [BEGIN:END) contains names of lines in section.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">ROOT</span><span class="p">)</span>
+        <span class="n">paths_str</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_names_model_multi</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">paths_str_section</span> <span class="o">=</span> <span class="n">paths_str</span><span class="p">[</span><span class="n">BEGIN</span><span class="p">:</span><span class="n">END</span><span class="p">]</span>
+        <span class="c1"># Test</span>
+        <span class="n">paths_str_line</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">get_string_from_iter</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">lines_section</span><span class="p">(</span><span class="n">root</span><span class="p">)]</span>
+        <span class="k">assert</span> <span class="n">paths_str_section</span> <span class="o">==</span> <span class="n">paths_str_line</span></div>
+
+<div class="viewcode-block" id="TestModelOutlineMulti.test_set_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_set_persist">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_multi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm import from persistent form.</span>
+
+<span class="sd">        :param new_patch_multi: fixture :func:`.new_patch_multi`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">new_patch_multi</span><span class="p">()</span>
+        <span class="n">persist</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">persist</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">persist</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestModelOutlineSingle"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle">[docs]</a><span class="k">class</span> <span class="nc">TestModelOutlineSingle</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ModelOutlineSingle`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModelOutlineSingle.test_insert_after"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_insert_after">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;AFTER&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_insert_after</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_single</span><span class="p">,</span> <span class="n">new_names_model_single</span><span class="p">,</span> <span class="n">AFTER</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm item insertion.</span>
+
+<span class="sd">        :param new_patch_single: fixture :func:`.new_patch_single`.</span>
+<span class="sd">        :param new_names_model_single: fixture</span>
+<span class="sd">            :func:`.new_names_model_single`.</span>
+<span class="sd">        :param AFTER: position after which to insert item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_patch_single</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">ITEM_NEW</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item New&#39;</span><span class="p">,</span> <span class="s1">&#39;Inserted&#39;</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_names_model_single</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">AFTER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">AFTER</span><span class="p">)</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">AFTER</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">ITEM_NEW</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">line_new</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">ITEM_NEW</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ITEM_NEW</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line_new</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">names</span> <span class="o">==</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="TestModelOutlineSingle.test_insert_before"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_insert_before">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;BEFORE&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_insert_before</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_single</span><span class="p">,</span> <span class="n">new_names_model_single</span><span class="p">,</span> <span class="n">BEFORE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm item insertion.</span>
+
+<span class="sd">        :param new_patch_single: fixture :func:`.new_patch_single`.</span>
+<span class="sd">        :param new_names_model_single: fixture</span>
+<span class="sd">            :func:`.new_names_model_single`.</span>
+<span class="sd">        :param BEFORE: position before which to insert item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_patch_single</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">ITEM_NEW</span> <span class="o">=</span> <span class="n">PatchItem</span><span class="p">(</span><span class="s1">&#39;Item New&#39;</span><span class="p">,</span> <span class="s1">&#39;Inserted&#39;</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_names_model_single</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">BEFORE</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">BEFORE</span><span class="p">)</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">BEFORE</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">ITEM_NEW</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">line_new</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">ITEM_NEW</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ITEM_NEW</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line_new</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">names</span> <span class="o">==</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="TestModelOutlineSingle.test_set_persist"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_set_persist">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_patch_single</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm import from persistent form.</span>
+
+<span class="sd">        :param new_patch_single: fixture :func:`.new_patch_single`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">new_patch_single</span><span class="p">()</span>
+        <span class="n">persist</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ModelOutlineSingle</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">persist</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">persist</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div></div>
+
+
+<span class="c1"># @pytest.mark.skip(reason=&#39;Refactor in progress&#39;)</span>
+<span class="c1"># class TestBridgeOutlineColumnar:</span>
+<span class="c1">#     &quot;&quot;&quot;Unit tests for :class:`~.BridgeOutlineColumnar`.&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def test_new_view(self):</span>
+<span class="c1">#         &quot;&quot;&quot;Confirm view element.&quot;&quot;&quot;</span>
+<span class="c1">#         # Setup</span>
+<span class="c1">#         target = BOUTLINE.BridgeOutlineColumnar()</span>
+<span class="c1">#         # Test</span>
+<span class="c1">#         view = target.new_view()</span>
+<span class="c1">#         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)</span>
+<span class="c1">#         assert target._model is view.get_model()</span>
+
+
+<span class="c1"># @pytest.mark.skip(reason=&#39;Refactor in progress&#39;)</span>
+<span class="c1"># class TestBridgeOutlineSelect:</span>
+<span class="c1">#     &quot;&quot;&quot;Unit tests for :class:`~.BridgeOutlineSelect`.&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def test_new_view(self):</span>
+<span class="c1">#         &quot;&quot;&quot;Confirm view element.&quot;&quot;&quot;</span>
+<span class="c1">#         # Setup</span>
+<span class="c1">#         target = BOUTLINE.BridgeOutlineSelect()</span>
+<span class="c1">#         # Test</span>
+<span class="c1">#         view = target.new_view()</span>
+<span class="c1">#         assert isinstance(view, BOUTLINE.ViewOutlineSelect)</span>
+<span class="c1">#         assert target._model is view.get_model()</span>
+
+
+<span class="c1"># @pytest.mark.skip(reason=&#39;Refactor in progress&#39;)</span>
+<span class="c1"># class TestBridgeOutlineMultiColumnar:</span>
+<span class="c1">#     &quot;&quot;&quot;Unit tests for :class:`~.BridgeOutlineMultiColumnar`.&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def test_new_view(self):</span>
+<span class="c1">#         &quot;&quot;&quot;Confirm view element.&quot;&quot;&quot;</span>
+<span class="c1">#         # Setup</span>
+<span class="c1">#         target = BOUTLINE.BridgeOutlineMultiColumnar()</span>
+<span class="c1">#         # Test</span>
+<span class="c1">#         view = target.new_view()</span>
+<span class="c1">#         assert isinstance(view, BOUTLINE.ViewOutlineColumnar)</span>
+<span class="c1">#         assert target._model is view.get_model()</span>
+
+
+<span class="c1"># @pytest.mark.skip(reason=&#39;Refactor in progress&#39;)</span>
+<span class="c1"># class TestBridgeOutlineMultiSelect:</span>
+<span class="c1">#     &quot;&quot;&quot;Unit tests for :class:`~.BridgeOutlineMultiSelect`.&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def test_new_view(self):</span>
+<span class="c1">#         &quot;&quot;&quot;Confirm view element.&quot;&quot;&quot;</span>
+<span class="c1">#         # Setup</span>
+<span class="c1">#         target = BOUTLINE.BridgeOutlineMultiSelect()</span>
+<span class="c1">#         # Test</span>
+<span class="c1">#         view = target.new_view()</span>
+<span class="c1">#         assert isinstance(view, BOUTLINE.ViewOutlineSelect)</span>
+<span class="c1">#         assert target._model is view.get_model()</span>
+
+
+<div class="viewcode-block" id="TestBridgeOutlineTypes"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestBridgeOutlineTypes">[docs]</a><span class="k">class</span> <span class="nc">TestBridgeOutlineTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for definitions of API classes and type hints in</span>
+<span class="sd">    :mod:`.bridge_outline`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBridgeOutlineTypes.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.TestBridgeOutlineTypes.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ChooserOutline</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ComboBox</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeIter</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">PersistOutline</span><span class="p">,</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ItemOpaque</span><span class="p">]),</span>
+        <span class="c1"># (BOUTLINE.UiModelOutline, Gtk.TreeModel),</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutline</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutline</span><span class="o">.</span><span class="n">__constraints__</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">,</span> <span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineMulti</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeStore</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">UiModelOutlineSingle</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ListStore</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BOUTLINE</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type hint definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+
+
+<div class="viewcode-block" id="SUBTYPE"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_outline.html#factsheet_test.bridge_gtk.test_bridge_outline.SUBTYPE">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">SUBTYPE</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">new_patch_multi</span><span class="p">,</span> <span class="n">new_patch_single</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return outline of type identified in request.</span>
+
+<span class="sd">    :param request: built-in fixture `Pytest request`_.</span>
+<span class="sd">    :param new_patch_multi: fixture :func:`.new_patch_multi`.</span>
+<span class="sd">    :param new_patch_single: fixture :func:`.new_patch_single`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FACTORY</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">MULTI</span><span class="o">=</span><span class="n">new_patch_multi</span><span class="p">,</span> <span class="n">SINGLE</span><span class="o">=</span><span class="n">new_patch_single</span><span class="p">)</span>
+    <span class="n">outline</span> <span class="o">=</span> <span class="n">FACTORY</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">]()</span>
+    <span class="k">return</span> <span class="n">outline</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

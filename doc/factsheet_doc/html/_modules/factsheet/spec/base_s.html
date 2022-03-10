@@ -1,0 +1,1218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.spec.base_s &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.spec.base_s</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.spec.base_s</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines base classes for topic specification.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># import abc</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.ui</span> <span class="k">as</span> <span class="nn">UI</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_markup</span> <span class="k">as</span> <span class="nn">VMARKUP</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.SBASE&#39;</span><span class="p">)</span>
+
+<span class="n">NameSpec</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span>
+<span class="n">PageAssist</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">]</span>
+<span class="n">SummarySpec</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span>
+<span class="n">TitleSpec</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span>
+
+
+<div class="viewcode-block" id="Base"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base">[docs]</a><span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Base spec for Factsheet topics.</span>
+
+<span class="sd">    A spec provides a user the means to create a class of topics.  A</span>
+<span class="sd">    spec embodies a template for the class.  It queries the user to</span>
+<span class="sd">    complete the template for a specific topic.  The spec also queries</span>
+<span class="sd">    the user of the location of the new topic in the Factsheet&#39;s</span>
+<span class="sd">    outline of topics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Base.__call__"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Orchestrate creation and placement of new topic.</span>
+
+<span class="sd">        The user specializes the specification to create the topic.  The</span>
+<span class="sd">        user may confirm or cancel the topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_pages</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_assistant</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assist</span><span class="p">)</span>
+        <span class="c1"># construct topic (or exit)</span>
+        <span class="c1"># place topic (or exit)</span>
+        <span class="c1"># Issue #245: patch pending completion of assistant</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;New Topic&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Name:    </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_topic</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Summary: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_summary_topic</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Title:   </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_title_topic</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">value_name</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Response: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">p_summary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">p_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize spec identity and topic identity including location.</span>
+
+<span class="sd">        :param p_name: name of specification.</span>
+<span class="sd">        :param p_summary: description of specification.</span>
+<span class="sd">        :param p_title: descriptive title for specification.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_spec</span> <span class="o">=</span> <span class="n">NameSpec</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary_spec</span> <span class="o">=</span> <span class="n">SummarySpec</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_summary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_spec</span> <span class="o">=</span> <span class="n">TitleSpec</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">p_title</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_name_topic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_summary_topic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_title_topic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_init_name_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Initialize attributes for a topic name and view factories.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Name</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_name_topic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayName</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_topic</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_editor_name_topic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorName</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_topic</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_init_summary_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Initialize attributes for a topic summary and view factories.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary_topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Summary</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_summary_topic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_summary_topic</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_editor_summary_topic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorSummary</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_summary_topic</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_init_title_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Initialize attributes for a topic title and view factories.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Title</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_title_topic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayTitle</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title_topic</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_editor_title_topic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorTitle</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title_topic</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Base.add_pages"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.add_pages">[docs]</a>    <span class="k">def</span> <span class="nf">add_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add pages to assistant.</span>
+
+<span class="sd">        :param p_assistant: assistant to populate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">append_page_intro</span><span class="p">(</span><span class="n">p_assistant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">append_page_identify</span><span class="p">(</span><span class="n">p_assistant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">append_page_confirm</span><span class="p">(</span><span class="n">p_assistant</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Base.append_page_confirm"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.append_page_confirm">[docs]</a>    <span class="k">def</span> <span class="nf">append_page_confirm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Append confirmation page to assistant.</span>
+
+<span class="sd">        :param p_assistant: assistant to append to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">confirm_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">()</span>
+        <span class="n">confirm_display_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_summary_topic</span><span class="p">()</span>
+        <span class="n">confirm_display_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">()</span>
+        <span class="n">page_confirm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_page_confirm</span><span class="p">(</span><span class="n">confirm_display_name</span><span class="p">,</span>
+                                             <span class="n">confirm_display_summary</span><span class="p">,</span>
+                                             <span class="n">confirm_display_title</span><span class="p">)</span>
+        <span class="n">_i_new</span> <span class="o">=</span> <span class="n">p_assistant</span><span class="o">.</span><span class="n">append_page</span><span class="p">(</span><span class="n">page_confirm</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_title</span><span class="p">(</span><span class="n">page_confirm</span><span class="p">,</span> <span class="s1">&#39;Confirm&#39;</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_type</span><span class="p">(</span><span class="n">page_confirm</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">AssistantPageType</span><span class="o">.</span><span class="n">CONFIRM</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_complete</span><span class="p">(</span><span class="n">page_confirm</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Base.append_page_identify"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.append_page_identify">[docs]</a>    <span class="k">def</span> <span class="nf">append_page_identify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Append identify page to assistant.</span>
+
+<span class="sd">        :param p_assistant: assistant to append to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">identify_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">()</span>
+        <span class="n">identify_editor_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_editor_name_topic</span><span class="p">()</span>
+        <span class="n">identify_view_name</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span>
+            <span class="n">identify_display_name</span><span class="p">,</span> <span class="n">identify_editor_name</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+        <span class="n">identify_editor_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_editor_summary_topic</span><span class="p">()</span>
+        <span class="n">identify_display_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">()</span>
+        <span class="n">identify_editor_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_editor_title_topic</span><span class="p">()</span>
+        <span class="n">identify_view_title</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span>
+            <span class="n">identify_display_title</span><span class="p">,</span> <span class="n">identify_editor_title</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">)</span>
+        <span class="n">page_identify</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_page_identify</span><span class="p">(</span>
+            <span class="n">identify_view_name</span><span class="p">,</span> <span class="n">identify_editor_summary</span><span class="p">,</span> <span class="n">identify_view_title</span><span class="p">)</span>
+        <span class="n">_i_new</span> <span class="o">=</span> <span class="n">p_assistant</span><span class="o">.</span><span class="n">append_page</span><span class="p">(</span><span class="n">page_identify</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_title</span><span class="p">(</span><span class="n">page_identify</span><span class="p">,</span> <span class="s1">&#39;Identify&#39;</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_type</span><span class="p">(</span><span class="n">page_identify</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">AssistantPageType</span><span class="o">.</span><span class="n">CONTENT</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_complete</span><span class="p">(</span><span class="n">page_identify</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Base.append_page_intro"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.append_page_intro">[docs]</a>    <span class="k">def</span> <span class="nf">append_page_intro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Append introduction page to assistant.</span>
+
+<span class="sd">        :param p_assistant: assistant to append to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">page_intro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_page_intro</span><span class="p">()</span>
+        <span class="n">_i_new</span> <span class="o">=</span> <span class="n">p_assistant</span><span class="o">.</span><span class="n">append_page</span><span class="p">(</span><span class="n">page_intro</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_title</span><span class="p">(</span><span class="n">page_intro</span><span class="p">,</span> <span class="s1">&#39;Introduction&#39;</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_type</span><span class="p">(</span><span class="n">page_intro</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">AssistantPageType</span><span class="o">.</span><span class="n">INTRO</span><span class="p">)</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">set_page_complete</span><span class="p">(</span><span class="n">page_intro</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Base.add_page_locate"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.add_page_locate">[docs]</a>    <span class="k">def</span> <span class="nf">add_page_locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assist</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;TBD&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NameSpec</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return spec name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_spec</span>
+
+<div class="viewcode-block" id="Base.new_assistant"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.new_assistant">[docs]</a>    <span class="k">def</span> <span class="nf">new_assistant</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return an assistant from user interface definition.&quot;&quot;&quot;</span>
+        <span class="n">get_ui_object</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="n">UI_ASSIST</span><span class="p">)</span>
+        <span class="n">assist</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_assistant&#39;</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">assist</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;apply&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_apply</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">assist</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;cancel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_cancel</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">assist</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_cancel</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">assist</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;prepare&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_prepare</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">assist</span></div>
+
+<div class="viewcode-block" id="Base.new_page_confirm"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.new_page_confirm">[docs]</a>    <span class="k">def</span> <span class="nf">new_page_confirm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_display_name</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">DisplayName</span><span class="p">,</span>
+                         <span class="n">p_display_summary</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">DisplaySummary</span><span class="p">,</span>
+                         <span class="n">p_display_title</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">DisplayTitle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PageAssist</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a confirmation page.</span>
+
+<span class="sd">        :param p_display_name: display for topic name.</span>
+<span class="sd">        :param p_display_summary: display for topic summary.</span>
+<span class="sd">        :param p_display_title: display for topic title.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_ui_object</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="n">UI_PAGE_CONFIRM</span><span class="p">)</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_page_confirm&#39;</span><span class="p">)</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">site_name</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_confirm_site_name&#39;</span><span class="p">)</span>
+        <span class="n">site_name</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">p_display_name</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+        <span class="n">site_summary</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_confirm_site_summary&#39;</span><span class="p">)</span>
+        <span class="n">site_summary</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p_display_summary</span><span class="p">)</span>
+        <span class="n">site_title</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_confirm_site_title&#39;</span><span class="p">)</span>
+        <span class="n">site_title</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">p_display_title</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_page</span></div>
+
+<div class="viewcode-block" id="Base.new_page_identify"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.new_page_identify">[docs]</a>    <span class="k">def</span> <span class="nf">new_page_identify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_view_name</span><span class="p">:</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">,</span>
+                          <span class="n">p_editor_summary</span><span class="p">:</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">EditorSummary</span><span class="p">,</span>
+                          <span class="n">p_view_title</span><span class="p">:</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PageAssist</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return an identification page.</span>
+
+<span class="sd">        :param p_view_name: view to display and edit topic name.</span>
+<span class="sd">        :param p_editor_summary: view to display and edit topic summary.</span>
+<span class="sd">        :param p_view_title: view to display and edit topic title.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_ui_object</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="n">UI_PAGE_IDENTIFY</span><span class="p">)</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_page_identify&#39;</span><span class="p">)</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">site_name</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_identify_site_name&#39;</span><span class="p">)</span>
+        <span class="n">site_name</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">p_view_name</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+        <span class="n">site_summary</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_identify_site_summary&#39;</span><span class="p">)</span>
+        <span class="n">site_summary</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p_editor_summary</span><span class="p">)</span>
+        <span class="n">site_title</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_identify_site_title&#39;</span><span class="p">)</span>
+        <span class="n">site_title</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">p_view_title</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_page</span></div>
+
+<div class="viewcode-block" id="Base.new_page_intro"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.new_page_intro">[docs]</a>    <span class="k">def</span> <span class="nf">new_page_intro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PageAssist</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return an introduction page.&quot;&quot;&quot;</span>
+        <span class="n">get_ui_object</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="n">UI_PAGE_INTRO</span><span class="p">)</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">get_ui_object</span><span class="p">(</span><span class="s1">&#39;ui_page_intro&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_page</span></div>
+
+<div class="viewcode-block" id="Base.on_apply"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.on_apply">[docs]</a>    <span class="k">def</span> <span class="nf">on_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Hide assistant and record user confirmed new topic.</span>
+
+<span class="sd">        Recording user&#39;s response unblocks call method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">p_assistant</span>  <span class="c1"># Unused in base method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span></div>
+
+<div class="viewcode-block" id="Base.on_cancel"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.on_cancel">[docs]</a>    <span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Hide assistant and record user cancelled new topic.</span>
+
+<span class="sd">        Recording user&#39;s response unblocks call method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">p_assistant</span>  <span class="c1"># Unused in base method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span></div>
+
+<div class="viewcode-block" id="Base.on_prepare"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.on_prepare">[docs]</a>    <span class="k">def</span> <span class="nf">on_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">,</span> <span class="n">p_page</span><span class="p">:</span> <span class="n">PageAssist</span><span class="p">,</span>
+                   <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prepare page contents for presentation in assistant.</span>
+
+<span class="sd">        :param p_assistant: assistant presenting page.</span>
+<span class="sd">        :param p_page: page to present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">p_assistant</span>  <span class="c1"># Unused in base method</span>
+        <span class="n">p_page</span><span class="o">.</span><span class="n">show_all</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Base.run_assistant"><a class="viewcode-back" href="../../../src/factsheet.spec.base_s.html#factsheet.spec.base_s.Base.run_assistant">[docs]</a>    <span class="k">def</span> <span class="nf">run_assistant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Present assistant to the user and wait for user&#39;s responses.</span>
+
+<span class="sd">        The user navigates the assistant and fills in assistant&#39;s</span>
+<span class="sd">        fields.  The user may confirm or cancel their selections.</span>
+
+<span class="sd">        :param p_assistant: assistant to present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">main_iteration</span><span class="p">()</span>
+        <span class="n">p_assistant</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SummarySpec</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return spec summary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_spec</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TitleSpec</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return spec title.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title_spec</span></div>
+
+
+<span class="n">g_spec_basic</span> <span class="o">=</span> <span class="n">Base</span><span class="p">(</span>
+    <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;Basic&#39;</span><span class="p">,</span>
+    <span class="n">p_summary</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Lets you customize the Topics outline of a Factsheet. &#39;</span>
+               <span class="s1">&#39;A Basic topic has a name, title, and summary, but no facts. &#39;</span>
+               <span class="s1">&#39;Specify a Basic topic to add a note to the Topics outline. &#39;</span>
+               <span class="s1">&#39;Also, you may group topics within the outline by adding a &#39;</span>
+               <span class="s1">&#39;Basic topic and then adding or moving topics underneath it. &#39;</span>
+               <span class="p">),</span>
+    <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;Basic Topic&#39;</span><span class="p">)</span>
+
+
+<span class="n">UI_ASSIST</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s2">    &lt;!-- Generated with glade 3.22.1 --&gt;</span>
+<span class="s2">    &lt;interface&gt;</span>
+<span class="s2">      &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span>
+<span class="s2">      &lt;object class=&quot;GtkAssistant&quot; id=&quot;ui_assistant&quot;&gt;</span>
+<span class="s2">        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">        &lt;property name=&quot;modal&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">        &lt;property name=&quot;window_position&quot;&gt;mouse&lt;/property&gt;</span>
+<span class="s2">        &lt;property name=&quot;default_width&quot;&gt;350&lt;/property&gt;</span>
+<span class="s2">        &lt;property name=&quot;default_height&quot;&gt;450&lt;/property&gt;</span>
+<span class="s2">        &lt;property name=&quot;use_header_bar&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">        &lt;child&gt;</span>
+<span class="s2">          &lt;placeholder/&gt;</span>
+<span class="s2">        &lt;/child&gt;</span>
+<span class="s2">      &lt;/object&gt;</span>
+<span class="s2">    &lt;/interface&gt;</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+
+<span class="n">UI_PAGE_CONFIRM</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;!-- Generated with glade 3.22.1 --&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;interface&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;object class=&quot;GtkBox&quot; id=&quot;ui_page_confirm&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;width_request&quot;&gt;500&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;margin_bottom&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;Click &#39;</span>
+    <span class="s1">&#39;&amp;lt;b&amp;gt;Apply&amp;lt;/b&amp;gt; to accept the topic information below or &#39;</span>
+    <span class="s1">&#39;&amp;lt;b&amp;gt;Back&amp;lt;/b&amp;gt; to change the information.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;max_width_chars&quot;&gt;60&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkGrid&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;row_spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;column_spacing&quot;&gt;12&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;&#39;</span>
+    <span class="s1">&#39;&amp;lt;i&amp;gt;Name:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;right&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;&#39;</span>
+    <span class="s1">&#39;&amp;lt;i&amp;gt;Title:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;right&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkBox&quot; id=&quot;ui_confirm_site_name&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkBox&quot; id=&quot;ui_confirm_site_title&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;halign&quot;&gt;center&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;&#39;</span>
+    <span class="s1">&#39;&amp;lt;i&amp;gt;Content&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkScrolledWindow&quot; &#39;</span>
+    <span class="s1">&#39;id=&quot;ui_confirm_site_summary&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;shadow_type&quot;&gt;in&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;3&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;halign&quot;&gt;center&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;&#39;</span>
+    <span class="s1">&#39;&amp;lt;i&amp;gt;Location&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;4&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkBox&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkFrame&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label_xalign&quot;&gt;&#39;</span>
+    <span class="s1">&#39;0.10000000149011612&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;shadow_type&quot;&gt;in&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;object class=&quot;GtkScrolledWindow&quot; &#39;</span>
+    <span class="s1">&#39;id=&quot;ui_confirm_site_topics&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;margin_bottom&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;shadow_type&quot;&gt;in&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;min_content_height&quot;&gt;120&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child type=&quot;label&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Topics&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkSearchBar&quot; id=&quot;ui_confirm_search_bar&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;search_mode_enabled&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;object class=&quot;GtkBox&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;object class=&quot;GtkCheckButton&quot; &#39;</span>
+    <span class="s1">&#39;id=&quot;ui_search_by_name&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;By name&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;receives_default&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;active&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;draw_indicator&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;object class=&quot;GtkCheckButton&quot; &#39;</span>
+    <span class="s1">&#39;id=&quot;ui_search_by_title&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;By &#39;</span>
+    <span class="s1">&#39;title&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;receives_default&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;active&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;draw_indicator&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;object class=&quot;GtkSearchEntry&quot; id=&quot;ui_search_entry1&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;width_chars&quot;&gt;25&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;primary_icon_name&quot;&gt;&#39;</span>
+    <span class="s1">&#39;edit-find-symbolic&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;primary_icon_activatable&quot;&gt;&#39;</span>
+    <span class="s1">&#39;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;primary_icon_sensitive&quot;&gt;&#39;</span>
+    <span class="s1">&#39;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;expand&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                    &lt;property name=&quot;position&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                  &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;                &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;5&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;/interface&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="p">)</span>
+
+<span class="n">UI_PAGE_IDENTIFY</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;!-- Generated with glade 3.22.1 --&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;interface&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;object class=&quot;GtkBox&quot; id=&quot;ui_page_identify&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;width_request&quot;&gt;500&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;margin_bottom&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;Enter a name, a title, and summary for the new &#39;</span>
+    <span class="s1">&#39;topic &lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;max_width_chars&quot;&gt;60&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkGrid&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;margin_bottom&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;row_spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;column_spacing&quot;&gt;12&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Name:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Title:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Summary:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;short identifier &#39;</span>
+    <span class="s1">&#39;for the topic.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;one-line &#39;</span>
+    <span class="s1">&#39;description of the topic.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;description of &#39;</span>
+    <span class="s1">&#39;topic that adds detail to title.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkGrid&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;row_spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;column_spacing&quot;&gt;12&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;center&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;b&amp;gt;Name:&amp;lt;/b&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;right&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;width_chars&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;center&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;b&amp;gt;Title:&amp;lt;/b&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;right&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;width_chars&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkBox&quot; id=&quot;ui_identify_site_name&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkBox&quot; id=&quot;ui_identify_site_title&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;              &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;b&amp;gt;Summary&amp;lt;/b&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;3&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkScrolledWindow&quot; id=&quot;ui_identify_site_summary&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;shadow_type&quot;&gt;in&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;min_content_height&quot;&gt;60&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;placeholder/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;4&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;/interface&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="p">)</span>
+
+
+<span class="n">UI_PAGE_INTRO</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;!-- Generated with glade 3.22.1 --&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;interface&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;object class=&quot;GtkBox&quot; id=&quot;ui_page_intro&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;width_request&quot;&gt;500&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;margin_bottom&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;property name=&quot;spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;Use this assistant &#39;</span>
+    <span class="s1">&#39;to add a basic topic to the &amp;lt;i&amp;gt;Topics &amp;lt;/i&amp;gt;outline. You &#39;</span>
+    <span class="s1">&#39;may use a basic topic to add a note or group topics within the &#39;</span>
+    <span class="s1">&#39;outline. To group topics, add a basic topic and then add or move &#39;</span>
+    <span class="s1">&#39;topics underneath it. The steps for adding a basic topic are as &#39;</span>
+    <span class="s1">&#39;follows.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkGrid&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;row_spacing&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;column_spacing&quot;&gt;12&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Identify:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Confirm:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;Customize &#39;</span>
+    <span class="s1">&#39;identification information for the new topic.  A topic is identified &#39;</span>
+    <span class="s1">&#39;by the name, title, and summary that you enter.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;max_width_chars&quot;&gt;50&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;Confirm the &#39;</span>
+    <span class="s1">&#39;topic information is correct.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;max_width_chars&quot;&gt;50&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;end&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;&amp;lt;i&amp;gt;Locate:&amp;lt;/i&amp;gt;&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;0&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;label&quot; translatable=&quot;yes&quot;&gt;Pick location &#39;</span>
+    <span class="s1">&#39;in the the &amp;lt;i&amp;gt;Topics &amp;lt;/i&amp;gt;outline for new topic.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;max_width_chars&quot;&gt;50&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;left_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;            &lt;property name=&quot;top_attach&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;          &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;object class=&quot;GtkLabel&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;halign&quot;&gt;start&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;label&quot; &#39;</span>
+    <span class="s1">&#39;translatable=&quot;yes&quot;&gt;Click &amp;lt;b&amp;gt;Next &amp;lt;/b&amp;gt;to proceed.  &#39;</span>
+    <span class="s1">&#39;Click &amp;lt;b&amp;gt;Cancel &amp;lt;/b&amp;gt;at any time to abandon the new &#39;</span>
+    <span class="s1">&#39;topic.&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;        &lt;property name=&quot;position&quot;&gt;2&lt;/property&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;      &lt;/packing&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;    &lt;/child&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;  &lt;/object&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s1">&#39;&lt;interface&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

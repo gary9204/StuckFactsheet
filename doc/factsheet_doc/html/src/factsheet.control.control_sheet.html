@@ -1,0 +1,963 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>control_sheet Control Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="control_topic Control Module" href="factsheet.control.control_topic.html" />
+    <link rel="prev" title="control Package" href="factsheet.control.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">control_sheet</span></code> Control Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.control.control_sheet.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.control.control_sheet">
+<span id="control-sheet-control-module"></span><h1><code class="docutils literal notranslate"><span class="pre">control_sheet</span></code> Control Module<a class="headerlink" href="#module-factsheet.control.control_sheet" title="Permalink to this headline">¶</a></h1>
+<p>Defines classes to mediate factsheet-level interactions.</p>
+<p><a class="reference internal" href="../guide/devel_notes.html"><span class="doc">Development Notes</span></a> explains how application Factsheet is based
+on a Model-View-Controller (MVC) design.  Module <code class="xref py py-mod docutils literal notranslate"><span class="pre">control_sheet</span></code>
+defines classes representing control components for a factsheet as a
+whole.</p>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="factsheet.control.control_sheet.BackupFileError">
+<em class="property">exception </em><code class="sig-name descname">BackupFileError</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#BackupFileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.BackupFileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.control.control_sheet.FactsheetError" title="factsheet.control.control_sheet.FactsheetError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FactsheetError</span></code></a></p>
+<p>Raise for errors when making backup copy of file during save
+operation.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="factsheet.control.control_sheet.DumpFileError">
+<em class="property">exception </em><code class="sig-name descname">DumpFileError</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#DumpFileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.DumpFileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.control.control_sheet.FactsheetError" title="factsheet.control.control_sheet.FactsheetError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FactsheetError</span></code></a></p>
+<p>Raise for errors dumping sheet to a file.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="factsheet.control.control_sheet.FactsheetError">
+<em class="property">exception </em><code class="sig-name descname">FactsheetError</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#FactsheetError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.FactsheetError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-exc docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for Factsheet exceptions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="factsheet.control.control_sheet.NoFileError">
+<em class="property">exception </em><code class="sig-name descname">NoFileError</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#NoFileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.NoFileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.control.control_sheet.FactsheetError" title="factsheet.control.control_sheet.FactsheetError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FactsheetError</span></code></a></p>
+<p>Raise for file operations when when factsheet has no file path.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="factsheet.control.control_sheet.OpenFileError">
+<em class="property">exception </em><code class="sig-name descname">OpenFileError</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#OpenFileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.OpenFileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.control.control_sheet.FactsheetError" title="factsheet.control.control_sheet.FactsheetError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FactsheetError</span></code></a></p>
+<p>Raise for errors when opening a factsheet file.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="global-variables">
+<h2>Global Variables<a class="headerlink" href="#global-variables" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="factsheet.control.control_sheet.g_control_app">
+<code class="sig-name descname">g_control_app</code><a class="headerlink" href="#factsheet.control.control_sheet.g_control_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application-level collection of open factsheets.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="types-and-type-aliases">
+<h2>Types and Type Aliases<a class="headerlink" href="#types-and-type-aliases" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="factsheet.control.control_sheet.DisplayName">
+<code class="sig-name descname">DisplayName</code><a class="headerlink" href="#factsheet.control.control_sheet.DisplayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to display Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Name" title="factsheet.model.sheet.Name"><code class="xref py py-data docutils literal notranslate"><span class="pre">Name</span></code></a>.  See <a class="reference internal" href="#factsheet.control.control_sheet.FactoryDisplayName" title="factsheet.control.control_sheet.FactoryDisplayName"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryDisplayName</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.DisplaySummary">
+<code class="sig-name descname">DisplaySummary</code><a class="headerlink" href="#factsheet.control.control_sheet.DisplaySummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to display Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Summary" title="factsheet.model.sheet.Summary"><code class="xref py py-data docutils literal notranslate"><span class="pre">Summary</span></code></a>.  See
+<a class="reference internal" href="#factsheet.control.control_sheet.FactoryDisplaySummary" title="factsheet.control.control_sheet.FactoryDisplaySummary"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryDisplaySummary</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.DisplayTitle">
+<code class="sig-name descname">DisplayTitle</code><a class="headerlink" href="#factsheet.control.control_sheet.DisplayTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to display Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Title" title="factsheet.model.sheet.Title"><code class="xref py py-data docutils literal notranslate"><span class="pre">Title</span></code></a>.  See <a class="reference internal" href="#factsheet.control.control_sheet.FactoryDisplayTitle" title="factsheet.control.control_sheet.FactoryDisplayTitle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryDisplayTitle</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.EditorName">
+<code class="sig-name descname">EditorName</code><a class="headerlink" href="#factsheet.control.control_sheet.EditorName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to edit Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Name" title="factsheet.model.sheet.Name"><code class="xref py py-data docutils literal notranslate"><span class="pre">Name</span></code></a>.  See <a class="reference internal" href="#factsheet.control.control_sheet.FactoryEditorName" title="factsheet.control.control_sheet.FactoryEditorName"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryEditorName</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.EditorSummary">
+<code class="sig-name descname">EditorSummary</code><a class="headerlink" href="#factsheet.control.control_sheet.EditorSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to edit Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Summary" title="factsheet.model.sheet.Summary"><code class="xref py py-data docutils literal notranslate"><span class="pre">Summary</span></code></a>.  See
+<a class="reference internal" href="#factsheet.control.control_sheet.FactoryEditorSummary" title="factsheet.control.control_sheet.FactoryEditorSummary"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryEditorSummary</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.EditorTitle">
+<code class="sig-name descname">EditorTitle</code><a class="headerlink" href="#factsheet.control.control_sheet.EditorTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to edit Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Title" title="factsheet.model.sheet.Title"><code class="xref py py-data docutils literal notranslate"><span class="pre">Title</span></code></a>.  See
+<a class="reference internal" href="#factsheet.control.control_sheet.FactoryEditorTitle" title="factsheet.control.control_sheet.FactoryEditorTitle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryEditorTitle</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryDisplayName">
+<em class="property">class </em><code class="sig-name descname">FactoryDisplayName</code><span class="sig-paren">(</span><em class="sig-param">p_name: Name</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryDisplayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.DisplayName" title="factsheet.control.control_sheet.DisplayName"><code class="xref py py-data docutils literal notranslate"><span class="pre">DisplayName</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Name" title="factsheet.model.sheet.Name"><code class="xref py py-data docutils literal notranslate"><span class="pre">Name</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_name</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Name" title="factsheet.model.sheet.Name"><code class="xref py py-data docutils literal notranslate"><span class="pre">Name</span></code></a>) – name of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryDisplaySummary">
+<em class="property">class </em><code class="sig-name descname">FactoryDisplaySummary</code><span class="sig-paren">(</span><em class="sig-param">p_summary: Summary</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryDisplaySummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.DisplaySummary" title="factsheet.control.control_sheet.DisplaySummary"><code class="xref py py-data docutils literal notranslate"><span class="pre">DisplaySummary</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Summary" title="factsheet.model.sheet.Summary"><code class="xref py py-data docutils literal notranslate"><span class="pre">Summary</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_summary</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Summary" title="factsheet.model.sheet.Summary"><code class="xref py py-data docutils literal notranslate"><span class="pre">Summary</span></code></a>) – summary of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryDisplayTitle">
+<em class="property">class </em><code class="sig-name descname">FactoryDisplayTitle</code><span class="sig-paren">(</span><em class="sig-param">p_title: Title</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryDisplayTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.DisplayTitle" title="factsheet.control.control_sheet.DisplayTitle"><code class="xref py py-data docutils literal notranslate"><span class="pre">DisplayTitle</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Title" title="factsheet.model.sheet.Title"><code class="xref py py-data docutils literal notranslate"><span class="pre">Title</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_title</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Title" title="factsheet.model.sheet.Title"><code class="xref py py-data docutils literal notranslate"><span class="pre">Title</span></code></a>) – title of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryEditorName">
+<em class="property">class </em><code class="sig-name descname">FactoryEditorName</code><span class="sig-paren">(</span><em class="sig-param">p_name: Name</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryEditorName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.EditorName" title="factsheet.control.control_sheet.EditorName"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorName</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Name" title="factsheet.model.sheet.Name"><code class="xref py py-data docutils literal notranslate"><span class="pre">Name</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_name</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Name" title="factsheet.model.sheet.Name"><code class="xref py py-data docutils literal notranslate"><span class="pre">Name</span></code></a>) – name of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryEditorSummary">
+<em class="property">class </em><code class="sig-name descname">FactoryEditorSummary</code><span class="sig-paren">(</span><em class="sig-param">p_summary: Summary</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryEditorSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.EditorSummary" title="factsheet.control.control_sheet.EditorSummary"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorSummary</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Summary" title="factsheet.model.sheet.Summary"><code class="xref py py-data docutils literal notranslate"><span class="pre">Summary</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_summary</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Summary" title="factsheet.model.sheet.Summary"><code class="xref py py-data docutils literal notranslate"><span class="pre">Summary</span></code></a>) – summary of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryEditorTitle">
+<em class="property">class </em><code class="sig-name descname">FactoryEditorTitle</code><span class="sig-paren">(</span><em class="sig-param">p_title: Title</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryEditorTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.EditorTitle" title="factsheet.control.control_sheet.EditorTitle"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorTitle</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Title" title="factsheet.model.sheet.Title"><code class="xref py py-data docutils literal notranslate"><span class="pre">Title</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_title</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Title" title="factsheet.model.sheet.Title"><code class="xref py py-data docutils literal notranslate"><span class="pre">Title</span></code></a>) – title of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.FactoryViewTopics">
+<em class="property">class </em><code class="sig-name descname">FactoryViewTopics</code><span class="sig-paren">(</span><em class="sig-param">p_topics: Topics</em><span class="sig-paren">)</span><a class="headerlink" href="#factsheet.control.control_sheet.FactoryViewTopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias of factory for user interface elements.</p>
+<p>A call to the factory takes no arguments and returns a
+<a class="reference internal" href="#factsheet.control.control_sheet.ViewTopics" title="factsheet.control.control_sheet.ViewTopics"><code class="xref py py-data docutils literal notranslate"><span class="pre">ViewTopics</span></code></a> for the Factsheet
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Topics" title="factsheet.model.sheet.Topics"><code class="xref py py-data docutils literal notranslate"><span class="pre">Topics</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_topics</strong> (<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Topics" title="factsheet.model.sheet.Topics"><code class="xref py py-data docutils literal notranslate"><span class="pre">Topics</span></code></a>) – topics outline of Factsheet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.IdViewSheet">
+<code class="sig-name descname">IdViewSheet</code><a class="headerlink" href="#factsheet.control.control_sheet.IdViewSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distinct type for unique identifier of a sheet view. See
+<a class="reference internal" href="#factsheet.control.control_sheet.id_view_sheet" title="factsheet.control.control_sheet.id_view_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">id_view_sheet()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.control.control_sheet.ViewTopics">
+<code class="sig-name descname">ViewTopics</code><a class="headerlink" href="#factsheet.control.control_sheet.ViewTopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for user interface element to view outline of
+<a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Topics" title="factsheet.model.sheet.Topics"><code class="xref py py-data docutils literal notranslate"><span class="pre">Topics</span></code></a>.  See
+<a class="reference internal" href="#factsheet.control.control_sheet.FactoryViewTopics" title="factsheet.control.control_sheet.FactoryViewTopics"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryViewTopics</span></code></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="factsheet.control.control_sheet.ControlApp">
+<em class="property">class </em><code class="sig-name descname">ControlApp</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlApp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Maintains collection of open factsheets.</p>
+<p>A user may open a factsheet by requesting a new, empty factsheet or
+opening a factsheet file.</p>
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlApp.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlApp.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlApp.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize empty roster for factsheets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlApp.close_all_factsheets">
+<code class="sig-name descname">close_all_factsheets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlApp.close_all_factsheets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlApp.close_all_factsheets" title="Permalink to this definition">¶</a></dt>
+<dd><p>TBD</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlApp.close_factsheet">
+<code class="sig-name descname">close_factsheet</code><span class="sig-paren">(</span><em class="sig-param">p_control</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlApp.close_factsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlApp.close_factsheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close all views of the given factsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_control</strong> (<a class="reference internal" href="#factsheet.control.control_sheet.ControlSheet" title="factsheet.control.control_sheet.ControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlSheet</span></code></a>) – factsheet whose views to close.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlApp.open_factsheet">
+<code class="sig-name descname">open_factsheet</code><span class="sig-paren">(</span><em class="sig-param">p_path</em>, <em class="sig-param">p_time</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlApp.open_factsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlApp.open_factsheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factsheet for the given path or None if factsheet is
+open already.</p>
+<p>If the path corresponds to an open factsheet, present the sheet
+views to the user and return None.  Otherwise, return factsheet
+with the given path.</p>
+<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">ControlSheet.open()</span></code> regarding file load failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – location for factsheet file.</p></li>
+<li><p><strong>p_time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – timestamp to order open requests.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#factsheet.control.control_sheet.ControlSheet" title="factsheet.control.control_sheet.ControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlSheet</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlApp.remove_factsheet">
+<code class="sig-name descname">remove_factsheet</code><span class="sig-paren">(</span><em class="sig-param">p_control</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlApp.remove_factsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlApp.remove_factsheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove factsheet from collection of open factsheets.</p>
+<p>Log a warning when the control is not in the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_control</strong> (<a class="reference internal" href="#factsheet.control.control_sheet.ControlSheet" title="factsheet.control.control_sheet.ControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlSheet</span></code></a>) – factsheet to remove.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.ControlSheet">
+<em class="property">class </em><code class="sig-name descname">ControlSheet</code><span class="sig-paren">(</span><em class="sig-param">p_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mediates between user actions at factsheet view and factsheet model.</p>
+<p>Class <a class="reference internal" href="#factsheet.control.control_sheet.ControlSheet" title="factsheet.control.control_sheet.ControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlSheet</span></code></a> maintains a collection of active views
+of a factsheet. The class translates user requests in a factsheet
+view into changes in the factsheet model (such as save or delete) or
+in the collection of factsheet views (such as add or remove a view).</p>
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize instance from given file or with default attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – location of file for factsheet model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.add_view">
+<code class="sig-name descname">add_view</code><span class="sig-paren">(</span><em class="sig-param">p_view</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.add_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.add_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add given view to collection of active views.</p>
+<p>Log a warning for a duplicate addition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_view</strong> (<a class="reference internal" href="#factsheet.control.control_sheet.ObserverControlSheet" title="factsheet.control.control_sheet.ObserverControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObserverControlSheet</span></code></a>) – view to add.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove contents of topics roster and topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.get_control_topic">
+<code class="sig-name descname">get_control_topic</code><span class="sig-paren">(</span><em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.get_control_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.get_control_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return contents of topics outline at given line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line corresponding to desired control.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="factsheet.control.control_topic.html#factsheet.control.control_topic.ControlTopic" title="factsheet.control.control_topic.ControlTopic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlTopic</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.insert_topic_after">
+<code class="sig-name descname">insert_topic_after</code><span class="sig-paren">(</span><em class="sig-param">p_topic</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.insert_topic_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.insert_topic_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add topic to topics outline and roster of topics.</p>
+<p>Add topic to topics outline after topic at given index.  Create
+corresponding <a class="reference internal" href="factsheet.control.control_topic.html#factsheet.control.control_topic.ControlTopic" title="factsheet.control.control_topic.ControlTopic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlTopic</span></code></a> for roster of topics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_topic</strong> (<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>) – new topic to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of topic to precede new topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line containing new topic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.insert_topic_before">
+<code class="sig-name descname">insert_topic_before</code><span class="sig-paren">(</span><em class="sig-param">p_topic</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.insert_topic_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.insert_topic_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add topic to topics outline and roster of topics.</p>
+<p>Add topic to topics outline before topic at given index.  Create
+corresponding <a class="reference internal" href="factsheet.control.control_topic.html#factsheet.control.control_topic.ControlTopic" title="factsheet.control.control_topic.ControlTopic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlTopic</span></code></a> for roster of topics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_topic</strong> (<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>) – new topic to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of topic to follow new topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line containing new topic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.insert_topic_child">
+<code class="sig-name descname">insert_topic_child</code><span class="sig-paren">(</span><em class="sig-param">p_topic</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.insert_topic_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.insert_topic_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add topic to topics outline and roster of topics.</p>
+<p>Add topic to topics outline as child of topic at given index.
+Create corresponding <a class="reference internal" href="factsheet.control.control_topic.html#factsheet.control.control_topic.ControlTopic" title="factsheet.control.control_topic.ControlTopic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlTopic</span></code></a> for roster of topics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_topic</strong> (<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>) – new topic to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of parent topic for new topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line containing new topic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.is_fresh">
+<code class="sig-name descname">is_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.is_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.is_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there are no unsaved changes to factsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.is_stale">
+<code class="sig-name descname">is_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there is at least one unsaved change to
+factsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return sheet name without markup errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_display_name">
+<em class="property">property </em><code class="sig-name descname">new_display_name</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_display_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for displays of sheet name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_display_summary">
+<em class="property">property </em><code class="sig-name descname">new_display_summary</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_display_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for displays of sheet summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TextView</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_display_title">
+<em class="property">property </em><code class="sig-name descname">new_display_title</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_display_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for displays of sheet title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_editor_name">
+<em class="property">property </em><code class="sig-name descname">new_editor_name</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_editor_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for editors of sheet name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Entry</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_editor_summary">
+<em class="property">property </em><code class="sig-name descname">new_editor_summary</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_editor_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for editors of sheet summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TextView</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_editor_title">
+<em class="property">property </em><code class="sig-name descname">new_editor_title</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_editor_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for editors of sheet title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Entry</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.new_view_topics">
+<em class="property">property </em><code class="sig-name descname">new_view_topics</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.new_view_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return factory for editors of sheet title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeView</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.path">
+<em class="property">property </em><code class="sig-name descname">path</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return path to file containing factsheet contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.present_views">
+<code class="sig-name descname">present_views</code><span class="sig-paren">(</span><em class="sig-param">p_time</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.present_views"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.present_views" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make visible to user all views of the factsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – timestamp of event requesting presentation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.remove_all_views">
+<code class="sig-name descname">remove_all_views</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.remove_all_views"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.remove_all_views" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all views of the collection of active views.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.remove_topic">
+<code class="sig-name descname">remove_topic</code><span class="sig-paren">(</span><em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.remove_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.remove_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove topic from roster of topic and from topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of topic to remove along with all its
+descendants.  If line is None, remove no topics.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.remove_view">
+<code class="sig-name descname">remove_view</code><span class="sig-paren">(</span><em class="sig-param">p_view</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.remove_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.remove_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove given view from collection of active views.</p>
+<p>Log a warning for a missing view.</p>
+<p>If the collection of active views is empty, remove the factsheet
+from the collection of open factsheets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_view</strong> (<a class="reference internal" href="#factsheet.control.control_sheet.ObserverControlSheet" title="factsheet.control.control_sheet.ObserverControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObserverControlSheet</span></code></a>) – view to remove.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.remove_view_is_safe">
+<code class="sig-name descname">remove_view_is_safe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.remove_view_is_safe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.remove_view_is_safe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when the control can safely remove a view.</p>
+<p>A factsheet closes when it has no views.  A sheet control may
+safely remove a sheet view when:</p>
+<ul class="simple">
+<li><p>The factsheet contains no unsaved changes or</p></li>
+<li><p>The factsheet has more than one view or</p></li>
+<li><p>The user approves closing the factsheet.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">p_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save factsheet contents to file at factsheet’s path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – path to replace factsheet’s path.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#factsheet.control.control_sheet.BackupFileError" title="factsheet.control.control_sheet.BackupFileError"><strong>BackupFileError</strong></a> – when backup fails.</p></li>
+<li><p><a class="reference internal" href="#factsheet.control.control_sheet.DumpFileError" title="factsheet.control.control_sheet.DumpFileError"><strong>DumpFileError</strong></a> – when factsheet cannot be written to file.</p></li>
+<li><p><a class="reference internal" href="#factsheet.control.control_sheet.OpenFileError" title="factsheet.control.control_sheet.OpenFileError"><strong>OpenFileError</strong></a> – for all other errors.</p></li>
+<li><p><a class="reference internal" href="#factsheet.control.control_sheet.NoFileError" title="factsheet.control.control_sheet.NoFileError"><strong>NoFileError</strong></a> – when path to save file is None.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.tag">
+<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return unique identifier of sheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">TagSheet</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ControlSheet.topics">
+<code class="sig-name descname">topics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ControlSheet.topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ControlSheet.topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over topic controls in factsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="factsheet.control.control_topic.html#factsheet.control.control_topic.ControlTopic" title="factsheet.control.control_topic.ControlTopic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlTopic</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet.control.control_sheet.id_view_sheet">
+<code class="sig-name descname">id_view_sheet</code><span class="sig-paren">(</span><em class="sig-param">p_view_sheet</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#id_view_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.id_view_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return unique identifier for a sheet view.</p>
+<p>The identifier is unique during the lifetime of the sheet view.  An
+identifier may be reused if a sheet view is destroyed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_view_sheet</strong> (<a class="reference internal" href="#factsheet.control.control_sheet.ObserverControlSheet" title="factsheet.control.control_sheet.ObserverControlSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObserverControlSheet</span></code></a>) – sheet view to identify.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<a class="reference internal" href="#factsheet.control.control_sheet.IdViewSheet" title="factsheet.control.control_sheet.IdViewSheet"><code class="xref py py-data docutils literal notranslate"><span class="pre">IdViewSheet</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.control.control_sheet.ObserverControlSheet">
+<em class="property">class </em><code class="sig-name descname">ObserverControlSheet</code><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ObserverControlSheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ObserverControlSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Define interface for sheet control to notify a sheet view.</p>
+<p>In general, a sheet view requests services from its sheet control.
+For a few exceptions, a sheet view acts as an observer of its sheet
+control.  A sheet control notifies its views when to present to the
+user and when to erase.</p>
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ObserverControlSheet.erase">
+<em class="property">abstract </em><code class="sig-name descname">erase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ObserverControlSheet.erase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ObserverControlSheet.erase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy visible portion of sheet view.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.control.control_sheet.ObserverControlSheet.present">
+<em class="property">abstract </em><code class="sig-name descname">present</code><span class="sig-paren">(</span><em class="sig-param">p_time</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/control/control_sheet.html#ObserverControlSheet.present"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.control.control_sheet.ObserverControlSheet.present" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sheet view visible to user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – time stamp to order multiple requests.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.control.control_topic.html" class="btn btn-neutral float-right" title="control_topic Control Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.control.html" class="btn btn-neutral float-left" title="control Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

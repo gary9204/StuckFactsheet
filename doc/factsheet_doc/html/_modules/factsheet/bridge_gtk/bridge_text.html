@@ -1,0 +1,614 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.bridge_gtk.bridge_text &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.bridge_gtk.bridge_text</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.bridge_gtk.bridge_text</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines bridge classes that encapsulate widget toolkit text classes.</span>
+
+<span class="sd">Constants and Type Hints</span>
+<span class="sd">========================</span>
+
+<span class="sd">.. data:: DisplayTextMarkup</span>
+
+<span class="sd">    Type hint for GTK element to display a text attribute.  The element</span>
+<span class="sd">    supports `Pango markup`_ but is not editable.  See `Gtk.Label`_.</span>
+
+<span class="sd">.. _Pango markup:</span>
+<span class="sd">    https://docs.gtk.org/Pango/pango_markup.html</span>
+
+<span class="sd">.. _Gtk.Label:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html</span>
+
+<span class="sd">.. data:: DisplayTextStyled</span>
+
+<span class="sd">    Type hint for GTK element to display a text attribute.  The element</span>
+<span class="sd">    supports rich, tag-based formatting but is not editable.  See</span>
+<span class="sd">    `Gtk.TextView`_.</span>
+
+<span class="sd">.. _Gtk.TextView:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html</span>
+
+<span class="sd">.. data:: EditorTextMarkup</span>
+
+<span class="sd">    Type hint for GTK element to display a text attribute.  The element</span>
+<span class="sd">    is editable and supports embedding `Pango markup`_.  See</span>
+<span class="sd">    `Gtk.Entry`_.</span>
+
+<span class="sd">.. _Gtk.Entry:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html</span>
+
+<span class="sd">.. data:: EditorTextStyled</span>
+
+<span class="sd">    Type hint for GTK element to display a text attribute.  The element</span>
+<span class="sd">    is editable and supports rich, tag-based formatting.  See</span>
+<span class="sd">    `Gtk.TextView`_.</span>
+
+<span class="sd">.. data:: ModelTextOpaque</span>
+
+<span class="sd">    Type hint for placeholder GTK element to store a text attribute.</span>
+
+<span class="sd">.. data:: UiTextMarkup</span>
+
+<span class="sd">    Type hint for GTK element to store text formatted with</span>
+<span class="sd">    `Pango markup`_.  See :data:`EditorTextMarkup` `Gtk.EntryBuffer`_.</span>
+
+<span class="sd">.. _Gtk.EntryBuffer:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html</span>
+
+<span class="sd">.. data:: UiTextStyled</span>
+
+<span class="sd">    Type hint for GTK element to store text formatted with</span>
+<span class="sd">    externally-defined tags.  See :data:`EditorTextStyled` and</span>
+<span class="sd">    `Gtk.TextBuffer`_.</span>
+
+<span class="sd">.. _Gtk.TextBuffer:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html</span>
+
+<span class="sd">Classes and Functions</span>
+<span class="sd">=====================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>   <span class="c1"># noqa</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.abc_types.abc_stalefile</span> <span class="k">as</span> <span class="nn">ABC_STALE</span>
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_base</span> <span class="k">as</span> <span class="nn">BBASE</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GLib</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Pango</span>    <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+<span class="n">IdDisplay</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">NewType</span><span class="p">(</span><span class="s1">&#39;IdDisplay&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">ModelTextOpaque</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ModelTextOpaque&#39;</span><span class="p">)</span>
+<span class="n">PersistText</span> <span class="o">=</span> <span class="nb">str</span>
+
+<span class="n">UiTextMarkup</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryBuffer</span><span class="p">]</span>
+<span class="n">DisplayTextMarkup</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">]</span>
+<span class="n">EditorTextMarkup</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">]</span>
+
+<span class="n">UiTextStyled</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TextBuffer</span><span class="p">]</span>
+<span class="n">DisplayTextStyled</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">]</span>
+<span class="n">EditorTextStyled</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.bridge_text&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="escape_text_markup"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.escape_text_markup">[docs]</a><span class="k">def</span> <span class="nf">escape_text_markup</span><span class="p">(</span><span class="n">p_markup</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return text without markup errors.</span>
+
+<span class="sd">    Escape `Pango markup`_ errors.  Raise other GLib errors.</span>
+
+<span class="sd">    :param p_markup: text that may contain markup errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">NO_ACCEL_CHAR</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Pango</span><span class="o">.</span><span class="n">parse_markup</span><span class="p">(</span><span class="n">p_markup</span><span class="p">,</span> <span class="n">ALL</span><span class="p">,</span> <span class="n">NO_ACCEL_CHAR</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;g-markup-error-quark&#39;</span> <span class="o">==</span> <span class="n">err</span><span class="o">.</span><span class="n">domain</span><span class="p">:</span>
+            <span class="n">p_markup</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">markup_escape_text</span><span class="p">(</span><span class="n">p_markup</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span>
+    <span class="k">return</span> <span class="n">p_markup</span></div>
+
+
+<div class="viewcode-block" id="FactoryEditorTextMarkup"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">FactoryEditorTextMarkup</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">[</span><span class="n">EditorTextMarkup</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Editor factory for text stored in a given :class:`.ModelTextMarkup`.</span>
+
+<span class="sd">    Views support editing both text and embedded `Pango markup`_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FactoryEditorTextMarkup.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_model</span><span class="p">:</span> <span class="s1">&#39;ModelTextMarkup&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize store for text.</span>
+
+<span class="sd">        :param p_model: model that contains storage for editors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">ui_model</span></div>
+
+<div class="viewcode-block" id="FactoryEditorTextMarkup.__call__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EditorTextMarkup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return editor for text and markup formatting.&quot;&quot;&quot;</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">buffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="n">NAME_ICON_PRIMARY</span> <span class="o">=</span> <span class="s1">&#39;emblem-default-symbolic&#39;</span>
+        <span class="n">NAME_ICON_SECONDARY</span> <span class="o">=</span> <span class="s1">&#39;edit-delete-symbolic&#39;</span>
+        <span class="n">TOOLTIP_PRIMARY</span> <span class="o">=</span> <span class="s1">&#39;Click to accept changes.&#39;</span>
+        <span class="n">TOOLTIP_SECONDARY</span> <span class="o">=</span> <span class="s1">&#39;Click to cancel changes.&#39;</span>
+        <span class="n">N_WIDTH_EDIT</span> <span class="o">=</span> <span class="mi">45</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_halign</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Align</span><span class="o">.</span><span class="n">START</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_icon_from_icon_name</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">PRIMARY</span><span class="p">,</span> <span class="n">NAME_ICON_PRIMARY</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_icon_from_icon_name</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">SECONDARY</span><span class="p">,</span> <span class="n">NAME_ICON_SECONDARY</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_icon_tooltip_markup</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">PRIMARY</span><span class="p">,</span> <span class="n">TOOLTIP_PRIMARY</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_icon_tooltip_markup</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">SECONDARY</span><span class="p">,</span> <span class="n">TOOLTIP_SECONDARY</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_width_chars</span><span class="p">(</span><span class="n">N_WIDTH_EDIT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">view</span></div></div>
+
+
+<div class="viewcode-block" id="FactoryDisplayTextMarkup"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">FactoryDisplayTextMarkup</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">[</span><span class="n">DisplayTextMarkup</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Display factory for text stored in a given :class:`.ModelTextMarkup`.</span>
+
+<span class="sd">    Views support text display formatted from embedded `Pango markup`_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FactoryDisplayTextMarkup.__call__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisplayTextMarkup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return view to display text with markup formatting.&quot;&quot;&quot;</span>
+        <span class="n">markup</span> <span class="o">=</span> <span class="n">escape_text_markup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span>
+        <span class="n">display</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">markup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_displays</span><span class="p">[</span><span class="n">id_display</span><span class="p">(</span><span class="n">display</span><span class="p">)]</span> <span class="o">=</span> <span class="n">display</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">display</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_destroy</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;deleted-text&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_change</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;inserted-text&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_change</span><span class="p">)</span>
+        <span class="n">XALIGN_LEFT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">N_WIDTH_DISPLAY</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">set_ellipsize</span><span class="p">(</span><span class="n">Pango</span><span class="o">.</span><span class="n">EllipsizeMode</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">set_halign</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Align</span><span class="o">.</span><span class="n">START</span><span class="p">)</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">set_selectable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">set_use_markup</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">set_width_chars</span><span class="p">(</span><span class="n">N_WIDTH_DISPLAY</span><span class="p">)</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">set_xalign</span><span class="p">(</span><span class="n">XALIGN_LEFT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">display</span></div>
+
+<div class="viewcode-block" id="FactoryDisplayTextMarkup.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_model</span><span class="p">:</span> <span class="s1">&#39;ModelTextMarkup&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize store for text and collection of displays.</span>
+
+<span class="sd">        :param p_model: model that contains storage for displays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_displays</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">[</span>
+            <span class="n">IdDisplay</span><span class="p">,</span> <span class="n">DisplayTextMarkup</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FactoryDisplayTextMarkup.on_change"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.on_change">[docs]</a>    <span class="k">def</span> <span class="nf">on_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refresh display views when text is inserted or deleted.&quot;&quot;&quot;</span>
+        <span class="n">markup</span> <span class="o">=</span> <span class="n">escape_text_markup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">display</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">display</span><span class="o">.</span><span class="n">set_markup</span><span class="p">(</span><span class="n">markup</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FactoryDisplayTextMarkup.on_destroy"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.on_destroy">[docs]</a>    <span class="k">def</span> <span class="nf">on_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_display</span><span class="p">:</span> <span class="n">DisplayTextMarkup</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Stop refreshing display view that is being destroyed.</span>
+
+<span class="sd">        :param p_display: display view being destroyed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">id_destroy</span> <span class="o">=</span> <span class="n">id_display</span><span class="p">(</span><span class="n">p_display</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displays</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">id_destroy</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s1">&#39;Missing display: </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">hex</span><span class="p">(</span><span class="n">id_destroy</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_destroy</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="FactoryEditorTextStyled"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled">[docs]</a><span class="k">class</span> <span class="nc">FactoryEditorTextStyled</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">[</span><span class="n">EditorTextStyled</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Editor factory for text stored in a given :class:`.ModelTextStyled`.</span>
+
+<span class="sd">    Views support editing text.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       Editing and applying format tags is planned but not implemented yet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FactoryEditorTextStyled.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_model</span><span class="p">:</span> <span class="s1">&#39;ModelTextStyled&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize store for text.</span>
+
+<span class="sd">        :param p_model: model that contains storage for editors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">ui_model</span></div>
+
+<div class="viewcode-block" id="FactoryEditorTextStyled.__call__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EditorTextStyled</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return editor for text with tag-based formatting.&quot;&quot;&quot;</span>
+        <span class="n">N_MARGIN_LEFT_RIGHT</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">N_MARGIN_TOP_BOTTOM</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextView</span><span class="p">(</span><span class="n">buffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_bottom_margin</span><span class="p">(</span><span class="n">N_MARGIN_TOP_BOTTOM</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_left_margin</span><span class="p">(</span><span class="n">N_MARGIN_LEFT_RIGHT</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_right_margin</span><span class="p">(</span><span class="n">N_MARGIN_LEFT_RIGHT</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_top_margin</span><span class="p">(</span><span class="n">N_MARGIN_TOP_BOTTOM</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_vexpand</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_wrap_mode</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">WrapMode</span><span class="o">.</span><span class="n">WORD_CHAR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">view</span></div></div>
+
+
+<div class="viewcode-block" id="FactoryDisplayTextStyled"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled">[docs]</a><span class="k">class</span> <span class="nc">FactoryDisplayTextStyled</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">[</span><span class="n">DisplayTextStyled</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Display factory for text stored in a given :class:`.ModelTextStyled`.</span>
+
+<span class="sd">    Views support displaying text.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       Applying format tags is planned but not implemented yet.  Class</span>
+<span class="sd">       :class:`.FactoryDisplayTextStyled` is a wrapper for</span>
+<span class="sd">       :class:`.FactoryEditorTextStyled` until formatting is implemented.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FactoryDisplayTextStyled.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_model</span><span class="p">:</span> <span class="s1">&#39;ModelTextStyled&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize store for text.</span>
+
+<span class="sd">        :param p_model: model that contains storage for displays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factory_source</span> <span class="o">=</span> <span class="n">FactoryEditorTextStyled</span><span class="p">(</span><span class="n">p_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FactoryDisplayTextStyled.__call__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisplayTextStyled</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return view to display text with tag-based formatting.&quot;&quot;&quot;</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factory_source</span><span class="p">()</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">set_editable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">view</span></div></div>
+
+
+<div class="viewcode-block" id="id_display"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.id_display">[docs]</a><span class="k">def</span> <span class="nf">id_display</span><span class="p">(</span><span class="n">p_display</span><span class="p">:</span> <span class="n">DisplayTextMarkup</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IdDisplay</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return unique identifier for a display view.</span>
+
+<span class="sd">    :param p_display: display to identify.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">IdDisplay</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">p_display</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ModelText"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelText">[docs]</a><span class="k">class</span> <span class="nc">ModelText</span><span class="p">(</span><span class="n">ABC_STALE</span><span class="o">.</span><span class="n">InterfaceStaleFile</span><span class="p">,</span>
+                <span class="n">BBASE</span><span class="o">.</span><span class="n">BridgeBase</span><span class="p">[</span><span class="n">ModelTextOpaque</span><span class="p">,</span> <span class="n">PersistText</span><span class="p">],</span>
+                <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">ModelTextOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Common ancestor of bridge classes for text.</span>
+
+<span class="sd">    Text bridge objects may have transient aspects associated with views in</span>
+<span class="sd">    addition to persistant text content.</span>
+<span class="sd">    Text bridge objects fhave persistent text content. In addition, a</span>
+<span class="sd">    text bridge object may have transient aspects</span>
+<span class="sd">    such as signal connections to views or change state with respect to file</span>
+<span class="sd">    storage,</span>
+
+<span class="sd">    .. admonition:: About Equality</span>
+
+<span class="sd">        Each text bridge object has persistent text content.  In</span>
+<span class="sd">        addition, a text bridge object may have transient aspects such</span>
+<span class="sd">        as signal connections to views or change state with respect to</span>
+<span class="sd">        file storage,</span>
+
+<span class="sd">        Two text bridge objects are equivalent when their text content</span>
+<span class="sd">        are equal.  Transient aspects of the objects are not compared</span>
+<span class="sd">        and may be different.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return text bridge model in form pickle can persist.</span>
+
+<span class="sd">        Persistent form of text bridge consists of text only.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;_stale&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+<div class="viewcode-block" id="ModelText.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelText.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extend initialization with text and change state.</span>
+
+<span class="sd">        :param p_text: initial text content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">p_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_state</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extend text bridge reconstruction with change state.</span>
+
+<span class="sd">        Reconstructed text bridge is marked unchanged.</span>
+
+<span class="sd">        :param p_state: unpickled content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">p_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="ModelText.is_fresh"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelText.is_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">is_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there are no unsaved changes to content.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelText.is_stale"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelText.is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when there is at least one unsaved change to</span>
+<span class="sd">        content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="ModelText.set_fresh"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelText.set_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">set_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mark content in memory consistent with file.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ModelText.set_stale"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelText.set_stale">[docs]</a>    <span class="k">def</span> <span class="nf">set_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mark content in memory changed from file.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return model text.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+
+    <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set model text.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">p_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelTextMarkup"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelTextMarkup">[docs]</a><span class="k">class</span> <span class="nc">ModelTextMarkup</span><span class="p">(</span><span class="n">ModelText</span><span class="p">[</span><span class="n">UiTextMarkup</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Text storage with support for editing and `Pango markup`_.  See</span>
+<span class="sd">    `Gtk.EntryBuffer`_.</span>
+
+<span class="sd">    See :class:`.ModelText` regarding equality.</span>
+
+<span class="sd">    .. _Gtk.EntryBuffer:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistText</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return text storage element in form suitable for persistent</span>
+<span class="sd">        storage.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiTextMarkup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``UiTextMarkup`` with signal connections.&quot;&quot;&quot;</span>
+        <span class="n">ui_model</span> <span class="o">=</span> <span class="n">UiTextMarkup</span><span class="p">()</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">ui_model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;deleted-text&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">())</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">ui_model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;inserted-text&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">ui_model</span>
+
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">:</span> <span class="n">PersistText</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set text storage element from content in persistent form.</span>
+
+<span class="sd">        :param p_persist: persistent form for text storage element</span>
+<span class="sd">            content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">p_persist</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelTextStyled"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelTextStyled">[docs]</a><span class="k">class</span> <span class="nc">ModelTextStyled</span><span class="p">(</span><span class="n">ModelText</span><span class="p">[</span><span class="n">UiTextStyled</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Text bridge with support for editing and format tagging.  See</span>
+<span class="sd">    `Gtk.TextBuffer`_.</span>
+
+<span class="sd">    See :class:`.ModelText` regarding equality.</span>
+
+<span class="sd">    .. _Gtk.TextBuffer:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistText</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return text storage element in form suitable for persistent</span>
+<span class="sd">        storage.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">NO_HIDDEN</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">NO_HIDDEN</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiTextStyled</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return `GTK.TextBuffer`_ with signals connections.&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TextBuffer</span><span class="p">()</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_stale</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">:</span> <span class="n">PersistText</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set text storage element from content in persistent form.</span>
+
+<span class="sd">        :param p_persist: persistent form for text storage element</span>
+<span class="sd">            content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">p_persist</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

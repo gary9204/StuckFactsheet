@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_view_markup View Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_view_sheet View Test Module" href="factsheet_test.view.test_view_sheet.html" />
+    <link rel="prev" title="test_ui View Test Module" href="factsheet_test.view.test_ui.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_view_markup</span></code> View Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.view.test_view_markup.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.view.test_view_markup">
+<span id="test-view-markup-view-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_view_markup</span></code> View Test Module<a class="headerlink" href="#module-factsheet_test.view.test_view_markup" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for classes to display identity information.  See
+<a class="reference internal" href="../src/factsheet.view.view_markup.html#module-factsheet.view.view_markup" title="factsheet.view.view_markup"><code class="xref py py-mod docutils literal notranslate"><span class="pre">view_markup</span></code></a>.</p>
+<dl class="function">
+<dt id="factsheet_test.view.test_view_markup.setup_views_markup">
+<code class="sig-name descname">setup_views_markup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#setup_views_markup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.setup_views_markup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture with teardown: return display and editor views of markup.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup">
+<em class="property">class </em><code class="sig-name descname">TestEditorMarkup</code><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup" title="factsheet.view.view_markup.ViewMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewMarkup</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">setup_views_markup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: view settings and attributes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>setup_views_markup</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_markup.setup_views_markup" title="factsheet_test.view.test_view_markup.setup_views_markup"><code class="xref py py-func docutils literal notranslate"><span class="pre">setup_views_markup()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup.test_init_signals_attr">
+<code class="sig-name descname">test_init_signals_attr</code><span class="sig-paren">(</span><em class="sig-param">setup_views_markup</em>, <em class="sig-param">NAME_SIGNAL</em>, <em class="sig-param">NAME_ATTR</em>, <em class="sig-param">ORIGIN</em>, <em class="sig-param">N_DEFAULT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup.test_init_signals_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup.test_init_signals_attr" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: signal connections to view attributes.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>setup_views_markup</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_markup.setup_views_markup" title="factsheet_test.view.test_view_markup.setup_views_markup"><code class="xref py py-func docutils literal notranslate"><span class="pre">setup_views_markup()</span></code></a>.</p></li>
+<li><p><strong>NAME_SIGNAL</strong> – name of signal to check.</p></li>
+<li><p><strong>NAME_ATTR</strong> – attribute generating signal.</p></li>
+<li><p><strong>ORIGIN</strong> – GTK class origin of signal.</p></li>
+<li><p><strong>N_DEFAULT</strong> – count of default signal handlers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup.test_init_signals_editor">
+<code class="sig-name descname">test_init_signals_editor</code><span class="sig-paren">(</span><em class="sig-param">setup_views_markup</em>, <em class="sig-param">NAME_SIGNAL</em>, <em class="sig-param">ORIGIN</em>, <em class="sig-param">N_DEFAULT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup.test_init_signals_editor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup.test_init_signals_editor" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: signal connections to editor.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>setup_views_markup</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_markup.setup_views_markup" title="factsheet_test.view.test_view_markup.setup_views_markup"><code class="xref py py-func docutils literal notranslate"><span class="pre">setup_views_markup()</span></code></a>.</p></li>
+<li><p><strong>NAME_SIGNAL</strong> – name of signal to check.</p></li>
+<li><p><strong>ORIGIN</strong> – GTK class origin of signal.</p></li>
+<li><p><strong>N_DEFAULT</strong> – count of default signal handlers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup.test_on_icon_press">
+<code class="sig-name descname">test_on_icon_press</code><span class="sig-paren">(</span><em class="sig-param">setup_views_markup</em>, <em class="sig-param">ICON</em>, <em class="sig-param">EXPECT_TEXT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup.test_on_icon_press"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup.test_on_icon_press" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm text restored before ending edit.</p>
+<ol class="arabic simple">
+<li><p>Case: primary icon.</p></li>
+<li><p>Case: secondary icon.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>setup_views_markup</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_markup.setup_views_markup" title="factsheet_test.view.test_view_markup.setup_views_markup"><code class="xref py py-func docutils literal notranslate"><span class="pre">setup_views_markup()</span></code></a>.</p></li>
+<li><p><strong>ICON</strong> – icon to check.</p></li>
+<li><p><strong>EXPECT_TEXT</strong> – text expected in buffer.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup.test_on_toggle">
+<code class="sig-name descname">test_on_toggle</code><span class="sig-paren">(</span><em class="sig-param">setup_views_markup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup.test_on_toggle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup.test_on_toggle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm record of restore text and clear of restore text.</p>
+<ol class="arabic simple">
+<li><p>Case: editor changes to active</p></li>
+<li><p>Case: editor changes to not active</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>setup_views_markup</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_markup.setup_views_markup" title="factsheet_test.view.test_view_markup.setup_views_markup"><code class="xref py py-func docutils literal notranslate"><span class="pre">setup_views_markup()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_markup.TestEditorMarkup.test_property_access">
+<code class="sig-name descname">test_property_access</code><span class="sig-paren">(</span><em class="sig-param">setup_views_markup</em>, <em class="sig-param">NAME_PROP</em>, <em class="sig-param">NAME_ATTR</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_markup.html#TestEditorMarkup.test_property_access"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_markup.TestEditorMarkup.test_property_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm access limits of each property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_PROP</strong> – name of property.</p></li>
+<li><p><strong>NAME_ATTR</strong> – name of attribute for property.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.view.test_view_sheet.html" class="btn btn-neutral float-right" title="test_view_sheet View Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.view.test_ui.html" class="btn btn-neutral float-left" title="test_ui View Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

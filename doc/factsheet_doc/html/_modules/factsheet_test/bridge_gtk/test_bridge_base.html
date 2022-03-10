@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.bridge_gtk.test_bridge_base &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.bridge_gtk.test_bridge_base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.bridge_gtk.test_bridge_base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for base of classes that encapsulate widget toolkit classes.</span>
+<span class="sd">See :mod:`~.bridge_base`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pytest</span>  <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_base</span> <span class="k">as</span> <span class="nn">BBASE</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gdk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gdk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="PatchBridgeBase"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.PatchBridgeBase">[docs]</a><span class="k">class</span> <span class="nc">PatchBridgeBase</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">BridgeBase</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Class with test stubs for abstract :class:`~.BridgeBase` methods.&quot;&quot;&quot;</span>
+
+    <span class="n">MODEL_INIT</span> <span class="o">=</span> <span class="s1">&#39;A Norwegian Blue&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span>
+
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODEL_INIT</span>
+
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_persist</span></div>
+
+
+<div class="viewcode-block" id="TestBridgeBase"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase">[docs]</a><span class="k">class</span> <span class="nc">TestBridgeBase</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`~.BridgeBase`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBridgeBase.test_eq"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase.test_eq">[docs]</a>    <span class="k">def</span> <span class="nf">test_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm equality comparison.</span>
+
+<span class="sd">        #. Case: type difference.</span>
+<span class="sd">        #. Case: storage element difference.</span>
+<span class="sd">        #. Case: equivalent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span><span class="p">()</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">TEXT</span>
+        <span class="c1"># Test: type difference.</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test: storage element difference.</span>
+        <span class="n">TEXT_DIFFER</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">TEXT_DIFFER</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: equivalent.</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">TEXT</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBridgeBase.test_get_set_state"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase.test_get_set_state">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm conversion to and from pickle format.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;get_set.fsg&#39;</span><span class="p">))</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span><span class="p">()</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">TEXT</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io_out</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s1">&#39;ex_ui_model&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestBridgeBase.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">PatchBridgeBase</span><span class="o">.</span><span class="n">MODEL_INIT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span></div>
+
+<div class="viewcode-block" id="TestBridgeBase.test_str"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase.test_str">[docs]</a>    <span class="k">def</span> <span class="nf">test_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm string representation.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">TEXT</span>
+        <span class="n">expect</span> <span class="o">=</span> <span class="s1">&#39;&lt;PatchBridgeBase: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">expect</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBridgeBase.test_ui_model"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase.test_ui_model">[docs]</a>    <span class="k">def</span> <span class="nf">test_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of ui_model property.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target_class</span> <span class="o">=</span> <span class="n">PatchBridgeBase</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target_class</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_class</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">ui_model</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="k">assert</span> <span class="n">target_class</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_class</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestBridgeBase.test_method_abstract"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeBase.test_method_abstract">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;CLASS, NAME_METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">BridgeBase</span><span class="p">,</span> <span class="s1">&#39;_get_persist&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">BridgeBase</span><span class="p">,</span> <span class="s1">&#39;_new_ui_model&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">BridgeBase</span><span class="p">,</span> <span class="s1">&#39;_set_persist&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_method_abstract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm each abstract method is specified.</span>
+
+<span class="sd">        :param CLASS: class that should be abstract.</span>
+<span class="sd">        :param NAME_METHOD: method that should be abstract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_METHOD</span> <span class="ow">in</span> <span class="n">CLASS</span><span class="o">.</span><span class="n">__abstractmethods__</span></div></div>
+
+
+<div class="viewcode-block" id="TestBridgeTypes"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeTypes">[docs]</a><span class="k">class</span> <span class="nc">TestBridgeTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`~.FactoryUiViewAbstract`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBridgeTypes.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestBridgeTypes.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">ModelUiOpaque</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">PersistUiOpaque</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="c1"># (BBASE.ViewAny, Gtk.Widget),</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">ViewUiOpaque</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">TimeEvent</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type hint definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+
+
+<div class="viewcode-block" id="TestFactoryGtkViewAbstract"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestFactoryGtkViewAbstract">[docs]</a><span class="k">class</span> <span class="nc">TestFactoryGtkViewAbstract</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for `.FactoryUiViewAbstract`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFactoryGtkViewAbstract.test_method_abstract"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestFactoryGtkViewAbstract.test_method_abstract">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;CLASS, NAME_METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_method_abstract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm each abstract method is specified.</span>
+
+<span class="sd">        :param CLASS: class that should be abstract.</span>
+<span class="sd">        :param NAME_METHOD: method that should be abstract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_METHOD</span> <span class="ow">in</span> <span class="n">CLASS</span><span class="o">.</span><span class="n">__abstractmethods__</span></div></div>
+
+
+<div class="viewcode-block" id="TestTimeEvent"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestTimeEvent">[docs]</a><span class="k">class</span> <span class="nc">TestTimeEvent</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for time constant in :mod:`.bridge_base`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestTimeEvent.test_time_current"><a class="viewcode-back" href="../../../test/factsheet_test.bridge_gtk.test_bridge_base.html#factsheet_test.bridge_gtk.test_bridge_base.TestTimeEvent.test_time_current">[docs]</a>    <span class="k">def</span> <span class="nf">test_time_current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm value of constant :data:`.TIME_EVENT_CURRENT`.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">CURRENT_TIME</span> <span class="o">==</span> <span class="n">BBASE</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.conftest &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.conftest</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.conftest</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test fixtures for AppFactsheet as a whole.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="c1"># import factsheet.bridge_gtk.bridge_text as BTEXT</span>
+<span class="c1"># import factsheet.model.idcore as MIDCORE</span>
+<span class="c1"># import factsheet.model.element as MELEMENT</span>
+<span class="c1"># import factsheet.model.fact as MFACT</span>
+<span class="c1"># import factsheet.model.setindexed as MSET</span>
+<span class="c1"># import factsheet.model.table as MTABLE</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_sheet</span> <span class="k">as</span> <span class="nn">CSHEET</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gio</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="c1"># from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<span class="c1"># class PatchBridgeText(BTEXT.BridgeText[typing.Any, typing.Any]):</span>
+<span class="c1">#     &quot;&quot;&quot;:class:`.BridgeText` subclass with stub text property.&quot;&quot;&quot;</span>
+
+<span class="c1">#     def __init__(self):</span>
+<span class="c1">#         super().__init__()</span>
+<span class="c1">#         self.bound = []</span>
+<span class="c1">#         self.loosed = []</span>
+
+<span class="c1">#     # def _bind(self, p_view):</span>
+<span class="c1">#     #     self.bound.append(p_view)</span>
+
+<span class="c1">#     def _get_persist(self):</span>
+<span class="c1">#         return self._model</span>
+
+<span class="c1">#     # def _loose(self, p_view):</span>
+<span class="c1">#     #     self.loosed = [p_view]</span>
+
+<span class="c1">#     def _new_model(self):</span>
+<span class="c1">#         return str()</span>
+
+<span class="c1">#     def new_view(self):</span>
+<span class="c1">#         return str()</span>
+
+<span class="c1">#     def _set_persist(self, p_persist):</span>
+<span class="c1">#         self._model = str(p_persist)</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_bridge_text():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return :class:`.BridgeText` subclass with stub</span>
+<span class="c1">#     text property.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return PatchBridgeText</span>
+
+
+<span class="c1"># class PatchIdCore(MIDCORE.IdCore[</span>
+<span class="c1">#         BTEXT.ViewTextMarkup, BTEXT.ViewTextDisplay,</span>
+<span class="c1">#         BTEXT.ViewTextTagged, BTEXT.ViewTextTagged,</span>
+<span class="c1">#         BTEXT.ViewTextMarkup, BTEXT.ViewTextDisplay]):</span>
+<span class="c1">#     &quot;&quot;&quot;:class:`.IdCore` subclass with stubs for properties.&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, *, p_name, p_summary, p_title, **kwargs):</span>
+<span class="c1">#         super().__init__(p_name=p_name, p_summary=p_summary,</span>
+<span class="c1">#                          p_title=p_title, **kwargs)</span>
+<span class="c1">#</span>
+<span class="c1">#     def _new_model(self):</span>
+<span class="c1">#         name = BTEXT.BridgeTextMarkup()</span>
+<span class="c1">#         summary = BTEXT.BridgeTextTagged()</span>
+<span class="c1">#         title = BTEXT.BridgeTextMarkup()</span>
+<span class="c1">#         return name, summary, title</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_idcore():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return :class:`.IdCore` subclass with stub</span>
+<span class="c1">#     identity properties.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return PatchIdCore</span>
+
+
+<div class="viewcode-block" id="new_id_args"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.new_id_args">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_id_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: factory for stock identity keyword arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_args</span><span class="p">():</span>
+        <span class="n">id_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;Parrot&#39;</span><span class="p">,</span>
+            <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span><span class="p">,</span>
+            <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;The Parrot Sketch&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">id_args</span>
+
+    <span class="k">return</span> <span class="n">new_args</span></div>
+
+
+<div class="viewcode-block" id="new_model_topic"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.new_model_topic">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_model_topic</span><span class="p">(</span><span class="n">new_id_args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: Return factory for topic with non-empty facts</span>
+<span class="sd">    outline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_target</span><span class="p">(</span><span class="n">n_facts</span><span class="p">):</span>
+        <span class="n">ID_ARGS</span> <span class="o">=</span> <span class="n">new_id_args</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="o">**</span><span class="n">ID_ARGS</span><span class="p">)</span>
+        <span class="c1"># PatchFact = patch_class_fact</span>
+        <span class="c1"># for i in range(n_facts):</span>
+        <span class="c1">#     fact = PatchFact(p_topic=target)</span>
+        <span class="c1">#     fact.name.text = &#39;Fact {:02}&#39;.format(i)</span>
+        <span class="c1">#     target.append_fact(fact)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">target</span>
+
+    <span class="k">return</span> <span class="n">new_target</span></div>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def new_kwargs_idcore():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: factory for stock identity keyword arguments for</span>
+<span class="c1">#     :class:`.IdCore`.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def new_kwargs():</span>
+<span class="c1">#         kwargs = dict(</span>
+<span class="c1">#             p_name=&#39;Parrot&#39;,</span>
+<span class="c1">#             p_summary=&#39;The parrot is a Norwegian Blue.&#39;,</span>
+<span class="c1">#             p_title=&#39;The Parrot Sketch&#39;,</span>
+<span class="c1">#             )</span>
+<span class="c1">#         return kwargs</span>
+<span class="c1">#</span>
+<span class="c1">#     return new_kwargs</span>
+
+
+<span class="c1"># class PatchFact(MFACT.Fact[MTOPIC.Topic, int]):</span>
+<span class="c1">#     &quot;&quot;&quot;Stub :class:`.Fact` class with complete check and clear methods.&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     STATUS_CHECKED = MFACT.StatusOfFact.DEFINED</span>
+<span class="c1">#     STATUS_CLEARED = MFACT.StatusOfFact.UNCHECKED</span>
+<span class="c1">#     VALUE_CHECKED = 42</span>
+<span class="c1">#     VALUE_CLEARED = None</span>
+<span class="c1">#</span>
+<span class="c1">#     def check(self) -&gt; MFACT.StatusOfFact:</span>
+<span class="c1">#         &quot;&quot;&quot;Set fact value and set corresponding state of fact check.&quot;&quot;&quot;</span>
+<span class="c1">#         self._value = PatchFact.VALUE_CHECKED</span>
+<span class="c1">#         self._status = PatchFact.STATUS_CHECKED</span>
+<span class="c1">#         return super().check()</span>
+<span class="c1">#</span>
+<span class="c1">#     def clear(self) -&gt; None:</span>
+<span class="c1">#         &quot;&quot;&quot;Clear fact value and set corresponding state of fact check.&quot;&quot;&quot;</span>
+<span class="c1">#         self._value = PatchFact.VALUE_CLEARED</span>
+<span class="c1">#         self._status = PatchFact.STATUS_CLEARED</span>
+<span class="c1">#         super().clear()</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_class_fact():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return stub :class:`.Fact` class with complete</span>
+<span class="c1">#     check and clear methods.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return PatchFact</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def fact_sample():</span>
+<span class="c1">#     &quot;&quot;&quot;Fixture to return factory for sample facts.&quot;&quot;&quot;</span>
+<span class="c1">#     def _new_fact(p_name=&#39;Parrot&#39;, p_value=None):</span>
+<span class="c1">#         Fact = MFACT.Fact[typing.Any, typing.Any]</span>
+<span class="c1">#         SUMMARY = &#39;The parrot is a Norwegian Blue.&#39;</span>
+<span class="c1">#         TITLE = &#39;The Parrot Sketch&#39;</span>
+<span class="c1">#         TOPIC = None</span>
+<span class="c1">#         sample = Fact(</span>
+<span class="c1">#             p_name=p_name, p_summary=SUMMARY, p_title=TITLE, p_topic=TOPIC)</span>
+<span class="c1">#         sample._value = p_value</span>
+<span class="c1">#         return sample</span>
+<span class="c1">#</span>
+<span class="c1">#     return _new_fact</span>
+
+
+<div class="viewcode-block" id="factory_control_sheet"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.factory_control_sheet">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">factory_control_sheet</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: return factory for :class:`ControlSheet` with</span>
+<span class="sd">    model that includes sample topics outline.</span>
+
+<span class="sd">    :param p_n_top_topics: number of top-level topics.</span>
+<span class="sd">    :param p_depth_topics: number of outline levels below top level.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_sheet</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">p_n_top_topics</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">p_n_depth_topics</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">TITLE_SHEET</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">control_sheet</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">TITLE_SHEET</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p_n_top_topics</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Topic </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">insert_topic_before</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p_n_depth_topics</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;Topic </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="n">p_n_top_topics</span><span class="p">)</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">insert_topic_child</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">control_sheet</span>
+
+    <span class="k">return</span> <span class="n">new_sheet</span></div>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def factory_topic():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return factory for :class:`Topic` with facts</span>
+<span class="c1">#     outline.</span>
+<span class="c1">#</span>
+<span class="c1">#     :param p_top_facts: number of top-level facts.</span>
+<span class="c1">#     :param p_depth_facts: number of outline levels below top level.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def new_topic(*, p_top_facts=3, p_depth_facts=2):</span>
+<span class="c1">#         TITLE_MODEL = &#39;Something completely different.&#39;</span>
+<span class="c1">#         topic = MTOPIC.Topic()</span>
+<span class="c1">#         topic.init_identity(p_title=TITLE_MODEL)</span>
+<span class="c1">#</span>
+<span class="c1">#         for i in range(p_top_facts):</span>
+<span class="c1">#             fact = PatchFact(p_topic=topic)</span>
+<span class="c1">#             fact.init_identity(p_name=&#39;Fact {}&#39;.format(i))</span>
+<span class="c1">#             topic.insert_fact_before(fact, None)</span>
+<span class="c1">#         parent = topic._facts._gtk_model.get_iter_first()</span>
+<span class="c1">#         for j in range(p_depth_facts):</span>
+<span class="c1">#             name = &#39;\t&#39;*(j+1) + &#39;Fact {}&#39;.format(j + p_top_facts)</span>
+<span class="c1">#             fact = PatchFact(p_topic=topic)</span>
+<span class="c1">#             fact.init_identity(p_name=name)</span>
+<span class="c1">#             parent = topic.insert_fact_child(fact, parent)</span>
+<span class="c1">#         return topic</span>
+<span class="c1">#</span>
+<span class="c1">#     return new_topic</span>
+
+
+<div class="viewcode-block" id="AppFactsheet"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.AppFactsheet">[docs]</a><span class="k">class</span> <span class="nc">AppFactsheet</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Application</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stub :class:`~.app.AppFactsheet` class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">application_id</span><span class="o">=</span><span class="s1">&#39;com.novafolks.factsheet.stub&#39;</span><span class="p">,</span>
+                         <span class="n">flags</span><span class="o">=</span><span class="n">Gio</span><span class="o">.</span><span class="n">ApplicationFlags</span><span class="o">.</span><span class="n">FLAGS_NONE</span><span class="p">,</span>
+                         <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AppFactsheet.do_activate"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.AppFactsheet.do_activate">[docs]</a>    <span class="k">def</span> <span class="nf">do_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="c1"># def do_shutdown(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;Application teardown. &quot;&quot;&quot;</span>
+    <span class="c1">#     Gtk.Application.do_shutdown(self)</span>
+
+<div class="viewcode-block" id="AppFactsheet.do_startup"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.AppFactsheet.do_startup">[docs]</a>    <span class="k">def</span> <span class="nf">do_startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">Gtk</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">do_startup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="patch_appfactsheet"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.patch_appfactsheet">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">patch_appfactsheet</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pytest fixture with teardown: return stub :class:`.AppFactsheet`</span>
+<span class="sd">    class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">factsheet</span> <span class="o">=</span> <span class="n">AppFactsheet</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">factsheet</span>
+    <span class="k">del</span> <span class="n">factsheet</span></div>
+
+
+<span class="c1"># @DC.dataclass</span>
+<span class="c1"># class ArgsInfoId:</span>
+<span class="c1">#     &quot;&quot;&quot;Convenience class for assembling arguments to</span>
+<span class="c1">#     :class:`.InfoId` method ``__init__``.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     p_name: str</span>
+<span class="c1">#     p_summary: str</span>
+<span class="c1">#     p_title: str</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_args_infoid():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return set of argument values to construct a</span>
+<span class="c1">#     stock :class:`InfoId` object.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return ArgsInfoId(</span>
+<span class="c1">#         p_name=&#39;Parrot&#39;,</span>
+<span class="c1">#         p_summary=&#39;The parrot is a Norwegian Blue.&#39;,</span>
+<span class="c1">#         p_title=&#39;The Parrot Sketch&#39;,</span>
+<span class="c1">#         )</span>
+
+
+<span class="c1"># @DC.dataclass</span>
+<span class="c1"># class ArgsArray:</span>
+<span class="c1">#     &quot;&quot;&quot;Convenience class for assembling arguments to</span>
+<span class="c1">#     :class:`.Array` constructor expression.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     p_rows: Gtk.ListStore</span>
+<span class="c1">#     p_cols: typing.Sequence</span>
+<span class="c1">#     p_styles: typing.Sequence[MELEMENT.Style]</span>
+<span class="c1">#     p_title: str</span>
+<span class="c1">#     p_symbol_row: str</span>
+<span class="c1">#     p_symbol_col: str</span>
+<span class="c1">#     p_symbol_entry: str</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_args_array():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return argument list to construct a stock</span>
+<span class="c1">#     :class:`.Array` object.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Set = MSET.SetIndexed[int]</span>
+<span class="c1">#     Element = MELEMENT.ElementOpaque[int]</span>
+<span class="c1">#     N_ROWS = 3</span>
+<span class="c1">#     N_COLUMNS = 4</span>
+<span class="c1">#     size = N_ROWS * N_COLUMNS</span>
+<span class="c1">#     range_r = range(0, size, N_COLUMNS)</span>
+<span class="c1">#     range_c = range(0, size, N_ROWS)</span>
+<span class="c1">#     ROWS = Gtk.ListStore(*[GO.TYPE_PYOBJECT]*(1+N_COLUMNS))</span>
+<span class="c1">#     for i, r in enumerate(range_r):</span>
+<span class="c1">#         row = [Element(p_member=r, p_index=i)]</span>
+<span class="c1">#         entries = Set([(r+c) % size for c in range_c])</span>
+<span class="c1">#         row.extend(entries)</span>
+<span class="c1">#         ROWS.append(row)</span>
+<span class="c1">#     set_cols = Set(range_c)</span>
+<span class="c1">#     COLS = list(set_cols)</span>
+<span class="c1">#     STYLES = [MELEMENT.Style(&#39;Label&#39;), MELEMENT.Style(&#39;Element&#39;),</span>
+<span class="c1">#               MELEMENT.Style(&#39;Index&#39;), MELEMENT.Style(&#39;Member&#39;),</span>
+<span class="c1">#               MELEMENT.Style(&#39;Plain&#39;), MELEMENT.Style(&#39;Oops!&#39;),</span>
+<span class="c1">#               ]</span>
+<span class="c1">#     TITLE = &#39;Array&#39;</span>
+<span class="c1">#     SYMBOL_ROW = &#39;r&#39;</span>
+<span class="c1">#     SYMBOL_COL = &#39;c&#39;</span>
+<span class="c1">#     SYMBOL_ENTRY = &#39;e&#39;</span>
+<span class="c1">#     return ArgsArray(</span>
+<span class="c1">#         p_rows=ROWS,</span>
+<span class="c1">#         p_cols=COLS,</span>
+<span class="c1">#         p_styles=STYLES,</span>
+<span class="c1">#         p_title=TITLE,</span>
+<span class="c1">#         p_symbol_row=SYMBOL_ROW,</span>
+<span class="c1">#         p_symbol_col=SYMBOL_COL,</span>
+<span class="c1">#         p_symbol_entry=SYMBOL_ENTRY,</span>
+<span class="c1">#         )</span>
+
+
+<span class="c1"># @DC.dataclass</span>
+<span class="c1"># class ArgsTable:</span>
+<span class="c1">#     &quot;&quot;&quot;Convenience class assembles arguments to</span>
+<span class="c1">#     :meth:`.TableElements.__init__` for pytest fixture.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     rows: Gtk.ListStore</span>
+<span class="c1">#     columns: typing.Sequence[MTABLE.InfoColumn]</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_args_table():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture: return arguments for</span>
+<span class="c1">#     :meth:`.TableElements.__init__`.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     set_int = MSET.SetIndexed[int]([0, 2, 4, 6, 8])</span>
+<span class="c1">#     set_str = MSET.SetIndexed[str]([&#39;a&#39;, &#39;e&#39;, &#39;i&#39;, &#39;o&#39;, &#39;u&#39;])</span>
+<span class="c1">#     list_mix = [MELEMENT.ElementOpaque(&#39;x&#39;, 0), None,</span>
+<span class="c1">#                 MELEMENT.ElementOpaque(&#39;y&#39;, 1), None,</span>
+<span class="c1">#                 MELEMENT.ElementOpaque(&#39;z&#39;, 2)]</span>
+    <span class="c1"># rows = Gtk.ListStore(GO.TYPE_PYOBJECT, GO.TYPE_PYOBJECT,</span>
+    <span class="c1">#                      GO.TYPE_PYOBJECT)</span>
+<span class="c1">#     for e_int, e_str, e_mix in zip(set_int, set_str, list_mix):</span>
+<span class="c1">#         rows.append([e_int, e_str, e_mix])</span>
+<span class="c1">#     info_int = MTABLE.InfoColumn(title=&#39;Integers&#39;, symbol=&#39;i&#39;, styles=[</span>
+<span class="c1">#         &#39;Label&#39;, &#39;Element&#39;, &#39;Index&#39;, &#39;Member&#39;, &#39;Plain&#39;])</span>
+<span class="c1">#     info_str = MTABLE.InfoColumn(title=&#39;Strings&#39;, symbol=&#39;s&#39;, styles=[</span>
+<span class="c1">#         &#39;Label&#39;, &#39;Element&#39;, &#39;Index&#39;, &#39;Member&#39;, &#39;Plain&#39;, &#39;Oops&#39;])</span>
+<span class="c1">#     info_mix = MTABLE.InfoColumn(title=&#39;Mixed&#39;, symbol=&#39;m&#39;, styles=[</span>
+<span class="c1">#         &#39;Label&#39;, &#39;Element&#39;, &#39;Index&#39;, &#39;Member&#39;, &#39;Plain&#39;])</span>
+<span class="c1">#     columns = [info_int, info_str, info_mix]</span>
+<span class="c1">#     return ArgsTable(</span>
+<span class="c1">#         rows=rows,</span>
+<span class="c1">#         columns=columns,</span>
+<span class="c1">#         )</span>
+
+
+<div class="viewcode-block" id="PatchLogger"><a class="viewcode-back" href="../../test/factsheet_test.conftest.html#factsheet_test.conftest.PatchLogger">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">PatchLogger</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: return stub `logging.logger &lt;LoggingLogger_&gt;`_.</span>
+
+<span class="sd">    .. _LoggingLogger: https://docs.python.org/3.7/library/logging.html</span>
+<span class="sd">       #logger-objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Logger</span><span class="p">:</span>
+        <span class="n">T_CRITICAL</span> <span class="o">=</span> <span class="s1">&#39;critical&#39;</span>
+        <span class="n">T_DEBUG</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span>
+        <span class="n">T_ERROR</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span>
+        <span class="n">T_NONE</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+        <span class="n">T_WARNING</span> <span class="o">=</span> <span class="s1">&#39;warning&#39;</span>
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_NONE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;No log call&quot;</span>
+
+        <span class="k">def</span> <span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_message</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_CRITICAL</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">p_message</span>
+
+        <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_message</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_DEBUG</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">p_message</span>
+
+        <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_message</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_ERROR</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">p_message</span>
+
+        <span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_message</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_WARNING</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">p_message</span>
+
+    <span class="k">return</span> <span class="n">Logger</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

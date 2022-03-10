@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_idcore Model Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_sheet Model Test Module" href="factsheet_test.model.test_sheet.html" />
+    <link rel="prev" title="model Test Package" href="factsheet_test.model.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_idcore</span></code> Model Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.model.test_idcore.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.model.test_idcore">
+<span id="test-idcore-model-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_idcore</span></code> Model Test Module<a class="headerlink" href="#module-factsheet_test.model.test_idcore" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for identity attributes common to Factsheet model components.
+See <a class="reference internal" href="../src/factsheet.model.idcore.html#factsheet.model.idcore.IdCore" title="factsheet.model.idcore.IdCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdCore</span></code></a>.</p>
+<dl class="class">
+<dt id="factsheet_test.model.test_idcore.PatchIdCore">
+<em class="property">class </em><code class="sig-name descname">PatchIdCore</code><span class="sig-paren">(</span><em class="sig-param">p_name</em>, <em class="sig-param">p_summary</em>, <em class="sig-param">p_title</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#PatchIdCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.PatchIdCore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../src/factsheet.model.idcore.html#factsheet.model.idcore.IdCore" title="factsheet.model.idcore.IdCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.model.idcore.IdCore</span></code></a></p>
+<p>Stub subclass for testing <a class="reference internal" href="../src/factsheet.model.idcore.html#factsheet.model.idcore.IdCore" title="factsheet.model.idcore.IdCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdCore</span></code></a> methods.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.model.test_idcore.TestIdCore">
+<em class="property">class </em><code class="sig-name descname">TestIdCore</code><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.model.idcore.html#factsheet.model.idcore.IdCore" title="factsheet.model.idcore.IdCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdCore</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_eq">
+<code class="sig-name descname">test_eq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_eq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_eq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm equivalence operator.</p>
+<ol class="arabic simple">
+<li><p>Case: type difference.</p></li>
+<li><p>Case: name difference.</p></li>
+<li><p>Case: summary difference.</p></li>
+<li><p>Case: title difference.</p></li>
+<li><p>Case: equivalent</p></li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_get_set_state">
+<code class="sig-name descname">test_get_set_state</code><span class="sig-paren">(</span><em class="sig-param">tmp_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_get_set_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_get_set_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm conversion to and from pickle format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: nominal.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_init_attr">
+<code class="sig-name descname">test_init_attr</code><span class="sig-paren">(</span><em class="sig-param">ATTR</em>, <em class="sig-param">HINT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_init_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_init_attr" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: missing attribute definition.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ATTR</strong> – missing attribute.</p></li>
+<li><p><strong>HINT</strong> – type hint for missing attribute.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_init_extra">
+<code class="sig-name descname">test_init_extra</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_init_extra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_init_extra" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: extra keyword argument.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_is_fresh">
+<code class="sig-name descname">test_is_fresh</code><span class="sig-paren">(</span><em class="sig-param">IS_STALE</em>, <em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_is_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_is_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm negation of <a class="reference internal" href="../src/factsheet.model.idcore.html#factsheet.model.idcore.IdCore.is_stale" title="factsheet.model.idcore.IdCore.is_stale"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_stale()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>IS_STALE</strong> – state to report for sheet.</p></li>
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_is_stale">
+<code class="sig-name descname">test_is_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm return is accurate.</p>
+<ol class="arabic simple">
+<li><p>Case: IdCore stale, name, summary, and title fresh</p></li>
+<li><p>Case: IdCore fresh, name stale, summary fresh, title fresh</p></li>
+<li><p>Case: IdCore fresh, name fresh, summary stale, title fresh</p></li>
+<li><p>Case: IdCore fresh, name fresh, summary fresh, title stale</p></li>
+<li><p>Case: IdCore fresh, name, summary, and title fresh</p></li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_property_access">
+<code class="sig-name descname">test_property_access</code><span class="sig-paren">(</span><em class="sig-param">NAME_PROP</em>, <em class="sig-param">NAME_ATTR</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_property_access"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_property_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm access limits of each property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_PROP</strong> – name of property.</p></li>
+<li><p><strong>NAME_ATTR</strong> – name of attribute.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_set_fresh">
+<code class="sig-name descname">test_set_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_set_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_set_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm instance marked fresh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_set_fresh_attr">
+<code class="sig-name descname">test_set_fresh_attr</code><span class="sig-paren">(</span><em class="sig-param">ATTR</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_set_fresh_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_set_fresh_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm all attributes marked fresh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ATTR</strong> – name of attribute.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCore.test_set_stale">
+<code class="sig-name descname">test_set_stale</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCore.test_set_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCore.test_set_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm instance marked stale and attributes unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.model.test_idcore.TestIdCoreTypes">
+<em class="property">class </em><code class="sig-name descname">TestIdCoreTypes</code><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCoreTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCoreTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for type hint definitions in <a class="reference internal" href="../src/factsheet.model.idcore.html#module-factsheet.model.idcore" title="factsheet.model.idcore"><code class="xref py py-mod docutils literal notranslate"><span class="pre">idcore</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.model.test_idcore.TestIdCoreTypes.test_types">
+<code class="sig-name descname">test_types</code><span class="sig-paren">(</span><em class="sig-param">TYPE_TARGET</em>, <em class="sig-param">TYPE_EXPECT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_idcore.html#TestIdCoreTypes.test_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_idcore.TestIdCoreTypes.test_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm type hint definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TYPE_TARGET</strong> – type hint under test.</p></li>
+<li><p><strong>TYPE_EXPECT</strong> – type expected.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.model.test_sheet.html" class="btn btn-neutral float-right" title="test_sheet Model Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.model.html" class="btn btn-neutral float-left" title="model Test Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

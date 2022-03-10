@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.bridge_gtk.bridge_base &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.bridge_gtk.bridge_base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.bridge_gtk.bridge_base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines base for model classes that encapsulate widget toolkit classes.</span>
+
+<span class="sd">Constants and Type Hints</span>
+<span class="sd">========================</span>
+
+<span class="sd">.. data:: ModelUiOpaque</span>
+
+<span class="sd">    Placeholder type hint for a toolkit-specific storage element.  A GTK</span>
+<span class="sd">    example is `Gtk.TextBuffer`_.</span>
+
+<span class="sd">.. _Gtk.TextBuffer:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html</span>
+
+<span class="sd">.. data:: PersistUiOpaque</span>
+
+<span class="sd">    Placeholder type hint for model representation suitable</span>
+<span class="sd">    for persistent storage.  A GTK example is the string representation</span>
+<span class="sd">    of a `Gtk.TextBuffer`_.</span>
+
+<span class="sd">.. data:: TimeEvent</span>
+
+<span class="sd">    Type hint for timestamp of a user interface event.  See</span>
+<span class="sd">    `Gtk.get_current_event_time`_.</span>
+
+<span class="sd">.. _Gtk.get_current_event_time:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/</span>
+<span class="sd">    functions.html#Gtk.get_current_event_time</span>
+
+<span class="sd">.. data:: TIME_EVENT_CURRENT</span>
+
+<span class="sd">    Represents the current time for a user interface event.  See</span>
+<span class="sd">    `Gdk.CURRENT_TIME`_.</span>
+
+<span class="sd">.. _Gdk.CURRENT_TIME:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gdk-3.0/</span>
+<span class="sd">    constants.html#Gdk.CURRENT_TIME</span>
+
+<span class="sd">.. data:: ViewUiOpaque</span>
+
+<span class="sd">    Placeholder type hint for a toolkit-specific view element.  A GTK</span>
+<span class="sd">    example is `Gtk.TextView`_.</span>
+
+<span class="sd">.. _Gtk.TextView:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html</span>
+
+<span class="sd">Classes and Functions</span>
+<span class="sd">=====================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gdk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gdk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.bridge_base&#39;</span><span class="p">)</span>
+
+<span class="n">TimeEvent</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="n">TIME_EVENT_CURRENT</span> <span class="o">=</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">CURRENT_TIME</span>
+
+<span class="n">ModelUiOpaque</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ModelUiOpaque&#39;</span><span class="p">)</span>
+<span class="n">PersistUiOpaque</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;PersistUiOpaque&#39;</span><span class="p">)</span>
+<span class="c1"># ViewAny = typing.Union[Gtk.Widget]</span>
+<span class="n">ViewUiOpaque</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ViewUiOpaque&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FactoryUiViewAbstract"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract">[docs]</a><span class="k">class</span> <span class="nc">FactoryUiViewAbstract</span><span class="p">(</span>
+        <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">ViewUiOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Common ancestor of factory classes for views of storage elements.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ViewUiOpaque</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return toolkit-specific view of storage element.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="BridgeBase"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.BridgeBase">[docs]</a><span class="k">class</span> <span class="nc">BridgeBase</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">ModelUiOpaque</span><span class="p">,</span> <span class="n">PersistUiOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Common ancestor of model classes that encapsulate widget toolkit</span>
+<span class="sd">    storage elements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_other</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when storage element of other is equivalent to</span>
+<span class="sd">        self.</span>
+
+<span class="sd">        :param p_other: object to test for equality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p_other</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">p_other</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return content of storage element in form pickle can store.</span>
+
+<span class="sd">        Each descendant class defines its persistent contents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;ex_ui_model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;_ui_model&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+<div class="viewcode-block" id="BridgeBase.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.BridgeBase.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize instance with toolkit-specific storage.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_ui_model</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_state</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reconstruct storage element from content that pickle loads.</span>
+
+<span class="sd">        :param p_state: unpickled content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">p_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_ui_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ex_ui_model</span><span class="p">)</span>   <span class="c1"># type: ignore[attr-defined]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ui_model</span>       <span class="c1"># type: ignore[attr-defined]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return storage element as string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_persist</span><span class="p">())</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistUiOpaque</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return storage element in form suitable for persistent storage.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelUiOpaque</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return user interface storage element with signal connections.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">:</span> <span class="n">PersistUiOpaque</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set storage element from content in persistent form.</span>
+
+<span class="sd">        :param p_persist: persistent form for storage element content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelUiOpaque</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return underlying user interface storage element.</span>
+
+<span class="sd">        Method :meth:`.ui_model` is intended only for use in bridge</span>
+<span class="sd">        classes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

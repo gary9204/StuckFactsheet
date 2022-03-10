@@ -1,0 +1,914 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_bridge_outline Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_bridge_text Test Module" href="factsheet_test.bridge_gtk.test_bridge_text.html" />
+    <link rel="prev" title="test_bridge_base Test Module" href="factsheet_test.bridge_gtk.test_bridge_base.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_bridge_outline</span></code> Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.bridge_gtk.test_bridge_outline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.bridge_gtk.test_bridge_outline">
+<span id="test-bridge-outline-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_bridge_outline</span></code> Test Module<a class="headerlink" href="#module-factsheet_test.bridge_gtk.test_bridge_outline" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for bridge classes to encapsulate witget toolkit outline
+classes. See <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#module-factsheet.bridge_gtk.bridge_outline" title="factsheet.bridge_gtk.bridge_outline"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bridge_outline</span></code></a>.</p>
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline">
+<em class="property">class </em><code class="sig-name descname">TestFactoryChooserOutline</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestFactoryChooserOutline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline" title="factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryChooserOutline</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">TYPE_UI_MODEL</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestFactoryChooserOutline.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm storage initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>TYPE_UI_MODEL</strong> – user interface model type for outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline.test_call">
+<code class="sig-name descname">test_call</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">TYPE_UI_MODEL</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestFactoryChooserOutline.test_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestFactoryChooserOutline.test_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm return is a view for choosing from model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>TYPE_UI_MODEL</strong> – user interface model type for outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline">
+<em class="property">class </em><code class="sig-name descname">TestViewChooserOutline</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestViewChooserOutline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.FactoryViewOutline" title="factsheet.bridge_gtk.bridge_outline.FactoryViewOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryViewOutline</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">TYPE_UI_MODEL</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestViewChooserOutline.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm storage initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>TYPE_UI_MODEL</strong> – user interface model type for outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline.test_call">
+<code class="sig-name descname">test_call</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">TYPE_UI_MODEL</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestViewChooserOutline.test_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestViewChooserOutline.test_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm return is a view for outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>TYPE_UI_MODEL</strong> – user interface model type for outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.gtk_model_to_names">
+<code class="sig-name descname">gtk_model_to_names</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#gtk_model_to_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.gtk_model_to_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dictionary of names in a <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeModel.html">Gtk.TreeModel</a> indexed by line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model</strong> – model to extract names from.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.iter_section">
+<code class="sig-name descname">iter_section</code><span class="sig-paren">(</span><em class="sig-param">p_model</em>, <em class="sig-param">p_it=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#iter_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.iter_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over all rows at or under a given row of
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeModel.html">Gtk.TreeModel</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_model</strong> – model containing rows.</p></li>
+<li><p><strong>p_it</strong> – iterate over this row and all of its descendants.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_children">
+<code class="sig-name descname">insert_snippet_children</code><span class="sig-paren">(</span><em class="sig-param">p_model</em>, <em class="sig-param">p_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#insert_snippet_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert snippet into <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti" title="factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti"><code class="xref py py-data docutils literal notranslate"><span class="pre">UiModelOutlineMulti</span></code></a> at given path.</p>
+<p>The snippet includes a line with children as shown below.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Item cxx</div>
+<div class="line-block">
+<div class="line">Item cax</div>
+<div class="line">Item cbx</div>
+</div>
+</div>
+</div></blockquote>
+<p>The function places the snipppet as the last child of line at given
+path.  If line is None, the snippet is placed at the end of the
+outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_model</strong> – model in which to insert snippet.</p></li>
+<li><p><strong>p_path</strong> – path to parent for snippet.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of snippet root in model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_multiple">
+<code class="sig-name descname">insert_snippet_multiple</code><span class="sig-paren">(</span><em class="sig-param">p_model</em>, <em class="sig-param">p_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#insert_snippet_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_multiple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert snippet into <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti" title="factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti"><code class="xref py py-data docutils literal notranslate"><span class="pre">UiModelOutlineMulti</span></code></a> at given path.</p>
+<p>The snippet includes multiple levels as shown below.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Item mxx</div>
+<div class="line-block">
+<div class="line">Item max</div>
+<div class="line-block">
+<div class="line">Item maa</div>
+<div class="line">Item mab</div>
+</div>
+</div>
+</div>
+</div></blockquote>
+<p>The function places the snipppet as the last child of line at given
+path.  If line is None, the snippet is placed at the end of the
+outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_model</strong> – model in which to insert snippet.</p></li>
+<li><p><strong>p_path</strong> – path to parent for snippet.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of snippet root in model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_single">
+<code class="sig-name descname">insert_snippet_single</code><span class="sig-paren">(</span><em class="sig-param">p_model</em>, <em class="sig-param">p_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#insert_snippet_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.insert_snippet_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert snippet into <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti" title="factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti"><code class="xref py py-data docutils literal notranslate"><span class="pre">UiModelOutlineMulti</span></code></a> at given path.</p>
+<p>The snippet includes a single line as shown below.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Item sxx</div>
+</div>
+</div></blockquote>
+<p>The function places the snipppet as the last child of line at given
+path.  If line is None, the snippet is placed at the end of the
+outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_model</strong> – model in which to insert snippet.</p></li>
+<li><p><strong>p_path</strong> – path to parent for snippet.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of snippet root in model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.NAMES">
+<code class="sig-name descname">NAMES</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">new_names_model_multi</em>, <em class="sig-param">new_names_model_single</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#NAMES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.NAMES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return names of items in outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/reference/reference.html?#std-fixture-request">Pytest request</a> identifies type
+of outline.</p></li>
+<li><p><strong>new_names_model_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_multi()</span></code></a>.</p></li>
+<li><p><strong>new_names_model_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_single()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi">
+<code class="sig-name descname">new_gtk_model_multi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#new_gtk_model_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeStore.html">Gtk.TreeStore</a> model factory.</p>
+<p>The structure of each model is as shown below.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Item 0xx</div>
+<div class="line-block">
+<div class="line">Item 00x</div>
+<div class="line-block">
+<div class="line">Item 000</div>
+</div>
+<div class="line">Item 01x</div>
+</div>
+<div class="line">Item 1xx</div>
+<div class="line-block">
+<div class="line">Item 10x</div>
+<div class="line">Item 11x</div>
+<div class="line-block">
+<div class="line">Item 110</div>
+<div class="line">Item 111</div>
+<div class="line">Item 112</div>
+</div>
+</div>
+</div>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_tag</strong> (<em>factory</em>) – identifies model (default is ‘Target’).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single">
+<code class="sig-name descname">new_gtk_model_single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#new_gtk_model_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ListStore.html">Gtk.ListStore</a> model factory.</p>
+<p>The structure of each model is as shown below.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Item 0</div>
+<div class="line">Item 1</div>
+<div class="line">Item 2</div>
+<div class="line">…</div>
+</div>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_n_items</strong> (<em>factory</em>) – number of items in model (default is 5).</p></li>
+<li><p><strong>p_tag</strong> (<em>factory</em>) – identifies model (default is ‘Target’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi">
+<code class="sig-name descname">new_names_model_multi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#new_names_model_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return factory for names in model returned by
+<a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_gtk_model_multi()</span></code></a>.</p>
+<p>This fixture primarily serves to validate test fixtures and
+functions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single">
+<code class="sig-name descname">new_names_model_single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#new_names_model_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return factory for names in model returned by
+<a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_gtk_model_single()</span></code></a>.</p>
+<p>This fixture primarily serves to validate test fixtures and
+functions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi">
+<code class="sig-name descname">new_patch_multi</code><span class="sig-paren">(</span><em class="sig-param">new_gtk_model_multi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#new_patch_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return factory for multi-level outlines.</p>
+<p>Each outline is patched with non-empty model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_gtk_model_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_gtk_model_multi()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single">
+<code class="sig-name descname">new_patch_single</code><span class="sig-paren">(</span><em class="sig-param">new_gtk_model_single</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#new_patch_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return factory for single-level outlines.</p>
+<p>Each outline is patched with non-empty model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_gtk_model_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_gtk_model_single()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.PatchItem">
+<em class="property">class </em><code class="sig-name descname">PatchItem</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">tag='Target'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#PatchItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.PatchItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Placeholder item class for unit tests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name to identify an item.</p></li>
+<li><p><strong>tag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – string to identify all items in a section or model.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.PatchItem.tag">
+<code class="sig-name descname">tag</code><em class="property"> = 'Target'</em><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.PatchItem.tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures">
+<em class="property">class </em><code class="sig-name descname">TestCheckFixtures</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestCheckFixtures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests to check test fixtures and test module functions.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures.test_model_multi">
+<code class="sig-name descname">test_model_multi</code><span class="sig-paren">(</span><em class="sig-param">new_gtk_model_multi</em>, <em class="sig-param">new_names_model_multi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestCheckFixtures.test_model_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures.test_model_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm multi-level model structure and content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_gtk_model_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_gtk_model_multi()</span></code></a>.</p></li>
+<li><p><strong>new_names_model_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_multi()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures.test_model_single">
+<code class="sig-name descname">test_model_single</code><span class="sig-paren">(</span><em class="sig-param">new_gtk_model_single</em>, <em class="sig-param">new_names_model_single</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestCheckFixtures.test_model_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestCheckFixtures.test_model_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm single-level model structure and content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_gtk_model_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_gtk_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_gtk_model_single()</span></code></a>.</p></li>
+<li><p><strong>new_names_model_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_single()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline">
+<em class="property">class </em><code class="sig-name descname">TestModelOutline</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline" title="factsheet.bridge_gtk.bridge_outline.ModelOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutline</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_method_abstract">
+<code class="sig-name descname">test_method_abstract</code><span class="sig-paren">(</span><em class="sig-param">CLASS</em>, <em class="sig-param">NAME_METHOD</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_method_abstract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_method_abstract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm each abstract method is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CLASS</strong> – abstract class under test.</p></li>
+<li><p><strong>NAME_METHOD</strong> – confirm method with this name is abstract.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">SUBCLASS</em>, <em class="sig-param">MODEL</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization for each subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBCLASS</strong> – outline model subclass under test.</p></li>
+<li><p><strong>MODEL</strong> – GTK model for outline model subclass under test.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_clear">
+<code class="sig-name descname">test_clear</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm all lines removed from outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_item">
+<code class="sig-name descname">test_get_item</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">LINE</em>, <em class="sig-param">NAME</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_get_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm all lines removed from outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>LINE</strong> – path to line containing item to get.</p></li>
+<li><p><strong>NAME</strong> – name in item to get.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_item_direct">
+<code class="sig-name descname">test_get_item_direct</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">LINE</em>, <em class="sig-param">NAME</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_get_item_direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_item_direct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm all lines removed from outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>LINE</strong> – path to line containing item to get.</p></li>
+<li><p><strong>NAME</strong> – name in item to get.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_persist">
+<code class="sig-name descname">test_get_persist</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">NAMES</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_get_persist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_get_persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm iterator over lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>NAME</strong> – fixture that returns names of items in outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_items">
+<code class="sig-name descname">test_items</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">NAMES</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm iterator over items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBCLASS</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>NAME</strong> – fixture that returns names of items in outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_lines">
+<code class="sig-name descname">test_lines</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">NAMES</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm iterator over lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>NAME</strong> – fixture that returns names of items in outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_remove">
+<code class="sig-name descname">test_remove</code><span class="sig-paren">(</span><em class="sig-param">SUBTYPE</em>, <em class="sig-param">NAMES</em>, <em class="sig-param">PATH</em>, <em class="sig-param">BEGIN</em>, <em class="sig-param">END</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutline.test_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutline.test_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm section removal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SUBTYPE</strong> – identifies outline model subclass under test.</p></li>
+<li><p><strong>NAME</strong> – fixture that returns names of items in outline.</p></li>
+<li><p><strong>PATH</strong> – path for line to remove.</p></li>
+<li><p><strong>BEGIN</strong> – slice [BEGIN:END) contains names of lines removed.</p></li>
+<li><p><strong>END</strong> – slice [BEGIN:END) contains names of lines removed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti">
+<em class="property">class </em><code class="sig-name descname">TestModelOutlineMulti</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineMulti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti" title="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutlineMulti</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert">
+<code class="sig-name descname">test_insert</code><span class="sig-paren">(</span><em class="sig-param">new_patch_multi</em>, <em class="sig-param">new_names_model_multi</em>, <em class="sig-param">METHOD</em>, <em class="sig-param">PATH</em>, <em class="sig-param">POSITION</em>, <em class="sig-param">PATH_NEW</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineMulti.test_insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm item insertion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_patch_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_multi()</span></code></a>.</p></li>
+<li><p><strong>new_names_model_multi</strong> – fixture
+<a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_multi()</span></code></a>.</p></li>
+<li><p><strong>METHOD</strong> – insert method under test.</p></li>
+<li><p><strong>PATH</strong> – path for line after which to insert item.</p></li>
+<li><p><strong>POSITION</strong> – position of new name in list of names.</p></li>
+<li><p><strong>PATH_NEW</strong> – path for line containing new item.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert_section">
+<code class="sig-name descname">test_insert_section</code><span class="sig-paren">(</span><em class="sig-param">new_patch_multi</em>, <em class="sig-param">SNIPPET</em>, <em class="sig-param">PATH_SOURCE</em>, <em class="sig-param">PATH_TARGET</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineMulti.test_insert_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert_section" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm insertion of sections with representative structures.</div>
+<div class="line">Case: section is part of source outline.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SNIPPET</strong> – funtion that returns section to copy.</p></li>
+<li><p><strong>PATH_SOURCE</strong> – path to parent of snippet in source.</p></li>
+<li><p><strong>PATH_TARGET</strong> – path in parent of section copy in target.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert_section_all">
+<code class="sig-name descname">test_insert_section_all</code><span class="sig-paren">(</span><em class="sig-param">new_patch_multi</em>, <em class="sig-param">SNIPPET</em>, <em class="sig-param">PATH_TARGET</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineMulti.test_insert_section_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_insert_section_all" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm insertion of sections with representative structures.</div>
+<div class="line">Case: section is all of source outline.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SNIPPET</strong> – funtion that returns section to copy.</p></li>
+<li><p><strong>PATH_TARGET</strong> – path in parent of section copy in target.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_lines_section">
+<code class="sig-name descname">test_lines_section</code><span class="sig-paren">(</span><em class="sig-param">new_patch_multi</em>, <em class="sig-param">new_names_model_multi</em>, <em class="sig-param">ROOT</em>, <em class="sig-param">BEGIN</em>, <em class="sig-param">END</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineMulti.test_lines_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_lines_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm iterator over lines in section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ROOT</strong> – path to root line of section.</p></li>
+<li><p><strong>END</strong> – slice [BEGIN:END) contains names of lines in section.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_set_persist">
+<code class="sig-name descname">test_set_persist</code><span class="sig-paren">(</span><em class="sig-param">new_patch_multi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineMulti.test_set_persist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineMulti.test_set_persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm import from persistent form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_patch_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_multi()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle">
+<em class="property">class </em><code class="sig-name descname">TestModelOutlineSingle</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineSingle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle" title="factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutlineSingle</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_insert_after">
+<code class="sig-name descname">test_insert_after</code><span class="sig-paren">(</span><em class="sig-param">new_patch_single</em>, <em class="sig-param">new_names_model_single</em>, <em class="sig-param">AFTER</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineSingle.test_insert_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_insert_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm item insertion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_patch_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_single()</span></code></a>.</p></li>
+<li><p><strong>new_names_model_single</strong> – fixture
+<a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_single()</span></code></a>.</p></li>
+<li><p><strong>AFTER</strong> – position after which to insert item.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_insert_before">
+<code class="sig-name descname">test_insert_before</code><span class="sig-paren">(</span><em class="sig-param">new_patch_single</em>, <em class="sig-param">new_names_model_single</em>, <em class="sig-param">BEFORE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineSingle.test_insert_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_insert_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm item insertion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_patch_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_single()</span></code></a>.</p></li>
+<li><p><strong>new_names_model_single</strong> – fixture
+<a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_names_model_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_names_model_single()</span></code></a>.</p></li>
+<li><p><strong>BEFORE</strong> – position before which to insert item.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_set_persist">
+<code class="sig-name descname">test_set_persist</code><span class="sig-paren">(</span><em class="sig-param">new_patch_single</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestModelOutlineSingle.test_set_persist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestModelOutlineSingle.test_set_persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm import from persistent form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_patch_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_single()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestBridgeOutlineTypes">
+<em class="property">class </em><code class="sig-name descname">TestBridgeOutlineTypes</code><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestBridgeOutlineTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestBridgeOutlineTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for definitions of API classes and type hints in
+<a class="reference internal" href="../src/factsheet.bridge_gtk.bridge_outline.html#module-factsheet.bridge_gtk.bridge_outline" title="factsheet.bridge_gtk.bridge_outline"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bridge_outline</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.TestBridgeOutlineTypes.test_types">
+<code class="sig-name descname">test_types</code><span class="sig-paren">(</span><em class="sig-param">TYPE_TARGET</em>, <em class="sig-param">TYPE_EXPECT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#TestBridgeOutlineTypes.test_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.TestBridgeOutlineTypes.test_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm type hint definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TYPE_TARGET</strong> – type hint under test.</p></li>
+<li><p><strong>TYPE_EXPECT</strong> – type expected.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.bridge_gtk.test_bridge_outline.SUBTYPE">
+<code class="sig-name descname">SUBTYPE</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">new_patch_multi</em>, <em class="sig-param">new_patch_single</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/bridge_gtk/test_bridge_outline.html#SUBTYPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.bridge_gtk.test_bridge_outline.SUBTYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return outline of type identified in request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/reference/reference.html?#std-fixture-request">Pytest request</a>.</p></li>
+<li><p><strong>new_patch_multi</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_multi"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_multi()</span></code></a>.</p></li>
+<li><p><strong>new_patch_single</strong> – fixture <a class="reference internal" href="#factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single" title="factsheet_test.bridge_gtk.test_bridge_outline.new_patch_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_patch_single()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.bridge_gtk.test_bridge_text.html" class="btn btn-neutral float-right" title="test_bridge_text Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.bridge_gtk.test_bridge_base.html" class="btn btn-neutral float-left" title="test_bridge_base Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

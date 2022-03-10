@@ -1,0 +1,902 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.view.view_sheet &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.view.view_sheet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.view.view_sheet</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines class to display Factsheet document in a window.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">traceback</span> <span class="k">as</span> <span class="nn">TB</span>
+<span class="kn">import</span> <span class="nn">typing</span>   <span class="c1"># noqa</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_sheet</span> <span class="k">as</span> <span class="nn">CSHEET</span>
+<span class="c1"># from factsheet.view import query_place as QPLACE</span>
+<span class="c1"># from factsheet.view import query_template as QTEMPLATE</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.editor_topics</span> <span class="k">as</span> <span class="nn">VTOPICS</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_markup</span> <span class="k">as</span> <span class="nn">VMARKUP</span>
+<span class="c1"># from factsheet.view import scenes as VSCENES</span>
+<span class="c1"># from factsheet.view import view_infoid as VINFOID</span>
+<span class="c1"># from factsheet.view import form_topic as VTOPIC</span>
+<span class="c1"># from factsheet.view import types_view as VTYPES</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.ui</span> <span class="k">as</span> <span class="nn">UI</span>
+<span class="kn">from</span> <span class="nn">factsheet.control.control_sheet</span> <span class="kn">import</span> <span class="n">g_control_app</span>
+
+<span class="c1"># Issue #249 stub</span>
+<span class="kn">import</span> <span class="nn">factsheet.spec.base_s</span> <span class="k">as</span> <span class="nn">SBASE</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gdk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gdk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gio</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GLib</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="c1"># from gi.repository import Pango   # type: ignore[import]    # noqa: E402</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.VSHEET&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AppFactsheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet">[docs]</a><span class="k">class</span> <span class="nc">AppFactsheet</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Application</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extends GTK application for factsheets.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AppFactsheet.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register application with GTK.</span>
+
+<span class="sd">        :param args: superclass positional parameters</span>
+<span class="sd">        :param kwargs: superclass keyword parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">application_id</span><span class="o">=</span><span class="s1">&#39;com.novafolks.factsheet&#39;</span><span class="p">,</span>
+                         <span class="n">flags</span><span class="o">=</span><span class="n">Gio</span><span class="o">.</span><span class="n">ApplicationFlags</span><span class="o">.</span><span class="n">HANDLES_OPEN</span><span class="p">,</span>
+                         <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFactsheet.do_activate"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet.do_activate">[docs]</a>    <span class="k">def</span> <span class="nf">do_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create and display an initial factsheet with default content.</span>
+
+<span class="sd">        Log initialization failure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ViewSheet</span><span class="o">.</span><span class="n">on_new_sheet</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFactsheet.do_open"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet.do_open">[docs]</a>    <span class="k">def</span> <span class="nf">do_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_files</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Gio</span><span class="o">.</span><span class="n">File</span><span class="p">],</span> <span class="n">p_n_files</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                <span class="n">p_hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create and display factsheets from file names on the</span>
+<span class="sd">        command line.</span>
+
+<span class="sd">        Log initialization failures.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Stub for open -- command line files ignored.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Files: </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_files</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;N: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_n_files</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Hint: &quot;</span><span class="si">{}</span><span class="s1">&quot;.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_hint</span><span class="p">))</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">control_sheet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s1">&#39;Failed to create initial factsheet (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_open</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+        <span class="n">_view</span> <span class="o">=</span> <span class="n">ViewSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFactsheet.do_shutdown"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet.do_shutdown">[docs]</a>    <span class="k">def</span> <span class="nf">do_shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Application teardown. &quot;&quot;&quot;</span>
+        <span class="n">Gtk</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">do_shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;AppFactsheet application shutdown.&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFactsheet.do_startup"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet.do_startup">[docs]</a>    <span class="k">def</span> <span class="nf">do_startup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Application setup. &quot;&quot;&quot;</span>
+        <span class="n">Gtk</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">do_startup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;AppFactsheet application startup.&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="new_dialog_warn_loss"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.new_dialog_warn_loss">[docs]</a><span class="k">def</span> <span class="nf">new_dialog_warn_loss</span><span class="p">(</span><span class="n">p_parent</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ApplicationWindow</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="nb">str</span>
+                         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return Data Loss Warning dialog.</span>
+
+<span class="sd">    :param p_parent: window running dialog.</span>
+<span class="sd">    :param p_name: name of factsheet that might lose data.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       There are limitations in Glade and Python bindings for GTK.</span>
+<span class="sd">       Glade does not recognize use-header-bar property of GtkDialog.</span>
+<span class="sd">       Gtk.Dialog() does not recognize flag</span>
+<span class="sd">       Gtk.DialogFlags.USE_HEADER_BAR.</span>
+
+<span class="sd">        To replace hard-coded ui definition with a Glade file, Manually</span>
+<span class="sd">        add the following to GtkDialog section of the Glade file:</span>
+
+<span class="sd">           `&lt;property name=&quot;use-header-bar&quot;&gt;1&lt;/property&gt;`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">form_dialog</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s2">        &lt;!-- Generated with glade 3.22.1 --&gt;</span>
+<span class="s2">        &lt;interface&gt;</span>
+<span class="s2">          &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span>
+<span class="s2">          &lt;object class=&quot;GtkDialog&quot; id=&quot;ui_dialog_data_loss&quot;&gt;</span>
+<span class="s2">            &lt;property name=&quot;use-header-bar&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;title&quot;</span>
+<span class="s2">                translatable=&quot;yes&quot;&gt;Data Loss Warning&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;modal&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;default_width&quot;&gt;500&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;icon_name&quot;&gt;dialog-warning&lt;/property&gt;</span>
+<span class="s2">            &lt;property name=&quot;type_hint&quot;&gt;dialog&lt;/property&gt;</span>
+<span class="s2">            &lt;child type=&quot;titlebar&quot;&gt;</span>
+<span class="s2">              &lt;placeholder/&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">            &lt;child internal-child=&quot;vbox&quot;&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot;&gt;</span>
+<span class="s2">                &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span>
+<span class="s2">                &lt;property name=&quot;spacing&quot;&gt;2&lt;/property&gt;</span>
+<span class="s2">                &lt;child internal-child=&quot;action_area&quot;&gt;</span>
+<span class="s2">                  &lt;object class=&quot;GtkButtonBox&quot;&gt;</span>
+<span class="s2">                    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;layout_style&quot;&gt;end&lt;/property&gt;</span>
+<span class="s2">                    &lt;child&gt;</span>
+<span class="s2">                      &lt;placeholder/&gt;</span>
+<span class="s2">                    &lt;/child&gt;</span>
+<span class="s2">                    &lt;child&gt;</span>
+<span class="s2">                      &lt;placeholder/&gt;</span>
+<span class="s2">                    &lt;/child&gt;</span>
+<span class="s2">                  &lt;/object&gt;</span>
+<span class="s2">                  &lt;packing&gt;</span>
+<span class="s2">                    &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;fill&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span>
+<span class="s2">                  &lt;/packing&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;object class=&quot;GtkBox&quot;&gt;</span>
+<span class="s2">                    &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;margin_left&quot;&gt;12&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;margin_right&quot;&gt;12&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;margin_top&quot;&gt;6&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;margin_bottom&quot;&gt;6&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;orientation&quot;&gt;vertical&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;spacing&quot;&gt;12&lt;/property&gt;</span>
+<span class="s2">                    &lt;child&gt;</span>
+<span class="s2">                      &lt;object class=&quot;GtkLabel&quot; id=&quot;ui_warning&quot;&gt;</span>
+<span class="s2">                        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;label&quot;</span>
+<span class="s2">                            translatable=&quot;yes&quot;&gt;Oops!&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;justify&quot;&gt;fill&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                      &lt;/object&gt;</span>
+<span class="s2">                      &lt;packing&gt;</span>
+<span class="s2">                        &lt;property name=&quot;expand&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span>
+<span class="s2">                      &lt;/packing&gt;</span>
+<span class="s2">                    &lt;/child&gt;</span>
+<span class="s2">                    &lt;child&gt;</span>
+<span class="s2">                      &lt;object class=&quot;GtkLabel&quot;&gt;</span>
+<span class="s2">                        &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;can_focus&quot;&gt;False&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;valign&quot;&gt;start&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;label&quot;translatable=&quot;yes&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;use_markup&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;justify&quot;&gt;center&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;wrap&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                      &lt;/object&gt;</span>
+<span class="s2">                      &lt;packing&gt;</span>
+<span class="s2">                        &lt;property name=&quot;expand&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                        &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">                      &lt;/packing&gt;</span>
+<span class="s2">                    &lt;/child&gt;</span>
+<span class="s2">                  &lt;/object&gt;</span>
+<span class="s2">                  &lt;packing&gt;</span>
+<span class="s2">                    &lt;property name=&quot;expand&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;fill&quot;&gt;True&lt;/property&gt;</span>
+<span class="s2">                    &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">                  &lt;/packing&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">          &lt;/object&gt;</span>
+<span class="s2">        &lt;/interface&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+    <span class="n">text_direct</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&amp;lt;i&amp;gt;Cancel close, or continue to close and&#39;</span>
+                   <span class="s1">&#39; discard changes?&amp;lt;/i&amp;gt;&#39;</span>
+                   <span class="p">)</span>
+    <span class="n">ui_dialog</span> <span class="o">=</span> <span class="n">form_dialog</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">text_direct</span><span class="p">)</span>
+
+    <span class="n">builder</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_string</span><span class="p">(</span><span class="n">ui_dialog</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui_dialog</span><span class="p">))</span>
+    <span class="n">dialog</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;ui_dialog_data_loss&#39;</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="n">p_parent</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">set_destroy_with_parent</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">form_warn</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Factsheet </span><span class="si">{}</span><span class="s1"> contains unsaved changes.  All unsaved&#39;</span>
+                 <span class="s1">&#39; changes will be discarded if you close.&#39;</span>
+                 <span class="p">)</span>
+    <span class="n">text_warn</span> <span class="o">=</span> <span class="n">form_warn</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+    <span class="n">warning</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;ui_warning&#39;</span><span class="p">)</span>
+    <span class="n">warning</span><span class="o">.</span><span class="n">set_markup</span><span class="p">(</span><span class="n">text_warn</span><span class="p">)</span>
+
+    <span class="n">dialog</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s1">&#39;Cancel&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span><span class="p">)</span>
+    <span class="n">button_c</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_widget_for_response</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span><span class="p">)</span>
+    <span class="n">style_c</span> <span class="o">=</span> <span class="n">button_c</span><span class="o">.</span><span class="n">get_style_context</span><span class="p">()</span>
+    <span class="n">style_c</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">STYLE_CLASS_SUGGESTED_ACTION</span><span class="p">)</span>
+
+    <span class="n">dialog</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s1">&#39;Discard&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">)</span>
+    <span class="n">button_d</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_widget_for_response</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">)</span>
+    <span class="n">style_d</span> <span class="o">=</span> <span class="n">button_d</span><span class="o">.</span><span class="n">get_style_context</span><span class="p">()</span>
+    <span class="n">style_d</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">STYLE_CLASS_DESTRUCTIVE_ACTION</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dialog</span></div>
+
+
+<div class="viewcode-block" id="ViewSheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet">[docs]</a><span class="k">class</span> <span class="nc">ViewSheet</span><span class="p">(</span><span class="n">CSHEET</span><span class="o">.</span><span class="n">ObserverControlSheet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Displays Factsheet document and translates user actions.</span>
+
+<span class="sd">    Class :class:`~.ViewSheet` maintains presentation of a Factsheet.  The</span>
+<span class="sd">    class displays the content of a factsheet model.  It translates a</span>
+<span class="sd">    user&#39;s actions at the user interface into requests to update the</span>
+<span class="sd">    model and its presentation.</span>
+
+<span class="sd">    .. attribute:: NAME_FILE_DIALOG_DATA_LOSS_UI</span>
+
+<span class="sd">       Path to user interface definition of data loss warning dialog.</span>
+
+<span class="sd">    .. attribute:: NAME_FILE_SHEET_UI</span>
+
+<span class="sd">       Path to user interface defintion of factsheet window.</span>
+
+<span class="sd">    .. attribute:: ALLOW_CLOSE</span>
+
+<span class="sd">        Indicates GTK should close a factsheet window.</span>
+
+<span class="sd">    .. attribute:: DENY_CLOSE</span>
+
+<span class="sd">        Indicates GTK should cancel closing a factsheet window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NAME_FILE_SHEET_UI</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">UI</span><span class="o">.</span><span class="n">DIR_UI</span> <span class="o">/</span> <span class="s1">&#39;sheet.ui&#39;</span><span class="p">)</span>
+
+    <span class="n">NAME_FILE_DIALOG_DATA_LOSS_UI</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">UI</span><span class="o">.</span><span class="n">DIR_UI</span> <span class="o">/</span> <span class="s1">&#39;dialog_data_loss.ui&#39;</span><span class="p">)</span>
+
+    <span class="n">ALLOW_CLOSE</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">DENY_CLOSE</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">ALLOW_CLOSE</span>
+
+<div class="viewcode-block" id="ViewSheet.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_control</span><span class="p">:</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize sheet view and show window.</span>
+
+<span class="sd">        :param p_control: control for factsheet to display.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span> <span class="o">=</span> <span class="n">p_control</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NAME_FILE_SHEET_UI</span><span class="p">)</span>
+        <span class="n">get_object</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;ui_sheet&#39;</span><span class="p">)</span>
+        <span class="k">global</span> <span class="n">g_app</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">set_application</span><span class="p">(</span><span class="n">g_app</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_name_sheet</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_summary_sheet</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_title_sheet</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_topics</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+
+        <span class="c1"># Components</span>
+        <span class="c1"># self._context_summary = get_object(&#39;ui_context_summary&#39;)</span>
+        <span class="c1"># self._flip_summary = get_object(&#39;ui_flip_summary&#39;)</span>
+
+        <span class="c1"># self._dialog_data_loss, self._warning_data_loss = (</span>
+        <span class="c1">#     self._init_dialog_warn())</span>
+        <span class="c1"># self._query_place: typing.Optional[QPLACE.QueryPlace] = None</span>
+        <span class="c1"># self._query_template: typing.Optional[QTEMPLATE.QueryTemplate] = None</span>
+        <span class="c1"># self._name_former: typing.Optional[str] = None</span>
+        <span class="c1"># self._infoid = VINFOID.ViewInfoId(get_object)</span>
+
+        <span class="c1"># self._close_window = False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">show_all</span><span class="p">()</span>
+
+        <span class="c1"># Signals</span>
+        <span class="n">_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;delete-event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_close_view_sheet</span><span class="p">)</span>
+
+        <span class="c1"># Application Title</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;open-sheet&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_open_sheet</span><span class="p">)</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;new-sheet&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_new_sheet</span><span class="p">)</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;save-sheet&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_save_sheet</span><span class="p">)</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;save-as-sheet&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_save_as_sheet</span><span class="p">)</span>
+
+        <span class="c1"># Application Menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_app_menu</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_factsheet_menu</span><span class="p">()</span>
+
+        <span class="c1"># Factsheet Menu</span>
+        <span class="c1"># UI.new_action_active_dialog(</span>
+        <span class="c1">#     self._window, &#39;show-help-sheet&#39;,</span>
+        <span class="c1">#     self.on_show_dialog, UI.HELP_SHEET)</span>
+
+        <span class="c1"># Factsheet Display Menu</span>
+        <span class="c1"># UI.new_action_active(</span>
+        <span class="c1">#     self._window, &#39;flip-summary&#39;, self.on_flip_summary)</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;close-view-sheet&#39;</span><span class="p">,</span>
+                             <span class="k">lambda</span> <span class="n">_a</span><span class="p">,</span> <span class="n">_p</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">close</span><span class="p">())</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;open-view-sheet&#39;</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">on_open_view_sheet</span><span class="p">)</span>
+        <span class="c1"># UI.new_action_active_dialog(</span>
+        <span class="c1">#     self._window, &#39;show-help-sheet-display&#39;,</span>
+        <span class="c1">#     self.on_show_dialog, UI.HELP_SHEET_DISPLAY)</span>
+
+        <span class="c1"># Factsheet File Menu</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;delete-sheet&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_delete_sheet</span><span class="p">)</span>
+        <span class="c1"># UI.new_action_active_dialog(</span>
+        <span class="c1">#     self._window, &#39;show-help-sheet-file&#39;,</span>
+        <span class="c1">#     self.on_show_dialog, UI.HELP_SHEET_FILE)</span>
+
+        <span class="c1"># Topics Outline Toolbar</span>
+        <span class="c1"># Issue #249 stub</span>
+        <span class="n">search_bar</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;ui_search_bar&#39;</span><span class="p">)</span></div>
+        <span class="c1"># button_find = get_object(&#39;ui_find_topic&#39;)</span>
+        <span class="c1"># _binding = button_find.bind_property(</span>
+        <span class="c1">#     &#39;active&#39;, search_bar, &#39;search-mode-enabled&#39;,</span>
+        <span class="c1">#     GO.BindingFlags.BIDIRECTIONAL)</span>
+        <span class="c1"># entry_find = get_object(&#39;ui_find_topic_entry&#39;)</span>
+        <span class="c1"># self._view_topics.gtk_view.set_search_entry(entry_find)</span>
+
+        <span class="c1"># button_by_name = get_object(&#39;ui_find_by_name&#39;)</span>
+        <span class="c1"># _ = button_by_name.connect(</span>
+        <span class="c1">#     &#39;toggled&#39;, self.on_toggle_search_field, ASHEET.FieldsTopic.NAME)</span>
+        <span class="c1"># button_by_title = get_object(&#39;ui_find_by_title&#39;)</span>
+        <span class="c1"># _ = button_by_title.connect(</span>
+        <span class="c1">#     &#39;toggled&#39;, self.on_toggle_search_field, ASHEET.FieldsTopic.TITLE)</span>
+
+    <span class="k">def</span> <span class="nf">_init_app_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize application menu.</span>
+
+<span class="sd">        Create an action for each application menu dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active_dialog</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;show-intro-app&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">,</span> <span class="n">UI</span><span class="o">.</span><span class="n">INTRO_APP</span><span class="p">)</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active_dialog</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;show-help-app&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">,</span> <span class="n">UI</span><span class="o">.</span><span class="n">HELP_APP</span><span class="p">)</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active_dialog</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;show-about-app&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">,</span> <span class="n">UI</span><span class="o">.</span><span class="n">ABOUT_APP</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_factsheet_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize factsheet menu.</span>
+
+<span class="sd">        Create an action for each factsheet menu dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active_dialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="s1">&#39;show-help-sheet&#39;</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">,</span> <span class="n">UI</span><span class="o">.</span><span class="n">HELP_SHEET</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_name_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize editor for factsheet name.</span>
+
+<span class="sd">        :param p_get_object: method to get visual element from user</span>
+<span class="sd">            interface description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+
+        <span class="n">display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_display_name</span><span class="p">()</span>
+        <span class="n">editor_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_editor_name</span><span class="p">()</span>
+        <span class="n">view_name</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_name</span><span class="p">,</span> <span class="n">editor_name</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+        <span class="n">site_name_sheet</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_name_sheet&#39;</span><span class="p">)</span>
+        <span class="n">site_name_sheet</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">view_name</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+
+        <span class="c1"># Work around for issue #231.</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Error! please report.&#39;</span><span class="p">,</span> <span class="n">use_markup</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">title</span><span class="o">.</span><span class="n">set_selectable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">display_name</span><span class="o">.</span><span class="n">bind_property</span><span class="p">(</span>
+            <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">SYNC_CREATE</span><span class="p">)</span>
+        <span class="n">headerbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">get_titlebar</span><span class="p">()</span>
+        <span class="n">headerbar</span><span class="o">.</span><span class="n">set_custom_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_summary_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize view for factsheet summary.</span>
+
+<span class="sd">        :param p_get_object: method to get visual element from user</span>
+<span class="sd">            interface description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_editor_summary</span><span class="p">()</span>
+        <span class="n">site_summary_sheet</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_summary_sheet&#39;</span><span class="p">)</span>
+        <span class="n">site_summary_sheet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">editor_summary</span><span class="p">)</span>
+
+        <span class="n">button_show</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_button_show_summary_sheet&#39;</span><span class="p">)</span>
+        <span class="n">expander</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_expander_summary_sheet&#39;</span><span class="p">)</span>
+        <span class="n">SYNC</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">BIDIRECTIONAL</span> <span class="o">|</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">SYNC_CREATE</span>
+        <span class="n">_binding</span> <span class="o">=</span> <span class="n">button_show</span><span class="o">.</span><span class="n">bind_property</span><span class="p">(</span>
+            <span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="n">expander</span><span class="p">,</span> <span class="s1">&#39;visible&#39;</span><span class="p">,</span> <span class="n">SYNC</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_title_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize editor for factsheet title.</span>
+
+<span class="sd">        :param p_get_object: method to get visual element from user</span>
+<span class="sd">            interface description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+
+        <span class="n">display_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_display_title</span><span class="p">()</span>
+        <span class="n">editor_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_editor_title</span><span class="p">()</span>
+        <span class="n">view_title</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_title</span><span class="p">,</span> <span class="n">editor_title</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">)</span>
+        <span class="n">site_title_sheet</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_title_sheet&#39;</span><span class="p">)</span>
+        <span class="n">site_title_sheet</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">view_title</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize editor for topics outline.</span>
+
+<span class="sd">        :param p_get_object: method to get visual element from user</span>
+<span class="sd">            interface description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">site_topics</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_topics&#39;</span><span class="p">)</span>
+        <span class="n">editor_topics</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">)</span>
+        <span class="n">site_topics</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">editor_topics</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ViewSheet.confirm_close"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.confirm_close">[docs]</a>    <span class="k">def</span> <span class="nf">confirm_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return :data:`ALLOW_CLOSE` when user approves closing view.</span>
+<span class="sd">        Otherwise, return :data:`DENY_CLOSE`.&quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">dialog_warn</span> <span class="o">=</span> <span class="n">new_dialog_warn_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dialog_warn</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">dialog_warn</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span> <span class="o">==</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ViewSheet</span><span class="o">.</span><span class="n">ALLOW_CLOSE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ViewSheet</span><span class="o">.</span><span class="n">DENY_CLOSE</span></div>
+
+<div class="viewcode-block" id="ViewSheet.erase"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.erase">[docs]</a>    <span class="k">def</span> <span class="nf">erase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Destroy visible portion of sheet view.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ViewSheet.get_path"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.get_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_action</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="p">,</span>
+                 <span class="n">p_suggest</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return path to factsheet file or None if user cancels.</span>
+
+<span class="sd">        :param p_action: dialog box action (Open, Save, etc.).</span>
+<span class="sd">        :param p_suggest: path to suggest to user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_file_chooser</span><span class="p">(</span><span class="n">p_action</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p_suggest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">set_filename</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p_suggest</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">SAVE</span> <span class="o">==</span> <span class="n">p_action</span><span class="p">:</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="n">set_current_name</span><span class="p">(</span><span class="s1">&#39;factsheet.fsg&#39;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="n">path_new</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">:</span>
+            <span class="n">path_new</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">dialog</span>
+        <span class="k">return</span> <span class="n">path_new</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_file_chooser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_action</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span>
+                           <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserDialog</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Construct dialog to choose file for open or save.</span>
+
+<span class="sd">        This helper method works around limitations in Glade.</span>
+
+<span class="sd">        :param p_action: dialog box action (Open, Save, etc.).</span>
+<span class="sd">        :returns: File chooser dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserDialog</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">p_action</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">set_destroy_with_parent</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s1">&#39;Cancel&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">p_action</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">SAVE</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Save&#39;</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="n">set_do_overwrite_confirmation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">p_action</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">OPEN</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Open&#39;</span>
+        <span class="k">elif</span> <span class="n">p_action</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">CREATE_FOLDER</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Create&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Select&#39;</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">)</span>
+        <span class="n">button_d</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_widget_for_response</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">)</span>
+        <span class="n">style_d</span> <span class="o">=</span> <span class="n">button_d</span><span class="o">.</span><span class="n">get_style_context</span><span class="p">()</span>
+        <span class="n">style_d</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">STYLE_CLASS_SUGGESTED_ACTION</span><span class="p">)</span>
+
+        <span class="n">filter_alpha</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileFilter</span><span class="p">()</span>
+        <span class="n">filter_alpha</span><span class="o">.</span><span class="n">add_pattern</span><span class="p">(</span><span class="s1">&#39;*.fsg&#39;</span><span class="p">)</span>
+        <span class="n">filter_alpha</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s1">&#39;Factsheet&#39;</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">filter_alpha</span><span class="p">)</span>
+
+        <span class="n">filter_any</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FileFilter</span><span class="p">()</span>
+        <span class="n">filter_any</span><span class="o">.</span><span class="n">add_pattern</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+        <span class="n">filter_any</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s1">&#39;Any&#39;</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">filter_any</span><span class="p">)</span>
+
+        <span class="c1"># Partial work around for issue #235.</span>
+        <span class="n">content_area</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_content_area</span><span class="p">()</span>
+        <span class="c1"># print(&#39;Content: {}&#39;.format(content_area))</span>
+        <span class="n">chooser_widget</span> <span class="o">=</span> <span class="n">content_area</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># print(&#39;Chooser: {}&#39;.format(chooser_widget))</span>
+        <span class="n">action_bar</span> <span class="o">=</span> <span class="n">chooser_widget</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># print(&#39;Action bar: {}&#39;.format(action_bar))</span>
+        <span class="n">filter_box</span> <span class="o">=</span> <span class="n">action_bar</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># print(&#39;Filter box: {}&#39;.format(filter_box))</span>
+        <span class="n">filter_combo</span> <span class="o">=</span> <span class="n">filter_box</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># print(&#39;Filter combo: {}&#39;.format(filter_combo))</span>
+        <span class="c1"># print(&#39;\tHas tooltip: {}&#39;.format(filter_combo.get_has_tooltip()))</span>
+        <span class="c1"># print(&#39;\tTooltip: {}&#39;.format(filter_combo.get_tooltip_text()))</span>
+        <span class="n">filter_combo</span><span class="o">.</span><span class="n">set_tooltip_text</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># print(&#39;Clear tooltip&#39;)</span>
+        <span class="c1"># print(&#39;\tHas tooltip: {}&#39;.format(filter_combo.get_has_tooltip()))</span>
+
+        <span class="k">return</span> <span class="n">dialog</span>
+
+<div class="viewcode-block" id="ViewSheet.on_close_view_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_close_view_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">on_close_view_sheet</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">_widget</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">,</span> <span class="n">_event</span><span class="p">:</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Close view of factsheet.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">remove_view_is_safe</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ViewSheet</span><span class="o">.</span><span class="n">DENY_CLOSE</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">confirm_close</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">ViewSheet</span><span class="o">.</span><span class="n">DENY_CLOSE</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ViewSheet</span><span class="o">.</span><span class="n">ALLOW_CLOSE</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_delete_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_delete_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">on_delete_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                        <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete factsheet guarding against data loss.</span>
+
+<span class="sd">        A user may ask to delete a factsheet when there are unsaved</span>
+<span class="sd">        changes.  If so, the method includes checks to ensure the user</span>
+<span class="sd">        approves.  The method deletes the factsheet unconditionally if</span>
+<span class="sd">        no changes would be lost.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">is_stale</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ViewSheet</span><span class="o">.</span><span class="n">DENY_CLOSE</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">confirm_close</span><span class="p">():</span>
+                <span class="k">return</span>
+
+        <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="o">.</span><span class="n">close_factsheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_new_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_new_sheet">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">on_new_sheet</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                     <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a new factsheet with default contents.&quot;&quot;&quot;</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+            <span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">get_current_event_time</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">control_sheet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s1">&#39;Failed to create new factsheet (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">on_new_sheet</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="n">_view</span> <span class="o">=</span> <span class="n">ViewSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_open_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_open_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">on_open_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                      <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a factsheet with contents from file.&quot;&quot;&quot;</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">get_current_event_time</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">control</span> <span class="o">=</span> <span class="n">g_control_app</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">time</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_view</span> <span class="o">=</span> <span class="n">ViewSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_open_view_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_open_view_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">on_open_view_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                           <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Open another view of factsheet.&quot;&quot;&quot;</span>
+        <span class="n">_view_new</span> <span class="o">=</span> <span class="n">ViewSheet</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_save_as_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_save_as_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">on_save_as_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                         <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Persist factsheet contents to file at new path.&quot;&quot;&quot;</span>
+        <span class="n">path_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">SAVE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path_update</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_sheet</span><span class="p">(</span><span class="n">path_update</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_save_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_save_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">on_save_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                      <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Persist factsheet contents to file.&quot;&quot;&quot;</span>
+        <span class="n">path_update</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">FileChooserAction</span><span class="o">.</span><span class="n">SAVE</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">path_update</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_sheet</span><span class="p">(</span><span class="n">path_update</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_show_dialog"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_show_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">on_show_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                       <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">,</span> <span class="n">p_dialog</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span>
+                       <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Display informational dialog.</span>
+
+<span class="sd">        :param p_dialog: informational dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">p_dialog</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">p_dialog</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="n">p_dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewSheet.on_toggle_search_field"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.on_toggle_search_field">[docs]</a>    <span class="k">def</span> <span class="nf">on_toggle_search_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">px_button</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ToggleButton</span><span class="p">,</span> <span class="n">p_field</span>
+                               <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># ASHEET.FieldsTopic) -&gt; None:</span>
+        <span class="sd">&quot;&quot;&quot;Sets topic search to match active field buttons.</span>
+
+<span class="sd">        :param px_button: button user toggled.</span>
+<span class="sd">        :param p_field: search field of toggled button.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="c1"># if px_button.get_active():</span>
+        <span class="c1">#     self._view_topics.scope_search |= p_field</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     self._view_topics.scope_search &amp;= ~p_field</span>
+
+<div class="viewcode-block" id="ViewSheet.present"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.present">[docs]</a>    <span class="k">def</span> <span class="nf">present</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_time</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">TimeEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Make sheet view window visible to user.</span>
+
+<span class="sd">        Make window visible even when it is an icon or covered by other</span>
+<span class="sd">        windows.</span>
+
+<span class="sd">        :param p_time: time stamp to order multiple requests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">present_with_time</span><span class="p">(</span><span class="n">p_time</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_report_error_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_err</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">p_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Display error dialog to user and log error details.</span>
+
+<span class="sd">        :param p_err: error to display.</span>
+<span class="sd">        :param p_message: primary text for error dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">p_message</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">TB</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">p_err</span><span class="p">),</span> <span class="n">p_err</span><span class="p">,</span> <span class="n">p_err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MessageDialog</span><span class="p">(</span>
+            <span class="n">transient_for</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">,</span> <span class="n">message_type</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">MessageType</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">buttons</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ButtonsType</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">set_markup</span><span class="p">(</span><span class="n">p_message</span><span class="p">)</span>
+        <span class="n">text_cause</span> <span class="o">=</span> <span class="s1">&#39;Error source is Factsheet.&#39;</span>
+        <span class="n">cause</span> <span class="o">=</span> <span class="n">p_err</span><span class="o">.</span><span class="n">__cause__</span>
+        <span class="k">if</span> <span class="n">cause</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text_cause</span> <span class="o">=</span> <span class="s1">&#39;Error source is </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">cause</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">cause</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">format_secondary_text</span><span class="p">(</span><span class="n">text_cause</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ViewSheet.save_sheet"><a class="viewcode-back" href="../../../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.save_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">save_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_path_update</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save factsheet to file with basic error handling.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">p_path_update</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">BackupFileError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">text_prime</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not saved! could not make backup.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_error_sheet</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">text_prime</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">DumpFileError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">text_prime</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not saved! could not write file.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_error_sheet</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">text_prime</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">NoFileError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">text_prime</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not saved! no file selected.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_error_sheet</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">text_prime</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">OpenFileError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">text_prime</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not saved! could not open file.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_error_sheet</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">text_prime</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">text_prime</span> <span class="o">=</span> <span class="s1">&#39;Factsheet not saved! Application is broken!&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_error_sheet</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">text_prime</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ApplicationWindow</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return visual element for sheet view.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span></div>
+
+
+<span class="n">g_app</span> <span class="o">=</span> <span class="n">AppFactsheet</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+``__init__`` Module
+===================
+
+.. automodule:: factsheet.spec.__init__
+   :members:
+   :undoc-members:
+   :show-inheritance:

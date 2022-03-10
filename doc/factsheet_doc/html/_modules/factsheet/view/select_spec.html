@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.view.select_spec &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.view.select_spec</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.view.select_spec</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines class for selecting a specification of a new topic.</span>
+
+<span class="sd">.. data:: FactoryDisplaySummary</span>
+
+<span class="sd">    Factory class for display of specification summary.</span>
+
+<span class="sd">.. data:: ModelSummary</span>
+
+<span class="sd">    Type for model of specification summary.</span>
+
+<span class="sd">.. data:: ViewOutlineSpec</span>
+
+<span class="sd">    Type for view of specification outline.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.spec</span> <span class="k">as</span> <span class="nn">SPECS</span>
+<span class="kn">import</span> <span class="nn">factsheet.spec.base_s</span> <span class="k">as</span> <span class="nn">SBASE</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.ui</span> <span class="k">as</span> <span class="nn">UI</span>
+
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<span class="n">FactoryDisplaySummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span>
+<span class="n">ModelSummary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span>
+<span class="n">ViewOutlineSpec</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.VSELECT_SPEC&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FieldsId"><a class="viewcode-back" href="../../../src/factsheet.view.select_spec.html#factsheet.view.select_spec.FieldsId">[docs]</a><span class="k">class</span> <span class="nc">FieldsId</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Flag</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Identifies search fields for :class:`.IdCore`.</span>
+
+<span class="sd">    A search may combine fields using logical operators.</span>
+
+<span class="sd">    .. data:: NAME</span>
+
+<span class="sd">       Denotes name field.</span>
+
+<span class="sd">    .. data:: TITLE</span>
+
+<span class="sd">       Denotes title field.</span>
+
+<span class="sd">    .. data:: SUMMARY</span>
+
+<span class="sd">       Denotes summary field.</span>
+
+<span class="sd">    .. data:: VOID</span>
+
+<span class="sd">       Denotes no field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">VOID</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">SUMMARY</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">TITLE</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SelectSpec"><a class="viewcode-back" href="../../../src/factsheet.view.select_spec.html#factsheet.view.select_spec.SelectSpec">[docs]</a><span class="k">class</span> <span class="nc">SelectSpec</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Provides the means to select the specification for a new topic.</span>
+
+<span class="sd">    Select Specification dialog allows a user to select the</span>
+<span class="sd">    specification for a new topic from an outline of available</span>
+<span class="sd">    specications.  A user may cancel the dialog without selecting a</span>
+<span class="sd">    specification.</span>
+
+<span class="sd">    .. attribute:: NO_SUMMARY</span>
+
+<span class="sd">       Summary text displayed when no specification is selected.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NO_SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;Please choose a specification for a new topic.&#39;</span>
+
+    <span class="c1"># STUB Glade patch - begin</span>
+    <span class="c1">#    &lt;property name=&quot;use-header-bar&quot;&gt;1&lt;/property&gt;</span>
+    <span class="c1"># STUB Glade patch - end</span>
+
+<div class="viewcode-block" id="SelectSpec.__call__"><a class="viewcode-back" href="../../../src/factsheet.view.select_spec.html#factsheet.view.select_spec.SelectSpec.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return spec user chooses from Select Specification dialog.</span>
+
+<span class="sd">        Return None when user cancels without selecting a specification..</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="o">==</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">:</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">unselect_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">spec</span></div>
+
+<div class="viewcode-block" id="SelectSpec.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.select_spec.html#factsheet.view.select_spec.SelectSpec.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_parent</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Select Specification dialog with its fields.</span>
+
+<span class="sd">        :param p_parent: parent window for Select Specification dialog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path_ui</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.ui&#39;</span><span class="p">)</span>
+        <span class="n">get_ui_element</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByPath</span><span class="p">(</span><span class="n">p_path_ui</span><span class="o">=</span><span class="n">path_ui</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_dialog</span><span class="p">(</span><span class="n">p_parent</span><span class="p">,</span> <span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_outline_specs</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_summary</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_search</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_parent</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">,</span> <span class="n">p_get_ui_element</span><span class="p">:</span>
+                     <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the top-level visual element.</span>
+
+<span class="sd">        :param p_parent: parent window for Select Specification dialog.</span>
+<span class="sd">        :param p_get_ui_element: gets visual element from UI description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_select_spec&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="n">p_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">set_destroy_with_parent</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s1">&#39;Cancel&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_button_select</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+            <span class="s1">&#39;Select&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">)</span>
+        <span class="n">style_specify</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_style_context</span><span class="p">()</span>
+        <span class="n">style_specify</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">STYLE_CLASS_SUGGESTED_ACTION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_outline_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_ui_element</span><span class="p">:</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElement</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize specifications outline.</span>
+
+<span class="sd">        :param p_get_ui_element: gets visual element from UI description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span> <span class="o">=</span> <span class="n">ViewOutlineSpec</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">ui_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">site_specs</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_site_outline_specs&#39;</span><span class="p">)</span>
+        <span class="n">site_specs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_name</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">new_column_stock</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_markup_cell_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">append_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_title</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">new_column_stock</span><span class="p">(</span><span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_markup_cell_title</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">append_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_selection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_changed_selection</span><span class="p">)</span>
+
+        <span class="c1"># # self._outline = UI.FACTORY_SHEET.new_view_outline_templates()</span>
+        <span class="c1"># self._outline = VTYPES.ViewOutlineTemplates()</span>
+        <span class="c1"># self._outline.scope_search = ~ASHEET.FieldsTemplate.VOID</span>
+        <span class="c1"># templates = XMAN_CONTENT.new_templates(p_new_view_topics)</span>
+        <span class="c1"># templates.attach_view(self._outline)</span>
+        <span class="c1"># view = self._outline.gtk_view</span>
+        <span class="c1"># view.show_all()</span>
+        <span class="c1"># context_outline = get_object(&#39;ui_context_outline_templates&#39;)</span>
+        <span class="c1"># context_outline.add(view)</span>
+        <span class="c1"># context_outline.show_all()</span>
+        <span class="c1"># self._cursor = view.get_selection()</span>
+        <span class="c1"># _ = self._cursor.connect(&#39;changed&#39;, self.on_changed_cursor)</span>
+        <span class="c1">#</span>
+        <span class="c1"># search_entry = get_object(&#39;ui_search_entry&#39;)</span>
+        <span class="c1"># view.set_search_entry(search_entry)</span>
+
+    <span class="k">def</span> <span class="nf">_init_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_ui_element</span><span class="p">:</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize display for summary of chosen specification.</span>
+
+<span class="sd">        :param p_get_ui_element: gets visual element from UI description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span> <span class="o">=</span> <span class="n">ModelSummary</span><span class="p">(</span><span class="n">p_text</span><span class="o">=</span><span class="n">SelectSpec</span><span class="o">.</span><span class="n">NO_SUMMARY</span><span class="p">)</span>
+        <span class="n">factory_display</span> <span class="o">=</span> <span class="n">FactoryDisplaySummary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_summary</span><span class="p">)</span>
+        <span class="n">display_summary</span> <span class="o">=</span> <span class="n">factory_display</span><span class="p">()</span>
+        <span class="n">display_summary</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">display_summary</span><span class="o">.</span><span class="n">set_wrap_mode</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">WrapMode</span><span class="o">.</span><span class="n">WORD_CHAR</span><span class="p">)</span>
+        <span class="n">site_summary</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_site_summary&#39;</span><span class="p">)</span>
+        <span class="n">site_summary</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">display_summary</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_ui_element</span><span class="p">:</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize search bar and buttons.</span>
+
+<span class="sd">        :param p_get_ui_element: gets visual element from UI description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">=</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span>
+        <span class="n">search_bar</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_search&#39;</span><span class="p">)</span>
+        <span class="n">button_find</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ToggleButton</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Find&#39;</span><span class="p">)</span>
+        <span class="n">_binding</span> <span class="o">=</span> <span class="n">button_find</span><span class="o">.</span><span class="n">bind_property</span><span class="p">(</span>
+            <span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="n">search_bar</span><span class="p">,</span> <span class="s1">&#39;search-mode-enabled&#39;</span><span class="p">,</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">BIDIRECTIONAL</span><span class="p">)</span>
+        <span class="n">button_find</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">header_bar</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_header&#39;</span><span class="p">)</span>
+        <span class="n">header_bar</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">button_find</span><span class="p">)</span>
+
+        <span class="n">button_in_name</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_search_in_name&#39;</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">button_in_name</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_changed_search_scope</span><span class="p">,</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="n">button_in_summary</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_search_in_summary&#39;</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">button_in_summary</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_changed_search_scope</span><span class="p">,</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">)</span>
+        <span class="n">button_in_title</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_search_in_title&#39;</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">button_in_title</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_changed_search_scope</span><span class="p">,</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">set_enable_search</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">C_FIRST</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">set_search_column</span><span class="p">(</span><span class="n">C_FIRST</span><span class="p">)</span>
+        <span class="n">entry_search</span> <span class="o">=</span> <span class="n">p_get_ui_element</span><span class="p">(</span><span class="s1">&#39;ui_search_entry&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">set_search_entry</span><span class="p">(</span><span class="n">entry_search</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">set_search_equal_func</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_match_spec_ne</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_markup_cell_name</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">_column</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">,</span> <span class="n">p_render</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRenderer</span><span class="p">,</span>
+            <span class="n">_ui_model</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeModel</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">,</span> <span class="n">_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set markup for name cell in the specs outline view.</span>
+
+<span class="sd">        :param _column: column of cell to format (unused).</span>
+<span class="sd">        :param p_render: renders formatted cell contents.</span>
+<span class="sd">        :param _model: contains cell content (unused).</span>
+<span class="sd">        :param p_line: line of cell to format.</span>
+<span class="sd">        :param _data: user data (unused).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Missing&#39;</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">p_render</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;markup&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_markup_cell_title</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">_column</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">,</span> <span class="n">p_render</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRenderer</span><span class="p">,</span>
+            <span class="n">_ui_model</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeModel</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">,</span> <span class="n">_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set markup for title cell in the specs outline view.</span>
+
+<span class="sd">        :param _column: column of cell to format (unused).</span>
+<span class="sd">        :param p_render: renders formatted cell contents.</span>
+<span class="sd">        :param _model: contains cell content (unused).</span>
+<span class="sd">        :param p_line: line of cell to format.</span>
+<span class="sd">        :param _data: user data (unused).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Missing&#39;</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">p_render</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;markup&#39;</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_match_spec_ne</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">_model</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeModel</span><span class="p">,</span> <span class="n">_n_column</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">p_match_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">p_line</span><span class="p">:</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">,</span> <span class="n">_extra</span><span class="p">:</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return False when given key is found with scope of search.</span>
+
+<span class="sd">        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can</span>
+<span class="sd">        include any combination of spec name, summary, or title.</span>
+
+<span class="sd">        :param _model: storage for spec outline visual element (unused).</span>
+<span class="sd">        :param _n_column: model column to match (unused).</span>
+<span class="sd">        :param p_match_key: key to match within search field(s).</span>
+<span class="sd">        :param p_line: line to check for key.</span>
+<span class="sd">        :param _extra: optional extra parameter (unused)</span>
+
+<span class="sd">        .. _`Gtk.TreeViewSearchEqualFunc`::</span>
+<span class="sd">            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#</span>
+<span class="sd">            Gtk.TreeViewSearchEqualFunc</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Spec outline contains None for spec (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">_match_spec_ne</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">&amp;</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p_match_key</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">&amp;</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p_match_key</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">&amp;</span> <span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p_match_key</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">expand_row</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="SelectSpec.on_changed_selection"><a class="viewcode-back" href="../../../src/factsheet.view.select_spec.html#factsheet.view.select_spec.SelectSpec.on_changed_selection">[docs]</a>    <span class="k">def</span> <span class="nf">on_changed_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_selection</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeSelection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Changes summary text and Select button to match chosen spec.</span>
+
+<span class="sd">        :param _selection: identifies chosen spec (unused).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_no_spec</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_no_spec</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_no_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set summary and Select button if no spec chosen.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_SUMMARY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SelectSpec.on_changed_search_scope"><a class="viewcode-back" href="../../../src/factsheet.view.select_spec.html#factsheet.view.select_spec.SelectSpec.on_changed_search_scope">[docs]</a>    <span class="k">def</span> <span class="nf">on_changed_search_scope</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">p_button</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ToggleButton</span><span class="p">,</span> <span class="n">p_field</span><span class="p">:</span> <span class="n">FieldsId</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Sets search scope to match requested change.</span>
+
+<span class="sd">        :param p_button: search scope button changed by user.</span>
+<span class="sd">        :param p_field: search field corresponding to changed button.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_button</span><span class="o">.</span><span class="n">get_active</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">|=</span> <span class="n">p_field</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">p_field</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

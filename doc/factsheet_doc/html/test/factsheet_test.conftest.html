@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>conftest Application Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_app Application Test Module" href="factsheet_test.test_app.html" />
+    <link rel="prev" title="test_view_topic View Test Module" href="factsheet_test.view.test_view_topic.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">conftest</span></code> Application Test Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.test_app.html"><code class="docutils literal notranslate"><span class="pre">test_app</span></code> Application Test Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.test_bridge_ui.html"><code class="docutils literal notranslate"><span class="pre">bridge_ui</span></code> User Interface Test Module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">conftest</span></code> Application Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.conftest.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.conftest">
+<span id="conftest-application-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">conftest</span></code> Application Test Module<a class="headerlink" href="#module-factsheet_test.conftest" title="Permalink to this headline">¶</a></h1>
+<p>Test fixtures for AppFactsheet as a whole.</p>
+<dl class="function">
+<dt id="factsheet_test.conftest.new_id_args">
+<code class="sig-name descname">new_id_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#new_id_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.new_id_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: factory for stock identity keyword arguments.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.conftest.new_model_topic">
+<code class="sig-name descname">new_model_topic</code><span class="sig-paren">(</span><em class="sig-param">new_id_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#new_model_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.new_model_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return factory for topic with non-empty facts
+outline.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.conftest.factory_control_sheet">
+<code class="sig-name descname">factory_control_sheet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#factory_control_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.factory_control_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: return factory for <code class="xref py py-class docutils literal notranslate"><span class="pre">ControlSheet</span></code> with
+model that includes sample topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_n_top_topics</strong> – number of top-level topics.</p></li>
+<li><p><strong>p_depth_topics</strong> – number of outline levels below top level.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.conftest.AppFactsheet">
+<em class="property">class </em><code class="sig-name descname">AppFactsheet</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#AppFactsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.AppFactsheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gi.repository.Gtk.Application</span></code></p>
+<p>Stub <code class="xref py py-class docutils literal notranslate"><span class="pre">AppFactsheet</span></code> class.</p>
+<dl class="method">
+<dt id="factsheet_test.conftest.AppFactsheet.do_activate">
+<code class="sig-name descname">do_activate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#AppFactsheet.do_activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.AppFactsheet.do_activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>activate(self)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.conftest.AppFactsheet.do_startup">
+<code class="sig-name descname">do_startup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#AppFactsheet.do_startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.AppFactsheet.do_startup" title="Permalink to this definition">¶</a></dt>
+<dd><p>startup(self)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.conftest.patch_appfactsheet">
+<code class="sig-name descname">patch_appfactsheet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#patch_appfactsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.patch_appfactsheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture with teardown: return stub <a class="reference internal" href="#factsheet_test.conftest.AppFactsheet" title="factsheet_test.conftest.AppFactsheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppFactsheet</span></code></a>
+class.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.conftest.PatchLogger">
+<code class="sig-name descname">PatchLogger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/conftest.html#PatchLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.conftest.PatchLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: return stub <a class="reference external" href="https://docs.python.org/3.7/library/logging.html#logger-objects">logging.logger</a>.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.test_app.html" class="btn btn-neutral float-right" title="test_app Application Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.view.test_view_topic.html" class="btn btn-neutral float-left" title="test_view_topic View Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

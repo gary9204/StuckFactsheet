@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_editor_topics View Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_select_spec View Test Module" href="factsheet_test.view.test_select_spec.html" />
+    <link rel="prev" title="conftest View Test Module" href="factsheet_test.view.conftest.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_editor_topics</span></code> View Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.view.test_editor_topics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.view.test_editor_topics">
+<span id="test-editor-topics-view-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_editor_topics</span></code> View Test Module<a class="headerlink" href="#module-factsheet_test.view.test_editor_topics" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for class to display and edit topics outline of a factsheet.
+See <a class="reference internal" href="../src/factsheet.view.editor_topics.html#module-factsheet.view.editor_topics" title="factsheet.view.editor_topics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">editor_topics</span></code></a>.</p>
+<dl class="function">
+<dt id="factsheet_test.view.test_editor_topics.fill_topics">
+<code class="sig-name descname">fill_topics</code><span class="sig-paren">(</span><em class="sig-param">p_control_sheet</em>, <em class="sig-param">p_n_width</em>, <em class="sig-param">p_n_depth</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#fill_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.fill_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears control’s topics outline and refills with stub content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_control_sheet</strong> – ControlSheet to modify.</p></li>
+<li><p><strong>p_n_width</strong> – number of top-level topics.</p></li>
+<li><p><strong>p_n_depth</strong> – number of descendant levels under last top-level topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of last topic added to outline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics">
+<em class="property">class </em><code class="sig-name descname">TestEditorTopics</code><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <code class="xref py py-class docutils literal notranslate"><span class="pre">editor_topics</span></code>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_actions">
+<code class="sig-name descname">test_init_actions</code><span class="sig-paren">(</span><em class="sig-param">NAME_ACTION</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_init_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization of actions for toolbar buttons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>NAME_ACTION</strong> – name of action under test.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_outline_topics">
+<code class="sig-name descname">test_init_outline_topics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_init_outline_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_outline_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization of topics outline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_signals">
+<code class="sig-name descname">test_init_signals</code><span class="sig-paren">(</span><em class="sig-param">NAME_SIGNAL</em>, <em class="sig-param">NAME_ATTRIBUTE</em>, <em class="sig-param">ORIGIN</em>, <em class="sig-param">N_DEFAULT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_init_signals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_signals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization of signal connections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_SIGNAL</strong> – name of signal.</p></li>
+<li><p><strong>NAME_ATTRIBUTE</strong> – name of attribute connected to signal.</p></li>
+<li><p><strong>ORIGIN</strong> – GTK class of connected attribute.</p></li>
+<li><p><strong>N_DEFAULT</strong> – number of default handlers</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_views_topics">
+<code class="sig-name descname">test_init_views_topics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_init_views_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_views_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization of stack of topic views.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_markup_cell">
+<code class="sig-name descname">test_markup_cell</code><span class="sig-paren">(</span><em class="sig-param">METHOD</em>, <em class="sig-param">I_LINE</em>, <em class="sig-param">EXPECT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_markup_cell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_markup_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm cell data function updates column text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>METHOD</strong> – markup method under test.</p></li>
+<li><p><strong>I_LINE</strong> – index in outline of sample line.</p></li>
+<li><p><strong>EXPECT</strong> – text to expect in cell.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_markup_cell_none">
+<code class="sig-name descname">test_markup_cell_none</code><span class="sig-paren">(</span><em class="sig-param">METHOD</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_markup_cell_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_markup_cell_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm cell data function updates column text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>METHOD</strong> – markup method under test.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_name_tag">
+<code class="sig-name descname">test_name_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_name_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_name_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm name matches tag.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_change_depth">
+<code class="sig-name descname">test_on_change_depth</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">NAME</em>, <em class="sig-param">COLLAPSE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_change_depth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_change_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm actions that change depth shown of topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>NAME</strong> – name of action under test.</p></li>
+<li><p><strong>COLLAPSE</strong> – whether method should collapse outline.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_change_depth_warn">
+<code class="sig-name descname">test_on_change_depth_warn</code><span class="sig-paren">(</span><em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_change_depth_warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_change_depth_warn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm warning for unexpected action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_in">
+<code class="sig-name descname">test_on_changed_selection_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_changed_selection_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_in" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm view shown after selection changes.</div>
+<div class="line">Case: view of selected topic in stack.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_none">
+<code class="sig-name descname">test_on_changed_selection_none</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_changed_selection_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_none" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm view shown after selection changes.</div>
+<div class="line">Case: no topic selected.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_not_in">
+<code class="sig-name descname">test_on_changed_selection_not_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_changed_selection_not_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_not_in" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm view shown after selection changes.</div>
+<div class="line">Case: view of selected topic not in stack.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_warn">
+<code class="sig-name descname">test_on_changed_selection_warn</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_changed_selection_warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_warn" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm view shown after selection changes.</div>
+<div class="line">Case: topic control roster inconsistent with model topics outline.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_clear_topics">
+<code class="sig-name descname">test_on_clear_topics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_clear_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_clear_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm all topics removed from topics outline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_delete_topic">
+<code class="sig-name descname">test_on_delete_topic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_delete_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_delete_topic" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm topic removal.</div>
+<div class="line">Case: Topic selected.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_first_topic">
+<code class="sig-name descname">test_on_go_first_topic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_go_first_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_first_topic" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm first topic selection.</div>
+<div class="line">Case: topics outline is not empty.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_first_topic_none">
+<code class="sig-name descname">test_on_go_first_topic_none</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_go_first_topic_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_first_topic_none" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm first topic selection.</div>
+<div class="line">Case: topics outline is empty.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_last_topic">
+<code class="sig-name descname">test_on_go_last_topic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_go_last_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_last_topic" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm last topic selection.</div>
+<div class="line">Case: topics outline is not empty; last topic is not top level.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_last_topic_none">
+<code class="sig-name descname">test_on_go_last_topic_none</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_go_last_topic_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_last_topic_none" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm last topic selection.</div>
+<div class="line">Case: topics outline is empty.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>capfd</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/capture-stdout-stderr.html#captures">Pytest capfd</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_new_topic">
+<code class="sig-name descname">test_on_new_topic</code><span class="sig-paren">(</span><em class="sig-param">capfd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_new_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_new_topic" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm response to request to specify topic.</div>
+<div class="line">Case: user completes placement, template selection, and topic
+specification.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>capfd</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/capture-stdout-stderr.html#captures">Pytest capfd</a>.</p></li>
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_show_dialog">
+<code class="sig-name descname">test_on_show_dialog</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_show_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_show_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm handler displays dialog.</p>
+<p>See manual tests for dialog content checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_switch_columns">
+<code class="sig-name descname">test_on_switch_columns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_on_switch_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_switch_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm visual column switches.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestEditorTopics.test_property_access">
+<code class="sig-name descname">test_property_access</code><span class="sig-paren">(</span><em class="sig-param">NAME_PROP</em>, <em class="sig-param">NAME_ATTR</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestEditorTopics.test_property_access"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestEditorTopics.test_property_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm access limits of each property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_PROP</strong> – name of property.</p></li>
+<li><p><strong>NAME_ATTR</strong> – name of attribute.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_editor_topics.TestModule">
+<em class="property">class </em><code class="sig-name descname">TestModule</code><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for module-level components of <a class="reference internal" href="../src/factsheet.view.editor_topics.html#module-factsheet.view.editor_topics" title="factsheet.view.editor_topics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">editor_topics</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestModule.test_attributes">
+<code class="sig-name descname">test_attributes</code><span class="sig-paren">(</span><em class="sig-param">ATTR</em>, <em class="sig-param">TYPE_EXPECT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestModule.test_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestModule.test_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm global attribute definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ATTR</strong> – global attibute under test.</p></li>
+<li><p><strong>TYPE_EXPECT</strong> – type expected.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_editor_topics.TestModule.test_types">
+<code class="sig-name descname">test_types</code><span class="sig-paren">(</span><em class="sig-param">TYPE_TARGET</em>, <em class="sig-param">TYPE_EXPECT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_editor_topics.html#TestModule.test_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_editor_topics.TestModule.test_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm type alias definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TYPE_TARGET</strong> – type alias under test.</p></li>
+<li><p><strong>TYPE_EXPECT</strong> – type expected.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.view.test_select_spec.html" class="btn btn-neutral float-right" title="test_select_spec View Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.view.conftest.html" class="btn btn-neutral float-left" title="conftest View Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

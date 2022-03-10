@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.view.test_view_topic &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.view.test_view_topic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.view.test_view_topic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for class to display topic view in a Factsheet window pane.</span>
+<span class="sd">See :mod:`.view_topic`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># import dataclasses as DC</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.control.control_topic</span> <span class="k">as</span> <span class="nn">CTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.ui</span> <span class="k">as</span> <span class="nn">UI</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_topic</span> <span class="k">as</span> <span class="nn">VTOPIC</span>
+
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gio</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="new_model_control_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.new_model_control_view">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_model_control_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture with teardown: return topic model, control, and view.</span>
+
+<span class="sd">    :param request: built-in fixture `Pytest request`_.</span>
+<span class="sd">    :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">marker</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">get_closest_marker</span><span class="p">(</span><span class="s2">&quot;n_facts&quot;</span><span class="p">)</span>
+    <span class="n">n_facts</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="k">if</span> <span class="n">marker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">n_facts</span> <span class="o">=</span> <span class="n">marker</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_facts&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">n_facts</span><span class="p">)</span>
+    <span class="n">control</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">VTOPIC</span><span class="o">.</span><span class="n">ViewTopic</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">model</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">view</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
+    <span class="c1"># view._ui_view.destroy()</span>
+    <span class="c1"># del view._ui_view</span>
+
+
+<div class="viewcode-block" id="TestViewTopic"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic">[docs]</a><span class="k">class</span> <span class="nc">TestViewTopic</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ViewTopic`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestViewTopic.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_init">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">n_facts</span><span class="p">(</span><span class="n">n_facts</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_control_view</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.</span>
+
+<span class="sd">        :param new_model_control_view: fixture</span>
+<span class="sd">            :func:`.new_model_control_view`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_control_view</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_control</span> <span class="ow">is</span> <span class="n">control</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">is_visible</span><span class="p">()</span>
+        <span class="n">actions_topic</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_action_group</span><span class="p">(</span><span class="s1">&#39;topic&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actions_topic</span><span class="p">,</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleActionGroup</span><span class="p">)</span>
+
+        <span class="c1"># Components: see helper tests.</span>
+
+        <span class="c1"># Dialogs</span>
+        <span class="k">assert</span> <span class="n">actions_topic</span><span class="o">.</span><span class="n">lookup_action</span><span class="p">(</span><span class="s1">&#39;show-help-topic&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">actions_topic</span><span class="o">.</span><span class="n">lookup_action</span><span class="p">(</span>
+            <span class="s1">&#39;show-help-topic-display&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+    <span class="c1"># @pytest.mark.skip</span>
+    <span class="c1"># def test_init_activate(self, patch_control_topic):</span>
+    <span class="c1">#     &quot;&quot;&quot;Confirm initialization.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     Case: name view activation signal.&quot;&quot;&quot;</span>
+    <span class="c1">#     # Setup</span>
+    <span class="c1">#     entry_gtype = GO.type_from_name(GO.type_name(Gtk.Entry))</span>
+    <span class="c1">#     delete_signal = GO.signal_lookup(&#39;activate&#39;, entry_gtype)</span>
+    <span class="c1">#     CONTROL = patch_control_topic</span>
+    <span class="c1">#     # Test</span>
+    <span class="c1">#     target = VTOPIC.ViewTopic(p_control=CONTROL)</span>
+    <span class="c1">#     entry = target._infoid.get_view_name()</span>
+    <span class="c1">#     activate_id = GO.signal_handler_find(</span>
+    <span class="c1">#         entry, GO.SignalMatchType.ID, delete_signal,</span>
+    <span class="c1">#         0, None, None, None)</span>
+    <span class="c1">#     assert 0 != activate_id</span>
+    <span class="c1">#     # Teardown</span>
+    <span class="c1">#     target._ui_view.destroy()</span>
+    <span class="c1">#     del target._ui_view</span>
+
+<div class="viewcode-block" id="TestViewTopic.test_helper_init_menu_display"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_helper_init_menu_display">[docs]</a>    <span class="k">def</span> <span class="nf">test_helper_init_menu_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_control_view</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm helper binds display menu buttons to topic components.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_</span>
+<span class="sd">        :param new_model_control_view: fixture :func:`new_model_control_view`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">_control</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_control_view</span>
+
+        <span class="k">class</span> <span class="nc">PatchGetObject</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_elements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name_all</span> <span class="o">=</span> <span class="s1">&#39;ui_show_all&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_all</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_elements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name_all</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">button_all</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pairs_name_ui</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="s1">&#39;ui_show_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_summary&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;ui_show_facts&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_facts&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;ui_show_fact_current&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_fact_current&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;ui_show_topics_related&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_topics_related&#39;</span><span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pairs_ui</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">name_button</span><span class="p">,</span> <span class="n">name_expander</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pairs_name_ui</span><span class="p">:</span>
+                    <span class="n">button</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui_elements</span><span class="p">[</span><span class="n">name_button</span><span class="p">]</span> <span class="o">=</span> <span class="n">button</span>
+                    <span class="n">expander</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Expander</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui_elements</span><span class="p">[</span><span class="n">name_expander</span><span class="p">]</span> <span class="o">=</span> <span class="n">expander</span>
+                    <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="n">expander</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pairs_ui</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name_ui</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_elements</span><span class="p">[</span><span class="n">p_name_ui</span><span class="p">]</span>
+
+        <span class="n">patch_get</span> <span class="o">=</span> <span class="n">PatchGetObject</span><span class="p">()</span>
+
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_menu_display</span><span class="p">(</span><span class="n">patch_get</span><span class="o">.</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">button</span><span class="p">,</span> <span class="n">expander</span> <span class="ow">in</span> <span class="n">patch_get</span><span class="o">.</span><span class="n">pairs_ui</span><span class="p">:</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">button</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">expander</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">button</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span> <span class="ow">and</span> <span class="n">expander</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="n">patch_get</span><span class="o">.</span><span class="n">button_all</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">button</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">patch_get</span><span class="o">.</span><span class="n">pairs_ui</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">button</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">patch_get</span><span class="o">.</span><span class="n">button_all</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">patch_get</span><span class="o">.</span><span class="n">button_all</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">button</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">patch_get</span><span class="o">.</span><span class="n">pairs_ui</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">button</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">patch_get</span><span class="o">.</span><span class="n">button_all</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestViewTopic.test_helper_init_summary"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_helper_init_summary">[docs]</a>    <span class="k">def</span> <span class="nf">test_helper_init_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">new_model_control_view</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm helper creates summary fields in topic view.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_</span>
+<span class="sd">        :param new_model_control_view: fixture :func:`new_model_control_view`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">_control</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_control_view</span>
+        <span class="n">NAME_SITE</span> <span class="o">=</span> <span class="s1">&#39;ui_site_summary&#39;</span>
+        <span class="n">TYPE_CONTENT</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">EditorSummary</span>
+
+        <span class="k">class</span> <span class="nc">PatchGetObject</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name_site</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name_site</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name_site</span> <span class="o">=</span> <span class="n">p_name_site</span>
+                <span class="k">return</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">()</span>
+
+        <span class="n">patch_get</span> <span class="o">=</span> <span class="n">PatchGetObject</span><span class="p">()</span>
+
+        <span class="k">class</span> <span class="nc">PatchAdd</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_widget</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">p_widget</span>
+
+        <span class="n">patch_add</span> <span class="o">=</span> <span class="n">PatchAdd</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">patch_add</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_summary_topic</span><span class="p">(</span><span class="n">patch_get</span><span class="o">.</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_SITE</span> <span class="o">==</span> <span class="n">patch_get</span><span class="o">.</span><span class="n">name_site</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patch_add</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">TYPE_CONTENT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestViewTopic.patch_view_display_editor"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.patch_view_display_editor">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span> <span class="nf">patch_view_display_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_control_view</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pytest fixture with teardown: return patched view of topic.</span>
+
+<span class="sd">        Component patch provides access to component initialization</span>
+<span class="sd">        calls as well as teardown.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">_control</span><span class="p">,</span> <span class="n">view</span> <span class="o">=</span> <span class="n">new_model_control_view</span>
+
+        <span class="k">class</span> <span class="nc">PatchDisplayEditor</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_display</span><span class="p">,</span> <span class="n">p_editor</span><span class="p">,</span> <span class="n">p_type</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="n">p_display</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">p_editor</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">p_type</span>
+
+        <span class="n">patch_display_editor</span> <span class="o">=</span> <span class="n">PatchDisplayEditor</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">VTOPIC</span><span class="o">.</span><span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="n">patch_display_editor</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">VTOPIC</span><span class="o">.</span><span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">,</span> <span class="s1">&#39;ui_view&#39;</span><span class="p">,</span> <span class="n">patch_display_editor</span><span class="o">.</span><span class="n">ui_view</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">view</span><span class="p">,</span> <span class="n">patch_display_editor</span>
+        <span class="n">patch_display_editor</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestViewTopic.test_helper_init_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_helper_init_view">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;HELPER, CONTENT, SITE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_init_name_topic&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_site_name_topic&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_init_title_topic&#39;</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_site_title_topic&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_helper_init_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">patch_view_display_editor</span><span class="p">,</span>
+                              <span class="n">HELPER</span><span class="p">,</span> <span class="n">CONTENT</span><span class="p">,</span> <span class="n">SITE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm helper creates name and title fields in topic view.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param patch_view_display_editor: fixture</span>
+<span class="sd">            :func:`.patch_view_display_eidtor`.</span>
+<span class="sd">        :param HELPER: initialization helper method under test.</span>
+<span class="sd">        :param CONTENT: name of view type.</span>
+<span class="sd">        :param SITE: expected locaton for new view.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">display_editor</span> <span class="o">=</span> <span class="n">patch_view_display_editor</span>
+        <span class="n">target_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">HELPER</span><span class="p">)</span>
+
+        <span class="k">class</span> <span class="nc">PatchGetObject</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">site_ui</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_site_ui</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">site_ui</span> <span class="o">=</span> <span class="n">p_site_ui</span>
+                <span class="k">return</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">()</span>
+
+        <span class="n">patch_get_object</span> <span class="o">=</span> <span class="n">PatchGetObject</span><span class="p">()</span>
+
+        <span class="k">class</span> <span class="nc">PatchSite</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_view</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">expand_okay</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fill_okay</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_padding</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">def</span> <span class="nf">pack_start</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span> <span class="n">p_view</span><span class="p">,</span> <span class="n">p_exapnd_okay</span><span class="p">,</span> <span class="n">p_fill_okay</span><span class="p">,</span> <span class="n">p_n_padding</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_view</span> <span class="o">=</span> <span class="n">p_view</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">expand_okay</span> <span class="o">=</span> <span class="n">p_exapnd_okay</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fill_okay</span> <span class="o">=</span> <span class="n">p_fill_okay</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_padding</span> <span class="o">=</span> <span class="n">p_n_padding</span>
+
+        <span class="n">patch_site</span> <span class="o">=</span> <span class="n">PatchSite</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">,</span> <span class="s1">&#39;pack_start&#39;</span><span class="p">,</span> <span class="n">patch_site</span><span class="o">.</span><span class="n">pack_start</span><span class="p">)</span>
+
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_method</span><span class="p">(</span><span class="n">patch_get_object</span><span class="o">.</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">display_editor</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">display_editor</span><span class="o">.</span><span class="n">display</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">display_editor</span><span class="o">.</span><span class="n">editor</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">CONTENT</span> <span class="o">==</span> <span class="n">display_editor</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">assert</span> <span class="n">patch_get_object</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">SITE</span> <span class="o">==</span> <span class="n">patch_get_object</span><span class="o">.</span><span class="n">site_ui</span>
+        <span class="k">assert</span> <span class="n">patch_site</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">display_editor</span><span class="o">.</span><span class="n">ui_view</span> <span class="ow">is</span> <span class="n">patch_site</span><span class="o">.</span><span class="n">ui_view</span>
+        <span class="k">assert</span> <span class="n">EXPAND_OKAY</span> <span class="o">==</span> <span class="n">patch_site</span><span class="o">.</span><span class="n">expand_okay</span>
+        <span class="k">assert</span> <span class="n">FILL_OKAY</span> <span class="o">==</span> <span class="n">patch_site</span><span class="o">.</span><span class="n">fill_okay</span>
+        <span class="k">assert</span> <span class="n">N_PADDING</span> <span class="o">==</span> <span class="n">patch_site</span><span class="o">.</span><span class="n">n_padding</span></div>
+
+    <span class="c1"># @pytest.mark.skip</span>
+    <span class="c1"># @pytest.mark.parametrize(&#39;NAME_ATTR, NAME_PROP&#39;, [</span>
+    <span class="c1">#     [&#39;_ui_view&#39;, &#39;gtk_pane&#39;],</span>
+    <span class="c1">#     ])</span>
+    <span class="c1"># def test_property(self, patch_control_topic, NAME_ATTR, NAME_PROP):</span>
+    <span class="c1">#     &quot;&quot;&quot;Confirm properties are get-only.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     #. Case: get</span>
+    <span class="c1">#     #. Case: no set</span>
+    <span class="c1">#     #. Case: no delete</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     # Setup</span>
+    <span class="c1">#     CONTROL = patch_control_topic</span>
+    <span class="c1">#     target = VTOPIC.ViewTopic(p_control=CONTROL)</span>
+    <span class="c1">#     value_attr = getattr(target, NAME_ATTR)</span>
+    <span class="c1">#     target_prop = getattr(VTOPIC.ViewTopic, NAME_PROP)</span>
+    <span class="c1">#     value_prop = getattr(target, NAME_PROP)</span>
+    <span class="c1">#     # Test: read</span>
+    <span class="c1">#     assert target_prop.fget is not None</span>
+    <span class="c1">#     assert str(value_attr) == str(value_prop)</span>
+    <span class="c1">#     # Test: no replace</span>
+    <span class="c1">#     assert target_prop.fset is None</span>
+    <span class="c1">#     # Test: no delete</span>
+    <span class="c1">#     assert target_prop.fdel is None</span>
+
+<div class="viewcode-block" id="TestViewTopic.test_on_show_dialog"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_on_show_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_show_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_control_view</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm handler runs dialog.</span>
+<span class="sd">        | Case: topic view in top-level window.</span>
+
+<span class="sd">        See manual tests for dialog content checks.</span>
+
+<span class="sd">        :param new_model_control_view: fixture</span>
+<span class="sd">            :func:`.new_model_control_view`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">DialogPatch</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">DialogPatch</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+
+        <span class="n">_model</span><span class="p">,</span> <span class="n">_control</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_control_view</span>
+
+        <span class="n">window</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ApplicationWindow</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">,</span> <span class="s1">&#39;get_toplevel&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_args</span><span class="p">:</span> <span class="n">window</span><span class="p">)</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">()</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dialog</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">dialog</span><span class="o">.</span><span class="n">is_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_transient_for</span><span class="p">()</span> <span class="ow">is</span> <span class="n">window</span></div>
+
+<div class="viewcode-block" id="TestViewTopic.test_on_show_dialog_no_top"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_on_show_dialog_no_top">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_show_dialog_no_top</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_model_control_view</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm handler runs dialog.</span>
+<span class="sd">        | Case: topic view not in top-level window.</span>
+
+<span class="sd">        :param new_model_control_view: fixture</span>
+<span class="sd">            :func:`.new_model_control_view`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">DialogPatch</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">DialogPatch</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+
+        <span class="n">_model</span><span class="p">,</span> <span class="n">_control</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_control_view</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">,</span> <span class="s1">&#39;get_toplevel&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_args</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">)</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ApplicationWindow</span><span class="p">()</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">()</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dialog</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">dialog</span><span class="o">.</span><span class="n">is_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_transient_for</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestViewTopic.test_on_show_dialog_input"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_topic.html#factsheet_test.view.test_view_topic.TestViewTopic.test_on_show_dialog_input">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;DIALOG&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">HELP_TOPIC</span><span class="p">,</span>
+        <span class="n">UI</span><span class="o">.</span><span class="n">HELP_TOPIC_DISPLAY</span><span class="p">,</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_on_show_dialog_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DIALOG</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm presence of shared dialogs.</span>
+
+<span class="sd">        :param DIALOG: dialog under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">DIALOG</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,880 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.view.test_editor_topics &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.view.test_editor_topics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.view.test_editor_topics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for class to display and edit topics outline of a factsheet.</span>
+<span class="sd">See :mod:`.editor_topics`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pytest</span>  <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_sheet</span> <span class="k">as</span> <span class="nn">CSHEET</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.editor_topics</span> <span class="k">as</span> <span class="nn">VTOPICS</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_stack</span> <span class="k">as</span> <span class="nn">VSTACK</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_topic</span> <span class="k">as</span> <span class="nn">VTOPIC</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gio</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="fill_topics"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.fill_topics">[docs]</a><span class="k">def</span> <span class="nf">fill_topics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="p">,</span> <span class="n">p_n_width</span><span class="p">,</span> <span class="n">p_n_depth</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Clears control&#39;s topics outline and refills with stub content.</span>
+
+<span class="sd">    :param p_control_sheet: ControlSheet to modify.</span>
+<span class="sd">    :param p_n_width: number of top-level topics.</span>
+<span class="sd">    :param p_n_depth: number of descendant levels under last top-level topic.</span>
+<span class="sd">    :returns: line of last topic added to outline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_control_sheet</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p_n_width</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Title </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">p_control_sheet</span><span class="o">.</span><span class="n">insert_topic_after</span><span class="p">(</span><span class="n">p_topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p_n_depth</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_n_width</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Title </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_n_width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">p_control_sheet</span><span class="o">.</span><span class="n">insert_topic_child</span><span class="p">(</span><span class="n">p_topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">line</span></div>
+
+
+<div class="viewcode-block" id="TestEditorTopics"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics">[docs]</a><span class="k">class</span> <span class="nc">TestEditorTopics</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.editor_topics`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestEditorTopics.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_ACTIONS</span> <span class="o">=</span> <span class="s1">&#39;outline_topics&#39;</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span> <span class="ow">is</span> <span class="n">control_sheet</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Frame</span><span class="p">)</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_action_group</span><span class="p">(</span><span class="n">NAME_ACTIONS</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleActionGroup</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">actions</span><span class="o">.</span><span class="n">lookup_action</span><span class="p">(</span><span class="s1">&#39;show-help&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_dialog_help</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">new_view_topics</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="p">,</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_init_actions"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_actions">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_ACTION&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;clear-topics&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;collapse-outline&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;delete-topic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;expand-outline&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;go-first-topic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;go-last-topic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;new-topic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;show-help&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;switch-columns&#39;</span><span class="p">,</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NAME_ACTION</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of actions for toolbar buttons.</span>
+
+<span class="sd">        :param NAME_ACTION: name of action under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">NAME_ACTIONS</span> <span class="o">=</span> <span class="s1">&#39;outline_topics&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_init_actions</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">actions</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_action_group</span><span class="p">(</span><span class="n">NAME_ACTIONS</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleActionGroup</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">actions</span><span class="o">.</span><span class="n">lookup_action</span><span class="p">(</span><span class="n">NAME_ACTION</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_init_outline_topics"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_outline_topics">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_outline_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of topics outline.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_COLUMNS</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">C_NAME</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">TITLE_C_NAME</span> <span class="o">=</span> <span class="s1">&#39;Name&#39;</span>
+        <span class="n">C_TITLE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">TITLE_C_TITLE</span> <span class="o">=</span> <span class="s1">&#39;Title&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">new_view_topics</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span> <span class="ow">is</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_selection</span><span class="p">())</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_columns</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_COLUMNS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_name</span> <span class="ow">is</span> <span class="n">columns</span><span class="p">[</span><span class="n">C_NAME</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">TITLE_C_NAME</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_name</span><span class="o">.</span><span class="n">get_title</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_title</span> <span class="ow">is</span> <span class="n">columns</span><span class="p">[</span><span class="n">C_TITLE</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">TITLE_C_TITLE</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_title</span><span class="o">.</span><span class="n">get_title</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_init_signals"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_signals">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+        <span class="s1">&#39;NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="s1">&#39;_ui_selection&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeSelection</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_signals</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">NAME_ATTRIBUTE</span><span class="p">,</span> <span class="n">ORIGIN</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of signal connections.</span>
+
+<span class="sd">        :param NAME_SIGNAL: name of signal.</span>
+<span class="sd">        :param NAME_ATTRIBUTE: name of attribute connected to signal.</span>
+<span class="sd">        :param ORIGIN: GTK class of connected attribute.</span>
+<span class="sd">        :param N_DEFAULT: number of default handlers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">ORIGIN</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTRIBUTE</span><span class="p">)</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">attribute</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_init_views_topics"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_init_views_topics">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_views_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of stack of topic views.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_VIEWS_DEFAULT</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">NAME_DEFAULT</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="o">.</span><span class="n">name_tag</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="p">,</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_DEFAULT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_name_view_default</span>
+        <span class="n">ui_view_stack</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">ui_view</span>
+        <span class="k">assert</span> <span class="n">N_VIEWS_DEFAULT</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui_view_stack</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_DEFAULT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">get_name_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="n">NAME_DEFAULT</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">_pinned</span>
+        <span class="n">default_view</span> <span class="o">=</span> <span class="n">ui_view_stack</span><span class="o">.</span><span class="n">get_visible_child</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">default_view</span><span class="o">.</span><span class="n">get_use_markup</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">default_view</span><span class="o">.</span><span class="n">get_line_wrap</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_markup_cell"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_markup_cell">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD, I_LINE, EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_name&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Name 0&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_name&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Name 3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_title&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Title 2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_title&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Title 4&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_markup_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">,</span> <span class="n">I_LINE</span><span class="p">,</span> <span class="n">EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm cell data function updates column text.</span>
+
+<span class="sd">        :param METHOD: markup method under test.</span>
+<span class="sd">        :param I_LINE: index in outline of sample line.</span>
+<span class="sd">        :param EXPECT: text to expect in cell.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">control_sheet</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">N_TOPICS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TOPICS</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Title </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">control_sheet</span><span class="o">.</span><span class="n">insert_topic_before</span><span class="p">(</span><span class="n">p_topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">target_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">()</span>
+        <span class="n">render</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRendererText</span><span class="p">()</span>
+        <span class="n">column</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">render</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ui_model_topics</span> <span class="o">=</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">I_LINE</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_method</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT</span> <span class="o">==</span> <span class="n">render</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_markup_cell_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_markup_cell_none">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_title&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_markup_cell_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm cell data function updates column text.</span>
+
+<span class="sd">        :param METHOD: markup method under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">control_sheet</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">target_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">()</span>
+        <span class="n">render</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRendererText</span><span class="p">()</span>
+        <span class="n">column</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">render</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ui_model_topics</span> <span class="o">=</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_topics</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_first</span><span class="p">()</span>
+        <span class="n">EXPECT</span> <span class="o">=</span> <span class="s1">&#39;Missing&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_method</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT</span> <span class="o">==</span> <span class="n">render</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_name_tag"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_name_tag">[docs]</a>    <span class="k">def</span> <span class="nf">test_name_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm name matches tag.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">TAG</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">TagTopic</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">TAG</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">NAME</span> <span class="o">==</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="o">.</span><span class="n">name_tag</span><span class="p">(</span><span class="n">TAG</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_change_depth"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_change_depth">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME, COLLAPSE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;collapse-outline&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;expand-outline&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_on_change_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">COLLAPSE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm actions that change depth shown of topics outline.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param NAME: name of action under test.</span>
+<span class="sd">        :param COLLAPSE: whether method should collapse outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchTreeView</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_collapse</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_expand</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">def</span> <span class="nf">collapse_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_collapse</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">def</span> <span class="nf">expand_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_expand</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">PatchTreeView</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">,</span> <span class="s1">&#39;collapse_all&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">collapse_all</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">,</span> <span class="s1">&#39;expand_all&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">expand_all</span><span class="p">)</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_action_group</span><span class="p">(</span><span class="s1">&#39;outline_topics&#39;</span><span class="p">)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">actions</span><span class="o">.</span><span class="n">lookup_action</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_change_depth</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called_collapse</span> <span class="ow">is</span> <span class="n">COLLAPSE</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called_expand</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">COLLAPSE</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_change_depth_warn"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_change_depth_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_change_depth_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm warning for unexpected action.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Unexpected action: &#39;</span> <span class="o">+</span> <span class="n">NAME</span> <span class="o">+</span>
+                       <span class="s1">&#39; (EditorTopics.on_change_depth)&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_change_depth</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_changed_selection_in"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_in">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm view shown after selection changes.</span>
+<span class="sd">        | Case: view of selected topic in stack.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">ui_model_topics</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+        <span class="n">line_topic</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="s1">&#39;3:0&#39;</span><span class="p">)</span>
+        <span class="n">control_topic</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="n">view_topic</span> <span class="o">=</span> <span class="n">VTOPIC</span><span class="o">.</span><span class="n">ViewTopic</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_topic</span><span class="p">)</span>
+        <span class="n">name_topic</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="o">.</span><span class="n">name_tag</span><span class="p">(</span><span class="n">control_topic</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view_topic</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">name_topic</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="n">name_visible</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">name_topic</span> <span class="o">==</span> <span class="n">name_visible</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_changed_selection_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm view shown after selection changes.</span>
+<span class="sd">        | Case: no topic selected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">ui_model_topics</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+        <span class="n">line_topic</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="s1">&#39;3:0&#39;</span><span class="p">)</span>
+        <span class="n">control_topic</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="n">view_topic</span> <span class="o">=</span> <span class="n">VTOPIC</span><span class="o">.</span><span class="n">ViewTopic</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_topic</span><span class="p">)</span>
+        <span class="n">name_topic</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="o">.</span><span class="n">name_tag</span><span class="p">(</span><span class="n">control_topic</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view_topic</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">name_topic</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">show_view</span><span class="p">(</span><span class="n">name_topic</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">unselect_all</span><span class="p">()</span>
+        <span class="n">name_visible</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_name_view_default</span> <span class="o">==</span> <span class="n">name_visible</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_changed_selection_not_in"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_not_in">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection_not_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm view shown after selection changes.</span>
+<span class="sd">        | Case: view of selected topic not in stack.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">ui_model_topics</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+        <span class="n">line_topic</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="s1">&#39;3:0&#39;</span><span class="p">)</span>
+        <span class="n">control_topic</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="n">name_topic</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="o">.</span><span class="n">name_tag</span><span class="p">(</span><span class="n">control_topic</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="n">name_visible</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">name_topic</span> <span class="o">==</span> <span class="n">name_visible</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_changed_selection_warn"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_changed_selection_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm view shown after selection changes.</span>
+<span class="sd">        | Case: topic control roster inconsistent with model topics outline.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">ui_model_topics</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+        <span class="n">line_topic</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="s1">&#39;3:0&#39;</span><span class="p">)</span>
+        <span class="n">control_topic</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+        <span class="n">view_topic</span> <span class="o">=</span> <span class="n">VTOPIC</span><span class="o">.</span><span class="n">ViewTopic</span><span class="p">(</span><span class="n">p_control</span><span class="o">=</span><span class="n">control_topic</span><span class="p">)</span>
+        <span class="n">name_topic</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="o">.</span><span class="n">name_tag</span><span class="p">(</span><span class="n">control_topic</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view_topic</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">name_topic</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">show_view</span><span class="p">(</span><span class="n">name_topic</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_topic</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">get_control_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_line</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">,</span> <span class="s1">&#39;get_control_topic&#39;</span><span class="p">,</span> <span class="n">get_control_topic</span><span class="p">)</span>
+        <span class="n">line_trigger</span> <span class="o">=</span> <span class="n">ui_model_topics</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Topic control roster inconsistent with model topics &#39;</span>
+                       <span class="s1">&#39;outline. (EditorTopics.on_changed_selection)&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_trigger</span><span class="p">)</span>
+        <span class="n">name_visible</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_views_topics</span><span class="o">.</span><span class="n">ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_name_view_default</span> <span class="o">==</span> <span class="n">name_visible</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;CRITICAL&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_clear_topics"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_clear_topics">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_clear_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all topics removed from topics outline.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_clear_topics</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_control_sheet</span><span class="o">.</span><span class="n">_roster_topics</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_delete_topic"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_delete_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_delete_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm topic removal.</span>
+<span class="sd">        | Case: Topic selected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="n">PATH_DELETE</span> <span class="o">=</span> <span class="s1">&#39;3:0:0&#39;</span>
+        <span class="n">line_delete</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH_DELETE</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_tree_view</span><span class="p">()</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_delete</span><span class="p">)</span>
+        <span class="n">EXPECT_ROSTER_TOPICS</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">control_sheet</span><span class="o">.</span><span class="n">_roster_topics</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">topics</span><span class="p">(</span><span class="n">p_line</span><span class="o">=</span><span class="n">line_delete</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">EXPECT_ROSTER_TOPICS</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">topic</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_delete_topic</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">_model</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">EXPECT_ROSTER_TOPICS</span> <span class="o">==</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">_roster_topics</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_go_first_topic"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_first_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_go_first_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm first topic selection.</span>
+<span class="sd">        | Case: topics outline is not empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="n">PATH_START</span> <span class="o">=</span> <span class="s1">&#39;3:0:0&#39;</span>
+        <span class="n">line_start</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH_START</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_start</span><span class="p">)</span>
+        <span class="n">EXPECT_NAME</span> <span class="o">=</span> <span class="s1">&#39;Name 0&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_go_first_topic</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">control_topic</span> <span class="o">=</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT_NAME</span> <span class="o">==</span> <span class="n">control_topic</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_go_first_topic_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_first_topic_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_go_first_topic_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm first topic selection.</span>
+<span class="sd">        | Case: topics outline is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">control_sheet</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_go_first_topic</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_go_last_topic"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_last_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_go_last_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm last topic selection.</span>
+<span class="sd">        | Case: topics outline is not empty; last topic is not top level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">N_WIDTH</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">N_DEPTH</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fill_topics</span><span class="p">(</span><span class="n">control_sheet</span><span class="p">,</span> <span class="n">N_WIDTH</span><span class="p">,</span> <span class="n">N_DEPTH</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="n">PATH_START</span> <span class="o">=</span> <span class="s1">&#39;3:0:0&#39;</span>
+        <span class="n">line_start</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH_START</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_start</span><span class="p">)</span>
+        <span class="n">EXPECT_NAME</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">N_WIDTH</span> <span class="o">+</span> <span class="n">N_DEPTH</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_go_last_topic</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">control_topic</span> <span class="o">=</span> <span class="n">control_sheet</span><span class="o">.</span><span class="n">get_control_topic</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT_NAME</span> <span class="o">==</span> <span class="n">control_topic</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_go_last_topic_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_go_last_topic_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_go_last_topic_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm last topic selection.</span>
+<span class="sd">        | Case: topics outline is empty.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param capfd: built-in fixture `Pytest capfd`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">control_sheet</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_go_last_topic</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_new_topic"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_new_topic">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s1">&#39;stub method pending implementation&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_on_new_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capfd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm response to request to specify topic.</span>
+<span class="sd">        | Case: user completes placement, template selection, and topic</span>
+<span class="sd">          specification.</span>
+
+<span class="sd">        :param capfd: built-in fixture `Pytest capfd`_.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># factsheet = patch_factsheet()</span>
+        <span class="c1"># target = VSHEET.ViewSheet(px_app=factsheet)</span>
+        <span class="c1"># snapshot = capfd.readouterr()   # Resets the internal buffer</span>
+        <span class="c1"># assert not snapshot.out</span>
+        <span class="c1"># assert &#39;Gtk-CRITICAL&#39; in snapshot.err</span>
+        <span class="c1"># assert &#39;GApplication::startup signal&#39; in snapshot.err</span>
+        <span class="c1"># # target._window.set_skip_pager_hint(True)</span>
+        <span class="c1"># # target._window.set_skip_taskbar_hint(True)</span>
+        <span class="c1"># target._window.set_transient_for(WINDOW_ANCHOR)</span>
+        <span class="c1">#</span>
+        <span class="c1"># sheets_active = CPOOL.PoolSheets()</span>
+        <span class="c1"># control = CSHEET.ControlSheet.new(sheets_active)</span>
+        <span class="c1"># target.link_factsheet(target, control)</span>
+        <span class="c1"># gtk_model = target._view_topics.gtk_view.get_model()</span>
+        <span class="c1"># NAME = &#39;Parrot&#39;</span>
+        <span class="c1"># SUMMARY = &#39;A sketch about customer service.&#39;</span>
+        <span class="c1"># TITLE = &#39;The Parrot Sketch&#39;</span>
+        <span class="c1"># topic = MTOPIC.Topic(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)</span>
+        <span class="c1"># index_0 = gtk_model.append(None, [topic])</span>
+        <span class="c1">#</span>
+        <span class="c1"># PATH_EXPECT = &#39;0:0&#39;</span>
+        <span class="c1"># placement = QPLACE.Placement(index_0, QPLACE.Order.CHILD)</span>
+        <span class="c1"># patch_place = PatchCall(placement)</span>
+        <span class="c1"># monkeypatch.setattr(</span>
+        <span class="c1">#     QPLACE.QueryPlace, &#39;__call__&#39;, patch_place.__call__)</span>
+        <span class="c1">#</span>
+        <span class="c1"># query_template = target._query_template</span>
+        <span class="c1"># outline = query_template._outline</span>
+        <span class="c1"># model = outline.gtk_view.get_model()</span>
+        <span class="c1"># i_first = model.get_iter_first()</span>
+        <span class="c1"># template = AOUTLINE.get_item_gtk(model, i_first)</span>
+        <span class="c1"># patch_query_template = PatchCall(template)</span>
+        <span class="c1"># monkeypatch.setattr(QTEMPLATE.QueryTemplate, &#39;__call__&#39;,</span>
+        <span class="c1">#                     patch_query_template.__call__)</span>
+        <span class="c1">#</span>
+        <span class="c1"># patch_template = PatchCall(topic)</span>
+        <span class="c1"># monkeypatch.setattr(</span>
+        <span class="c1">#     XSPEC_NOTE.SpecNote, &#39;__call__&#39;, patch_template.__call__)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># target.on_new_topic(None, None)</span>
+        <span class="c1"># assert patch_place.called</span>
+        <span class="c1"># assert patch_query_template.called</span>
+        <span class="c1"># assert patch_template.called</span>
+        <span class="c1"># id_visible = target._scenes_topic.show_scene(hex(topic.tag))</span>
+        <span class="c1"># assert id_visible == hex(topic.tag)</span>
+        <span class="c1"># topics, i_new = target._cursor_topics.get_selected()</span>
+        <span class="c1"># assert PATH_EXPECT == gtk_model.get_string_from_iter(i_new)</span>
+        <span class="c1"># topic_new = AOUTLINE.get_item_gtk(topics, i_new)</span>
+        <span class="c1"># assert topic_new is topic</span>
+        <span class="c1"># # Teardown</span>
+        <span class="c1"># target._window.destroy()</span>
+        <span class="c1"># del target._window</span>
+        <span class="c1"># del factsheet</span>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_show_dialog"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_show_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_show_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm handler displays dialog.</span>
+
+<span class="sd">        See manual tests for dialog content checks.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchDialog</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_hide</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_run</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_set</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+
+            <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called_hide</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">called_run</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">def</span> <span class="nf">set_transient_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_parent</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_set</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">p_parent</span>
+
+        <span class="n">patch_dialog</span> <span class="o">=</span> <span class="n">PatchDialog</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">hide</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;set_transient_for&#39;</span><span class="p">,</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">)</span>
+
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">ui_view</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_show_help</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">called_set</span>
+        <span class="k">assert</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="n">parent</span>
+        <span class="k">assert</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">called_run</span>
+        <span class="k">assert</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">called_hide</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_on_switch_columns"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_on_switch_columns">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_switch_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm visual column switches.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">I_COLUMN_NAME</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">I_COLUMN_TITLE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">column_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="n">I_COLUMN_NAME</span><span class="p">)</span>
+        <span class="n">column_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_topics</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="n">I_COLUMN_TITLE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_switch_columns</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">column_name</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">column_title</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_switch_columns</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">column_name</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">column_title</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestEditorTopics.test_property_access"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestEditorTopics.test_property_access">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_PROP, NAME_ATTR&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;ui_view&#39;</span><span class="p">,</span> <span class="s1">&#39;_ui_view&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_access</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of each property.</span>
+
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">control_sheet</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">ControlSheet</span><span class="p">(</span><span class="n">p_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span><span class="p">(</span><span class="n">p_control_sheet</span><span class="o">=</span><span class="n">control_sheet</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">CLASS</span> <span class="o">=</span> <span class="n">VTOPICS</span><span class="o">.</span><span class="n">EditorTopics</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">is</span> <span class="n">attr</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.editor_topics`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_attributes"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestModule.test_attributes">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ATTR, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VTOPICS</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm global attribute definitions.</span>
+
+<span class="sd">        :param ATTR: global attibute under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ATTR</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_editor_topics.html#factsheet_test.view.test_editor_topics.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VTOPICS</span><span class="o">.</span><span class="n">UiEditorTopics</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Frame</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type alias definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type alias under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

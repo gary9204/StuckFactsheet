@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>idcore Model Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="sheet Model Module" href="factsheet.model.sheet.html" />
+    <link rel="prev" title="model Package" href="factsheet.model.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">idcore</span></code> Model Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.model.idcore.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.model.idcore">
+<span id="idcore-model-module"></span><h1><code class="docutils literal notranslate"><span class="pre">idcore</span></code> Model Module<a class="headerlink" href="#module-factsheet.model.idcore" title="Permalink to this headline">¶</a></h1>
+<p>Defines identity attributes common to Factsheet model components.
+See <a class="reference internal" href="factsheet.model.html#module-factsheet.model" title="factsheet.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">model</span></code></a></p>
+<dl class="data">
+<dt id="factsheet.model.idcore.ModelName">
+<code class="sig-name descname">ModelName</code><a class="headerlink" href="#factsheet.model.idcore.ModelName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for model for component name.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.model.idcore.ModelSummary">
+<code class="sig-name descname">ModelSummary</code><a class="headerlink" href="#factsheet.model.idcore.ModelSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for model for component summary.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.model.idcore.ModelTitle">
+<code class="sig-name descname">ModelTitle</code><a class="headerlink" href="#factsheet.model.idcore.ModelTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for model for component title.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.model.idcore.IdCore">
+<em class="property">class </em><code class="sig-name descname">IdCore</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/idcore.html#IdCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.idcore.IdCore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.abc_types.abc_stalefile.InterfaceStaleFile</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Defines identity attributes common to Factsheet model components.</p>
+<p>Common identity atttributes are name, summary, and title.</p>
+<blockquote>
+<div><p><em>Name:</em> short identifier for component (suitable, for
+example, as a label).</p>
+<p><em>Summary:</em> description of component, which adds detail to
+title.</p>
+<p><em>Title:</em> one-line description of component.</p>
+</div></blockquote>
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/idcore.html#IdCore.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.idcore.IdCore.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize instance.</p>
+<p>Subclasses must define attributes for name, summary, and title
+before calling <a class="reference internal" href="#factsheet.model.idcore.IdCore.__init__" title="factsheet.model.idcore.IdCore.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IdCore.__init__()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – superclass keyword parameters.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.is_fresh">
+<code class="sig-name descname">is_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/idcore.html#IdCore.is_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.idcore.IdCore.is_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there are no unsaved changes to identity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.is_stale">
+<code class="sig-name descname">is_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/idcore.html#IdCore.is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.idcore.IdCore.is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there is at least one unsaved change to
+identity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#factsheet.model.idcore.IdCore.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return name model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>~ModelName</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.set_fresh">
+<code class="sig-name descname">set_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/idcore.html#IdCore.set_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.idcore.IdCore.set_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark identity in memory consistent with file contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.set_stale">
+<code class="sig-name descname">set_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/idcore.html#IdCore.set_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.idcore.IdCore.set_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark identity in memory changed from file contents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.summary">
+<em class="property">property </em><code class="sig-name descname">summary</code><a class="headerlink" href="#factsheet.model.idcore.IdCore.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return summary model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>~ModelSummary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.idcore.IdCore.title">
+<em class="property">property </em><code class="sig-name descname">title</code><a class="headerlink" href="#factsheet.model.idcore.IdCore.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return title model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>~ModelTitle</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.model.sheet.html" class="btn btn-neutral float-right" title="sheet Model Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.model.html" class="btn btn-neutral float-left" title="model Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

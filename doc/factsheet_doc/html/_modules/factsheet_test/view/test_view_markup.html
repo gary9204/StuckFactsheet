@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.view.test_view_markup &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.view.test_view_markup</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.view.test_view_markup</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for classes to display identity information.  See</span>
+<span class="sd">:mod:`.view_markup`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_sheet</span> <span class="k">as</span> <span class="nn">CSHEET</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_markup</span> <span class="k">as</span> <span class="nn">VMARKUP</span>
+
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import] # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="setup_views_markup"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.setup_views_markup">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">setup_views_markup</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Fixture with teardown: return display and editor views of markup.&quot;&quot;&quot;</span>
+    <span class="n">PATH</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">control</span> <span class="o">=</span> <span class="n">CSHEET</span><span class="o">.</span><span class="n">g_control_app</span><span class="o">.</span><span class="n">open_factsheet</span><span class="p">(</span>
+        <span class="n">p_path</span><span class="o">=</span><span class="n">PATH</span><span class="p">,</span> <span class="n">p_time</span><span class="o">=</span><span class="n">BUI</span><span class="o">.</span><span class="n">TIME_EVENT_CURRENT</span><span class="p">)</span>
+    <span class="n">display_name</span> <span class="o">=</span> <span class="n">control</span><span class="o">.</span><span class="n">new_display_name</span><span class="p">()</span>
+    <span class="n">editor_name</span> <span class="o">=</span> <span class="n">control</span><span class="o">.</span><span class="n">new_editor_name</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">display_name</span><span class="p">,</span> <span class="n">editor_name</span>
+    <span class="n">display_name</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+    <span class="n">editor_name</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestEditorMarkup"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup">[docs]</a><span class="k">class</span> <span class="nc">TestEditorMarkup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ViewMarkup`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestEditorMarkup.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_views_markup</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: view settings and attributes</span>
+
+<span class="sd">        :param setup_views_markup: fixture :func:`.setup_views_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">DISPLAY</span><span class="p">,</span> <span class="n">EDITOR</span> <span class="o">=</span> <span class="n">setup_views_markup</span>
+        <span class="n">I_SITE_DISPLAY</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">I_DISPLAY</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">I_BUTTON_EDIT</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">I_EDITOR</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">TYPE_MARKED</span> <span class="o">=</span> <span class="s1">&#39;&lt;b&gt;&#39;</span> <span class="o">+</span> <span class="n">TYPE</span> <span class="o">+</span> <span class="s1">&#39;&lt;/b&gt;:&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span>
+            <span class="n">p_display</span><span class="o">=</span><span class="n">DISPLAY</span><span class="p">,</span> <span class="n">p_editor</span><span class="o">=</span><span class="n">EDITOR</span><span class="p">,</span> <span class="n">p_type</span><span class="o">=</span><span class="n">TYPE</span><span class="p">)</span>
+        <span class="n">children_editor</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_buffer</span> <span class="ow">is</span> <span class="n">EDITOR</span><span class="o">.</span><span class="n">get_buffer</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_button_edit</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MenuButton</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s1">&#39;&#39;</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_text_restore</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+
+        <span class="n">site_display</span> <span class="o">=</span> <span class="n">children_editor</span><span class="p">[</span><span class="n">I_SITE_DISPLAY</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">site_display</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">DISPLAY</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">site_display</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="n">I_DISPLAY</span><span class="p">])</span>
+        <span class="n">expand_passive</span><span class="p">,</span> <span class="n">fill_passive</span><span class="p">,</span> <span class="n">padding_passive</span><span class="p">,</span> <span class="n">_pack</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">site_display</span><span class="o">.</span><span class="n">query_child_packing</span><span class="p">(</span><span class="n">DISPLAY</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">expand_passive</span>
+        <span class="k">assert</span> <span class="n">fill_passive</span>
+        <span class="k">assert</span> <span class="n">N_PADDING</span> <span class="o">==</span> <span class="n">padding_passive</span>
+        <span class="k">assert</span> <span class="n">DISPLAY</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+
+        <span class="n">button_edit</span> <span class="o">=</span> <span class="n">children_editor</span><span class="p">[</span><span class="n">I_BUTTON_EDIT</span><span class="p">]</span>
+        <span class="n">popover_edit</span> <span class="o">=</span> <span class="n">button_edit</span><span class="o">.</span><span class="n">get_popover</span><span class="p">()</span>
+        <span class="n">box_popover</span> <span class="o">=</span> <span class="n">popover_edit</span><span class="o">.</span><span class="n">get_child</span><span class="p">()</span>
+        <span class="n">label_type</span><span class="p">,</span> <span class="n">site_editor</span> <span class="o">=</span> <span class="n">box_popover</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">TYPE_MARKED</span> <span class="o">==</span> <span class="n">label_type</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">site_editor</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EDITOR</span> <span class="ow">is</span> <span class="n">site_editor</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="n">I_EDITOR</span><span class="p">]</span>
+        <span class="n">expand_active</span><span class="p">,</span> <span class="n">fill_active</span><span class="p">,</span> <span class="n">padding_active</span><span class="p">,</span> <span class="n">_pack</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">site_editor</span><span class="o">.</span><span class="n">query_child_packing</span><span class="p">(</span><span class="n">EDITOR</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">expand_active</span>
+        <span class="k">assert</span> <span class="n">fill_active</span>
+        <span class="k">assert</span> <span class="n">N_PADDING</span> <span class="o">==</span> <span class="n">padding_active</span>
+        <span class="k">assert</span> <span class="n">EDITOR</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestEditorMarkup.test_init_signals_attr"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup.test_init_signals_attr">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+        <span class="s1">&#39;NAME_SIGNAL, NAME_ATTR, ORIGIN, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="s1">&#39;_button_edit&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MenuButton</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_signals_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_views_markup</span><span class="p">,</span>
+                               <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">,</span> <span class="n">ORIGIN</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: signal connections to view attributes.</span>
+
+<span class="sd">        :param setup_views_markup: fixture :func:`.setup_views_markup`.</span>
+<span class="sd">        :param NAME_SIGNAL: name of signal to check.</span>
+<span class="sd">        :param NAME_ATTR: attribute generating signal.</span>
+<span class="sd">        :param ORIGIN: GTK class origin of signal.</span>
+<span class="sd">        :param N_DEFAULT: count of default signal handlers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">ORIGIN</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="n">DISPLAY</span><span class="p">,</span> <span class="n">EDITOR</span> <span class="o">=</span> <span class="n">setup_views_markup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">p_display</span><span class="o">=</span><span class="n">DISPLAY</span><span class="p">,</span> <span class="n">p_editor</span><span class="o">=</span><span class="n">EDITOR</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">attribute</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestEditorMarkup.test_init_signals_editor"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup.test_init_signals_editor">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_SIGNAL, ORIGIN, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;icon_press&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;activate&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_signals_editor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">setup_views_markup</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">ORIGIN</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: signal connections to editor.</span>
+
+<span class="sd">        :param setup_views_markup: fixture :func:`.setup_views_markup`.</span>
+<span class="sd">        :param NAME_SIGNAL: name of signal to check.</span>
+<span class="sd">        :param ORIGIN: GTK class origin of signal.</span>
+<span class="sd">        :param N_DEFAULT: count of default signal handlers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">ORIGIN</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="n">DISPLAY</span><span class="p">,</span> <span class="n">EDITOR</span> <span class="o">=</span> <span class="n">setup_views_markup</span>
+        <span class="n">_target</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">p_display</span><span class="o">=</span><span class="n">DISPLAY</span><span class="p">,</span> <span class="n">p_editor</span><span class="o">=</span><span class="n">EDITOR</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">EDITOR</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">EDITOR</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestEditorMarkup.test_on_icon_press"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup.test_on_icon_press">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ICON, EXPECT_TEXT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">PRIMARY</span><span class="p">,</span> <span class="s1">&#39;Something completely different&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">EntryIconPosition</span><span class="o">.</span><span class="n">SECONDARY</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_on_icon_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_views_markup</span><span class="p">,</span> <span class="n">ICON</span><span class="p">,</span> <span class="n">EXPECT_TEXT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm text restored before ending edit.</span>
+
+<span class="sd">        #. Case: primary icon.</span>
+<span class="sd">        #. Case: secondary icon.</span>
+
+<span class="sd">        :param setup_views_markup: fixture :func:`.setup_views_markup`.</span>
+<span class="sd">        :param ICON: icon to check.</span>
+<span class="sd">        :param EXPECT_TEXT: text expected in buffer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">DISPLAY</span><span class="p">,</span> <span class="n">EDITOR</span> <span class="o">=</span> <span class="n">setup_views_markup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span>
+            <span class="n">p_display</span><span class="o">=</span><span class="n">DISPLAY</span><span class="p">,</span> <span class="n">p_editor</span><span class="o">=</span><span class="n">EDITOR</span><span class="p">)</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Something completely different&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEXT</span><span class="p">))</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">clicked</span><span class="p">()</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_text_restore</span> <span class="o">=</span> <span class="n">BLANK</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_icon_press</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ICON</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">get_active</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">EXPECT_TEXT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestEditorMarkup.test_on_toggle"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup.test_on_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_views_markup</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm record of restore text and clear of restore text.</span>
+
+<span class="sd">        #. Case: editor changes to active</span>
+<span class="sd">        #. Case: editor changes to not active</span>
+
+<span class="sd">        :param setup_views_markup: fixture :func:`.setup_views_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">DISPLAY</span><span class="p">,</span> <span class="n">EDITOR</span> <span class="o">=</span> <span class="n">setup_views_markup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">p_display</span><span class="o">=</span><span class="n">DISPLAY</span><span class="p">,</span> <span class="n">p_editor</span><span class="o">=</span><span class="n">EDITOR</span><span class="p">)</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEXT</span><span class="p">))</span>
+        <span class="c1"># Test: edit button is active</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">clicked</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">TEXT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_text_restore</span>
+        <span class="c1"># Test: edit button is not active</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_edit</span><span class="o">.</span><span class="n">clicked</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_text_restore</span></div>
+
+<div class="viewcode-block" id="TestEditorMarkup.test_property_access"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_markup.html#factsheet_test.view.test_view_markup.TestEditorMarkup.test_property_access">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_PROP, NAME_ATTR&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;ui_view&#39;</span><span class="p">,</span> <span class="s1">&#39;_ui_view&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_access</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">setup_views_markup</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of each property.</span>
+
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute for property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">DISPLAY</span><span class="p">,</span> <span class="n">EDITOR</span> <span class="o">=</span> <span class="n">setup_views_markup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">p_display</span><span class="o">=</span><span class="n">DISPLAY</span><span class="p">,</span> <span class="n">p_editor</span><span class="o">=</span><span class="n">EDITOR</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">CLASS</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">attr</span> <span class="o">==</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

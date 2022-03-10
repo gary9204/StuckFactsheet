@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_topic Model Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="spec Test Package" href="factsheet_test.spec.html" />
+    <link rel="prev" title="test_sheet Model Test Module" href="factsheet_test.model.test_sheet.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_topic</span></code> Model Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.model.test_topic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.model.test_topic">
+<span id="test-topic-model-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_topic</span></code> Model Test Module<a class="headerlink" href="#module-factsheet_test.model.test_topic" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for topic-level model. See <a class="reference internal" href="../src/factsheet.model.topic.html#module-factsheet.model.topic" title="factsheet.model.topic"><code class="xref py py-mod docutils literal notranslate"><span class="pre">topic</span></code></a>.</p>
+<dl class="class">
+<dt id="factsheet_test.model.test_topic.TestTopic">
+<em class="property">class </em><code class="sig-name descname">TestTopic</code><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_contains_in">
+<code class="sig-name descname">test_contains_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_contains_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_contains_in" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm check for fact in facts outline.</div>
+<div class="line">Case: fact in facts outline</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_contains_not_in">
+<code class="sig-name descname">test_contains_not_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_contains_not_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_contains_not_in" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm check for fact in facts outline.</div>
+<div class="line">Case: fact not in facts outline</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_contains_none">
+<code class="sig-name descname">test_contains_none</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_contains_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_contains_none" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm check for fact in facts outline.</div>
+<div class="line">Case: item is None</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_eq">
+<code class="sig-name descname">test_eq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_eq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_eq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm equivalence operator.</p>
+<ol class="arabic simple">
+<li><p>Case: type difference.</p></li>
+<li><p>Case: identity difference.</p></li>
+<li><p>Case: facts outline diffrence.</p></li>
+<li><p>Case: Equivalence</p></li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">new_id_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_id_args</strong> – fixture <a class="reference internal" href="factsheet_test.conftest.html#factsheet_test.conftest.new_id_args" title="factsheet_test.conftest.new_id_args"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_id_args()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_iter">
+<code class="sig-name descname">test_iter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_iter" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm iterator over facts outline.</div>
+<div class="line">Case: no lines with None.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_iter_blank">
+<code class="sig-name descname">test_iter_blank</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_iter_blank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_iter_blank" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm iterator over facts outline.</div>
+<div class="line">Case: lines with None.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_property">
+<code class="sig-name descname">test_property</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em>, <em class="sig-param">NAME_ATTR</em>, <em class="sig-param">NAME_PROP</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm values and access limits of properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_model_topic</strong> – fixture <a class="reference internal" href="factsheet_test.conftest.html#factsheet_test.conftest.new_model_topic" title="factsheet_test.conftest.new_model_topic"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_model_topic()</span></code></a>.</p></li>
+<li><p><strong>NAME_ATTR</strong> – name of attribute under test.</p></li>
+<li><p><strong>NAME_PROP</strong> – name of property under test.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_property_tag">
+<code class="sig-name descname">test_property_tag</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_property_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_property_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm values and access limits of tag property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_model_topic</strong> – fixture <a class="reference internal" href="factsheet_test.conftest.html#factsheet_test.conftest.new_model_topic" title="factsheet_test.conftest.new_model_topic"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_model_topic()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_append_fact">
+<code class="sig-name descname">test_append_fact</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_append_fact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_append_fact" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm fact appended to facts outline.</div>
+<div class="line">Case: no duplicate facts.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_append_fact_dup">
+<code class="sig-name descname">test_append_fact_dup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_append_fact_dup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_append_fact_dup" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm fact appended to facts outline.</div>
+<div class="line">Case: duplicate facts.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_append_outline_fact">
+<code class="sig-name descname">test_append_outline_fact</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_append_outline_fact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_append_outline_fact" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm facts outline appended to facts outline.</div>
+<div class="line">Case: no duplicate facts.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_append_outline_fact_dup">
+<code class="sig-name descname">test_append_outline_fact_dup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_append_outline_fact_dup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_append_outline_fact_dup" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm facts outline appended to facts outline.</div>
+<div class="line">Case: duplicate facts.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_check_fact">
+<code class="sig-name descname">test_check_fact</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em>, <em class="sig-param">patch_class_fact</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_check_fact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_check_fact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm fact checked.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_clear">
+<code class="sig-name descname">test_clear</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em>, <em class="sig-param">patch_class_fact</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm all facts cleared.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_clear_fact">
+<code class="sig-name descname">test_clear_fact</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em>, <em class="sig-param">patch_class_fact</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_clear_fact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_clear_fact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm fact cleared.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_is_stale">
+<code class="sig-name descname">test_is_stale</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm fresh/stale check with facts.</p>
+<ol class="arabic simple">
+<li><p>Case: Topic stale, identity fresh, facts fresh.</p></li>
+<li><p>Case: Topic fresh, identity stale, facts fresh.</p></li>
+<li><p>Case: Sheet fresh, identity fresh, facts fresh.</p></li>
+<li><p>Case: Topic fresh, identity fresh, a fact stale.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_model_topic</strong> – fixture <a class="reference internal" href="factsheet_test.conftest.html#factsheet_test.conftest.new_model_topic" title="factsheet_test.conftest.new_model_topic"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_model_topic()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_is_stale_no_facts">
+<code class="sig-name descname">test_is_stale_no_facts</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_is_stale_no_facts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_is_stale_no_facts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm fresh/stale check without facts.</p>
+<ol class="arabic simple">
+<li><p>Case: Topic stale, identity fresh, no facts.</p></li>
+<li><p>Case: Topic fresh, identity stale, no facts.</p></li>
+<li><p>Case: Topic fresh, identity fresh, no facts.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_model_topic</strong> – fixture <a class="reference internal" href="factsheet_test.conftest.html#factsheet_test.conftest.new_model_topic" title="factsheet_test.conftest.new_model_topic"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_model_topic()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestTopic.test_set_fresh">
+<code class="sig-name descname">test_set_fresh</code><span class="sig-paren">(</span><em class="sig-param">new_model_topic</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestTopic.test_set_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestTopic.test_set_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm frest set at all levels.</p>
+<ol class="arabic simple">
+<li><p>Case: Topic fresh, identity fresh, facts fresh.</p></li>
+<li><p>Case: Topic stale, identity fresh, facts fresh.</p></li>
+<li><p>Case: Topic fresh, identity stale, facts fresh.</p></li>
+<li><p>Case: Topic fresh, identity fresh, facts stale.</p></li>
+<li><p>Case: Sheet stale, identity stale, facts stale</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_model_topic</strong> – fixture <a class="reference internal" href="factsheet_test.conftest.html#factsheet_test.conftest.new_model_topic" title="factsheet_test.conftest.new_model_topic"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_model_topic()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.model.test_topic.TestModule">
+<em class="property">class </em><code class="sig-name descname">TestModule</code><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for module-level components of <a class="reference internal" href="../src/factsheet.model.topic.html#module-factsheet.model.topic" title="factsheet.model.topic"><code class="xref py py-mod docutils literal notranslate"><span class="pre">topic</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.model.test_topic.TestModule.test_types">
+<code class="sig-name descname">test_types</code><span class="sig-paren">(</span><em class="sig-param">TYPE_TARGET</em>, <em class="sig-param">TYPE_EXPECT</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/model/test_topic.html#TestModule.test_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.model.test_topic.TestModule.test_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm type hint definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TYPE_TARGET</strong> – type hint under test.</p></li>
+<li><p><strong>TYPE_EXPECT</strong> – type expected.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.spec.html" class="btn btn-neutral float-right" title="spec Test Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.model.test_sheet.html" class="btn btn-neutral float-left" title="test_sheet Model Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

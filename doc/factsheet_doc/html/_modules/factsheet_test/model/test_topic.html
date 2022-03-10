@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.model.test_topic &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.model.test_topic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.model.test_topic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for topic-level model. See :mod:`~.topic`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># from pathlib import Path</span>
+<span class="c1"># import itertools as IT</span>
+<span class="c1"># import pickle</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="c1"># import factsheet.model.fact as MFACT</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+
+
+<div class="viewcode-block" id="TestTopic"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic">[docs]</a><span class="k">class</span> <span class="nc">TestTopic</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.Topic`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestTopic.test_contains_in"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_contains_in">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_contains_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm check for fact in facts outline.</span>
+<span class="sd">        | Case: fact in facts outline</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     _ = target._facts.insert_before(fact)</span>
+        <span class="c1"># I_FACT_TEST = 2</span>
+        <span class="c1"># fact_test = facts[I_FACT_TEST]</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># assert fact_test in target</span>
+
+<div class="viewcode-block" id="TestTopic.test_contains_not_in"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_contains_not_in">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_contains_not_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm check for fact in facts outline.</span>
+<span class="sd">        | Case: fact not in facts outline</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     _ = target._facts.insert_before(fact)</span>
+        <span class="c1"># fact_test = MFACT.Fact(p_topic=target)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># assert fact_test not in target</span>
+
+<div class="viewcode-block" id="TestTopic.test_contains_none"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_contains_none">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_contains_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm check for fact in facts outline.</span>
+<span class="sd">        | Case: item is None</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     _ = target._facts.insert_before(fact)</span>
+        <span class="c1"># item_test = None</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># assert item_test not in target</span>
+
+<div class="viewcode-block" id="TestTopic.test_eq"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_eq">[docs]</a>    <span class="k">def</span> <span class="nf">test_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm equivalence operator.</span>
+
+<span class="sd">        #. Case: type difference.</span>
+<span class="sd">        #. Case: identity difference.</span>
+<span class="sd">        #. Case: facts outline diffrence.</span>
+<span class="sd">        #. Case: Equivalence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">TITLE</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Something completely different&#39;</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts_source = [MFACT.Fact(p_topic=source) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts_source:</span>
+        <span class="c1">#     _ = source._facts.insert_before(fact)</span>
+        <span class="c1"># Test: type difference</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="c1"># Test: identity difference</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">TEXT</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: Facts outline diffrence</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># target.title.text = TITLE</span>
+        <span class="c1"># facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     _ = target._facts.insert_before(fact)</span>
+        <span class="c1"># assert not source.__eq__(target)</span>
+        <span class="c1"># Test: Equivalence</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">TITLE</span>
+        <span class="c1"># for fact in facts_source:</span>
+        <span class="c1">#     _ = target._facts.insert_before(fact)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+    <span class="c1"># def test_get_set_state(self, new_id_args, tmp_path):</span>
+    <span class="c1">#     &quot;&quot;&quot;Confirm conversion to and from pickle format.&quot;&quot;&quot;</span>
+    <span class="c1">#     # Setup</span>
+    <span class="c1">#     path = Path(str(tmp_path / &#39;get_set.fsg&#39;))</span>
+    <span class="c1">#     ID_ARGS = new_id_args()</span>
+    <span class="c1">#     source = MTOPIC.Topic(**ID_ARGS)</span>
+    <span class="c1">#     # N_FACTS = 5</span>
+    <span class="c1">#     # for i in range(N_FACTS):</span>
+    <span class="c1">#     #     fact = MFACT.Fact(p_topic=source)</span>
+    <span class="c1">#     #     fact.name.text = &#39;Fact {:02}&#39;.format(i)</span>
+    <span class="c1">#     #     _ = source._facts.insert_before(fact)</span>
+    <span class="c1">#     source._stale = True</span>
+    <span class="c1">#     # Test</span>
+    <span class="c1">#     with path.open(mode=&#39;wb&#39;) as io_out:</span>
+    <span class="c1">#         pickle.dump(source, io_out)</span>
+    <span class="c1">#     with path.open(mode=&#39;rb&#39;) as io_in:</span>
+    <span class="c1">#         target = pickle.load(io_in)</span>
+    <span class="c1">#     assert not target._stale</span>
+    <span class="c1">#     # assert source._tag != target._tag</span>
+    <span class="c1">#     assert source.name.text == target.name.text</span>
+    <span class="c1">#     assert source.summary.text == target.summary.text</span>
+    <span class="c1">#     assert source.title.text == target.title.text</span>
+    <span class="c1">#     # for fact_s, fact_t in IT.zip_longest(</span>
+    <span class="c1">#     #         source._facts.items(), target._facts.items()):</span>
+    <span class="c1">#     #     assert fact_s.name.text == fact_t.name.text</span>
+
+<div class="viewcode-block" id="TestTopic.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id_args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.</span>
+
+<span class="sd">        :param new_id_args: fixture :func:`.new_id_args`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">ID_ARGS</span> <span class="o">=</span> <span class="n">new_id_args</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">(</span><span class="o">**</span><span class="n">ID_ARGS</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ID_ARGS</span><span class="p">[</span><span class="s1">&#39;p_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Summary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ID_ARGS</span><span class="p">[</span><span class="s1">&#39;p_summary&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_title</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Title</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ID_ARGS</span><span class="p">[</span><span class="s1">&#39;p_title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+        <span class="c1"># assert target._facts.__orig_class__ is MTOPIC.OutlineFacts</span>
+        <span class="c1"># with pytest.raises(StopIteration):</span>
+        <span class="c1">#     next(iter(target._facts))</span>
+
+<div class="viewcode-block" id="TestTopic.test_iter"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_iter">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm iterator over facts outline.</span>
+<span class="sd">        | Case: no lines with None.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     _ = target._facts.insert_before(fact)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># for fact, fact_target in IT.zip_longest(facts, target):</span>
+        <span class="c1">#     assert fact is fact_target</span>
+
+<div class="viewcode-block" id="TestTopic.test_iter_blank"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_iter_blank">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_iter_blank</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm iterator over facts outline.</span>
+<span class="sd">        | Case: lines with None.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># I_BLANKS = [1, 3]</span>
+        <span class="c1"># facts_blank = list(facts)</span>
+        <span class="c1"># for i in I_BLANKS:</span>
+        <span class="c1">#     facts_blank.insert(i, None)</span>
+        <span class="c1"># for item in facts_blank:</span>
+        <span class="c1">#     target._facts.insert_before(item)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># for fact, fact_target in IT.zip_longest(facts, target):</span>
+        <span class="c1">#     assert fact is fact_target</span>
+
+<div class="viewcode-block" id="TestTopic.test_property"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_property">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_ATTR, NAME_PROP&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="c1"># (&#39;_facts&#39;, &#39;facts&#39;),</span>
+        <span class="p">(</span><span class="s1">&#39;_name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">),</span>
+        <span class="c1"># (&#39;_tag&#39;, &#39;tag&#39;),</span>
+        <span class="p">(</span><span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm values and access limits of properties.</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute under test.</span>
+<span class="sd">        :param NAME_PROP: name of property under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="n">value_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">value_attr</span> <span class="ow">is</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestTopic.test_property_tag"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_property_tag">[docs]</a>    <span class="k">def</span> <span class="nf">test_property_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm values and access limits of tag property.</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">id</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">==</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestTopic.test_append_fact"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_append_fact">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_append_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm fact appended to facts outline.</span>
+<span class="sd">        | Case: no duplicate facts.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     target.append_fact(fact)</span>
+        <span class="c1"># assert target.is_stale()</span>
+        <span class="c1"># for fact, fact_target in IT.zip_longest(facts, target):</span>
+        <span class="c1">#     assert fact is fact_target</span>
+
+<div class="viewcode-block" id="TestTopic.test_append_fact_dup"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_append_fact_dup">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_append_fact_dup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm fact appended to facts outline.</span>
+<span class="sd">        | Case: duplicate facts.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     _ = target.append_fact(fact)</span>
+        <span class="c1"># target.set_fresh()</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     target.append_fact(fact)</span>
+        <span class="c1"># assert target.is_fresh()</span>
+        <span class="c1"># for fact, fact_target in IT.zip_longest(facts, target):</span>
+        <span class="c1">#     assert fact is fact_target</span>
+
+<div class="viewcode-block" id="TestTopic.test_append_outline_fact"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_append_outline_fact">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_append_outline_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm facts outline appended to facts outline.</span>
+<span class="sd">        | Case: no duplicate facts.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     target.append_fact(fact)</span>
+        <span class="c1"># target.set_fresh()</span>
+        <span class="c1"># source = MTOPIC.Topic()</span>
+        <span class="c1"># facts_source = [MFACT.Fact(p_topic=source) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts_source:</span>
+        <span class="c1">#     source.append_fact(fact)</span>
+        <span class="c1"># facts = facts_target + facts_source</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># target.append_outline_facts(source)</span>
+        <span class="c1"># target.is_stale()</span>
+        <span class="c1"># for fact, fact_target in IT.zip_longest(facts, target):</span>
+        <span class="c1">#     assert fact is fact_target</span>
+
+<div class="viewcode-block" id="TestTopic.test_append_outline_fact_dup"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_append_outline_fact_dup">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_append_outline_fact_dup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm facts outline appended to facts outline.</span>
+<span class="sd">        | Case: duplicate facts.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># target = MTOPIC.Topic()</span>
+        <span class="c1"># facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     target.append_fact(fact)</span>
+        <span class="c1"># target.set_fresh()</span>
+        <span class="c1"># source = MTOPIC.Topic()</span>
+        <span class="c1"># for fact in reversed(facts_target):</span>
+        <span class="c1">#     source.append_fact(fact)</span>
+        <span class="c1"># facts = facts_target</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># target.append_outline_facts(source)</span>
+        <span class="c1"># target.is_fresh()</span>
+        <span class="c1"># for fact, fact_target in IT.zip_longest(facts, target):</span>
+        <span class="c1">#     assert fact is fact_target</span>
+
+<div class="viewcode-block" id="TestTopic.test_check_fact"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_check_fact">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_check_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">,</span> <span class="n">patch_class_fact</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm fact checked.&quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># PatchFact = patch_class_fact</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># target = new_model_topic(N_FACTS)</span>
+        <span class="c1"># I_FACT = 2</span>
+        <span class="c1"># line_fact = list(target._facts.lines())[I_FACT]</span>
+        <span class="c1"># fact = target._facts.get_item(line_fact)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># target.check_fact(line_fact)</span>
+        <span class="c1"># assert PatchFact.VALUE_CHECKED == fact.value</span>
+        <span class="c1"># assert fact.status is PatchFact.STATUS_CHECKED</span>
+        <span class="c1"># assert target.is_stale()</span>
+
+<div class="viewcode-block" id="TestTopic.test_clear"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_clear">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">,</span> <span class="n">patch_class_fact</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all facts cleared.&quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># PatchFact = patch_class_fact</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># target = new_model_topic(N_FACTS)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># target.clear()</span>
+        <span class="c1"># for fact in target:</span>
+        <span class="c1">#     assert PatchFact.VALUE_CLEARED == fact.value</span>
+        <span class="c1">#     assert fact.status is PatchFact.STATUS_CLEARED</span>
+        <span class="c1"># assert target.is_stale()</span>
+
+<div class="viewcode-block" id="TestTopic.test_clear_fact"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_clear_fact">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
+    <span class="k">def</span> <span class="nf">test_clear_fact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">,</span> <span class="n">patch_class_fact</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm fact cleared.&quot;&quot;&quot;</span></div>
+        <span class="c1"># # Setup</span>
+        <span class="c1"># PatchFact = patch_class_fact</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># target = new_model_topic(N_FACTS)</span>
+        <span class="c1"># I_FACT = 2</span>
+        <span class="c1"># line_fact = list(target._facts.lines())[I_FACT]</span>
+        <span class="c1"># fact = target._facts.get_item(line_fact)</span>
+        <span class="c1"># target.check_fact(line_fact)</span>
+        <span class="c1"># # Test</span>
+        <span class="c1"># target.clear_fact(line_fact)</span>
+        <span class="c1"># assert PatchFact.VALUE_CLEARED == fact.value</span>
+        <span class="c1"># assert fact.status is PatchFact.STATUS_CLEARED</span>
+        <span class="c1"># assert target.is_stale()</span>
+
+<div class="viewcode-block" id="TestTopic.test_is_stale"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">test_is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm fresh/stale check with facts.</span>
+
+<span class="sd">        #. Case: Topic stale, identity fresh, facts fresh.</span>
+<span class="sd">        #. Case: Topic fresh, identity stale, facts fresh.</span>
+<span class="sd">        #. Case: Sheet fresh, identity fresh, facts fresh.</span>
+<span class="sd">        #. Case: Topic fresh, identity fresh, a fact stale.</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="c1"># Test: Topic stale, identity fresh, facts fresh.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="c1"># Test: Topic fresh, identity stale, facts fresh.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="c1"># Test: Topic fresh, identity fresh, facts fresh.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div>
+        <span class="c1"># Test: Topic fresh, identity fresh, a fact stale.</span>
+        <span class="c1"># LINE_STALE = 2</span>
+        <span class="c1"># target._stale = False</span>
+        <span class="c1"># target.summary.set_fresh()</span>
+        <span class="c1"># for i, line in enumerate(target._facts.lines()):</span>
+        <span class="c1">#     fact = target._facts.get_item(line)</span>
+        <span class="c1">#     if i == LINE_STALE:</span>
+        <span class="c1">#         fact.set_stale()</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         fact.set_fresh()</span>
+        <span class="c1"># assert target.is_stale()</span>
+        <span class="c1"># assert target._stale</span>
+        <span class="c1"># assert not target.is_fresh()</span>
+
+<div class="viewcode-block" id="TestTopic.test_is_stale_no_facts"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_is_stale_no_facts">[docs]</a>    <span class="k">def</span> <span class="nf">test_is_stale_no_facts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm fresh/stale check without facts.</span>
+
+<span class="sd">        #. Case: Topic stale, identity fresh, no facts.</span>
+<span class="sd">        #. Case: Topic fresh, identity stale, no facts.</span>
+<span class="sd">        #. Case: Topic fresh, identity fresh, no facts.</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="c1"># Test: Topic stale, identity fresh, no facts.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="c1"># Test: Topic fresh, identity stale, no facts.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="c1"># Test: Topic fresh, identity fresh, no facts.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestTopic.test_set_fresh"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestTopic.test_set_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm frest set at all levels.</span>
+
+<span class="sd">        #. Case: Topic fresh, identity fresh, facts fresh.</span>
+<span class="sd">        #. Case: Topic stale, identity fresh, facts fresh.</span>
+<span class="sd">        #. Case: Topic fresh, identity stale, facts fresh.</span>
+<span class="sd">        #. Case: Topic fresh, identity fresh, facts stale.</span>
+<span class="sd">        #. Case: Sheet stale, identity stale, facts stale</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="c1"># N_FACTS = 5</span>
+        <span class="c1"># facts_target = [MFACT.Fact(p_topic=target) for _ in range(N_FACTS)]</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     target.append_fact(fact)</span>
+        <span class="c1"># Test: Topic fresh, identity fresh, facts fresh.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     assert fact.is_fresh()</span>
+        <span class="c1"># Test: Topic stale, identity fresh, facts fresh.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     assert fact.is_fresh()</span>
+        <span class="c1"># Test: Topic fresh, identity stale, facts fresh.</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div></div>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     assert fact.is_fresh()</span>
+        <span class="c1"># Test: Topic fresh, identity fresh, facts stale.</span>
+        <span class="c1"># LINE_STALE = 1</span>
+        <span class="c1"># target._stale = False</span>
+        <span class="c1"># target.summary.set_fresh()</span>
+        <span class="c1"># for i, line in enumerate(target._facts.lines()):</span>
+        <span class="c1">#     fact = target._facts.get_item(line)</span>
+        <span class="c1">#     if i == LINE_STALE:</span>
+        <span class="c1">#         fact.set_stale()</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         fact.set_fresh()</span>
+        <span class="c1"># target.set_fresh()</span>
+        <span class="c1"># assert not target._stale</span>
+        <span class="c1"># assert target.is_fresh()</span>
+        <span class="c1"># assert target.summary.is_fresh()</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     assert fact.is_fresh()</span>
+        <span class="c1"># # Test: Sheet stale, identity stale, facts stale</span>
+        <span class="c1"># LINE_STALE = 4</span>
+        <span class="c1"># target._stale = True</span>
+        <span class="c1"># target.summary.set_stale()</span>
+        <span class="c1"># for i, line in enumerate(target._facts.lines()):</span>
+        <span class="c1">#     fact = target._facts.get_item(line)</span>
+        <span class="c1">#     if i == LINE_STALE:</span>
+        <span class="c1">#         fact.set_stale()</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         fact.set_fresh()</span>
+        <span class="c1"># target.set_fresh()</span>
+        <span class="c1"># assert not target._stale</span>
+        <span class="c1"># assert target.is_fresh()</span>
+        <span class="c1"># assert target.summary.is_fresh()</span>
+        <span class="c1"># for fact in facts_target:</span>
+        <span class="c1">#     assert fact.is_fresh()</span>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.topic`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_topic.html#factsheet_test.model.test_topic.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">LineOutline</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">DisplayName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">EditorName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorName</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">),</span>
+        <span class="c1"># (MTOPIC.OutlineFacts, BUI.BridgeOutlineColumnar[MFACT.Fact]),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Summary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">DisplaySummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">EditorSummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorSummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">Title</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">DisplayTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">DisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">EditorTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">EditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorTitle</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryEditorTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">TagTopic</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span> <span class="s1">&#39;NewType.&lt;locals&gt;.new_type&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MTOPIC</span><span class="o">.</span><span class="n">TagTopic</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__supertype__&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type hint definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>base_s Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="view Package" href="factsheet.view.html" />
+    <link rel="prev" title="ops Specification Package" href="factsheet.spec.ops.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">base_s</span></code> Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.spec.base_s.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.spec.base_s">
+<span id="base-s-module"></span><h1><code class="docutils literal notranslate"><span class="pre">base_s</span></code> Module<a class="headerlink" href="#module-factsheet.spec.base_s" title="Permalink to this headline">¶</a></h1>
+<p>Defines base classes for topic specification.</p>
+<dl class="class">
+<dt id="factsheet.spec.base_s.Base">
+<em class="property">class </em><code class="sig-name descname">Base</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_name</em>, <em class="sig-param">p_summary</em>, <em class="sig-param">p_title</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base spec for Factsheet topics.</p>
+<p>A spec provides a user the means to create a class of topics.  A
+spec embodies a template for the class.  It queries the user to
+complete the template for a specific topic.  The spec also queries
+the user of the location of the new topic in the Factsheet’s
+outline of topics.</p>
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orchestrate creation and placement of new topic.</p>
+<p>The user specializes the specification to create the topic.  The
+user may confirm or cancel the topic.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.add_pages">
+<code class="sig-name descname">add_pages</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.add_pages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.add_pages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add pages to assistant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_assistant</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>) – assistant to populate.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.append_page_confirm">
+<code class="sig-name descname">append_page_confirm</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.append_page_confirm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.append_page_confirm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append confirmation page to assistant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_assistant</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>) – assistant to append to.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.append_page_identify">
+<code class="sig-name descname">append_page_identify</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.append_page_identify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.append_page_identify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append identify page to assistant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_assistant</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>) – assistant to append to.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.append_page_intro">
+<code class="sig-name descname">append_page_intro</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.append_page_intro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.append_page_intro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append introduction page to assistant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_assistant</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>) – assistant to append to.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.add_page_locate">
+<code class="sig-name descname">add_page_locate</code><span class="sig-paren">(</span><em class="sig-param">p_assist</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.add_page_locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.add_page_locate" title="Permalink to this definition">¶</a></dt>
+<dd><p>TBD</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#factsheet.spec.base_s.Base.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return spec name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="factsheet.bridge_gtk.bridge_text.ModelTextMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextMarkup</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.new_assistant">
+<code class="sig-name descname">new_assistant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.new_assistant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.new_assistant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an assistant from user interface definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.new_page_confirm">
+<code class="sig-name descname">new_page_confirm</code><span class="sig-paren">(</span><em class="sig-param">p_display_name</em>, <em class="sig-param">p_display_summary</em>, <em class="sig-param">p_display_title</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.new_page_confirm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.new_page_confirm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a confirmation page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_display_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code>) – display for topic name.</p></li>
+<li><p><strong>p_display_summary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TextView</span></code>) – display for topic summary.</p></li>
+<li><p><strong>p_display_title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code>) – display for topic title.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.new_page_identify">
+<code class="sig-name descname">new_page_identify</code><span class="sig-paren">(</span><em class="sig-param">p_view_name</em>, <em class="sig-param">p_editor_summary</em>, <em class="sig-param">p_view_title</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.new_page_identify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.new_page_identify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an identification page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_view_name</strong> (<a class="reference internal" href="factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup" title="factsheet.view.view_markup.ViewMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewMarkup</span></code></a>) – view to display and edit topic name.</p></li>
+<li><p><strong>p_editor_summary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TextView</span></code>) – view to display and edit topic summary.</p></li>
+<li><p><strong>p_view_title</strong> (<a class="reference internal" href="factsheet.view.view_markup.html#factsheet.view.view_markup.ViewMarkup" title="factsheet.view.view_markup.ViewMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewMarkup</span></code></a>) – view to display and edit topic title.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.new_page_intro">
+<code class="sig-name descname">new_page_intro</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.new_page_intro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.new_page_intro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an introduction page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.on_apply">
+<code class="sig-name descname">on_apply</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.on_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.on_apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hide assistant and record user confirmed new topic.</p>
+<p>Recording user’s response unblocks call method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.on_cancel">
+<code class="sig-name descname">on_cancel</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.on_cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.on_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hide assistant and record user cancelled new topic.</p>
+<p>Recording user’s response unblocks call method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.on_prepare">
+<code class="sig-name descname">on_prepare</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em>, <em class="sig-param">p_page</em>, <em class="sig-param">**_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.on_prepare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.on_prepare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare page contents for presentation in assistant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_assistant</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>) – assistant presenting page.</p></li>
+<li><p><strong>p_page</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code>) – page to present.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.run_assistant">
+<code class="sig-name descname">run_assistant</code><span class="sig-paren">(</span><em class="sig-param">p_assistant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/spec/base_s.html#Base.run_assistant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.spec.base_s.Base.run_assistant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Present assistant to the user and wait for user’s responses.</p>
+<p>The user navigates the assistant and fills in assistant’s
+fields.  The user may confirm or cancel their selections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_assistant</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Assistant</span></code>) – assistant to present.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.summary">
+<em class="property">property </em><code class="sig-name descname">summary</code><a class="headerlink" href="#factsheet.spec.base_s.Base.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return spec summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelTextStyled" title="factsheet.bridge_gtk.bridge_text.ModelTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextStyled</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.spec.base_s.Base.title">
+<em class="property">property </em><code class="sig-name descname">title</code><a class="headerlink" href="#factsheet.spec.base_s.Base.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return spec title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="factsheet.bridge_gtk.bridge_text.html#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="factsheet.bridge_gtk.bridge_text.ModelTextMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextMarkup</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.view.html" class="btn btn-neutral float-right" title="view Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.spec.ops.html" class="btn btn-neutral float-left" title="ops Specification Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
