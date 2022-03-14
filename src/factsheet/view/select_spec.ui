@@ -3,7 +3,6 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkDialog" id="ui_select_spec">
-    <property name="use-header-bar">1</property>
     <property name="can_focus">False</property>
     <property name="modal">True</property>
     <property name="default_width">500</property>
@@ -98,7 +97,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="label" translatable="yes">Click the &lt;b&gt;Find &lt;/b&gt;button in the dialog title to search for a text in the specification name,  title, or summary fields. Select one or more fields to search by checking corresponding box(es) below the search bar.</property>
+                        <property name="label" translatable="yes">Click the &lt;b&gt;Find &lt;/b&gt;button in the dialog title to search for text in the specification name,  title, or summary fields. Select one or more fields to search by checking corresponding box(es) below the search bar.</property>
                         <property name="use_markup">True</property>
                         <property name="justify">fill</property>
                         <property name="wrap">True</property>

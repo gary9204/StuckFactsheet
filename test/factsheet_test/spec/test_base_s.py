@@ -173,7 +173,7 @@ class TestBase:
     @pytest.mark.parametrize('I_PAGE, TITLE', [
         (0, 'Introduction'),
         (1, 'Identify'),
-        (2, 'Confirm'),
+        (3, 'Confirm'),
         ])
     def test_add_pages(self, new_identity_spec, I_PAGE, TITLE):
         """Confirm pages added to assistant.
@@ -187,7 +187,7 @@ class TestBase:
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         assistant = target.new_assistant()
-        N_PAGES = 3
+        N_PAGES = 4
         # Test
         target.add_pages(p_assistant=assistant)
         page = assistant.get_nth_page(I_PAGE)
