@@ -5,6 +5,82 @@ models define the classes.
     * :mod:`.bridge_base`
     * :mod:`.bridge_outline`
     * :mod:`.bridge_text`
+
+
+.. data:: ChooserOutline
+
+    BOUTLINE.ChooserOutline
+
+.. data:: FactoryChooserOutline
+
+    BOUTLINE.FactoryChooserOutline
+
+.. data:: FactoryViewOutline
+
+    BOUTLINE.FactoryViewOutline
+
+.. data:: LineOutline
+
+    BOUTLINE.LineOutline
+
+.. data:: ModelOutlineMulti
+
+    BOUTLINE.ModelOutlineMulti
+
+.. data:: ModelOutlineSingle
+
+    BOUTLINE.ModelOutlineSingle
+
+.. data:: ViewOutline
+
+    BOUTLINE.ViewOutline
+
+
+.. data:: escape_text_markup
+
+    BTEXT.escape_text_markup
+
+.. data:: ModelTextMarkup
+
+    BTEXT.ModelTextMarkup
+
+.. data:: DisplayTextMarkup
+
+    BTEXT.DisplayTextMarkup
+
+.. data:: FactoryDisplayTextMarkup
+
+    BTEXT.FactoryDisplayTextMarkup
+
+.. data:: EditorTextMarkup
+
+    BTEXT.EditorTextMarkup
+
+.. data:: FactoryEditorTextMarkup
+
+    BTEXT.FactoryEditorTextMarkup
+
+
+.. data:: ModelTextStyled
+
+    BTEXT.ModelTextStyled
+
+.. data:: DisplayTextStyled
+
+    BTEXT.DisplayTextStyled
+
+.. data:: FactoryDisplayTextStyled
+
+    BTEXT.FactoryDisplayTextStyled
+
+.. data:: EditorTextStyled
+
+    BTEXT.EditorTextStyled
+
+.. data:: FactoryEditorTextStyled
+
+    BTEXT.FactoryEditorTextStyled
+
 """
 
 import factsheet.bridge_gtk.bridge_base as BBASE
