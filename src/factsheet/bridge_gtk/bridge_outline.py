@@ -12,7 +12,7 @@ Constants and Type Hints
 
 .. data:: ChooserOutline
 
-    Type hint for GTK element to view an outline and choose a line.
+    Type variable for visual element to choose an item from an outline.
     See `Gtk.ComboBox`_.
 
 .. _`Gtk.ComboBox`:
@@ -20,23 +20,23 @@ Constants and Type Hints
 
 .. data:: ItemOpaque
 
-    Placeholder type hint for an item at a line.
+    Generic type for an item in an outline.
 
 .. data:: LineOutline
 
-    Type hint for GTK element to store a line.  See `Gtk.Treeiter`_.
+    Type variable for store of a line.  See `Gtk.Treeiter`_.
 
 .. _`Gtk.TreeIter`:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeIter.html
 
 .. data:: PersistOutline
 
-    Type hint for outline representation suitable for persistent
+    Type variable for outline representation suitable for persistent
     storage.
 
 .. data:: UiModelOutlineMulti
 
-    Type hint for GTK element to store a multi-level outline.  See
+    Type variable for store of a multi-level outline.  See
     `Gtk.TreeStore`_.
 
 .. _`Gtk.TreeStore`:
@@ -44,7 +44,7 @@ Constants and Type Hints
 
 .. data:: UIModelOutlineSingle
 
-    Type hint for GTK element to store a single-level outline.  See
+    Type variable for store of a single-level outline.  See
     `Gtk.ListStore`_ .
 
 .. _`Gtk.ListStore`:
@@ -52,8 +52,8 @@ Constants and Type Hints
 
 .. data:: ViewOutline
 
-    Type hint for GTK element to view an outline in columnar format.
-    See `Gtk.TreeView`_.
+    Type variable for visual element to view an outline in columnar
+    format.  See `Gtk.TreeView`_.
 
 .. _`Gtk.TreeView`:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeView.html
@@ -87,6 +87,8 @@ class FactoryChooserOutline(BBASE.FactoryUiViewAbstract[UiModelOutline],
                             typing.Generic[UiModelOutline, ItemOpaque]):
     """Chooser factory for an outline.
 
+    Class is generic in type of items contained in the outline.
+
     A call to the factory takes no arguments and returns
     :data:`.ChooserOutline`.
     """
@@ -109,7 +111,10 @@ class FactoryViewOutline(BBASE.FactoryUiViewAbstract[UiModelOutline],
                          typing.Generic[UiModelOutline, ItemOpaque]):
     """View factory for an outline.
 
-    A call to the factory takes no arguments and returns :data:`.ViewOutline`.
+    Factory is generic in type of items contained in the outline.
+
+    A call to the factory takes no arguments and returns
+    :data:`.ViewOutline`.
     """
 
     def __init__(self, p_model_outline:
@@ -129,6 +134,9 @@ class FactoryViewOutline(BBASE.FactoryUiViewAbstract[UiModelOutline],
 class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
                    typing.Generic[UiModelOutline, ItemOpaque]):
     """Common ancestor of bridge classes for outlines.
+
+    Class is generic in type of outline store and type of items
+    contained in the outline.
 
     .. data:: C_ITEM
 
@@ -226,66 +234,14 @@ class ModelOutline(BBASE.BridgeBase[UiModelOutline, PersistOutline],
         raise NotImplementedError
 
 
-class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
-                         typing.Generic[ItemOpaque]):
-    """
-    Encapsulate widget toolkit class for a single-level outline.
-
-    .. admonition:: About Equality
-
-        Two outlines are equivalent when they have the same structure
-        (fields, items, and sections) and corresponding items are equal.
-    """
-
-    def insert_after(self, p_item: ItemOpaque,
-                     p_line: LineOutline = None) -> LineOutline:
-        """Add item to outline after given line.
-
-        If line is None, prepend item at beginning of outline.
-
-        :param p_item: new item to add.
-        :param p_line: line to precede new line.
-        :returns: line of newly-added item.
-        """
-        return self._ui_model.insert_after(p_line, [p_item])
-
-    def insert_before(self, p_item: ItemOpaque,
-                      p_line: LineOutline = None) -> LineOutline:
-        """Add item to outline before given line.
-
-        If line is None, append item at end of outline.
-
-        :param p_item: new item to add.
-        :param p_line: line to follow new line.
-        :returns: line of newly-added item.
-        """
-        return self._ui_model.insert_before(p_line, [p_item])
-
-    def lines(self) -> typing.Iterator[LineOutline]:
-        """Return iterator over lines in outline."""
-        line = self._ui_model.get_iter_first()
-        while line is not None:
-            yield line
-            line = self._ui_model.iter_next(line)
-
-    def _new_ui_model(self) -> UiModelOutlineSingle:
-        """Return toolkit-specific outline storage element."""
-        return UiModelOutlineSingle(GO.TYPE_PYOBJECT)
-
-    def _set_persist(self, p_persist: PersistOutline) -> None:
-        """Set outline storage element from content in persistent form.
-
-        :param p_persist: persistent form for outline content.
-        """
-        for path_str, item in (p_persist.items()):
-            position = int(path_str)
-            self._ui_model.insert(position, [item])
-
-
 class ModelOutlineMulti(ModelOutline[UiModelOutlineMulti, ItemOpaque],
                         typing.Generic[ItemOpaque]):
-    """
-    Encapsulate widget toolkit class for a multi-level outline.
+    """Store for a multi-level outline.
+
+    Class is generic in type of items contained in the outline.
+
+    Encapsulates visual element storage with methods tailored to
+    Factsheet.
 
     .. admonition:: About Equality
 
@@ -414,3 +370,63 @@ class ModelOutlineMulti(ModelOutline[UiModelOutlineMulti, ItemOpaque],
                 _ = path.up()
                 i_parent = self._ui_model.get_iter(path)
             self._ui_model.append(i_parent, [item])
+
+
+class ModelOutlineSingle(ModelOutline[UiModelOutlineSingle, ItemOpaque],
+                         typing.Generic[ItemOpaque]):
+    """Store for a single-level outline.
+
+    Class is generic in type of items contained in the outline.
+
+    Encapsulates visual element storage with methods tailored to
+    Factsheet.
+
+    .. admonition:: About Equality
+
+        Two outlines are equivalent when they have the same structure
+        (fields, items, and sections) and corresponding items are equal.
+    """
+
+    def insert_after(self, p_item: ItemOpaque,
+                     p_line: LineOutline = None) -> LineOutline:
+        """Add item to outline after given line.
+
+        If line is None, prepend item at beginning of outline.
+
+        :param p_item: new item to add.
+        :param p_line: line to precede new line.
+        :returns: line of newly-added item.
+        """
+        return self._ui_model.insert_after(p_line, [p_item])
+
+    def insert_before(self, p_item: ItemOpaque,
+                      p_line: LineOutline = None) -> LineOutline:
+        """Add item to outline before given line.
+
+        If line is None, append item at end of outline.
+
+        :param p_item: new item to add.
+        :param p_line: line to follow new line.
+        :returns: line of newly-added item.
+        """
+        return self._ui_model.insert_before(p_line, [p_item])
+
+    def lines(self) -> typing.Iterator[LineOutline]:
+        """Return iterator over lines in outline."""
+        line = self._ui_model.get_iter_first()
+        while line is not None:
+            yield line
+            line = self._ui_model.iter_next(line)
+
+    def _new_ui_model(self) -> UiModelOutlineSingle:
+        """Return toolkit-specific outline storage element."""
+        return UiModelOutlineSingle(GO.TYPE_PYOBJECT)
+
+    def _set_persist(self, p_persist: PersistOutline) -> None:
+        """Set outline storage element from content in persistent form.
+
+        :param p_persist: persistent form for outline content.
+        """
+        for path_str, item in (p_persist.items()):
+            position = int(path_str)
+            self._ui_model.insert(position, [item])

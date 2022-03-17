@@ -6,8 +6,9 @@ Constants and Type Hints
 
 .. data:: DisplayTextMarkup
 
-    Type hint for GTK element to display a text attribute.  The element
-    supports `Pango markup`_ but is not editable.  See `Gtk.Label`_.
+    Type variable for visual element to display a text attribute.  The
+    element supports `Pango markup`_ but is not editable.  See
+    `Gtk.Label`_.
 
 .. _Pango markup:
     https://docs.gtk.org/Pango/pango_markup.html
@@ -17,17 +18,17 @@ Constants and Type Hints
 
 .. data:: DisplayTextStyled
 
-    Type hint for GTK element to display a text attribute.  The element
-    supports rich, tag-based formatting but is not editable.  See
-    `Gtk.TextView`_.
+    Type variable for visual element to display a text attribute.  The
+    element supports rich, tag-based formatting but is not editable.
+    See `Gtk.TextView`_.
 
 .. _Gtk.TextView:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html
 
 .. data:: EditorTextMarkup
 
-    Type hint for GTK element to display a text attribute.  The element
-    is editable and supports embedding `Pango markup`_.  See
+    Type variable for visual element to display a text attribute.  The
+    element is editable and supports embedding `Pango markup`_.  See
     `Gtk.Entry`_.
 
 .. _Gtk.Entry:
@@ -35,17 +36,18 @@ Constants and Type Hints
 
 .. data:: EditorTextStyled
 
-    Type hint for GTK element to display a text attribute.  The element
-    is editable and supports rich, tag-based formatting.  See
+    Type variable for viaual element to display a text attribute.  The
+    element is editable and supports rich, tag-based formatting.  See
     `Gtk.TextView`_.
 
 .. data:: ModelTextOpaque
 
-    Type hint for placeholder GTK element to store a text attribute.
+    Placeholder type variable for visual element to store a text
+    attribute.
 
 .. data:: UiTextMarkup
 
-    Type hint for GTK element to store text formatted with
+    Type variable for visual element to store text formatted with
     `Pango markup`_.  See :data:`EditorTextMarkup` `Gtk.EntryBuffer`_.
 
 .. _Gtk.EntryBuffer:
@@ -53,7 +55,7 @@ Constants and Type Hints
 
 .. data:: UiTextStyled
 
-    Type hint for GTK element to store text formatted with
+    Type variable for visual element to store text formatted with
     externally-defined tags.  See :data:`EditorTextStyled` and
     `Gtk.TextBuffer`_.
 
