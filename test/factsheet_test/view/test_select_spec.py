@@ -521,7 +521,7 @@ class TestSelectSpec:
 
     def test_on_changed_selection(self, g_specs_empty):
         """| Confirm summary shown matches chosen spec.
-        | Case: a spec at line choosen.
+        | Case: a spec at line chosen.
 
         :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
@@ -550,7 +550,7 @@ class TestSelectSpec:
 
     def test_on_changed_selection_absent(self, g_specs_empty):
         """| Confirm summary shown matches chosen spec.
-        | Case: no spec at line choosen.
+        | Case: no spec at line chosen.
 
         :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """
@@ -570,7 +570,7 @@ class TestSelectSpec:
 
     def test_on_changed_selection_none(self, g_specs_empty):
         """| Confirm summary shown matches chosen spec.
-        | Case: no spec is choosen.
+        | Case: no spec is chosen.
 
         :param g_specs_empty: fixture :func:`.g_specs_empty`.
         """

@@ -1,10 +1,6 @@
 """
 Defines class for selecting a item from an outline.
 
-.. data:: ButtonFind
-
-    Type for button to show and hide search of item outline.
-
 .. data:: FactoryDisplaySummary
 
     Factory class for display of item summary.
@@ -13,11 +9,19 @@ Defines class for selecting a item from an outline.
 
     Type for model of item summary.
 
+.. data:: UiButtonFind
+
+    Type for button to show and hide search of item outline.
+
+.. data:: UiButtonSearchScope
+
+    Type for button to change scope of search.
+
 .. data:: UiChooserItem
 
     Type for visual element of :class:`ChooserItem`.
 
-.. data:: ViewOutlineItem
+.. data:: UiViewOutline
 
     Type for view of outline of items.
 """
@@ -37,12 +41,13 @@ from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-ButtonFind = typing.Union[Gtk.ToggleButton]
 FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
 ModelOutline = BUI.ModelOutlineMulti[MIDCORE.IdCore]
 ModelSummary = BUI.ModelTextStyled
+UiButtonFind = typing.Union[Gtk.ToggleButton]
+UiButtonSearchScope = typing.Union[Gtk.ToggleButton]
 UiChooserItem = typing.Union[Gtk.Paned]
-ViewOutlineItem = BUI.ViewOutline
+UiViewOutline = BUI.ViewOutline
 
 logger = logging.getLogger('Main.VSELECT_ITEM')
 
@@ -90,10 +95,10 @@ class ChooserItem:
 
     NO_SUMMARY = 'Please choose an item in the outline above.'
 
-    def __init__(self, p_view_outline: ViewOutlineItem) -> None:
-        """Initialize Select Specification dialog with its fields.
+    def __init__(self, p_view_outline: UiViewOutline) -> None:
+        """Initialize outline view format, search, and summary.
 
-        :param p_view_outline: parent window for Select Specification dialog.
+        :param p_view_outline: visual element for view of outline.
         """
         path_ui = Path(__file__).with_suffix('.ui')
         get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
@@ -242,9 +247,9 @@ class ChooserItem:
         return True
 
     def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
-        """Changes summary text and Select button to match chosen spec.
+        """Changes summary text to match chosen item.
 
-        :param _selection: identifies chosen spec (unused).
+        :param _selection: identifies chosen item (unused).
         """
         model, line = self._ui_selection.get_selected()
         if line is None:
@@ -259,7 +264,7 @@ class ChooserItem:
         self._summary.text = item.summary.text
 
     def on_changed_search_scope(
-            self, p_button: Gtk.ToggleButton, p_field: FieldsId) -> None:
+            self, p_button: UiButtonSearchScope, p_field: FieldsId) -> None:
         """Sets search scope to match requested change.
 
         :param p_button: search scope button changed by user.
@@ -270,13 +275,7 @@ class ChooserItem:
         else:
             self._scope_search &= ~p_field
 
-    @property
-    def ui_chooser(self) -> UiChooserItem:
-        """Return visual element for choosing an item.
-        """
-        return self._ui_chooser
-
-    def sync_to_search(self, p_button_find: ButtonFind) -> None:
+    def sync_to_search(self, p_button_find: UiButtonFind) -> None:
         """Sync button to show and hide search of item outline.
 
         :param p_button: button to sync with search.
@@ -284,3 +283,9 @@ class ChooserItem:
         _binding = p_button_find.bind_property(
             'active', self._search_bar, 'search-mode-enabled',
             GO.BindingFlags.BIDIRECTIONAL)
+
+    @property
+    def ui_chooser(self) -> UiChooserItem:
+        """Return visual element for choosing an item.
+        """
+        return self._ui_chooser

@@ -97,7 +97,7 @@ class TestFieldsIdCore:
         assert VCHOOSER_ITEM.FieldsId.TITLE
 
 
-class TestSelectItem:
+class TestChooserItem:
     """Unit tests for :class:`.ChooserItem`."""
 
     def test_no_summary(self):
@@ -306,7 +306,7 @@ class TestSelectItem:
         assert view_summary.get_wrap_mode() is Gtk.WrapMode.WORD_CHAR
 
     def test_init_view_outline(self, new_ui, monkeypatch):
-        """Confirm initialization of spec outline.
+        """Confirm initialization of items outline.
 
         :param new_ui: fixture :func:`.new_ui`.
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
@@ -353,7 +353,7 @@ class TestSelectItem:
         # assert target._ui_view_outline.get_visible()
 
     def test_sync_to_search(self, new_ui, monkeypatch):
-        """Confirm initialization of search bar.
+        """Confirm sync of button to show/hide of search.
 
         :param new_ui: fixture :func:`.new_ui`.
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
@@ -372,7 +372,7 @@ class TestSelectItem:
         patch_call = PatchCall()
         monkeypatch.setattr(
             Gtk.ToggleButton, 'bind_property', patch_call.bind_property)
-        BUTTON = VCHOOSER_ITEM.ButtonFind()
+        BUTTON = VCHOOSER_ITEM.UiButtonFind()
         PROP_SOURCE = 'active'
         PROP_TARGET = 'search-mode-enabled'
         # Test
@@ -390,7 +390,8 @@ class TestSelectItem:
         ('_markup_cell_title', '1:1:2', 'title_112'),
         ])
     def test_markup_cell(self, new_ui, METHOD, LINE_STR, EXPECT):
-        """Confirm cell data function updates column text.
+        """| Confirm cell data function updates column text.
+        | Case: item in outline is not None.
 
         :param new_ui: fixture :func:`.new_ui`.
         :param METHOD: markup method under test.
@@ -414,7 +415,8 @@ class TestSelectItem:
         ('_markup_cell_title'),
         ])
     def test_markup_cell_none(self, METHOD):
-        """Confirm cell data function updates column text.
+        """| Confirm cell data function updates column text.
+        | Case: item in outline is None.
 
         :param METHOD: markup method under test.
         """
@@ -435,8 +437,8 @@ class TestSelectItem:
         assert EXPECT == render.get_property('text')
 
     def test_on_changed_selection(self, new_ui):
-        """| Confirm summary shown matches chosen spec.
-        | Case: a spec at line choosen.
+        """| Confirm summary shown matches chosen item.
+        | Case: a item at line chosen.
 
         :param new_ui: fixture :func:`.new_ui`.
         """
@@ -454,8 +456,8 @@ class TestSelectItem:
         assert summary_expect == target._summary.text
 
     def test_on_changed_selection_absent(self, new_ui):
-        """| Confirm summary shown matches chosen spec.
-        | Case: no spec at line choosen.
+        """| Confirm summary shown matches chosen item.
+        | Case: no item at line chosen.
 
         :param new_ui: fixture :func:`.new_ui`.
         """
@@ -475,8 +477,8 @@ class TestSelectItem:
         assert target.NO_SUMMARY == target._summary.text
 
     def test_on_changed_selection_none(self, new_ui):
-        """| Confirm summary shown matches chosen spec.
-        | Case: no spec is choosen.
+        """| Confirm summary shown matches chosen item.
+        | Case: no line is chosen.
 
         :param new_ui: fixture :func:`.new_ui`.
         """
@@ -509,7 +511,7 @@ class TestSelectItem:
         :param SCOPE: fields identifying scope of search.
         :param ACTIVE: True when scope button set to active.
         :param FIELD: changed scope field.
-        :param EXPECT: expected result.
+        :param EXPECT: expected result scope of search.
         """
         # Setup
         _MODEL_OUTLINE, VIEW_OUTLINE = new_ui
@@ -537,7 +539,7 @@ class TestSelectItem:
             ])
     def test_match_spec_ne(self, new_ui, monkeypatch,
                            SCOPE, PATH_ITEM, MATCH_KEY, EXPECT, EXPANDED):
-        """Confirm method returns False when field matches search key.
+        """Confirm method returns False when item field matches search key.
 
         :param new_ui: fixture :func:`.new_ui`.
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
@@ -574,7 +576,7 @@ class TestSelectItem:
             assert PATH_ITEM == patch_expand.path.to_string()
 
     def test_match_spec_ne_absent(self, caplog):
-        """Confirm method returns True and logs warning when spec is None.
+        """Confirm method returns True and logs warning when item is None.
 
         :param caplog: built-in fixture `Pytest caplog`_.
         """
@@ -623,7 +625,7 @@ class TestSelectItem:
 
 
 class TestModule:
-    """Unit tests for module-level components of :mod:`.select_spec`."""
+    """Unit tests for module-level components of :mod:`.chooser_item`."""
 
     @pytest.mark.parametrize('ATTR, TYPE_EXPECT', [
         (VCHOOSER_ITEM.logger, logging.Logger),
@@ -639,12 +641,12 @@ class TestModule:
         assert isinstance(ATTR, TYPE_EXPECT)
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        # (VTOPICS.UiEditorTopics, Gtk.Frame),
-        (VCHOOSER_ITEM.ButtonFind, Gtk.ToggleButton),
+        (VCHOOSER_ITEM.UiButtonFind, Gtk.ToggleButton),
+        (VCHOOSER_ITEM.UiButtonSearchScope, Gtk.ToggleButton),
         (VCHOOSER_ITEM.FactoryDisplaySummary, BUI.FactoryDisplayTextStyled),
         (VCHOOSER_ITEM.ModelSummary, BUI.ModelTextStyled),
         (VCHOOSER_ITEM.UiChooserItem, Gtk.Paned),
-        (VCHOOSER_ITEM.ViewOutlineItem, BUI.ViewOutline),
+        (VCHOOSER_ITEM.UiViewOutline, BUI.ViewOutline),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type alias definitions.
