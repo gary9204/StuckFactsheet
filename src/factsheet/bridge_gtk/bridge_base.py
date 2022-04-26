@@ -48,12 +48,12 @@ Classes and Functions
 =====================
 """
 import abc
-import gi   # type: ignore[import]
+import gi
 import logging
 import typing
 
 gi.require_version('Gdk', '3.0')
-from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gdk   # noqa: E402
 
 logger = logging.getLogger('Main.bridge_base')
 
