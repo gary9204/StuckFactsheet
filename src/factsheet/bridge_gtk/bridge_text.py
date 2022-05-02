@@ -65,7 +65,7 @@ Constants and Type Hints
 Classes and Functions
 =====================
 """
-import gi   # type: ignore[import]
+import gi
 import logging
 import typing   # noqa
 
@@ -73,9 +73,9 @@ import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_gtk.bridge_base as BBASE
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GLib   # type: ignore[import]    # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-from gi.repository import Pango    # type: ignore[import]    # noqa: E402
+from gi.repository import GLib   # noqa: E402
+from gi.repository import Gtk   # noqa: E402
+from gi.repository import Pango    # noqa: E402
 
 IdDisplay = typing.NewType('IdDisplay', int)
 ModelTextOpaque = typing.TypeVar('ModelTextOpaque')

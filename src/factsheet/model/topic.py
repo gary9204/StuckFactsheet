@@ -7,7 +7,7 @@ factsheet, topic, and fact layers.  Module ``topic`` defines
 the base class representing the model of a topic.  Additional classes
 specialize the model for sets, operations, and so on.
 """
-import typing   # noqa
+import typing
 
 import factsheet.bridge_ui as BUI
 # import factsheet.model.fact as MFACT

@@ -4,7 +4,7 @@ Unit tests common to abstract interfaces.
 There are test to confirm a class is abstract and to confirm definitions
 of abstract methods and propreties.
 """
-import pytest   # type: ignore[import]
+import pytest
 
 import factsheet.abc_types.abc_stalefile as ABC_STALE
 

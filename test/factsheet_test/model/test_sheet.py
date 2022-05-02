@@ -3,7 +3,7 @@ Unit tests for factsheet-level model.  See :mod:`~factsheet.model`.
 
 .. include:: /test/refs_include_pytest.txt
 """
-import pytest   # type: ignore[import]
+import pytest
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.sheet as MSHEET

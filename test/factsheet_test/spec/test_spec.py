@@ -4,7 +4,9 @@ See :mod:`~.factsheet.spec`.
 
 .. include:: /test/refs_include_pytest.txt
 """
-import pytest  # type: ignore[import]
+
+
+# import pytest
 
 
 import factsheet.bridge_ui as BUI

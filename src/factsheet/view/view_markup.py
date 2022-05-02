@@ -1,14 +1,14 @@
 """
 Defines view classes for identity information.
 """
-import gi   # type: ignore[import]
+import gi
 
 import factsheet.bridge_ui as BUI
 
 gi.require_version('Gdk', '3.0')
-from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gdk   # noqa: E402
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 class ViewMarkup:

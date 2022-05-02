@@ -14,7 +14,7 @@ See :mod:`~factsheet.model`
 
     Type hint for model for component title.
 """
-import abc
+# import abc
 import typing
 
 import factsheet.abc_types.abc_stalefile as ABC_STALE

@@ -29,7 +29,7 @@ class representing the model of a factsheet.
     :data:`~.control_sheet.ViewTopics`.
 """
 import logging
-import typing   # noqa
+import typing
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.idcore as MIDCORE

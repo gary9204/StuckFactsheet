@@ -7,7 +7,7 @@ See :class:`~.IdCore`.
 import copy
 from pathlib import Path
 import pickle
-import pytest   # type: ignore[import]
+import pytest
 import re
 import typing
 

@@ -62,7 +62,6 @@ TIME_EVENT_CURRENT = Gdk.CURRENT_TIME
 
 ModelUiOpaque = typing.TypeVar('ModelUiOpaque')
 PersistUiOpaque = typing.TypeVar('PersistUiOpaque')
-# ViewAny = typing.Union[Gtk.Widget]
 ViewUiOpaque = typing.TypeVar('ViewUiOpaque')
 
 

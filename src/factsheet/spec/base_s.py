@@ -2,7 +2,7 @@
 Defines base classes for topic specification.
 """
 # import abc
-import gi   # type: ignore[import]
+import gi
 import logging
 import typing
 
@@ -12,7 +12,7 @@ import factsheet.view.ui as UI
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 logger = logging.getLogger('Main.SBASE')
 

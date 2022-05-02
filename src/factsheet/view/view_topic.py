@@ -9,10 +9,10 @@ import factsheet.view.ui as UI
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gio   # type: ignore[import]    # noqa: E402
-from gi.repository import GLib   # type: ignore[import]    # noqa: E402
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gio   # noqa: E402
+from gi.repository import GLib   # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 class ViewTopic:

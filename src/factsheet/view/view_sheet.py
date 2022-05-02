@@ -1,11 +1,11 @@
 """
 Defines class to display Factsheet document in a window.
 """
-import gi   # type: ignore[import]
+import gi
 import logging
 from pathlib import Path
 import traceback as TB
-import typing   # noqa
+import typing
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
@@ -24,13 +24,13 @@ from factsheet.control.control_sheet import g_control_app
 import factsheet.spec.base_s as SBASE
 
 gi.require_version('Gdk', '3.0')
+from gi.repository import Gdk   # noqa: E402
+from gi.repository import Gio   # noqa: E402
+from gi.repository import GLib   # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
-from gi.repository import Gio   # type: ignore[import]    # noqa: E402
-from gi.repository import GLib   # type: ignore[import]    # noqa: E402
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-# from gi.repository import Pango   # type: ignore[import]    # noqa: E402
+from gi.repository import Gtk   # noqa: E402
+# from gi.repository import Pango   # noqa: E402
 
 logger = logging.getLogger('Main.VSHEET')
 

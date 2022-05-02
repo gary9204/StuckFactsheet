@@ -2,16 +2,16 @@
 Unit tests for base of classes that encapsulate widget toolkit classes.
 See :mod:`~.bridge_base`.
 """
-import gi   # type: ignore[import]
+import gi
 from pathlib import Path
 import pickle
-import pytest  # type: ignore[import]
+import pytest
 import typing
 
 import factsheet.bridge_gtk.bridge_base as BBASE
 
 gi.require_version('Gdk', '3.0')
-from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gdk   # noqa: E402
 
 
 class PatchBridgeBase(BBASE.BridgeBase[typing.Any, typing.Any]):

@@ -5,15 +5,15 @@ classes. See :mod:`.bridge_outline`.
 .. include:: /test/refs_include_pytest.txt
 """
 import dataclasses as DC
-import gi   # type: ignore[import]
-import pytest   # type: ignore[import]
+import gi
+import pytest
 import typing
 
 import factsheet.bridge_gtk.bridge_outline as BOUTLINE
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 class TestFactoryChooserOutline:

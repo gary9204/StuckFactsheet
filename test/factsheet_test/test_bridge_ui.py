@@ -2,7 +2,7 @@
 Unit tests for classes that encapsulates user interface classes from
 widget toolkit.  See :mod:`~.bridge_ui`.
 """
-import pytest  # type: ignore[import]
+import pytest
 
 import factsheet.bridge_gtk.bridge_base as BBASE
 import factsheet.bridge_gtk.bridge_outline as BOUTLINE

@@ -3,7 +3,7 @@ Unit tests for class that mediates topic-level interactions from
 :mod:`~factsheet.view` to :mod:`~factsheet.model`.  See
 :mod:`~.control_topic`.
 """
-import pytest  # type: ignore[import]
+import pytest
 # import typing
 
 # import factsheet.bridge_ui as BUI

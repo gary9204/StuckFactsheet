@@ -180,7 +180,7 @@ import logging
 from pathlib import Path
 import pickle
 import traceback as TB
-import typing   # noqa
+import typing
 
 
 import factsheet.bridge_ui as BUI

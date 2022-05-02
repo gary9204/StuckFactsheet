@@ -4,8 +4,8 @@ Unit tests for base classes for topic specification.  See
 
 .. include:: /test/refs_include_pytest.txt
 """
-import pytest  # type: ignore[import]
-import gi   # type: ignore[import]
+import pytest
+import gi
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
@@ -14,8 +14,8 @@ import factsheet.spec.base_s as SBASE
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 @pytest.fixture
@@ -43,7 +43,7 @@ class TestBase:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -111,7 +111,7 @@ class TestBase:
         """
         # Setup
         BLANK = ''
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         # Test
         target = SBASE.Base(
@@ -135,7 +135,7 @@ class TestBase:
         """
         # Setup
         BLANK = ''
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         # Test
         target = SBASE.Base(
@@ -159,7 +159,7 @@ class TestBase:
         """
         # Setup
         BLANK = ''
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         # Test
         target = SBASE.Base(
@@ -188,7 +188,7 @@ class TestBase:
         :param TITLE: assistant's title for page.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -222,7 +222,7 @@ class TestBase:
             enums.html#Gtk.AssistantPageType
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -242,7 +242,7 @@ class TestBase:
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -266,7 +266,7 @@ class TestBase:
         :param N_DEFAULT: number of default handlers for signal.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
@@ -334,7 +334,7 @@ class TestBase:
         """
         monkeypatch.setattr(SBASE, 'UI_PAGE_CONFIRM', PATCH_UI_PAGE_CONFIRM)
 
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -361,7 +361,7 @@ class TestBase:
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -421,7 +421,7 @@ class TestBase:
         """
         monkeypatch.setattr(SBASE, 'UI_PAGE_IDENTIFY', PATCH_UI_PAGE_IDENTITY)
 
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -452,7 +452,7 @@ class TestBase:
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -474,7 +474,7 @@ class TestBase:
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -488,7 +488,7 @@ class TestBase:
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -505,7 +505,7 @@ class TestBase:
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -523,7 +523,7 @@ class TestBase:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -554,7 +554,7 @@ class TestBase:
         :param NAME_ATTR: name of attribute.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
@@ -574,7 +574,7 @@ class TestBase:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        control_sheet = CSHEET.ControlSheet(p_path=None)
+        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)

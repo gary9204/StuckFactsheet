@@ -2,7 +2,7 @@
 Unit tests for classes to display identity information.  See
 :mod:`.view_markup`.
 """
-import pytest   # type: ignore[import]
+import pytest
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
@@ -10,8 +10,8 @@ import factsheet.view.view_markup as VMARKUP
 
 import gi   # type: ignore[import]
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 @pytest.fixture

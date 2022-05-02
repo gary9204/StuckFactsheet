@@ -5,17 +5,17 @@ See :mod:`.view_topic`.
 .. include:: /test/refs_include_pytest.txt
 """
 # import dataclasses as DC
-import pytest   # type: ignore[import]
+import pytest
 
 import factsheet.control.control_topic as CTOPIC
 import factsheet.model.topic as MTOPIC
 import factsheet.view.ui as UI
 import factsheet.view.view_topic as VTOPIC
 
-import gi   # type: ignore[import]
+import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gio   # type: ignore[import]    # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import Gio   # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 @pytest.fixture

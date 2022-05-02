@@ -6,7 +6,7 @@ Unit tests for topic-level model. See :mod:`~.topic`.
 # from pathlib import Path
 # import itertools as IT
 # import pickle
-import pytest   # type: ignore[import]
+import pytest
 
 import factsheet.bridge_ui as BUI
 # import factsheet.model.fact as MFACT

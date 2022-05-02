@@ -25,12 +25,13 @@ import factsheet.view.view_sheet as VSHEET
 # from factsheet.view import ui as UI
 # from factsheet.view import view_infoid as VINFOID
 
-import gi   # type: ignore[import]
+import gi
+# gi.require_version('Gdk', '3.0')
+# from gi.repository import Gdk   # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
 gi.require_version('Gtk', '3.0')
-# from gi.repository import Gdk   # type: ignore[import]    # noqa: E402
-from gi.repository import GObject as GO  # type: ignore[import] # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
-# from gi.repository import Pango  # type: ignore[import]    # noqa: E402
+from gi.repository import Gtk   # noqa: E402
+# from gi.repository import Pango  # noqa: E402
 
 
 # class PatchCall:
@@ -1292,7 +1293,8 @@ class TestViewSheet:
                 self.called = True
                 self.time = p_time
                 sheet = CSHEET.ControlSheet(p_path=p_path)
-                self.id_sheet = CSHEET.id_factsheet(sheet)
+                # self.id_sheet = CSHEET.id_factsheet(sheet)
+                self.id_sheet = sheet.tag
                 CSHEET.g_control_app._roster_sheets[self.id_sheet] = sheet
                 return sheet
 

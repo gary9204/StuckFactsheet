@@ -19,7 +19,7 @@ Classes
 -------
 """
 # import logging
-import typing   # noqa
+import typing
 
 import factsheet.bridge_ui as BUI
 import factsheet.model.topic as MTOPIC
