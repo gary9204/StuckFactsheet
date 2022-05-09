@@ -4,9 +4,9 @@ Unit tests for class to select a topic specification.  See
 
 .. include:: /test/refs_include_pytest.txt
 """
-import gi   # type: ignore[import]
+import gi
 import logging
-import pytest   # type: ignore[import]
+import pytest
 
 import factsheet.bridge_ui as BUI
 import factsheet.spec as SPECS
@@ -15,8 +15,8 @@ import factsheet.view.select_spec as VSELECT_SPEC
 import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
-from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
 
 
 @pytest.fixture
@@ -684,7 +684,6 @@ class TestSelectSpec:
         assert patch_expand.called is EXPANDED
         if EXPANDED:
             assert PATH_ITEM == patch_expand.path.to_string()
-
 
     def test_match_spec_ne_absent(self, g_specs_empty, caplog):
         """Confirm method returns True and logs warning when spec is None.

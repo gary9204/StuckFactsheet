@@ -32,7 +32,7 @@ class Base:
     outline of topics.
     """
 
-    def __call__(self):
+    def __call__(self) -> None:
         """Orchestrate creation and placement of new topic.
 
         The user specializes the specification to create the topic.  The
@@ -76,6 +76,10 @@ class Base:
             MTOPIC.FactoryDisplayName(p_model=self._name_topic))
         self._new_editor_name_topic = (
             MTOPIC.FactoryEditorName(p_model=self._name_topic))
+
+    def _init_place_topic(self) -> None:
+        """ Initialize placement for topic relative to selected topic."""
+        pass
 
     def _init_summary_topic(self) -> None:
         """ Initialize attributes for a topic summary and view factories."""
