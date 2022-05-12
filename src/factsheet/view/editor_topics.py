@@ -20,6 +20,7 @@ Types and Type Aliases
 Classes
 -------
 """
+import enum
 import gi
 import logging
 
@@ -28,6 +29,7 @@ from pathlib import Path
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
 import factsheet.view.select_spec as VSELECT_SPEC
+import factsheet.view.outline_id as VOUTLINE_ID
 import factsheet.view.view_stack as VSTACK
 import factsheet.view.view_topic as VTOPIC
 import factsheet.view.ui as UI
@@ -49,6 +51,156 @@ UiTopicSelection = Gtk.TreeSelection
 logger = logging.getLogger('Main.VTOPICS')
 
 
+class DisplayTopicsId:
+    """Displays identity information for topics in topics outline."""
+
+    def __init__(self, p_control_sheet: CSHEET.ControlSheet) -> None:
+        """Initialize topics outline and communication.
+
+        :param p_control_sheet: control for factsheet content to display.
+        """
+        self._control_sheet = p_control_sheet
+        self._ui_view = self._control_sheet.new_view_topics()
+        self._ui_selection = self._ui_view.get_selection()
+        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
+        self._ui_view.append_column(self._column_name)
+        self._column_title = UI.new_column_stock(
+            'Title', self._markup_cell_title)
+        self._ui_view.append_column(self._column_title)
+
+    def add_actions_to_group(self, p_action_group: Gio.SimpleActionGroup
+                             ) -> None:
+        """Add display actions to the given group.
+
+        :param p_action_group: group of topic outline display actions.
+        """
+        handlers = {'collapse-outline': self.on_change_depth,
+                    'expand-outline': self.on_change_depth,
+                    'go-first': self.on_go_first_topic,
+                    'go-last': self.on_go_last_topic,
+                    'switch-columns': self.on_switch_columns,
+                    }
+        for name, handler in handlers.items():
+            UI.new_action_active(
+                p_group=p_action_group, p_name=name, p_handler=handler)
+        return
+
+    def add_topics_actions(self, p_ui_view) -> None:
+        """Add topics outline display actions to given visual element."""
+        pass
+
+    def _markup_cell_name(
+            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+            _ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+        """Set markup for name cell in the topics outline view.
+
+        :param _column: column of cell to format (unused).
+        :param p_render: renders formatted cell contents.
+        :param _model: contains cell content (unused).
+        :param p_line: line of cell to format.
+        :param _data: user data (unused).
+        """
+        control_topic = self._control_sheet.get_control_topic(p_line)
+        name = 'Missing'
+        if control_topic is not None:
+            name = control_topic.name
+        p_render.set_property('markup', name)
+
+    def _markup_cell_title(
+            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+            _ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+        """Set markup for title cell in the topics outline view.
+
+        :param _column: column of cell to format (unused).
+        :param p_render: renders formatted cell contents.
+        :param _model: contains cell content (unused).
+        :param p_line: line of cell to format.
+        :param _data: user data (unused).
+        """
+        control_topic = self._control_sheet.get_control_topic(p_line)
+        title = 'Missing'
+        if control_topic is not None:
+            title = control_topic.title
+        p_render.set_property('markup', title)
+
+    def on_change_depth(
+            self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Expand or collapse topics outline.
+
+        :param p_action: user activated this action.
+        :param _target: target of action (unused).
+        """
+        name = p_action.get_name()
+        if 'collapse-outline' == name:
+            self._ui_view.collapse_all()
+        elif 'expand-outline' == name:
+            self._ui_view.expand_all()
+        else:
+            logger.warning('Unexpected action: {} ({}.{})'
+                           ''.format(name, self.__class__.__name__,
+                                     self.on_change_depth.__name__))
+
+    def on_go_first_topic(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Make the first topic in the outline the selected topic.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
+        model, _ = self._ui_selection.get_selected()
+        line_first = model.get_iter_first()
+        if line_first is not None:
+            self._ui_selection.select_iter(line_first)
+
+    def on_go_last_topic(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Make the last topic in the outline the selected topic.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
+        model, _ = self._ui_selection.get_selected()
+        line_last = None
+        n_children = model.iter_n_children(line_last)
+        while 0 < n_children:
+            line_last = model.iter_nth_child(line_last, n_children - 1)
+            n_children = model.iter_n_children(line_last)
+        if line_last is not None:
+            path = model.get_path(line_last)
+            self._ui_view.expand_to_path(path)
+            self._ui_selection.select_iter(line_last)
+            NO_COLUMN = None
+            NO_ALIGN = False
+            IGNORED = 0
+            self._ui_view.scroll_to_cell(
+                path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
+
+    def on_switch_columns(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Switch between showing name column, title column, and both.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
+        if not self._column_name.get_visible():
+            self._column_name.set_visible(True)
+        elif self._column_title.get_visible():
+            self._column_title.set_visible(False)
+        else:
+            self._column_name.set_visible(False)
+            self._column_title.set_visible(True)
+
+    @property
+    def ui_selection(self) -> UiTopicSelection:
+        """Return visual element of topics editor."""
+        return self._ui_selection
+
+    @property
+    def ui_view(self) -> UiDisplayTopicsId:
+        """Return visual element of topics editor."""
+        return self._ui_view
+
+
 class EditorTopics:
     """Displays topics outline along with current topic for editing."""
 
@@ -62,11 +214,17 @@ class EditorTopics:
         get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
         self._ui_view = get_ui_element('ui_editor_topics')
         self._dialog_help = get_ui_element('ui_help_outline_topics')
-        self._outline_topics = DisplayTopicsId(self._control_sheet)
-        _id = self._outline_topics.ui_selection.connect(
+        self._ui_topics = self._control_sheet.new_view_topics()
+        self._outline_topics = VOUTLINE_ID.DisplayOutlineId(self._ui_topics)
+        _id = self._ui_topics.get_selection().connect(
             'changed', self.on_changed_selection)
         site_topics = get_ui_element('ui_site_topics')
-        site_topics.add(self._outline_topics.ui_view)
+        site_topics.add(self._ui_topics)
+        # self._outline_topics = DisplayTopicsId(self._control_sheet)
+        # _id = self._outline_topics.ui_selection.connect(
+        #     'changed', self.on_changed_selection)
+        # site_topics = get_ui_element('ui_site_topics')
+        # site_topics.add(self._outline_topics.ui_view)
         PREFIX_ACTIONS_TOPICS = 'outline_topics'
         actions = Gio.SimpleActionGroup()
         self._ui_view.insert_action_group(PREFIX_ACTIONS_TOPICS, actions)
@@ -349,151 +507,126 @@ class EditorTopics:
         return self._ui_view
 
 
-class DisplayTopicsId:
-    """Displays identity information for topics in topics outline."""
+class FieldsId(enum.Flag):
+    """Identifies search fields for :class:`.IdCore`.
 
-    def __init__(self, p_control_sheet: CSHEET.ControlSheet) -> None:
-        """Initialize topics outline and communication.
+    A search may combine fields using logical operators.
 
-        :param p_control_sheet: control for factsheet content to display.
+    .. data:: NAME
+
+       Denotes name field.
+
+    .. data:: TITLE
+
+       Denotes title field.
+
+    .. data:: SUMMARY
+
+       Denotes summary field.
+
+    .. data:: VOID
+
+       Denotes no field.
+    """
+    VOID = 0
+    NAME = enum.auto()
+    SUMMARY = enum.auto()
+    TITLE = enum.auto()
+
+
+class SearchOutlineId:
+    """TBD"""
+
+    def __init__(self, p_button_find: Gtk.ToggleButton,
+                 p_view_outline) -> None:
+        """Initialize search bar and buttons.
+
+        :param p_get_ui_element: gets visual element from UI description.
         """
-        self._control_sheet = p_control_sheet
-        self._ui_view = self._control_sheet.new_view_topics()
-        self._ui_selection = self._ui_view.get_selection()
-        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
-        self._ui_view.append_column(self._column_name)
-        self._column_title = UI.new_column_stock(
-            'Title', self._markup_cell_title)
-        self._ui_view.append_column(self._column_title)
+        raise NotImplementedError
+        # self._scope_search = FieldsId.NAME
+        # search_bar = p_get_ui_element('ui_search')
+        # button_find = Gtk.ToggleButton(label='Find')
+        # _binding = button_find.bind_property(
+        #     'active', search_bar, 'search-mode-enabled',
+        #     GO.BindingFlags.BIDIRECTIONAL)
+        # button_find.show()
+        #
+        # header_bar = p_get_ui_element('ui_header')
+        # header_bar.pack_start(button_find)
+        #
+        # button_in_name = p_get_ui_element('ui_search_in_name')
+        # _ = button_in_name.connect(
+        #     'toggled', self.on_changed_search_scope, FieldsId.NAME)
+        # button_in_summary = p_get_ui_element('ui_search_in_summary')
+        # _ = button_in_summary.connect(
+        #     'toggled', self.on_changed_search_scope, FieldsId.SUMMARY)
+        # button_in_title = p_get_ui_element('ui_search_in_title')
+        # _ = button_in_title.connect(
+        #     'toggled', self.on_changed_search_scope, FieldsId.TITLE)
+        #
+        # self._ui_outline_specs.set_enable_search(True)
+        # C_FIRST = 0
+        # self._ui_outline_specs.set_search_column(C_FIRST)
+        # entry_search = p_get_ui_element('ui_search_entry')
+        # self._ui_outline_specs.set_search_entry(entry_search)
+        # self._ui_outline_specs.set_search_equal_func(
+        #     self._match_spec_ne, None)
 
-    def add_actions_to_group(self, p_action_group: Gio.SimpleActionGroup
-                             ) -> None:
-        """Add display actions to the given group.
+    def _match_ne(
+            self, _model: Gtk.TreeModel, _n_column: int, p_match_key: str,
+            p_line: BUI.LineOutline, _extra: None):
+        """Return False when given key is found with scope of search.
 
-        :param p_action_group: group of topic outline display actions.
+        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
+        include any combination of spec name, summary, or title.
+
+        :param _model: storage for spec outline visual element (unused).
+        :param _n_column: model column to match (unused).
+        :param p_match_key: key to match within search field(s).
+        :param p_line: line to check for key.
+        :param _extra: optional extra parameter (unused)
+
+        .. _`Gtk.TreeViewSearchEqualFunc`::
+            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
+            Gtk.TreeViewSearchEqualFunc
         """
-        handlers = {'collapse-outline': self.on_change_depth,
-                    'expand-outline': self.on_change_depth,
-                    'go-first-topic': self.on_go_first_topic,
-                    'go-last-topic': self.on_go_last_topic,
-                    'switch-columns': self.on_switch_columns,
-                    }
-        for name, handler in handlers.items():
-            UI.new_action_active(
-                p_group=p_action_group, p_name=name, p_handler=handler)
-        return
+        raise NotImplementedError
+        # if not self._scope_search:
+        #     return True
+        #
+        # spec = self._specs.get_item(p_line)
+        # if spec is None:
+        #     logger.warning('Spec outline contains None for spec ({}.{})'
+        #                    ''.format(self.__class__.__name__,
+        #                              self._match_spec_ne.__name__))
+        #     return True
+        #
+        # if (self._scope_search & FieldsId.NAME):
+        #     if p_match_key in spec.name.text:
+        #         return False
+        #
+        # if (self._scope_search & FieldsId.SUMMARY):
+        #     if p_match_key in spec.summary.text:
+        #         return False
+        #
+        # if (self._scope_search & FieldsId.TITLE):
+        #     if p_match_key in spec.title.text:
+        #         return False
+        #
+        # path = self._specs.ui_model.get_path(p_line)
+        # _ = self._ui_outline_specs.expand_row(path, False)
+        # return True
 
-    def add_topics_actions(self, p_ui_view) -> None:
-        """Add topics outline display actions to given visual element."""
-        pass
+    def on_changed_search_scope(
+            self, p_button: Gtk.ToggleButton, p_field: FieldsId) -> None:
+        """Sets search scope to match requested change.
 
-    def _markup_cell_name(
-            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
-            _ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
-        """Set markup for name cell in the topics outline view.
-
-        :param _column: column of cell to format (unused).
-        :param p_render: renders formatted cell contents.
-        :param _model: contains cell content (unused).
-        :param p_line: line of cell to format.
-        :param _data: user data (unused).
+        :param p_button: search scope button changed by user.
+        :param p_field: search field corresponding to changed button.
         """
-        control_topic = self._control_sheet.get_control_topic(p_line)
-        name = 'Missing'
-        if control_topic is not None:
-            name = control_topic.name
-        p_render.set_property('markup', name)
-
-    def _markup_cell_title(
-            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
-            _ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
-        """Set markup for title cell in the topics outline view.
-
-        :param _column: column of cell to format (unused).
-        :param p_render: renders formatted cell contents.
-        :param _model: contains cell content (unused).
-        :param p_line: line of cell to format.
-        :param _data: user data (unused).
-        """
-        control_topic = self._control_sheet.get_control_topic(p_line)
-        title = 'Missing'
-        if control_topic is not None:
-            title = control_topic.title
-        p_render.set_property('markup', title)
-
-    def on_change_depth(
-            self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Expand or collapse topics outline.
-
-        :param p_action: user activated this action.
-        :param _target: target of action (unused).
-        """
-        name = p_action.get_name()
-        if 'collapse-outline' == name:
-            self._ui_view.collapse_all()
-        elif 'expand-outline' == name:
-            self._ui_view.expand_all()
-        else:
-            logger.warning('Unexpected action: {} ({}.{})'
-                           ''.format(name, self.__class__.__name__,
-                                     self.on_change_depth.__name__))
-
-    def on_go_first_topic(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Make the first topic in the outline the selected topic.
-
-        :param _action: user activated this action (unused).
-        :param _target: parameter GTK provides with activation (unused).
-        """
-        model, _ = self._ui_selection.get_selected()
-        line_first = model.get_iter_first()
-        if line_first is not None:
-            self._ui_selection.select_iter(line_first)
-
-    def on_go_last_topic(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Make the last topic in the outline the selected topic.
-
-        :param _action: user activated this action (unused).
-        :param _target: parameter GTK provides with activation (unused).
-        """
-        model, _ = self._ui_selection.get_selected()
-        line_last = None
-        n_children = model.iter_n_children(line_last)
-        while 0 < n_children:
-            line_last = model.iter_nth_child(line_last, n_children - 1)
-            n_children = model.iter_n_children(line_last)
-        if line_last is not None:
-            path = model.get_path(line_last)
-            self._ui_view.expand_to_path(path)
-            self._ui_selection.select_iter(line_last)
-            NO_COLUMN = None
-            NO_ALIGN = False
-            IGNORED = 0
-            self._ui_view.scroll_to_cell(
-                path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
-
-    def on_switch_columns(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Switch between showing name column, title column, and both.
-
-        :param _action: user activated this action (unused).
-        :param _target: parameter GTK provides with activation (unused).
-        """
-        if not self._column_name.get_visible():
-            self._column_name.set_visible(True)
-        elif self._column_title.get_visible():
-            self._column_title.set_visible(False)
-        else:
-            self._column_name.set_visible(False)
-            self._column_title.set_visible(True)
-
-    @property
-    def ui_selection(self) -> UiTopicSelection:
-        """Return visual element of topics editor."""
-        return self._ui_selection
-
-    @property
-    def ui_view(self) -> UiDisplayTopicsId:
-        """Return visual element of topics editor."""
-        return self._ui_view
+        raise NotImplementedError
+        # if p_button.get_active():
+        #     self._scope_search |= p_field
+        # else:
+        #     self._scope_search &= ~p_field

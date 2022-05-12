@@ -21,6 +21,7 @@ class TestBridgeTypes:
         (BUI.FactoryChooserOutline, BOUTLINE.FactoryChooserOutline),
         (BUI.FactoryViewOutline, BOUTLINE.FactoryViewOutline),
         (BUI.LineOutline, BOUTLINE.LineOutline),
+        (BUI.ModelOutline, BOUTLINE.ModelOutline),
         (BUI.ModelOutlineMulti, BOUTLINE.ModelOutlineMulti),
         (BUI.ModelOutlineSingle, BOUTLINE.ModelOutlineSingle),
         (BUI.ViewOutline, BOUTLINE.ViewOutline),

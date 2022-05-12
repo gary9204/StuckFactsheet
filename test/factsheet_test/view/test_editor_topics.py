@@ -439,8 +439,8 @@ class TestDisplayTopicsId:
     @pytest.mark.parametrize('NAME_ACTION', [
         'collapse-outline',
         'expand-outline',
-        'go-first-topic',
-        'go-last-topic',
+        'go-first',
+        'go-last',
         # 'show-help',
         'switch-columns',
         ])

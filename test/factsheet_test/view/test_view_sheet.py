@@ -496,8 +496,8 @@ class TestViewSheet:
         # # Topics Outline Toolbar and Menu
         # assert target._view_topics.gtk_view.get_search_entry() is not None
         # assert target._window.lookup_action('new-topic') is not None
-        # assert target._window.lookup_action('go-first-topic') is not None
-        # assert target._window.lookup_action('go-last-topic') is not None
+        # assert target._window.lookup_action('go-first') is not None
+        # assert target._window.lookup_action('go-last') is not None
         # assert target._window.lookup_action('delete-topic') is not None
         # assert target._window.lookup_action('clear-topics') is not None
         # assert target._window.lookup_action('show-help-topics') is not None

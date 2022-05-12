@@ -120,6 +120,7 @@ ChooserOutline = BOUTLINE.ChooserOutline
 FactoryChooserOutline = BOUTLINE.FactoryChooserOutline
 FactoryViewOutline = BOUTLINE.FactoryViewOutline
 LineOutline = BOUTLINE.LineOutline
+ModelOutline = BOUTLINE.ModelOutline
 ModelOutlineMulti = BOUTLINE.ModelOutlineMulti
 ModelOutlineSingle = BOUTLINE.ModelOutlineSingle
 ViewOutline = BOUTLINE.ViewOutline
