@@ -25,6 +25,7 @@ class TestBridgeTypes:
         (BUI.ModelOutlineMulti, BOUTLINE.ModelOutlineMulti),
         (BUI.ModelOutlineSingle, BOUTLINE.ModelOutlineSingle),
         (BUI.ViewOutline, BOUTLINE.ViewOutline),
+        (BUI.ModelText, BTEXT.ModelText),
         (BUI.ModelTextMarkup, BTEXT.ModelTextMarkup),
         (BUI.DisplayTextMarkup, BTEXT.DisplayTextMarkup),
         (BUI.FactoryDisplayTextMarkup, BTEXT.FactoryDisplayTextMarkup),

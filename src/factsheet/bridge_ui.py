@@ -125,6 +125,8 @@ ModelOutlineMulti = BOUTLINE.ModelOutlineMulti
 ModelOutlineSingle = BOUTLINE.ModelOutlineSingle
 ViewOutline = BOUTLINE.ViewOutline
 
+ModelText = BTEXT.ModelText
+
 escape_text_markup = BTEXT.escape_text_markup
 ModelTextMarkup = BTEXT.ModelTextMarkup
 DisplayTextMarkup = BTEXT.DisplayTextMarkup

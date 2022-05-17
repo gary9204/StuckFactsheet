@@ -2,8 +2,9 @@
 Defines classes for visual elements of outline contining items with
 identity information.
 """
-import gi
-from gi.repository import Gio
+import typing
+import gi   # type: ignore[import]
+from gi.repository import Gio   # type: ignore[import]
 from gi.repository import GLib
 
 import factsheet.bridge_ui as BUI
@@ -13,28 +14,37 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # noqa: E402
 
 
-UiDisplayOutlineId = Gtk.TreeView
-UiSelectionOutlineId = Gtk.TreeSelection
+UiActionsOutlineId = typing.Union[Gio.SimpleActionGroup]
+UiDisplayOutlineId = typing.Union[Gtk.TreeView]
+UiSearchOutlineId = typing.Union[Gtk.SearchBar]
 
 
-class DisplayOutlineId:
-    """Displays identity information for items in outline."""
+class SetupUiDisplayOutlineId:
+    """Set up columns and, optionally, actions, search, and summary."""
 
-    def __init__(self, p_ui_view: UiDisplayOutlineId) -> None:
-        """Initialize visual element of outline.
+    def __init__(self, p_ui_view: UiDisplayOutlineId,
+                 p_action_group: UiActionsOutlineId= None,
+                 p_ui_search: UiSearchOutlineId = None,
+                 p_ui_model_summary: BUI.ModelTextStyled = None) -> None:
+        """Initialize columns in outline and given additional elements.
 
-        :param p_ui_view: visual element of outline to tailor.
+        :param p_ui_view: visual element of outline.
+        :param p_action_group: container for outline actions (optional).
+        :param p_ui_search: visual element for search (optional).
+        :param p_ui_model_summary: model for summary visual element
+            (optional).
         """
         self._ui_view = p_ui_view
-        self._ui_selection = self._ui_view.get_selection()
-        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
-        self._ui_view.append_column(self._column_name)
-        self._column_title = UI.new_column_stock(
-            'Title', self._markup_cell_title)
-        self._ui_view.append_column(self._column_title)
+        self._init_columns()
+        if p_action_group is not None:
+            self._init_actions(p_action_group)
+        if p_ui_search is not None:
+            raise NotImplementedError
+        if p_ui_model_summary is not None:
+            raise NotImplementedError
 
-    def add_actions_to_group(self, p_action_group: Gio.SimpleActionGroup
-                             ) -> None:
+    def _init_actions(self, p_action_group: Gio.SimpleActionGroup
+                      ) -> None:
         """Add display actions to the given group.
 
         :param p_action_group: group of outline's visual element actions.
@@ -49,6 +59,21 @@ class DisplayOutlineId:
             UI.new_action_active(
                 p_group=p_action_group, p_name=name, p_handler=handler)
         return
+
+    def _init_columns(self) -> None:
+        """Initialize columns in visual element of outline."""
+        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
+        self._ui_view.append_column(self._column_name)
+        self._column_title = UI.new_column_stock(
+            'Title', self._markup_cell_title)
+        self._ui_view.append_column(self._column_title)
+
+    def _init_search(self, p_ui_search: UiSearchOutlineId) -> None:
+        """Initialize components in visual element of search.
+
+        :param p_ui_search: visual element for search.
+        """
+        raise NotImplementedError
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
@@ -110,7 +135,7 @@ class DisplayOutlineId:
         model = self._ui_view.get_model()
         line_first = model.get_iter_first()
         if line_first is not None:
-            self._ui_selection.select_iter(line_first)
+            self._ui_view.get_selection().select_iter(line_first)
 
     def on_go_last_item(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
@@ -129,7 +154,7 @@ class DisplayOutlineId:
         if line_last is not None:
             path = model.get_path(line_last)
             self._ui_view.expand_to_path(path)
-            self._ui_selection.select_iter(line_last)
+            self._ui_view.get_selection().select_iter(line_last)
             NO_COLUMN = None
             NO_ALIGN = False
             IGNORED = 0
@@ -151,10 +176,10 @@ class DisplayOutlineId:
             self._column_name.set_visible(False)
             self._column_title.set_visible(True)
 
-    @property
-    def ui_selection(self) -> UiSelectionOutlineId:
-        """Return visual element of outline display."""
-        return self._ui_selection
+    # @property
+    # def ui_selection(self) -> UiSelectionOutlineId:
+    #     """Return visual element of outline display."""
+    #     return self._ui_selectionC
 
     @property
     def ui_view(self) -> UiDisplayOutlineId:

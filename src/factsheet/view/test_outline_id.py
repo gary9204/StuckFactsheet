@@ -2,8 +2,8 @@
 Unit tests for classes of visual elements of identity item outlines.
 See :mod:`.outline_id`.
 """
-import gi
-from gi.repository import Gio
+import gi   # type: ignore[import]
+from gi.repository import Gio   # type: ignore[import]
 import pytest
 
 import factsheet.bridge_ui as BUI
@@ -64,11 +64,52 @@ def empty_model_outline():
     return BUI.ModelOutlineMulti[ItemId]()
 
 
-class TestDisplayOutlinesId:
-    """Unit tests for :class:`.DisplayOutlinesId`."""
+class TestTailorUiDisplayOutlinesId:
+    """Unit tests for :class:`.TailorUiDisplayOutlinesId`."""
 
     def test_init(self, new_model_outline):
-        """Confirm initialization.
+        """Confirm initialization orchestration.
+
+        :param new_model_outline: fixture :func:`.new_model_outline`.
+        """
+        # Setup
+        N_COLUMNS = 2
+        OUTLINE = new_model_outline()
+        ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
+        actions = Gio.SimpleActionGroup()
+        NAME_ACTION = 'go-first'
+        # Test
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(
+            p_ui_view=ui_view, p_action_group=actions)
+        assert target._ui_view is ui_view
+        columns = target.ui_view.get_columns()
+        assert N_COLUMNS == len(columns)
+        assert actions.lookup_action(NAME_ACTION) is not None
+
+    @pytest.mark.parametrize('NAME_ACTION', [
+        'collapse-outline',
+        'expand-outline',
+        'go-first',
+        'go-last',
+        'switch-columns',
+        ])
+    def test_init_actions(self, new_model_outline, NAME_ACTION):
+        """Confirm outline display actions added to group.
+
+        :param new_model_outline: fixture :func:`.new_model_outline`.
+        :param NAME_ACTION: name of action under test.
+        """
+        # Setup
+        OUTLINE = new_model_outline()
+        ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
+        actions = Gio.SimpleActionGroup()
+        # Test
+        target._init_actions(actions)
+        assert actions.lookup_action(NAME_ACTION) is not None
+
+    def test_init_columns(self, new_model_outline):
+        """Confirm initialization of columns.
 
         :param new_model_outline: fixture :func:`.new_model_outline`.
         """
@@ -80,38 +121,32 @@ class TestDisplayOutlinesId:
         TITLE_C_TITLE = 'Title'
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
+        for column in ui_view.get_columns():
+            ui_view.remove_column(column)
         # Test
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
-        assert target._ui_view is ui_view
-        assert target._ui_selection is ui_view.get_selection()
-        columns = target._ui_view.get_columns()
+        target._init_columns()
+        # assert target._ui_selection is ui_view.get_selection()
+        columns = target.ui_view.get_columns()
         assert target._column_name is columns[C_NAME]
-        assert TITLE_C_NAME == target._column_name.get_title()
+        assert TITLE_C_NAME == columns[C_NAME].get_title()
         assert target._column_title is columns[C_TITLE]
-        assert TITLE_C_TITLE == target._column_title.get_title()
+        assert TITLE_C_TITLE == columns[C_TITLE].get_title()
         assert N_COLUMNS == len(columns)
 
-    @pytest.mark.parametrize('NAME_ACTION', [
-        'collapse-outline',
-        'expand-outline',
-        'go-first',
-        'go-last',
-        'switch-columns',
-        ])
-    def test_add_actions_to_group(self, new_model_outline, NAME_ACTION):
-        """Confirm outline display actions added to group.
+    def test_init_search(self, new_model_outline):
+        """Confirm initialization of columns.
 
         :param new_model_outline: fixture :func:`.new_model_outline`.
-        :param NAME_ACTION: name of action under test.
         """
         # Setup
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
-        actions = Gio.SimpleActionGroup()
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
+        search = VOUTLINE_ID.UiSearchOutlineId()
         # Test
-        target.add_actions_to_group(actions)
-        assert actions.lookup_action(NAME_ACTION) is not None
+        target._init_search(search)
+        # Test
 
     @pytest.mark.parametrize('METHOD, I_LINE, EXPECT', [
         ('_markup_cell_name', 0, 'Name 0'),
@@ -135,7 +170,7 @@ class TestDisplayOutlinesId:
             item = ItemId(p_name=name, p_summary='', p_title=title)
             outline.insert_before(p_item=item, p_line=None)
         ui_view = Gtk.TreeView(model=outline.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         target_method = getattr(target, METHOD)
         column = Gtk.TreeViewColumn()
         render = Gtk.CellRendererText()
@@ -157,7 +192,7 @@ class TestDisplayOutlinesId:
         # Setup
         outline = empty_model_outline
         ui_view = Gtk.TreeView(model=outline.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         target_method = getattr(target, METHOD)
         column = Gtk.TreeViewColumn()
         render = Gtk.CellRendererText()
@@ -199,9 +234,9 @@ class TestDisplayOutlinesId:
         monkeypatch.setattr(Gtk.TreeView, 'expand_all', patch.expand_all)
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         actions = Gio.SimpleActionGroup()
-        target.add_actions_to_group(p_action_group=actions)
+        target._init_actions(p_action_group=actions)
         action = actions.lookup_action(NAME)
         # Test
         target.on_change_depth(action, None)
@@ -230,7 +265,7 @@ class TestDisplayOutlinesId:
         monkeypatch.setattr(Gtk.TreeView, 'expand_all', patch.expand_all)
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         NAME = 'undefined-action'
         action = Gio.SimpleAction.new(NAME, None)
         # Test
@@ -247,14 +282,15 @@ class TestDisplayOutlinesId:
         # Setup
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        ui_selection = ui_view.get_selection()
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         PATH_START = '3:0:0'
         line_start = OUTLINE.ui_model.get_iter_from_string(PATH_START)
-        target._ui_selection.select_iter(line_start)
+        ui_selection.select_iter(line_start)
         NAME_EXPECT = 'Name 0'
         # Test
         target.on_go_first_item(None, None)
-        model, line = target._ui_selection.get_selected()
+        model, line = ui_selection.get_selected()
         assert line is not None
         item_id = BUI.ModelOutline.get_item_direct(model, line)
         assert NAME_EXPECT == item_id.name.text
@@ -267,10 +303,11 @@ class TestDisplayOutlinesId:
         """
         OUTLINE = empty_model_outline
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        ui_selection = ui_view.get_selection()
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         # Test
         target.on_go_first_item(None, None)
-        _, line = target._ui_selection.get_selected()
+        _, line = ui_selection.get_selected()
         assert line is None
 
     def test_on_go_last_item(self, new_model_outline):
@@ -284,15 +321,16 @@ class TestDisplayOutlinesId:
         I_LAST = N_WIDTH + N_DEPTH - 1
         OUTLINE = new_model_outline(N_WIDTH, N_DEPTH)
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
-        model, _ = target._ui_selection.get_selected()
+        ui_selection = ui_view.get_selection()
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
+        model, _ = ui_selection.get_selected()
         PATH_START = '3:0:0'
         line_start = model.get_iter_from_string(PATH_START)
-        target._ui_selection.select_iter(line_start)
+        ui_selection.select_iter(line_start)
         EXPECT_NAME = 'Name ' + str(I_LAST)
         # Test
         target.on_go_last_item(None, None)
-        model, line = target._ui_selection.get_selected()
+        model, line = ui_selection.get_selected()
         assert line is not None
         item_id = BUI.ModelOutline.get_item_direct(model, line)
         assert EXPECT_NAME == item_id.name.text
@@ -305,10 +343,11 @@ class TestDisplayOutlinesId:
         """
         OUTLINE = empty_model_outline
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        ui_selection = ui_view.get_selection()
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         # Test
         target.on_go_last_item(None, None)
-        _, line = target._ui_selection.get_selected()
+        _, line = ui_selection.get_selected()
         assert line is None
 
     @pytest.mark.parametrize('PRE_NAME, PRE_TITLE, POST_NAME, POST_TITLE', [
@@ -329,7 +368,7 @@ class TestDisplayOutlinesId:
         # Setup
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         I_COLUMN_NAME = 0
         column_name = target._ui_view.get_column(I_COLUMN_NAME)
         column_name.set_visible(PRE_NAME)
@@ -341,6 +380,7 @@ class TestDisplayOutlinesId:
         assert column_name.get_visible() is POST_NAME
         assert column_title.get_visible() is POST_TITLE
 
+    @pytest.mark.skip(reason='pending removal')
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
         ('ui_selection', '_ui_selection'),
         ('ui_view', '_ui_view'),
@@ -355,9 +395,9 @@ class TestDisplayOutlinesId:
         # Setup
         OUTLINE = new_model_outline()
         ui_view = Gtk.TreeView(model=OUTLINE.ui_model)
-        target = VOUTLINE_ID.DisplayOutlineId(p_ui_view=ui_view)
+        target = VOUTLINE_ID.SetupUiDisplayOutlineId(p_ui_view=ui_view)
         attr = getattr(target, NAME_ATTR)
-        CLASS = VOUTLINE_ID.DisplayOutlineId
+        CLASS = VOUTLINE_ID.SetupUiDisplayOutlineId
         target_prop = getattr(CLASS, NAME_PROP)
         # Test
         assert target_prop.fget is not None
@@ -370,8 +410,9 @@ class TestModule:
     """Unit tests for module-level components of :mod:`.outline_ui`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (VOUTLINE_ID.UiActionsOutlineId, Gio.SimpleActionGroup),
         (VOUTLINE_ID.UiDisplayOutlineId, Gtk.TreeView),
-        (VOUTLINE_ID.UiSelectionOutlineId, Gtk.TreeSelection),
+        (VOUTLINE_ID.UiSearchOutlineId, Gtk.SearchBar),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type alias definitions.
