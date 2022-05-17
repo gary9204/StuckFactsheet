@@ -20,7 +20,7 @@ Submodules
 .. toctree::
 
    factsheet_test.view.conftest
-   factsheet_test.view.test_chooser_item
+   factsheet_test.view.test_id
    factsheet_test.view.test_editor_topics
    factsheet_test.view.test_select_spec
    factsheet_test.view.test_ui

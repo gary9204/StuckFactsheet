@@ -20,8 +20,8 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   factsheet.view.id
    factsheet.view.editor_topics
-   factsheet.view.chooser_item
    factsheet.view.select_spec
    factsheet.view.ui
    factsheet.view.view_markup

@@ -4,13 +4,7 @@
 .. automodule:: factsheet.view.select_spec
    :members:
    :special-members: __call__
-   :exclude-members: FieldsId, SelectSpec
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: FieldsId
-   :members:
-   :exclude-members: NAME, TITLE, SUMMARY, VOID
+   :exclude-members: SelectSpec
    :undoc-members:
    :show-inheritance:
 

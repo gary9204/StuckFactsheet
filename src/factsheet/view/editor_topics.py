@@ -20,18 +20,19 @@ Types and Type Aliases
 Classes
 -------
 """
-import enum
 import gi   # type: ignore[import]
 from gi.repository import Gio   # type: ignore[import]
 from gi.repository import GLib   # type: ignore[import]
 import logging
+import typing
 
 from pathlib import Path
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
-import factsheet.view.select_spec as VSELECT_SPEC
+import factsheet.view.id as VID
 import factsheet.view.outline_id as VOUTLINE_ID
+import factsheet.view.select_spec as VSELECT_SPEC
 import factsheet.view.view_stack as VSTACK
 import factsheet.view.view_topic as VTOPIC
 import factsheet.view.ui as UI
@@ -43,10 +44,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # noqa: E402
 
 
-UiActionMap = Gio.ActionMap
-UiDisplayTopicsId = Gtk.TreeView
-UiEditorTopics = Gtk.Frame
-UiTopicSelection = Gtk.TreeSelection
+UiActionMap = typing.Union[Gio.ActionMap]
+UiDisplayTopicsId = typing.Union[Gtk.TreeView]
+UiEditorTopics = typing.Union[Gtk.Frame]
+UiTopicSelection = typing.Union[Gtk.TreeSelection]
 
 logger = logging.getLogger('Main.VTOPICS')
 
@@ -347,33 +348,6 @@ class EditorTopics:
         return self._ui_view
 
 
-class FieldsId(enum.Flag):
-    """Identifies search fields for :class:`.IdCore`.
-
-    A search may combine fields using logical operators.
-
-    .. data:: NAME
-
-       Denotes name field.
-
-    .. data:: TITLE
-
-       Denotes title field.
-
-    .. data:: SUMMARY
-
-       Denotes summary field.
-
-    .. data:: VOID
-
-       Denotes no field.
-    """
-    VOID = 0
-    NAME = enum.auto()
-    SUMMARY = enum.auto()
-    TITLE = enum.auto()
-
-
 class SearchOutlineId:
     """TBD"""
 
@@ -384,7 +358,7 @@ class SearchOutlineId:
         :param p_get_ui_element: gets visual element from UI description.
         """
         raise NotImplementedError
-        # self._scope_search = FieldsId.NAME
+        # self._scope_search = VID.FieldsId.NAME
         # search_bar = p_get_ui_element('ui_search')
         # button_find = Gtk.ToggleButton(label='Find')
         # _binding = button_find.bind_property(
@@ -397,13 +371,13 @@ class SearchOutlineId:
         #
         # button_in_name = p_get_ui_element('ui_search_in_name')
         # _ = button_in_name.connect(
-        #     'toggled', self.on_changed_search_scope, FieldsId.NAME)
+        #     'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
         # button_in_summary = p_get_ui_element('ui_search_in_summary')
         # _ = button_in_summary.connect(
-        #     'toggled', self.on_changed_search_scope, FieldsId.SUMMARY)
+        #     'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
         # button_in_title = p_get_ui_element('ui_search_in_title')
         # _ = button_in_title.connect(
-        #     'toggled', self.on_changed_search_scope, FieldsId.TITLE)
+        #     'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
         #
         # self._ui_outline_specs.set_enable_search(True)
         # C_FIRST = 0
@@ -442,15 +416,15 @@ class SearchOutlineId:
         #                              self._match_spec_ne.__name__))
         #     return True
         #
-        # if (self._scope_search & FieldsId.NAME):
+        # if (self._scope_search & VID.FieldsId.NAME):
         #     if p_match_key in spec.name.text:
         #         return False
         #
-        # if (self._scope_search & FieldsId.SUMMARY):
+        # if (self._scope_search & VID.FieldsId.SUMMARY):
         #     if p_match_key in spec.summary.text:
         #         return False
         #
-        # if (self._scope_search & FieldsId.TITLE):
+        # if (self._scope_search & VID.FieldsId.TITLE):
         #     if p_match_key in spec.title.text:
         #         return False
         #
@@ -459,7 +433,7 @@ class SearchOutlineId:
         # return True
 
     def on_changed_search_scope(
-            self, p_button: Gtk.ToggleButton, p_field: FieldsId) -> None:
+            self, p_button: Gtk.ToggleButton, p_field: VID.FieldsId) -> None:
         """Sets search scope to match requested change.
 
         :param p_button: search scope button changed by user.

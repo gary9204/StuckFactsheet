@@ -13,8 +13,8 @@ Defines class for selecting a specification of a new topic.
 
     Type for view of specification outline.
 """
-import enum
-import gi
+import gi   # type: ignore[import]
+from gi.repository import GObject as GO   # type: ignore[import]
 import logging
 from pathlib import Path
 import typing
@@ -22,11 +22,11 @@ import typing
 import factsheet.bridge_ui as BUI
 import factsheet.spec as SPECS
 import factsheet.spec.base_s as SBASE
+import factsheet.view.id as VID
 import factsheet.view.ui as UI
 
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # noqa: E402
 from gi.repository import Gtk   # noqa: E402
 
 
@@ -35,33 +35,6 @@ ModelSummary = BUI.ModelTextStyled
 ViewOutlineSpec = BUI.ViewOutline
 
 logger = logging.getLogger('Main.VSELECT_SPEC')
-
-
-class FieldsId(enum.Flag):
-    """Identifies search fields for :class:`.IdCore`.
-
-    A search may combine fields using logical operators.
-
-    .. data:: NAME
-
-       Denotes name field.
-
-    .. data:: TITLE
-
-       Denotes title field.
-
-    .. data:: SUMMARY
-
-       Denotes summary field.
-
-    .. data:: VOID
-
-       Denotes no field.
-    """
-    VOID = 0
-    NAME = enum.auto()
-    SUMMARY = enum.auto()
-    TITLE = enum.auto()
 
 
 class SelectSpec:
@@ -180,7 +153,7 @@ class SelectSpec:
 
         :param p_get_ui_element: gets visual element from UI description.
         """
-        self._scope_search = FieldsId.NAME
+        self._scope_search = VID.FieldsId.NAME
         search_bar = p_get_ui_element('ui_search')
         button_find = Gtk.ToggleButton(label='Find')
         _binding = button_find.bind_property(
@@ -193,13 +166,13 @@ class SelectSpec:
 
         button_in_name = p_get_ui_element('ui_search_in_name')
         _ = button_in_name.connect(
-            'toggled', self.on_changed_search_scope, FieldsId.NAME)
+            'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
         button_in_summary = p_get_ui_element('ui_search_in_summary')
         _ = button_in_summary.connect(
-            'toggled', self.on_changed_search_scope, FieldsId.SUMMARY)
+            'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
         button_in_title = p_get_ui_element('ui_search_in_title')
         _ = button_in_title.connect(
-            'toggled', self.on_changed_search_scope, FieldsId.TITLE)
+            'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
 
         self._ui_outline_specs.set_enable_search(True)
         C_FIRST = 0
@@ -271,15 +244,15 @@ class SelectSpec:
                                      self._match_spec_ne.__name__))
             return True
 
-        if (self._scope_search & FieldsId.NAME):
+        if (self._scope_search & VID.FieldsId.NAME):
             if p_match_key in spec.name.text:
                 return False
 
-        if (self._scope_search & FieldsId.SUMMARY):
+        if (self._scope_search & VID.FieldsId.SUMMARY):
             if p_match_key in spec.summary.text:
                 return False
 
-        if (self._scope_search & FieldsId.TITLE):
+        if (self._scope_search & VID.FieldsId.TITLE):
             if p_match_key in spec.title.text:
                 return False
 
@@ -311,7 +284,7 @@ class SelectSpec:
         self._button_select.set_sensitive(False)
 
     def on_changed_search_scope(
-            self, p_button: Gtk.ToggleButton, p_field: FieldsId) -> None:
+            self, p_button: Gtk.ToggleButton, p_field: VID.FieldsId) -> None:
         """Sets search scope to match requested change.
 
         :param p_button: search scope button changed by user.

@@ -4,18 +4,19 @@ Unit tests for class to select a topic specification.  See
 
 .. include:: /test/refs_include_pytest.txt
 """
-import gi
+import gi   # type: ignore[import]
+from gi.repository import GObject as GO   # type: ignore[import]
 import logging
 import pytest
 
 import factsheet.bridge_ui as BUI
 import factsheet.spec as SPECS
 import factsheet.spec.base_s as SBASE
+import factsheet.view.id as VID
 import factsheet.view.select_spec as VSELECT_SPEC
 import factsheet.view.ui as UI
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # noqa: E402
 from gi.repository import Gtk   # noqa: E402
 
 
@@ -83,19 +84,6 @@ def g_specs_stub(g_specs_empty):
     _line_112 = specs.insert_child(spec, line_11x)
 
 
-class TestFieldsIdCore:
-    """Unit tests for :class:`.FieldsId`."""
-
-    def test_members(self):
-        """Confirm member definitions."""
-        # Setup
-        # Test
-        assert not bool(VSELECT_SPEC.FieldsId.VOID)
-        assert VSELECT_SPEC.FieldsId.NAME
-        assert VSELECT_SPEC.FieldsId.SUMMARY
-        assert VSELECT_SPEC.FieldsId.TITLE
-
-
 class TestSelectSpec:
     """Unit tests for :class:`.SelectSpec`."""
 
@@ -118,7 +106,7 @@ class TestSelectSpec:
         assert target._dialog is not None
         assert target._ui_outline_specs is not None
         assert target.NO_SUMMARY == target._summary.text
-        assert VSELECT_SPEC.FieldsId.NAME == target._scope_search
+        assert VID.FieldsId.NAME == target._scope_search
 
     def test_init_dialog(self, monkeypatch):
         """Confirm initialization of top-level visual element.
@@ -255,7 +243,7 @@ class TestSelectSpec:
         C_FIRST = 0
         # Test
         target._init_search(get_ui_element)
-        assert VSELECT_SPEC.FieldsId.NAME == target._scope_search
+        assert VID.FieldsId.NAME == target._scope_search
         prop_source, target_bind, prop_target, flags = patch_call.binding_args
         assert PROP_SOURCE == prop_source
         assert isinstance(target_bind, Gtk.SearchBar)
@@ -593,14 +581,11 @@ class TestSelectSpec:
         assert not target._button_select.get_sensitive()
 
     @pytest.mark.parametrize('SCOPE, ACTIVE, FIELD, EXPECT', [
-        (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.NAME,
-         VSELECT_SPEC.FieldsId.NAME),
-        (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.SUMMARY,
-         VSELECT_SPEC.FieldsId.SUMMARY),
-        (VSELECT_SPEC.FieldsId.VOID, True, VSELECT_SPEC.FieldsId.TITLE,
-         VSELECT_SPEC.FieldsId.TITLE),
-        (~VSELECT_SPEC.FieldsId.VOID, False, VSELECT_SPEC.FieldsId.NAME,
-         VSELECT_SPEC.FieldsId.SUMMARY | VSELECT_SPEC.FieldsId.TITLE),
+        (VID.FieldsId.VOID, True, VID.FieldsId.NAME, VID.FieldsId.NAME),
+        (VID.FieldsId.VOID, True, VID.FieldsId.SUMMARY, VID.FieldsId.SUMMARY),
+        (VID.FieldsId.VOID, True, VID.FieldsId.TITLE, VID.FieldsId.TITLE),
+        (~VID.FieldsId.VOID, False, VID.FieldsId.NAME,
+         VID.FieldsId.SUMMARY | VID.FieldsId.TITLE),
         ])
     def test_on_changed_search_scope(self, SCOPE, ACTIVE, FIELD, EXPECT):
         """Confirm change in search scope.
@@ -632,19 +617,19 @@ class TestSelectSpec:
         assert not target._button_select.get_sensitive()
 
     @pytest.mark.parametrize('SCOPE, PATH_ITEM, MATCH_KEY, EXPECT, EXPANDED', [
-        (VSELECT_SPEC.FieldsId.VOID, '1:0', 'name 01x', True, False),
-        (VSELECT_SPEC.FieldsId.NAME, '0:1', 'name_01x', False, False),
-        (VSELECT_SPEC.FieldsId.NAME, '0', 'e_0x', False, False),
-        (VSELECT_SPEC.FieldsId.NAME, '0', '$e_0x', True, True),
-        (VSELECT_SPEC.FieldsId.VOID, '1', 'summary_1xx', True, False),
-        (VSELECT_SPEC.FieldsId.SUMMARY, '1', 'summary_1xx', False, False),
-        (VSELECT_SPEC.FieldsId.SUMMARY, '1:1:1', 'y_111', False, False),
-        (VSELECT_SPEC.FieldsId.SUMMARY, '1:1:1', 'y_11$', True, True),
-        (VSELECT_SPEC.FieldsId.VOID, '0:0:0', 'title_000', True, False),
-        (VSELECT_SPEC.FieldsId.TITLE, '0:0:0', 'title_000', False, False),
-        (VSELECT_SPEC.FieldsId.TITLE, '1:1', 'le_1', False, False),
-        (VSELECT_SPEC.FieldsId.TITLE, '1:1', 'le_11', False, False),
-        (VSELECT_SPEC.FieldsId.TITLE, '1:1', 'le$11', True, True),
+        (VID.FieldsId.VOID, '1:0', 'name 01x', True, False),
+        (VID.FieldsId.NAME, '0:1', 'name_01x', False, False),
+        (VID.FieldsId.NAME, '0', 'e_0x', False, False),
+        (VID.FieldsId.NAME, '0', '$e_0x', True, True),
+        (VID.FieldsId.VOID, '1', 'summary_1xx', True, False),
+        (VID.FieldsId.SUMMARY, '1', 'summary_1xx', False, False),
+        (VID.FieldsId.SUMMARY, '1:1:1', 'y_111', False, False),
+        (VID.FieldsId.SUMMARY, '1:1:1', 'y_11$', True, True),
+        (VID.FieldsId.VOID, '0:0:0', 'title_000', True, False),
+        (VID.FieldsId.TITLE, '0:0:0', 'title_000', False, False),
+        (VID.FieldsId.TITLE, '1:1', 'le_1', False, False),
+        (VID.FieldsId.TITLE, '1:1', 'le_11', False, False),
+        (VID.FieldsId.TITLE, '1:1', 'le$11', True, True),
             ])
     def test_match_spec_ne(self, monkeypatch, g_specs_stub,
                            SCOPE, PATH_ITEM, MATCH_KEY, EXPECT, EXPANDED):
