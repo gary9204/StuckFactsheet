@@ -23,6 +23,7 @@ Classes
 import gi   # type: ignore[import]
 from gi.repository import Gio   # type: ignore[import]
 from gi.repository import GLib   # type: ignore[import]
+from gi.repository import GObject as GO   # type: ignore[import]
 import logging
 import typing
 
@@ -70,8 +71,8 @@ class EditorTopics:
         self.add_actions_to_group(p_action_group=actions)
         self._dialog_help = get_ui_element('ui_help_outline_topics')
         self._ui_topics = self._control_sheet.new_view_topics()
-        _ = VOUTLINE_ID.SetupUiDisplayOutlineId(
-            p_ui_view=self._ui_topics, p_action_group=actions)
+        # _ = VOUTLINE_ID.SetupUiDisplayOutlineId(
+        #     p_ui_view=self._ui_topics, p_action_group=actions)
         _id = self._ui_topics.get_selection().connect(
             'changed', self.on_changed_selection)
         site_topics = get_ui_element('ui_site_topics')
@@ -81,6 +82,18 @@ class EditorTopics:
         site_views.add(self._views_topics.ui_view)
 
         # Stub Issue #264
+        _ = VOUTLINE_ID.InitColumnsOutlineId(self._ui_topics, actions)
+        _ = VOUTLINE_ID.InitMotionOutlineId(self._ui_topics, actions)
+        ui_search_id = Gtk.SearchBar(
+            search_mode_enabled=True, show_close_button=True)
+        site_search_id = get_ui_element('ui_site_find')
+        site_search_id.add(ui_search_id)
+        button_search = get_ui_element('ui_find_topic')
+        _binding = button_search.bind_property(
+            'active', ui_search_id, 'search-mode-enabled',
+            GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE)
+        _ = VOUTLINE_ID.InitSearchOutlineId(self._ui_topics, ui_search_id)
+
         topic = MTOPIC.Topic(
             p_name='Topic 0', p_summary='Summary 0', p_title='Title 0')
         line_0 = self._control_sheet.insert_topic_after(
@@ -105,6 +118,27 @@ class EditorTopics:
             p_name='Topic 3', p_summary='Summary 3', p_title='Title 3')
         line_x = self._control_sheet.insert_topic_after(
             p_topic=topic, p_line=line_x)
+        self._control_sheet._model.set_fresh()
+
+    def _match_ne(
+            self, _model: Gtk.TreeModel, _n_column: int, p_match_key: str,
+            p_line: BUI.LineOutline, _extra: None):
+        """Return False when given key is found with scope of search.
+
+        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
+        include any combination of spec name, summary, or title.
+
+        :param _model: storage for spec outline visual element (unused).
+        :param _n_column: model column to match (unused).
+        :param p_match_key: key to match within search field(s).
+        :param p_line: line to check for key.
+        :param _extra: optional extra parameter (unused)
+
+        .. _`Gtk.TreeViewSearchEqualFunc`::
+            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
+            Gtk.TreeViewSearchEqualFunc
+        """
+        return False
 
     def add_actions_to_group(self, p_action_group: Gio.SimpleActionGroup
                              ) -> None:
@@ -346,101 +380,3 @@ class EditorTopics:
     def ui_view(self) -> UiEditorTopics:
         """Return visual element of topics editor."""
         return self._ui_view
-
-
-class SearchOutlineId:
-    """TBD"""
-
-    def __init__(self, p_button_find: Gtk.ToggleButton,
-                 p_view_outline) -> None:
-        """Initialize search bar and buttons.
-
-        :param p_get_ui_element: gets visual element from UI description.
-        """
-        raise NotImplementedError
-        # self._scope_search = VID.FieldsId.NAME
-        # search_bar = p_get_ui_element('ui_search')
-        # button_find = Gtk.ToggleButton(label='Find')
-        # _binding = button_find.bind_property(
-        #     'active', search_bar, 'search-mode-enabled',
-        #     GO.BindingFlags.BIDIRECTIONAL)
-        # button_find.show()
-        #
-        # header_bar = p_get_ui_element('ui_header')
-        # header_bar.pack_start(button_find)
-        #
-        # button_in_name = p_get_ui_element('ui_search_in_name')
-        # _ = button_in_name.connect(
-        #     'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
-        # button_in_summary = p_get_ui_element('ui_search_in_summary')
-        # _ = button_in_summary.connect(
-        #     'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
-        # button_in_title = p_get_ui_element('ui_search_in_title')
-        # _ = button_in_title.connect(
-        #     'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
-        #
-        # self._ui_outline_specs.set_enable_search(True)
-        # C_FIRST = 0
-        # self._ui_outline_specs.set_search_column(C_FIRST)
-        # entry_search = p_get_ui_element('ui_search_entry')
-        # self._ui_outline_specs.set_search_entry(entry_search)
-        # self._ui_outline_specs.set_search_equal_func(
-        #     self._match_spec_ne, None)
-
-    def _match_ne(
-            self, _model: Gtk.TreeModel, _n_column: int, p_match_key: str,
-            p_line: BUI.LineOutline, _extra: None):
-        """Return False when given key is found with scope of search.
-
-        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
-        include any combination of spec name, summary, or title.
-
-        :param _model: storage for spec outline visual element (unused).
-        :param _n_column: model column to match (unused).
-        :param p_match_key: key to match within search field(s).
-        :param p_line: line to check for key.
-        :param _extra: optional extra parameter (unused)
-
-        .. _`Gtk.TreeViewSearchEqualFunc`::
-            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
-            Gtk.TreeViewSearchEqualFunc
-        """
-        raise NotImplementedError
-        # if not self._scope_search:
-        #     return True
-        #
-        # spec = self._specs.get_item(p_line)
-        # if spec is None:
-        #     logger.warning('Spec outline contains None for spec ({}.{})'
-        #                    ''.format(self.__class__.__name__,
-        #                              self._match_spec_ne.__name__))
-        #     return True
-        #
-        # if (self._scope_search & VID.FieldsId.NAME):
-        #     if p_match_key in spec.name.text:
-        #         return False
-        #
-        # if (self._scope_search & VID.FieldsId.SUMMARY):
-        #     if p_match_key in spec.summary.text:
-        #         return False
-        #
-        # if (self._scope_search & VID.FieldsId.TITLE):
-        #     if p_match_key in spec.title.text:
-        #         return False
-        #
-        # path = self._specs.ui_model.get_path(p_line)
-        # _ = self._ui_outline_specs.expand_row(path, False)
-        # return True
-
-    def on_changed_search_scope(
-            self, p_button: Gtk.ToggleButton, p_field: VID.FieldsId) -> None:
-        """Sets search scope to match requested change.
-
-        :param p_button: search scope button changed by user.
-        :param p_field: search field corresponding to changed button.
-        """
-        raise NotImplementedError
-        # if p_button.get_active():
-        #     self._scope_search |= p_field
-        # else:
-        #     self._scope_search &= ~p_field

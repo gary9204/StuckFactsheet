@@ -22,6 +22,7 @@ Submodules
 
    factsheet.view.id
    factsheet.view.editor_topics
+   factsheet.view.outline_id
    factsheet.view.select_spec
    factsheet.view.ui
    factsheet.view.view_markup

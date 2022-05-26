@@ -62,6 +62,153 @@ UiChooserItem = typing.Union[Gtk.Paned]
 UiViewOutline = BUI.ViewOutline
 
 
+class InitColumnsOutlineId:
+    """Initialize identity item outline with name and title columns."""
+
+    def __init__(self, p_ui_view_outline: UiDisplayOutlineId,
+                 p_action_group: UiActionsOutlineId = None) -> None:
+        """Initialize columns in visual element of outline.
+
+        Each column supports `Pango markup`_.  Optional action cycles
+        through showing name column, title column, or both columns.
+
+    .. _Pango markup:
+        https://developer.gnome.org/pygtk/stable/pango-markup-language.html
+
+        :param p_ui_view_outline: visual element of outline.
+        :param p_action_group: add column switch action to this group
+            (optional).
+        """
+        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
+        p_ui_view_outline.append_column(self._column_name)
+        self._column_title = UI.new_column_stock(
+            'Title', self._markup_cell_title)
+        p_ui_view_outline.append_column(self._column_title)
+        if p_action_group is not None:
+            UI.new_action_active(
+                p_action_group, 'switch-columns', self.switch_columns)
+
+    def _markup_cell_name(
+            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+            p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+        """Set markup for name cell in the outline's visual element.
+
+        :param _column: column of cell to format (unused).
+        :param p_render: renders formatted cell contents.
+        :param p_ui_model: contains cell content.
+        :param p_line: line of cell to format.
+        :param _data: user data (unused).
+        """
+        item_id = BUI.ModelOutline.get_item_direct(p_ui_model, p_line)
+        name = 'Missing'
+        if item_id is not None:
+            name = item_id.name.text
+        p_render.set_property('markup', name)
+
+    def _markup_cell_title(
+            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+            p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+        """Set markup for title cell in the outline visual element.
+
+        :param _column: column of cell to format (unused).
+        :param p_render: renders formatted cell contents.
+        :param p_ui_model: contains cell content.
+        :param p_line: line of cell to format.
+        :param _data: user data (unused).
+        """
+        item_id = BUI.ModelOutline.get_item_direct(p_ui_model, p_line)
+        title = 'Missing'
+        if item_id is not None:
+            title = item_id.title.text
+        p_render.set_property('markup', title)
+
+    def switch_columns(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Switch between showing name column, title column, and both.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
+        if not self._column_name.get_visible():
+            self._column_name.set_visible(True)
+        elif self._column_title.get_visible():
+            self._column_title.set_visible(False)
+        else:
+            self._column_name.set_visible(False)
+            self._column_title.set_visible(True)
+
+
+class InitMotionOutlineId:
+    """Initialize actions to move selection through identity item outline"""
+
+    def __init__(self, p_ui_view_outline: UiDisplayOutlineId,
+                 p_action_group: UiActionsOutlineId) -> None:
+        """Initialize motion actions: expand, collapse, go first, and last.
+
+        :param p_ui_view_outline: visual element of outline.
+        :param p_action_group: add motion actions to this group.
+        """
+        self._ui_view_outline = p_ui_view_outline
+        handlers = {'collapse-outline': self.change_depth,
+                    'expand-outline': self.change_depth,
+                    'go-first': self.go_first_item,
+                    'go-last': self.go_last_item,
+                    }
+        for name, handler in handlers.items():
+            UI.new_action_active(
+                p_group=p_action_group, p_name=name, p_handler=handler)
+
+    def change_depth(
+            self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Expand or collapse outline.
+
+        :param p_action: user activated this action.
+        :param _target: target of action (unused).
+        """
+        name = p_action.get_name()
+        if 'collapse-outline' == name:
+            self._ui_view_outline.collapse_all()
+        elif 'expand-outline' == name:
+            self._ui_view_outline.expand_all()
+        else:
+            self._ui_view_outline.expand_all()
+
+    def go_first_item(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Make the first item in the outline the selected item.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
+        model = self._ui_view_outline.get_model()
+        line_first = model.get_iter_first()
+        if line_first is not None:
+            self._ui_view_outline.get_selection().select_iter(line_first)
+
+    def go_last_item(
+            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+        """Make the last item in the outline the selected item.
+
+        :param _action: user activated this action (unused).
+        :param _target: parameter GTK provides with activation (unused).
+        """
+        model = self._ui_view_outline.get_model()
+        line_last = None
+        n_children = model.iter_n_children(line_last)
+        while 0 < n_children:
+            line_last = model.iter_nth_child(line_last, n_children - 1)
+            n_children = model.iter_n_children(line_last)
+        if line_last is not None:
+            path = model.get_path(line_last)
+            self._ui_view_outline.expand_to_path(path)
+            self._ui_view_outline.get_selection().select_iter(line_last)
+            NO_COLUMN = None
+            NO_ALIGN = False
+            IGNORED = 0
+            self._ui_view_outline.scroll_to_cell(
+                path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
+
+
 class ChooserItem:
     """Provides means to choose an item from an outline.
 
@@ -71,9 +218,9 @@ class ChooserItem:
     button with :class:`ChooserItem` to show and hide a field to search
     the outline.
 
-    .. attribute:: NO_SUMMARY
-
-       Summary text displayed when no item is selected.
+    # .. attribute:: NO_SUMMARY
+    #
+    #    Summary text displayed when no item is selected.
     """
 
     NO_SUMMARY = 'Please choose an item in the outline above.'
@@ -275,169 +422,374 @@ class ChooserItem:
         return self._ui_chooser
 
 
-class SetupUiDisplayOutlineId:
-    """Set up columns and, optionally, actions, search, and summary."""
+class InitSearchOutlineId:
+    """Search bar for the visual element of an outline of identity items."""
 
-    def __init__(self, p_ui_view: UiDisplayOutlineId,
-                 p_action_group: UiActionsOutlineId= None,
-                 p_ui_search: UiSearchOutlineId = None,
-                 p_ui_model_summary: BUI.ModelTextStyled = None) -> None:
-        """Initialize columns in outline and given additional elements.
+    _UI_TEXT = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.38.2 -->
+        <interface>
+          <requires lib="gtk+" version="3.24"/>
+          <object class="GtkBox" id="ui_kit_search_id">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkSearchEntry" id="ui_search_entry">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="primary-icon-name">edit-find-symbolic</property>
+                <property name="primary-icon-activatable">False</property>
+                <property name="primary-icon-sensitive">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Search in: </property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="ui_search_name">
+                    <property name="label" translatable="yes">Name</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="ui_search_title">
+                    <property name="label" translatable="yes">Title</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="ui_search_summary">
+                    <property name="label" translatable="yes">Summary</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+        </interface>
+    """
 
-        :param p_ui_view: visual element of outline.
-        :param p_action_group: container for outline actions (optional).
-        :param p_ui_search: visual element for search (optional).
-        :param p_ui_model_summary: model for summary visual element
-            (optional).
+    def __init__(self, p_ui_view_outline: UiDisplayOutlineId,
+                 p_ui_view_search: UiSearchOutlineId) -> None:
+        """Initialize search bar of outline of identity items.
+
+        :param p_ui_view_outline: visual element of outline.
+        :param p_ui_view_search: visual element for search.
         """
-        self._ui_view = p_ui_view
-        self._init_columns()
-        if p_action_group is not None:
-            self._init_actions(p_action_group)
-        if p_ui_search is not None:
-            raise NotImplementedError
-        if p_ui_model_summary is not None:
-            raise NotImplementedError
+        get_ui_element = UI.GetUiElementByStr(p_string_ui=self._UI_TEXT)
+        kit_search = get_ui_element('ui_kit_search_id')
+        p_ui_view_search.add(kit_search)
+        C_FIRST = 0
+        p_ui_view_outline.set_search_column(C_FIRST)
+        entry_search = get_ui_element('ui_search_entry')
+        p_ui_view_outline.set_search_entry(entry_search)
+        p_ui_view_outline.set_search_equal_func(
+            self._match_spec_ne, p_ui_view_outline)
 
-    def _init_actions(self, p_action_group: Gio.SimpleActionGroup
-                      ) -> None:
-        """Add display actions to the given group.
+        button_name = get_ui_element('ui_search_name')
+        _ = button_name.connect(
+            'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
+        self._scope_search = VID.FieldsId.VOID
+        button_name.set_active(True)
+        button_summary = get_ui_element('ui_search_summary')
+        _ = button_summary.connect(
+            'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
+        button_title = get_ui_element('ui_search_title')
+        _ = button_title.connect(
+            'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
 
-        :param p_action_group: group of outline's visual element actions.
+    def _match_spec_ne(self, p_ui_model: Gtk.TreeModel, _n_column: int,
+                       p_match_key: str, p_line: BUI.LineOutline,
+                       p_ui_view_outline: UiDisplayOutlineId) -> bool:
+        """Return False when given key is found with scope of search.
+
+        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
+        include any combination of spec name, summary, or title.
+
+        :param p_ui_model: storage for outline visual element.
+        :param _n_column: model column to match (unused).
+        :param p_match_key: key to match within search field(s).
+        :param p_line: line to check for key.
+        :param p_ui_view_outline: outline visual element.
+
+        .. _`Gtk.TreeViewSearchEqualFunc`::
+            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
+            Gtk.TreeViewSearchEqualFunc
         """
-        handlers = {'collapse-outline': self.on_change_depth,
-                    'expand-outline': self.on_change_depth,
-                    'go-first': self.on_go_first_item,
-                    'go-last': self.on_go_last_item,
-                    'switch-columns': self.on_switch_columns,
-                    }
-        for name, handler in handlers.items():
-            UI.new_action_active(
-                p_group=p_action_group, p_name=name, p_handler=handler)
-        return
+        if not self._scope_search:
+            return True
 
-    def _init_columns(self) -> None:
-        """Initialize columns in visual element of outline."""
-        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
-        self._ui_view.append_column(self._column_name)
-        self._column_title = UI.new_column_stock(
-            'Title', self._markup_cell_title)
-        self._ui_view.append_column(self._column_title)
+        item = ModelOutline.get_item_direct(p_ui_model, p_line)
+        if item is None:
+            line_str = p_ui_model.get_string_from_iter(p_line)
+            logger.warning('Outline contains None at line "{}" ({}.{})'
+                           ''.format(line_str, self.__class__.__name__,
+                                     self._match_spec_ne.__name__))
+            return True
 
-    def _init_search(self, p_ui_search: UiSearchOutlineId) -> None:
-        """Initialize components in visual element of search.
+        if (self._scope_search & VID.FieldsId.NAME):
+            if p_match_key in item.name.text:
+                return False
 
-        :param p_ui_search: visual element for search.
+        if (self._scope_search & VID.FieldsId.SUMMARY):
+            if p_match_key in item.summary.text:
+                return False
+
+        if (self._scope_search & VID.FieldsId.TITLE):
+            if p_match_key in item.title.text:
+                return False
+
+        path = p_ui_model.get_path(p_line)
+        _ = p_ui_view_outline.expand_row(path, False)
+        return True
+
+    def on_changed_search_scope(
+            self, p_button: UiButtonSearchScope, p_field: VID.FieldsId
+            ) -> None:
+        """Sets search scope to match requested change.
+
+        :param p_button: search scope button changed by user.
+        :param p_field: search field corresponding to changed button.
         """
-        pass
-
-    def _markup_cell_name(
-            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
-            p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
-        """Set markup for name cell in the outline's visual element.
-
-        :param _column: column of cell to format (unused).
-        :param p_render: renders formatted cell contents.
-        :param p_ui_model: contains cell content.
-        :param p_line: line of cell to format.
-        :param _data: user data (unused).
-        """
-        item_id = BUI.ModelOutline.get_item_direct(p_ui_model, p_line)
-        name = 'Missing'
-        if item_id is not None:
-            name = item_id.name.text
-        p_render.set_property('markup', name)
-
-    def _markup_cell_title(
-            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
-            p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
-        """Set markup for title cell in the outline visual element.
-
-        :param _column: column of cell to format (unused).
-        :param p_render: renders formatted cell contents.
-        :param p_ui_model: contains cell content.
-        :param p_line: line of cell to format.
-        :param _data: user data (unused).
-        """
-        item_id = BUI.ModelOutline.get_item_direct(p_ui_model, p_line)
-        title = 'Missing'
-        if item_id is not None:
-            title = item_id.title.text
-        p_render.set_property('markup', title)
-
-    def on_change_depth(
-            self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Expand or collapse outline.
-
-        :param p_action: user activated this action.
-        :param _target: target of action (unused).
-        """
-        name = p_action.get_name()
-        if 'collapse-outline' == name:
-            self._ui_view.collapse_all()
-        elif 'expand-outline' == name:
-            self._ui_view.expand_all()
+        if p_button.get_active():
+            self._scope_search |= p_field
         else:
-            self._ui_view.expand_all()
+            self._scope_search &= ~p_field
 
-    def on_go_first_item(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Make the first item in the outline the selected item.
 
-        :param _action: user activated this action (unused).
-        :param _target: parameter GTK provides with activation (unused).
-        """
-        # model, _ = self._ui_selection.get_selected()
-        model = self._ui_view.get_model()
-        line_first = model.get_iter_first()
-        if line_first is not None:
-            self._ui_view.get_selection().select_iter(line_first)
-
-    def on_go_last_item(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Make the last item in the outline the selected item.
-
-        :param _action: user activated this action (unused).
-        :param _target: parameter GTK provides with activation (unused).
-        """
-
-        model = self._ui_view.get_model()
-        line_last = None
-        n_children = model.iter_n_children(line_last)
-        while 0 < n_children:
-            line_last = model.iter_nth_child(line_last, n_children - 1)
-            n_children = model.iter_n_children(line_last)
-        if line_last is not None:
-            path = model.get_path(line_last)
-            self._ui_view.expand_to_path(path)
-            self._ui_view.get_selection().select_iter(line_last)
-            NO_COLUMN = None
-            NO_ALIGN = False
-            IGNORED = 0
-            self._ui_view.scroll_to_cell(
-                path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
-
-    def on_switch_columns(
-            self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
-        """Switch between showing name column, title column, and both.
-
-        :param _action: user activated this action (unused).
-        :param _target: parameter GTK provides with activation (unused).
-        """
-        if not self._column_name.get_visible():
-            self._column_name.set_visible(True)
-        elif self._column_title.get_visible():
-            self._column_title.set_visible(False)
-        else:
-            self._column_name.set_visible(False)
-            self._column_title.set_visible(True)
-
-    # @property
-    # def ui_selection(self) -> UiSelectionOutlineId:
-    #     """Return visual element of outline display."""
-    #     return self._ui_selectionC
-
-    @property
-    def ui_view(self) -> UiDisplayOutlineId:
-        """Return visual element of outline display."""
-        return self._ui_view
+# class SetupUiDisplayOutlineId:
+#     """Set up columns and, optionally, actions, search, and summary."""
+#
+#     def __init__(self, p_ui_view: UiDisplayOutlineId,
+#                  p_action_group: UiActionsOutlineId = None,
+#                  p_ui_search: UiSearchOutlineId = None,
+#                  p_ui_model_summary: BUI.ModelTextStyled = None) -> None:
+#         """Initialize columns in outline and given additional elements.
+#
+#         :param p_ui_view: visual element of outline.
+#         :param p_action_group: container for outline actions (optional).
+#         :param p_ui_search: visual element for search (optional).
+#         :param p_ui_model_summary: model for summary visual element
+#             (optional).
+#         """
+#         self._ui_view = p_ui_view
+#         _ = InitColumnsOutlineId(p_ui_view)
+#         # self._init_columns()
+#         if p_action_group is not None:
+#             self._init_actions(p_action_group)
+#         if p_ui_search is not None:
+#             raise NotImplementedError
+#         if p_ui_model_summary is not None:
+#             raise NotImplementedError
+#
+#     def _init_actions(self, p_action_group: Gio.SimpleActionGroup
+#                       ) -> None:
+#         """Add display actions to the given group.
+#
+#         :param p_action_group: group of outline's visual element actions.
+#         """
+#         handlers = {'collapse-outline': self.on_change_depth,
+#                     'expand-outline': self.on_change_depth,
+#                     'go-first': self.on_go_first_item,
+#                     'go-last': self.on_go_last_item,
+#                     'switch-columns': self.on_switch_columns,
+#                     }
+#         for name, handler in handlers.items():
+#             UI.new_action_active(
+#                 p_group=p_action_group, p_name=name, p_handler=handler)
+#         return
+#
+#     def _init_columns(self) -> None:
+#         """Initialize columns in visual element of outline."""
+#         self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
+#         self._ui_view.append_column(self._column_name)
+#         self._column_title = UI.new_column_stock(
+#             'Title', self._markup_cell_title)
+#         self._ui_view.append_column(self._column_title)
+#
+#     def _init_search(self, p_ui_search: UiSearchOutlineId) -> None:
+#         """Initialize components in visual element of search.
+#
+#         :param p_ui_search: visual element for search.
+#         """
+#         pass
+#         # self._scope_search = VID.FieldsId.NAME
+#         # self._search_bar = p_get_ui_element('ui_search')
+#         #
+#         # button_in_name = p_get_ui_element('ui_search_in_name')
+#         # _ = button_in_name.connect(
+#         #     'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
+#         # button_in_summary = p_get_ui_element('ui_search_in_summary')
+#         # _ = button_in_summary.connect(
+#         #     'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
+#         # button_in_title = p_get_ui_element('ui_search_in_title')
+#         # _ = button_in_title.connect(
+#         #     'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
+#         #
+#         # # self._ui_view_outline.set_enable_search(True)
+#         # C_FIRST = 0
+#         # self._ui_view_outline.set_search_column(C_FIRST)
+#         # entry_search = p_get_ui_element('ui_search_entry')
+#         # self._ui_view_outline.set_search_entry(entry_search)
+#         # EXTRA = None
+#         # self._ui_view_outline.set_search_equal_func(
+#         #     self._match_spec_ne, EXTRA)
+#
+#     def _markup_cell_name(
+#             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+#             p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+#         """Set markup for name cell in the outline's visual element.
+#
+#         :param _column: column of cell to format (unused).
+#         :param p_render: renders formatted cell contents.
+#         :param p_ui_model: contains cell content.
+#         :param p_line: line of cell to format.
+#         :param _data: user data (unused).
+#         """
+#         item_id = BUI.ModelOutline.get_item_direct(p_ui_model, p_line)
+#         name = 'Missing'
+#         if item_id is not None:
+#             name = item_id.name.text
+#         p_render.set_property('markup', name)
+#
+#     def _markup_cell_title(
+#             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+#             p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+#         """Set markup for title cell in the outline visual element.
+#
+#         :param _column: column of cell to format (unused).
+#         :param p_render: renders formatted cell contents.
+#         :param p_ui_model: contains cell content.
+#         :param p_line: line of cell to format.
+#         :param _data: user data (unused).
+#         """
+#         item_id = BUI.ModelOutline.get_item_direct(p_ui_model, p_line)
+#         title = 'Missing'
+#         if item_id is not None:
+#             title = item_id.title.text
+#         p_render.set_property('markup', title)
+#
+#     def on_change_depth(
+#             self, p_action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+#         """Expand or collapse outline.
+#
+#         :param p_action: user activated this action.
+#         :param _target: target of action (unused).
+#         """
+#         name = p_action.get_name()
+#         if 'collapse-outline' == name:
+#             self._ui_view.collapse_all()
+#         elif 'expand-outline' == name:
+#             self._ui_view.expand_all()
+#         else:
+#             self._ui_view.expand_all()
+#
+#     def on_go_first_item(
+#             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+#         """Make the first item in the outline the selected item.
+#
+#         :param _action: user activated this action (unused).
+#         :param _target: parameter GTK provides with activation (unused).
+#         """
+#         # model, _ = self._ui_selection.get_selected()
+#         model = self._ui_view.get_model()
+#         line_first = model.get_iter_first()
+#         if line_first is not None:
+#             self._ui_view.get_selection().select_iter(line_first)
+#
+#     def on_go_last_item(
+#             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+#         """Make the last item in the outline the selected item.
+#
+#         :param _action: user activated this action (unused).
+#         :param _target: parameter GTK provides with activation (unused).
+#         """
+#
+#         model = self._ui_view.get_model()
+#         line_last = None
+#         n_children = model.iter_n_children(line_last)
+#         while 0 < n_children:
+#             line_last = model.iter_nth_child(line_last, n_children - 1)
+#             n_children = model.iter_n_children(line_last)
+#         if line_last is not None:
+#             path = model.get_path(line_last)
+#             self._ui_view.expand_to_path(path)
+#             self._ui_view.get_selection().select_iter(line_last)
+#             NO_COLUMN = None
+#             NO_ALIGN = False
+#             IGNORED = 0
+#             self._ui_view.scroll_to_cell(
+#                 path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
+#
+#     def on_switch_columns(
+#             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
+#         """Switch between showing name column, title column, and both.
+#
+#         :param _action: user activated this action (unused).
+#         :param _target: parameter GTK provides with activation (unused).
+#         """
+#         if not self._column_name.get_visible():
+#             self._column_name.set_visible(True)
+#         elif self._column_title.get_visible():
+#             self._column_title.set_visible(False)
+#         else:
+#             self._column_name.set_visible(False)
+#             self._column_title.set_visible(True)
+#
+#     # @property
+#     # def ui_selection(self) -> UiSelectionOutlineId:
+#     #     """Return visual element of outline display."""
+#     #     return self._ui_selectionC
+#
+#     @property
+#     def ui_view(self) -> UiDisplayOutlineId:
+#         """Return visual element of outline display."""
+#         return self._ui_view
