@@ -50,12 +50,12 @@ logger = logging.getLogger('Main.VSELECT_ITEM')
 UiActionsOutlineId = typing.Union[Gio.SimpleActionGroup]
 UiDisplayOutlineId = typing.Union[Gtk.TreeView]
 UiSearchOutlineId = typing.Union[Gtk.SearchBar]
+ModelSummary = BUI.ModelTextStyled
 
 
 # TODO: Prune types when updating ChooserItem.
 FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
 ModelOutline = BUI.ModelOutlineMulti[MIDCORE.IdCore]
-ModelSummary = BUI.ModelTextStyled
 UiButtonFind = typing.Union[Gtk.ToggleButton]
 UiButtonSearchScope = typing.Union[Gtk.ToggleButton]
 UiChooserItem = typing.Union[Gtk.Paned]
@@ -603,6 +603,52 @@ class InitSearchOutlineId:
             self._scope_search |= p_field
         else:
             self._scope_search &= ~p_field
+
+
+class InitSummaryOutlineId:
+    """Summary of item selected in outline of identity items.
+
+    # .. attribute:: NO_SUMMARY
+    #
+    #    Summary text displayed when no item is selected.
+    """
+
+    NO_SUMMARY = 'Please select an item in the outline.'
+
+    def __init__(self, p_ui_view_outline: UiDisplayOutlineId,
+                 p_model_summary: ModelSummary) -> None:
+        """Initialize updating of item summary when selection changes.
+
+        :param p_ui_view_outline: visual element of outline
+        :param p_model_summary: storage for summary of selected item.
+        """
+        self._model_summary = p_model_summary
+        selection = p_ui_view_outline.get_selection()
+        selection.connect('changed', self.on_changed_selection)
+        # self._summary = ModelSummary(p_text=ChooserItem.NO_SUMMARY)
+        # factory_display = FactoryDisplaySummary(self._summary)
+        # display_summary = factory_display()
+        # site_summary = p_get_ui_element('ui_site_summary')
+        # site_summary.add(display_summary)
+        # display_summary.show()
+        # display_summary.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+
+    def on_changed_selection(self, p_ui_selection: Gtk.TreeSelection) -> None:
+        """Changes summary text to match selected item.
+
+        :param p_ui_selection: identifies item selected by user.
+        """
+        model, line = p_ui_selection.get_selected()
+        if line is None:
+            self._model_summary.text = self.NO_SUMMARY
+            return
+
+        item = ModelOutline.get_item_direct(model, line)
+        if item is None:
+            self._model_summary.text = self.NO_SUMMARY
+            return
+
+        self._model_summary.text = item.summary.text
 
 
 # class SetupUiDisplayOutlineId:

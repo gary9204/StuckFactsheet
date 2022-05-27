@@ -616,6 +616,126 @@ class TestInitSearchOutlineId:
         assert EXPECT == target._scope_search
 
 
+class TestInitSummaryOutlineId:
+    """Unit tests for :class:`.InitSummaryOutlineId`."""
+
+    def test_no_summary(self):
+        """Confirm class attribute definition."""
+        # Setup
+        target = VOUTLINE_ID.InitSummaryOutlineId
+        EXPECT = 'Please select an item in the outline.'
+        # Test
+        assert isinstance(target.NO_SUMMARY, str)
+        assert EXPECT == target.NO_SUMMARY
+
+    def test_init(self, new_ui_outline):
+        """Confirm initialization of updateing of item summary.
+
+        :param new_ui_outline: fixture :func:`.new_ui_outline`.
+        """
+        # Setup
+        _outline, ui_view_outline = new_ui_outline
+        model_summary = VOUTLINE_ID.ModelSummary()
+        # Test
+        target = VOUTLINE_ID.InitSummaryOutlineId(
+            ui_view_outline, model_summary)
+        assert target._model_summary == model_summary
+
+    def test_init_signal_change(self, new_ui_outline):
+        """Confirm initialization of topic selection change signal.
+
+        :param new_ui_outline: fixture :func:`.new_ui_outline`.
+        """
+        # Setup
+        # Modified test of single signal from indirect source.
+        _outline, ui_view_outline = new_ui_outline
+        model_summary = VOUTLINE_ID.ModelSummary()
+        _target = VOUTLINE_ID.InitSummaryOutlineId(
+            ui_view_outline, model_summary)
+        NAME_SIGNAL = 'changed'
+        ORIGIN = Gtk.TreeSelection
+        N_DEFAULT = 0
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        # Test
+        attribute = ui_view_outline.get_selection()
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                attribute, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(attribute, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
+
+    def test_on_changed_selection(self, new_ui_outline):
+        """| Confirm summary shown matches chosen item.
+        | Case: a item at line chosen.
+
+        :param new_ui_outline: fixture :func:`.new_ui_outline`.
+        """
+        # Setup
+        outline, ui_view_outline = new_ui_outline
+        model_summary = VOUTLINE_ID.ModelSummary()
+        target = VOUTLINE_ID.InitSummaryOutlineId(
+            ui_view_outline, model_summary)
+        target._model_summary.text = 'Oops'
+        LINE_STR = '1:0'
+        line = outline.ui_model.get_iter_from_string(LINE_STR)
+        summary_expect = 'summary_10x'
+        ui_view_outline.expand_all()
+        selection = ui_view_outline.get_selection()
+        selection.select_iter(line)
+        # Test
+        target.on_changed_selection(selection)
+        assert summary_expect == target._model_summary.text
+
+    def test_on_changed_selection_absent(self, new_ui_outline):
+        """| Confirm summary shown matches chosen item.
+        | Case: no item at line chosen.
+
+        :param new_ui_outline: fixture :func:`.new_ui_outline`.
+        """
+        # Setup
+        outline, ui_view_outline = new_ui_outline
+        model_summary = VOUTLINE_ID.ModelSummary()
+        target = VOUTLINE_ID.InitSummaryOutlineId(
+            ui_view_outline, model_summary)
+        target._model_summary.text = 'Oops'
+        outline.clear()
+        outline.ui_model.append(None, [None])
+        line = outline.ui_model.get_iter_first()
+        ui_view_outline.expand_all()
+        selection = ui_view_outline.get_selection()
+        selection.select_iter(line)
+        # Test
+        target.on_changed_selection(selection)
+        assert target.NO_SUMMARY == target._model_summary.text
+
+    def test_on_changed_selection_none(self, new_ui_outline):
+        """| Confirm summary shown matches chosen item.
+        | Case: no line is chosen.
+
+        :param new_ui_outline: fixture :func:`.new_ui_outline`.
+        """
+        # Setup
+        _outline, ui_view_outline = new_ui_outline
+        model_summary = VOUTLINE_ID.ModelSummary()
+        target = VOUTLINE_ID.InitSummaryOutlineId(
+            ui_view_outline, model_summary)
+        target._model_summary.text = 'Oops'
+        ui_view_outline.expand_all()
+        selection = ui_view_outline.get_selection()
+        selection.unselect_all()
+        # Test
+        target.on_changed_selection(selection)
+        assert target.NO_SUMMARY == target._model_summary.text
+
+
 class TestChooserItem:
     """Unit tests for :class:`.ChooserItem`."""
 
@@ -762,8 +882,8 @@ class TestChooserItem:
         'NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT', [
             ('changed', '_ui_selection', Gtk.TreeSelection, 0),
             ])
-    def test_init_signals(
-            self, new_ui_outline, NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT):
+    def test_init_signals(self, new_ui_outline, NAME_SIGNAL,
+                          NAME_ATTRIBUTE, ORIGIN, N_DEFAULT):
         """Confirm initialization of signal connections.
 
         :param new_ui_outline: fixture :func:`.new_ui_outline`.
