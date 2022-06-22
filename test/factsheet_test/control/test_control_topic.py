@@ -168,11 +168,21 @@ class TestModule:
     """Unit tests for module-level components of :mod:`.control_topic`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        # (CTOPIC.IdTopic.__qualname__, 'NewType.<locals>.new_type'),
-        # (CTOPIC.IdTopic.__dict__['__supertype__'], int),
-        # (CTOPIC.ViewNameTopic, BUI.ViewTextMarkup),
-        # (CTOPIC.ViewSummaryTopic, BUI.ViewTextTagged),
-        # (CTOPIC.ViewTitleTopic, BUI.ViewTextMarkup),
+        (CTOPIC.Name, MTOPIC.Name),
+        (CTOPIC.DisplayName, MTOPIC.DisplayName),
+        (CTOPIC.FactoryDisplayName, MTOPIC.FactoryDisplayName),
+        (CTOPIC.FactoryEditorName, MTOPIC.FactoryEditorName),
+        (CTOPIC.EditorName, MTOPIC.EditorName),
+        (CTOPIC.Summary, MTOPIC.Summary),
+        (CTOPIC.DisplaySummary, MTOPIC.DisplaySummary),
+        (CTOPIC.FactoryDisplaySummary, MTOPIC.FactoryDisplaySummary),
+        (CTOPIC.FactoryEditorSummary, MTOPIC.FactoryEditorSummary),
+        (CTOPIC.EditorSummary, MTOPIC.EditorSummary),
+        (CTOPIC.Title, MTOPIC.Title),
+        (CTOPIC.DisplayTitle, MTOPIC.DisplayTitle),
+        (CTOPIC.FactoryDisplayTitle, MTOPIC.FactoryDisplayTitle),
+        (CTOPIC.FactoryEditorTitle, MTOPIC.FactoryEditorTitle),
+        (CTOPIC.EditorTitle, MTOPIC.EditorTitle),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type alias definitions.

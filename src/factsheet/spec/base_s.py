@@ -2,12 +2,14 @@
 Defines base classes for topic specification.
 """
 # import abc
-import gi
+import gi   # type: ignore[import]
 import logging
 import typing
 
 import factsheet.bridge_ui as BUI
-import factsheet.model.topic as MTOPIC
+import factsheet.control.control_sheet as CSHEET
+import factsheet.control.control_topic as CTOPIC
+import factsheet.view.outline_id as VOUTLINE_ID
 import factsheet.view.ui as UI
 import factsheet.view.view_markup as VMARKUP
 
@@ -16,6 +18,7 @@ from gi.repository import Gtk   # noqa: E402
 
 logger = logging.getLogger('Main.SBASE')
 
+ChooserDirection = typing.Union[Gtk.ComboBoxText]
 NameSpec = BUI.ModelTextMarkup
 PageAssist = typing.Union[Gtk.Box]
 SummarySpec = BUI.ModelTextStyled
@@ -32,22 +35,30 @@ class Base:
     outline of topics.
     """
 
-    def __call__(self) -> None:
+    DIRECTION: typing.MutableMapping[str, str] = dict(
+        id_after='after',
+        id_before='before',
+        id_child='as child of',
+        )
+
+    def __call__(self, p_control_sheet: CSHEET.ControlSheet) -> None:
         """Orchestrate creation and placement of new topic.
 
-        The user specializes the specification to create the topic.  The
-        user may confirm or cancel the topic.
+        The user completes fields in the specification to create a topic.
+        The user may confirm or cancel the topic.
+
+        :param p_control_sheet: sheet in which to place new topic.
         """
         assist = self.new_assistant()
-        self.add_pages(p_assistant=assist)
+        self.add_pages(assist, p_control_sheet)
         self.run_assistant(p_assistant=assist)
         # construct topic (or exit)
         # place topic (or exit)
         # Issue #245: patch pending completion of assistant
         logger.info('New Topic')
-        logger.info('Name:    {}'.format(self._name_topic.text))
-        logger.info('Summary: {}'.format(self._summary_topic.text))
-        logger.info('Title:   {}'.format(self._title_topic.text))
+        logger.info('Name:    {}'.format(self._field_name.text))
+        logger.info('Summary: {}'.format(self._field_summary.text))
+        logger.info('Title:   {}'.format(self._field_title.text))
         response = 'None'
         if self._response is not None:
             response = self._response.value_name
@@ -63,48 +74,67 @@ class Base:
         self._name_spec = NameSpec(p_text=p_name)
         self._summary_spec = SummarySpec(p_text=p_summary)
         self._title_spec = TitleSpec(p_text=p_title)
+        self._response: typing.Optional[Gtk.ResponseType] = None
 
-        self._init_name_topic()
-        self._init_summary_topic()
-        self._init_title_topic()
-        self._response = None
+        self._init_fields_identity()
+        self._init_fields_place()
+
+    def _init_fields_identity(self):
+        """Initialize topic name, summary, and title fields."""
+        self._field_name = CTOPIC.Name(p_text='')
+        self._field_summary = CTOPIC.Summary(p_text='')
+        self._field_title = CTOPIC.Title(p_text='')
+
+    def _init_fields_place(self):
+        """Initialize anchor and direction of place for new topic."""
+        self._field_anchor: BUI.LineOutline = None
+        self._field_direction: str = None
+
+    def _reset_fields_identity(self):
+        """Reset topic name, summary, and title fields to initial values."""
+        self._field_name.text = ''
+        self._field_summary.text = ''
+        self._field_title.text = ''
+
+    def _reset_fields_place(self):
+        """Reset anchor and direction of place to initial values."""
+        self._field_anchor = None
+        self._field_direction = None
 
     def _init_name_topic(self) -> None:
         """ Initialize attributes for a topic name and view factories."""
-        self._name_topic = MTOPIC.Name(p_text='')
+        self._field_name = CTOPIC.Name(p_text='')
         self._new_display_name_topic = (
-            MTOPIC.FactoryDisplayName(p_model=self._name_topic))
+            CTOPIC.FactoryDisplayName(p_model=self._field_name))
         self._new_editor_name_topic = (
-            MTOPIC.FactoryEditorName(p_model=self._name_topic))
-
-    def _init_place_topic(self) -> None:
-        """ Initialize placement for topic relative to selected topic."""
-        pass
+            CTOPIC.FactoryEditorName(p_model=self._field_name))
 
     def _init_summary_topic(self) -> None:
         """ Initialize attributes for a topic summary and view factories."""
-        self._summary_topic = MTOPIC.Summary(p_text='')
+        self._field_summary = CTOPIC.Summary(p_text='')
         self._new_display_summary_topic = (
-            MTOPIC.FactoryDisplaySummary(p_model=self._summary_topic))
+            CTOPIC.FactoryDisplaySummary(p_model=self._field_summary))
         self._new_editor_summary_topic = (
-            MTOPIC.FactoryEditorSummary(p_model=self._summary_topic))
+            CTOPIC.FactoryEditorSummary(p_model=self._field_summary))
 
     def _init_title_topic(self) -> None:
         """ Initialize attributes for a topic title and view factories."""
-        self._title_topic = MTOPIC.Title(p_text='')
+        self._field_title = CTOPIC.Title(p_text='')
         self._new_display_title_topic = (
-            MTOPIC.FactoryDisplayTitle(p_model=self._title_topic))
+            CTOPIC.FactoryDisplayTitle(p_model=self._field_title))
         self._new_editor_title_topic = (
-            MTOPIC.FactoryEditorTitle(p_model=self._title_topic))
+            CTOPIC.FactoryEditorTitle(p_model=self._field_title))
 
-    def add_pages(self, p_assistant: Gtk.Assistant) -> None:
+    def add_pages(self, p_assistant: Gtk.Assistant,
+                  p_control_sheet: CSHEET.ControlSheet) -> None:
         """Add pages to assistant.
 
         :param p_assistant: assistant to populate.
+        :param p_control_sheet: sheet in which to place new topic.
         """
         self.append_page_intro(p_assistant)
         self.append_page_identify(p_assistant)
-        self.append_page_place(p_assistant)
+        self.append_page_place(p_assistant, p_control_sheet)
         self.append_page_confirm(p_assistant)
 
     def append_page_confirm(self, p_assistant: Gtk.Assistant) -> None:
@@ -128,15 +158,11 @@ class Base:
 
         :param p_assistant: assistant to append to.
         """
-        identify_display_name = self._new_display_name_topic()
-        identify_editor_name = self._new_editor_name_topic()
-        identify_view_name = VMARKUP.ViewMarkup(
-            identify_display_name, identify_editor_name, 'Name')
-        identify_editor_summary = self._new_editor_summary_topic()
-        identify_display_title = self._new_display_title_topic()
-        identify_editor_title = self._new_editor_title_topic()
-        identify_view_title = VMARKUP.ViewMarkup(
-            identify_display_title, identify_editor_title, 'Title')
+        identify_view_name = self._new_markup_name(self._field_name)
+        new_editor_summary = CTOPIC.FactoryEditorSummary(
+            p_model=self._field_summary)
+        identify_editor_summary = new_editor_summary()
+        identify_view_title = self._new_markup_title(self._field_title)
         page_identify = self.new_page_identify(
             identify_view_name, identify_editor_summary, identify_view_title)
         _i_new = p_assistant.append_page(page_identify)
@@ -155,12 +181,14 @@ class Base:
         p_assistant.set_page_type(page_intro, Gtk.AssistantPageType.INTRO)
         p_assistant.set_page_complete(page_intro, True)
 
-    def append_page_place(self, p_assistant: Gtk.Assistant) -> None:
+    def append_page_place(self, p_assistant: Gtk.Assistant,
+                          p_control_sheet: CSHEET.ControlSheet) -> None:
         """Append place page to assistant.
 
         :param p_assistant: assistant to append to.
+        :param p_control_sheet: sheet in which to place new topic.
         """
-        page_place = self.new_page_place()
+        page_place = self.new_page_place(p_control_sheet)
         _i_new = p_assistant.append_page(page_place)
         p_assistant.set_page_title(page_place, 'Place')
         p_assistant.set_page_type(page_place, Gtk.AssistantPageType.CONTENT)
@@ -181,9 +209,41 @@ class Base:
         _ = assist.connect('prepare', self.on_prepare)
         return assist
 
-    def new_page_confirm(self, p_display_name: MTOPIC.DisplayName,
-                         p_display_summary: MTOPIC.DisplaySummary,
-                         p_display_title: MTOPIC.DisplayTitle) -> PageAssist:
+    def _new_chooser_direction(self) -> ChooserDirection:
+        """Return visual element to choose placement direction."""
+        chooser = ChooserDirection()
+        for key, text in Base.DIRECTION.items():
+            chooser.append(key, text)
+        _ = chooser.set_active_id('id_after')
+        return chooser
+
+    def _new_markup_name(self, p_name: CTOPIC.Name) -> VMARKUP.ViewMarkup:
+        """Return visual element to markup a topic name.
+
+        :param p_name: topic name model.
+        """
+        factory_display = CTOPIC.FactoryDisplayName(p_model=p_name)
+        factory_editor = CTOPIC.FactoryEditorName(p_model=p_name)
+        display_name = factory_display()
+        editor_name = factory_editor()
+        markup_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
+        return markup_name
+
+    def _new_markup_title(self, p_title: CTOPIC.Title) -> VMARKUP.ViewMarkup:
+        """Return visual element to markup a topic title.
+
+        :param p_title: topic title model.
+        """
+        factory_display = CTOPIC.FactoryDisplayTitle(p_model=p_title)
+        factory_editor = CTOPIC.FactoryEditorTitle(p_model=p_title)
+        display_title = factory_display()
+        editor_title = factory_editor()
+        markup_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
+        return markup_title
+
+    def new_page_confirm(self, p_display_name: CTOPIC.DisplayName,
+                         p_display_summary: CTOPIC.DisplaySummary,
+                         p_display_title: CTOPIC.DisplayTitle) -> PageAssist:
         """Return a confirmation page.
 
         :param p_display_name: display for topic name.
@@ -205,7 +265,7 @@ class Base:
         return new_page
 
     def new_page_identify(self, p_view_name: VMARKUP.ViewMarkup,
-                          p_editor_summary: MTOPIC.EditorSummary,
+                          p_editor_summary: CTOPIC.EditorSummary,
                           p_view_title: VMARKUP.ViewMarkup) -> PageAssist:
         """Return an identification page.
 
@@ -234,20 +294,31 @@ class Base:
         new_page = get_ui_object('ui_page_intro')
         return new_page
 
-    def new_page_place(self) -> PageAssist:
-        """Return a topic place page."""
+    def new_page_place(
+            self, p_control_sheet: CSHEET.ControlSheet) -> PageAssist:
+        """Return a topic place page.
+
+        :param p_direction: visual element to choose placement direction.
+        :param p_control_sheet: sheet in which to place new topic.
+        """
+        ui_view_outline = p_control_sheet.new_view_topics()
         get_ui_object = UI.GetUiElementByStr(p_string_ui=UI_PAGE_PLACE)
         new_page = get_ui_object('ui_page_place')
-        EXPAND_OKAY = True
-        FILL_OKAY = True
-        N_PADDING = 6
-        site_place = get_ui_object('ui_place_site_place')
-        site_place.pack_start(
-            Gtk.Label(label=' Picker '), EXPAND_OKAY, FILL_OKAY, N_PADDING)
-        site_topics = get_ui_object('ui_site_display_topics')
-        site_topics.add(Gtk.Label(label='Topics'))
-        site_summary = get_ui_object('ui_site_summary')
-        site_summary.add(Gtk.Label(label='Summary'))
+        site_direction = get_ui_object('ui_place_site_direction')
+        site_direction.add(p_direction)
+        selector_anchor = VOUTLINE_ID.SelectorItem(ui_view_outline)
+        site_oultine = get_ui_object('ui_place_site_outline')
+        site_oultine.add(selector_anchor.ui_selector)
+        # EXPAND_OKAY = True
+        # FILL_OKAY = True
+        # N_PADDING = 6
+        # site_place = get_ui_object('ui_place_site_place')
+        # site_place.pack_start(
+        #     Gtk.Label(label=' Picker '), EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        # site_topics = get_ui_object('ui_site_display_topics')
+        # site_topics.add(Gtk.Label(label='Topics'))
+        # site_summary = get_ui_object('ui_site_summary')
+        # site_summary.add(Gtk.Label(label='Summary'))
         return new_page
 
     def on_apply(self, p_assistant: Gtk.Assistant) -> None:
@@ -257,6 +328,13 @@ class Base:
         """
         del p_assistant  # Unused in base method
         self._response = Gtk.ResponseType.APPLY
+
+    def on_change_direction(self, p_chooser: ChooserDirection) -> None:
+        """Update placement direction when user makes a choice.
+
+        :param p_chooser: visual element for choosing placement direction.
+        """
+        self._field_direction = p_chooser.get_active_id()
 
     def on_cancel(self, p_assistant: Gtk.Assistant) -> None:
         """Hide assistant and record user cancelled new topic.
@@ -1041,16 +1119,369 @@ UI_PAGE_INTRO = (
 )
 
 
+# UI_PAGE_PLACE = """
+# <?xml version="1.0" encoding="UTF-8"?>
+# <!-- Generated with glade 3.38.2 -->
+# <interface>
+#   <requires lib="gtk+" version="3.20"/>
+#   <object class="GtkImage" id="image_find">
+#     <property name="visible">True</property>
+#     <property name="can-focus">False</property>
+#     <property name="icon-name">edit-find-symbolic</property>
+#   </object>
+#   <object class="GtkBox" id="ui_page_place">
+#     <property name="width-request">500</property>
+#     <property name="visible">True</property>
+#     <property name="can-focus">False</property>
+#     <property name="margin-start">6</property>
+#     <property name="margin-end">6</property>
+#     <property name="margin-top">6</property>
+#     <property name="margin-bottom">6</property>
+#     <property name="orientation">vertical</property>
+#     <property name="spacing">6</property>
+#     <child>
+#       <object class="GtkExpander">
+#         <property name="visible">True</property>
+#         <property name="can-focus">True</property>
+#         <property name="resize-toplevel">True</property>
+#         <child>
+#           <object class="GtkBox">
+#             <property name="visible">True</property>
+#             <property name="can-focus">False</property>
+#             <property name="margin-top">6</property>
+#             <property name="margin-bottom">6</property>
+#             <property name="orientation">vertical</property>
+#             <property name="spacing">6</property>
+#             <child>
+#               <object class="GtkLabel">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="halign">start</property>
+#                 <property name="valign">start</property>
+#                 <property name="label" translatable="yes">An existing topic and order determine where in the topic outline the application will place the new topic. </property>
+#                 <property name="use-markup">True</property>
+#                 <property name="justify">fill</property>
+#                 <property name="wrap">True</property>
+#               </object>
+#               <packing>
+#                 <property name="expand">False</property>
+#                 <property name="fill">True</property>
+#                 <property name="position">0</property>
+#               </packing>
+#             </child>
+#             <child>
+#               <object class="GtkLabel">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="halign">start</property>
+#                 <property name="valign">start</property>
+#                 <property name="label" translatable="yes">The &lt;i&gt;Topics &lt;/i&gt;table below lists the names and titles of existing topics.  Click on a row to select a topic and show its summary.</property>
+#                 <property name="use-markup">True</property>
+#                 <property name="justify">fill</property>
+#                 <property name="wrap">True</property>
+#               </object>
+#               <packing>
+#                 <property name="expand">False</property>
+#                 <property name="fill">True</property>
+#                 <property name="position">1</property>
+#               </packing>
+#             </child>
+#             <child>
+#               <object class="GtkLabel">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="halign">start</property>
+#                 <property name="valign">start</property>
+#                 <property name="label" translatable="yes">One of the &lt;b&gt;After&lt;/b&gt;, &lt;b&gt;Before&lt;/b&gt;, or &lt;b&gt;Child&lt;/b&gt; buttons determines the order of the new topic relative to the selected topic. Click &lt;b&gt;After &lt;/b&gt;(&lt;b&gt;Before&lt;/b&gt;) to place the new topic after (before) the selected topic. Click &lt;b&gt;Child &lt;/b&gt;to make the new topic a child of the selected topic. In this case, the new topic will appear after any children of the selected topic.</property>
+#                 <property name="use-markup">True</property>
+#                 <property name="justify">fill</property>
+#                 <property name="wrap">True</property>
+#               </object>
+#               <packing>
+#                 <property name="expand">False</property>
+#                 <property name="fill">True</property>
+#                 <property name="position">2</property>
+#               </packing>
+#             </child>
+#             <child>
+#               <object class="GtkLabel">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="halign">start</property>
+#                 <property name="valign">start</property>
+#                 <property name="label" translatable="yes">Click the &lt;b&gt;Find &lt;/b&gt;button below to search for text in topic name,  title, or summary fields. Select one or more fields to search by checking corresponding box(es) below the search bar.</property>
+#                 <property name="use-markup">True</property>
+#                 <property name="justify">fill</property>
+#                 <property name="wrap">True</property>
+#               </object>
+#               <packing>
+#                 <property name="expand">False</property>
+#                 <property name="fill">True</property>
+#                 <property name="position">3</property>
+#               </packing>
+#             </child>
+#           </object>
+#         </child>
+#         <child type="label">
+#           <object class="GtkLabel">
+#             <property name="visible">True</property>
+#             <property name="can-focus">False</property>
+#             <property name="label" translatable="yes">&lt;b&gt;Instructions&lt;/b&gt;</property>
+#             <property name="use-markup">True</property>
+#           </object>
+#         </child>
+#       </object>
+#       <packing>
+#         <property name="expand">False</property>
+#         <property name="fill">True</property>
+#         <property name="position">0</property>
+#       </packing>
+#     </child>
+#     <child>
+#       <object class="GtkBox" id="ui_place_site_place">
+#         <property name="visible">True</property>
+#         <property name="can-focus">False</property>
+#         <child>
+#           <object class="GtkLabel">
+#             <property name="visible">True</property>
+#             <property name="can-focus">False</property>
+#             <property name="label" translatable="yes">Place</property>
+#           </object>
+#           <packing>
+#             <property name="expand">False</property>
+#             <property name="fill">True</property>
+#             <property name="position">0</property>
+#           </packing>
+#         </child>
+#         <child>
+#           <object class="GtkToggleButton" id="ui_button_find">
+#             <property name="label" translatable="yes">Find</property>
+#             <property name="visible">True</property>
+#             <property name="can-focus">True</property>
+#             <property name="receives-default">True</property>
+#             <property name="image">image_find</property>
+#             <property name="always-show-image">True</property>
+#           </object>
+#           <packing>
+#             <property name="expand">False</property>
+#             <property name="fill">True</property>
+#             <property name="pack-type">end</property>
+#             <property name="position">1</property>
+#           </packing>
+#         </child>
+#         <child>
+#           <placeholder/>
+#         </child>
+#         <child>
+#           <object class="GtkLabel">
+#             <property name="visible">True</property>
+#             <property name="can-focus">False</property>
+#             <property name="label" translatable="yes">topic selected below</property>
+#           </object>
+#           <packing>
+#             <property name="expand">False</property>
+#             <property name="fill">True</property>
+#             <property name="position">3</property>
+#           </packing>
+#         </child>
+#       </object>
+#       <packing>
+#         <property name="expand">True</property>
+#         <property name="fill">True</property>
+#         <property name="position">1</property>
+#       </packing>
+#     </child>
+#     <child>
+#       <object class="GtkPaned">
+#         <property name="visible">True</property>
+#         <property name="can-focus">True</property>
+#         <property name="orientation">vertical</property>
+#         <property name="wide-handle">True</property>
+#         <child>
+#           <object class="GtkBox">
+#             <property name="visible">True</property>
+#             <property name="can-focus">False</property>
+#             <property name="orientation">vertical</property>
+#             <child>
+#               <object class="GtkFrame">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="label-xalign">0.10000000149011612</property>
+#                 <property name="shadow-type">in</property>
+#                 <child>
+#                   <object class="GtkScrolledWindow" id="ui_site_display_topics">
+#                     <property name="visible">True</property>
+#                     <property name="can-focus">True</property>
+#                     <property name="margin-bottom">6</property>
+#                     <property name="shadow-type">in</property>
+#                     <property name="min-content-height">120</property>
+#                     <child>
+#                       <placeholder/>
+#                     </child>
+#                   </object>
+#                 </child>
+#                 <child type="label">
+#                   <object class="GtkLabel">
+#                     <property name="visible">True</property>
+#                     <property name="can-focus">False</property>
+#                     <property name="label" translatable="yes">&lt;i&gt;Topics&lt;/i&gt;</property>
+#                     <property name="use-markup">True</property>
+#                   </object>
+#                 </child>
+#               </object>
+#               <packing>
+#                 <property name="expand">True</property>
+#                 <property name="fill">True</property>
+#                 <property name="position">0</property>
+#               </packing>
+#             </child>
+#             <child>
+#               <object class="GtkSearchBar" id="ui_search">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="hexpand">True</property>
+#                 <property name="search-mode-enabled">True</property>
+#                 <property name="show-close-button">True</property>
+#                 <child>
+#                   <object class="GtkBox">
+#                     <property name="visible">True</property>
+#                     <property name="can-focus">False</property>
+#                     <property name="hexpand">True</property>
+#                     <property name="orientation">vertical</property>
+#                     <child>
+#                       <object class="GtkSearchEntry" id="ui_search_entry">
+#                         <property name="visible">True</property>
+#                         <property name="can-focus">True</property>
+#                         <property name="valign">start</property>
+#                         <property name="width-chars">40</property>
+#                         <property name="primary-icon-name">edit-find-symbolic</property>
+#                         <property name="primary-icon-activatable">False</property>
+#                         <property name="primary-icon-sensitive">False</property>
+#                       </object>
+#                       <packing>
+#                         <property name="expand">False</property>
+#                         <property name="fill">True</property>
+#                         <property name="position">0</property>
+#                       </packing>
+#                     </child>
+#                     <child>
+#                       <object class="GtkBox">
+#                         <property name="visible">True</property>
+#                         <property name="can-focus">False</property>
+#                         <property name="hexpand">True</property>
+#                         <child>
+#                           <object class="GtkCheckButton" id="ui_search_in_name">
+#                             <property name="label" translatable="yes">In name</property>
+#                             <property name="visible">True</property>
+#                             <property name="can-focus">True</property>
+#                             <property name="receives-default">False</property>
+#                             <property name="active">True</property>
+#                             <property name="draw-indicator">True</property>
+#                           </object>
+#                           <packing>
+#                             <property name="expand">False</property>
+#                             <property name="fill">True</property>
+#                             <property name="position">0</property>
+#                           </packing>
+#                         </child>
+#                         <child>
+#                           <object class="GtkCheckButton" id="ui_search_in_title">
+#                             <property name="label" translatable="yes">In title</property>
+#                             <property name="visible">True</property>
+#                             <property name="can-focus">True</property>
+#                             <property name="receives-default">False</property>
+#                             <property name="draw-indicator">True</property>
+#                           </object>
+#                           <packing>
+#                             <property name="expand">False</property>
+#                             <property name="fill">True</property>
+#                             <property name="position">1</property>
+#                           </packing>
+#                         </child>
+#                         <child>
+#                           <object class="GtkCheckButton" id="ui_search_in_summary">
+#                             <property name="label" translatable="yes">In summary</property>
+#                             <property name="visible">True</property>
+#                             <property name="can-focus">True</property>
+#                             <property name="receives-default">False</property>
+#                             <property name="draw-indicator">True</property>
+#                           </object>
+#                           <packing>
+#                             <property name="expand">False</property>
+#                             <property name="fill">True</property>
+#                             <property name="position">2</property>
+#                           </packing>
+#                         </child>
+#                       </object>
+#                       <packing>
+#                         <property name="expand">False</property>
+#                         <property name="fill">True</property>
+#                         <property name="position">1</property>
+#                       </packing>
+#                     </child>
+#                   </object>
+#                 </child>
+#               </object>
+#               <packing>
+#                 <property name="expand">False</property>
+#                 <property name="fill">True</property>
+#                 <property name="position">1</property>
+#               </packing>
+#             </child>
+#           </object>
+#           <packing>
+#             <property name="resize">True</property>
+#             <property name="shrink">False</property>
+#           </packing>
+#         </child>
+#         <child>
+#           <object class="GtkFrame">
+#             <property name="visible">True</property>
+#             <property name="can-focus">False</property>
+#             <property name="label-xalign">0.10000000149011612</property>
+#             <property name="shadow-type">in</property>
+#             <child>
+#               <object class="GtkScrolledWindow" id="ui_site_summary">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">True</property>
+#                 <property name="margin-bottom">6</property>
+#                 <property name="shadow-type">in</property>
+#                 <property name="min-content-height">60</property>
+#                 <child>
+#                   <placeholder/>
+#                 </child>
+#               </object>
+#             </child>
+#             <child type="label">
+#               <object class="GtkLabel">
+#                 <property name="visible">True</property>
+#                 <property name="can-focus">False</property>
+#                 <property name="label" translatable="yes">&lt;i&gt;Summary&lt;/i&gt;</property>
+#                 <property name="use-markup">True</property>
+#               </object>
+#             </child>
+#           </object>
+#           <packing>
+#             <property name="resize">True</property>
+#             <property name="shrink">False</property>
+#           </packing>
+#         </child>
+#       </object>
+#       <packing>
+#         <property name="expand">True</property>
+#         <property name="fill">True</property>
+#         <property name="position">2</property>
+#       </packing>
+#     </child>
+#   </object>
+# </interface>
+# """
+
 UI_PAGE_PLACE = """
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkImage" id="image_find">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="icon-name">edit-find-symbolic</property>
-  </object>
   <object class="GtkBox" id="ui_page_place">
     <property name="width-request">500</property>
     <property name="visible">True</property>
@@ -1160,14 +1591,14 @@ UI_PAGE_PLACE = """
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="ui_place_site_place">
+      <object class="GtkBox" id="ui_place_direction">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Place</property>
+            <property name="label" translatable="yes">Place new topic </property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -1176,217 +1607,47 @@ UI_PAGE_PLACE = """
           </packing>
         </child>
         <child>
-          <object class="GtkToggleButton" id="ui_button_find">
-            <property name="label" translatable="yes">Find</property>
+          <object class="GtkBox" id="ui_place_site_direction">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="image">image_find</property>
-            <property name="always-show-image">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack-type">end</property>
+            <property name="fill">False</property>
             <property name="position">1</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
         <child>
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">topic selected below</property>
+            <property name="halign">start</property>
+            <property name="label" translatable="yes"> topic selected below</property>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
       <packing>
-        <property name="expand">True</property>
+        <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="position">1</property>
       </packing>
     </child>
     <child>
-      <object class="GtkPaned">
+      <object class="GtkBox" id="ui_place_site_outline">
         <property name="visible">True</property>
-        <property name="can-focus">True</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="wide-handle">True</property>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkFrame">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label-xalign">0.10000000149011612</property>
-                <property name="shadow-type">in</property>
-                <child>
-                  <object class="GtkScrolledWindow" id="ui_site_display_topics">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="shadow-type">in</property>
-                    <property name="min-content-height">120</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                </child>
-                <child type="label">
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">&lt;i&gt;Topics&lt;/i&gt;</property>
-                    <property name="use-markup">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSearchBar" id="ui_search">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="hexpand">True</property>
-                <property name="search-mode-enabled">True</property>
-                <property name="show-close-button">True</property>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="hexpand">True</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkSearchEntry" id="ui_search_entry">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="valign">start</property>
-                        <property name="width-chars">40</property>
-                        <property name="primary-icon-name">edit-find-symbolic</property>
-                        <property name="primary-icon-activatable">False</property>
-                        <property name="primary-icon-sensitive">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="hexpand">True</property>
-                        <child>
-                          <object class="GtkCheckButton" id="ui_search_in_name">
-                            <property name="label" translatable="yes">In name</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="active">True</property>
-                            <property name="draw-indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="ui_search_in_title">
-                            <property name="label" translatable="yes">In title</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="draw-indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="ui_search_in_summary">
-                            <property name="label" translatable="yes">In summary</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="draw-indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="resize">True</property>
-            <property name="shrink">False</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="label-xalign">0.10000000149011612</property>
-            <property name="shadow-type">in</property>
-            <child>
-              <object class="GtkScrolledWindow" id="ui_site_summary">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="margin-bottom">6</property>
-                <property name="shadow-type">in</property>
-                <property name="min-content-height">60</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">&lt;i&gt;Summary&lt;/i&gt;</property>
-                <property name="use-markup">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="resize">True</property>
-            <property name="shrink">False</property>
-          </packing>
+          <placeholder/>
         </child>
       </object>
       <packing>

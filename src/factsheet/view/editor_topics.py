@@ -65,7 +65,7 @@ class EditorTopics:
         path_ui = Path(__file__).with_suffix('.ui')
         get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
         self._ui_view = get_ui_element('ui_editor_topics')
-        PREFIX_ACTIONS_TOPICS = 'outline_topics'
+        PREFIX_ACTIONS_TOPICS = 'outline'
         actions = Gio.SimpleActionGroup()
         self._ui_view.insert_action_group(PREFIX_ACTIONS_TOPICS, actions)
         self.add_actions_to_group(p_action_group=actions)
@@ -88,7 +88,7 @@ class EditorTopics:
             search_mode_enabled=True, show_close_button=True)
         site_search_id = get_ui_element('ui_site_find')
         site_search_id.add(ui_search_id)
-        button_search = get_ui_element('ui_find_topic')
+        button_search = get_ui_element('ui_button_search')
         _binding = button_search.bind_property(
             'active', ui_search_id, 'search-mode-enabled',
             GO.BindingFlags.BIDIRECTIONAL | GO.BindingFlags.SYNC_CREATE)
@@ -148,7 +148,7 @@ class EditorTopics:
         """
         handlers = {'clear-topics': self.on_clear_topics,
                     'delete-topic': self.on_delete_topic,
-                    'new-topic': self.on_new_topic,
+                    'new-item': self.on_new_topic,
                     'show-help': self.on_show_help,
                     }
         for name, handler in handlers.items():
@@ -309,7 +309,7 @@ class EditorTopics:
         select_spec = VSELECT_SPEC.SelectSpec(parent)
         spec = select_spec()
         if spec is not None:
-            spec()
+            spec(self._control_sheet)
         return
 
         raise NotImplementedError

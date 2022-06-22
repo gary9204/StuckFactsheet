@@ -20,7 +20,7 @@ identity information.
 
 .. data:: UiChooserItem
 
-    Type for visual element of :class:`ChooserItem`.
+    Type for visual element of :class:`SelectorItem`.
 
 .. data:: UiViewOutline
 
@@ -47,18 +47,19 @@ from gi.repository import Gtk   # noqa: E402
 logger = logging.getLogger('Main.VSELECT_ITEM')
 
 
+DisplaySummary = BUI.DisplayTextStyled
+FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
+ModelSummary = BUI.ModelTextStyled
 UiActionsOutlineId = typing.Union[Gio.SimpleActionGroup]
 UiDisplayOutlineId = typing.Union[Gtk.TreeView]
 UiSearchOutlineId = typing.Union[Gtk.SearchBar]
-ModelSummary = BUI.ModelTextStyled
 
 
-# TODO: Prune types when updating ChooserItem.
-FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
+# TODO: Prune types when updating SelectorItem.
 ModelOutline = BUI.ModelOutlineMulti[MIDCORE.IdCore]
 UiButtonFind = typing.Union[Gtk.ToggleButton]
 UiButtonSearchScope = typing.Union[Gtk.ToggleButton]
-UiChooserItem = typing.Union[Gtk.Paned]
+UiSelectorItem = typing.Union[Gtk.Box]
 UiViewOutline = BUI.ViewOutline
 
 
@@ -86,7 +87,7 @@ class InitColumnsOutlineId:
         p_ui_view_outline.append_column(self._column_title)
         if p_action_group is not None:
             UI.new_action_active(
-                p_action_group, 'switch-columns', self.switch_columns)
+                p_action_group, 'cycle-columns', self.cycle_columns)
 
     def _markup_cell_name(
             self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
@@ -122,7 +123,7 @@ class InitColumnsOutlineId:
             title = item_id.title.text
         p_render.set_property('markup', title)
 
-    def switch_columns(
+    def cycle_columns(
             self, _action: Gio.SimpleAction, _target: GLib.Variant) -> None:
         """Switch between showing name column, title column, and both.
 
@@ -149,8 +150,8 @@ class InitMotionOutlineId:
         :param p_action_group: add motion actions to this group.
         """
         self._ui_view_outline = p_ui_view_outline
-        handlers = {'collapse-outline': self.change_depth,
-                    'expand-outline': self.change_depth,
+        handlers = {'collapse': self.change_depth,
+                    'expand': self.change_depth,
                     'go-first': self.go_first_item,
                     'go-last': self.go_last_item,
                     }
@@ -166,9 +167,9 @@ class InitMotionOutlineId:
         :param _target: target of action (unused).
         """
         name = p_action.get_name()
-        if 'collapse-outline' == name:
+        if 'collapse' == name:
             self._ui_view_outline.collapse_all()
-        elif 'expand-outline' == name:
+        elif 'expand' == name:
             self._ui_view_outline.expand_all()
         else:
             self._ui_view_outline.expand_all()
@@ -209,217 +210,511 @@ class InitMotionOutlineId:
                 path, NO_COLUMN, NO_ALIGN, IGNORED, IGNORED)
 
 
-class ChooserItem:
-    """Provides means to choose an item from an outline.
+class SelectorItem:
+    """Provides means to select an item in an outline.
 
     Visual element displays outline of items (such as specifications,
     topics, or facts).  The element identifies the element currently
-    chosen along with its summary.  A visual element may register a
-    button with :class:`ChooserItem` to show and hide a field to search
+    select and presents its summary.  A visual element may register a
+    button with :class:`SelectorItem` to show and hide a field to search
     the outline.
-
-    # .. attribute:: NO_SUMMARY
-    #
-    #    Summary text displayed when no item is selected.
     """
 
-    NO_SUMMARY = 'Please choose an item in the outline above.'
+    _UI_TEXT = """
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.2 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkImage" id="image_collapse">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">format-indent-less-symbolic</property>
+  </object>
+  <object class="GtkImage" id="image_cycle">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">emblem-synchronizing-symbolic</property>
+  </object>
+  <object class="GtkImage" id="image_expand">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">format-indent-more-symbolic</property>
+  </object>
+  <object class="GtkImage" id="image_find">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">edit-find-symbolic</property>
+  </object>
+  <object class="GtkImage" id="image_go_first">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">go-top-symbolic</property>
+  </object>
+  <object class="GtkImage" id="image_go_last">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">go-bottom-symbolic</property>
+  </object>
+  <object class="GtkImage" id="image_new_item">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">document-new-symbolic</property>
+  </object>
+  <object class="GtkBox" id="ui_kit_selector_id">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox" id="tools">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuButton" id="open_menu">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Menu of topic outline actions.</property>
+            <property name="relief">none</property>
+            <child>
+              <object class="GtkImage" id="image_menu">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">format-justify-fill-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="new_item">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="action-name">outline.new-item</property>
+            <property name="image">image_new_item</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="ui_button_search">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="image">image_find</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="cycle_columns">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="action-name">outline.cycle-columns</property>
+            <property name="image">image_cycle</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="go_first">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="action-name">outline.go-first</property>
+            <property name="image">image_go_first</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="go_last">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="action-name">outline.go-last</property>
+            <property name="image">image_go_last</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="expand">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="action-name">outline.expand</property>
+            <property name="image">image_expand</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">6</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="collase">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="action-name">outline.collapse</property>
+            <property name="image">image_collapse</property>
+            <property name="always-show-image">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">7</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox" id="ui_site_search">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkPaned">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="orientation">vertical</property>
+            <property name="wide-handle">True</property>
+            <child>
+              <object class="GtkExpander">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="expanded">True</property>
+                <property name="label-fill">True</property>
+                <property name="resize-toplevel">True</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="ui_site_outline_id">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="vexpand">True</property>
+                    <property name="shadow-type">in</property>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">&lt;i&gt; Options&lt;/i&gt;</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkExpander">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="expanded">True</property>
+                <property name="label-fill">True</property>
+                <property name="resize-toplevel">True</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="ui_site_summary">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="vexpand">True</property>
+                    <property name="shadow-type">in</property>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">&lt;i&gt; Summary&lt;/i&gt;</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+</interface>
+    """
 
-    def __init__(self, p_view_outline: UiViewOutline) -> None:
+    def __init__(self, p_ui_outline: UiViewOutline) -> None:
         """Initialize outline view format, search, and summary.
 
         :param p_view_outline: visual element for view of outline.
         """
-        path_ui = Path(__file__).with_suffix('.ui')
-        get_ui_element = UI.GetUiElementByPath(p_path_ui=path_ui)
-        self._ui_chooser = get_ui_element('ui_choose_item')
-        self._ui_view_outline = p_view_outline
-        self._init_view_outline(get_ui_element)
-        self._init_summary(get_ui_element)
-        self._init_search(get_ui_element)
-        self._ui_chooser.show_all()
-
-    def _init_search(self, p_get_ui_element: UI.GetUiElement) -> None:
-        """Initialize search bar and buttons.
-
-        :param p_get_ui_element: gets visual element from UI description.
-        """
-        self._scope_search = VID.FieldsId.NAME
-        self._search_bar = p_get_ui_element('ui_search')
-
-        button_in_name = p_get_ui_element('ui_search_in_name')
-        _ = button_in_name.connect(
-            'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
-        button_in_summary = p_get_ui_element('ui_search_in_summary')
-        _ = button_in_summary.connect(
-            'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
-        button_in_title = p_get_ui_element('ui_search_in_title')
-        _ = button_in_title.connect(
-            'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
-
-        # self._ui_view_outline.set_enable_search(True)
-        C_FIRST = 0
-        self._ui_view_outline.set_search_column(C_FIRST)
-        entry_search = p_get_ui_element('ui_search_entry')
-        self._ui_view_outline.set_search_entry(entry_search)
-        EXTRA = None
-        self._ui_view_outline.set_search_equal_func(
-            self._match_spec_ne, EXTRA)
-
-    def _init_summary(self, p_get_ui_element: UI.GetUiElement) -> None:
-        """Initialize display for summary of chosen specification.
-
-        :param p_get_ui_element: gets visual element from UI description.
-        """
-        self._summary = ModelSummary(p_text=ChooserItem.NO_SUMMARY)
-        factory_display = FactoryDisplaySummary(self._summary)
-        display_summary = factory_display()
-        site_summary = p_get_ui_element('ui_site_summary')
+        get_ui_element = UI.GetUiElementByStr(p_string_ui=self._UI_TEXT)
+        self._ui_selector = get_ui_element('ui_kit_selector_id')
+        actions = UiActionsOutlineId()
+        p_ui_outline.insert_action_group('outline', actions)
+        site_outline = get_ui_element('ui_site_outline_id')
+        site_outline.add(p_ui_outline)
+        _ = InitColumnsOutlineId(p_ui_outline, actions)
+        _ = InitMotionOutlineId(p_ui_outline, actions)
+        ui_search = UiSearchOutlineId()
+        _ = InitSearchOutlineId(p_ui_outline, ui_search)
+        site_search = get_ui_element('ui_site_search')
+        site_search.add(ui_search)
+        model_summary = ModelSummary()
+        _ = InitSummaryOutlineId(p_ui_outline, model_summary)
+        factory_summary = FactoryDisplaySummary(model_summary)
+        display_summary = factory_summary()
+        site_summary = get_ui_element('ui_site_summary')
         site_summary.add(display_summary)
-        display_summary.show()
-        display_summary.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
 
-    def _init_view_outline(self, p_get_ui_element: UI.GetUiElement) -> None:
-        """Initialize specifications outline.
+    # def _init_search(self, p_get_ui_element: UI.GetUiElement) -> None:
+    #     """Initialize search bar and buttons.
+    #
+    #     :param p_get_ui_element: gets visual element from UI description.
+    #     """
+    #     self._scope_search = VID.FieldsId.NAME
+    #     self._search_bar = p_get_ui_element('ui_search')
+    #
+    #     button_in_name = p_get_ui_element('ui_search_in_name')
+    #     _ = button_in_name.connect(
+    #         'toggled', self.on_changed_search_scope, VID.FieldsId.NAME)
+    #     button_in_summary = p_get_ui_element('ui_search_in_summary')
+    #     _ = button_in_summary.connect(
+    #         'toggled', self.on_changed_search_scope, VID.FieldsId.SUMMARY)
+    #     button_in_title = p_get_ui_element('ui_search_in_title')
+    #     _ = button_in_title.connect(
+    #         'toggled', self.on_changed_search_scope, VID.FieldsId.TITLE)
+    #
+    #     # self._ui_view_outline.set_enable_search(True)
+    #     C_FIRST = 0
+    #     self._ui_view_outline.set_search_column(C_FIRST)
+    #     entry_search = p_get_ui_element('ui_search_entry')
+    #     self._ui_view_outline.set_search_entry(entry_search)
+    #     EXTRA = None
+    #     self._ui_view_outline.set_search_equal_func(
+    #         self._match_spec_ne, EXTRA)
 
-        :param p_get_ui_element: gets visual element from UI description.
-        """
-        site_outline = p_get_ui_element('ui_site_outline')
-        site_outline.add(self._ui_view_outline)
+    # def _init_summary(self, p_get_ui_element: UI.GetUiElement) -> None:
+    #     """Initialize display for summary of chosen specification.
+    #
+    #     :param p_get_ui_element: gets visual element from UI description.
+    #     """
+    #     self._summary = ModelSummary(p_text=SelectorItem.NO_SUMMARY)
+    #     factory_display = FactoryDisplaySummary(self._summary)
+    #     display_summary = factory_display()
+    #     site_summary = p_get_ui_element('ui_site_summary')
+    #     site_summary.add(display_summary)
+    #     display_summary.show()
+    #     display_summary.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
 
-        self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
-        self._ui_view_outline.append_column(self._column_name)
-        self._column_title = (
-            UI.new_column_stock('Title', self._markup_cell_title))
-        self._ui_view_outline.append_column(self._column_title)
-        self._ui_selection = self._ui_view_outline.get_selection()
-        self._ui_selection.connect('changed', self.on_changed_selection)
-        # self._ui_view_outline.show()
+    # def _init_view_outline(self, p_get_ui_element: UI.GetUiElement) -> None:
+    #     """Initialize specifications outline.
+    #
+    #     :param p_get_ui_element: gets visual element from UI description.
+    #     """
+    #     site_outline = p_get_ui_element('ui_site_outline')
+    #     site_outline.add(self._ui_view_outline)
+    #
+    #     self._column_name = UI.new_column_stock('Name', self._markup_cell_name)
+    #     self._ui_view_outline.append_column(self._column_name)
+    #     self._column_title = (
+    #         UI.new_column_stock('Title', self._markup_cell_title))
+    #     self._ui_view_outline.append_column(self._column_title)
+    #     self._ui_selection = self._ui_view_outline.get_selection()
+    #     self._ui_selection.connect('changed', self.on_changed_selection)
+    #     # self._ui_view_outline.show()
 
-    def _markup_cell_name(
-            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
-            p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
-        """Set markup for name cell in the items outline view.
+    # def _markup_cell_name(
+    #         self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+    #         p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+    #     """Set markup for name cell in the items outline view.
+    #
+    #     :param _column: column of cell to format (unused).
+    #     :param p_render: renders formatted cell contents.
+    #     :param p_ui_model: contains cell content.
+    #     :param p_line: line of cell to format.
+    #     :param _data: user data (unused).
+    #     """
+    #     print('Enter: _markup_cell_name')
+    #     item = ModelOutline.get_item_direct(p_ui_model, p_line)
+    #     name = 'Missing'
+    #     if item is not None:
+    #         name = item.name.text
+    #     p_render.set_property('markup', name)
 
-        :param _column: column of cell to format (unused).
-        :param p_render: renders formatted cell contents.
-        :param p_ui_model: contains cell content.
-        :param p_line: line of cell to format.
-        :param _data: user data (unused).
-        """
-        print('Enter: _markup_cell_name')
-        item = ModelOutline.get_item_direct(p_ui_model, p_line)
-        name = 'Missing'
-        if item is not None:
-            name = item.name.text
-        p_render.set_property('markup', name)
+    # def _markup_cell_title(
+    #         self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
+    #         p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
+    #     """Set markup for title cell in the items outline view.
+    #
+    #     :param _column: column of cell to format (unused).
+    #     :param p_render: renders formatted cell contents.
+    #     :param _model: contains cell content.
+    #     :param p_line: line of cell to format.
+    #     :param _data: user data (unused).
+    #     """
+    #     item = ModelOutline.get_item_direct(p_ui_model, p_line)
+    #     title = 'Missing'
+    #     if item is not None:
+    #         title = item.title.text
+    #     p_render.set_property('markup', title)
 
-    def _markup_cell_title(
-            self, _column: Gtk.TreeViewColumn, p_render: Gtk.CellRenderer,
-            p_ui_model: Gtk.TreeModel, p_line: BUI.LineOutline, _data) -> None:
-        """Set markup for title cell in the items outline view.
+    # def _match_spec_ne(
+    #         self, p_ui_model: Gtk.TreeModel, _n_column: int, p_match_key: str,
+    #         p_line: BUI.LineOutline, _extra: None):
+    #     """Return False when given key is found with scope of search.
+    #
+    #     Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
+    #     include any combination of spec name, summary, or title.
+    #
+    #     :param p_ui_model: storage for spec outline visual element.
+    #     :param _n_column: model column to match (unused).
+    #     :param p_match_key: key to match within search field(s).
+    #     :param p_line: line to check for key.
+    #     :param _extra: optional extra parameter (unused)
+    #
+    #     .. _`Gtk.TreeViewSearchEqualFunc`::
+    #         https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
+    #         Gtk.TreeViewSearchEqualFunc
+    #     """
+    #     if not self._scope_search:
+    #         return True
+    #
+    #     item = ModelOutline.get_item_direct(p_ui_model, p_line)
+    #     if item is None:
+    #         line_str = p_ui_model.get_string_from_iter(p_line)
+    #         logger.warning('Outline contains None at line "{}" ({}.{})'
+    #                        ''.format(line_str, self.__class__.__name__,
+    #                                  self._match_spec_ne.__name__))
+    #         return True
+    #
+    #     if (self._scope_search & VID.FieldsId.NAME):
+    #         if p_match_key in item.name.text:
+    #             return False
+    #
+    #     if (self._scope_search & VID.FieldsId.SUMMARY):
+    #         if p_match_key in item.summary.text:
+    #             return False
+    #
+    #     if (self._scope_search & VID.FieldsId.TITLE):
+    #         if p_match_key in item.title.text:
+    #             return False
+    #
+    #     path = p_ui_model.get_path(p_line)
+    #     _ = self._ui_view_outline.expand_row(path, False)
+    #     return True
 
-        :param _column: column of cell to format (unused).
-        :param p_render: renders formatted cell contents.
-        :param _model: contains cell content.
-        :param p_line: line of cell to format.
-        :param _data: user data (unused).
-        """
-        item = ModelOutline.get_item_direct(p_ui_model, p_line)
-        title = 'Missing'
-        if item is not None:
-            title = item.title.text
-        p_render.set_property('markup', title)
+    # def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
+    #     """Changes summary text to match chosen item.
+    #
+    #     :param _selection: identifies chosen item (unused).
+    #     """
+    #     model, line = self._ui_selection.get_selected()
+    #     if line is None:
+    #         self._summary.text = self.NO_SUMMARY
+    #         return
+    #
+    #     item = ModelOutline.get_item_direct(model, line)
+    #     if item is None:
+    #         self._summary.text = self.NO_SUMMARY
+    #         return
+    #
+    #     self._summary.text = item.summary.text
 
-    def _match_spec_ne(
-            self, p_ui_model: Gtk.TreeModel, _n_column: int, p_match_key: str,
-            p_line: BUI.LineOutline, _extra: None):
-        """Return False when given key is found with scope of search.
+    # def on_changed_search_scope(
+    #         self, p_button: UiButtonSearchScope, p_field: VID.FieldsId
+    #         ) -> None:
+    #     """Sets search scope to match requested change.
+    #
+    #     :param p_button: search scope button changed by user.
+    #     :param p_field: search field corresponding to changed button.
+    #     """
+    #     if p_button.get_active():
+    #         self._scope_search |= p_field
+    #     else:
+    #         self._scope_search &= ~p_field
 
-        Implements `Gtk.TreeViewSearchEqualFunc`_. Search scope can
-        include any combination of spec name, summary, or title.
-
-        :param p_ui_model: storage for spec outline visual element.
-        :param _n_column: model column to match (unused).
-        :param p_match_key: key to match within search field(s).
-        :param p_line: line to check for key.
-        :param _extra: optional extra parameter (unused)
-
-        .. _`Gtk.TreeViewSearchEqualFunc`::
-            https://lazka.github.io/pgi-docs/Gtk-3.0/callbacks.html#
-            Gtk.TreeViewSearchEqualFunc
-        """
-        if not self._scope_search:
-            return True
-
-        item = ModelOutline.get_item_direct(p_ui_model, p_line)
-        if item is None:
-            line_str = p_ui_model.get_string_from_iter(p_line)
-            logger.warning('Outline contains None at line "{}" ({}.{})'
-                           ''.format(line_str, self.__class__.__name__,
-                                     self._match_spec_ne.__name__))
-            return True
-
-        if (self._scope_search & VID.FieldsId.NAME):
-            if p_match_key in item.name.text:
-                return False
-
-        if (self._scope_search & VID.FieldsId.SUMMARY):
-            if p_match_key in item.summary.text:
-                return False
-
-        if (self._scope_search & VID.FieldsId.TITLE):
-            if p_match_key in item.title.text:
-                return False
-
-        path = p_ui_model.get_path(p_line)
-        _ = self._ui_view_outline.expand_row(path, False)
-        return True
-
-    def on_changed_selection(self, _selection: Gtk.TreeSelection) -> None:
-        """Changes summary text to match chosen item.
-
-        :param _selection: identifies chosen item (unused).
-        """
-        model, line = self._ui_selection.get_selected()
-        if line is None:
-            self._summary.text = self.NO_SUMMARY
-            return
-
-        item = ModelOutline.get_item_direct(model, line)
-        if item is None:
-            self._summary.text = self.NO_SUMMARY
-            return
-
-        self._summary.text = item.summary.text
-
-    def on_changed_search_scope(
-            self, p_button: UiButtonSearchScope, p_field: VID.FieldsId
-            ) -> None:
-        """Sets search scope to match requested change.
-
-        :param p_button: search scope button changed by user.
-        :param p_field: search field corresponding to changed button.
-        """
-        if p_button.get_active():
-            self._scope_search |= p_field
-        else:
-            self._scope_search &= ~p_field
-
-    def sync_to_search(self, p_button_find: UiButtonFind) -> None:
-        """Sync button to show and hide search of item outline.
-
-        :param p_button: button to sync with search.
-        """
-        _binding = p_button_find.bind_property(
-            'active', self._search_bar, 'search-mode-enabled',
-            GO.BindingFlags.BIDIRECTIONAL)
+    # def sync_to_search(self, p_button_find: UiButtonFind) -> None:
+    #     """Sync button to show and hide search of item outline.
+    #
+    #     :param p_button: button to sync with search.
+    #     """
+    #     _binding = p_button_find.bind_property(
+    #         'active', self._search_bar, 'search-mode-enabled',
+    #         GO.BindingFlags.BIDIRECTIONAL)
 
     @property
-    def ui_chooser(self) -> UiChooserItem:
-        """Return visual element for choosing an item.
+    def ui_selector(self) -> UiSelectorItem:
+        """Return visual element for selecting an item.
         """
-        return self._ui_chooser
+        return self._ui_selector
 
 
 class InitSearchOutlineId:
@@ -625,7 +920,7 @@ class InitSummaryOutlineId:
         self._model_summary = p_model_summary
         selection = p_ui_view_outline.get_selection()
         selection.connect('changed', self.on_changed_selection)
-        # self._summary = ModelSummary(p_text=ChooserItem.NO_SUMMARY)
+        # self._summary = ModelSummary(p_text=SelectorItem.NO_SUMMARY)
         # factory_display = FactoryDisplaySummary(self._summary)
         # display_summary = factory_display()
         # site_summary = p_get_ui_element('ui_site_summary')
@@ -682,11 +977,11 @@ class InitSummaryOutlineId:
 #
 #         :param p_action_group: group of outline's visual element actions.
 #         """
-#         handlers = {'collapse-outline': self.on_change_depth,
-#                     'expand-outline': self.on_change_depth,
+#         handlers = {'collapse': self.on_change_depth,
+#                     'expand': self.on_change_depth,
 #                     'go-first': self.on_go_first_item,
 #                     'go-last': self.on_go_last_item,
-#                     'switch-columns': self.on_switch_columns,
+#                     'cycle-columns': self.on_switch_columns,
 #                     }
 #         for name, handler in handlers.items():
 #             UI.new_action_active(
@@ -771,9 +1066,9 @@ class InitSummaryOutlineId:
 #         :param _target: target of action (unused).
 #         """
 #         name = p_action.get_name()
-#         if 'collapse-outline' == name:
+#         if 'collapse' == name:
 #             self._ui_view.collapse_all()
-#         elif 'expand-outline' == name:
+#         elif 'expand' == name:
 #             self._ui_view.expand_all()
 #         else:
 #             self._ui_view.expand_all()

@@ -5,16 +5,16 @@ Unit tests for base classes for topic specification.  See
 .. include:: /test/refs_include_pytest.txt
 """
 import pytest
-import gi
+import gi   # type: ignore[import]
+from gi.repository import GObject as GO  # type: ignore[import]
 
 import factsheet.bridge_ui as BUI
 import factsheet.control.control_sheet as CSHEET
-import factsheet.model.topic as MTOPIC
+import factsheet.control.control_topic as CTOPIC
 import factsheet.spec.base_s as SBASE
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject as GO  # noqa: E402
 from gi.repository import Gtk   # noqa: E402
 
 
@@ -36,6 +36,22 @@ def new_identity_spec():
 class TestBase:
     """Unit tests for :class:`~.spec.base_s.Base`."""
 
+    @pytest.mark.parametrize('ID_DIRECTION, TEXT_DIRECTION', [
+        ('id_after', 'after'),
+        ('id_before', 'before'),
+        ('id_child', 'as child of'),
+        ])
+    def test_direction(self, ID_DIRECTION, TEXT_DIRECTION):
+        """Confirm definition of placement direction constants.
+
+        :param ID_DIRECTION: key for direction under text.
+        :param TEXT_DIRECTION: text for direction under test.
+        """
+        # Setup
+        # Test
+        assert TEXT_DIRECTION == SBASE.Base.DIRECTION[ID_DIRECTION]
+
+    @pytest.mark.skip(reason='pending completion of delegates')
     def test_call(self, new_identity_spec, monkeypatch):
         """Confirm orchestration for topic creation and placement.
 
@@ -43,12 +59,13 @@ class TestBase:
         :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
-        # control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        ui_view_topics = control_sheet.new_view_topics()
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         assistant = target.new_assistant()
-        target.add_pages(p_assistant=assistant)
+        target.add_pages(assistant, ui_view_topics)
 
         called_new_assistant = False
         called_add_pages = False
@@ -62,7 +79,7 @@ class TestBase:
             nonlocal assistant
             return assistant
 
-        def patch_add_pages(self, p_assistant):
+        def patch_add_pages(self, p_assistant, p_ui_view_outline):
             nonlocal called_add_pages
             called_add_pages = True  # pylint: disable=unused-variable
             nonlocal assistant_add_pages
@@ -79,16 +96,73 @@ class TestBase:
         monkeypatch.setattr(SBASE.Base, 'add_pages', patch_add_pages)
         monkeypatch.setattr(SBASE.Base, 'run_assistant', patch_run_assistant)
         # Test
-        target()
+        target(ui_view_topics)
         assert called_new_assistant
         assert called_add_pages
         assert assistant_add_pages is assistant
         assert called_run_assistant
         assert assistant_run is assistant
 
+    @pytest.mark.skip(reason='Changing to fields')
+    def test_call_delegate(self, new_identity_spec, monkeypatch):
+        """Confirm delegation of topic creation and placement.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        ui_view_topics = control_sheet.new_view_topics()
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assistant = target.new_assistant()
+        # target.add_pages(assistant, ui_view_topics)
+
+        called_new_assistant = False
+        called_add_pages = False
+        assistant_add_pages = None
+        view_add_pages = None
+        called_run_assistant = False
+        assistant_run = None
+
+        def patch_new_assistant(self):
+            nonlocal called_new_assistant
+            called_new_assistant = True  # pylint: disable=unused-variable
+            nonlocal assistant
+            return assistant
+
+        def patch_add_pages(self, p_assistant, p_ui_view_outline):
+            nonlocal called_add_pages
+            called_add_pages = True  # pylint: disable=unused-variable
+            nonlocal assistant_add_pages
+            assistant_add_pages = (  # pylint: disable=unused-variable
+                p_assistant)
+            nonlocal view_add_pages
+            view_add_pages = (  # pylint: disable=unused-variable
+                p_ui_view_outline)
+
+        def patch_run_assistant(self, p_assistant):
+            nonlocal called_run_assistant
+            called_run_assistant = True  # pylint: disable=unused-variable
+            nonlocal assistant_run
+            assistant_run = p_assistant  # pylint: disable=unused-variable
+
+        monkeypatch.setattr(SBASE.Base, 'new_assistant', patch_new_assistant)
+        monkeypatch.setattr(SBASE.Base, 'add_pages', patch_add_pages)
+        monkeypatch.setattr(SBASE.Base, 'run_assistant', patch_run_assistant)
+        # Test
+        target(ui_view_topics)
+        assert called_new_assistant
+        assert called_add_pages
+        assert assistant_add_pages is assistant
+        assert view_add_pages is ui_view_topics
+        assert called_run_assistant
+        assert assistant_run is assistant
+
     def test_init(self, new_identity_spec):
         """| Confirm initialization.
-        | Case: non-topic attributes
+        | Case: defintion of attributes other than fields.
 
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
         """
@@ -103,78 +177,124 @@ class TestBase:
         assert TITLE_SPEC == target._title_spec.text
         assert target._response is None
 
-    def test_init_name_topic(self, new_identity_spec):
+    @pytest.mark.parametrize('DELEGATE', [
+        '_init_fields_identity',
+        '_init_fields_place',
+        ])
+    def test_init_delegate(self, monkeypatch, new_identity_spec, DELEGATE):
         """| Confirm initialization.
-        | Case: attributes for topic name and view factories.
+        | Case: delegation of field definitions.
 
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param DELEGATE: method delegated to define attribute(s).
         """
         # Setup
-        BLANK = ''
-        # control_sheet = CSHEET.ControlSheet(p_path=None)
+        called_delegate = False
+
+        def patch_delegate(self):
+            nonlocal called_delegate
+            called_delegate = True  # pylint: disable=unused-variable
+
+        monkeypatch.setattr(SBASE.Base, DELEGATE, patch_delegate)
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        # Test
+        _target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        assert called_delegate
+
+    @pytest.mark.parametrize('FIELD, CLASS, CONTENT', [
+        ('_field_name', CTOPIC.Name, ''),
+        ('_field_summary', CTOPIC.Summary, ''),
+        ('_field_title', CTOPIC.Title, ''),
+        ])
+    def test_init_fields_identity(
+            self, new_identity_spec, FIELD, CLASS, CONTENT):
+        """| Confirm initialization.
+        | Case: delegated definitions of topic identity fields.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param FIELD: name of field under test.
+        :param CLASS: class expected for field.
+        :param CONTENT: content expected for field.
+        """
+        # Setup
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         # Test
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
-        assert isinstance(target._name_topic, MTOPIC.Name)
-        assert BLANK == target._name_topic.text
-        assert isinstance(
-            target._new_display_name_topic, MTOPIC.FactoryDisplayName)
-        assert target._new_display_name_topic._ui_model is (
-            target._name_topic._ui_model)
-        assert isinstance(
-            target._new_editor_name_topic, MTOPIC.FactoryEditorName)
-        assert target._new_editor_name_topic._ui_model is (
-            target._name_topic._ui_model)
+        field = getattr(target, FIELD)
+        assert isinstance(field, CLASS)
+        assert CONTENT == field.text
 
-    def test_init_summary_topic(self, new_identity_spec):
+    @pytest.mark.parametrize('FIELD, CLASS, CONTENT', [
+        ('_field_anchor', type(None), None),
+        ('_field_direction', type(None), None),
+        ])
+    def test_init_fields_place(
+            self, new_identity_spec, FIELD, CLASS, CONTENT):
         """| Confirm initialization.
-        | Case: attributes for topic summary and view factories.
+        | Case: delegated definitions of topic place fields.
 
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param FIELD: name of field under test.
+        :param CLASS: class expected for field.
+        :param CONTENT: content expected for field.
         """
         # Setup
-        BLANK = ''
-        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         # Test
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
-        assert isinstance(target._summary_topic, MTOPIC.Summary)
-        assert BLANK == target._summary_topic.text
-        assert isinstance(
-            target._new_display_summary_topic, MTOPIC.FactoryDisplaySummary)
-        assert target._new_display_summary_topic._ui_model is (
-            target._summary_topic._ui_model)
-        assert isinstance(
-            target._new_editor_summary_topic, MTOPIC.FactoryEditorSummary)
-        assert target._new_editor_summary_topic._ui_model is (
-            target._summary_topic._ui_model)
+        field = getattr(target, FIELD)
+        assert isinstance(field, CLASS)
+        assert CONTENT == field
 
-    def test_init_title_topic(self, new_identity_spec):
-        """| Confirm initialization.
-        | Case: attributes for topic title and view factories.
+    @pytest.mark.parametrize('FIELD, CONTENT', [
+        ('_field_name', ''),
+        ('_field_summary', ''),
+        ('_field_title', ''),
+        ])
+    def test_reset_fields_identity(self, new_identity_spec, FIELD, CONTENT):
+        """Confirm topic identity fields reset to initial values.
 
         :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param FIELD: name of field under test.
+        :param CONTENT: content expected for field.
         """
         # Setup
-        BLANK = ''
-        # control_sheet = CSHEET.ControlSheet(p_path=None)
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
-        # Test
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
-        assert isinstance(target._title_topic, MTOPIC.Title)
-        assert BLANK == target._title_topic.text
-        assert isinstance(
-            target._new_display_title_topic, MTOPIC.FactoryDisplayTitle)
-        assert target._new_display_title_topic._ui_model is (
-            target._title_topic._ui_model)
-        assert isinstance(
-            target._new_editor_title_topic, MTOPIC.FactoryEditorTitle)
-        assert target._new_editor_title_topic._ui_model is (
-            target._title_topic._ui_model)
+        field = getattr(target, FIELD)
+        field.text = 'Oops'
+        # Test
+        target._reset_fields_identity()
+        assert CONTENT == field.text
 
+    @pytest.mark.parametrize('FIELD, CHANGE, EXPECT', [
+        ('_field_anchor', Gtk.TreeIter(), None),
+        ('_field_direction', 'Oops', None),
+        ])
+    def test_reset_fields_place(
+            self, new_identity_spec, FIELD, CHANGE, EXPECT):
+        """Confirm topic place fields reset to initial values.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param FIELD: name of field under test.
+        :param CHANGE: content distinct from initial field content.
+        :param EXPECT: content expected for field.
+        """
+        # Setup
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        setattr(target, FIELD, CHANGE)
+        # Test
+        target._reset_fields_place()
+        assert EXPECT == getattr(target, FIELD)
+
+    @pytest.mark.skip(reason='Changing to fields')
     @pytest.mark.parametrize('I_PAGE, TITLE', [
         (0, 'Introduction'),
         (1, 'Identify'),
@@ -188,14 +308,15 @@ class TestBase:
         :param TITLE: assistant's title for page.
         """
         # Setup
-        # control_sheet = CSHEET.ControlSheet(p_path=None)
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        ui_view_topics = control_sheet.new_view_topics()
         NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
         assistant = target.new_assistant()
         N_PAGES = 4
         # Test
-        target.add_pages(p_assistant=assistant)
+        target.add_pages(assistant, ui_view_topics)
         page = assistant.get_nth_page(I_PAGE)
         assert TITLE == assistant.get_page_title(page)
         assert N_PAGES == assistant.get_n_pages()
@@ -205,8 +326,8 @@ class TestBase:
             'Introduction', Gtk.AssistantPageType.INTRO, True),
         ('append_page_identify',
             'Identify', Gtk.AssistantPageType.CONTENT, True),
-        ('append_page_confirm',
-            'Confirm', Gtk.AssistantPageType.CONFIRM, True),
+        # ('append_page_confirm',
+        #     'Confirm', Gtk.AssistantPageType.CONFIRM, True),
         ])
     def test_append_page(
             self, new_identity_spec, METHOD, TITLE, TYPE, COMPLETE):
@@ -286,6 +407,7 @@ class TestBase:
 
         assert N_DEFAULT + 1 == n_handlers
 
+    @pytest.mark.skip(reason='Changing to fields')
     def test_new_page_confirm_sites(self, monkeypatch, new_identity_spec):
         """Confirm builder populates page sites.
 
@@ -355,6 +477,7 @@ class TestBase:
             view = site.get_children()[FIRST]
             assert view is sites[index]
 
+    @pytest.mark.skip(reason='Changing to fields')
     def test_new_page_confirm_parse(self, new_identity_spec):
         """Confirm builder can parse page description.
 
@@ -373,6 +496,7 @@ class TestBase:
             display_name, display_summary, display_title)
         assert isinstance(new_page, SBASE.PageAssist)
 
+    @pytest.mark.skip(reason='Changing to fields')
     def test_new_page_identify_sites(self, monkeypatch, new_identity_spec):
         """Confirm builder populates page sites.
 
@@ -446,6 +570,7 @@ class TestBase:
             view = site.get_children()[FIRST]
             assert view is sites[index]
 
+    @pytest.mark.skip(reason='Changing to fields')
     def test_new_page_identify_parse(self, new_identity_spec):
         """Confirm builder can parse page description.
 
@@ -482,6 +607,204 @@ class TestBase:
         new_page = target.new_page_intro()
         assert isinstance(new_page, SBASE.PageAssist)
 
+    @pytest.mark.skip(reason='Next')
+    def test_new_page_place_sites(self, monkeypatch, new_identity_spec):
+        """Confirm builder populates page sites.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
+        # Setup
+        PATCH_UI_PAGE_IDENTITY = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.22.1 -->
+        <interface>
+          <requires lib="gtk+" version="3.20"/>
+          <object class="GtkBox" id="ui_page_identify">
+            <child>
+              <object class="GtkBox" id="ui_identify_site_name">
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="ui_identify_site_summary">
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="ui_identify_site_title">
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+        </interface>
+        """
+        monkeypatch.setattr(SBASE, 'UI_PAGE_IDENTIFY', PATCH_UI_PAGE_IDENTITY)
+
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        ui_view_topics = control_sheet.new_view_topics()
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        sites = list()
+        display_name = target._new_display_name_topic()
+        editor_name = target._new_editor_name_topic()
+        view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
+        sites.append(view_name.ui_view)
+        editor_summary = target._new_editor_summary_topic()
+        sites.append(editor_summary)
+        display_title = target._new_display_title_topic()
+        editor_title = target._new_editor_title_topic()
+        view_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
+        sites.append(view_title.ui_view)
+        FIRST = 0
+        # Test
+        new_page = target.new_page_place(control_sheet)
+        children = new_page.get_children()
+        for index in range(len(sites)):
+            site = children[index]
+            view = site.get_children()[FIRST]
+            assert view is sites[index]
+
+    @pytest.mark.skip(reason='Next')
+    def test_new_page_place_parse(self, new_identity_spec):
+        """Confirm builder can parse page description.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
+        # Setup
+        control_sheet = CSHEET.ControlSheet(p_path=None)
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        display_name = target._new_display_name_topic()
+        editor_name = target._new_editor_name_topic()
+        view_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
+        editor_summary = target._new_editor_summary_topic()
+        display_title = target._new_display_title_topic()
+        editor_title = target._new_editor_title_topic()
+        view_title = VMARKUP.ViewMarkup(display_title, editor_title, 'Title')
+        # Test
+        new_page = target.new_page_place(control_sheet)
+        assert isinstance(new_page, SBASE.PageAssist)
+
+    @pytest.mark.parametrize('ID_DIRECTION, TEXT_DIRECTION', [
+        ('id_after', 'after'),
+        ('id_before', 'before'),
+        ('id_child', 'as child of'),
+        ])
+    def test_new_chooser_direction(
+            self, new_identity_spec, ID_DIRECTION, TEXT_DIRECTION):
+        """Confirm initialization.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param ID_DIRECTION: key for direction under test.
+        :param TEXT_DIRECTION: text for direction under test.
+        """
+        # Setup
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        TEXT_ACTIVE = 'after'
+        # Test
+        chooser = target._new_chooser_direction()
+        assert isinstance(chooser, SBASE.ChooserDirection)
+        assert TEXT_ACTIVE == chooser.get_active_text()
+        assert chooser.set_active_id(ID_DIRECTION)
+        assert TEXT_DIRECTION == chooser.get_active_text()
+
+    @pytest.mark.parametrize(
+        'NAME_DISPLAY, NAME_EDITOR, NAME_MODEL, NAME_METHOD, EXPECT_TYPE', [
+            ('FactoryDisplayName', 'FactoryEditorName', '_field_name',
+             '_new_markup_name', 'Name'),
+            ('FactoryDisplayTitle', 'FactoryEditorTitle', '_field_title',
+             '_new_markup_title', 'Title'),
+        ])
+    def test_new_markup(self, monkeypatch, new_identity_spec,
+                        NAME_DISPLAY, NAME_EDITOR, NAME_MODEL,
+                        NAME_METHOD, EXPECT_TYPE):
+        """Confirm return of visual element to markup a topic name.
+
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        :param NAME_DISPLAY: name of display factory class.
+        :param NAME_EDITOR: name of editor factory class
+        :param NAME_MODEL: name of model attribute.
+        :param NAME_METHOD: name of method under test.
+        :param EXPECT_TYPE: expected markup type.
+        """
+        # Setup
+        EXPECT_DISPLAY = Gtk.Label()
+        EXPECT_EDITOR = Gtk.Label()
+
+        class PatchCalls:
+            def __init__(self):
+                self.display = None
+                self.editor = None
+                self.model_display = None
+                self.model_editor = None
+                self.type = None
+
+            def call_display(self):
+                return EXPECT_DISPLAY
+
+            def call_editor(self):
+                return EXPECT_EDITOR
+
+            def init_display(self, p_model):
+                self.model_display = p_model
+
+            def init_editor(self, p_model):
+                self.model_editor = p_model
+
+            def init_markup(self, p_display, p_editor, p_type):
+                self.display = p_display
+                self.editor = p_editor
+                self.type = p_type
+
+        patch_calls = PatchCalls()
+        form_init = 'factsheet.control.control_topic.{}.__init__'
+        form_call = 'factsheet.control.control_topic.{}.__call__'
+        monkeypatch.setattr(
+            form_init.format(NAME_DISPLAY), patch_calls.init_display)
+        monkeypatch.setattr(
+            form_call.format(NAME_DISPLAY), patch_calls.call_display)
+        monkeypatch.setattr(
+            form_init.format(NAME_EDITOR), patch_calls.init_editor)
+        monkeypatch.setattr(
+            form_call.format(NAME_EDITOR), patch_calls.call_editor)
+        monkeypatch.setattr(
+            VMARKUP.ViewMarkup, '__init__', patch_calls.init_markup)
+
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        model = getattr(target, NAME_MODEL)
+        method = getattr(target, NAME_METHOD)
+        # Test
+        result = method(model)
+        assert patch_calls.model_display is model
+        assert patch_calls.model_editor is model
+        assert isinstance(result, VMARKUP.ViewMarkup)
+        assert patch_calls.display is EXPECT_DISPLAY
+        assert patch_calls.editor is EXPECT_EDITOR
+        assert patch_calls.type == EXPECT_TYPE
+
     def test_on_apply(self, new_identity_spec):
         """Confirm assistant hidden and response set.
 
@@ -498,6 +821,22 @@ class TestBase:
         target.on_apply(assistant)
         # assert not assistant.get_visible()
         assert target._response is Gtk.ResponseType.APPLY
+
+    def test_on_change_direction(self, new_identity_spec):
+        """Confirm assistant hidden and response set.
+
+        :param new_identity_spec: fixture :func:`.new_identity_spec`.
+        """
+        # Setup
+        NAME_SPEC, SUMMARY_SPEC, TITLE_SPEC = new_identity_spec()
+        target = SBASE.Base(
+            p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
+        chooser = target._new_chooser_direction()
+        ID_ACTIVE = 'id_child'
+        chooser.set_active_id(ID_ACTIVE)
+        # Test
+        target.on_change_direction(chooser)
+        assert ID_ACTIVE == target._field_direction
 
     def test_on_cancel(self, new_identity_spec):
         """Confirm assistant hidden and response set.
@@ -605,6 +944,7 @@ class TestModule:
         assert TITLE == target.title.text
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (SBASE.ChooserDirection, Gtk.ComboBoxText),
         (SBASE.NameSpec, BUI.ModelTextMarkup),
         (SBASE.PageAssist, Gtk.Box),
         (SBASE.SummarySpec, BUI.ModelTextStyled),

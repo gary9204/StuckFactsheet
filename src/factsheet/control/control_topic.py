@@ -35,9 +35,24 @@ import factsheet.model.topic as MTOPIC
 
 IdTopic = typing.NewType('IdTopic', int)
 
-# ViewNameTopic = BUI.ViewTextMarkup
-# ViewSummaryTopic = BUI.ViewTextTagged
-# ViewTitleTopic = BUI.ViewTextMarkup
+Name = MTOPIC.Name
+DisplayName = MTOPIC.DisplayName
+FactoryDisplayName = MTOPIC.FactoryDisplayName
+FactoryEditorName = MTOPIC.FactoryEditorName
+EditorName = MTOPIC.EditorName
+
+Summary = MTOPIC.Summary
+DisplaySummary = MTOPIC.DisplaySummary
+FactoryDisplaySummary = MTOPIC.FactoryDisplaySummary
+FactoryEditorSummary = MTOPIC.FactoryEditorSummary
+EditorSummary = MTOPIC.EditorSummary
+
+Title = MTOPIC.Title
+DisplayTitle = MTOPIC.DisplayTitle
+FactoryDisplayTitle = MTOPIC.FactoryDisplayTitle
+FactoryEditorTitle = MTOPIC.FactoryEditorTitle
+EditorTitle = MTOPIC.EditorTitle
+
 
 
 class ControlTopic:
