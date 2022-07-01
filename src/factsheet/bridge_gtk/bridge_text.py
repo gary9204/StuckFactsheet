@@ -65,15 +65,17 @@ Constants and Type Hints
 Classes and Functions
 =====================
 """
-import gi
+import gi  # type: ignore[import]
 import logging
 import typing   # noqa
 
 import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_gtk.bridge_base as BBASE
 
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gdk  # type: ignore[import]  # noqa: E402
+from gi.repository import GLib  # noqa: E402
 gi.require_version('Gtk', '3.0')
-from gi.repository import GLib   # noqa: E402
 from gi.repository import Gtk   # noqa: E402
 from gi.repository import Pango    # noqa: E402
 
@@ -84,6 +86,7 @@ PersistText = str
 UiTextMarkup = typing.Union[Gtk.EntryBuffer]
 DisplayTextMarkup = typing.Union[Gtk.Label]
 EditorTextMarkup = typing.Union[Gtk.Entry]
+ViewDuoTextMarkup = str  # typing.Union[Gtk.Box]
 
 UiTextStyled = typing.Union[Gtk.TextBuffer]
 DisplayTextStyled = typing.Union[Gtk.TextView]
@@ -109,40 +112,6 @@ def escape_text_markup(p_markup: str) -> str:
         else:
             raise
     return p_markup
-
-
-class FactoryEditorTextMarkup(BBASE.FactoryUiViewAbstract[EditorTextMarkup]):
-    """Editor factory for text stored in a given :class:`.ModelTextMarkup`.
-
-    Views support editing both text and embedded `Pango markup`_.
-    """
-
-    def __init__(self, p_model: 'ModelTextMarkup') -> None:
-        """Initialize store for text.
-
-        :param p_model: model that contains storage for editors.
-        """
-        self._ui_model = p_model.ui_model
-
-    def __call__(self) -> EditorTextMarkup:
-        """Return editor for text and markup formatting."""
-        view = Gtk.Entry(buffer=self._ui_model)
-        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        TOOLTIP_PRIMARY = 'Click to accept changes.'
-        TOOLTIP_SECONDARY = 'Click to cancel changes.'
-        N_WIDTH_EDIT = 45
-        view.set_halign(Gtk.Align.START)
-        view.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
-        view.set_icon_from_icon_name(
-            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
-        view.set_icon_tooltip_markup(
-            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
-        view.set_icon_tooltip_markup(
-            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
-        view.set_width_chars(N_WIDTH_EDIT)
-        return view
 
 
 class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
@@ -197,6 +166,40 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
                 'Missing display: {} ({}.{})'.format(
                     hex(id_destroy),
                     self.__class__.__name__, self.on_destroy.__name__))
+
+
+class FactoryEditorTextMarkup(BBASE.FactoryUiViewAbstract[EditorTextMarkup]):
+    """Editor factory for text stored in a given :class:`.ModelTextMarkup`.
+
+    Views support editing both text and embedded `Pango markup`_.
+    """
+
+    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+        """Initialize store for text.
+
+        :param p_model: model that contains storage for editors.
+        """
+        self._ui_model = p_model.ui_model
+
+    def __call__(self) -> EditorTextMarkup:
+        """Return editor for text and markup formatting."""
+        view = Gtk.Entry(buffer=self._ui_model)
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        N_WIDTH_EDIT = 45
+        view.set_halign(Gtk.Align.START)
+        view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
+        view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
+        view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
+        view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
+        view.set_width_chars(N_WIDTH_EDIT)
+        return view
 
 
 class FactoryEditorTextStyled(BBASE.FactoryUiViewAbstract[EditorTextStyled]):
@@ -409,3 +412,172 @@ class ModelTextStyled(ModelText[UiTextStyled]):
         """
         ALL = -1
         self._ui_model.set_text(p_persist, ALL)
+
+
+class FactoryViewDuoTextMarkup(BBASE.FactoryUiViewAbstract[ViewDuoTextMarkup]):
+    """Compound view to display and edit text with `Pango markup`_.
+
+    The view contains a display and an editor. Display shows formatted
+    text when markup is valid.  It shows text with embedded markup when
+    there is a markup error.  User can popup editor to edit both text
+    and embedded markup.  The formatted text in the display updates as
+    the user edits the markup text.  User can cancel edit and discard
+    changes.
+    """
+
+    _UI_VIEW_MARKUP = """<?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.22.1 -->
+        <interface>
+          <requires lib="gtk+" version="3.20"/>
+          <object class="GtkBox" id="view">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkMenuButton" id="button_edit">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="popover">editor</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property
+                        name="icon_name">document-edit-symbolic</property>
+                    <property name="icon_size">2</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="site_display">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <object class="GtkPopover" id="editor">
+            <property name="can_focus">False</property>
+            <property name="relative_to">button_edit</property>
+            <property name="position">bottom</property>
+            <property name="constrain_to">none</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="label_type">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label"
+                        translatable="yes">&lt;b&gt;Oops!&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="site_editor">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+        </interface>
+        """
+
+    # @property
+    def __call__(self) -> ViewDuoTextMarkup:
+        # Was: def ui_view(self) -> Gtk.Box:
+        """Return GTK element of markup view."""
+        pass
+        # return self._ui_view
+
+    def __init__(
+            self, p_model: 'ModelTextMarkup', p_label: str = 'Item') -> None:
+        # Was: def __init__(self, p_display: DisplayTextMarkup,
+        #              p_editor: EditorTextMarkup, p_label: str = '') -> None:
+        """Initialize internal components and their connections.
+
+        :param p_display: display for formatted text.
+        :param p_editor: editor for markup text.
+        :param p_label: label displayed with view to user (such as, 'Title')
+        """
+        pass
+        # builder = Gtk.Builder.new_from_string(self._UI_VIEW_MARKUP, -1)
+        # get_object = builder.get_object
+
+        # self._buffer = p_editor.get_buffer()
+        # self._button_edit = get_object('button_edit')
+        # _ = self._button_edit.connect('toggled', self.on_toggled)
+        # self._text_restore = ''
+        # self._ui_view = get_object('view')
+
+        # EXPAND_OKAY = True
+        # FILL_OKAY = True
+        # N_PADDING = 6
+        # site_display = get_object('site_display')
+        # site_display.pack_start(
+        #     p_display, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        # p_display.show()
+
+        # label_type = get_object('label_type')
+        # label_type.set_label('<b>{}</b>:'.format(p_label))
+
+        # site_editor = get_object('site_editor')
+        # site_editor.pack_start(
+        #     p_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        # _ = p_editor.connect('icon-press', self.on_icon_press)
+        # _ = p_editor.connect(
+        #     'activate', lambda _: self._button_edit.clicked())
+        # p_editor.show()
+
+    def on_icon_press(
+            self, _entry, p_icon_position, _event: Gdk.Event) -> None:
+        """End edit and if user cancels edit, restore text.
+
+        :param _entry: edit view (unused).
+        :param p_icon_position: identifies icon user clicked.
+        :param _event: user interface event (unused).
+        """
+        pass
+        # if Gtk.EntryIconPosition.SECONDARY == p_icon_position:
+        #     self._buffer.set_text(self._text_restore, len(self._text_restore))
+        # self._button_edit.clicked()
+
+    def on_toggled(self, _button: Gtk.Button) -> None:
+        """Record restore text before edit begins and clear after edit ends.
+
+        :param _button: edit button (unused).
+        """
+        pass
+        # if self._button_edit.get_active():
+        #     self._text_restore = self._buffer.get_text()
+        # else:
+        #     self._text_restore = ''
