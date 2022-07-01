@@ -24,6 +24,8 @@ PageAssist = typing.Union[Gtk.Box]
 SummarySpec = BUI.ModelTextStyled
 TitleSpec = BUI.ModelTextMarkup
 
+ViewDuoName = typing.Union[Gtk.Box]
+
 
 class Base:
     """Base spec for Factsheet topics.
@@ -298,14 +300,15 @@ class Base:
             self, p_control_sheet: CSHEET.ControlSheet) -> PageAssist:
         """Return a topic place page.
 
-        :param p_direction: visual element to choose placement direction.
         :param p_control_sheet: sheet in which to place new topic.
         """
-        ui_view_outline = p_control_sheet.new_view_topics()
         get_ui_object = UI.GetUiElementByStr(p_string_ui=UI_PAGE_PLACE)
         new_page = get_ui_object('ui_page_place')
+        ui_choose_direction = self._new_chooser_direction()
+        ui_choose_direction.connect('changed', self.on_change_direction)
         site_direction = get_ui_object('ui_place_site_direction')
-        site_direction.add(p_direction)
+        site_direction.add(ui_choose_direction)
+        ui_view_outline = p_control_sheet.new_view_topics()
         selector_anchor = VOUTLINE_ID.SelectorItem(ui_view_outline)
         site_oultine = get_ui_object('ui_place_site_outline')
         site_oultine.add(selector_anchor.ui_selector)
@@ -1659,3 +1662,40 @@ UI_PAGE_PLACE = """
   </object>
 </interface>
 """
+
+
+class FieldTextMarkup:
+    """Specification field for text with markup."""
+
+    def __init__(self, p_name_field: str) -> None:
+        """Initialize topic name field and view factories.
+
+        :param p_name_field: field name as shown to user.
+        """
+        self._name_field = p_name_field
+        self._model = BUI.ModelTextMarkup(p_text='')
+        self._factory_display = (
+            BUI.FactoryDisplayTextMarkup(p_model=self._model))
+        self._factory_editor = (
+            BUI.FactoryEditorTextMarkup(p_model=self._model))
+
+    @property
+    def model(self) -> BUI.ModelTextMarkup:
+        """Return field model."""
+        return self._model
+
+    def new_display(self) -> BUI.DisplayTextMarkup:
+        """Return visual element to display field."""
+        return self._factory_display()
+
+    def new_editor(self) -> BUI.EditorTextMarkup:
+        """Return visual element to edit field."""
+        return self._factory_editor()
+
+    def new_view_duo(self) -> ViewDuoName:
+        """Return visual element combining both display and editor."""
+        pass
+        # display = self.new_display()
+        # editor = self.new_editor()
+        # markup = VMARKUP.ViewMarkup(display, editor, 'Name')
+        # return markup.ui_view

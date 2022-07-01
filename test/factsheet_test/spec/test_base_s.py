@@ -931,6 +931,74 @@ class TestBase:
         assert not assistant.get_visible()
 
 
+class TestFieldTextMarkup:
+    """Unit tests for :class:`.FieldTextMarkup`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        NAME = 'Parrot'
+        BLANK = ''
+        # Test
+        target = SBASE.FieldTextMarkup(p_name_field=NAME)
+        assert isinstance(target._model, BUI.ModelTextMarkup)
+        assert BLANK == target._model.text
+        assert isinstance(
+            target._factory_display, BUI.FactoryDisplayTextMarkup)
+        assert target._factory_display._ui_model is target._model.ui_model
+        assert isinstance(
+            target._factory_editor, BUI.FactoryEditorTextMarkup)
+        assert target._factory_editor._ui_model is target._model.ui_model
+        assert NAME == target._name_field
+
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
+        ('model', '_model'),
+        ])
+    def test_property_access(self, NAME_PROP, NAME_ATTR):
+        """Confirm access limits of each property.
+
+        :param NAME_PROP: name of property.
+        :param NAME_ATTR: name of attribute.
+        """
+        # Setup
+        NAME = 'Parrot'
+        target = SBASE.FieldTextMarkup(p_name_field=NAME)
+        attr = getattr(target, NAME_ATTR)
+        CLASS = SBASE.FieldTextMarkup
+        target_prop = getattr(CLASS, NAME_PROP)
+        # Test
+        assert target_prop.fget is not None
+        assert target_prop.fget(target) is attr
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+    @pytest.mark.parametrize('METHOD, CLASS', [
+        ('new_display', BUI.DisplayTextMarkup),
+        ('new_editor', BUI.EditorTextMarkup),
+        ])
+    def test_new(self, METHOD, CLASS):
+        """Confirm factory methods.
+
+        """
+        # Setup
+        NAME = 'Parrot'
+        target = SBASE.FieldTextMarkup(p_name_field=NAME)
+        TEXT = 'The Parrot Sketch'
+        target._model.text = TEXT
+        method = getattr(target, METHOD)
+        # Test
+        ui_view = method()
+        assert isinstance(ui_view, CLASS)
+        assert TEXT == ui_view.get_text()
+        # Teardown
+        ui_view.destroy()
+
+    def test_new_view_duo(self):
+        """TBD"""
+        # Setup
+        # Test
+        assert False    # Complete comment in test_new
+
 class TestModule:
     """Unit tests for module-level components of :mod:`.base_s`."""
 
