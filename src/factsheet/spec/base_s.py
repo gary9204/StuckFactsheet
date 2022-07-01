@@ -144,9 +144,18 @@ class Base:
 
         :param p_assistant: assistant to append to.
         """
-        confirm_display_name = self._new_display_name_topic()
-        confirm_display_summary = self._new_display_summary_topic()
-        confirm_display_title = self._new_display_title_topic()
+        # confirm_display_name = self._new_display_name_topic()
+        factory_display_name = CTOPIC.FactoryDisplayName(
+            p_model=self._field_name)
+        confirm_display_name = factory_display_name()
+        # confirm_display_summary = self._new_display_summary_topic()
+        factory_display_summary = CTOPIC.FactoryDisplaySummary(
+            p_model=self._field_summary)
+        confirm_display_summary = factory_display_summary()
+        # confirm_display_title = self._new_display_title_topic()
+        factory_display_title = CTOPIC.FactoryDisplayTitle(
+            p_model=self._field_title)
+        confirm_display_title = factory_display_title()
         page_confirm = self.new_page_confirm(confirm_display_name,
                                              confirm_display_summary,
                                              confirm_display_title)
@@ -225,8 +234,8 @@ class Base:
         :param p_name: topic name model.
         """
         factory_display = CTOPIC.FactoryDisplayName(p_model=p_name)
-        factory_editor = CTOPIC.FactoryEditorName(p_model=p_name)
         display_name = factory_display()
+        factory_editor = CTOPIC.FactoryEditorName(p_model=p_name)
         editor_name = factory_editor()
         markup_name = VMARKUP.ViewMarkup(display_name, editor_name, 'Name')
         return markup_name

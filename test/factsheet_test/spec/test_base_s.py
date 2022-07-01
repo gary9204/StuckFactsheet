@@ -326,8 +326,8 @@ class TestBase:
             'Introduction', Gtk.AssistantPageType.INTRO, True),
         ('append_page_identify',
             'Identify', Gtk.AssistantPageType.CONTENT, True),
-        # ('append_page_confirm',
-        #     'Confirm', Gtk.AssistantPageType.CONFIRM, True),
+        ('append_page_confirm',
+            'Confirm', Gtk.AssistantPageType.CONFIRM, True),
         ])
     def test_append_page(
             self, new_identity_spec, METHOD, TITLE, TYPE, COMPLETE):
@@ -998,6 +998,7 @@ class TestFieldTextMarkup:
         # Setup
         # Test
         assert False    # Complete comment in test_new
+
 
 class TestModule:
     """Unit tests for module-level components of :mod:`.base_s`."""
