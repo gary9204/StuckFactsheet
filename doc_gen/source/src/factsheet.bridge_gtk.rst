@@ -14,3 +14,4 @@ Submodules
    factsheet.bridge_gtk.bridge_base
    factsheet.bridge_gtk.bridge_outline
    factsheet.bridge_gtk.bridge_text
+   factsheet.bridge_gtk.bridge_text_markup

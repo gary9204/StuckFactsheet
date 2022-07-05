@@ -14,3 +14,4 @@ Submodules
    factsheet_test.bridge_gtk.test_bridge_base
    factsheet_test.bridge_gtk.test_bridge_outline
    factsheet_test.bridge_gtk.test_bridge_text
+   factsheet_test.bridge_gtk.test_bridge_text_markup
