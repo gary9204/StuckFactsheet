@@ -14,7 +14,7 @@ import factsheet.view.ui as UI
 import factsheet.view.view_markup as VMARKUP
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # noqa: E402
+from gi.repository import Gtk   # type: ignore[import]   # noqa: E402
 
 logger = logging.getLogger('Main.SBASE')
 
@@ -25,6 +25,31 @@ SummarySpec = BUI.ModelTextStyled
 TitleSpec = BUI.ModelTextMarkup
 
 ViewDuoName = typing.Union[Gtk.Box]
+
+
+class ManifestIdentify:
+    """Fields :class:`.Base` uses to identify new topic."""
+
+    def __init__(self):
+        """Initialize identification fields"""
+        self._name = CTOPIC.Name(p_text='')
+        self._summary = CTOPIC.Summary(p_text='')
+        self._title = CTOPIC.Title(p_text='')
+
+    @property
+    def name(self) -> CTOPIC.Name:
+        """Return name field."""
+        return self._name
+
+    @property
+    def summary(self) -> CTOPIC.Summary:
+        """Return summary field."""
+        return self._summary
+
+    @property
+    def title(self) -> CTOPIC.Title:
+        """Return title field."""
+        return self._title
 
 
 class Base:

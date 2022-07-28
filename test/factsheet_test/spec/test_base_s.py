@@ -33,6 +33,51 @@ def new_identity_spec():
     return new_identity
 
 
+class TestManifestIdentify:
+    """Unit tests for :class:`.ManifestIdentify`."""
+
+    @pytest.mark.parametrize('FIELD, CLASS, CONTENT', [
+        ('_name', CTOPIC.Name, ''),
+        ('_summary', CTOPIC.Summary, ''),
+        ('_title', CTOPIC.Title, ''),
+        ])
+    def test_init(self, FIELD, CLASS, CONTENT):
+        """Confirm initialization of identification fields.
+
+        :param FIELD: name of field under test.
+        :param CLASS: class expected for field.
+        :param CONTENT: content expected for field.
+        """
+        # Setup
+        # Test
+        target = SBASE.ManifestIdentify()
+        field = getattr(target, FIELD)
+        assert isinstance(field, CLASS)
+        assert CONTENT == field.text
+
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
+        ('name', '_name'),
+        ('summary', '_summary'),
+        ('title', '_title'),
+        ])
+    def test_property_access(self, NAME_PROP, NAME_ATTR):
+        """Confirm access limits of each property.
+
+        :param NAME_PROP: name of property.
+        :param NAME_ATTR: name of attribute.
+        """
+        # Setup
+        target = SBASE.ManifestIdentify()
+        attr = getattr(target, NAME_ATTR)
+        CLASS = SBASE.ManifestIdentify
+        target_prop = getattr(CLASS, NAME_PROP)
+        # Test
+        assert target_prop.fget is not None
+        assert target_prop.fget(target) is attr
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+
 class TestBase:
     """Unit tests for :class:`~.spec.base_s.Base`."""
 
@@ -993,6 +1038,7 @@ class TestFieldTextMarkup:
         # Teardown
         ui_view.destroy()
 
+    @pytest.mark.skip(reason='Deferred until bridge classes updated')
     def test_new_view_duo(self):
         """TBD"""
         # Setup
