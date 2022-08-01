@@ -9,15 +9,104 @@ See :mod:`.bridge_text_markup`.
 """
 import gi  # type: ignore[import]
 import logging
+from pathlib import Path
+import pickle
 import pytest
 
-import factsheet.bridge_gtk.bridge_text as BTEXT
 import factsheet.bridge_gtk.bridge_text_markup as BTEXT_MARKUP
 import factsheet.view.ui as VUI
 
+from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
-from gi.repository import GObject as GO  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
+
+
+class TestModelTextMarkup:
+    """Unit tests for :class:`.ModelTextMarkup`."""
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format.
+
+        :param tmp_path: built-in fixture `Pytest tmp_path`_.
+        """
+        # Setup
+        PATH = Path(str(tmp_path / 'get_set.fsg'))
+        source = BTEXT_MARKUP.ModelTextMarkup()
+        TEXT = 'Something completely different'
+        source._set_persist(TEXT)
+        source._stale = True
+        # Test
+        with PATH.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert source._get_persist() == target._get_persist()
+        assert not target._stale
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        BLANK = ''
+        # Test
+        target = BTEXT_MARKUP.ModelTextMarkup()
+        assert target._stale is not None
+        assert not target._stale
+        assert isinstance(target._ui_model, Gtk.EntryBuffer)
+        assert BLANK == target._ui_model.get_text()
+
+    def test_get_persist(self):
+        """Confirm export to persistent form."""
+        # Setup
+        target = BTEXT_MARKUP.ModelTextMarkup()
+        TEXT = 'The Parrot Sketch.'
+        ALL = -1
+        target._ui_model.set_text(TEXT, ALL)
+        # Test
+        assert TEXT == target._get_persist()
+
+    @pytest.mark.parametrize('NAME_SIGNAL, N_DEFAULT', [
+        ('deleted-text', 0),
+        ('inserted-text', 0),
+        ])
+    def test_new_model(self, NAME_SIGNAL, N_DEFAULT):
+        """Confirm GTK model with signal connections.
+
+        :param NAME_SIGNAL: signal under test.
+        :param N_DEFAULT: number of default handlers for signal.
+        """
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(Gtk.EntryBuffer))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        NO_SIGNAL = 0
+        # Test
+        target = BTEXT_MARKUP.ModelTextMarkup()
+        assert isinstance(target._ui_model, Gtk.EntryBuffer)
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                target._ui_model, GO.SignalMatchType.ID, signal,
+                0, None, None, None)
+            if NO_SIGNAL == id_signal:
+                break
+            n_handlers += 1
+            GO.signal_handler_disconnect(target._ui_model, id_signal)
+        assert (N_DEFAULT + 1) == n_handlers
+
+    def test_set_persist(self):
+        """Confirm import from persistent form."""
+        # Setup
+        target = BTEXT_MARKUP.ModelTextMarkup()
+        target_buffer = target._ui_model
+        TEXT = 'The Parrot Sketch.'
+        ALL = -1
+        target._ui_model.set_text(TEXT, ALL)
+        target.set_fresh()
+        TEXT_NEW = 'Something completely different.'
+        # Test
+        target._set_persist(TEXT_NEW)
+        assert target._ui_model is target_buffer
+        assert TEXT_NEW == target._ui_model.get_text()
+        assert target.is_stale()
 
 
 class TestModule:
@@ -62,7 +151,7 @@ class TestPairViewDuoTextMarkup:
         | Case: attributes set directly.
         """
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         # Test
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
@@ -91,7 +180,7 @@ class TestPairViewDuoTextMarkup:
 
         monkeypatch.setattr(
             BTEXT_MARKUP.PairViewDuoTextMarkup, HELPER, helper)
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         # Test
         _target = BTEXT_MARKUP.PairViewDuoTextMarkup(
@@ -101,7 +190,7 @@ class TestPairViewDuoTextMarkup:
     def test_fill_display(self):
         """Confirm display populated in view duo."""
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
             p_model=model, p_label=LABEL)
@@ -125,7 +214,7 @@ class TestPairViewDuoTextMarkup:
     def test_fill_label(self):
         """Confirm label populated in view duo."""
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         EXPECT = '<b>' + LABEL + '</b>:'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
@@ -140,7 +229,7 @@ class TestPairViewDuoTextMarkup:
     def test_fill_popup_editor(self):
         """Confirm editor popup populated in view duo."""
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
             p_model=model, p_label=LABEL)
@@ -180,7 +269,7 @@ class TestPairViewDuoTextMarkup:
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
             p_model=model, p_label=LABEL)
@@ -221,7 +310,7 @@ class TestPairViewDuoTextMarkup:
         :param EXPECT_TEXT: text expected in editor.
         """
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
             p_model=model, p_label=LABEL)
@@ -248,7 +337,7 @@ class TestPairViewDuoTextMarkup:
         :param TEXT_EXPECT: expected restore text.
         """
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
             p_model=model, p_label=LABEL)
@@ -274,7 +363,7 @@ class TestPairViewDuoTextMarkup:
         :param NAME_ATTR: name of attribute for property.
         """
         # Setup
-        model = BTEXT.ModelTextMarkup()
+        model = BTEXT_MARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
         target = BTEXT_MARKUP.PairViewDuoTextMarkup(
             p_model=model, p_label=LABEL)

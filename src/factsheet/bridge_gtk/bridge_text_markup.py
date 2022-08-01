@@ -66,6 +66,39 @@ UiTextMarkup = typing.Union[Gtk.EntryBuffer]
 ViewDuoTextMarkup = typing.Union[Gtk.Box]
 
 
+class ModelTextMarkup(BTEXT.ModelText[UiTextMarkup]):
+    """Text storage with support for editing and `Pango markup`_.  See
+    `Gtk.EntryBuffer`_.
+
+    See :class:`.ModelText` regarding equality.
+
+    .. _Gtk.EntryBuffer:
+        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
+    """
+
+    def _get_persist(self) -> BTEXT.PersistText:
+        """Return text storage element in form suitable for persistent
+        storage.
+        """
+        return self._ui_model.get_text()
+
+    def _new_ui_model(self) -> UiTextMarkup:
+        """Return ``UiTextMarkup`` with signal connections."""
+        ui_model = UiTextMarkup()
+        _ = ui_model.connect('deleted-text', lambda *_a: self.set_stale())
+        _ = ui_model.connect('inserted-text', lambda *_a: self.set_stale())
+        return ui_model
+
+    def _set_persist(self, p_persist: BTEXT.PersistText) -> None:
+        """Set text storage element from content in persistent form.
+
+        :param p_persist: persistent form for text storage element
+            content.
+        """
+        ALL = -1
+        self._ui_model.set_text(p_persist, ALL)
+
+
 class PairViewDuoTextMarkup:
     """View-model pair of visual elements to display and edit markup text.
 

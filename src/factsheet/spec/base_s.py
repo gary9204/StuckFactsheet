@@ -27,6 +27,43 @@ TitleSpec = BUI.ModelTextMarkup
 ViewDuoName = typing.Union[Gtk.Box]
 
 
+class FieldTextMarkup:
+    """Specification field for text with markup."""
+
+    def __init__(self, p_name_field: str) -> None:
+        """Initialize topic name field and view factories.
+
+        :param p_name_field: field name as shown to user.
+        """
+        self._name_field = p_name_field
+        self._model = BUI.ModelTextMarkup(p_text='')
+        self._factory_display = (
+            BUI.FactoryDisplayTextMarkup(p_model=self._model))
+        self._factory_editor = (
+            BUI.FactoryEditorTextMarkup(p_model=self._model))
+
+    @property
+    def model(self) -> BUI.ModelTextMarkup:
+        """Return field model."""
+        return self._model
+
+    def new_display(self) -> BUI.DisplayTextMarkup:
+        """Return visual element to display field."""
+        return self._factory_display()
+
+    def new_editor(self) -> BUI.EditorTextMarkup:
+        """Return visual element to edit field."""
+        return self._factory_editor()
+
+    def new_view_duo(self) -> ViewDuoName:
+        """Return visual element combining both display and editor."""
+        pass
+        # display = self.new_display()
+        # editor = self.new_editor()
+        # markup = VMARKUP.ViewMarkup(display, editor, 'Name')
+        # return markup.ui_view
+
+
 class ManifestIdentify:
     """Fields :class:`.Base` uses to identify new topic."""
 
@@ -1696,40 +1733,3 @@ UI_PAGE_PLACE = """
   </object>
 </interface>
 """
-
-
-class FieldTextMarkup:
-    """Specification field for text with markup."""
-
-    def __init__(self, p_name_field: str) -> None:
-        """Initialize topic name field and view factories.
-
-        :param p_name_field: field name as shown to user.
-        """
-        self._name_field = p_name_field
-        self._model = BUI.ModelTextMarkup(p_text='')
-        self._factory_display = (
-            BUI.FactoryDisplayTextMarkup(p_model=self._model))
-        self._factory_editor = (
-            BUI.FactoryEditorTextMarkup(p_model=self._model))
-
-    @property
-    def model(self) -> BUI.ModelTextMarkup:
-        """Return field model."""
-        return self._model
-
-    def new_display(self) -> BUI.DisplayTextMarkup:
-        """Return visual element to display field."""
-        return self._factory_display()
-
-    def new_editor(self) -> BUI.EditorTextMarkup:
-        """Return visual element to edit field."""
-        return self._factory_editor()
-
-    def new_view_duo(self) -> ViewDuoName:
-        """Return visual element combining both display and editor."""
-        pass
-        # display = self.new_display()
-        # editor = self.new_editor()
-        # markup = VMARKUP.ViewMarkup(display, editor, 'Name')
-        # return markup.ui_view
