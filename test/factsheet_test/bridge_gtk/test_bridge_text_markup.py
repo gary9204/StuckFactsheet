@@ -21,6 +21,89 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # noqa: E402
 
 
+class TestEditorTextMarkup:
+    """Unit tests for :class:`.EditorTextMarkup`."""
+
+    def test_init(self):
+        """| Confirm initialization.
+        | Case: direct attribute initialization.
+        """
+        # Setup
+        MODEL = BTEXT_MARKUP.ModelTextMarkup()
+        # Test
+        target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
+        # assert target._ui_model is MODEL.ui_model
+        assert isinstance(target._ui_view, BTEXT_MARKUP.UiEditorTextMarkup)
+        assert target._ui_view.get_buffer() is MODEL.ui_model
+
+    @pytest.mark.parametrize('HELPER', [
+        'format_view',
+        ])
+    def test_init_delegate(self, HELPER, monkeypatch):
+        """| Confirm initialization.
+        | Case: delegated attribute initialization calls.
+
+        :param HELPER: name of helper method under test.
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        """
+        # Setup
+        called_helper = False
+
+        def helper(self, *_args, **_kwargs):
+            nonlocal called_helper
+            called_helper = True  # pylint: disable=unused-variable
+
+        monkeypatch.setattr(BTEXT_MARKUP.EditorTextMarkup, HELPER, helper)
+        MODEL = BTEXT_MARKUP.ModelTextMarkup()
+        # Test
+        _target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
+        assert called_helper
+
+    def test_format_view(self):
+        """Confirm format of visual element."""
+        # Setup
+        N_WIDTH_EDIT = 45
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        MODEL = BTEXT_MARKUP.ModelTextMarkup()
+        target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
+        # Test
+        target.format_view()
+        assert Gtk.Align.START == target._ui_view.get_halign()
+        assert N_WIDTH_EDIT == target._ui_view.get_width_chars()
+        assert NAME_ICON_PRIMARY == target._ui_view.get_icon_name(
+            Gtk.EntryIconPosition.PRIMARY)
+        assert TOOLTIP_PRIMARY == target._ui_view.get_icon_tooltip_markup(
+            Gtk.EntryIconPosition.PRIMARY)
+        assert NAME_ICON_SECONDARY == target._ui_view.get_icon_name(
+            Gtk.EntryIconPosition.SECONDARY)
+        assert TOOLTIP_SECONDARY == target._ui_view.get_icon_tooltip_markup(
+            Gtk.EntryIconPosition.SECONDARY)
+
+    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
+        ('ui_view', '_ui_view'),
+        ])
+    def test_property_access(self, NAME_PROP, NAME_ATTR):
+        """Confirm access limits of each property.
+
+        :param NAME_PROP: name of property.
+        :param NAME_ATTR: name of attribute for property.
+        """
+        # Setup
+        MODEL = BTEXT_MARKUP.ModelTextMarkup()
+        target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
+        attr = getattr(target, NAME_ATTR)
+        CLASS = BTEXT_MARKUP.EditorTextMarkup
+        target_prop = getattr(CLASS, NAME_PROP)
+        # Test
+        assert target_prop.fget is not None
+        assert attr == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+
 class TestModelTextMarkup:
     """Unit tests for :class:`.ModelTextMarkup`."""
 
@@ -121,7 +204,7 @@ class TestModule:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (BTEXT_MARKUP.ButtonEdit, Gtk.MenuButton),
         (BTEXT_MARKUP.DisplayTextMarkup, Gtk.Label),
-        (BTEXT_MARKUP.EditorTextMarkup, Gtk.Entry),
+        (BTEXT_MARKUP.UiEditorTextMarkup, Gtk.Entry),
         (BTEXT_MARKUP.UiTextMarkup, Gtk.EntryBuffer),
         (BTEXT_MARKUP.ViewDuoTextMarkup, Gtk.Box),
         ])
@@ -148,7 +231,7 @@ class TestPairViewDuoTextMarkup:
 
     def test_init(self):
         """| Confirm initialization.
-        | Case: attributes set directly.
+        | Case: direct attribute initialization.
         """
         # Setup
         model = BTEXT_MARKUP.ModelTextMarkup()
@@ -166,10 +249,10 @@ class TestPairViewDuoTextMarkup:
         ])
     def test_init_delegate(self, HELPER, monkeypatch):
         """| Confirm initialization.
-        | Case: helper method calls to set attributes.
+        | Case: delegated attribute initialization calls.
 
         :param HELPER: name of helper method under test.
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_
+        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
         """
         # Setup
         called_helper = False
@@ -226,6 +309,7 @@ class TestPairViewDuoTextMarkup:
         label_duo = get_object('label_duo')
         assert EXPECT == label_duo.get_label()
 
+    @pytest.mark.skip(reason='Adding EditorTExtMarkup')
     def test_fill_popup_editor(self):
         """Confirm editor popup populated in view duo."""
         # Setup

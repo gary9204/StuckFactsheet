@@ -21,7 +21,7 @@ Defines bridge classes to display and edit text with `Pango markup`_
 .. _Gtk.Label:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
 
-.. data:: EditorTextMarkup
+.. data:: UiEditorTextMarkup
 
     Type alias for visual element to edit a text attribute.  The
     element is editable and supports embedding `Pango markup`_.  See
@@ -33,7 +33,7 @@ Defines bridge classes to display and edit text with `Pango markup`_
 .. data:: UiTextMarkup
 
     Type alias for element to store text formatted with `Pango markup`_.
-    See `Gtk.EntryBuffer`_ and :data:`EditorTextMarkup`.
+    See `Gtk.EntryBuffer`_ and :data:`UiEditorTextMarkup`.
 
 .. _Gtk.EntryBuffer:
    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html
@@ -42,7 +42,7 @@ Defines bridge classes to display and edit text with `Pango markup`_
 
     Type alias for visual element with components to both display and
     edit a text attribute.  See :data:`.DisplayTextMarkup` and
-    :data:`.EditorTextMarkup`.
+    :data:`.UiEditorTextMarkup`.
 
 """
 import gi  # type: ignore[import]
@@ -61,9 +61,58 @@ logger = logging.getLogger('Main.bridge_text_markup')
 
 ButtonEdit = typing.Union[Gtk.MenuButton]
 DisplayTextMarkup = typing.Union[Gtk.Label]
-EditorTextMarkup = typing.Union[Gtk.Entry]
+UiEditorTextMarkup = typing.Union[Gtk.Entry]
 UiTextMarkup = typing.Union[Gtk.EntryBuffer]
 ViewDuoTextMarkup = typing.Union[Gtk.Box]
+
+
+class EditorTextMarkup:
+    """Editor for text stored in a given :class:`.ModelTextMarkup`.
+
+    Provides visual element that support editing both text and embedded
+    `Pango markup`_.
+
+    .. warning:: Treat a :class:`.EditorTextMarkup` object like a GTK
+        widget.  In particular, use the editor's visual element only in
+        one GTK container and drop all references to the visual
+        element when destroying the element.
+    """
+
+    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+        """Initialize visual element of editor.
+
+        :param p_model: model that contains storage for editor.
+        """
+        # self._ui_model = p_model.ui_model
+        self._ui_view = UiEditorTextMarkup(buffer=p_model.ui_model)
+        self.format_view()
+
+    def format_view(self):
+        """Apply formatting to visual element of editor.
+
+        Set editor width and add icons to accept and cancel editing.
+        Include tooltips for icons.
+        """
+        self._ui_view.set_halign(Gtk.Align.START)
+        N_WIDTH_EDIT = 45
+        self._ui_view.set_width_chars(N_WIDTH_EDIT)
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        self._ui_view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.PRIMARY, NAME_ICON_PRIMARY)
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        self._ui_view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.PRIMARY, TOOLTIP_PRIMARY)
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        self._ui_view.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, NAME_ICON_SECONDARY)
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        self._ui_view.set_icon_tooltip_markup(
+            Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
+
+    @property
+    def ui_view(self) -> UiEditorTextMarkup:
+        """Return editor for text and markup formatting."""
+        return self._ui_view
 
 
 class ModelTextMarkup(BTEXT.ModelText[UiTextMarkup]):
@@ -224,7 +273,7 @@ class PairViewDuoTextMarkup:
         p_button_edit.clicked()
 
     def on_toggled(
-            self, p_button: Gtk.Button, p_editor: EditorTextMarkup) -> None:
+            self, p_button: Gtk.Button, p_editor: UiEditorTextMarkup) -> None:
         """Record restore text before edit begins and clear after edit ends.
 
         :param p_button: button user clicked.
