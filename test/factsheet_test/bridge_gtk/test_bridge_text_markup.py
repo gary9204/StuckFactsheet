@@ -25,9 +25,7 @@ class TestEditorTextMarkup:
     """Unit tests for :class:`.EditorTextMarkup`."""
 
     def test_init(self):
-        """| Confirm initialization.
-        | Case: direct attribute initialization.
-        """
+        """Confirm initialization."""
         # Setup
         MODEL = BTEXT_MARKUP.ModelTextMarkup()
         # Test
@@ -36,51 +34,28 @@ class TestEditorTextMarkup:
         assert isinstance(target._ui_view, BTEXT_MARKUP.UiEditorTextMarkup)
         assert target._ui_view.get_buffer() is MODEL.ui_model
 
-    @pytest.mark.parametrize('HELPER', [
-        'format_view',
-        ])
-    def test_init_delegate(self, HELPER, monkeypatch):
-        """| Confirm initialization.
-        | Case: delegated attribute initialization calls.
+    # @pytest.mark.parametrize('HELPER', [
+    #     'format_view',
+    #     ])
+    # def test_init_delegate(self, HELPER, monkeypatch):
+    #     """| Confirm initialization.
+    #     | Case: delegated attribute initialization calls.
 
-        :param HELPER: name of helper method under test.
-        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
-        """
-        # Setup
-        called_helper = False
+        # :param HELPER: name of helper method under test.
+        # :param monkeypatch: built-in fixture `Pytest monkeypatch`_.
+        # """
+        # # Setup
+        # called_helper = False
 
-        def helper(self, *_args, **_kwargs):
-            nonlocal called_helper
-            called_helper = True  # pylint: disable=unused-variable
+        # def helper(self, *_args, **_kwargs):
+        #     nonlocal called_helper
+        #     called_helper = True  # pylint: disable=unused-variable
 
-        monkeypatch.setattr(BTEXT_MARKUP.EditorTextMarkup, HELPER, helper)
-        MODEL = BTEXT_MARKUP.ModelTextMarkup()
-        # Test
-        _target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
-        assert called_helper
-
-    def test_format_view(self):
-        """Confirm format of visual element."""
-        # Setup
-        N_WIDTH_EDIT = 45
-        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
-        TOOLTIP_PRIMARY = 'Click to accept changes.'
-        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
-        TOOLTIP_SECONDARY = 'Click to cancel changes.'
-        MODEL = BTEXT_MARKUP.ModelTextMarkup()
-        target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
-        # Test
-        target.format_view()
-        assert Gtk.Align.START == target._ui_view.get_halign()
-        assert N_WIDTH_EDIT == target._ui_view.get_width_chars()
-        assert NAME_ICON_PRIMARY == target._ui_view.get_icon_name(
-            Gtk.EntryIconPosition.PRIMARY)
-        assert TOOLTIP_PRIMARY == target._ui_view.get_icon_tooltip_markup(
-            Gtk.EntryIconPosition.PRIMARY)
-        assert NAME_ICON_SECONDARY == target._ui_view.get_icon_name(
-            Gtk.EntryIconPosition.SECONDARY)
-        assert TOOLTIP_SECONDARY == target._ui_view.get_icon_tooltip_markup(
-            Gtk.EntryIconPosition.SECONDARY)
+        # monkeypatch.setattr(BTEXT_MARKUP.EditorTextMarkup, HELPER, helper)
+        # MODEL = BTEXT_MARKUP.ModelTextMarkup()
+        # # Test
+        # _target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
+        # assert called_helper
 
     @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
         ('ui_view', '_ui_view'),
@@ -102,6 +77,33 @@ class TestEditorTextMarkup:
         assert attr == target_prop.fget(target)
         assert target_prop.fset is None
         assert target_prop.fdel is None
+
+
+class TestFormatEditorMarkup:
+    """Unit tests for :func:`.format_editor_markup`."""
+
+    def test_format_editor_markup(self):
+        """Confirm format of visual element."""
+        # Setup
+        N_WIDTH_EDIT = 45
+        NAME_ICON_PRIMARY = 'emblem-default-symbolic'
+        TOOLTIP_PRIMARY = 'Click to accept changes.'
+        NAME_ICON_SECONDARY = 'edit-delete-symbolic'
+        TOOLTIP_SECONDARY = 'Click to cancel changes.'
+        MODEL = BTEXT_MARKUP.ModelTextMarkup()
+        target = BTEXT_MARKUP.EditorTextMarkup(p_model=MODEL)
+        # Test
+        BTEXT_MARKUP.format_editor_markup(p_editor=target)
+        assert Gtk.Align.START == target._ui_view.get_halign()
+        assert N_WIDTH_EDIT == target._ui_view.get_width_chars()
+        assert NAME_ICON_PRIMARY == target._ui_view.get_icon_name(
+            Gtk.EntryIconPosition.PRIMARY)
+        assert TOOLTIP_PRIMARY == target._ui_view.get_icon_tooltip_markup(
+            Gtk.EntryIconPosition.PRIMARY)
+        assert NAME_ICON_SECONDARY == target._ui_view.get_icon_name(
+            Gtk.EntryIconPosition.SECONDARY)
+        assert TOOLTIP_SECONDARY == target._ui_view.get_icon_tooltip_markup(
+            Gtk.EntryIconPosition.SECONDARY)
 
 
 class TestModelTextMarkup:
