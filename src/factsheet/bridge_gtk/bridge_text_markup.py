@@ -21,6 +21,14 @@ Defines bridge classes to display and edit text with `Pango markup`_
 .. _Gtk.Label:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html
 
+.. data:: UiAnchor
+
+    Type alias for visual element that anchors a :class:`.EditorTextMarkup`.
+    See `Gtk.Widget`_.
+
+.. _Gtk.Widget:
+   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Widget.html
+
 .. data:: UiEditorTextMarkup
 
     Type alias for visual element to edit a text attribute.  The
@@ -61,7 +69,11 @@ logger = logging.getLogger('Main.bridge_text_markup')
 
 ButtonEdit = typing.Union[Gtk.MenuButton]
 DisplayTextMarkup = typing.Union[Gtk.Label]
+UiAnchor = typing.Union[Gtk.Widget]
 UiEditorTextMarkup = typing.Union[Gtk.Entry]
+UiLabel = typing.Union[Gtk.Label]
+UiPopoverEditorMarkup = typing.Union[Gtk.Popover]
+UiSite = typing.Union[Gtk.Box]
 UiTextMarkup = typing.Union[Gtk.EntryBuffer]
 ViewDuoTextMarkup = typing.Union[Gtk.Box]
 
@@ -72,11 +84,39 @@ class EditorTextMarkup:
     Provides visual element that support editing both text and embedded
     `Pango markup`_.
 
+    .. attribute:: _UI_DEFINITION
+
+        Constant that defines layout and format of visual element for
+        the markup text editor.  Visual element property (that is,
+        ``ui_view``) can change the layout and format of individual
+        editors.
+
     .. warning:: Treat a :class:`.EditorTextMarkup` object like a GTK
         widget.  In particular, use the editor's visual element only in
         one GTK container and drop all references to the visual
         element when destroying the element.
     """
+
+    _UI_DEFINITION = """<?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.38.2 -->
+        <interface>
+          <requires lib="gtk+" version="3.24"/>
+          <object class="GtkEntry" id="ui_view">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="halign">start</property>
+            <property name="width-chars">45</property>
+            <property name="primary-icon-name"
+                >emblem-default-symbolic</property>
+            <property name="secondary-icon-name"
+                >edit-delete-symbolic</property>
+            <property name="primary-icon-tooltip-text"
+                translatable="yes">Click to accept changes.</property>
+            <property name="secondary-icon-tooltip-text"
+                translatable="yes">Click to cancel changes.</property>
+          </object>
+        </interface>
+        """
 
     def __init__(self, p_model: 'ModelTextMarkup') -> None:
         """Initialize visual element of editor.
@@ -149,33 +189,98 @@ class ModelTextMarkup(BTEXT.ModelText[UiTextMarkup]):
         self._ui_model.set_text(p_persist, ALL)
 
 
-class PopupEditorTextMarkup:
-    """Popup visual element containing :class:`.EditorTextMarkup`.
+class PopoverEditorMarkup:
+    """Facade for visual element to pop up markup text editor.
 
-    Provides visual element that support editing both text and embedded
-    `Pango markup`_.
+    :class:`.PopoverEditorMarkup` contains a visual element to pop
+    up a markup text editor (:class:`.EditorTextMarkup`).  The element
+    contains text to identify the editor's contents (such as Name or
+    Title).  You may include `Pango markup`_ in the identifying text.
+    An anchor visual element determines where the editor pops up.
 
-    .. warning:: Treat a :class:`.EditorTextMarkup` object like a GTK
-        widget.  In particular, use the editor's visual element only in
-        one GTK container and drop all references to the visual
-        element when destroying the element.
+    .. attribute:: _UI_DEFINITION
+
+        Constant that defines layout and format of visual element that
+        pops up for the markup text editor.
+
+    .. admonition:: To maintainer
+
+        Treat a :class:`.PopoverEditorMarkup` object like a user
+        interface toolkit element.  In particular, use the pop up editor
+        only with one toolkit container and drop all references to the
+        pop up editor when destroying the element.
+
+    .. admonition:: To maintainer
+
+        Each property with prefix ``ui_`` is a user interface toolkit
+        element. Such properties should only be accessed in
+        :mod:`.Element` or :mod:`.View` classes.  You can use toolkit
+        element properties to change the layout and format of individual
+        pop up editors.
     """
 
-    _DEF_VIEW_DUO = """<?xml version="1.0" encoding="UTF-8"?>
+    def __init__(self, p_model: ModelTextMarkup) -> None:
+        """Initialize visual elements.
+
+        :param p_model: model containing markup text.
+        """
+        get_object = VUI.GetUiElementByStr(p_string_ui=self._UI_DEFINITION)
+        self._ui_view = get_object('ui_view')
+        editor = EditorTextMarkup(p_model)
+        self._ui_editor = editor.ui_view
+        site_editor = get_object('site_editor')
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 0
+        site_editor.pack_start(
+            self._ui_editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        self._ui_label = get_object('ui_label')
+
+    def set_anchor(self, p_anchor: UiAnchor) -> None:
+        """Set anchor to determine editor pop up position.
+
+        :param p_anchor: editor appears relative to this visual element.
+        """
+        self._ui_view.set_relative_to(p_anchor)
+
+    def set_label(self, p_text: str) -> None:
+        """Set text to identify editor.
+
+
+        :param p_test: identifying text, which may contain `Pango markup`_.
+        """
+        self._ui_label.set_label(p_text)
+
+    @property
+    def ui_editor(self) -> UiEditorTextMarkup:
+        """Return visual element for markup text editor."""
+        return self._ui_editor
+
+    @property
+    def ui_label(self) -> UiLabel:
+        """Return visual element that identifies editor contents."""
+        return self._ui_label
+
+    @property
+    def ui_view(self) -> UiPopoverEditorMarkup:
+        """Return visual element to popup editor."""
+        return self._ui_view
+
+    _UI_DEFINITION = """<?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.38.2 -->
         <interface>
           <requires lib="gtk+" version="3.20"/>
-          <object class="GtkPopover" id="ui_editor">
+          <object class="GtkPopover" id="ui_view">
             <property name="can-focus">False</property>
-            <property name="relative-to">button_edit</property>
             <property name="position">bottom</property>
             <property name="constrain-to">none</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="site_editor">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="spacing">6</property>
                 <child>
-                  <object class="GtkLabel" id="label_duo">
+                  <object class="GtkLabel" id="ui_label">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes"
@@ -186,20 +291,6 @@ class PopupEditorTextMarkup:
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox" id="site_editor">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
                   </packing>
                 </child>
               </object>
