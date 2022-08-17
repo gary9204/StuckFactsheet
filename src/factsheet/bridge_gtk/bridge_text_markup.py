@@ -12,7 +12,7 @@ Defines bridge classes to display and edit text with `Pango markup`_
 .. _Gtk.MenuButton:
     https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/MenuButton.html
 
-.. data:: DisplayTextMarkup
+.. data:: UiDisplayTextMarkup
 
     Type alias for visual element to display a text attribute.  The
     element supports `Pango markup`_ but is not editable.  See
@@ -49,7 +49,7 @@ Defines bridge classes to display and edit text with `Pango markup`_
 .. data:: ViewDuoTextMarkup
 
     Type alias for visual element with components to both display and
-    edit a text attribute.  See :data:`.DisplayTextMarkup` and
+    edit a text attribute.  See :data:`.UiDisplayTextMarkup` and
     :data:`.UiEditorTextMarkup`.
 
 """
@@ -62,20 +62,126 @@ import factsheet.view.ui as VUI
 
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk   # type: ignore[import]  # noqa: E402
+from gi.repository import GLib  # noqa: E402
+from gi.repository import GObject as GO  # noqa: E402
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # noqa: E402
+from gi.repository import Pango    # noqa: E402
 
 logger = logging.getLogger('Main.bridge_text_markup')
 
 ButtonEdit = typing.Union[Gtk.MenuButton]
-DisplayTextMarkup = typing.Union[Gtk.Label]
+UiDisplayTextMarkup = typing.Union[Gtk.Label]
 UiAnchor = typing.Union[Gtk.Widget]
 UiEditorTextMarkup = typing.Union[Gtk.Entry]
 UiLabel = typing.Union[Gtk.Label]
 UiPopoverEditorMarkup = typing.Union[Gtk.Popover]
 UiSite = typing.Union[Gtk.Box]
 UiTextMarkup = typing.Union[Gtk.EntryBuffer]
-ViewDuoTextMarkup = typing.Union[Gtk.Box]
+UiButtonTrigger = typing.Union[Gtk.MenuButton]
+UiViewDuoMarkup = typing.Union[Gtk.Box]
+
+
+def escape_text_markup(p_markup: str) -> str:
+    """Return text without markup errors.
+
+    Escape `Pango markup`_ errors.  Raise other GLib errors.
+
+    :param p_markup: text that may contain markup errors.
+    """
+    ALL = -1
+    NO_ACCEL_CHAR = '0'
+    try:
+        _, _, _, _ = Pango.parse_markup(p_markup, ALL, NO_ACCEL_CHAR)
+    except GLib.Error as err:
+        if 'g-markup-error-quark' == err.domain:
+            p_markup = GLib.markup_escape_text(p_markup, ALL)
+        else:
+            raise
+    return p_markup
+
+
+class DisplayTextMarkup:
+    """Editor for text stored in a given :class:`.ModelTextMarkup`.
+
+    Provides visual element that support editing both text and embedded
+    `Pango markup`_.
+
+    .. attribute:: _UI_DEFINITION
+
+        Constant that defines layout and format of visual element for
+        the markup text editor.  Visual element property (that is,
+        ``ui_view``) can change the layout and format of individual
+        editors.
+
+    .. warning:: Treat a :class:`.EditorTextMarkup` object like a GTK
+        widget.  In particular, use the editor's visual element only in
+        one GTK container and drop all references to the visual
+        element when destroying the element.
+    """
+
+    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+        """Initialize store for text and collection of displays.
+
+        :param p_model: model that contains storage for displays.
+        """
+        """Initialize visual element of editor.
+
+        :param p_model: model that contains storage for editor.
+        """
+        # self._ui_model = p_model.ui_model
+        get_object = VUI.GetUiElementByStr(p_string_ui=self._UI_DEFINITION)
+        self._ui_view = get_object('ui_view')
+
+        markup = escape_text_markup(p_model.text)
+        self._ui_view = UiDisplayTextMarkup(label=markup)
+
+        _ = self._ui_view.connect('destroy', self.on_destroy, p_model.ui_model)
+        self._id_delete = (
+            p_model.ui_model.connect('deleted-text', self.on_change))
+        self._id_insert = (
+            p_model.ui_model.connect('inserted-text', self.on_change))
+
+    def on_change(self, p_ui_model: UiTextMarkup, *_args):
+        """Refresh display views when text is inserted or deleted."""
+        markup = escape_text_markup(p_ui_model.get_text())
+        self._ui_view.set_markup(markup)
+
+    def on_destroy(self, _ui_view: UiDisplayTextMarkup,
+                   p_ui_model: UiTextMarkup) -> None:
+        """Stop refreshing display view that is being destroyed.
+
+        :param _ui_view: visual element of display being destroyed. (Unused)
+        :param p_ui_model: storage element of display being destroyed.
+        """
+        if hasattr(self, 'ui_view'):  # Guard: duplicate destruction.
+            del self._ui_view
+            ID_INVALID = 0
+            GO.signal_handler_disconnect(p_ui_model, self._id_delete)
+            self._id_delete = ID_INVALID
+            GO.signal_handler_disconnect(p_ui_model, self._id_insert)
+            self._id_insert = ID_INVALID
+
+    @property
+    def ui_view(self) -> UiDisplayTextMarkup:
+        """Return editor for text and markup formatting."""
+        return self._ui_view
+
+    _UI_DEFINITION = """<?xml version="1.0" encoding="UTF-8"?>
+        <!-- Generated with glade 3.38.2 -->
+        <interface>
+          <requires lib="gtk+" version="3.24"/>
+          <object class="GtkLabel" id="ui_view">
+            <property name="visible">True</property>
+            <property name="halign">start</property>
+            <property name="use-markup">True</property>
+            <property name="selectable">True</property>
+            <property name="ellipsize">end</property>
+            <property name="width-chars">15</property>
+            <property name="xalign">0</property>
+          </object>
+        </interface>
+        """
 
 
 class EditorTextMarkup:
@@ -300,7 +406,7 @@ class PopoverEditorMarkup:
         """
 
 
-class PairViewDuoTextMarkup:
+class ViewDuoMarkup:
     """View-model pair of visual elements to display and edit markup text.
 
     A view duo contains a display and a popup editor for markup text.
@@ -330,7 +436,7 @@ class PairViewDuoTextMarkup:
 
         * Con: no guarantee of one factory per model
 
-        :class:`.PairViewDuoTextMarkup` makes pairing a distinct action
+        :class:`.ViewDuoMarkup` makes pairing a distinct action
         independent from view duo collection management.  Collection
         management may be implemented separately as needed.
     """
@@ -342,15 +448,18 @@ class PairViewDuoTextMarkup:
         :param p_model: model containing markup text.
         :param p_label: text to identify view duo to user (such as, 'Title').
         """
-        self._model = p_model
+        # self._model = p_model
         self._text_restore = ''
 
-        get_object = VUI.GetUiElementByStr(p_string_ui=self._DEF_VIEW_DUO)
+        get_object = VUI.GetUiElementByStr(p_string_ui=self._UI_DEFINITION)
         self._ui_view = get_object('ui_view')
+        self._ui_button = get_object('ui_button_edit')
+        self._ui_display = None
+        self._ui_popup = None
 
-        self.fill_display(get_object)
-        self.fill_label(get_object, p_label)
-        self.fill_popup_editor(get_object)
+        # self.fill_display(get_object)
+        # self.fill_label(get_object, p_label)
+        # self.fill_popup_editor(get_object)
 
     def fill_display(self, p_get_object: VUI.GetUiElementByStr) -> None:
         """Populate display component of view duo.
@@ -360,14 +469,15 @@ class PairViewDuoTextMarkup:
         :param p_get_object: method to get visual element from user
             interface description.
         """
-        factory_display = BTEXT.FactoryDisplayTextMarkup(self._model)
-        display = factory_display()
-        display.show()
-        EXPAND_OKAY = True
-        FILL_OKAY = True
-        N_PADDING = 6
-        site_display = p_get_object('site_display')
-        site_display.pack_start(display, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        pass
+        # factory_display = BTEXT.FactoryDisplayTextMarkup(self._model)
+        # display = factory_display()
+        # display.show()
+        # EXPAND_OKAY = True
+        # FILL_OKAY = True
+        # N_PADDING = 6
+        # site_display = p_get_object('site_display')
+        # site_display.pack_start(display, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
     def fill_label(
             self, p_get_object: VUI.GetUiElementByStr, p_label: str) -> None:
@@ -379,8 +489,9 @@ class PairViewDuoTextMarkup:
             interface description.
         :param p_label: text to identify view duo to user (such as, 'Title').
         """
-        label_duo = p_get_object('label_duo')
-        label_duo.set_label('<b>{}</b>:'.format(p_label))
+        pass
+        # label_duo = p_get_object('label_duo')
+        # label_duo.set_label('<b>{}</b>:'.format(p_label))
 
     def fill_popup_editor(self, p_get_object: VUI.GetUiElementByStr) -> None:
         """Populate popup editor component of view duo.
@@ -392,20 +503,21 @@ class PairViewDuoTextMarkup:
         :param p_get_object: method to get visual element from user
             interface description.
         """
-        factory_editor = BTEXT.FactoryEditorTextMarkup(self._model)
-        editor = factory_editor()
-        editor.show()
-        EXPAND_OKAY = True
-        FILL_OKAY = True
-        N_PADDING = 6
-        site_editor = p_get_object('site_editor')
-        site_editor.pack_start(editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        pass
+        # factory_editor = BTEXT.FactoryEditorTextMarkup(self._model)
+        # editor = factory_editor()
+        # editor.show()
+        # EXPAND_OKAY = True
+        # FILL_OKAY = True
+        # N_PADDING = 6
+        # site_editor = p_get_object('site_editor')
+        # site_editor.pack_start(editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-        button_edit = p_get_object('button_edit')
-        _ = button_edit.connect('toggled', self.on_toggled, editor)
+        # button_edit = p_get_object('button_edit')
+        # _ = button_edit.connect('toggled', self.on_toggled, editor)
 
-        _ = editor.connect('activate', lambda _: button_edit.clicked())
-        _ = editor.connect('icon-press', self.on_icon_press)
+        # _ = editor.connect('activate', lambda _: button_edit.clicked())
+        # _ = editor.connect('icon-press', self.on_icon_press)
 
     def on_icon_press(self, p_editor: BTEXT.EditorTextMarkup,
                       p_icon: Gtk.EntryIconPosition, _event: Gdk.Event,
@@ -420,9 +532,10 @@ class PairViewDuoTextMarkup:
         :param _event: user interface event (unused).
         :param p_button_edit: button to show/hide editor.
         """
-        if Gtk.EntryIconPosition.SECONDARY == p_icon:
-            p_editor.set_text(self._text_restore)
-        p_button_edit.clicked()
+        pass
+        # if Gtk.EntryIconPosition.SECONDARY == p_icon:
+        #     p_editor.set_text(self._text_restore)
+        # p_button_edit.clicked()
 
     def on_toggled(
             self, p_button: Gtk.Button, p_editor: UiEditorTextMarkup) -> None:
@@ -431,80 +544,49 @@ class PairViewDuoTextMarkup:
         :param p_button: button user clicked.
         :param p_editor: editor associated with button user clicked.
         """
-        if p_button.get_active():
-            self._text_restore = p_editor.get_text()
-        else:
-            self._text_restore = ''
+        pass
+        # if p_button.get_active():
+        #     self._text_restore = p_editor.get_text()
+        # else:
+        #     self._text_restore = ''
 
-    @property
+    # @property
     def model(self) -> UiTextMarkup:
         """Return model of view duo."""
-        return self._model
+        pass
+        # return self._model
 
-    @property
-    def ui_view(self) -> ViewDuoTextMarkup:
+    # @property
+    def ui_button(self) -> UiViewDuoMarkup:
         """Return visual element of view duo."""
-        return self._ui_view
+        pass
+        # return self._ui_view
 
-    _DEF_VIEW_DUO = """<?xml version="1.0" encoding="UTF-8"?>
+    # @property
+    def ui_view(self) -> UiViewDuoMarkup:
+        """Return visual element of view duo."""
+        pass
+        # return self._ui_view
+
+    _UI_DEFINITION = """<?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.38.2 -->
         <interface>
           <requires lib="gtk+" version="3.20"/>
-          <object class="GtkPopover" id="ui_editor">
-            <property name="can-focus">False</property>
-            <property name="relative-to">button_edit</property>
-            <property name="position">bottom</property>
-            <property name="constrain-to">none</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <child>
-                  <object class="GtkLabel" id="label_duo">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes"
-                        >&lt;b&gt;Oops!&lt;/b&gt;</property>
-                    <property name="use-markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox" id="site_editor">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-            </child>
-          </object>
           <object class="GtkBox" id="ui_view">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="spacing">6</property>
             <child>
-              <object class="GtkMenuButton" id="button_edit">
+              <object class="GtkMenuButton" id="ui_button_edit">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="popover">ui_editor</property>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="icon-name">document-edit-symbolic
-                        </property>
+                    <property name="icon-name"
+                        >document-edit-symbolic</property>
                     <property name="icon_size">2</property>
                   </object>
                 </child>
@@ -513,20 +595,6 @@ class PairViewDuoTextMarkup:
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox" id="site_display">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
               </packing>
             </child>
           </object>
