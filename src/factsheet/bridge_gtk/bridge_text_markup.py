@@ -4,7 +4,7 @@ Defines bridge classes to display and edit text with `Pango markup`_
 .. _Pango markup:
     https://docs.gtk.org/Pango/pango_markup.html
 
-.. data:: ButtonEdit
+.. data:: UIButtonTrigger
 
     Type alias for visual element to show/hide editor in view duo.  See
     `Gtk.MenuButton`_.
@@ -70,7 +70,6 @@ from gi.repository import Pango    # noqa: E402
 
 logger = logging.getLogger('Main.bridge_text_markup')
 
-ButtonEdit = typing.Union[Gtk.MenuButton]
 UiDisplayTextMarkup = typing.Union[Gtk.Label]
 UiAnchor = typing.Union[Gtk.Widget]
 UiEditorTextMarkup = typing.Union[Gtk.Entry]
@@ -134,7 +133,7 @@ class DisplayTextMarkup:
         self._ui_view = get_object('ui_view')
 
         markup = escape_text_markup(p_model.text)
-        self._ui_view = UiDisplayTextMarkup(label=markup)
+        self._ui_view.set_label(markup)
 
         _ = self._ui_view.connect('destroy', self.on_destroy, p_model.ui_model)
         self._id_delete = (
@@ -295,10 +294,10 @@ class ModelTextMarkup(BTEXT.ModelText[UiTextMarkup]):
         self._ui_model.set_text(p_persist, ALL)
 
 
-class PopoverEditorMarkup:
+class PopupEditorMarkup:
     """Facade for visual element to pop up markup text editor.
 
-    :class:`.PopoverEditorMarkup` contains a visual element to pop
+    :class:`.PopupEditorMarkup` contains a visual element to pop
     up a markup text editor (:class:`.EditorTextMarkup`).  The element
     contains text to identify the editor's contents (such as Name or
     Title).  You may include `Pango markup`_ in the identifying text.
@@ -311,7 +310,7 @@ class PopoverEditorMarkup:
 
     .. admonition:: To maintainer
 
-        Treat a :class:`.PopoverEditorMarkup` object like a user
+        Treat a :class:`.PopupEditorMarkup` object like a user
         interface toolkit element.  In particular, use the pop up editor
         only with one toolkit container and drop all references to the
         pop up editor when destroying the element.
@@ -346,6 +345,9 @@ class PopoverEditorMarkup:
         """Set anchor to determine editor pop up position.
 
         :param p_anchor: editor appears relative to this visual element.
+
+        .. warning:: Gtk.MenuButton may use method set_popover in place
+            of this method.
         """
         self._ui_view.set_relative_to(p_anchor)
 
@@ -441,8 +443,8 @@ class ViewDuoMarkup:
         management may be implemented separately as needed.
     """
 
-    def __init__(self, p_model: BTEXT.ModelTextMarkup,
-                 p_label: str = 'Item') -> None:
+    def __init__(self, p_model: ModelTextMarkup, p_label: str = 'Item'
+                 ) -> None:
         """Initialize internal components and their connections.
 
         :param p_model: model containing markup text.
@@ -454,119 +456,73 @@ class ViewDuoMarkup:
         get_object = VUI.GetUiElementByStr(p_string_ui=self._UI_DEFINITION)
         self._ui_view = get_object('ui_view')
         self._ui_button = get_object('ui_button_edit')
-        self._ui_display = None
-        self._ui_popup = None
+        self._display = DisplayTextMarkup(p_model)
+        self._popup = PopupEditorMarkup(p_model)
+        self._popup.set_label(p_label)
 
-        # self.fill_display(get_object)
-        # self.fill_label(get_object, p_label)
-        # self.fill_popup_editor(get_object)
+        self.fill_display()
+        self.link_popup()
 
-    def fill_display(self, p_get_object: VUI.GetUiElementByStr) -> None:
+    def fill_display(self) -> None:
         """Populate display component of view duo.
 
         Override this method to change the format of the display.
-
-        :param p_get_object: method to get visual element from user
-            interface description.
         """
-        pass
-        # factory_display = BTEXT.FactoryDisplayTextMarkup(self._model)
-        # display = factory_display()
-        # display.show()
-        # EXPAND_OKAY = True
-        # FILL_OKAY = True
-        # N_PADDING = 6
-        # site_display = p_get_object('site_display')
-        # site_display.pack_start(display, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        EXPAND_OKAY = True
+        FILL_OKAY = True
+        N_PADDING = 6
+        self._ui_view.pack_start(
+            self._display.ui_view, EXPAND_OKAY, FILL_OKAY, N_PADDING)
 
-    def fill_label(
-            self, p_get_object: VUI.GetUiElementByStr, p_label: str) -> None:
-        """Populate label component identifying view duo.
-
-        Override this method to change the format of label.
-
-        :param p_get_object: method to get visual element from user
-            interface description.
-        :param p_label: text to identify view duo to user (such as, 'Title').
-        """
-        pass
-        # label_duo = p_get_object('label_duo')
-        # label_duo.set_label('<b>{}</b>:'.format(p_label))
-
-    def fill_popup_editor(self, p_get_object: VUI.GetUiElementByStr) -> None:
-        """Populate popup editor component of view duo.
+    def link_popup(self) -> None:
+        """Link popup editor to view duo components.
 
         Popup includes editor along with button to show/hide editor..
-
-        Override this method to change the format of the editor.
-
-        :param p_get_object: method to get visual element from user
-            interface description.
         """
-        pass
-        # factory_editor = BTEXT.FactoryEditorTextMarkup(self._model)
-        # editor = factory_editor()
-        # editor.show()
-        # EXPAND_OKAY = True
-        # FILL_OKAY = True
-        # N_PADDING = 6
-        # site_editor = p_get_object('site_editor')
-        # site_editor.pack_start(editor, EXPAND_OKAY, FILL_OKAY, N_PADDING)
+        self._ui_button.set_popover(self._popup.ui_view)
+        _ = self._ui_button.connect(
+            'toggled', self.on_toggled, self._popup.ui_editor)
 
-        # button_edit = p_get_object('button_edit')
-        # _ = button_edit.connect('toggled', self.on_toggled, editor)
+        _ = self._popup.ui_editor.connect(
+            'activate', lambda _: self._ui_button.clicked())
+        _ = self._popup.ui_editor.connect('icon-press', self.on_icon_press)
 
-        # _ = editor.connect('activate', lambda _: button_edit.clicked())
-        # _ = editor.connect('icon-press', self.on_icon_press)
-
-    def on_icon_press(self, p_editor: BTEXT.EditorTextMarkup,
-                      p_icon: Gtk.EntryIconPosition, _event: Gdk.Event,
-                      p_button_edit: ButtonEdit
+    def on_icon_press(self, p_ui_editor: UiEditorTextMarkup,
+                      p_icon: Gtk.EntryIconPosition, _event: Gdk.Event
                       ) -> None:
         """End edit and if user cancels edit, restore text.
 
         Primary icon accepts edits.  Secondary icon cancels edits.
 
-        :param p_editor: editor view.
+        :param p_ui_editor: editor visual element.
         :param p_icon: identifies icon user clicked.
         :param _event: user interface event (unused).
-        :param p_button_edit: button to show/hide editor.
         """
-        pass
-        # if Gtk.EntryIconPosition.SECONDARY == p_icon:
-        #     p_editor.set_text(self._text_restore)
-        # p_button_edit.clicked()
+        if Gtk.EntryIconPosition.SECONDARY == p_icon:
+            p_ui_editor.set_text(self._text_restore)
+        self._ui_button.clicked()
 
-    def on_toggled(
-            self, p_button: Gtk.Button, p_editor: UiEditorTextMarkup) -> None:
+    def on_toggled(self, p_ui_button: UiButtonTrigger,
+                   p_ui_editor: UiEditorTextMarkup) -> None:
         """Record restore text before edit begins and clear after edit ends.
 
-        :param p_button: button user clicked.
-        :param p_editor: editor associated with button user clicked.
+        :param p_ui_button: button user clicked.
+        :param p_ui_editor: editor visual element.
         """
-        pass
-        # if p_button.get_active():
-        #     self._text_restore = p_editor.get_text()
-        # else:
-        #     self._text_restore = ''
+        if p_ui_button.get_active():
+            self._text_restore = p_ui_editor.get_text()
+        else:
+            self._text_restore = ''
 
-    # @property
-    def model(self) -> UiTextMarkup:
-        """Return model of view duo."""
-        pass
-        # return self._model
-
-    # @property
+    @property
     def ui_button(self) -> UiViewDuoMarkup:
         """Return visual element of view duo."""
-        pass
-        # return self._ui_view
+        return self._ui_button
 
-    # @property
+    @property
     def ui_view(self) -> UiViewDuoMarkup:
         """Return visual element of view duo."""
-        pass
-        # return self._ui_view
+        return self._ui_view
 
     _UI_DEFINITION = """<?xml version="1.0" encoding="UTF-8"?>
         <!-- Generated with glade 3.38.2 -->

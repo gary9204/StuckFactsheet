@@ -354,7 +354,6 @@ class TestModule:
         assert isinstance(BMARKUP.logger, logging.Logger)
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (BMARKUP.ButtonEdit, Gtk.MenuButton),
         (BMARKUP.UiButtonTrigger, Gtk.MenuButton),
         (BMARKUP.UiDisplayTextMarkup, Gtk.Label),
         (BMARKUP.UiAnchor, Gtk.Widget),
@@ -377,7 +376,7 @@ class TestModule:
 
 
 class TestPopoverEditorMarkup:
-    """Unit tests for :class:`.PopoverEditorMarkup`."""
+    """Unit tests for :class:`.PopupEditorMarkup`."""
 
     def test_ui_definition(self):
         """Confirm visual element definition."""
@@ -385,7 +384,7 @@ class TestPopoverEditorMarkup:
         N_SPACING = 6
         TEXT = '<b>Oops!</b>'
         get_object = VUI.GetUiElementByStr(
-            p_string_ui=BMARKUP.PopoverEditorMarkup._UI_DEFINITION)
+            p_string_ui=BMARKUP.PopupEditorMarkup._UI_DEFINITION)
         # Test
         ui_view = get_object('ui_view')
         assert isinstance(ui_view, BMARKUP.UiPopoverEditorMarkup)
@@ -407,7 +406,7 @@ class TestPopoverEditorMarkup:
         FILL_OKAY = True
         N_PADDING = 0
         # Test
-        target = BMARKUP.PopoverEditorMarkup(p_model=model)
+        target = BMARKUP.PopupEditorMarkup(p_model=model)
         assert isinstance(target._ui_view, BMARKUP.UiPopoverEditorMarkup)
         assert isinstance(target._ui_editor, BMARKUP.UiEditorTextMarkup)
         assert target._ui_editor.get_buffer() is model.ui_model
@@ -435,9 +434,9 @@ class TestPopoverEditorMarkup:
         """
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        target = BMARKUP.PopoverEditorMarkup(p_model=model)
+        target = BMARKUP.PopupEditorMarkup(p_model=model)
         attr = getattr(target, NAME_ATTR)
-        CLASS = BMARKUP.PopoverEditorMarkup
+        CLASS = BMARKUP.PopupEditorMarkup
         target_prop = getattr(CLASS, NAME_PROP)
         # Test
         assert target_prop.fget is not None
@@ -449,7 +448,7 @@ class TestPopoverEditorMarkup:
         """Confirm anchor is set."""
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        target = BMARKUP.PopoverEditorMarkup(p_model=model)
+        target = BMARKUP.PopupEditorMarkup(p_model=model)
         BUTTON = Gtk.MenuButton()
         # Test
         target.set_anchor(p_anchor=BUTTON)
@@ -459,7 +458,7 @@ class TestPopoverEditorMarkup:
         """Confirm identifying text is set."""
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        target = BMARKUP.PopoverEditorMarkup(p_model=model)
+        target = BMARKUP.PopupEditorMarkup(p_model=model)
         TEXT = '<i>The Parrot Sketch</i>'
         # Test
         target.set_label(p_text=TEXT)
@@ -468,14 +467,6 @@ class TestPopoverEditorMarkup:
 
 class TestViewDuoMarkup:
     """Unit tests for :class:`.ViewDuoMarkup`."""
-
-    @pytest.mark.skip(reason='refactor')
-    def test_constants(self):
-        """Confirm constant definitions."""
-        # Setup
-        # Test
-        assert isinstance(
-            BMARKUP.ViewDuoMarkup._UI_DEFINITION, str)
 
     def test_ui_definition(self):
         """Confirm visual element definition."""
@@ -491,30 +482,26 @@ class TestViewDuoMarkup:
         button = ui_view.get_children()[I_BUTTON]
         assert isinstance(button, BMARKUP.UiButtonTrigger)
 
-    @pytest.mark.skip(reason='next')
     def test_init(self):
         """| Confirm initialization.
         | Case: direct attribute initialization.
         """
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        LABEL = 'Parrot'
+        LABEL = 'Sketch'
         BLANK = ''
         # Test
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         assert BLANK == target._text_restore
         assert isinstance(target._ui_view, BMARKUP.UiViewDuoMarkup)
         assert isinstance(target._ui_button, BMARKUP.UiButtonTrigger)
-        assert isinstance(target._ui_display, BMARKUP.UiDisplayTextMarkup)
+        assert isinstance(target._display, BMARKUP.DisplayTextMarkup)
+        assert isinstance(target._popup, BMARKUP.PopupEditorMarkup)
+        assert LABEL == target._popup.ui_label.get_label()
 
-        # assert target._model is model
-        # assert isinstance(target._ui_view, BMARKUP.UiViewDuoMarkup)
-
-    @pytest.mark.skip(reason='refactor')
     @pytest.mark.parametrize('HELPER', [
         'fill_display',
-        'fill_label',
-        'fill_popup_editor',
+        'link_popup',
         ])
     def test_init_delegate(self, HELPER, monkeypatch):
         """| Confirm initialization.
@@ -539,105 +526,67 @@ class TestViewDuoMarkup:
             p_model=model, p_label=LABEL)
         assert called_helper
 
-    @pytest.mark.skip(reason='refactor')
     def test_fill_display(self):
         """Confirm display populated in view duo."""
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        LABEL = 'Parrot'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
-        get_object = VUI.GetUiElementByStr(
-            p_string_ui=BMARKUP.ViewDuoMarkup._UI_DEFINITION)
-        site_display = get_object('site_display')
-        FIRST = 0
+        LABEL = 'Sketch'
+        target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
+        PATCH_UI_DISPLAY = BMARKUP.UiDisplayTextMarkup()
+        target._display._ui_view = PATCH_UI_DISPLAY
+        I_DISPLAY = 1
         N_PADDING = 6
         # Test
-        target.fill_display(get_object)
-        display = site_display.get_children()[FIRST]
+        target.fill_display()
+        display = target._ui_view.get_children()[I_DISPLAY]
         assert isinstance(display, BMARKUP.UiDisplayTextMarkup)
         expand, fill, padding, pack_type = (
-            site_display.query_child_packing(display))
+            target._ui_view.query_child_packing(display))
         assert expand
         assert fill
         assert N_PADDING == padding
         assert pack_type is Gtk.PackType.START
         assert display.get_visible()
 
-    @pytest.mark.skip(reason='refactor')
-    def test_fill_label(self):
-        """Confirm label populated in view duo."""
+    def test_link_popup(self):
+        """Confirm links betwen popup editor to view duo components."""
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        LABEL = 'Parrot'
-        EXPECT = '<b>' + LABEL + '</b>:'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
-        get_object = VUI.GetUiElementByStr(
-            p_string_ui=BMARKUP.ViewDuoMarkup._UI_DEFINITION)
+        LABEL = 'Sketch'
+        target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
+        PATCH_UI_BUTTON = BMARKUP.UiButtonTrigger()
+        target._ui_button = PATCH_UI_BUTTON
+        PATCH_POPUP = BMARKUP.PopupEditorMarkup(model)
+        target._popup = PATCH_POPUP
         # Test
-        target.fill_label(get_object, LABEL)
-        label_duo = get_object('label_duo')
-        assert EXPECT == label_duo.get_label()
+        target.link_popup()
+        assert PATCH_UI_BUTTON.get_popover() is PATCH_POPUP.ui_view
+        assert PATCH_POPUP.ui_view.get_relative_to() is PATCH_UI_BUTTON
 
-    @pytest.mark.skip(reason='Adding EditorTExtMarkup')
-    def test_fill_popup_editor(self):
-        """Confirm editor popup populated in view duo."""
-        # Setup
-        model = BMARKUP.ModelTextMarkup()
-        LABEL = 'Parrot'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
-        get_object = VUI.GetUiElementByStr(
-            p_string_ui=BMARKUP.ViewDuoMarkup._UI_DEFINITION)
-        site_editor = get_object('site_editor')
-        FIRST = 0
-        N_PADDING = 6
-        # Test
-        target.fill_popup_editor(get_object)
-        editor = site_editor.get_children()[FIRST]
-        assert isinstance(editor, BMARKUP.EditorTextMarkup)
-        expand, fill, padding, pack_type = (
-            site_editor.query_child_packing(editor))
-        assert expand
-        assert fill
-        assert N_PADDING == padding
-        assert pack_type is Gtk.PackType.START
-        assert editor.get_visible()
-
-    @pytest.mark.skip(reason='refactor')
     @pytest.mark.parametrize(
-        'ORIGIN, NAME_SIGNAL, LOCATION, IS_SITE, N_DEFAULT', [
-            (Gtk.Entry, 'activate', 'site_editor', True, 0),
-            (Gtk.Entry, 'icon_press', 'site_editor', True, 0),
-            (Gtk.MenuButton, 'toggled', 'button_edit', False, 0),
+        'ORIGIN, NAME_SIGNAL, ATTRS_VIEW, N_DEFAULT', [
+            (Gtk.Entry, 'activate', ['_popup', '_ui_editor'], 0),
+            (Gtk.Entry, 'icon_press', ['_popup', '_ui_editor'], 0),
+            (Gtk.MenuButton, 'toggled', ['_ui_button'], 0),
             ])
-    def test_fill_popup_editor_signals(
-            self, ORIGIN, NAME_SIGNAL, LOCATION, IS_SITE, N_DEFAULT):
+    def test_link_popup_signals(
+            self, ORIGIN, NAME_SIGNAL, ATTRS_VIEW, N_DEFAULT):
         """| Confirm popup editor signal connection.
 
         :param ORIGIN: GTK class origin of signal.
         :param NAME_SIGNAL: name of signal to check.
-        :param LOCATION: location of object in builder.
-        :param IS_SITE: True when location is site containing object.
+        :param ATTRS_VIEW: list of attributes to reach visual element.
         :param N_DEFAULT: count of default signal handlers.
         """
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         model = BMARKUP.ModelTextMarkup()
-        LABEL = 'Parrot'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
-        get_object = VUI.GetUiElementByStr(
-            p_string_ui=BMARKUP.ViewDuoMarkup._UI_DEFINITION)
-        target.fill_popup_editor(get_object)
-        if IS_SITE:
-            site = get_object(LOCATION)
-            FIRST = 0
-            ui_view = site.get_children()[FIRST]
-        else:
-            ui_view = get_object(LOCATION)
+        LABEL = 'Sketch'
+        target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
+        ui_view = target
+        for attr in ATTRS_VIEW:
+            ui_view = getattr(ui_view, attr)
         # Test
         n_handlers = 0
         while True:
@@ -652,7 +601,6 @@ class TestViewDuoMarkup:
 
         assert N_DEFAULT + 1 == n_handlers
 
-    @pytest.mark.skip(reason='refactor')
     @pytest.mark.parametrize('ICON, EXPECT_TEXT', [
         (Gtk.EntryIconPosition.SECONDARY, 'The Parrot Sketch'),
         (Gtk.EntryIconPosition.PRIMARY, 'Something completely different'),
@@ -668,22 +616,19 @@ class TestViewDuoMarkup:
         """
         # Setup
         model = BMARKUP.ModelTextMarkup()
-        LABEL = 'Parrot'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
+        LABEL = 'Sketch'
+        target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
+        target._ui_button.clicked()
         TEXT_RESTORE = 'The Parrot Sketch'
         target._text_restore = TEXT_RESTORE
         TEXT_EDITED = 'Something completely different'
-        editor = Gtk.Entry(text=TEXT_EDITED)
+        target._popup.ui_editor.set_text(TEXT_EDITED)
         EVENT = None
-        button_edit = BMARKUP.ButtonEdit()
-        button_edit.clicked()
         # Test
-        target.on_icon_press(editor, ICON, EVENT, button_edit)
-        assert not button_edit.get_active()
-        assert EXPECT_TEXT == editor.get_text()
+        target.on_icon_press(target._popup.ui_editor, ICON, EVENT)
+        assert not target._ui_button.get_active()
+        assert EXPECT_TEXT == target._popup.ui_editor.get_text()
 
-    @pytest.mark.skip(reason='refactor')
     @pytest.mark.parametrize('ACTIVE, TEXT_EXPECT', [
         (True, 'Something completely different'),
         (False, ''),
@@ -697,36 +642,33 @@ class TestViewDuoMarkup:
         # Setup
         model = BMARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
+        target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         TEXT_RESTORE = 'Oops!'
         target._text_restore = TEXT_RESTORE
         TEXT_EDITED = 'Something completely different'
-        editor = Gtk.Entry(text=TEXT_EDITED)
-        editor.set_text(TEXT_EDITED)
-        button_edit = BMARKUP.ButtonEdit()
-        button_edit.set_active(ACTIVE)
-        # Test
-        target.on_toggled(button_edit, editor)
+        target._popup.ui_editor.set_text(TEXT_EDITED)
+        target._ui_button.set_active(ACTIVE)
+        target.on_toggled(target._ui_button, target._popup.ui_editor)
         assert TEXT_EXPECT == target._text_restore
 
-    @pytest.mark.skip(reason='refactor')
-    @pytest.mark.parametrize('NAME_PROP, NAME_ATTR', [
-        ('model', '_model'),
-        ('ui_view', '_ui_view'),
+    @pytest.mark.parametrize('NAME_PROP, NAMES_ATTR', [
+        ('ui_button', ['_ui_button']),
+        ('ui_view', ['_ui_view']),
         ])
-    def test_property_access(self, NAME_PROP, NAME_ATTR):
+    def test_property_access(self, NAME_PROP, NAMES_ATTR):
         """Confirm access limits of each property.
 
         :param NAME_PROP: name of property.
-        :param NAME_ATTR: name of attribute for property.
+        :param NAME_ATTR: list of names that identify attribute.
         """
         # Setup
         model = BMARKUP.ModelTextMarkup()
         LABEL = 'Parrot'
-        target = BMARKUP.ViewDuoMarkup(
-            p_model=model, p_label=LABEL)
-        attr = getattr(target, NAME_ATTR)
+        target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
+        attr = target
+        for name in NAMES_ATTR:
+            attr = getattr(attr, name)
+        # attr = getattr(target, NAME_ATTR)
         CLASS = BMARKUP.ViewDuoMarkup
         target_prop = getattr(CLASS, NAME_PROP)
         # Test
