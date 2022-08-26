@@ -14,6 +14,7 @@ Subpackages
 
    factsheet_test.bridge_gtk
    factsheet_test.control
+   factsheet_test.element_gtk3
    factsheet_test.model
    factsheet_test.spec
    factsheet_test.view
