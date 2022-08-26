@@ -10,5 +10,6 @@ Submodules
 ----------
 
 .. toctree::
+   :titlesonly:
 
-..   factsheet_test.element_gtk3.test_bridge_base
+   factsheet_test.element_gtk3.model.test_model_abc
