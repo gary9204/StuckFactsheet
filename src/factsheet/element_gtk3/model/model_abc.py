@@ -55,12 +55,13 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
 
         Property :attr:`~.element_gtk3.model.model_abc,ModelABC.ui_model`
         is intended only for use by classes in ``element_*`` and
-        :mod:`~.factsheet.view`.
+        :mod:`~.factsheet.view` packages.
         """
         raise NotImplementedError
 
 
-class ModelGtk3(abc.ABC, typing.Generic[UiModelOpaque, PersistOpaque]):
+class ModelGtk3(ModelAbc[UiModelOpaque],
+                typing.Generic[UiModelOpaque, PersistOpaque]):
     """Abstract base class for facade classes of storage elements.
 
     :class:`~.element_gtk3.model.model_abc.ModelGtk3` is generic with
@@ -129,16 +130,16 @@ class ModelGtk3(abc.ABC, typing.Generic[UiModelOpaque, PersistOpaque]):
         """Return storage element in form suitable for persistent storage."""
         raise NotImplementedError
 
-    @abc.abstractmethod
-    def new_ui_model(self) -> UiModelOpaque:
-        """Return a user interface storage element.
-
-        Method :meth:`~.element_gtk3.model.model_abc.ModelGtk3.__init__`
-        uses :meth:`~.element_gtk3.model.model_abc.ModelGtk3.new_ui_model`
-        to create the facade's storage element.  This method is intended
-        for overriding rather than for external use.
-        """
-        raise NotImplementedError
+    # @abc.abstractmethod
+    # def new_ui_model(self) -> UiModelOpaque:
+    #     """Return a user interface storage element.
+    #
+    #     Method :meth:`~.element_gtk3.model.model_abc.ModelGtk3.__init__`
+    #     uses :meth:`~.element_gtk3.model.model_abc.ModelGtk3.new_ui_model`
+    #     to create the facade's storage element.  This method is intended
+    #     for overriding rather than for external use.
+    #     """
+    #     raise NotImplementedError
 
     @abc.abstractmethod
     def set_persist(self, p_persist: PersistOpaque) -> None:

@@ -52,8 +52,6 @@ class TestModelAbc:
         property.
         """
         # Setup
-        # target_class = PatchModelAbc
-        # target = target_class()
         target_class = EMABC.ModelAbc
         # Test
         assert target_class.ui_model.fget is not None
