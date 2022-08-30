@@ -28,6 +28,25 @@ class PatchModelGtk3(EMABC.ModelGtk3[typing.Any, typing.Any]):
     def set_persist(self, p_persist): self._ui_model.set_text(p_persist)
 
 
+class TestConversion:
+    """Unit tests for :class:`~.element_gtk3.model.model_abc.Conversion`."""
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (EMABC.Conversion, 'set_internal'),
+        (EMABC.Conversion, 'to_external'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+
 class TestModelAbc:
     """Unit tests for :class:`~.element_gtk3.model.model_abc.ModelAbc`."""
 
@@ -155,8 +174,8 @@ class TestModule:
     """
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (type(EMABC.ExternalOpaque), typing.TypeVar),
         (type(EMABC.UiModelOpaque), typing.TypeVar),
-        (type(EMABC.PersistOpaque), typing.TypeVar),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.

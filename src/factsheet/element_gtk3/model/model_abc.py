@@ -1,14 +1,14 @@
 """
 Define abstract base class for facade classes of storage elements.
 
+.. data:: ExternalOpaque
+
+    Placeholder type hint for model representation that is not specific
+    to any user interface toolkit.
+
 .. data:: UiModelOpaque
 
     Placeholder type hint for a toolkit-specific storage element.
-
-.. data:: PersistOpaque
-
-    Placeholder type hint for model representation suitable
-    for persistent storage.
 """
 import abc
 import logging
@@ -16,16 +16,54 @@ import typing
 
 logger = logging.getLogger('Main.element.model')
 
+ExternalOpaque = typing.TypeVar('ExternalOpaque')
 UiModelOpaque = typing.TypeVar('UiModelOpaque')
-PersistOpaque = typing.TypeVar('PersistOpaque')
 
 
-class Consistency:
+class Consistency(abc.ABC):
     pass
 
 
-class Conversion:
-    pass
+class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):
+    """Abstract interface for conversion between element representations.
+
+    A representation of a storage element may be specific to a user
+    interface toolkit.  Call this kind of representation an **internal**
+    representation.  A representation of a storage element may not
+    rely on any user interface toolkit.  Call this kind of
+    representation an **external** representation.
+
+    :class:`~.element_gtk3.model.model_abc.Conversion` is generic with
+    respect to external representation.  A subclass must provide a
+    specific type
+
+    .. admonition:: Maintain
+
+        Pickle cannot store GTK 3 objects directly.  A workaround is to
+        convert a GTK 3 object to a plain Python representation and
+        override a model element's ``__getstate__`` method to replace
+        the GTK 3 object with that external representation.  For
+        loading, overwrite a model element's ``__setstate__`` method to
+        replace the external representation with the corresponding GTK 3
+        object.
+
+        GTK 3 has mechanisms to persist objects.  Factsheet uses Pickle
+        to reduce dependence on GTK 3.
+    """
+
+    @abc.abstractmethod
+    def set_internal(self, p_external) -> None:
+        """Set storage element from external representation.
+
+        :param p_external: external representation of desired content.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def to_external(self) -> ExternalOpaque:
+        """Return external representation of storage element.
+        """
+        raise NotImplementedError
 
 
 class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
@@ -61,7 +99,7 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
 
 
 class ModelGtk3(ModelAbc[UiModelOpaque],
-                typing.Generic[UiModelOpaque, PersistOpaque]):
+                typing.Generic[UiModelOpaque, ExternalOpaque]):
     """Abstract base class for facade classes of storage elements.
 
     :class:`~.element_gtk3.model.model_abc.ModelGtk3` is generic with
@@ -126,7 +164,7 @@ class ModelGtk3(ModelAbc[UiModelOpaque],
         return '<{}: {}>'.format(type(self).__name__, self.get_persist())
 
     @abc.abstractmethod
-    def get_persist(self) -> PersistOpaque:
+    def get_persist(self) -> ExternalOpaque:
         """Return storage element in form suitable for persistent storage."""
         raise NotImplementedError
 
@@ -142,7 +180,7 @@ class ModelGtk3(ModelAbc[UiModelOpaque],
     #     raise NotImplementedError
 
     @abc.abstractmethod
-    def set_persist(self, p_persist: PersistOpaque) -> None:
+    def set_persist(self, p_persist: ExternalOpaque) -> None:
         """Set storage element from content in persistent form.
 
         :param p_persist: persistent form for storage element content.
