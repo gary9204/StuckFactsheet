@@ -21,11 +21,17 @@ class PatchModelGtk3(EMABC.ModelGtk3[typing.Any, typing.Any]):
 
     MODEL_INIT = 'A Norwegian Blue'
 
-    def get_persist(self): return self._ui_model.get_text()
+    def new_ui_model(self):
+        """Stub method."""
+        return Gtk.Entry(text=self.MODEL_INIT)
 
-    def new_ui_model(self): return Gtk.Entry(text=self.MODEL_INIT)
+    def set_internal(self, p_persist):
+        """Stub method."""
+        self._ui_model.set_text(p_persist)
 
-    def set_persist(self, p_persist): self._ui_model.set_text(p_persist)
+    def to_external(self):
+        """Stub method."""
+        return self._ui_model.get_text()
 
 
 class TestConversion:
@@ -117,7 +123,7 @@ class TestModelGtk3:
             pickle.dump(source, io_out)
         with PATH.open(mode='rb') as io_in:
             target = pickle.load(io_in)
-        assert source.get_persist() == target.get_persist()
+        assert source.to_external() == target.to_external()
         assert not hasattr(target, 'ex_ui_model')
 
     def test_init(self):
@@ -138,9 +144,9 @@ class TestModelGtk3:
         assert expect == str(target)
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (EMABC.ModelGtk3, 'get_persist'),
+        (EMABC.ModelGtk3, 'to_external'),
         (EMABC.ModelGtk3, 'new_ui_model'),
-        (EMABC.ModelGtk3, 'set_persist'),
+        (EMABC.ModelGtk3, 'set_internal'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.

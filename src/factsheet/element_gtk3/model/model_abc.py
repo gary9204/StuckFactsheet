@@ -98,34 +98,28 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
         raise NotImplementedError
 
 
-class ModelGtk3(ModelAbc[UiModelOpaque],
+class ModelGtk3(ModelAbc[UiModelOpaque], Conversion[ExternalOpaque],
                 typing.Generic[UiModelOpaque, ExternalOpaque]):
     """Abstract base class for facade classes of storage elements.
 
-    :class:`~.element_gtk3.model.model_abc.ModelGtk3` is generic with
-    respect to toolkit storage element.  A subclass must provide a
-    specific storage element type and override
-    :meth:`~.element_gtk3.model.model_abc.ModelGtk3.new_ui_model` to
-    return storage of that type. For example, see
-    :class:`.element_gtk3.model.text.ModelText`.
-
-    :class:`~.element_gtk3.model.model_abc.ModelGtk3` is generic with
-    respect to persistent storage.  A subclass must provide a specific
-    type that ``Pickle`` can store and load.
+    See :class:`~.element_gtk3.model.model_abc.Conversion` regarding
+    generic type :data:`.ExternalOpaque`.
+    See :class:`~.element_gtk3.model.model_abc.ModelAbc` regarding
+    generic type :data:`UiModelOpaque`.
     """
 
     def __eq__(self, p_other: typing.Any) -> bool:
         """Return True when other is equivalent to self.
 
-        Two model facades are equivalent when their persistent forms are
-        equal.
+        Two model facades are equivalent when their external
+        representations are equal.
 
         :param p_other: object to test for equality.
         """
         if not isinstance(p_other, type(self)):
             return False
 
-        if self.get_persist() != p_other.get_persist():
+        if self.to_external() != p_other.to_external():
             return False
 
         return True
@@ -137,7 +131,7 @@ class ModelGtk3(ModelAbc[UiModelOpaque],
         remove such content from the returned state.
         """
         state = self.__dict__.copy()
-        state['ex_ui_model'] = self.get_persist()
+        state['ex_ui_model'] = self.to_external()
         del state['_ui_model']
         return state
 
@@ -150,49 +144,19 @@ class ModelGtk3(ModelAbc[UiModelOpaque],
         """Reconstruct storage element from content that pickle loads.
 
         A subclass with transient content must extend this method to
-        initialize such content in addition to prsistent content.
+        initialize such content in addition to persistent content.
 
         :param p_state: unpickled content.
         """
         self.__dict__.update(p_state)
         self._ui_model = self.new_ui_model()
-        self.set_persist(self.ex_ui_model)   # type: ignore[attr-defined]
+        self.set_internal(self.ex_ui_model)   # type: ignore[attr-defined]
         del self.ex_ui_model       # type: ignore[attr-defined]
 
     def __str__(self) -> str:
         """Return storage element as string."""
-        return '<{}: {}>'.format(type(self).__name__, self.get_persist())
-
-    @abc.abstractmethod
-    def get_persist(self) -> ExternalOpaque:
-        """Return storage element in form suitable for persistent storage."""
-        raise NotImplementedError
-
-    # @abc.abstractmethod
-    # def new_ui_model(self) -> UiModelOpaque:
-    #     """Return a user interface storage element.
-    #
-    #     Method :meth:`~.element_gtk3.model.model_abc.ModelGtk3.__init__`
-    #     uses :meth:`~.element_gtk3.model.model_abc.ModelGtk3.new_ui_model`
-    #     to create the facade's storage element.  This method is intended
-    #     for overriding rather than for external use.
-    #     """
-    #     raise NotImplementedError
-
-    @abc.abstractmethod
-    def set_persist(self, p_persist: ExternalOpaque) -> None:
-        """Set storage element from content in persistent form.
-
-        :param p_persist: persistent form for storage element content.
-        """
-        raise NotImplementedError
+        return '<{}: {}>'.format(type(self).__name__, self.to_external())
 
     @property
     def ui_model(self) -> UiModelOpaque:
-        """Return underlying user interface storage element.
-
-        Property :attr:`~.element_gtk3.model.model_abc,ModelGtk3.ui_model`
-        is intended only for use by classes in packages element and
-        view.
-        """
         return self._ui_model
