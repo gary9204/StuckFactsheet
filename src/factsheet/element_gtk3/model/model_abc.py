@@ -20,17 +20,57 @@ UiModelOpaque = typing.TypeVar('UiModelOpaque')
 PersistOpaque = typing.TypeVar('PersistOpaque')
 
 
-class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque, PersistOpaque]):
+class Consistency:
+    pass
+
+
+class Conversion:
+    pass
+
+
+class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
     """Abstract base class for facade classes of storage elements.
 
     :class:`~.element_gtk3.model.model_abc.ModelAbc` is generic with
+    respect to storage element type.  A subclass must provide a
+    specific storage element type, typically specific to a user
+    interface toolkit.
+    """
+
+    @abc.abstractmethod
+    def new_ui_model(self) -> UiModelOpaque:
+        """Return a user interface storage element.
+
+        Use method
+        :meth:`~.element_gtk3.model.model_abc.ModelAbc.new_ui_model` in
+        the ``__init__`` method of a subclass to create the facade's
+        storage element.
+        """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def ui_model(self) -> UiModelOpaque:
+        """Return underlying storage element.
+
+        Property :attr:`~.element_gtk3.model.model_abc,ModelABC.ui_model`
+        is intended only for use by classes in ``element_*`` and
+        :mod:`~.factsheet.view`.
+        """
+        raise NotImplementedError
+
+
+class ModelGtk3(abc.ABC, typing.Generic[UiModelOpaque, PersistOpaque]):
+    """Abstract base class for facade classes of storage elements.
+
+    :class:`~.element_gtk3.model.model_abc.ModelGtk3` is generic with
     respect to toolkit storage element.  A subclass must provide a
     specific storage element type and override
-    :meth:`~.element_gtk3.model.model_abc.ModelAbc.new_ui_model` to
+    :meth:`~.element_gtk3.model.model_abc.ModelGtk3.new_ui_model` to
     return storage of that type. For example, see
     :class:`.element_gtk3.model.text.ModelText`.
 
-    :class:`~.element_gtk3.model.model_abc.ModelAbc` is generic with
+    :class:`~.element_gtk3.model.model_abc.ModelGtk3` is generic with
     respect to persistent storage.  A subclass must provide a specific
     type that ``Pickle`` can store and load.
     """
@@ -93,8 +133,8 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque, PersistOpaque]):
     def new_ui_model(self) -> UiModelOpaque:
         """Return a user interface storage element.
 
-        Method :meth:`~.element_gtk3.model.model_abc.ModelAbc.__init__`
-        uses :meth:`~.element_gtk3.model.model_abc.ModelAbc.new_ui_model`
+        Method :meth:`~.element_gtk3.model.model_abc.ModelGtk3.__init__`
+        uses :meth:`~.element_gtk3.model.model_abc.ModelGtk3.new_ui_model`
         to create the facade's storage element.  This method is intended
         for overriding rather than for external use.
         """
@@ -112,7 +152,7 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque, PersistOpaque]):
     def ui_model(self) -> UiModelOpaque:
         """Return underlying user interface storage element.
 
-        Property :attr:`~.element_gtk3.model.model_abc,ModelAbc.ui_model`
+        Property :attr:`~.element_gtk3.model.model_abc,ModelGtk3.ui_model`
         is intended only for use by classes in packages element and
         view.
         """

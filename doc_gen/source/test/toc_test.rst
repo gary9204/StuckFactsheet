@@ -2,6 +2,7 @@ Unit Test Code
 ==============
 
 .. toctree::
-   :maxdepth: 3
+   :titlesonly:
 
    factsheet_test
+..   :maxdepth: 3

@@ -2,6 +2,6 @@ Source Code
 ===========
 
 .. toctree::
-   :maxdepth: 3
+   :titlesonly:
 
    factsheet

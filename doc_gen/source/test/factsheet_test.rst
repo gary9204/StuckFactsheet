@@ -10,7 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 1
+   :titlesonly:
 
    factsheet_test.bridge_gtk
    factsheet_test.control
@@ -18,6 +18,7 @@ Subpackages
    factsheet_test.model
    factsheet_test.spec
    factsheet_test.view
+..   :maxdepth: 1
 ..   factsheet_test.abc_types
 ..   factsheet_test.adapt_gtk
 
@@ -25,8 +26,9 @@ Submodules
 ----------
 
 .. toctree::
-   :maxdepth: 1
+   :titlesonly:
 
    factsheet_test.conftest
    factsheet_test.test_app
    factsheet_test.test_bridge_ui
+..   :maxdepth: 1

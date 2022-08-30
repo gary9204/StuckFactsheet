@@ -14,9 +14,9 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
-class PatchModelAbc(EMABC.ModelAbc[typing.Any, typing.Any]):
+class PatchModelGtk3(EMABC.ModelGtk3[typing.Any, typing.Any]):
     """Class with test stubs for abstract
-    :class:`~.element_gtk3.model.model_abc.ModelAbc` methods.
+    :class:`~.element_gtk3.model.model_abc.ModelGtk3` methods.
     """
 
     MODEL_INIT = 'A Norwegian Blue'
@@ -31,66 +31,9 @@ class PatchModelAbc(EMABC.ModelAbc[typing.Any, typing.Any]):
 class TestModelAbc:
     """Unit tests for :class:`~.element_gtk3.model.model_abc.ModelAbc`."""
 
-    def test_eq(self):
-        """Confirm equality comparison.
-
-        #. Case: type difference.
-        #. Case: storage element difference.
-        #. Case: equivalent.
-        """
-        # Setup
-        TEXT = 'Parrot'
-        source = PatchModelAbc()
-        source._ui_model.set_text(TEXT)
-        # Test: type difference.
-        assert not source.__eq__(TEXT)
-        # Test: storage element difference.
-        TEXT_DIFFER = 'Something completely different.'
-        target = PatchModelAbc()
-        target._ui_model.set_text(TEXT_DIFFER)
-        assert not source.__eq__(target)
-        # Test: equivalent.
-        target = PatchModelAbc()
-        target._ui_model.set_text(TEXT)
-        assert source.__eq__(target)
-        assert not source.__ne__(target)
-
-    def test_get_set_state(self, tmp_path):
-        """Confirm conversion to and from pickle format."""
-        # Setup
-        PATH = Path(str(tmp_path / 'get_set.fsg'))
-        TEXT = 'Parrot'
-        source = PatchModelAbc()
-        source._ui_model.set_text(TEXT)
-        # Test
-        with PATH.open(mode='wb') as io_out:
-            pickle.dump(source, io_out)
-        with PATH.open(mode='rb') as io_in:
-            target = pickle.load(io_in)
-        assert source.get_persist() == target.get_persist()
-        assert not hasattr(target, 'ex_ui_model')
-
-    def test_init(self):
-        """Confirm initialization."""
-        # Setup
-        # Test
-        target = PatchModelAbc()
-        assert PatchModelAbc.MODEL_INIT == target._ui_model.get_text()
-
-    def test_str(self):
-        """Confirm string representation."""
-        # Setup
-        TEXT = 'Parrot'
-        target = PatchModelAbc()
-        target._ui_model.set_text(TEXT)
-        expect = '<PatchModelAbc: {}>'.format(TEXT)
-        # Test
-        assert expect == str(target)
-
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (EMABC.ModelAbc, 'get_persist'),
         (EMABC.ModelAbc, 'new_ui_model'),
-        (EMABC.ModelAbc, 'set_persist'),
+        (EMABC.ModelAbc, 'ui_model'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.
@@ -109,7 +52,97 @@ class TestModelAbc:
         property.
         """
         # Setup
-        target_class = PatchModelAbc
+        # target_class = PatchModelAbc
+        # target = target_class()
+        target_class = EMABC.ModelAbc
+        # Test
+        assert target_class.ui_model.fget is not None
+        assert target_class.ui_model.fset is None
+        assert target_class.ui_model.fdel is None
+
+
+class TestModelGtk3:
+    """Unit tests for :class:`~.element_gtk3.model.model_abc.ModelGtk3`."""
+
+    def test_eq(self):
+        """Confirm equality comparison.
+
+        #. Case: type difference.
+        #. Case: storage element difference.
+        #. Case: equivalent.
+        """
+        # Setup
+        TEXT = 'Parrot'
+        source = PatchModelGtk3()
+        source._ui_model.set_text(TEXT)
+        # Test: type difference.
+        assert not source.__eq__(TEXT)
+        # Test: storage element difference.
+        TEXT_DIFFER = 'Something completely different.'
+        target = PatchModelGtk3()
+        target._ui_model.set_text(TEXT_DIFFER)
+        assert not source.__eq__(target)
+        # Test: equivalent.
+        target = PatchModelGtk3()
+        target._ui_model.set_text(TEXT)
+        assert source.__eq__(target)
+        assert not source.__ne__(target)
+
+    def test_get_set_state(self, tmp_path):
+        """Confirm conversion to and from pickle format."""
+        # Setup
+        PATH = Path(str(tmp_path / 'get_set.fsg'))
+        TEXT = 'Parrot'
+        source = PatchModelGtk3()
+        source._ui_model.set_text(TEXT)
+        # Test
+        with PATH.open(mode='wb') as io_out:
+            pickle.dump(source, io_out)
+        with PATH.open(mode='rb') as io_in:
+            target = pickle.load(io_in)
+        assert source.get_persist() == target.get_persist()
+        assert not hasattr(target, 'ex_ui_model')
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        # Test
+        target = PatchModelGtk3()
+        assert PatchModelGtk3.MODEL_INIT == target._ui_model.get_text()
+
+    def test_str(self):
+        """Confirm string representation."""
+        # Setup
+        TEXT = 'Parrot'
+        target = PatchModelGtk3()
+        target._ui_model.set_text(TEXT)
+        expect = '<PatchModelGtk3: {}>'.format(TEXT)
+        # Test
+        assert expect == str(target)
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (EMABC.ModelGtk3, 'get_persist'),
+        (EMABC.ModelGtk3, 'new_ui_model'),
+        (EMABC.ModelGtk3, 'set_persist'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+    def test_ui_model(self):
+        """Confirm access limits of
+        :attr:`~.element_gtk3.model.model_abc.ModelGtk3.ui_model`
+        property.
+        """
+        # Setup
+        target_class = PatchModelGtk3
         target = target_class()
         # Test
         assert target_class.ui_model.fget is not None

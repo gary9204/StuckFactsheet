@@ -6,9 +6,10 @@
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+Subpackages
+-----------
 
 .. toctree::
+   :titlesonly:
 
    factsheet_test.element_gtk3.model
