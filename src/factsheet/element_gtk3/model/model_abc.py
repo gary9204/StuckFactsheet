@@ -21,7 +21,37 @@ UiModelOpaque = typing.TypeVar('UiModelOpaque')
 
 
 class Consistency(abc.ABC):
-    pass
+    """Abstract interface to track consistency between two representations.
+
+    A class implements interface
+    :class:`~.element_gtk.model.model_abc.Consistency` to track an
+    object's representation against a target representation.  The
+    implementation determines what makes two representations consistent
+    (such as equality or equivalence).
+
+    .. admonition:: Maintain
+
+        The initial use for interface
+        :class:`~.element_gtk.model.model_abc.Consistency` it to track
+        an obejct's representation in memory against its
+        representaton in persistent storage.
+    """
+
+    @abc.abstractmethod
+    def alike(self) -> bool:
+        """Return True when self and target are consistent."""
+
+    @abc.abstractmethod
+    def differ(self) -> bool:
+        """Return True when self and target inconsistent."""
+
+    @abc.abstractmethod
+    def set_alike(self):
+        """Mark self as consistent with target."""
+
+    @abc.abstractmethod
+    def set_differ(self):
+        """Mark self as inconsistent with target."""
 
 
 class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):
@@ -31,11 +61,13 @@ class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):
     interface toolkit.  Call this kind of representation an **internal**
     representation.  A representation of a storage element may not
     rely on any user interface toolkit.  Call this kind of
-    representation an **external** representation.
+    representation is an **external** representation.
 
     :class:`~.element_gtk3.model.model_abc.Conversion` is generic with
-    respect to external representation.  A subclass must provide a
-    specific type
+    respect to external representation.  A implementation of the
+    interface must provide a specific type.  Likewise, the
+    implementation determines both the internal and external
+    representations.
 
     .. admonition:: Maintain
 
@@ -46,6 +78,8 @@ class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):
         loading, overwrite a model element's ``__setstate__`` method to
         replace the external representation with the corresponding GTK 3
         object.
+
+    .. admonition:: Plan
 
         GTK 3 has mechanisms to persist objects.  Factsheet uses Pickle
         to reduce dependence on GTK 3.

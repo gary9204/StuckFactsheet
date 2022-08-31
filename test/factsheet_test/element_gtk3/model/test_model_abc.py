@@ -34,6 +34,27 @@ class PatchModelGtk3(EMABC.ModelGtk3[typing.Any, typing.Any]):
         return self._ui_model.get_text()
 
 
+class TestConsistency:
+    """Unit tests for :class:`~.element_gtk3.model.model_abc.Consistency`."""
+
+    @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+        (EMABC.Consistency, 'alike'),
+        (EMABC.Consistency, 'differ'),
+        (EMABC.Consistency, 'set_alike'),
+        (EMABC.Consistency, 'set_differ'),
+        ])
+    def test_method_abstract(self, CLASS, NAME_METHOD):
+        """Confirm each abstract method is specified.
+
+        :param CLASS: class that should be abstract.
+        :param NAME_METHOD: method that should be abstract.
+        """
+        # Setup
+        # Test
+        assert hasattr(CLASS, '__abstractmethods__')
+        assert NAME_METHOD in CLASS.__abstractmethods__
+
+
 class TestConversion:
     """Unit tests for :class:`~.element_gtk3.model.model_abc.Conversion`."""
 
