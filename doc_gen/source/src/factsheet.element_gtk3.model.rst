@@ -6,6 +6,14 @@
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :titlesonly:
+
+   factsheet.element_gtk3.model.text
+
 Submodules
 ----------
 

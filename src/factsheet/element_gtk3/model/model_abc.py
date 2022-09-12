@@ -32,7 +32,7 @@ class Consistency(abc.ABC):
     .. admonition:: Maintain
 
         The initial use for interface
-        :class:`~.element_gtk.model.model_abc.Consistency` it to track
+        :class:`~.element_gtk.model.model_abc.Consistency` is to track
         an obejct's representation in memory against its
         representaton in persistent storage.
     """

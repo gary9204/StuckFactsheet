@@ -1,5 +1,5 @@
 """
-Unit tests storage element facade base class.  See
+Unit tests for storage element facade base class.  See
 :mod:`.element_gtk3.model.model_abc`.
 """
 import gi   # type: ignore[import]
