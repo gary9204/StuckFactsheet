@@ -17,41 +17,68 @@ import typing
 logger = logging.getLogger('Main.element.model')
 
 ExternalOpaque = typing.TypeVar('ExternalOpaque')
+ModelOpaque = typing.TypeVar('ModelOpaque')
 UiModelOpaque = typing.TypeVar('UiModelOpaque')
 
 
-class Consistency(abc.ABC):
-    """Abstract interface to track consistency between two representations.
-
-    A class implements interface
-    :class:`~.element_gtk.model.model_abc.Consistency` to track an
-    object's representation against a target representation.  The
-    implementation determines what makes two representations consistent
-    (such as equality or equivalence).
-
-    .. admonition:: Maintain
-
-        The initial use for interface
-        :class:`~.element_gtk.model.model_abc.Consistency` is to track
-        an obejct's representation in memory against its
-        representaton in persistent storage.
-    """
+class ChangeMarkAbc(abc.ABC, typing.Generic[ModelOpaque]):
+    """Abstract base class to mark when a model component has changed."""
 
     @abc.abstractmethod
-    def alike(self) -> bool:
-        """Return True when self and target are consistent."""
+    def __init__(self, p_model: ModelOpaque) -> None:
+        """Initialize as unchanged.
 
-    @abc.abstractmethod
-    def differ(self) -> bool:
-        """Return True when self and target inconsistent."""
+        Extend method to link change mark to model comonent.
 
-    @abc.abstractmethod
-    def set_alike(self):
-        """Mark self as consistent with target."""
+        :param p_model: model component to mark.
+        """
+        del p_model
+        self._changed = False
 
-    @abc.abstractmethod
-    def set_differ(self):
-        """Mark self as inconsistent with target."""
+    def has_changed(self) -> bool:
+        """Return True if and only if model component has changed."""
+        return self._changed
+
+    def set(self, p_changed: bool) -> None:
+        """Set mark to given status.
+
+        :param p_changed: new mark status.
+        """
+        self._changed = p_changed
+
+
+# class Consistency(abc.ABC):
+#     """Abstract interface to track consistency between two representations.
+#
+#     A class implements interface
+#     :class:`~.element_gtk.model.model_abc.Consistency` to track an
+#     object's representation against a target representation.  The
+#     implementation determines what makes two representations consistent
+#     (such as equality or equivalence).
+#
+#     .. admonition:: Maintain
+#
+#         The initial use for interface
+#         :class:`~.element_gtk.model.model_abc.Consistency` is to track
+#         an obejct's representation in memory against its
+#         representaton in persistent storage.
+#     """
+#
+#     @abc.abstractmethod
+#     def alike(self) -> bool:
+#         """Return True when self and target are consistent."""
+#
+#     @abc.abstractmethod
+#     def differ(self) -> bool:
+#         """Return True when self and target inconsistent."""
+#
+#     @abc.abstractmethod
+#     def set_alike(self):
+#         """Mark self as consistent with target."""
+#
+#     @abc.abstractmethod
+#     def set_differ(self):
+#         """Mark self as inconsistent with target."""
 
 
 class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):

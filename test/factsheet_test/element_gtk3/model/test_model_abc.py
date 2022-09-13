@@ -34,14 +34,18 @@ class PatchModelGtk3(EMABC.ModelGtk3[typing.Any, typing.Any]):
         return self._ui_model.get_text()
 
 
-class TestConsistency:
-    """Unit tests for :class:`~.element_gtk3.model.model_abc.Consistency`."""
+class TestChangeMarkAbc:
+    """Unit tests for :class:`~.element_gtk3.model.model_abc.ChangeMarkAbc`."""
+
+    class TrackerStub(EMABC.ChangeMarkAbc[int]):
+        """Subclass with stub for abstract methods."""
+
+        def __init__(self, p_model: int) -> None:
+            """Stub: pass through to super class.."""
+            super().__init__(p_model)
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (EMABC.Consistency, 'alike'),
-        (EMABC.Consistency, 'differ'),
-        (EMABC.Consistency, 'set_alike'),
-        (EMABC.Consistency, 'set_differ'),
+        (EMABC.ChangeMarkAbc, '__init__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.
@@ -53,6 +57,69 @@ class TestConsistency:
         # Test
         assert hasattr(CLASS, '__abstractmethods__')
         assert NAME_METHOD in CLASS.__abstractmethods__
+
+    def test_init(self):
+        """Confirm mark initialized as unchanged."""
+        # Setup
+        MODEL = 42
+        UNCHANGED = False
+        # Test
+        target = self.TrackerStub(p_model=MODEL)
+        assert target._changed is UNCHANGED
+
+    @pytest.mark.parametrize('CHANGED', [
+        True,
+        False,
+        ])
+    def test_has_changed(self, CHANGED):
+        """Confirm report of mark is correct.
+
+        :param CHANGED: expected mark.
+        """
+        # Setup
+        MODEL = 42
+        target = self.TrackerStub(p_model=MODEL)
+        target._changed = CHANGED
+        # Test
+        assert target.has_changed() is CHANGED
+
+    @pytest.mark.parametrize('CHANGED', [
+        True,
+        False,
+        ])
+    def test_set(self, CHANGED):
+        """Confirm mark is set correctly.
+
+        :param CHANGED: expected mark.
+        """
+        # Setup
+        MODEL = 42
+        target = self.TrackerStub(p_model=MODEL)
+        target._changed = not CHANGED
+        # Test
+        target.set(CHANGED)
+        assert target._changed is CHANGED
+
+
+# class TestConsistency:
+#     """Unit tests for :class:`~.element_gtk3.model.model_abc.Consistency`."""
+#
+#     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
+#         (EMABC.Consistency, 'alike'),
+#         (EMABC.Consistency, 'differ'),
+#         (EMABC.Consistency, 'set_alike'),
+#         (EMABC.Consistency, 'set_differ'),
+#         ])
+#     def test_method_abstract(self, CLASS, NAME_METHOD):
+#         """Confirm each abstract method is specified.
+#
+#         :param CLASS: class that should be abstract.
+#         :param NAME_METHOD: method that should be abstract.
+#         """
+#         # Setup
+#         # Test
+#         assert hasattr(CLASS, '__abstractmethods__')
+#         assert NAME_METHOD in CLASS.__abstractmethods__
 
 
 class TestConversion:
@@ -202,6 +269,7 @@ class TestModule:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (type(EMABC.ExternalOpaque), typing.TypeVar),
+        (type(EMABC.ModelOpaque), typing.TypeVar),
         (type(EMABC.UiModelOpaque), typing.TypeVar),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
