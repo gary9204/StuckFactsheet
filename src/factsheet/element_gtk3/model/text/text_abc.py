@@ -1,12 +1,25 @@
 """
 Define abstract base class for facade classes of text storage elements.
+
+Type Aliases
+------------
+
+.. data:: ExternalText
+
+    Type hint for text model representation that is not specific
+    to any user interface toolkit.
+
+Classes
+-------
 """
 import typing
 
 import factsheet.element_gtk3.model.model_abc as EMABC
 
+ExternalText = str
 
-class TextAbc(EMABC.ModelGtk3[EMABC.UiModelOpaque, str],
+
+class TextAbc(EMABC.ModelGtk3[EMABC.UiModelOpaque, ExternalText],
               typing.Generic[EMABC.UiModelOpaque]):
     """Common ancestor of facade classes for text storage elements.
 
@@ -47,7 +60,7 @@ class TextAbc(EMABC.ModelGtk3[EMABC.UiModelOpaque, str],
     #     # del state['_stale']
     #     return state
 
-    def __init__(self, p_text: str = '') -> None:
+    def __init__(self, p_text: ExternalText = '') -> None:
         """Extend initialization with text and consistency state.
 
         :param p_text: initial text content.
@@ -89,11 +102,11 @@ class TextAbc(EMABC.ModelGtk3[EMABC.UiModelOpaque, str],
     #     # self._stale = True
 
     @property
-    def text(self) -> str:
+    def text(self) -> ExternalText:
         """Return model text."""
         return self.to_external()
 
     @text.setter
-    def text(self, p_text: str) -> None:
+    def text(self, p_text: ExternalText) -> None:
         """Set model text."""
         self.set_internal(p_text)

@@ -13,4 +13,5 @@ Submodules
    :titlesonly:
 
    factsheet.element_gtk3.model.text.text_abc
+   factsheet.element_gtk3.model.text.text_markup
 

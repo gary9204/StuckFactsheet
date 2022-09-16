@@ -188,3 +188,22 @@ class TestModelText:
         target.text = TEXT_NEW
         assert TEXT_NEW == target.to_external()
         assert target_class.text.fdel is None
+
+
+class TestModule:
+    """Unit tests for module-level components of
+    :mod:`.element_gtk3.model.text.text_abc`
+    """
+
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (EMTEXT.ExternalText, str),
+        ])
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type alias definitions.
+
+        :param TYPE_TARGET: type alias under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert TYPE_TARGET == TYPE_EXPECT

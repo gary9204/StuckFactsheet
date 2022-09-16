@@ -113,7 +113,7 @@ class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):
     """
 
     @abc.abstractmethod
-    def set_internal(self, p_external) -> None:
+    def set_internal(self, p_external: ExternalOpaque) -> None:
         """Set storage element from external representation.
 
         :param p_external: external representation of desired content.

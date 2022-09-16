@@ -13,3 +13,4 @@ Submodules
    :titlesonly:
 
    factsheet_test.element_gtk3.model.text.test_text_abc
+   factsheet_test.element_gtk3.model.text.test_text_markup
