@@ -17,6 +17,7 @@ Subpackages
    factsheet.element_gtk3
    factsheet.model
    factsheet.spec
+   factsheet.ui_bricks
    factsheet.view
 ..   factsheet.abc_types
 ..   factsheet.adapt_gtk

@@ -17,6 +17,7 @@ Subpackages
    factsheet_test.element_gtk3
    factsheet_test.model
    factsheet_test.spec
+   factsheet_test.ui_bricks
    factsheet_test.view
 ..   :maxdepth: 1
 ..   factsheet_test.abc_types
