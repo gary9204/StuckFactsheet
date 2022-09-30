@@ -12,3 +12,4 @@ Subpackages
 .. toctree::
    :titlesonly:
 
+   factsheet.ui_bricks.ui_abc
