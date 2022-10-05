@@ -84,7 +84,7 @@ class PatchClassFact(ABC_FACT.InterfaceFact):
     def title(self):
         return 'No title.'
 
-    def is_fresh(self):
+    def has_not_changed(self):
         return False
 
     def is_stale(self):

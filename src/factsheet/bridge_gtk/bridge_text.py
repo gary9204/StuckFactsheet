@@ -318,7 +318,7 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         super().__setstate__(p_state)
         self._stale = False
 
-    def is_fresh(self) -> bool:
+    def has_not_changed(self) -> bool:
         """Return True when there are no unsaved changes to content."""
         return not self.is_stale()
 

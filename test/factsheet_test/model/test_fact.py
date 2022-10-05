@@ -395,7 +395,7 @@ class TestFact:
         # Test
         target.set_fresh()
         assert not target._stale
-        assert target._note.is_fresh()
+        assert target._note.has_not_changed()
 
     @pytest.mark.parametrize('ATTR', [
         '_name',
@@ -415,7 +415,7 @@ class TestFact:
         # Test
         target.set_fresh()
         assert not target._stale
-        assert attribute.is_fresh()
+        assert attribute.has_not_changed()
 
 
 class TestStatusOfFact:

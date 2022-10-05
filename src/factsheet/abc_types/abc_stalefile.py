@@ -9,7 +9,7 @@ class InterfaceStaleFile(abc.ABC):
     """Interface to detect when a stored model is out of date."""
 
     @abc.abstractmethod
-    def is_fresh(self) -> bool:
+    def has_not_changed(self) -> bool:
         """Return True when there are no unsaved changes to model."""
         raise NotImplementedError
 

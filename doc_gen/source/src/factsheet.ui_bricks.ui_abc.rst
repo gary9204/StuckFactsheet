@@ -19,4 +19,4 @@ Submodules
 .. toctree::
    :titlesonly:
 
-
+   factsheet.ui_bricks.ui_abc.brick_abc

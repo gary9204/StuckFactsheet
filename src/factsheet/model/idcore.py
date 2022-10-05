@@ -106,7 +106,7 @@ class IdCore(ABC_STALE.InterfaceStaleFile,
         self.__dict__.update(px_state)
         self.set_fresh()
 
-    def is_fresh(self) -> bool:
+    def has_not_changed(self) -> bool:
         """Return True when there are no unsaved changes to identity."""
         return not self.is_stale()
 

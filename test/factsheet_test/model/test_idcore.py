@@ -178,7 +178,7 @@ class TestIdCore:
         TITLE = 'The Parrot Sketch'
         target = PatchIdCore(p_name=NAME, p_summary=SUMMARY, p_title=TITLE)
         # Test
-        assert target.is_fresh() is not IS_STALE
+        assert target.has_not_changed() is not IS_STALE
         assert patch.called
 
     def test_is_stale(self):
@@ -289,7 +289,7 @@ class TestIdCore:
         attribute.set_stale()
         # Test
         target.set_fresh()
-        assert attribute.is_fresh()
+        assert attribute.has_not_changed()
 
     def test_set_stale(self, monkeypatch):
         """Confirm instance marked stale and attributes unchanged.

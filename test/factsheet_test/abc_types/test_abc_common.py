@@ -12,7 +12,7 @@ import factsheet.abc_types.abc_stalefile as ABC_STALE
 class PatchInterfaceStalefile(ABC_STALE.InterfaceStaleFile):
     """Abstract method overrides for :class:`.InterfaceStaleFile`."""
 
-    def is_fresh(self): super().is_fresh()
+    def has_not_changed(self): super().has_not_changed()
 
     def is_stale(self): super().is_stale()
 
@@ -38,7 +38,7 @@ class TestInterface:
             _ = CLASS()
 
     @pytest.mark.parametrize('PATCH_CLASS, NAME_METHOD', [
-        (PatchInterfaceStalefile, 'is_fresh'),
+        (PatchInterfaceStalefile, 'has_not_changed'),
         (PatchInterfaceStalefile, 'is_stale'),
         (PatchInterfaceStalefile, 'set_fresh'),
         (PatchInterfaceStalefile, 'set_stale'),

@@ -441,9 +441,9 @@ class TestModelText:
         target = PatchModelText()
         target._stale = False
         # Test
-        assert target.is_fresh()
+        assert target.has_not_changed()
         target._stale = True
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
 
     def test_is_stale(self):
         """Confirm return matches state. """

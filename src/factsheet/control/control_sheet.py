@@ -422,9 +422,9 @@ class ControlSheet:
         """
         self._roster_topics[p_control.tag] = p_control
 
-    def is_fresh(self) -> bool:
+    def has_not_changed(self) -> bool:
         """Return True when there are no unsaved changes to factsheet."""
-        return self._model.is_fresh()
+        return self._model.has_not_changed()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to

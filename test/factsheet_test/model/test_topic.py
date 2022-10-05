@@ -252,7 +252,7 @@ class TestTopic:
         # # Test
         # for fact in facts:
         #     target.append_fact(fact)
-        # assert target.is_fresh()
+        # assert target.has_not_changed()
         # for fact, fact_target in IT.zip_longest(facts, target):
         #     assert fact is fact_target
 
@@ -297,7 +297,7 @@ class TestTopic:
         # facts = facts_target
         # # Test
         # target.append_outline_facts(source)
-        # target.is_fresh()
+        # target.has_not_changed()
         # for fact, fact_target in IT.zip_longest(facts, target):
         #     assert fact is fact_target
 
@@ -366,19 +366,19 @@ class TestTopic:
         target.summary.set_fresh()
         assert target.is_stale()
         assert target._stale
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
         # Test: Topic fresh, identity stale, facts fresh.
         target._stale = False
         target.summary.set_stale()
         assert target.is_stale()
         assert target._stale
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
         # Test: Topic fresh, identity fresh, facts fresh.
         target._stale = False
         target.summary.set_fresh()
         assert not target.is_stale()
         assert not target._stale
-        assert target.is_fresh()
+        assert target.has_not_changed()
         # Test: Topic fresh, identity fresh, a fact stale.
         # LINE_STALE = 2
         # target._stale = False
@@ -391,7 +391,7 @@ class TestTopic:
         #         fact.set_fresh()
         # assert target.is_stale()
         # assert target._stale
-        # assert not target.is_fresh()
+        # assert not target.has_not_changed()
 
     def test_is_stale_no_facts(self, new_model_topic):
         """Confirm fresh/stale check without facts.
@@ -410,19 +410,19 @@ class TestTopic:
         target.summary.set_fresh()
         assert target.is_stale()
         assert target._stale
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
         # Test: Topic fresh, identity stale, no facts.
         target._stale = False
         target.summary.set_stale()
         assert target.is_stale()
         assert target._stale
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
         # Test: Topic fresh, identity fresh, no facts.
         target._stale = False
         target.summary.set_fresh()
         assert not target.is_stale()
         assert not target._stale
-        assert target.is_fresh()
+        assert target.has_not_changed()
 
     def test_set_fresh(self, new_model_topic):
         """Confirm frest set at all levels.
@@ -447,28 +447,28 @@ class TestTopic:
         target.summary.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target.is_fresh()
-        assert target.summary.is_fresh()
+        assert target.has_not_changed()
+        assert target.summary.has_not_changed()
         # for fact in facts_target:
-        #     assert fact.is_fresh()
+        #     assert fact.has_not_changed()
         # Test: Topic stale, identity fresh, facts fresh.
         target._stale = True
         target.summary.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target.is_fresh()
-        assert target.summary.is_fresh()
+        assert target.has_not_changed()
+        assert target.summary.has_not_changed()
         # for fact in facts_target:
-        #     assert fact.is_fresh()
+        #     assert fact.has_not_changed()
         # Test: Topic fresh, identity stale, facts fresh.
         target._stale = False
         target.summary.set_stale()
         target.set_fresh()
         assert not target._stale
-        assert target.is_fresh()
-        assert target.summary.is_fresh()
+        assert target.has_not_changed()
+        assert target.summary.has_not_changed()
         # for fact in facts_target:
-        #     assert fact.is_fresh()
+        #     assert fact.has_not_changed()
         # Test: Topic fresh, identity fresh, facts stale.
         # LINE_STALE = 1
         # target._stale = False
@@ -481,10 +481,10 @@ class TestTopic:
         #         fact.set_fresh()
         # target.set_fresh()
         # assert not target._stale
-        # assert target.is_fresh()
-        # assert target.summary.is_fresh()
+        # assert target.has_not_changed()
+        # assert target.summary.has_not_changed()
         # for fact in facts_target:
-        #     assert fact.is_fresh()
+        #     assert fact.has_not_changed()
         # # Test: Sheet stale, identity stale, facts stale
         # LINE_STALE = 4
         # target._stale = True
@@ -497,10 +497,10 @@ class TestTopic:
         #         fact.set_fresh()
         # target.set_fresh()
         # assert not target._stale
-        # assert target.is_fresh()
-        # assert target.summary.is_fresh()
+        # assert target.has_not_changed()
+        # assert target.summary.has_not_changed()
         # for fact in facts_target:
-        #     assert fact.is_fresh()
+        #     assert fact.has_not_changed()
 
 
 class TestModule:

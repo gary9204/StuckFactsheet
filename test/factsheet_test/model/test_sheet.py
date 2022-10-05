@@ -229,17 +229,17 @@ class TestSheet:
         # Test: Sheet stale, ID info fresh, topics fresh
         target._stale = True
         target._summary.set_fresh()
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
         assert target._stale
         # Test: Sheet fresh, ID info stale, topics fresh
         target._stale = False
         target._summary.set_stale()
-        assert not target.is_fresh()
+        assert not target.has_not_changed()
         assert target._stale
         # Test: Sheet fresh, ID info fresh, topics fresh
         target._stale = False
         target._summary.set_fresh()
-        assert target.is_fresh()
+        assert target.has_not_changed()
         assert not target._stale
         # Test: Sheet fresh, ID info fresh, topics fresh
         target._stale = False
@@ -435,7 +435,7 @@ class TestSheet:
             topic.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target._title.is_fresh()
+        assert target._title.has_not_changed()
         # Test: Sheet stale, ID info fresh, topics fresh
         target._stale = True
         target._title.set_fresh()
@@ -443,7 +443,7 @@ class TestSheet:
             topic.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target._title.is_fresh()
+        assert target._title.has_not_changed()
         # Test: Sheet fresh, ID info stale, topics fresh
         target._stale = False
         target._title.set_stale()
@@ -451,7 +451,7 @@ class TestSheet:
             topic.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target._title.is_fresh()
+        assert target._title.has_not_changed()
         # Test: Sheet stale, ID info stale, topics fresh
         target._stale = True
         target._title.set_stale()
@@ -459,7 +459,7 @@ class TestSheet:
             topic.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target._title.is_fresh()
+        assert target._title.has_not_changed()
         # Test: Sheet fresh, ID infor fresh, topics stale
         target._stale = False
         target._title.set_stale()
@@ -470,9 +470,9 @@ class TestSheet:
                 topic.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target._title.is_fresh()
+        assert target._title.has_not_changed()
         for topic in target._topics.items():
-            assert topic.is_fresh()
+            assert topic.has_not_changed()
         # Test: Sheet stale, ID info fresh, topics stale
         target._stale = True
         target._title.set_stale()
@@ -483,9 +483,9 @@ class TestSheet:
                 topic.set_fresh()
         target.set_fresh()
         assert not target._stale
-        assert target._title.is_fresh()
+        assert target._title.has_not_changed()
         for topic in target._topics.items():
-            assert topic.is_fresh()
+            assert topic.has_not_changed()
 
     def test_set_fresh_warn(self, new_id_args, caplog):
         """Confirm warning when topics outline contains line with None.

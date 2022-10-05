@@ -152,7 +152,7 @@ class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
         self.set_stale()
         return self._topics.insert_child(p_topic, p_line)
 
-    def is_fresh(self) -> bool:
+    def has_not_changed(self) -> bool:
         """Return True when there are no unsaved changes to factsheet."""
         return not self.is_stale()
 

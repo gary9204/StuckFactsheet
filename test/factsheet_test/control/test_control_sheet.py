@@ -426,15 +426,15 @@ class TestControlSheet:
         assert target._roster_topics[TOPIC.tag] is CONTROL
 
     @pytest.mark.parametrize('METHOD, MODEL_IS_STALE', [
-        ('is_fresh', False),
-        ('is_fresh', True),
+        ('has_not_changed', False),
+        ('has_not_changed', True),
         ('is_stale', False),
         ('is_stale', True),
         ])
     def test_is_fresh_stale(self, METHOD, MODEL_IS_STALE):
         """Confirm model and control report same state of change.
 
-        :param METHOD: method to test, which is ``is_fresh`` or ``is_stale``.
+        :param METHOD: method to test, which is ``has_not_changed`` or ``is_stale``.
         :param MODEL_IS_STALE: state of change in model.
         """
         # Setup
@@ -493,7 +493,7 @@ class TestControlSheet:
         model = target._model_from_path(p_path=PATH)
         assert model is not None
         assert model == target._model
-        assert target._model.is_fresh()
+        assert target._model.has_not_changed()
 
     def test_model_from_path_empty(self, tmp_path):
         """| Confirm model creation.
@@ -959,7 +959,7 @@ class TestControlSheet:
         assert not PATH.exists()
         # Test
         target.save()
-        assert target._model.is_fresh()
+        assert target._model.has_not_changed()
         assert PATH.exists()
         with PATH.open(mode='rb') as io_in:
             model_disk = pickle.load(io_in)
@@ -1007,7 +1007,7 @@ class TestControlSheet:
         # Test
         target.save(p_path=PATH)
         assert PATH is target.path
-        assert target._model.is_fresh()
+        assert target._model.has_not_changed()
         assert PATH.exists()
 
     def test_topics(self):
