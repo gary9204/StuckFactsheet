@@ -482,7 +482,7 @@ class ControlSheet:
     @property
     def name(self) -> str:
         """Return sheet name without markup errors."""
-        name = BUI.escape_text_markup(self._model.name.text)
+        name = BUI.x_b_t_escape_text_markup(self._model.name.text)
         return name
 
     @property

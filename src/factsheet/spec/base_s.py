@@ -19,10 +19,10 @@ from gi.repository import Gtk   # type: ignore[import]   # noqa: E402
 logger = logging.getLogger('Main.SBASE')
 
 ChooserDirection = typing.Union[Gtk.ComboBoxText]
-NameSpec = BUI.ModelTextMarkup
+NameSpec = BUI.x_b_t_ModelTextMarkup
 PageAssist = typing.Union[Gtk.Box]
 SummarySpec = BUI.ModelTextStyled
-TitleSpec = BUI.ModelTextMarkup
+TitleSpec = BUI.x_b_t_ModelTextMarkup
 
 ViewDuoName = typing.Union[Gtk.Box]
 
@@ -36,14 +36,14 @@ class FieldTextMarkup:
         :param p_name_field: field name as shown to user.
         """
         self._name_field = p_name_field
-        self._model = BUI.ModelTextMarkup(p_text='')
+        self._model = BUI.x_b_t_ModelTextMarkup(p_text='')
         self._factory_display = (
             BUI.FactoryDisplayTextMarkup(p_model=self._model))
         self._factory_editor = (
             BUI.FactoryEditorTextMarkup(p_model=self._model))
 
     @property
-    def model(self) -> BUI.ModelTextMarkup:
+    def model(self) -> BUI.x_b_t_ModelTextMarkup:
         """Return field model."""
         return self._model
 

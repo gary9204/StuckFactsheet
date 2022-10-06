@@ -31,7 +31,7 @@ class TestDisplayTextMarkup:
         """Confirm initialization."""
         # Setup
         TEXT = '<i>The Parrot Sketch</i>'
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         MODEL.text = TEXT
         # Test
         target = BMARKUP.DisplayTextMarkup(p_model=MODEL)
@@ -58,7 +58,7 @@ class TestDisplayTextMarkup:
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         target = BMARKUP.DisplayTextMarkup(p_model=MODEL)
         # Test
         n_handlers = 0
@@ -77,9 +77,9 @@ class TestDisplayTextMarkup:
     def test_on_change(self):
         """Confirm refresh of display views."""
         # Setup
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         target = BMARKUP.DisplayTextMarkup(p_model=MODEL)
-        PATCH_MODEL = BMARKUP.ModelTextMarkup()
+        PATCH_MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         PATCH_TEXT = '<i>The Parrot Sketch'
         PATCH_MODEL.text = PATCH_TEXT
         PATCH_ESCAPED = GLib.markup_escape_text(PATCH_TEXT, len(PATCH_TEXT))
@@ -95,7 +95,7 @@ class TestDisplayTextMarkup:
         """Confirm initialization."""
         # Setup
         TEXT = '<i>The Parrot Sketch</i>'
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         MODEL.text = TEXT
         target = BMARKUP.DisplayTextMarkup(p_model=MODEL)
         ui_model = MODEL.ui_model
@@ -119,7 +119,7 @@ class TestDisplayTextMarkup:
         """
         # Setup
         TEXT = '<i>The Parrot Sketch</i>'
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         MODEL.text = TEXT
         target = BMARKUP.DisplayTextMarkup(p_model=MODEL)
         attr = getattr(target, NAME_ATTR)
@@ -178,7 +178,7 @@ class TestEditorTextMarkup:
     def test_init(self):
         """Confirm initialization."""
         # Setup
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         # Test
         target = BMARKUP.EditorTextMarkup(p_model=MODEL)
         assert isinstance(target._ui_view, BMARKUP.UiEditorTextMarkup)
@@ -194,7 +194,7 @@ class TestEditorTextMarkup:
         :param NAME_ATTR: name of attribute for property.
         """
         # Setup
-        MODEL = BMARKUP.ModelTextMarkup()
+        MODEL = BMARKUP.x_b_tm_ModelTextMarkup()
         target = BMARKUP.EditorTextMarkup(p_model=MODEL)
         attr = getattr(target, NAME_ATTR)
         CLASS = BMARKUP.EditorTextMarkup
@@ -207,7 +207,7 @@ class TestEditorTextMarkup:
 
 
 class TestEscapeTextMarkup:
-    """Unit tests for function :func:`.escape_text_markup`."""
+    """Unit tests for function :func:`.x_b_tm_escape_text_markup`."""
 
     def test_escape_text_markup(self):
         """| Confirm markup errors escaped.
@@ -217,7 +217,7 @@ class TestEscapeTextMarkup:
         TEXT = 'The <b>Parrot Sketch.</b>'
         TEXT_ESCAPED = TEXT
         # Test
-        assert TEXT_ESCAPED == BMARKUP.escape_text_markup(TEXT)
+        assert TEXT_ESCAPED == BMARKUP.x_b_tm_escape_text_markup(TEXT)
 
     def test_escape_text_markup_error(self):
         """| Confirm markup errors escaped.
@@ -227,7 +227,7 @@ class TestEscapeTextMarkup:
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
         # Test
-        assert TEXT_ESCAPED == BMARKUP.escape_text_markup(TEXT)
+        assert TEXT_ESCAPED == BMARKUP.x_b_tm_escape_text_markup(TEXT)
 
     def test_escape_text_markup_except(self, monkeypatch):
         """| Confirm markup errors escaped.
@@ -249,7 +249,7 @@ class TestEscapeTextMarkup:
         TEXT = 'The <b>Parrot </b Sketch.'
         # Test
         with pytest.raises(GLib.Error) as exc_info:
-            _ = BMARKUP.escape_text_markup(TEXT)
+            _ = BMARKUP.x_b_tm_escape_text_markup(TEXT)
         exc = exc_info.value
         assert DOMAIN == exc.domain
         assert MESSAGE == exc.message
@@ -257,7 +257,7 @@ class TestEscapeTextMarkup:
 
 
 class TestModelTextMarkup:
-    """Unit tests for :class:`.ModelTextMarkup`."""
+    """Unit tests for :class:`.x_b_tm_ModelTextMarkup`."""
 
     def test_get_set_state(self, tmp_path):
         """Confirm conversion to and from pickle format.
@@ -266,7 +266,7 @@ class TestModelTextMarkup:
         """
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = BMARKUP.ModelTextMarkup()
+        source = BMARKUP.x_b_tm_ModelTextMarkup()
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         source._stale = True
@@ -283,7 +283,7 @@ class TestModelTextMarkup:
         # Setup
         BLANK = ''
         # Test
-        target = BMARKUP.ModelTextMarkup()
+        target = BMARKUP.x_b_tm_ModelTextMarkup()
         assert target._stale is not None
         assert not target._stale
         assert isinstance(target._ui_model, Gtk.EntryBuffer)
@@ -292,7 +292,7 @@ class TestModelTextMarkup:
     def test_get_persist(self):
         """Confirm export to persistent form."""
         # Setup
-        target = BMARKUP.ModelTextMarkup()
+        target = BMARKUP.x_b_tm_ModelTextMarkup()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
         target._ui_model.set_text(TEXT, ALL)
@@ -314,7 +314,7 @@ class TestModelTextMarkup:
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         NO_SIGNAL = 0
         # Test
-        target = BMARKUP.ModelTextMarkup()
+        target = BMARKUP.x_b_tm_ModelTextMarkup()
         assert isinstance(target._ui_model, Gtk.EntryBuffer)
         n_handlers = 0
         while True:
@@ -330,7 +330,7 @@ class TestModelTextMarkup:
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
-        target = BMARKUP.ModelTextMarkup()
+        target = BMARKUP.x_b_tm_ModelTextMarkup()
         target_buffer = target._ui_model
         TEXT = 'The Parrot Sketch.'
         ALL = -1
@@ -399,7 +399,7 @@ class TestPopoverEditorMarkup:
     def test_init(self):
         """Confirm initialization."""
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         I_EDITOR = 1
         PACK_TYPE = int(Gtk.PackType.START)
         EXPAND_OKAY = True
@@ -433,7 +433,7 @@ class TestPopoverEditorMarkup:
         :param NAME_ATTR: name of attribute for property.
         """
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         target = BMARKUP.PopupEditorMarkup(p_model=model)
         attr = getattr(target, NAME_ATTR)
         CLASS = BMARKUP.PopupEditorMarkup
@@ -447,7 +447,7 @@ class TestPopoverEditorMarkup:
     def test_set_anchor(self):
         """Confirm anchor is set."""
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         target = BMARKUP.PopupEditorMarkup(p_model=model)
         BUTTON = Gtk.MenuButton()
         # Test
@@ -457,7 +457,7 @@ class TestPopoverEditorMarkup:
     def test_set_label(self):
         """Confirm identifying text is set."""
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         target = BMARKUP.PopupEditorMarkup(p_model=model)
         TEXT = '<i>The Parrot Sketch</i>'
         # Test
@@ -487,7 +487,7 @@ class TestViewDuoMarkup:
         | Case: direct attribute initialization.
         """
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Sketch'
         BLANK = ''
         # Test
@@ -519,7 +519,7 @@ class TestViewDuoMarkup:
 
         monkeypatch.setattr(
             BMARKUP.ViewDuoMarkup, HELPER, helper)
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Parrot'
         # Test
         _target = BMARKUP.ViewDuoMarkup(
@@ -529,7 +529,7 @@ class TestViewDuoMarkup:
     def test_fill_display(self):
         """Confirm display populated in view duo."""
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Sketch'
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         PATCH_UI_DISPLAY = BMARKUP.UiDisplayTextMarkup()
@@ -551,7 +551,7 @@ class TestViewDuoMarkup:
     def test_link_popup(self):
         """Confirm links betwen popup editor to view duo components."""
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Sketch'
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         PATCH_UI_BUTTON = BMARKUP.UiButtonTrigger()
@@ -581,7 +581,7 @@ class TestViewDuoMarkup:
         # Setup
         origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Sketch'
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         ui_view = target
@@ -615,7 +615,7 @@ class TestViewDuoMarkup:
         :param EXPECT_TEXT: text expected in editor.
         """
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Sketch'
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         target._ui_button.clicked()
@@ -640,7 +640,7 @@ class TestViewDuoMarkup:
         :param TEXT_EXPECT: expected restore text.
         """
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Parrot'
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         TEXT_RESTORE = 'Oops!'
@@ -662,7 +662,7 @@ class TestViewDuoMarkup:
         :param NAME_ATTR: list of names that identify attribute.
         """
         # Setup
-        model = BMARKUP.ModelTextMarkup()
+        model = BMARKUP.x_b_tm_ModelTextMarkup()
         LABEL = 'Parrot'
         target = BMARKUP.ViewDuoMarkup(p_model=model, p_label=LABEL)
         attr = target

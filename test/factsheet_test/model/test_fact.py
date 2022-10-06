@@ -55,9 +55,9 @@ class PatchTopic(MIDCORE.IdCore[
         self._tag = id(self)
 
     def _new_model(self):
-        name = BUI.ModelTextMarkup()
+        name = BUI.x_b_t_ModelTextMarkup()
         summary = BUI.ModelGtkTextBuffer()
-        title = BUI.ModelTextMarkup()
+        title = BUI.x_b_t_ModelTextMarkup()
         return name, summary, title
 
     @property
@@ -436,15 +436,15 @@ class TestTypes:
     """Unit tests for type hint definitions in :mod:`.fact`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (MFACT.NameFact, BUI.ModelTextMarkup),
+        (MFACT.NameFact, BUI.x_b_t_ModelTextMarkup),
         (MFACT.SummaryFact, BUI.ModelGtkTextBuffer),
-        (MFACT.TitleFact, BUI.ModelTextMarkup),
+        (MFACT.TitleFact, BUI.x_b_t_ModelTextMarkup),
         (MFACT.ViewNameFact, BUI.ViewTextMarkup),
         (MFACT.ViewSummaryFact, BUI.ViewTextTagged),
         (MFACT.ViewTitleFact, BUI.ViewTextMarkup),
         (MFACT.NamesAspects, BUI.BridgeOutlineSelect[str]),
         (MFACT.ViewNamesAspects, BUI.ViewOutlineSelect),
-        (MFACT.NoteFact, BUI.ModelTextMarkup),
+        (MFACT.NoteFact, BUI.x_b_t_ModelTextMarkup),
         (MFACT.ViewNoteFact, BUI.ViewTextMarkup),
         (MFACT.AspectStatus, MASPECT.AspectPlain),
         (MFACT.ViewAspectStatus, MASPECT.ViewAspectPlain),

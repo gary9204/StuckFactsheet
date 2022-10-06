@@ -20,9 +20,9 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # noqa: E402
 
 
-Name = BUI.ModelTextMarkup
+Name = BUI.x_b_t_ModelTextMarkup
 Summary = BUI.ModelTextStyled
-Title = BUI.ModelTextMarkup
+Title = BUI.x_b_t_ModelTextMarkup
 
 
 class ItemId(MIDCORE.IdCore[Name, Summary, Title]):
@@ -71,14 +71,14 @@ def empty_model_outline():
 
 
 class ItemStub(MIDCORE.IdCore[
-        BUI.ModelTextMarkup, BUI.ModelTextMarkup, BUI.ModelTextMarkup]):
+        BUI.x_b_t_ModelTextMarkup, BUI.x_b_t_ModelTextMarkup, BUI.x_b_t_ModelTextMarkup]):
     """Stub for item based on :class:`.IdCore`."""
 
     def __init__(self, p_name='No name', p_summary='No summary',
                  p_title='No title'):
-        self._name = BUI.ModelTextMarkup(p_text=p_name)
-        self._summary = BUI.ModelTextMarkup(p_text=p_summary)
-        self._title = BUI.ModelTextMarkup(p_text=p_title)
+        self._name = BUI.x_b_t_ModelTextMarkup(p_text=p_name)
+        self._summary = BUI.x_b_t_ModelTextMarkup(p_text=p_summary)
+        self._title = BUI.x_b_t_ModelTextMarkup(p_text=p_title)
         super().__init__()
 
 

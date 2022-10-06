@@ -58,7 +58,7 @@ def setup_views_markup():
 
 
 class TestEscapeTextMarkup:
-    """Unit tests for function :func:`.escape_text_markup`."""
+    """Unit tests for function :func:`.x_b_t_escape_text_markup`."""
 
     def test_escape_text_markup(self):
         """| Confirm markup errors escaped.
@@ -68,7 +68,7 @@ class TestEscapeTextMarkup:
         TEXT = 'The <b>Parrot Sketch.</b>'
         TEXT_ESCAPED = TEXT
         # Test
-        assert TEXT_ESCAPED == BTEXT.escape_text_markup(TEXT)
+        assert TEXT_ESCAPED == BTEXT.x_b_t_escape_text_markup(TEXT)
 
     def test_escape_text_markup_error(self):
         """| Confirm markup errors escaped.
@@ -78,7 +78,7 @@ class TestEscapeTextMarkup:
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
         # Test
-        assert TEXT_ESCAPED == BTEXT.escape_text_markup(TEXT)
+        assert TEXT_ESCAPED == BTEXT.x_b_t_escape_text_markup(TEXT)
 
     def test_escape_text_markup_except(self, monkeypatch):
         """| Confirm markup errors escaped.
@@ -100,7 +100,7 @@ class TestEscapeTextMarkup:
         TEXT = 'The <b>Parrot </b Sketch.'
         # Test
         with pytest.raises(GLib.Error) as exc_info:
-            _ = BTEXT.escape_text_markup(TEXT)
+            _ = BTEXT.x_b_t_escape_text_markup(TEXT)
         exc = exc_info.value
         assert DOMAIN == exc.domain
         assert MESSAGE == exc.message
@@ -113,7 +113,7 @@ class TestFactoryEditorTextMarkup:
     def test_init(self):
         """Confirm storage initialization."""
         # Setup
-        MODEL = BTEXT.ModelTextMarkup()
+        MODEL = BTEXT.x_b_t_ModelTextMarkup()
         # Test
         target = BTEXT.FactoryEditorTextMarkup(p_model=MODEL)
         assert target._ui_model is MODEL._ui_model
@@ -126,7 +126,7 @@ class TestFactoryEditorTextMarkup:
         TOOLTIP_PRIMARY = 'Click to accept changes.'
         TOOLTIP_SECONDARY = 'Click to cancel changes.'
         N_WIDTH_EDIT = 45
-        entry_buffer = BTEXT.ModelTextMarkup()
+        entry_buffer = BTEXT.x_b_t_ModelTextMarkup()
         target = BTEXT.FactoryEditorTextMarkup(p_model=entry_buffer)
         # Test
         view = target()
@@ -154,7 +154,7 @@ class TestFactoryDisplayTextMarkup:
         """
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
-        entry_buffer = BTEXT.ModelTextMarkup()
+        entry_buffer = BTEXT.x_b_t_ModelTextMarkup()
         entry_buffer._set_persist(TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
 
@@ -192,7 +192,7 @@ class TestFactoryDisplayTextMarkup:
     def test_init(self):
         """Confirm storage initialization."""
         # Setup
-        MODEL = BTEXT.ModelTextMarkup()
+        MODEL = BTEXT.x_b_t_ModelTextMarkup()
         # Test
         target = BTEXT.FactoryDisplayTextMarkup(p_model=MODEL)
         assert target._ui_model is MODEL._ui_model
@@ -204,7 +204,7 @@ class TestFactoryDisplayTextMarkup:
         # Setup
         TEXT = 'The <b>Parrot </b Sketch.'
         TEXT_ESCAPED = GLib.markup_escape_text(TEXT, len(TEXT))
-        entry_buffer = BTEXT.ModelTextMarkup()
+        entry_buffer = BTEXT.x_b_t_ModelTextMarkup()
         entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
 
@@ -224,7 +224,7 @@ class TestFactoryDisplayTextMarkup:
         """
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
-        entry_buffer = BTEXT.ModelTextMarkup()
+        entry_buffer = BTEXT.x_b_t_ModelTextMarkup()
         entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         N_DISPLAYS = 5
@@ -249,7 +249,7 @@ class TestFactoryDisplayTextMarkup:
         """
         # Setup
         TEXT = 'The <b>Parrot Sketch.</b>'
-        entry_buffer = BTEXT.ModelTextMarkup()
+        entry_buffer = BTEXT.x_b_t_ModelTextMarkup()
         entry_buffer._set_persist(p_persist=TEXT)
         target = BTEXT.FactoryDisplayTextMarkup(p_model=entry_buffer)
         N_DISPLAYS = 5
@@ -491,10 +491,10 @@ class TestModelText:
 
 
 class TestModelTextMarkup:
-    """Unit tests for :class:`.ModelTextMarkup`.
+    """Unit tests for :class:`.x_b_t_ModelTextMarkup`.
 
     :class:`.TestBridgeTextCommon` contains additional unit tests for
-    :class:`.ModelTextMarkup`.
+    :class:`.x_b_t_ModelTextMarkup`.
     """
 
     def test_get_set_state(self, tmp_path):
@@ -504,7 +504,7 @@ class TestModelTextMarkup:
         """
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        source = BTEXT.ModelTextMarkup()
+        source = BTEXT.x_b_t_ModelTextMarkup()
         TEXT = 'Something completely different'
         source._set_persist(TEXT)
         source._stale = True
@@ -521,7 +521,7 @@ class TestModelTextMarkup:
         # Setup
         BLANK = ''
         # Test
-        target = BTEXT.ModelTextMarkup()
+        target = BTEXT.x_b_t_ModelTextMarkup()
         assert target._stale is not None
         assert not target._stale
         assert isinstance(target._ui_model, Gtk.EntryBuffer)
@@ -530,7 +530,7 @@ class TestModelTextMarkup:
     def test_get_persist(self):
         """Confirm export to persistent form."""
         # Setup
-        target = BTEXT.ModelTextMarkup()
+        target = BTEXT.x_b_t_ModelTextMarkup()
         TEXT = 'The Parrot Sketch.'
         ALL = -1
         target._ui_model.set_text(TEXT, ALL)
@@ -552,7 +552,7 @@ class TestModelTextMarkup:
         signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
         NO_SIGNAL = 0
         # Test
-        target = BTEXT.ModelTextMarkup()
+        target = BTEXT.x_b_t_ModelTextMarkup()
         assert isinstance(target._ui_model, Gtk.EntryBuffer)
         n_handlers = 0
         while True:
@@ -568,7 +568,7 @@ class TestModelTextMarkup:
     def test_set_persist(self):
         """Confirm import from persistent form."""
         # Setup
-        target = BTEXT.ModelTextMarkup()
+        target = BTEXT.x_b_t_ModelTextMarkup()
         target_buffer = target._ui_model
         TEXT = 'The Parrot Sketch.'
         ALL = -1

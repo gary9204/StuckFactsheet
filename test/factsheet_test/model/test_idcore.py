@@ -16,15 +16,15 @@ import factsheet.bridge_ui as BUI
 import factsheet.model.idcore as MIDCORE
 
 
-class PatchIdCore(MIDCORE.IdCore[BUI.ModelTextMarkup,
+class PatchIdCore(MIDCORE.IdCore[BUI.x_b_t_ModelTextMarkup,
                                  BUI.ModelTextStyled,
-                                 BUI.ModelTextMarkup]):
+                                 BUI.x_b_t_ModelTextMarkup]):
     """Stub subclass for testing :class:`.IdCore` methods."""
 
     def __init__(self, p_name, p_summary, p_title, **kwargs):
-        self._name = BUI.ModelTextMarkup(p_name)
+        self._name = BUI.x_b_t_ModelTextMarkup(p_name)
         self._summary = BUI.ModelTextStyled(p_summary)
-        self._title = BUI.ModelTextMarkup(p_title)
+        self._title = BUI.x_b_t_ModelTextMarkup(p_title)
         super().__init__(**kwargs)
 
 
@@ -114,15 +114,15 @@ class TestIdCore:
         :param HINT: type hint for missing attribute.
         """
         # Setup
-        class PatchPartial(MIDCORE.IdCore[BUI.ModelTextMarkup,
+        class PatchPartial(MIDCORE.IdCore[BUI.x_b_t_ModelTextMarkup,
                                           BUI.ModelTextStyled,
-                                          BUI.ModelTextMarkup]):
+                                          BUI.x_b_t_ModelTextMarkup]):
             """Partially defines attributes for  :func:`.IdCore.__init__`."""
 
             def __init__(self, p_name, p_summary, p_title, **kwargs):
-                self._name = BUI.ModelTextMarkup(p_name)
+                self._name = BUI.x_b_t_ModelTextMarkup(p_name)
                 self._summary = BUI.ModelTextStyled(p_summary)
-                self._title = BUI.ModelTextMarkup(p_title)
+                self._title = BUI.x_b_t_ModelTextMarkup(p_title)
                 delattr(self, ATTR)
                 super().__init__(**kwargs)
 
@@ -324,13 +324,13 @@ class TestIdCoreTypes:
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (type(MIDCORE.ModelName), typing.TypeVar),
         (MIDCORE.ModelName.__constraints__, (
-            BUI.ModelTextMarkup, BUI.ModelTextStyled)),
+            BUI.x_b_t_ModelTextMarkup, BUI.ModelTextStyled)),
         (type(MIDCORE.ModelSummary), typing.TypeVar),
         (MIDCORE.ModelSummary.__constraints__, (
-            BUI.ModelTextMarkup, BUI.ModelTextStyled)),
+            BUI.x_b_t_ModelTextMarkup, BUI.ModelTextStyled)),
         (type(MIDCORE.ModelTitle), typing.TypeVar),
         (MIDCORE.ModelTitle.__constraints__, (
-            BUI.ModelTextMarkup, BUI.ModelTextStyled)),
+            BUI.x_b_t_ModelTextMarkup, BUI.ModelTextStyled)),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.

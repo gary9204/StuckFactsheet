@@ -17,7 +17,7 @@ TagTopic = typing.NewType('TagTopic', int)
 LineOutline = BUI.LineOutline
 # OutlineFacts = BUI.BridgeOutlineColumnar[MFACT.Fact]
 
-Name = BUI.ModelTextMarkup
+Name = BUI.x_b_t_ModelTextMarkup
 DisplayName = BUI.DisplayTextMarkup
 FactoryDisplayName = BUI.FactoryDisplayTextMarkup
 EditorName = BUI.EditorTextMarkup
@@ -29,7 +29,7 @@ FactoryDisplaySummary = BUI.FactoryDisplayTextStyled
 EditorSummary = BUI.EditorTextStyled
 FactoryEditorSummary = BUI.FactoryEditorTextStyled
 
-Title = BUI.ModelTextMarkup
+Title = BUI.x_b_t_ModelTextMarkup
 DisplayTitle = BUI.DisplayTextMarkup
 FactoryDisplayTitle = BUI.FactoryDisplayTextMarkup
 EditorTitle = BUI.EditorTextMarkup

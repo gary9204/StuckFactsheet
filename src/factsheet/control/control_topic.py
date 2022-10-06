@@ -133,13 +133,13 @@ class ControlTopic:
     @property
     def name(self) -> str:
         """Return topic name without markup errors."""
-        name = BUI.escape_text_markup(self._model.name.text)
+        name = BUI.x_b_t_escape_text_markup(self._model.name.text)
         return name
 
     @property
     def title(self) -> str:
         """Return topic title without markup errors."""
-        title = BUI.escape_text_markup(self._model.title.text)
+        title = BUI.x_b_t_escape_text_markup(self._model.title.text)
         return title
 
     @property

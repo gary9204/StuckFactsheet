@@ -81,7 +81,7 @@ UiButtonTrigger = typing.Union[Gtk.MenuButton]
 UiViewDuoMarkup = typing.Union[Gtk.Box]
 
 
-def escape_text_markup(p_markup: str) -> str:
+def x_b_tm_escape_text_markup(p_markup: str) -> str:
     """Return text without markup errors.
 
     Escape `Pango markup`_ errors.  Raise other GLib errors.
@@ -101,7 +101,7 @@ def escape_text_markup(p_markup: str) -> str:
 
 
 class DisplayTextMarkup:
-    """Editor for text stored in a given :class:`.ModelTextMarkup`.
+    """Editor for text stored in a given :class:`.x_b_tm_ModelTextMarkup`.
 
     Provides visual element that support editing both text and embedded
     `Pango markup`_.
@@ -119,7 +119,7 @@ class DisplayTextMarkup:
         element when destroying the element.
     """
 
-    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+    def __init__(self, p_model: 'x_b_tm_ModelTextMarkup') -> None:
         """Initialize store for text and collection of displays.
 
         :param p_model: model that contains storage for displays.
@@ -132,7 +132,7 @@ class DisplayTextMarkup:
         get_object = VUI.GetUiElementByStr(p_string_ui=self._UI_DEFINITION)
         self._ui_view = get_object('ui_view')
 
-        markup = escape_text_markup(p_model.text)
+        markup = x_b_tm_escape_text_markup(p_model.text)
         self._ui_view.set_label(markup)
 
         _ = self._ui_view.connect('destroy', self.on_destroy, p_model.ui_model)
@@ -143,7 +143,7 @@ class DisplayTextMarkup:
 
     def on_change(self, p_ui_model: UiTextMarkup, *_args):
         """Refresh display views when text is inserted or deleted."""
-        markup = escape_text_markup(p_ui_model.get_text())
+        markup = x_b_tm_escape_text_markup(p_ui_model.get_text())
         self._ui_view.set_markup(markup)
 
     def on_destroy(self, _ui_view: UiDisplayTextMarkup,
@@ -184,7 +184,7 @@ class DisplayTextMarkup:
 
 
 class EditorTextMarkup:
-    """Editor for text stored in a given :class:`.ModelTextMarkup`.
+    """Editor for text stored in a given :class:`.x_b_tm_ModelTextMarkup`.
 
     Provides visual element that support editing both text and embedded
     `Pango markup`_.
@@ -223,7 +223,7 @@ class EditorTextMarkup:
         </interface>
         """
 
-    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+    def __init__(self, p_model: 'x_b_tm_ModelTextMarkup') -> None:
         """Initialize visual element of editor.
 
         :param p_model: model that contains storage for editor.
@@ -261,7 +261,7 @@ def format_editor_markup(p_editor: EditorTextMarkup) -> None:
         Gtk.EntryIconPosition.SECONDARY, TOOLTIP_SECONDARY)
 
 
-class ModelTextMarkup(BTEXT.ModelText[UiTextMarkup]):
+class x_b_tm_ModelTextMarkup(BTEXT.ModelText[UiTextMarkup]):
     """Text storage with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 
@@ -324,7 +324,7 @@ class PopupEditorMarkup:
         pop up editors.
     """
 
-    def __init__(self, p_model: ModelTextMarkup) -> None:
+    def __init__(self, p_model: x_b_tm_ModelTextMarkup) -> None:
         """Initialize visual elements.
 
         :param p_model: model containing markup text.
@@ -443,7 +443,7 @@ class ViewDuoMarkup:
         management may be implemented separately as needed.
     """
 
-    def __init__(self, p_model: ModelTextMarkup, p_label: str = 'Item'
+    def __init__(self, p_model: x_b_tm_ModelTextMarkup, p_label: str = 'Item'
                  ) -> None:
         """Initialize internal components and their connections.
 

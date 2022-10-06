@@ -37,10 +37,10 @@ import factsheet.model.topic as MTOPIC
 
 logger = logging.getLogger('Main.model.sheet')
 
-Name = BUI.ModelTextMarkup
+Name = BUI.x_b_t_ModelTextMarkup
 Summary = BUI.ModelTextStyled
 OutlineTopics = BUI.ModelOutlineMulti[MTOPIC.Topic]
-Title = BUI.ModelTextMarkup
+Title = BUI.x_b_t_ModelTextMarkup
 TagSheet = typing.NewType('TagSheet', int)
 
 

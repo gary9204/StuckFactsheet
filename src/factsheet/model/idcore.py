@@ -21,11 +21,11 @@ import factsheet.abc_types.abc_stalefile as ABC_STALE
 import factsheet.bridge_ui as BUI
 
 ModelName = typing.TypeVar(
-    'ModelName', BUI.ModelTextMarkup, BUI.ModelTextStyled)
+    'ModelName', BUI.x_b_t_ModelTextMarkup, BUI.ModelTextStyled)
 ModelSummary = typing.TypeVar(
-    'ModelSummary', BUI.ModelTextMarkup, BUI.ModelTextStyled)
+    'ModelSummary', BUI.x_b_t_ModelTextMarkup, BUI.ModelTextStyled)
 ModelTitle = typing.TypeVar(
-    'ModelTitle', BUI.ModelTextMarkup, BUI.ModelTextStyled)
+    'ModelTitle', BUI.x_b_t_ModelTextMarkup, BUI.ModelTextStyled)
 
 
 class IdCore(ABC_STALE.InterfaceStaleFile,

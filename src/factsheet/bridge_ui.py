@@ -57,10 +57,10 @@ Text with Markup Types and Classes
     Visual element to view and edit markup text.
     See :data:`.bridge_text.EditorTextMarkup`.
 
-.. data:: escape_text_markup
+.. data:: x_b_t_escape_text_markup
 
     Function returns text with `Pango markup`_ errors escaped.
-    See :func:`.bridge_text.escape_text_markup`.
+    See :func:`.bridge_text.x_b_t_escape_text_markup`.
 
 .. _Pango markup:
     https://docs.gtk.org/Pango/pango_markup.html
@@ -75,10 +75,10 @@ Text with Markup Types and Classes
     Factory to create :data:`.EditorTextMarkup` for markup text.
     See :class:`.bridge_text.FactoryEditorTextMarkup`.
 
-.. data:: ModelTextMarkup
+.. data:: x_b_t_ModelTextMarkup
 
     Storage for text with `Pango markup`_.
-    See :class:`.bridge_text.ModelTextMarkup`.
+    See :class:`.bridge_text.x_b_t_ModelTextMarkup`.
 
 Text with Styles Types and Classes
 ==================================
@@ -127,8 +127,8 @@ ViewOutline = BOUTLINE.ViewOutline
 
 ModelText = BTEXT.ModelText
 
-escape_text_markup = BTEXT.escape_text_markup
-ModelTextMarkup = BTEXT.ModelTextMarkup
+x_b_t_escape_text_markup = BTEXT.x_b_t_escape_text_markup
+x_b_t_ModelTextMarkup = BTEXT.x_b_t_ModelTextMarkup
 DisplayTextMarkup = BTEXT.DisplayTextMarkup
 FactoryDisplayTextMarkup = BTEXT.FactoryDisplayTextMarkup
 EditorTextMarkup = BTEXT.EditorTextMarkup

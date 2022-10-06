@@ -216,7 +216,7 @@ class TestBase:
         # Test
         target = SBASE.Base(
             p_name=NAME_SPEC, p_summary=SUMMARY_SPEC, p_title=TITLE_SPEC)
-        assert isinstance(target._name_spec, BUI.ModelTextMarkup)
+        assert isinstance(target._name_spec, BUI.x_b_t_ModelTextMarkup)
         assert NAME_SPEC == target._name_spec.text
         assert SUMMARY_SPEC == target._summary_spec.text
         assert TITLE_SPEC == target._title_spec.text
@@ -986,7 +986,7 @@ class TestFieldTextMarkup:
         BLANK = ''
         # Test
         target = SBASE.FieldTextMarkup(p_name_field=NAME)
-        assert isinstance(target._model, BUI.ModelTextMarkup)
+        assert isinstance(target._model, BUI.x_b_t_ModelTextMarkup)
         assert BLANK == target._model.text
         assert isinstance(
             target._factory_display, BUI.FactoryDisplayTextMarkup)
@@ -1060,10 +1060,10 @@ class TestModule:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (SBASE.ChooserDirection, Gtk.ComboBoxText),
-        (SBASE.NameSpec, BUI.ModelTextMarkup),
+        (SBASE.NameSpec, BUI.x_b_t_ModelTextMarkup),
         (SBASE.PageAssist, Gtk.Box),
         (SBASE.SummarySpec, BUI.ModelTextStyled),
-        (SBASE.TitleSpec, BUI.ModelTextMarkup),
+        (SBASE.TitleSpec, BUI.x_b_t_ModelTextMarkup),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type hint definitions.

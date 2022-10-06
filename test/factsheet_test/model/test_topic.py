@@ -508,7 +508,7 @@ class TestModule:
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         (MTOPIC.LineOutline, BUI.LineOutline),
-        (MTOPIC.Name, BUI.ModelTextMarkup),
+        (MTOPIC.Name, BUI.x_b_t_ModelTextMarkup),
         (MTOPIC.DisplayName, BUI.DisplayTextMarkup),
         (MTOPIC.FactoryDisplayName, BUI.FactoryDisplayTextMarkup),
         (MTOPIC.EditorName, BUI.EditorTextMarkup),
@@ -519,7 +519,7 @@ class TestModule:
         (MTOPIC.FactoryDisplaySummary, BUI.FactoryDisplayTextStyled),
         (MTOPIC.EditorSummary, BUI.EditorTextStyled),
         (MTOPIC.FactoryEditorSummary, BUI.FactoryEditorTextStyled),
-        (MTOPIC.Title, BUI.ModelTextMarkup),
+        (MTOPIC.Title, BUI.x_b_t_ModelTextMarkup),
         (MTOPIC.DisplayTitle, BUI.DisplayTextMarkup),
         (MTOPIC.FactoryDisplayTitle, BUI.FactoryDisplayTextMarkup),
         (MTOPIC.EditorTitle, BUI.EditorTextMarkup),

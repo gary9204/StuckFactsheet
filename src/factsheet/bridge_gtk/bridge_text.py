@@ -95,7 +95,7 @@ EditorTextStyled = typing.Union[Gtk.TextView]
 logger = logging.getLogger('Main.bridge_text')
 
 
-def escape_text_markup(p_markup: str) -> str:
+def x_b_t_escape_text_markup(p_markup: str) -> str:
     """Return text without markup errors.
 
     Escape `Pango markup`_ errors.  Raise other GLib errors.
@@ -115,14 +115,14 @@ def escape_text_markup(p_markup: str) -> str:
 
 
 class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
-    """Display factory for text stored in a given :class:`.ModelTextMarkup`.
+    """Display factory for text stored in a given :class:`.x_b_t_ModelTextMarkup`.
 
     Views support text display formatted from embedded `Pango markup`_.
     """
 
     def __call__(self) -> DisplayTextMarkup:
         """Return view to display text with markup formatting."""
-        markup = escape_text_markup(self._ui_model.get_text())
+        markup = x_b_t_escape_text_markup(self._ui_model.get_text())
         display = Gtk.Label(label=markup)
         self._displays[id_display(display)] = display
         _ = display.connect('destroy', self.on_destroy)
@@ -138,7 +138,7 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
         display.set_xalign(XALIGN_LEFT)
         return display
 
-    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+    def __init__(self, p_model: 'x_b_t_ModelTextMarkup') -> None:
         """Initialize store for text and collection of displays.
 
         :param p_model: model that contains storage for displays.
@@ -149,7 +149,7 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
 
     def on_change(self, *_args):
         """Refresh display views when text is inserted or deleted."""
-        markup = escape_text_markup(self._ui_model.get_text())
+        markup = x_b_t_escape_text_markup(self._ui_model.get_text())
         for display in self._displays.values():
             display.set_markup(markup)
 
@@ -169,12 +169,12 @@ class FactoryDisplayTextMarkup(BBASE.FactoryUiViewAbstract[DisplayTextMarkup]):
 
 
 class FactoryEditorTextMarkup(BBASE.FactoryUiViewAbstract[EditorTextMarkup]):
-    """Editor factory for text stored in a given :class:`.ModelTextMarkup`.
+    """Editor factory for text stored in a given :class:`.x_b_t_ModelTextMarkup`.
 
     Views support editing both text and embedded `Pango markup`_.
     """
 
-    def __init__(self, p_model: 'ModelTextMarkup') -> None:
+    def __init__(self, p_model: 'x_b_t_ModelTextMarkup') -> None:
         """Initialize store for text.
 
         :param p_model: model that contains storage for editors.
@@ -347,7 +347,7 @@ class ModelText(ABC_STALE.InterfaceStaleFile,
         self._set_persist(p_text)
 
 
-class ModelTextMarkup(ModelText[UiTextMarkup]):
+class x_b_t_ModelTextMarkup(ModelText[UiTextMarkup]):
     """Text storage with support for editing and `Pango markup`_.  See
     `Gtk.EntryBuffer`_.
 

@@ -26,7 +26,7 @@ class TestBridgeTypes:
         (BUI.ModelOutlineSingle, BOUTLINE.ModelOutlineSingle),
         (BUI.ViewOutline, BOUTLINE.ViewOutline),
         (BUI.ModelText, BTEXT.ModelText),
-        (BUI.ModelTextMarkup, BTEXT.ModelTextMarkup),
+        (BUI.x_b_t_ModelTextMarkup, BTEXT.x_b_t_ModelTextMarkup),
         (BUI.DisplayTextMarkup, BTEXT.DisplayTextMarkup),
         (BUI.FactoryDisplayTextMarkup, BTEXT.FactoryDisplayTextMarkup),
         (BUI.EditorTextMarkup, BTEXT.EditorTextMarkup),
@@ -58,4 +58,4 @@ class TestBridgeConstant:
         # Setup
         # Test
         assert BBASE.TIME_EVENT_CURRENT == BUI.TIME_EVENT_CURRENT
-        assert BUI.escape_text_markup is BTEXT.escape_text_markup
+        assert BUI.x_b_t_escape_text_markup is BTEXT.x_b_t_escape_text_markup

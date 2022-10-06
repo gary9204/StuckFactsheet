@@ -14,11 +14,11 @@ class TestModule:
     """Unit tests for module-level components of :mod:`.sheet`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (MSHEET.Name, BUI.ModelTextMarkup),
+        (MSHEET.Name, BUI.x_b_t_ModelTextMarkup),
         (MSHEET.Summary, BUI.ModelTextStyled),
         (MSHEET.OutlineTopics.__dict__['__origin__'], BUI.ModelOutlineMulti),
         (MSHEET.OutlineTopics.__dict__['__args__'], (MTOPIC.Topic, )),
-        (MSHEET.Title, BUI.ModelTextMarkup),
+        (MSHEET.Title, BUI.x_b_t_ModelTextMarkup),
         (MSHEET.TagSheet.__qualname__, 'NewType.<locals>.new_type'),
         (MSHEET.TagSheet.__dict__['__supertype__'], int),
         ])
