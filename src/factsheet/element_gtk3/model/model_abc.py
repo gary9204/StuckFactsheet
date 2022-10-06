@@ -127,10 +127,10 @@ class Conversion(abc.ABC, typing.Generic[ExternalOpaque]):
         raise NotImplementedError
 
 
-class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
+class x_e_ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
     """Abstract base class for facade classes of storage elements.
 
-    :class:`~.element_gtk3.model.model_abc.ModelAbc` is generic with
+    :class:`~.element_gtk3.model.model_abc.x_e_ModelAbc` is generic with
     respect to storage element type.  A subclass must provide a
     specific storage element type, typically specific to a user
     interface toolkit.
@@ -141,7 +141,7 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
         """Return a user interface storage element.
 
         Use method
-        :meth:`~.element_gtk3.model.model_abc.ModelAbc.new_ui_model` in
+        :meth:`~.element_gtk3.model.model_abc.x_e_ModelAbc.new_ui_model` in
         the ``__init__`` method of a subclass to create the facade's
         storage element.
         """
@@ -159,13 +159,13 @@ class ModelAbc(abc.ABC, typing.Generic[UiModelOpaque]):
         raise NotImplementedError
 
 
-class ModelGtk3(ModelAbc[UiModelOpaque], Conversion[ExternalOpaque],
+class ModelGtk3(x_e_ModelAbc[UiModelOpaque], Conversion[ExternalOpaque],
                 typing.Generic[UiModelOpaque, ExternalOpaque]):
     """Abstract base class for facade classes of storage elements.
 
     See :class:`~.element_gtk3.model.model_abc.Conversion` regarding
     generic type :data:`.ExternalOpaque`.
-    See :class:`~.element_gtk3.model.model_abc.ModelAbc` regarding
+    See :class:`~.element_gtk3.model.model_abc.x_e_ModelAbc` regarding
     generic type :data:`UiModelOpaque`.
     """
 

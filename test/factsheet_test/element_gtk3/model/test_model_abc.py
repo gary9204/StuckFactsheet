@@ -142,11 +142,11 @@ class TestConversion:
 
 
 class TestModelAbc:
-    """Unit tests for :class:`~.element_gtk3.model.model_abc.ModelAbc`."""
+    """Unit tests for :class:`~.element_gtk3.model.model_abc.x_e_ModelAbc`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (EMABC.ModelAbc, 'new_ui_model'),
-        (EMABC.ModelAbc, 'ui_model'),
+        (EMABC.x_e_ModelAbc, 'new_ui_model'),
+        (EMABC.x_e_ModelAbc, 'ui_model'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.
@@ -161,11 +161,11 @@ class TestModelAbc:
 
     def test_ui_model(self):
         """Confirm access limits of
-        :attr:`~.element_gtk3.model.model_abc.ModelAbc.ui_model`
+        :attr:`~.element_gtk3.model.model_abc.x_e_ModelAbc.ui_model`
         property.
         """
         # Setup
-        target_class = EMABC.ModelAbc
+        target_class = EMABC.x_e_ModelAbc
         # Test
         assert target_class.ui_model.fget is not None
         assert target_class.ui_model.fset is None
