@@ -20,3 +20,4 @@ Submodules
    :titlesonly:
 
    factsheet_test.ui_bricks.ui_abc.test_brick_abc
+   factsheet_test.ui_bricks.ui_abc.test_text_abc

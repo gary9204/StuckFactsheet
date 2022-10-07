@@ -1,9 +1,9 @@
 """
-Abstract facade and interface classes for model and control elements.
+Abstract facade and interface classes for model and control cp,[pmemts.
 
-This package provides an abstract facade class for a model component. A
+This module provides an abstract facade class for a model component. A
 concrete subclass may implement the facade with a user interface toolkit
-component or a Pyhton object.  The package includes a corresponding
+object or a Pyhton object.  The module includes a corresponding
 abstract control class.  Abstract interfaces partition control
 functions.
 
