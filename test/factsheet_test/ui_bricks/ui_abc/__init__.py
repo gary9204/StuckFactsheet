@@ -1,3 +1,3 @@
 """
-Unit tests for :mod:`~.factsheet.ui_bricks.ui_abc`.
+Unit tests for package :mod:`~.factsheet.ui_bricks.ui_abc`.
 """

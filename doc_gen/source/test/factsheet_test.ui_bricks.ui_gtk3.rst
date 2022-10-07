@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :titlesonly:
 
+   factsheet_test.ui_bricks.ui_gtk3.text_markup
 
 Submodules
 ----------
@@ -19,4 +20,3 @@ Submodules
 .. toctree::
    :titlesonly:
 
-..   factsheet_test.ui_bricks.ui_gtk3.test_text_gtk3
