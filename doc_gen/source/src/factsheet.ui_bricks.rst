@@ -13,3 +13,4 @@ Subpackages
    :titlesonly:
 
    factsheet.ui_bricks.ui_abc
+   factsheet.ui_bricks.ui_gtk3
