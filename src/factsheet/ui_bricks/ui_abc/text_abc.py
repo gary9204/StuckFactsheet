@@ -32,6 +32,10 @@ class ControlTextAbc(BABC.ControlAbc[str, BABC.StoreUiOpaque],
 
 class ModelTextAbc(BABC.ModelAbc[str, BABC.StoreUiOpaque],
                    typing.Generic[BABC.StoreUiOpaque]):
+    """Abstract class representing persistent aspects of text model.
+
+    See :class:`.ControlTextAbc` regarding transient aspects of model.
+    """
 
     @abc.abstractmethod
     def get_store_py(self) -> str:
