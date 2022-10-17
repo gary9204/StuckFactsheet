@@ -49,19 +49,19 @@ class ControlTextMarkupGtk3(
 
     def has_changed(self) -> bool:
         """Return True if and only if text with markup has changed."""
-        raise NotImplementedError
+        return self._changed
 
     def has_not_changed(self) -> bool:
         """Return True if and only if text with markup has not changed."""
-        raise NotImplementedError
+        return not self._changed
 
     def mark_changed(self) -> None:
-        """Mark text with markup as changed"""
-        raise NotImplementedError
+        """Mark text with markup as changed."""
+        self._changed = True
 
     def mark_not_changed(self) -> None:
         """Mark text with markup as not changed."""
-        raise NotImplementedError
+        self._changed = False
 
     def notify(self) -> None:
         """Notify all observers."""

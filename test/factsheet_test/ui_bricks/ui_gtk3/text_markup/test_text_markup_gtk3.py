@@ -19,6 +19,55 @@ class TestControlMarkupGtk3:
         assert isinstance(target._changed, bool)
         assert not target._changed
 
+    @pytest.mark.parametrize('CHANGED', [
+        False,
+        True
+        ])
+    def test_has_changed(self, CHANGED):
+        """Confirm return matches change state.
+
+        :param CHANGED: change state
+        """
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        # Test
+        target._changed = CHANGED
+        assert target.has_changed() is CHANGED
+
+    @pytest.mark.parametrize('CHANGED', [
+        False,
+        True
+        ])
+    def test_has_not_changed(self, CHANGED):
+        """Confirm return negates change state.
+
+        :param CHANGED: change state
+        """
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        EXPECT = not CHANGED
+        # Test
+        target._changed = CHANGED
+        assert target.has_not_changed() is EXPECT
+
+    def test_mark_changed(self):
+        """Confirm text marked as changed"""
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        # Test
+        target._changed = False
+        target.mark_changed()
+        assert target._changed
+
+    def test_mark_not_changed(self):
+        """Confirm text marked as not changed"""
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        # Test
+        target._changed = True
+        target.mark_not_changed()
+        assert not target._changed
+
     def test_new_model(self):
         """Confirm model construction."""
         # Setup
