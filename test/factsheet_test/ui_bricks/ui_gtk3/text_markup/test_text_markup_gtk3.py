@@ -1,5 +1,7 @@
 """
 Unit tests for :mod:`.text_markup_gtk3`.
+
+.. include:: /test/refs_include_pytest.txt
 """
 import gi   # type: ignore[import]
 import pytest
@@ -33,10 +35,9 @@ class TestControlMarkupGtk3:
         assert isinstance(target._observers, typing.MutableMapping)
         assert not target._observers
 
-    @pytest.mark.skip
     def test_attach(self):
-        """| Confirm observer attached.
-        | Case: novel observer.
+        """| Confirm control will notify observer.
+        | Case: initially control not notifying observer.
         """
         # Setup
         target = BMARKUPGTK3.ControlTextMarkupGtk3()
@@ -46,13 +47,65 @@ class TestControlMarkupGtk3:
         target.attach(p_observer=OBSERVER)
         assert target._observers[ID_OBSERVER] is OBSERVER
 
-    @pytest.mark.skip
-    def test_attach_duplicate(self):
-        """| Confirm observer attached.
-        | Case: duplicate observer.
+    def test_attach_present(self, caplog):
+        """| Confirm control will notify observer.
+        | Case: initially control already notifying observer.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        OBSERVER = self.StubObserver()
+        ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
+        target._observers[ID_OBSERVER] = OBSERVER
+
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Observer already being notified. id: {} '
+                       '(ControlTextMarkupGtk3.attach)'.format(
+                           hex(ID_OBSERVER)))
         # Test
+        target.attach(OBSERVER)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
+
+    def test_detach(self):
+        """| Confirm control will not notify observer.
+        | Case: initially control already notifying observer.
+        """
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        OBSERVER = self.StubObserver()
+        ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
+        target._observers[ID_OBSERVER] = OBSERVER
+        # Test
+        target.detach(p_observer=OBSERVER)
+        assert ID_OBSERVER not in target._observers
+
+    def test_detach_absent(self, caplog):
+        """| Confirm control will not notify observer.
+        | Case: initially control not notifying observer.
+
+        :param caplog: built-in fixture `Pytest caplog`_.
+        """
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        OBSERVER = self.StubObserver()
+        ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
+
+        N_LOGS = 1
+        LAST = -1
+        log_message = ('Observer not being notified. id: {} '
+                       '(ControlTextMarkupGtk3.detach)'.format(
+                           hex(ID_OBSERVER)))
+        # Test
+        target.detach(OBSERVER)
+        assert N_LOGS == len(caplog.records)
+        record = caplog.records[LAST]
+        assert log_message == record.message
+        assert 'WARNING' == record.levelname
 
     @pytest.mark.parametrize('CHANGED', [
         False,

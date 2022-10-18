@@ -11,6 +11,7 @@
     identities.
 """
 import gi   # type: ignore[import]
+import logging
 import typing
 
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
@@ -25,6 +26,8 @@ StoreUiTextMarkup = typing.Union[Gtk.EntryBuffer]
 ObserverMarkupAbc = BABC.ObserverAbc[StoreUiTextMarkup]
 
 VOID_ID_OBSERVER_MARKUP = IdObserverMarkup(0)
+
+logger = logging.getLogger('Main.markup_gtk3')
 
 
 def id_observer_markup(p_observer: ObserverMarkupAbc) -> IdObserverMarkup:
@@ -62,9 +65,18 @@ class ControlTextMarkupGtk3(
     def attach(self, p_observer: ObserverMarkupAbc) -> None:
         """Start notifying an observer.
 
+        Log warning when control is notifying observer already.
+
         :param p_observer: start to notify this observer.
         """
-        raise NotImplementedError
+        id_obsever = id_observer_markup(p_observer)
+        if id_obsever not in self._observers.keys():
+            self._observers[id_obsever] = p_observer
+        else:
+            logger.warning(
+                'Observer already being notified. id: {} ({}.{})'.format(
+                    hex(id_obsever),
+                    self.__class__.__name__, self.attach.__name__))
 
     def bypass(self) -> StoreUiTextMarkup:
         """Return GTK 3 storage component for a model."""
@@ -73,9 +85,18 @@ class ControlTextMarkupGtk3(
     def detach(self, p_observer: ObserverMarkupAbc) -> None:
         """Stop notifying an observer.
 
+        Log warning when control is not notifying observer.
+
         :param p_observer: cease to notify this observer.
         """
-        raise NotImplementedError
+        id_obsever = id_observer_markup(p_observer)
+        try:
+            _ = self._observers.pop(id_obsever)
+        except KeyError:
+            logger.warning(
+                'Observer not being notified. id: {} ({}.{})'.format(
+                    hex(id_obsever),
+                    self.__class__.__name__, self.detach.__name__))
 
     def has_changed(self) -> bool:
         """Return True if and only if text with markup has changed."""
