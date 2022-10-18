@@ -1,3 +1,15 @@
+"""
+
+.. data:: IdObserverMarkup
+
+    Type for identity of an :class:`.ObserverAbc` object.  See
+    :func:`~.text_markup_gtk3.id_observer_markup`.
+
+.. data:: VOID_ID_OBSERVER_MARKUP
+
+    Identity distinct from all possible :data:`.IdObserverMarkup`
+    identities.
+"""
 import gi   # type: ignore[import]
 import typing
 
@@ -7,8 +19,24 @@ import factsheet.ui_bricks.ui_abc.text_abc as BTEXTABC
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
 
+IdObserverMarkup = typing.NewType('IdObserverMarkup', int)
 StoreUiDisplay = typing.Union[Gtk.Label]
 StoreUiTextMarkup = typing.Union[Gtk.EntryBuffer]
+ObserverMarkupAbc = BABC.ObserverAbc[StoreUiTextMarkup]
+
+VOID_ID_OBSERVER_MARKUP = IdObserverMarkup(0)
+
+
+def id_observer_markup(p_observer: ObserverMarkupAbc) -> IdObserverMarkup:
+    """Return identity for given observer.
+
+    Function specializes builtin `id`_ to :class:`.ObserverAbc`.
+
+    :param p_observer: observer to identify.
+
+    .. _`id`: https://docs.python.org/3.9/library/functions.html#id
+    """
+    return IdObserverMarkup(id(p_observer))
 
 
 class ControlTextMarkupGtk3(
@@ -28,8 +56,10 @@ class ControlTextMarkupGtk3(
         """
         super().__init__(p_model)
         self._changed = False
+        self._observers: typing.MutableMapping[
+            IdObserverMarkup, ObserverMarkupAbc] = dict()
 
-    def attach(self, p_observer: BABC.ObserverAbc[StoreUiTextMarkup]) -> None:
+    def attach(self, p_observer: ObserverMarkupAbc) -> None:
         """Start notifying an observer.
 
         :param p_observer: start to notify this observer.
@@ -40,7 +70,7 @@ class ControlTextMarkupGtk3(
         """Return GTK 3 storage component for a model."""
         raise NotImplementedError
 
-    def detach(self, p_observer: BABC.ObserverAbc[StoreUiTextMarkup]) -> None:
+    def detach(self, p_observer: ObserverMarkupAbc) -> None:
         """Stop notifying an observer.
 
         :param p_observer: cease to notify this observer.
