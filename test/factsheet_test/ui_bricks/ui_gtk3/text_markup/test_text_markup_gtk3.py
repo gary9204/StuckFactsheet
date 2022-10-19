@@ -18,10 +18,15 @@ class TestControlMarkupGtk3:
     """Unit tests for :class:`.ControlTextMarkupGtk3`."""
 
     class StubObserver(BMARKUPGTK3.ObserverMarkupAbc):
+        """Stub for :data:`.ObserverMarkupAbc`."""
+
+        def __init__(self):
+            self.store_ui = None
 
         def on_notice(self, p_store_ui, **kwargs):
+            """Record GTK 3 store object to confirm call."""
             del kwargs
-            self._store_ui = p_store_ui
+            self.store_ui = p_store_ui
 
     def test_init(self):
         """Confirm initialization."""
@@ -70,6 +75,14 @@ class TestControlMarkupGtk3:
         record = caplog.records[LAST]
         assert log_message == record.message
         assert 'WARNING' == record.levelname
+
+    def test_bypass(self):
+        """Confirm return of model text as GTK 3 object."""
+        # Setup
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        MODEL = target._model._store_ui
+        # Test
+        assert target.bypass() is MODEL
 
     def test_detach(self):
         """| Confirm control will not notify observer.
@@ -164,6 +177,36 @@ class TestControlMarkupGtk3:
         assert isinstance(target._model, BMARKUPGTK3.ModelTextMarkupGtk3)
         assert target._model._control is target
 
+    def test_notify(self):
+        """Confirm notification of observers."""
+        # Setup
+        N_OBSERVERS = 5
+        OBSERVERS = [self.StubObserver() for _ in range(N_OBSERVERS)]
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        for observer in OBSERVERS:
+            target.attach(p_observer=observer)
+        STORE = target._model.get_store_ui()
+        # Test
+        target.notify()
+        for observer in OBSERVERS:
+            assert observer.store_ui is STORE
+
+    def test_model_chage(self):
+        """Confirm transient aspect updates."""
+        # Setup
+        N_OBSERVERS = 5
+        OBSERVERS = [self.StubObserver() for _ in range(N_OBSERVERS)]
+        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        for observer in OBSERVERS:
+            target.attach(p_observer=observer)
+        STORE = target._model.get_store_ui()
+        target.mark_not_changed()
+        # Test
+        target.on_model_change()
+        assert target.has_changed()
+        for observer in OBSERVERS:
+            assert observer.store_ui is STORE
+
 
 class TestModelMarkupGtk3:
     """Unit tests for :class:`.ModelTextMarkupGtk3`."""
@@ -175,6 +218,13 @@ class TestModelMarkupGtk3:
         # Test
         target = BMARKUPGTK3.ModelTextMarkupGtk3(p_control=CONTROL)
         assert target._control is CONTROL
+
+    def test_get_store_ui(self):
+        """Contirm return of model text as GTK 3 object."""
+        # Setup
+        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        # Test
+        assert target.get_store_ui() is target._store_ui
 
     def test_new_store_ui(self):
         """Confirm storage object construction."""
@@ -223,7 +273,6 @@ class TestModule:
         (BMARKUPGTK3.IdObserverMarkup.__dict__['__supertype__'], int),
         (BMARKUPGTK3.ObserverMarkupAbc,
             BABC.ObserverAbc[BMARKUPGTK3.StoreUiTextMarkup]),
-        (BMARKUPGTK3.StoreUiDisplay, Gtk.Label),
         (BMARKUPGTK3.StoreUiTextMarkup, Gtk.EntryBuffer),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):

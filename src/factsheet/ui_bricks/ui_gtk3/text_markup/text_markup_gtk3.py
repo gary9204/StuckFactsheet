@@ -1,9 +1,20 @@
 """
+Model facade, control, and factory classes for markup text.
+
+Classes support formatting text with manually-entered markup.
 
 .. data:: IdObserverMarkup
 
     Type for identity of an :class:`.ObserverAbc` object.  See
     :func:`~.text_markup_gtk3.id_observer_markup`.
+
+.. data:: ObserverMarkupAbc
+
+    Abstract interface specializing :class:`.ObserverAbc` to GTK 3.
+
+.. data:: StoreUiTextMarkup
+
+    GTK 3 type for storing markup text.
 
 .. data:: VOID_ID_OBSERVER_MARKUP
 
@@ -21,7 +32,6 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
 
 IdObserverMarkup = typing.NewType('IdObserverMarkup', int)
-StoreUiDisplay = typing.Union[Gtk.Label]
 StoreUiTextMarkup = typing.Union[Gtk.EntryBuffer]
 ObserverMarkupAbc = BABC.ObserverAbc[StoreUiTextMarkup]
 
@@ -47,8 +57,8 @@ class ControlTextMarkupGtk3(
         BTEXTABC.ControlTextAbc[StoreUiTextMarkup]):
     """Transient aspects of text model with manually-entered markup.
 
-    This class supports both GTK 3 (BypassAbc) and local (SubjectAbc)
-    communication mechanisms with views.
+    This class supports both GTK 3 (:class:`.BypassAbc`) and local
+    (:class:`.SubjectAbc`) communication mechanisms with views.
     """
 
     def __init__(self, p_model: 'ModelTextMarkupGtk3' = None) -> None:
@@ -79,8 +89,8 @@ class ControlTextMarkupGtk3(
                     self.__class__.__name__, self.attach.__name__))
 
     def bypass(self) -> StoreUiTextMarkup:
-        """Return GTK 3 storage component for a model."""
-        raise NotImplementedError
+        """Return model text as  GTK 3 object."""
+        return self._model.get_store_ui()
 
     def detach(self, p_observer: ObserverMarkupAbc) -> None:
         """Stop notifying an observer.
@@ -114,13 +124,15 @@ class ControlTextMarkupGtk3(
         """Mark text with markup as not changed."""
         self._changed = False
 
-    def notify(self) -> None:
-        """Notify all observers."""
-        raise NotImplementedError
-
     def new_model(self) -> 'ModelTextMarkupGtk3':
         """Return new text model facade for control initialization."""
         return ModelTextMarkupGtk3(p_control=self)
+
+    def notify(self) -> None:
+        """Notify all observers."""
+        store = self._model.get_store_ui()
+        for observer in self._observers.values():
+            observer.on_notice(p_store_ui=store)
 
     def on_model_change(self) -> None:
         """Update transient aspects of model.
@@ -129,7 +141,8 @@ class ControlTextMarkupGtk3(
         :class:`.TrackChangesAbc`) and notifying observers (see
         :class:`.SubjectAbc` and :class:`.ObserverAbc`).
         """
-        raise NotImplementedError
+        self.mark_changed()
+        self.notify()
 
 
 class ModelTextMarkupGtk3(
@@ -145,7 +158,7 @@ class ModelTextMarkupGtk3(
 
     def get_store_ui(self) -> StoreUiTextMarkup:
         """Return model text with markup as GTK 3 object."""
-        raise NotImplementedError
+        return self._store_ui
 
     def new_control(self) -> ControlTextMarkupGtk3:
         """Return new control for text model facade for initialization."""
