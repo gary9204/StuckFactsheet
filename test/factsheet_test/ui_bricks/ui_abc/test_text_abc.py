@@ -78,3 +78,20 @@ class TestFactoryTextStyledAbc:
         # Test
         assert hasattr(CLASS, '__abstractmethods__')
         assert NAME_METHOD in CLASS.__abstractmethods__
+
+
+class TestModule:
+    """Unit tests for module-level components of :mod:`.text_markup_gtk3`."""
+
+    @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
+        (BTEXT.StorePyTextMarkup, str),
+        ])
+    def test_types(self, TYPE_TARGET, TYPE_EXPECT):
+        """Confirm type definitions.
+
+        :param TYPE_TARGET: type hint under test.
+        :param TYPE_EXPECT: type expected.
+        """
+        # Setup
+        # Test
+        assert TYPE_TARGET == TYPE_EXPECT

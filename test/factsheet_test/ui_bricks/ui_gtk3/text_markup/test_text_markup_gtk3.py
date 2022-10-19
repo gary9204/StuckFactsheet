@@ -191,7 +191,7 @@ class TestControlMarkupGtk3:
         for observer in OBSERVERS:
             assert observer.store_ui is STORE
 
-    def test_model_chage(self):
+    def test_model_change(self):
         """Confirm transient aspect updates."""
         # Setup
         N_OBSERVERS = 5
@@ -219,6 +219,16 @@ class TestModelMarkupGtk3:
         target = BMARKUPGTK3.ModelTextMarkupGtk3(p_control=CONTROL)
         assert target._control is CONTROL
 
+    def test_get_store_py(self):
+        """Confirm return of model text as string."""
+        # Setup
+        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        TEXT = 'The Parrot Sketch'
+        ALL = -1
+        target._store_ui.set_text(TEXT, ALL)
+        # Test
+        assert TEXT == target.get_store_py()
+
     def test_get_store_ui(self):
         """Contirm return of model text as GTK 3 object."""
         # Setup
@@ -240,6 +250,15 @@ class TestModelMarkupGtk3:
         # Test
         assert isinstance(target._control, BMARKUPGTK3.ControlTextMarkupGtk3)
         assert target._control._model is target
+
+    def test_set_store_ui(self):
+        """Confirm text and markup set."""
+        # Setup
+        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        TEXT = 'The Parrot Sketch'
+        # Test
+        target.set_store_ui(p_store_py=TEXT)
+        assert TEXT == target._store_ui.get_text()
 
 
 class TestModule:

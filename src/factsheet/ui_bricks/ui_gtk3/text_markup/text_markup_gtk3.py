@@ -152,9 +152,9 @@ class ModelTextMarkupGtk3(
     This class is a facade for text model based on GTK 3.
     """
 
-    def get_store_py(self) -> str:
+    def get_store_py(self) -> BTEXTABC.StorePyTextMarkup:
         """Return model text with markup as string."""
-        raise NotImplementedError
+        return self._store_ui.get_text()
 
     def get_store_ui(self) -> StoreUiTextMarkup:
         """Return model text with markup as GTK 3 object."""
@@ -165,12 +165,13 @@ class ModelTextMarkupGtk3(
         return ControlTextMarkupGtk3(p_model=self)
 
     def new_store_ui(self) -> StoreUiTextMarkup:
-        """Return new GTK 3 object for model facade for initialization."""
+        """Return new GTK 3 object for model storage for initialization."""
         return StoreUiTextMarkup()
 
-    def set_store_ui(self, p_store_py: str) -> None:
-        """Set facade text and markup from string.
+    def set_store_ui(self, p_store_py: BTEXTABC.StorePyTextMarkup) -> None:
+        """Set text and markup from toolkit-independent storage.
 
         :param p_store_py: text and markup to store.
         """
-        raise NotImplementedError
+        ALL = -1
+        self._store_ui.set_text(p_store_py, ALL)

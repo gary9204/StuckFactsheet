@@ -7,14 +7,21 @@ The module includes a corresponding abstract control class.
 A subclass may support formatting with manually-entered markup or with
 style tags embedded programatically.  The module includes abstract
 factory classes for each method of formatting.
+
+.. data:: StorePyTextMarkup
+
+    Type alias for text storage object independent of user interface
+    toolkits.
 """
 import abc
 import typing
 
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
 
+StorePyTextMarkup = str
 
-class ControlTextAbc(BABC.ControlAbc[str, BABC.StoreUiOpaque],
+
+class ControlTextAbc(BABC.ControlAbc[StorePyTextMarkup, BABC.StoreUiOpaque],
                      typing.Generic[BABC.StoreUiOpaque]):
     """Abstract class representing transient aspects of text model.
 
@@ -30,7 +37,7 @@ class ControlTextAbc(BABC.ControlAbc[str, BABC.StoreUiOpaque],
         raise NotImplementedError
 
 
-class ModelTextAbc(BABC.ModelAbc[str, BABC.StoreUiOpaque],
+class ModelTextAbc(BABC.ModelAbc[StorePyTextMarkup, BABC.StoreUiOpaque],
                    typing.Generic[BABC.StoreUiOpaque]):
     """Abstract class representing persistent aspects of text model.
 
@@ -38,7 +45,7 @@ class ModelTextAbc(BABC.ModelAbc[str, BABC.StoreUiOpaque],
     """
 
     @abc.abstractmethod
-    def get_store_py(self) -> str:
+    def get_store_py(self) -> StorePyTextMarkup:
         """Return model storage as string.
 
         Return may contain both text and format information.
@@ -54,7 +61,7 @@ class ModelTextAbc(BABC.ModelAbc[str, BABC.StoreUiOpaque],
         raise NotImplementedError
 
     @abc.abstractmethod
-    def set_store_ui(self, p_store_py: str) -> None:
+    def set_store_ui(self, p_store_py: StorePyTextMarkup) -> None:
         """Set facade storage content from string.
 
         :param p_store_py: text and format information to store.
