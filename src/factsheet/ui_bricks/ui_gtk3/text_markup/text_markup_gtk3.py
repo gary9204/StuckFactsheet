@@ -159,10 +159,6 @@ class ModelMarkupGtk3(BTEXTABC.ModelTextAbc[StoreUiTextMarkup]):
         """Return model text with markup as GTK 3 object."""
         return self._store_ui
 
-    def new_control(self) -> ControlMarkupGtk3:
-        """Return new control for text model facade for initialization."""
-        return ControlMarkupGtk3(p_model=self)
-
     def new_store_ui(self) -> StoreUiTextMarkup:
         """Return new GTK 3 object for model storage for initialization."""
         return StoreUiTextMarkup()
