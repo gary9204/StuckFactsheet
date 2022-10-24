@@ -126,7 +126,7 @@ class ControlMarkupGtk3(
 
     def new_model(self) -> 'ModelMarkupGtk3':
         """Return new text model facade for control initialization."""
-        return ModelMarkupGtk3(p_control=self)
+        return ModelMarkupGtk3()
 
     def notify(self) -> None:
         """Notify all observers."""
@@ -145,8 +145,7 @@ class ControlMarkupGtk3(
         self.notify()
 
 
-class ModelMarkupGtk3(
-        BTEXTABC.ModelTextAbc[StoreUiTextMarkup]):
+class ModelMarkupGtk3(BTEXTABC.ModelTextAbc[StoreUiTextMarkup]):
     """Persistent aspects of text model with manually-entered markup.
 
     This class is a facade for text model based on GTK 3.

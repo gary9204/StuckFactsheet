@@ -175,7 +175,6 @@ class TestControlMarkupGtk3:
         target = BMARKUPGTK3.ControlMarkupGtk3()
         # Test
         assert isinstance(target._model, BMARKUPGTK3.ModelMarkupGtk3)
-        assert target._model._control is target
 
     def test_notify(self):
         """Confirm notification of observers."""
@@ -211,14 +210,6 @@ class TestControlMarkupGtk3:
 class TestModelMarkupGtk3:
     """Unit tests for :class:`.ModelMarkupGtk3`."""
 
-    def test_init(self):
-        """Confirm initialization."""
-        # Setup
-        CONTROL = BMARKUPGTK3.ControlMarkupGtk3()
-        # Test
-        target = BMARKUPGTK3.ModelMarkupGtk3(p_control=CONTROL)
-        assert target._control is CONTROL
-
     def test_get_store_py(self):
         """Confirm return of model text as string."""
         # Setup
@@ -242,14 +233,6 @@ class TestModelMarkupGtk3:
         target = BMARKUPGTK3.ModelMarkupGtk3()
         # Test
         assert isinstance(target._store_ui, BMARKUPGTK3.StoreUiTextMarkup)
-
-    def test_new_control(self):
-        """Confirm control construction."""
-        # Setup
-        target = BMARKUPGTK3.ModelMarkupGtk3()
-        # Test
-        assert isinstance(target._control, BMARKUPGTK3.ControlMarkupGtk3)
-        assert target._control._model is target
 
     def test_set_store_ui(self):
         """Confirm text and markup set."""

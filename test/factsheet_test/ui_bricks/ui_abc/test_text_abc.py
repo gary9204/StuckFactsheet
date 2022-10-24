@@ -29,7 +29,6 @@ class TestModelTextAbc:
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BTEXT.ModelTextAbc, 'get_store_py'),
-        (BTEXT.ModelTextAbc, 'new_control'),
         (BTEXT.ModelTextAbc, 'set_store_ui'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
@@ -45,10 +44,10 @@ class TestModelTextAbc:
 
 
 class TestFactoryTextMarkupAbc:
-    """Unit tests for :class:`.FactoryTextMarkupAbc`."""
+    """Unit tests for :class:`.FactoryMarkupAbc`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BTEXT.FactoryTextMarkupAbc, '__call__'),
+        (BTEXT.FactoryMarkupAbc, '__call__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.
@@ -63,10 +62,10 @@ class TestFactoryTextMarkupAbc:
 
 
 class TestFactoryTextStyledAbc:
-    """Unit tests for :class:`.FactoryTextStyledAbc`."""
+    """Unit tests for :class:`.FactoryStyledAbc`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BTEXT.FactoryTextStyledAbc, '__call__'),
+        (BTEXT.FactoryStyledAbc, '__call__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.

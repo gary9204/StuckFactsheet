@@ -53,14 +53,6 @@ class ModelTextAbc(BABC.ModelAbc[StorePyTextMarkup, BABC.StoreUiOpaque],
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_control(self) -> ControlTextAbc[BABC.StoreUiOpaque]:
-        """Return new control for text model facade for initialization.
-
-        Class delegates control construction to each subclass.
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def set_store_ui(self, p_store_py: StorePyTextMarkup) -> None:
         """Set facade storage content from string.
 
@@ -69,7 +61,7 @@ class ModelTextAbc(BABC.ModelAbc[StorePyTextMarkup, BABC.StoreUiOpaque],
         raise NotImplementedError
 
 
-class FactoryTextMarkupAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
+class FactoryMarkupAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
     """Abstract factory for text facade with manually-entered markup."""
 
     @abc.abstractmethod
@@ -78,7 +70,7 @@ class FactoryTextMarkupAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
         raise NotImplementedError
 
 
-class FactoryTextStyledAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
+class FactoryStyledAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
     """Abstract factory for text facade with embedded style tags."""
 
     @abc.abstractmethod

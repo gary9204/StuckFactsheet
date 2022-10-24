@@ -127,10 +127,6 @@ class ModelAbc(abc.ABC, typing.Generic[StorePyOpaque, StoreUiOpaque]):
 
     def __init__(self) -> None:
         """Initialize storage for model."""
-        # if p_control is None:
-        #     self._control = self.new_control()
-        # else:
-        #     self._control = p_control
         self._store_ui = self.new_store_ui()
 
     def __setstate__(
@@ -148,15 +144,10 @@ class ModelAbc(abc.ABC, typing.Generic[StorePyOpaque, StoreUiOpaque]):
         self._store_ui = self.new_store_ui()
         self.set_store_ui(self.ex_store)   # type: ignore[attr-defined]
         del self.ex_store  # type: ignore[attr-defined]
-        # self._control = self.new_control()
 
     def __str__(self) -> str:
         """Return storage element as string."""
         return '<{}: {}>'.format(type(self).__name__, self.get_store_ui())
-
-    # def get_control(self) -> 'ControlAbc[StorePyOpaque, StoreUiOpaque]':
-    #     """Return control associated with this model facade"""
-    #     return self._control
 
     @abc.abstractmethod
     def get_store_py(self) -> StorePyOpaque:
@@ -167,14 +158,6 @@ class ModelAbc(abc.ABC, typing.Generic[StorePyOpaque, StoreUiOpaque]):
     def get_store_ui(self) -> StoreUiOpaque:
         """Return model storage as toolkit-specific object."""
         raise NotImplementedError
-
-    # @abc.abstractmethod
-    # def new_control(self) -> ControlAbc[StorePyOpaque, StoreUiOpaque]:
-    #     """Return new control for this model facade for initialization.
-    #
-    #     Class delegates control construction to each subclass.
-    #     """
-    #     raise NotImplementedError
 
     @abc.abstractmethod
     def new_store_ui(self) -> StoreUiOpaque:

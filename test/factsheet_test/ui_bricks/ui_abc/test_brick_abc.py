@@ -76,7 +76,6 @@ class TestControlAbc:
 class TestModelAbc:
     """Unit tests for :class:`.ModelAbc`."""
 
-    stub_control = 'Something completely different'
     stub_store = 'Oops'
 
     class StubModel(BABC.ModelAbc[str, str]):
@@ -86,8 +85,6 @@ class TestModelAbc:
 
         def get_store_ui(self): return self._store_ui
 
-        # def new_control(self): return str(TestModelAbc.stub_control)
-
         def new_store_ui(self): return str('Oops')
 
         def set_store_ui(self, p_store_py): self._store_ui = p_store_py
@@ -95,10 +92,8 @@ class TestModelAbc:
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BABC.ModelAbc, 'get_store_py'),
         (BABC.ModelAbc, 'get_store_ui'),
-        # (BABC.ModelAbc, 'new_control'),
         (BABC.ModelAbc, 'new_store_ui'),
         (BABC.ModelAbc, 'set_store_ui'),
-        # (BABC.ModelAbc, 'TBD'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.
@@ -157,10 +152,8 @@ class TestModelAbc:
         | Case: with control parameter.
         """
         # Setup
-        # CONTROL = 'The Parrot Sketch'
         # Test
         target = TestModelAbc.StubModel()
-        # assert target._control is CONTROL
         assert TestModelAbc.stub_store == target._store_ui
 
     def test_init_default(self):
@@ -170,7 +163,6 @@ class TestModelAbc:
         # Setup
         # Test
         target = TestModelAbc.StubModel()
-        # assert target._control is TestModelAbc.stub_control
         assert TestModelAbc.stub_store == target._store_ui
 
     def test_str(self):
@@ -182,15 +174,6 @@ class TestModelAbc:
         expect = '<StubModel: {}>'.format(TEXT)
         # Test
         assert expect == str(target)
-
-    @pytest.mark.skip(reason='Moving control to toolkit-specific class')
-    def test_get_control(self):
-        """Confirm control access."""
-        # Setup
-        CONTROL = 'The Parrot Sketch'
-        # Test
-        target = TestModelAbc.StubModel(p_control=CONTROL)
-        assert target.get_control() is CONTROL
 
 
 class TestModule:
