@@ -86,7 +86,7 @@ class TestModelAbc:
 
         def get_store_ui(self): return self._store_ui
 
-        def new_control(self): return str(TestModelAbc.stub_control)
+        # def new_control(self): return str(TestModelAbc.stub_control)
 
         def new_store_ui(self): return str('Oops')
 
@@ -95,7 +95,7 @@ class TestModelAbc:
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         (BABC.ModelAbc, 'get_store_py'),
         (BABC.ModelAbc, 'get_store_ui'),
-        (BABC.ModelAbc, 'new_control'),
+        # (BABC.ModelAbc, 'new_control'),
         (BABC.ModelAbc, 'new_store_ui'),
         (BABC.ModelAbc, 'set_store_ui'),
         # (BABC.ModelAbc, 'TBD'),
@@ -139,8 +139,8 @@ class TestModelAbc:
         """Confirm conversion to and from pickle format."""
         # Setup
         PATH = Path(str(tmp_path / 'get_set.fsg'))
-        CONTROL = 'The Parrot Sketch'
-        source = TestModelAbc.StubModel(p_control=CONTROL)
+        # CONTROL = 'The Parrot Sketch'
+        source = TestModelAbc.StubModel()
         TEXT = 'Parrot'
         source.set_store_ui(TEXT)
         # Test
@@ -148,7 +148,7 @@ class TestModelAbc:
             pickle.dump(source, io_out)
         with PATH.open(mode='rb') as io_in:
             target = pickle.load(io_in)
-        assert TestModelAbc.stub_control == target._control
+        # assert TestModelAbc.stub_control == target._control
         assert not hasattr(target, 'ex_store')
         assert source.get_store_py() == target.get_store_py()
 
@@ -157,10 +157,10 @@ class TestModelAbc:
         | Case: with control parameter.
         """
         # Setup
-        CONTROL = 'The Parrot Sketch'
+        # CONTROL = 'The Parrot Sketch'
         # Test
-        target = TestModelAbc.StubModel(p_control=CONTROL)
-        assert target._control is CONTROL
+        target = TestModelAbc.StubModel()
+        # assert target._control is CONTROL
         assert TestModelAbc.stub_store == target._store_ui
 
     def test_init_default(self):
@@ -170,7 +170,7 @@ class TestModelAbc:
         # Setup
         # Test
         target = TestModelAbc.StubModel()
-        assert target._control is TestModelAbc.stub_control
+        # assert target._control is TestModelAbc.stub_control
         assert TestModelAbc.stub_store == target._store_ui
 
     def test_str(self):
@@ -183,6 +183,7 @@ class TestModelAbc:
         # Test
         assert expect == str(target)
 
+    @pytest.mark.skip(reason='Moving control to toolkit-specific class')
     def test_get_control(self):
         """Confirm control access."""
         # Setup

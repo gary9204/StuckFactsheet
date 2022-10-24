@@ -52,7 +52,7 @@ def id_observer_markup(p_observer: ObserverMarkupAbc) -> IdObserverMarkup:
     return IdObserverMarkup(id(p_observer))
 
 
-class ControlTextMarkupGtk3(
+class ControlMarkupGtk3(
         BABC.BypassAbc, BABC.SubjectAbc, BABC.TrackChangesAbc,
         BTEXTABC.ControlTextAbc[StoreUiTextMarkup]):
     """Transient aspects of text model with manually-entered markup.
@@ -61,7 +61,7 @@ class ControlTextMarkupGtk3(
     (:class:`.SubjectAbc`) communication mechanisms with views.
     """
 
-    def __init__(self, p_model: 'ModelTextMarkupGtk3' = None) -> None:
+    def __init__(self, p_model: 'ModelMarkupGtk3' = None) -> None:
         """Initialize model and change marks.
 
         :param p_model: model to associate with this control.  If None,
@@ -124,9 +124,9 @@ class ControlTextMarkupGtk3(
         """Mark text with markup as not changed."""
         self._changed = False
 
-    def new_model(self) -> 'ModelTextMarkupGtk3':
+    def new_model(self) -> 'ModelMarkupGtk3':
         """Return new text model facade for control initialization."""
-        return ModelTextMarkupGtk3(p_control=self)
+        return ModelMarkupGtk3(p_control=self)
 
     def notify(self) -> None:
         """Notify all observers."""
@@ -145,7 +145,7 @@ class ControlTextMarkupGtk3(
         self.notify()
 
 
-class ModelTextMarkupGtk3(
+class ModelMarkupGtk3(
         BTEXTABC.ModelTextAbc[StoreUiTextMarkup]):
     """Persistent aspects of text model with manually-entered markup.
 
@@ -160,9 +160,9 @@ class ModelTextMarkupGtk3(
         """Return model text with markup as GTK 3 object."""
         return self._store_ui
 
-    def new_control(self) -> ControlTextMarkupGtk3:
+    def new_control(self) -> ControlMarkupGtk3:
         """Return new control for text model facade for initialization."""
-        return ControlTextMarkupGtk3(p_model=self)
+        return ControlMarkupGtk3(p_model=self)
 
     def new_store_ui(self) -> StoreUiTextMarkup:
         """Return new GTK 3 object for model storage for initialization."""

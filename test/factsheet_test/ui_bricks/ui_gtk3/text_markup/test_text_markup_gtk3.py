@@ -15,7 +15,7 @@ from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
 
 
 class TestControlMarkupGtk3:
-    """Unit tests for :class:`.ControlTextMarkupGtk3`."""
+    """Unit tests for :class:`.ControlMarkupGtk3`."""
 
     class StubObserver(BMARKUPGTK3.ObserverMarkupAbc):
         """Stub for :data:`.ObserverMarkupAbc`."""
@@ -31,9 +31,9 @@ class TestControlMarkupGtk3:
     def test_init(self):
         """Confirm initialization."""
         # Setup
-        MODEL = BMARKUPGTK3.ModelTextMarkupGtk3()
+        MODEL = BMARKUPGTK3.ModelMarkupGtk3()
         # Test
-        target = BMARKUPGTK3.ControlTextMarkupGtk3(p_model=MODEL)
+        target = BMARKUPGTK3.ControlMarkupGtk3(p_model=MODEL)
         assert target._model is MODEL
         assert isinstance(target._changed, bool)
         assert not target._changed
@@ -45,7 +45,7 @@ class TestControlMarkupGtk3:
         | Case: initially control not notifying observer.
         """
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         OBSERVER = self.StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
         # Test
@@ -59,7 +59,7 @@ class TestControlMarkupGtk3:
         :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         OBSERVER = self.StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
         target._observers[ID_OBSERVER] = OBSERVER
@@ -67,7 +67,7 @@ class TestControlMarkupGtk3:
         N_LOGS = 1
         LAST = -1
         log_message = ('Observer already being notified. id: {} '
-                       '(ControlTextMarkupGtk3.attach)'.format(
+                       '(ControlMarkupGtk3.attach)'.format(
                            hex(ID_OBSERVER)))
         # Test
         target.attach(OBSERVER)
@@ -79,7 +79,7 @@ class TestControlMarkupGtk3:
     def test_bypass(self):
         """Confirm return of model text as GTK 3 object."""
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         MODEL = target._model._store_ui
         # Test
         assert target.bypass() is MODEL
@@ -89,7 +89,7 @@ class TestControlMarkupGtk3:
         | Case: initially control already notifying observer.
         """
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         OBSERVER = self.StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
         target._observers[ID_OBSERVER] = OBSERVER
@@ -104,14 +104,14 @@ class TestControlMarkupGtk3:
         :param caplog: built-in fixture `Pytest caplog`_.
         """
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         OBSERVER = self.StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
 
         N_LOGS = 1
         LAST = -1
         log_message = ('Observer not being notified. id: {} '
-                       '(ControlTextMarkupGtk3.detach)'.format(
+                       '(ControlMarkupGtk3.detach)'.format(
                            hex(ID_OBSERVER)))
         # Test
         target.detach(OBSERVER)
@@ -130,7 +130,7 @@ class TestControlMarkupGtk3:
         :param CHANGED: change state
         """
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         # Test
         target._changed = CHANGED
         assert target.has_changed() is CHANGED
@@ -145,7 +145,7 @@ class TestControlMarkupGtk3:
         :param CHANGED: change state
         """
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         EXPECT = not CHANGED
         # Test
         target._changed = CHANGED
@@ -154,7 +154,7 @@ class TestControlMarkupGtk3:
     def test_mark_changed(self):
         """Confirm text marked as changed"""
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         # Test
         target._changed = False
         target.mark_changed()
@@ -163,7 +163,7 @@ class TestControlMarkupGtk3:
     def test_mark_not_changed(self):
         """Confirm text marked as not changed"""
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         # Test
         target._changed = True
         target.mark_not_changed()
@@ -172,9 +172,9 @@ class TestControlMarkupGtk3:
     def test_new_model(self):
         """Confirm model construction."""
         # Setup
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         # Test
-        assert isinstance(target._model, BMARKUPGTK3.ModelTextMarkupGtk3)
+        assert isinstance(target._model, BMARKUPGTK3.ModelMarkupGtk3)
         assert target._model._control is target
 
     def test_notify(self):
@@ -182,7 +182,7 @@ class TestControlMarkupGtk3:
         # Setup
         N_OBSERVERS = 5
         OBSERVERS = [self.StubObserver() for _ in range(N_OBSERVERS)]
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         for observer in OBSERVERS:
             target.attach(p_observer=observer)
         STORE = target._model.get_store_ui()
@@ -196,7 +196,7 @@ class TestControlMarkupGtk3:
         # Setup
         N_OBSERVERS = 5
         OBSERVERS = [self.StubObserver() for _ in range(N_OBSERVERS)]
-        target = BMARKUPGTK3.ControlTextMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupGtk3()
         for observer in OBSERVERS:
             target.attach(p_observer=observer)
         STORE = target._model.get_store_ui()
@@ -209,20 +209,20 @@ class TestControlMarkupGtk3:
 
 
 class TestModelMarkupGtk3:
-    """Unit tests for :class:`.ModelTextMarkupGtk3`."""
+    """Unit tests for :class:`.ModelMarkupGtk3`."""
 
     def test_init(self):
         """Confirm initialization."""
         # Setup
-        CONTROL = BMARKUPGTK3.ControlTextMarkupGtk3()
+        CONTROL = BMARKUPGTK3.ControlMarkupGtk3()
         # Test
-        target = BMARKUPGTK3.ModelTextMarkupGtk3(p_control=CONTROL)
+        target = BMARKUPGTK3.ModelMarkupGtk3(p_control=CONTROL)
         assert target._control is CONTROL
 
     def test_get_store_py(self):
         """Confirm return of model text as string."""
         # Setup
-        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        target = BMARKUPGTK3.ModelMarkupGtk3()
         TEXT = 'The Parrot Sketch'
         ALL = -1
         target._store_ui.set_text(TEXT, ALL)
@@ -232,29 +232,29 @@ class TestModelMarkupGtk3:
     def test_get_store_ui(self):
         """Contirm return of model text as GTK 3 object."""
         # Setup
-        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        target = BMARKUPGTK3.ModelMarkupGtk3()
         # Test
         assert target.get_store_ui() is target._store_ui
 
     def test_new_store_ui(self):
         """Confirm storage object construction."""
         # Setup
-        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        target = BMARKUPGTK3.ModelMarkupGtk3()
         # Test
         assert isinstance(target._store_ui, BMARKUPGTK3.StoreUiTextMarkup)
 
     def test_new_control(self):
         """Confirm control construction."""
         # Setup
-        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        target = BMARKUPGTK3.ModelMarkupGtk3()
         # Test
-        assert isinstance(target._control, BMARKUPGTK3.ControlTextMarkupGtk3)
+        assert isinstance(target._control, BMARKUPGTK3.ControlMarkupGtk3)
         assert target._control._model is target
 
     def test_set_store_ui(self):
         """Confirm text and markup set."""
         # Setup
-        target = BMARKUPGTK3.ModelTextMarkupGtk3()
+        target = BMARKUPGTK3.ModelMarkupGtk3()
         TEXT = 'The Parrot Sketch'
         # Test
         target.set_store_ui(p_store_py=TEXT)
