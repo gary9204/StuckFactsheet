@@ -52,9 +52,8 @@ def id_observer_markup(p_observer: ObserverMarkupAbc) -> IdObserverMarkup:
     return IdObserverMarkup(id(p_observer))
 
 
-class ControlMarkupGtk3(
-        BABC.BypassAbc, BABC.SubjectAbc, BABC.TrackChangesAbc,
-        BTEXTABC.ControlTextAbc[StoreUiTextMarkup]):
+class ControlMarkupGtk3(BABC.BypassAbc, BABC.SubjectAbc,
+                        BTEXTABC.ControlTextAbc[StoreUiTextMarkup]):
     """Transient aspects of text model with manually-entered markup.
 
     This class supports both GTK 3 (:class:`.BypassAbc`) and local
@@ -62,15 +61,23 @@ class ControlMarkupGtk3(
     """
 
     def __init__(self, p_model: 'ModelMarkupGtk3' = None) -> None:
-        """Initialize model and change marks.
+        """Initialize model and observers.
 
         :param p_model: model to associate with this control.  If None,
             create a new model.
         """
         super().__init__(p_model)
-        self._changed = False
         self._observers: typing.MutableMapping[
             IdObserverMarkup, ObserverMarkupAbc] = dict()
+        self.init_signals()
+
+    def init_signals(self) -> None:
+        """Connect GTK 3 change signals from model's text store."""
+        source = self._model.get_store_ui()
+        _ = source.connect(
+            'deleted-text', lambda *_args: self.on_model_change())
+        _ = source.connect(
+            'inserted-text', lambda *_args: self.on_model_change())
 
     def attach(self, p_observer: ObserverMarkupAbc) -> None:
         """Start notifying an observer.
@@ -89,7 +96,7 @@ class ControlMarkupGtk3(
                     self.__class__.__name__, self.attach.__name__))
 
     def bypass(self) -> StoreUiTextMarkup:
-        """Return model text as  GTK 3 object."""
+        """Return model text as GTK 3 object."""
         return self._model.get_store_ui()
 
     def detach(self, p_observer: ObserverMarkupAbc) -> None:
@@ -108,6 +115,40 @@ class ControlMarkupGtk3(
                     hex(id_obsever),
                     self.__class__.__name__, self.detach.__name__))
 
+    def new_model(self) -> 'ModelMarkupGtk3':
+        """Return new text model facade for control initialization."""
+        return ModelMarkupGtk3()
+
+    def notify(self) -> None:
+        """Notify all observers."""
+        store = self._model.get_store_ui()
+        for observer in self._observers.values():
+            observer.on_notice(p_store_ui=store)
+
+    def on_model_change(self) -> None:
+        """Notify observers model has changed.
+
+        See :class:`.SubjectAbc` and :class:`.ObserverAbc`).
+        """
+        self.notify()
+
+
+class ControlMarkupTrackGtk3(ControlMarkupGtk3, BABC.TrackChangesAbc):
+    """Transient aspects of text model with manually-entered markup.
+
+    Extends :class:`.ControlMarkupGtk3` to track changes in text and
+    markup.
+    """
+
+    def __init__(self, p_model: 'ModelMarkupGtk3' = None) -> None:
+        """Initialize change mark.
+
+        :param p_model: model to associate with this control.  If None,
+            create a new model.
+        """
+        super().__init__(p_model)
+        self._changed = False
+
     def has_changed(self) -> bool:
         """Return True if and only if text with markup has changed."""
         return self._changed
@@ -124,25 +165,13 @@ class ControlMarkupGtk3(
         """Mark text with markup as not changed."""
         self._changed = False
 
-    def new_model(self) -> 'ModelMarkupGtk3':
-        """Return new text model facade for control initialization."""
-        return ModelMarkupGtk3()
-
-    def notify(self) -> None:
-        """Notify all observers."""
-        store = self._model.get_store_ui()
-        for observer in self._observers.values():
-            observer.on_notice(p_store_ui=store)
-
     def on_model_change(self) -> None:
-        """Update transient aspects of model.
+        """Extend to record that text or markup has changed.
 
-        Update includes tracking changes (see
-        :class:`.TrackChangesAbc`) and notifying observers (see
-        :class:`.SubjectAbc` and :class:`.ObserverAbc`).
+        See :class:`.TrackChangesAbc`.
         """
+        super().on_model_change()
         self.mark_changed()
-        self.notify()
 
 
 class ModelMarkupGtk3(BTEXTABC.ModelTextAbc[StoreUiTextMarkup]):

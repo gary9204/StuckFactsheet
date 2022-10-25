@@ -10,23 +10,25 @@ import typing
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
 import factsheet.ui_bricks.ui_gtk3.text_markup.text_markup_gtk3 as BMARKUPGTK3
 
+from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
+from gi.repository import Gtk   # noqa: E402
+
+
+class StubObserver(BMARKUPGTK3.ObserverMarkupAbc):
+    """Stub for :data:`.ObserverMarkupAbc`."""
+
+    def __init__(self):
+        self.store_ui = None
+
+    def on_notice(self, p_store_ui, **kwargs):
+        """Record GTK 3 store object to confirm call."""
+        del kwargs
+        self.store_ui = p_store_ui
 
 
 class TestControlMarkupGtk3:
     """Unit tests for :class:`.ControlMarkupGtk3`."""
-
-    class StubObserver(BMARKUPGTK3.ObserverMarkupAbc):
-        """Stub for :data:`.ObserverMarkupAbc`."""
-
-        def __init__(self):
-            self.store_ui = None
-
-        def on_notice(self, p_store_ui, **kwargs):
-            """Record GTK 3 store object to confirm call."""
-            del kwargs
-            self.store_ui = p_store_ui
 
     def test_init(self):
         """Confirm initialization."""
@@ -35,10 +37,37 @@ class TestControlMarkupGtk3:
         # Test
         target = BMARKUPGTK3.ControlMarkupGtk3(p_model=MODEL)
         assert target._model is MODEL
-        assert isinstance(target._changed, bool)
-        assert not target._changed
         assert isinstance(target._observers, typing.MutableMapping)
         assert not target._observers
+
+    @pytest.mark.parametrize('ORIGIN, NAME_SIGNAL, N_DEFAULT', [
+            (BMARKUPGTK3.StoreUiTextMarkup, 'deleted-text', 0),
+            (BMARKUPGTK3.StoreUiTextMarkup, 'inserted-text', 0),
+            ])
+    def test_init_signals(self, ORIGIN, NAME_SIGNAL, N_DEFAULT):
+        """Confirm GTK 3 signal connection.
+
+        :param ORIGIN: GTK class origin of signal.
+        :param NAME_SIGNAL: name of signal to check.
+        :param N_DEFAULT: count of default signal handlers.
+        """
+        # Setup
+        origin_gtype = GO.type_from_name(GO.type_name(ORIGIN))
+        signal = GO.signal_lookup(NAME_SIGNAL, origin_gtype)
+        target = BMARKUPGTK3.ControlMarkupGtk3()
+        source = target._model.get_store_ui()
+        # Test
+        n_handlers = 0
+        while True:
+            id_signal = GO.signal_handler_find(
+                source, GO.SignalMatchType.ID, signal, 0, None, None, None)
+            if 0 == id_signal:
+                break
+
+            n_handlers += 1
+            GO.signal_handler_disconnect(source, id_signal)
+
+        assert N_DEFAULT + 1 == n_handlers
 
     def test_attach(self):
         """| Confirm control will notify observer.
@@ -46,7 +75,7 @@ class TestControlMarkupGtk3:
         """
         # Setup
         target = BMARKUPGTK3.ControlMarkupGtk3()
-        OBSERVER = self.StubObserver()
+        OBSERVER = StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
         # Test
         target.attach(p_observer=OBSERVER)
@@ -60,7 +89,7 @@ class TestControlMarkupGtk3:
         """
         # Setup
         target = BMARKUPGTK3.ControlMarkupGtk3()
-        OBSERVER = self.StubObserver()
+        OBSERVER = StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
         target._observers[ID_OBSERVER] = OBSERVER
 
@@ -90,7 +119,7 @@ class TestControlMarkupGtk3:
         """
         # Setup
         target = BMARKUPGTK3.ControlMarkupGtk3()
-        OBSERVER = self.StubObserver()
+        OBSERVER = StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
         target._observers[ID_OBSERVER] = OBSERVER
         # Test
@@ -105,7 +134,7 @@ class TestControlMarkupGtk3:
         """
         # Setup
         target = BMARKUPGTK3.ControlMarkupGtk3()
-        OBSERVER = self.StubObserver()
+        OBSERVER = StubObserver()
         ID_OBSERVER = BMARKUPGTK3.IdObserverMarkup(id(OBSERVER))
 
         N_LOGS = 1
@@ -120,6 +149,56 @@ class TestControlMarkupGtk3:
         assert log_message == record.message
         assert 'WARNING' == record.levelname
 
+    def test_new_model(self):
+        """Confirm model construction."""
+        # Setup
+        target = BMARKUPGTK3.ControlMarkupGtk3()
+        # Test
+        assert isinstance(target._model, BMARKUPGTK3.ModelMarkupGtk3)
+
+    def test_notify(self):
+        """Confirm notification of observers."""
+        # Setup
+        N_OBSERVERS = 5
+        OBSERVERS = [StubObserver() for _ in range(N_OBSERVERS)]
+        target = BMARKUPGTK3.ControlMarkupGtk3()
+        for observer in OBSERVERS:
+            target.attach(p_observer=observer)
+        STORE = target._model.get_store_ui()
+        # Test
+        target.notify()
+        for observer in OBSERVERS:
+            assert observer.store_ui is STORE
+
+    def test_model_change(self):
+        """Confirm transient aspect updates."""
+        # Setup
+        N_OBSERVERS = 5
+        OBSERVERS = [StubObserver() for _ in range(N_OBSERVERS)]
+        target = BMARKUPGTK3.ControlMarkupGtk3()
+        for observer in OBSERVERS:
+            target.attach(p_observer=observer)
+        STORE = target._model.get_store_ui()
+        # Test
+        target.on_model_change()
+        for observer in OBSERVERS:
+            assert observer.store_ui is STORE
+
+
+class TestControlMarkupTrackGtk3:
+    """Unit tests for :class:`.ControlMarkupTrackGtk3`."""
+
+    def test_init(self):
+        """Confirm initialization."""
+        # Setup
+        MODEL = BMARKUPGTK3.ModelMarkupGtk3()
+        # Test
+        target = BMARKUPGTK3.ControlMarkupTrackGtk3(p_model=MODEL)
+        assert target._model is MODEL
+        assert hasattr(target, '_observers')
+        assert isinstance(target._changed, bool)
+        assert not target._changed
+
     @pytest.mark.parametrize('CHANGED', [
         False,
         True
@@ -130,7 +209,7 @@ class TestControlMarkupGtk3:
         :param CHANGED: change state
         """
         # Setup
-        target = BMARKUPGTK3.ControlMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupTrackGtk3()
         # Test
         target._changed = CHANGED
         assert target.has_changed() is CHANGED
@@ -145,7 +224,7 @@ class TestControlMarkupGtk3:
         :param CHANGED: change state
         """
         # Setup
-        target = BMARKUPGTK3.ControlMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupTrackGtk3()
         EXPECT = not CHANGED
         # Test
         target._changed = CHANGED
@@ -154,7 +233,7 @@ class TestControlMarkupGtk3:
     def test_mark_changed(self):
         """Confirm text marked as changed"""
         # Setup
-        target = BMARKUPGTK3.ControlMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupTrackGtk3()
         # Test
         target._changed = False
         target.mark_changed()
@@ -163,48 +242,27 @@ class TestControlMarkupGtk3:
     def test_mark_not_changed(self):
         """Confirm text marked as not changed"""
         # Setup
-        target = BMARKUPGTK3.ControlMarkupGtk3()
+        target = BMARKUPGTK3.ControlMarkupTrackGtk3()
         # Test
         target._changed = True
         target.mark_not_changed()
         assert not target._changed
 
-    def test_new_model(self):
-        """Confirm model construction."""
-        # Setup
-        target = BMARKUPGTK3.ControlMarkupGtk3()
-        # Test
-        assert isinstance(target._model, BMARKUPGTK3.ModelMarkupGtk3)
-
-    def test_notify(self):
-        """Confirm notification of observers."""
-        # Setup
-        N_OBSERVERS = 5
-        OBSERVERS = [self.StubObserver() for _ in range(N_OBSERVERS)]
-        target = BMARKUPGTK3.ControlMarkupGtk3()
-        for observer in OBSERVERS:
-            target.attach(p_observer=observer)
-        STORE = target._model.get_store_ui()
-        # Test
-        target.notify()
-        for observer in OBSERVERS:
-            assert observer.store_ui is STORE
-
     def test_model_change(self):
         """Confirm transient aspect updates."""
         # Setup
         N_OBSERVERS = 5
-        OBSERVERS = [self.StubObserver() for _ in range(N_OBSERVERS)]
-        target = BMARKUPGTK3.ControlMarkupGtk3()
+        OBSERVERS = [StubObserver() for _ in range(N_OBSERVERS)]
+        target = BMARKUPGTK3.ControlMarkupTrackGtk3()
         for observer in OBSERVERS:
             target.attach(p_observer=observer)
         STORE = target._model.get_store_ui()
-        target.mark_not_changed()
+        target._changed = False
         # Test
         target.on_model_change()
-        assert target.has_changed()
         for observer in OBSERVERS:
             assert observer.store_ui is STORE
+        assert target._changed
 
 
 class TestModelMarkupGtk3:

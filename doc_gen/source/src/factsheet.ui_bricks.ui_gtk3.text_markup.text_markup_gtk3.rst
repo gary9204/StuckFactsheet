@@ -5,4 +5,4 @@
    :members:
    :undoc-members:
    :show-inheritance:
-   :special-members: __call__
+   :special-members: __init__
