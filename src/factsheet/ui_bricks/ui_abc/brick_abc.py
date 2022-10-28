@@ -1,5 +1,5 @@
 """
-Abstract facade and interface classes for model and control cp,[pmemts.
+Abstract facade and interface classes for model and control components.
 
 This module provides an abstract facade class for a model component. A
 concrete subclass may implement the facade with a user interface toolkit
