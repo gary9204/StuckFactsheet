@@ -14,4 +14,5 @@ Submodules
 
    factsheet.ui_bricks.ui_abc.brick_abc
    factsheet.ui_bricks.ui_abc.new_brick_abc
+   factsheet.ui_bricks.ui_abc.new_component_abc
    factsheet.ui_bricks.ui_abc.text_abc
