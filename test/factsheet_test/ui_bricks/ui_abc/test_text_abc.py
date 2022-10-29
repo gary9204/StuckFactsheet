@@ -47,7 +47,7 @@ class TestFactoryTextMarkupAbc:
     """Unit tests for :class:`.NewComponentAbc`."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
-        (BTEXT.NewComponentAbc, '__call__'),
+        (BTEXT.FactoryMarkupAbc, '__call__'),
         ])
     def test_method_abstract(self, CLASS, NAME_METHOD):
         """Confirm each abstract method is specified.

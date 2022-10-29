@@ -61,7 +61,7 @@ class ModelTextAbc(BABC.ModelAbc[StorePyTextMarkup, BABC.StoreUiOpaque],
         raise NotImplementedError
 
 
-class NewComponentAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
+class FactoryMarkupAbc(abc.ABC, typing.Generic[BABC.StoreUiOpaque]):
     """Abstract factory for text facade with manually-entered markup."""
 
     @abc.abstractmethod
