@@ -1,47 +1,44 @@
 """
-Abstract component factory for a user interface toolkit feature.
-
-.. data:: ControlOpaque
-
-    Type variable for control of a toolkit feature.  The type variable
-    serves as parameter for generic class.
-
-.. data:: ControlTrackOpaque
-
-    Type variable for control of a toolkit feature.  The control tracks
-    changes in the corresponding model.  The type variable serves as
-    parameter for generic class.
-
-.. data:: ModelOpaque
-
-    Type variable for model facade of a toolkit feature.  The type
-    variable serves as parameter for generic class.
-"""
+Abstract component factory for a user interface toolkit feature."""
 import abc
 import typing
 
-ControlOpaque = typing.TypeVar('ControlOpaque')
-ControlTrackOpaque = typing.TypeVar('ControlTrackOpaque')
-ModelOpaque = typing.TypeVar('ModelOpaque')
+ControlGeneric = typing.TypeVar('ControlGeneric')
+ControlTrackGeneric = typing.TypeVar('ControlTrackGeneric')
+ModelGeneric = typing.TypeVar('ModelGeneric')
 
 
 class NewComponentAbc(abc.ABC, typing.Generic[
-        ControlOpaque, ControlTrackOpaque, ModelOpaque]):
-    """Abstract component factory for a user interface toolkit feature."""
+        ControlGeneric, ControlTrackGeneric, ModelGeneric]):
+    """Abstract component factory for a user interface toolkit feature.
+
+    .. data:: ControlGeneric
+
+        Type variable for control of a toolkit feature.
+
+    .. data:: ControlTrackGeneric
+
+        Type variable for control of a toolkit feature.  The control
+        tracks changes in the corresponding model.
+
+    .. data:: ModelGeneric
+
+        Type variable for model facade of a toolkit feature.
+    """
 
     @abc.abstractmethod
-    def new_control(self, p_model: ModelOpaque = None
-                    ) -> ControlOpaque:
+    def new_control(self, p_model: ModelGeneric = None
+                    ) -> ControlGeneric:
         """Return component factory for feature control."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_control_track(self, p_model: ModelOpaque = None
-                          ) -> ControlTrackOpaque:
+    def new_control_track(self, p_model: ModelGeneric = None
+                          ) -> ControlTrackGeneric:
         """Return component factory for feature control with track changes."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_model(self) -> ModelOpaque:
+    def new_model(self) -> ModelGeneric:
         """Return component factory for feature model facade."""
         raise NotImplementedError

@@ -32,9 +32,9 @@ class TestModule:
     """
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        (type(NEWCOMPABC.ControlOpaque), typing.TypeVar),
-        (type(NEWCOMPABC.ControlTrackOpaque), typing.TypeVar),
-        (type(NEWCOMPABC.ModelOpaque), typing.TypeVar),
+        (type(NEWCOMPABC.ControlGeneric), typing.TypeVar),
+        (type(NEWCOMPABC.ControlTrackGeneric), typing.TypeVar),
+        (type(NEWCOMPABC.ModelGeneric), typing.TypeVar),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type definitions.
