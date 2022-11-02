@@ -6,18 +6,10 @@
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-   :titlesonly:
-
-   factsheet.ui_bricks.ui_gtk3.text_markup
-
 Submodules
 ----------
 
 .. toctree::
    :titlesonly:
 
-..   factsheet.ui_bricks.ui_gtk3.text_markup_abc
+   factsheet.ui_bricks.ui_gtk3.markup_gtk3
