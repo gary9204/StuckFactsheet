@@ -1,5 +1,5 @@
 """
-Unit tests for :mod:`.text_markup_gtk3`.
+Unit tests for :mod:`.markup_gtk3`.
 
 .. include:: /test/refs_include_pytest.txt
 """
@@ -8,7 +8,7 @@ import pytest
 import typing
 
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
-import factsheet.ui_bricks.ui_gtk3.text_markup.text_markup_gtk3 as BMARKUPGTK3
+import factsheet.ui_bricks.ui_gtk3.text_markup.markup_gtk3 as BMARKUPGTK3
 
 from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402
 gi.require_version('Gtk', '3.0')
