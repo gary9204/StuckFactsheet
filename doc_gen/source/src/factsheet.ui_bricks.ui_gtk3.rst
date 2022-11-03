@@ -13,3 +13,4 @@ Submodules
    :titlesonly:
 
    factsheet.ui_bricks.ui_gtk3.markup_gtk3
+   factsheet.ui_bricks.ui_gtk3.new_brick_gtk3

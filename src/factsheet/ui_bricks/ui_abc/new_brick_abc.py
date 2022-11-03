@@ -1,5 +1,5 @@
 """
-Abstract component factory for user interface toolkit features.
+Abstract factory for user interface toolkit features.
 See :mod:`~.factsheet.ui_bricks.ui_abc`.
 """
 import abc

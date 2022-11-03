@@ -359,7 +359,12 @@ class TestNewMarkupGtk:
             BMARKUPGTK3.ModelMarkupGtk3(), BMARKUPGTK3.ControlMarkupTrackGtk3),
         ])
     def test_control_factories(self, METHOD, MODEL, CLASS):
-        """Confirm each control factory gives expected markup text control."""
+        """Confirm each control factory gives expected markup text control.
+
+        :param METHOD: name of control factory under test.
+        :param MODEL: model facade parameter for control factory call.
+        :param CLASS: class expected for control.
+        """
         # Setup
         target = BMARKUPGTK3.NewMarkupGtk3()
         method = getattr(target, METHOD)

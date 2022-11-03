@@ -10,6 +10,7 @@ import typing
 
 
 class TempClassAbc:
+    """Unit test templates for classes with abstract methods."""
 
     @pytest.mark.parametrize('CLASS, NAME_METHOD', [
         # (MODULE.Class, 'method_name'),
@@ -43,9 +44,34 @@ class TempClassAbc:
         return False
 
 
+class TempProperties:
+    """Unit test templates for classes with properties."""
+
+    @pytest.mark.parametrize('PROP, ATTR', [
+        ('TBD property', 'TBD attribute'),
+        ])
+    def test_property_access(self, PROP, ATTR):
+        """Confirm access limits of each property.
+
+        :param PROP: name of property under test.
+        :param ATTR: name of attribute for property.
+        """
+        # Setup
+        CLASS = bool  # TBD class uder test
+        target = CLASS()
+        attr = getattr(target, ATTR)
+        target_prop = getattr(CLASS, PROP)
+        # Test
+        # Test
+        assert target_prop.fget is not None
+        assert attr == target_prop.fget(target)
+        assert target_prop.fset is None
+        assert target_prop.fdel is None
+
+
 # import typing
 class TempTestModule:
-    """Unit tests for module-level components of :mod:`.name_module`."""
+    """Unit tests for module-level components of :mod:`.TBD module`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
         # (MODULE.TypeNew.__dict__['__supertype__'], type),
