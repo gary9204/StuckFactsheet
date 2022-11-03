@@ -27,14 +27,14 @@ class NewComponentAbc(abc.ABC, typing.Generic[
     """
 
     @abc.abstractmethod
-    def new_control(self, p_model: ModelGeneric = None
-                    ) -> ControlGeneric:
+    def new_control(
+            self, p_model: ModelGeneric = None) -> ControlGeneric:
         """Return component factory for feature control."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def new_control_track(self, p_model: ModelGeneric = None
-                          ) -> ControlTrackGeneric:
+    def new_control_track(
+            self, p_model: ModelGeneric = None) -> ControlTrackGeneric:
         """Return component factory for feature control with track changes."""
         raise NotImplementedError
 

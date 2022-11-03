@@ -28,6 +28,7 @@ import logging
 import typing
 
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
+import factsheet.ui_bricks.ui_abc.new_component_abc as NEWCOMPABC
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
@@ -203,3 +204,25 @@ class ModelMarkupGtk3(BABC.ModelAbc[StorePyMarkup, StoreUiMarkup]):
         """
         ALL = -1
         self._store_ui.set_text(p_store_py, ALL)
+
+
+class NewMarkupGtk3(NEWCOMPABC.NewComponentAbc[
+        ControlMarkupGtk3, ControlMarkupTrackGtk3, ModelMarkupGtk3]):
+    """Component factory for text with manually-entered markup in GTK 3."""
+
+    def new_control(
+            self, p_model: ModelMarkupGtk3 = None) -> ControlMarkupGtk3:
+        """Return component factory for markup text control in GTK 3."""
+        return ControlMarkupGtk3(p_model)
+
+    def new_control_track(
+            self, p_model: ModelMarkupGtk3 = None) -> ControlMarkupTrackGtk3:
+        """Return component factory for markup text control in GTK 3.
+
+        Control tracks changes in model..
+        """
+        return ControlMarkupTrackGtk3(p_model)
+
+    def new_model(self) -> ModelMarkupGtk3:
+        """Return component factory for markup text model facade in GTK 3."""
+        return ModelMarkupGtk3()

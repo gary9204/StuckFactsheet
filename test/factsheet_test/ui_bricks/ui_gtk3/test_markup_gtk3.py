@@ -345,3 +345,34 @@ class TestModule:
         # Setup
         # Test
         assert TYPE_TARGET == TYPE_EXPECT
+
+
+class TestNewMarkupGtk:
+    """Unit tests for :class:`.NewMarkupGtk3`."""
+
+    @pytest.mark.parametrize('METHOD, MODEL, CLASS', [
+        ('new_control', None, BMARKUPGTK3.ControlMarkupGtk3),
+        ('new_control',
+            BMARKUPGTK3.ModelMarkupGtk3(), BMARKUPGTK3.ControlMarkupGtk3),
+        ('new_control_track', None, BMARKUPGTK3.ControlMarkupTrackGtk3),
+        ('new_control_track',
+            BMARKUPGTK3.ModelMarkupGtk3(), BMARKUPGTK3.ControlMarkupTrackGtk3),
+        ])
+    def test_control_factories(self, METHOD, MODEL, CLASS):
+        """Confirm each control factory gives expected markup text control."""
+        # Setup
+        target = BMARKUPGTK3.NewMarkupGtk3()
+        method = getattr(target, METHOD)
+        # Test
+        control = method(p_model=MODEL)
+        assert isinstance(control, CLASS)
+        if MODEL is not None:
+            assert MODEL == control._model
+
+    def test_model_factory(self):
+        """Confirm model factory gives expected markup text model facade."""
+        # Setup
+        target = BMARKUPGTK3.NewMarkupGtk3()
+        # Test
+        model = target.new_model()
+        assert isinstance(model, BMARKUPGTK3.ModelMarkupGtk3)
