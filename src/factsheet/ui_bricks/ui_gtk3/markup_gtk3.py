@@ -10,10 +10,6 @@ Classes support formatting text with manually-entered markup.
     Type for identity of an :class:`.ObserverAbc` object.  See
     :func:`~.markup_gtk3.id_observer_markup`.
 
-.. data:: StorePyMarkup
-
-    User interface toolkit-independent type for storing markup text.
-
 .. data:: StoreUiMarkup
 
     GTK 3 type for storing markup text.
@@ -29,12 +25,12 @@ import typing
 
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
 import factsheet.ui_bricks.ui_abc.new_component_abc as NEWCOMPABC
+import factsheet.ui_bricks.ui_abc.store_py as STOREPY
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
 
 IdObserverMarkup = typing.NewType('IdObserverMarkup', int)
-StorePyMarkup = str
 StoreUiMarkup = typing.Union[Gtk.EntryBuffer]
 ObserverMarkupAbc = BABC.ObserverAbc[StoreUiMarkup]
 
@@ -54,7 +50,7 @@ def id_observer_markup(p_observer: ObserverMarkupAbc) -> IdObserverMarkup:
 
 
 class ControlMarkupGtk3(BABC.BypassAbc, BABC.SubjectAbc,
-                        BABC.ControlAbc[StorePyMarkup, StoreUiMarkup]):
+                        BABC.ControlAbc[STOREPY.StorePyMarkup, StoreUiMarkup]):
     """Transient aspects of text model with manually-entered markup.
 
     This class supports both GTK 3 (:class:`.BypassAbc`) and local
@@ -179,13 +175,13 @@ class ControlMarkupTrackGtk3(ControlMarkupGtk3, BABC.TrackChangesAbc):
         self.mark_changed()
 
 
-class ModelMarkupGtk3(BABC.ModelAbc[StorePyMarkup, StoreUiMarkup]):
+class ModelMarkupGtk3(BABC.ModelAbc[STOREPY.StorePyMarkup, StoreUiMarkup]):
     """Persistent aspects of text model with manually-entered markup.
 
     This class is a facade for text model based on GTK 3.
     """
 
-    def get_store_py(self) -> StorePyMarkup:
+    def get_store_py(self) -> STOREPY.StorePyMarkup:
         """Return model text with markup as string."""
         return self._store_ui.get_text()
 
@@ -197,7 +193,7 @@ class ModelMarkupGtk3(BABC.ModelAbc[StorePyMarkup, StoreUiMarkup]):
         """Return new GTK 3 object for model storage for initialization."""
         return StoreUiMarkup()
 
-    def set_store_ui(self, p_store_py: StorePyMarkup) -> None:
+    def set_store_ui(self, p_store_py: STOREPY.StorePyMarkup) -> None:
         """Set text and markup from toolkit-independent storage.
 
         :param p_store_py: text and markup to store.

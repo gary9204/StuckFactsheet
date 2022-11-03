@@ -333,7 +333,6 @@ class TestModule:
         (BMARKUPGTK3.IdObserverMarkup.__dict__['__supertype__'], int),
         (BMARKUPGTK3.ObserverMarkupAbc,
             BABC.ObserverAbc[BMARKUPGTK3.StoreUiMarkup]),
-        (BMARKUPGTK3.StorePyMarkup, str),
         (BMARKUPGTK3.StoreUiMarkup, Gtk.EntryBuffer),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
