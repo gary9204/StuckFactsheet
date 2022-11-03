@@ -3,16 +3,18 @@ Model facade, control, and factory classes for markup text.
 
 Classes support formatting text with manually-entered markup.
 
+.. _`id`: https://docs.python.org/3.9/library/functions.html#id
+
 .. data:: IdObserverMarkup
 
     Type for identity of an :class:`.ObserverAbc` object.  See
-    :func:`~.text_markup_gtk3.id_observer_markup`.
+    :func:`~.markup_gtk3.id_observer_markup`.
 
-.. data:: ObserverMarkupAbc
+.. data:: StorePyMarkup
 
-    Abstract interface specializing :class:`.ObserverAbc` to GTK 3.
+    User interface toolkit-independent type for storing markup text.
 
-.. data:: StoreUiTextMarkup
+.. data:: StoreUiMarkup
 
     GTK 3 type for storing markup text.
 
@@ -26,14 +28,14 @@ import logging
 import typing
 
 import factsheet.ui_bricks.ui_abc.brick_abc as BABC
-import factsheet.ui_bricks.ui_abc.text_abc as BTEXTABC
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]  # noqa: E402
 
 IdObserverMarkup = typing.NewType('IdObserverMarkup', int)
-StoreUiTextMarkup = typing.Union[Gtk.EntryBuffer]
-ObserverMarkupAbc = BABC.ObserverAbc[StoreUiTextMarkup]
+StorePyMarkup = str
+StoreUiMarkup = typing.Union[Gtk.EntryBuffer]
+ObserverMarkupAbc = BABC.ObserverAbc[StoreUiMarkup]
 
 VOID_ID_OBSERVER_MARKUP = IdObserverMarkup(0)
 
@@ -46,18 +48,20 @@ def id_observer_markup(p_observer: ObserverMarkupAbc) -> IdObserverMarkup:
     Function specializes builtin `id`_ to :class:`.ObserverAbc`.
 
     :param p_observer: observer to identify.
-
-    .. _`id`: https://docs.python.org/3.9/library/functions.html#id
     """
     return IdObserverMarkup(id(p_observer))
 
 
 class ControlMarkupGtk3(BABC.BypassAbc, BABC.SubjectAbc,
-                        BTEXTABC.ControlTextAbc[StoreUiTextMarkup]):
+                        BABC.ControlAbc[StorePyMarkup, StoreUiMarkup]):
     """Transient aspects of text model with manually-entered markup.
 
     This class supports both GTK 3 (:class:`.BypassAbc`) and local
     (:class:`.SubjectAbc`) communication mechanisms with views.
+
+    .. data:: ObserverMarkupAbc
+
+        Abstract interface specializing :class:`.ObserverAbc` to GTK 3.
     """
 
     def __init__(self, p_model: 'ModelMarkupGtk3' = None) -> None:
@@ -95,7 +99,7 @@ class ControlMarkupGtk3(BABC.BypassAbc, BABC.SubjectAbc,
                     hex(id_obsever),
                     self.__class__.__name__, self.attach.__name__))
 
-    def bypass(self) -> StoreUiTextMarkup:
+    def bypass(self) -> StoreUiMarkup:
         """Return model text as GTK 3 object."""
         return self._model.get_store_ui()
 
@@ -174,25 +178,25 @@ class ControlMarkupTrackGtk3(ControlMarkupGtk3, BABC.TrackChangesAbc):
         self.mark_changed()
 
 
-class ModelMarkupGtk3(BTEXTABC.ModelTextAbc[StoreUiTextMarkup]):
+class ModelMarkupGtk3(BABC.ModelAbc[StorePyMarkup, StoreUiMarkup]):
     """Persistent aspects of text model with manually-entered markup.
 
     This class is a facade for text model based on GTK 3.
     """
 
-    def get_store_py(self) -> BTEXTABC.StorePyTextMarkup:
+    def get_store_py(self) -> StorePyMarkup:
         """Return model text with markup as string."""
         return self._store_ui.get_text()
 
-    def get_store_ui(self) -> StoreUiTextMarkup:
+    def get_store_ui(self) -> StoreUiMarkup:
         """Return model text with markup as GTK 3 object."""
         return self._store_ui
 
-    def new_store_ui(self) -> StoreUiTextMarkup:
+    def new_store_ui(self) -> StoreUiMarkup:
         """Return new GTK 3 object for model storage for initialization."""
-        return StoreUiTextMarkup()
+        return StoreUiMarkup()
 
-    def set_store_ui(self, p_store_py: BTEXTABC.StorePyTextMarkup) -> None:
+    def set_store_ui(self, p_store_py: StorePyMarkup) -> None:
         """Set text and markup from toolkit-independent storage.
 
         :param p_store_py: text and markup to store.

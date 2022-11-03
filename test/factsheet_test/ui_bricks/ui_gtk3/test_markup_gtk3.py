@@ -41,8 +41,8 @@ class TestControlMarkupGtk3:
         assert not target._observers
 
     @pytest.mark.parametrize('ORIGIN, NAME_SIGNAL, N_DEFAULT', [
-            (BMARKUPGTK3.StoreUiTextMarkup, 'deleted-text', 0),
-            (BMARKUPGTK3.StoreUiTextMarkup, 'inserted-text', 0),
+            (BMARKUPGTK3.StoreUiMarkup, 'deleted-text', 0),
+            (BMARKUPGTK3.StoreUiMarkup, 'inserted-text', 0),
             ])
     def test_init_signals(self, ORIGIN, NAME_SIGNAL, N_DEFAULT):
         """Confirm GTK 3 signal connection.
@@ -290,7 +290,7 @@ class TestModelMarkupGtk3:
         # Setup
         target = BMARKUPGTK3.ModelMarkupGtk3()
         # Test
-        assert isinstance(target._store_ui, BMARKUPGTK3.StoreUiTextMarkup)
+        assert isinstance(target._store_ui, BMARKUPGTK3.StoreUiMarkup)
 
     def test_set_store_ui(self):
         """Confirm text and markup set."""
@@ -303,7 +303,7 @@ class TestModelMarkupGtk3:
 
 
 class TestModule:
-    """Unit tests for module-level components of :mod:`.text_markup_gtk3`."""
+    """Unit tests for module-level components of :mod:`.markup_gtk3`."""
 
     @pytest.mark.parametrize('CONSTANT, EXPECT', [
         (BMARKUPGTK3.VOID_ID_OBSERVER_MARKUP, 0),
@@ -332,8 +332,9 @@ class TestModule:
             'NewType.<locals>.new_type'),
         (BMARKUPGTK3.IdObserverMarkup.__dict__['__supertype__'], int),
         (BMARKUPGTK3.ObserverMarkupAbc,
-            BABC.ObserverAbc[BMARKUPGTK3.StoreUiTextMarkup]),
-        (BMARKUPGTK3.StoreUiTextMarkup, Gtk.EntryBuffer),
+            BABC.ObserverAbc[BMARKUPGTK3.StoreUiMarkup]),
+        (BMARKUPGTK3.StorePyMarkup, str),
+        (BMARKUPGTK3.StoreUiMarkup, Gtk.EntryBuffer),
         ])
     def test_types(self, TYPE_TARGET, TYPE_EXPECT):
         """Confirm type definitions.

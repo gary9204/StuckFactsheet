@@ -48,10 +48,10 @@ class TempTestModule:
     """Unit tests for module-level components of :mod:`.name_module`."""
 
     @pytest.mark.parametrize('TYPE_TARGET, TYPE_EXPECT', [
-        # (MODULE.TypeNew.__supertype__, type),  # type: ignore[attr-defined]
+        # (MODULE.TypeNew.__dict__['__supertype__'], type),
         # (type(MODULE.TypeVariable), typing.TypeVar),
         # (type(MODULE.TypeVariableConstrained), typing.TypeVar),
-        # (MODULE.TypeVariableConstrained.__constraints__,  # type: ignore
+        # (MODULE.TypeVariableConstrained.__dict__['__constraints__'],
         #     (MODULE.Constraint01, MODULE.Constraint02)),
         ])
     def temp_test_types(self, TYPE_TARGET, TYPE_EXPECT):
