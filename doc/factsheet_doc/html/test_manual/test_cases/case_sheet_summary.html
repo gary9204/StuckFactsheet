@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Case Factsheet Summary &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Case Factsheet Title" href="case_sheet_title.html" />
+    <link rel="prev" title="Case Factsheet File Errors" href="case_sheet_file_error.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../toc_test_manual.html">Manual Tests</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../tests_manual.html">Manual Tests for Factsheet</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="toc_test_cases.html">Test Cases</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="toc_app_cases.html">Application-level Cases</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="toc_sheet_cases.html">Factsheet-level Cases</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_close_view.html">Case Factsheet Close Window</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_delete.html">Case Factsheet Delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_dialogs.html">Case Factsheet Dialogs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_name.html">Case Factsheet Name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_new.html">Case Factsheet New</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_open_view.html">Case Factsheet Open Window</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_file.html">Case Factsheet Save and Open</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_file_error.html">Case Factsheet File Errors</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Case Factsheet Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_title.html">Case Factsheet Title</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_helpers/toc_test_helpers.html">Test Helpers</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../toc_test_manual.html">Manual Tests</a> &raquo;</li>
+        
+          <li><a href="toc_test_cases.html">Test Cases</a> &raquo;</li>
+        
+          <li><a href="toc_sheet_cases.html">Factsheet-level Cases</a> &raquo;</li>
+        
+      <li>Case Factsheet Summary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/test_manual/test_cases/case_sheet_summary.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="case-factsheet-summary">
+<h1>Case Factsheet Summary<a class="headerlink" href="#case-factsheet-summary" title="Permalink to this headline">¶</a></h1>
+<p><strong>Purpose:</strong> confirm display and edit of Factsheet summary.</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p></li>
+</ol>
+</div>
+<div class="section" id="steps-appearance-and-basic-editing">
+<h2>Steps – Appearance and Basic Editing<a class="headerlink" href="#steps-appearance-and-basic-editing" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Check window layout.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> A frame with collapser icon (▾) and label
+“<em>Factsheet Summary</em>” appears immediately below the edit icon
+<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> for the Factsheet name.</p></li>
+<li><p><em>Expect:</em> Default text for Factsheet summary is “Edit Factsheet
+description here.”</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click inside the <em>Factsheet Summary</em> frame after the
+default text.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> A blinking text cursor (|) appears after the default
+text.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit the summary as follows: “There is a tide in the
+affairs of men, which taken at the flood, leads on to fortune.
+Omitted, all the voyage of their lives is bound in shallows and in
+misery.”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The text appears as entered.</p></li>
+<li><p><em>Expect:</em> The text wraps to fit the frame.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Grab the lower right corner of the window and resize the
+window.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Summary text wraps to fit the resized frame.</p></li>
+<li><p><em>Expect:</em> Wrapping is at white space between words.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select and copy summary text. Paste into another
+application (e.g. Vim).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Factsheet application highlights text when selected.</p></li>
+<li><p><em>Expect:</em> Pasted text matches summary text.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Copy “And now for something completely different!”
+including a new line and paste at the bottom of the summary.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Copied text appears in summary and matches original.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Repeat paste about 20 time at the bottom of the summary.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Copied text appears in summary and matches original.</p></li>
+<li><p><em>Expect:</em> Summary pane scrolls as needed to keep each paste
+visible.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Move scroll slider to review summary content.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Pane scrolls to cover all summary content.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Lengthen window and move pane divider down to expose
+entire summary.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Scrollbar disappears when entire summary is visible.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Move pane divider up as far as possible.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Pane divider stops with about three summary lines
+visible.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="steps-hide-show-summary">
+<h2>Steps – Hide/Show Summary<a class="headerlink" href="#steps-hide-show-summary" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Edit summary to “This sample factsheet includes a summary.”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Text appears in summary pane as typed.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click collapser icon (▾) to left of <em>Factsheet
+Summary</em> label.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> pane collapses and shows only
+expander icon (▸) and label.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane expands to replace it.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click expander icon (▸) to left of <em>Factsheet
+Summary</em> label.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> pane expands.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane contracts to accommodate it.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> text is unchanged.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select Factsheet <strong>menu</strong> <img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> item <strong>Display … &gt;
+Summary</strong> (right of <em>Factsheet</em> name and title fields).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> label, frame, and pane disappear.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane expands to fill the window.</p></li>
+<li><p><em>Expect:</em> The popup menu remains visible.</p></li>
+<li><p><em>Expect:</em> The check box to the left of <strong>Summary</strong> menu item is
+cleared.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <strong>Summary</strong> menu item.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> label, frame, and pane appear.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane contracts to accommodate
+them.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> text is unchanged.</p></li>
+<li><p><em>Expect:</em> The popup menu remains visible.</p></li>
+<li><p><em>Expect:</em> The <strong>Summary</strong> check box is checked.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Press Esc key.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The popup menu disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click collapser icon (▾) to left of <em>Factsheet
+Summary</em> label.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> pane collapses and shows only
+expander icon (▸) and label.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane expands to replace it.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select Factsheet <strong>menu</strong> <img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> item <strong>Display … &gt;
+Summary</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> label disappears.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane expands to fill the window.</p></li>
+<li><p><em>Expect:</em> The popup menu remains visible.</p></li>
+<li><p><em>Expect:</em> The check box to the left of <strong>Summary</strong> menu item is
+cleared.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <strong>Summary</strong> menu item.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The <em>Factsheet Summary</em> label appears.</p></li>
+<li><p><em>Expect:</em> The <em>Factsheet Topics</em> pane contracts to accommodate
+them.</p></li>
+<li><p><em>Expect:</em> The popup menu remains visible.</p></li>
+<li><p><em>Expect:</em> The <strong>Summary</strong> check box is checked.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Press Esc key.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The popup menu disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click initial window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Data Loss Warning</em> dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Discard button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog and window disappear.</p></li>
+<li><p><em>Expect:</em> <em>Application</em> closes.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="teardown">
+<h2>Teardown<a class="headerlink" href="#teardown" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p>Check console for exceptions, GTK errors, and warning messages. There
+should be none.</p></li>
+<li><p>Transient Gdk-WARNING on 2021-06-16</p>
+<ul>
+<li><p><em>Warning:</em> (app.py:10104): Gdk-WARNING …: Error writing selection
+data: Error writing to file descriptor: Broken pipe</p></li>
+<li><p><em>Reproduce:</em></p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>Enter text in Factsheet Summary frame.</p></li>
+<li><p>Select text with mouse</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p><em>Notes:</em></p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>I could reproduce the warning on June 16 but not the following
+day.</p></li>
+<li><p>On June 16, moving mouse cursor to change size of selection
+triggers multiple warnings.</p></li>
+<li><p>Double and triple clicking to select text does not trigger
+warning.</p></li>
+<li><p>Selecting text with arrow keys does not trigger warning.</p></li>
+</ol>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>Transient Gdk-WARNING on 2021-06-22 repeated</p>
+<ul>
+<li><p><em>Warning:</em> (app.py:10104): Gdk-WARNING …: Error writing selection
+data: Error writing to file descriptor: Broken pipe</p></li>
+<li><p><em>Reproduce:</em></p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>Enter text in Factsheet Summary frame.</p></li>
+<li><p>Select text with mouse</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p><em>Notes:</em></p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>The warning recurred after lunch.</p></li>
+<li><p>I paused the virtual machine hosting the development
+environment during lunch.</p></li>
+<li><p>After rebooting the virtual machine, the warning did not recur.</p></li>
+</ol>
+</div></blockquote>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="case_sheet_title.html" class="btn btn-neutral float-right" title="Case Factsheet Title" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="case_sheet_file_error.html" class="btn btn-neutral float-left" title="Case Factsheet File Errors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

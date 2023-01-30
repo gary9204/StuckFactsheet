@@ -1,0 +1,632 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.view.test_view_stack &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.view.test_view_stack</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.view.test_view_stack</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for class for collection of views.</span>
+<span class="sd">See :mod:`.view_stack`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pytest</span>  <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">collections.abc</span> <span class="k">as</span> <span class="nn">CABC</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.view.view_stack</span> <span class="k">as</span> <span class="nn">VSTACK</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="TestViewStack"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack">[docs]</a><span class="k">class</span> <span class="nc">TestViewStack</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.ViewStack`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestViewStack.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Stack</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_pinned</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_pinned</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_add_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_add_view">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm add view with name.</span>
+<span class="sd">        | Case: view not in collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">VIEW</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="n">VIEW</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">VIEW</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">child</span> <span class="ow">is</span> <span class="n">VIEW</span>
+        <span class="k">assert</span> <span class="n">child</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">NAME</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_add_view_warn"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_add_view_warn">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_view_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm add view with name.</span>
+<span class="sd">        | Case: view in collection.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">ID_PRESENT</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">name_dup</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">ID_PRESENT</span><span class="p">)</span>
+        <span class="n">view_dup</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Parrot&#39;</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Duplicate view </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> for name </span><span class="si">{}</span><span class="s1"> &#39;</span>
+                       <span class="s1">&#39;(ViewStack.add_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">view_dup</span><span class="p">,</span> <span class="n">name_dup</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">view_dup</span><span class="p">,</span> <span class="n">name_dup</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">views</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">name_dup</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">view</span> <span class="ow">is</span> <span class="n">views</span><span class="p">[</span><span class="n">ID_PRESENT</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_clear"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_clear">[docs]</a>    <span class="k">def</span> <span class="nf">test_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm collection contains only pinned item views.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">I_PINNED</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">pinned</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">I_PINNED</span><span class="p">:</span>
+                <span class="n">pinned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pinned</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_children</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">pinned</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_children</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_contains"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_contains">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;VALUE, EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Oops&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;0x3&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">VALUE</span><span class="p">,</span> <span class="n">EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm containment by name.</span>
+
+<span class="sd">        :param VALUE: value to test for containment.</span>
+<span class="sd">        :param EXPECT: expected result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">CABC</span><span class="o">.</span><span class="n">Container</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">VALUE</span> <span class="ow">in</span> <span class="n">target</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="n">EXPECT</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_get_view_visible"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_get_view_visible">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_view_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm name of visible view.</span>
+<span class="sd">        | Case: a view is visible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">I_VISIBLE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">name_visible</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">I_VISIBLE</span><span class="p">)</span>
+        <span class="n">view_visible</span> <span class="o">=</span> <span class="n">views</span><span class="p">[</span><span class="n">I_VISIBLE</span><span class="p">]</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">set_visible_child</span><span class="p">(</span><span class="n">view_visible</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">name_visible</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">get_name_visible</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_get_view_visible_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_get_view_visible_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_view_visible_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm name of visible view.</span>
+<span class="sd">        | Case: no view is visible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">get_name_visible</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_pin_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_pin_view">[docs]</a>    <span class="k">def</span> <span class="nf">test_pin_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm pinning of view by name.</span>
+<span class="sd">        | Case: collection contains view with name unpinned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">VIEW</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">VIEW</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_pinned</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_pin_view_absent"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_pin_view_absent">[docs]</a>    <span class="k">def</span> <span class="nf">test_pin_view_absent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm pinning of view by name.</span>
+<span class="sd">        | Case: collection does not contains view with given name.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;No view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> (ViewStack.pin_view)&#39;</span>
+                       <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_pinned</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_pin_view_pinned"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_pin_view_pinned">[docs]</a>    <span class="k">def</span> <span class="nf">test_pin_view_pinned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm pinning of view by name.</span>
+<span class="sd">        | Case: collection contains view with name pinned.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">VIEW</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;The Parrot Sketch&#39;</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">VIEW</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="n">n_pinned</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_pinned</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;View named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> already pinned &#39;</span>
+                       <span class="s1">&#39;(ViewStack.pin_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="n">n_pinned</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_pinned</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_property_access"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_property_access">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_PROP, NAME_ATTR&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;ui_view&#39;</span><span class="p">,</span> <span class="s1">&#39;_ui_view&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of each property.</span>
+
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">CLASS</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">is</span> <span class="n">attr</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_remove_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_remove_view">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm removal of view from collection.</span>
+<span class="sd">        | Case: view in collection and not pinned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+        <span class="n">ID_REMOVE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">views</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">ID_REMOVE</span><span class="p">)</span>
+        <span class="n">name_remove</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">ID_REMOVE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">name_remove</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">views</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">views</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">view</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">key</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_remove_view_absent"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_remove_view_absent">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_absent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm removal of view from collection.</span>
+<span class="sd">        | Case: view not in collection.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">NAME_ABSENT</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;No item view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> &#39;</span>
+                       <span class="s1">&#39;(ViewStack.remove_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME_ABSENT</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">NAME_ABSENT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="n">N_VIEWS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_remove_view_pinned"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_remove_view_pinned">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_view_pinned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm removal of view from collection.</span>
+<span class="sd">        | Case: view in collection but pinned.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">I_PINNED</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">NAME_PINNED</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">I_PINNED</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="n">NAME_PINNED</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Pinned item view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> cannot be removed &#39;</span>
+                       <span class="s1">&#39;(ViewStack.remove_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME_PINNED</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">NAME_PINNED</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="n">N_VIEWS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_show_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_show_view">[docs]</a>    <span class="k">def</span> <span class="nf">test_show_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm view selection.</span>
+<span class="sd">        | Case: named view in collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">view</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">ID_VISIBLE</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">set_visible_child</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">ID_VISIBLE</span><span class="p">])</span>
+        <span class="n">ID_SHOW</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">name_show</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">ID_SHOW</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">name_shown</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">show_view</span><span class="p">(</span><span class="n">name_show</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">name_show</span> <span class="o">==</span> <span class="n">name_shown</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_visible_child</span><span class="p">()</span> <span class="ow">is</span> <span class="n">views</span><span class="p">[</span><span class="n">ID_SHOW</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_show_view_absent"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_show_view_absent">[docs]</a>    <span class="k">def</span> <span class="nf">test_show_view_absent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm view selection.</span>
+<span class="sd">        | Case: named view not in collection.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_VIEWS</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_VIEWS</span><span class="p">):</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">ID_VISIBLE</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">NAME_VISIBLE</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">ID_VISIBLE</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">set_visible_child_name</span><span class="p">(</span><span class="n">NAME_VISIBLE</span><span class="p">)</span>
+        <span class="n">NAME_SHOW</span> <span class="o">=</span> <span class="s1">&#39;Something completely different&#39;</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;No item view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> &#39;</span>
+                       <span class="s1">&#39;(ViewStack.show_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME_SHOW</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">name_shown</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">show_view</span><span class="p">(</span><span class="n">NAME_SHOW</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="n">NAME_VISIBLE</span> <span class="o">==</span> <span class="n">name_shown</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_visible_child</span><span class="p">()</span> <span class="ow">is</span> <span class="n">views</span><span class="p">[</span><span class="n">ID_VISIBLE</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_unpin_view"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_unpin_view">[docs]</a>    <span class="k">def</span> <span class="nf">test_unpin_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm unpinning of item view.</span>
+<span class="sd">        | Case: named view is pinned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">VIEW</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">VIEW</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">pin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">unpin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">_pinned</span></div>
+
+<div class="viewcode-block" id="TestViewStack.test_unpin_view_unpinned"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestViewStack.test_unpin_view_unpinned">[docs]</a>    <span class="k">def</span> <span class="nf">test_unpin_view_unpinned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm unpinning of item view.</span>
+<span class="sd">        | Case: named view is not pinned.</span>
+
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">VIEW</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;The Parrot Sketch&#39;</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewStack</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">VIEW</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;View named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> not pinned &#39;</span>
+                       <span class="s1">&#39;(ViewStack.unpin_view)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">unpin_view</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_pinned</span></div></div>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.view_stack`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_attributes"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestModule.test_attributes">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ATTR, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VSTACK</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm global attribute definitions.</span>
+
+<span class="sd">        :param ATTR: attribute under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ATTR</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_view_stack.html#factsheet_test.view.test_view_stack.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VSTACK</span><span class="o">.</span><span class="n">NameView</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSTACK</span><span class="o">.</span><span class="n">UiViewStack</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Stack</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSTACK</span><span class="o">.</span><span class="n">ViewItem</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type and type alias definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type or type alias under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

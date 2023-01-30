@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.view.view_stack &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.view.view_stack</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.view.view_stack</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines classes to represent a collection of views.</span>
+
+<span class="sd">Factsheet uses outlines containing topics and facts.  ViewStack provides</span>
+<span class="sd">a collection to contain and display views of items in an</span>
+<span class="sd">outline.  ViewStack presents one view at a time.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.VSTACK&#39;</span><span class="p">)</span>
+
+<span class="n">NameView</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">UiViewStack</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Stack</span><span class="p">]</span>
+<span class="n">ViewItem</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ViewStack"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack">[docs]</a><span class="k">class</span> <span class="nc">ViewStack</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Displays view at a time from a collection of views.</span>
+
+<span class="sd">    Each view is a presentation element for an item (such as a topic,</span>
+<span class="sd">    fact, or fact value).  Each item view is identified by a name.</span>
+<span class="sd">    Methods use view name to add, show, pin, or remove the item view.</span>
+<span class="sd">    The class supports pinning names. When a name is pinned, the</span>
+<span class="sd">    corresponding view cannot be removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initilize collection of item views.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Stack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pinned</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">NameView</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ViewStack.add_view"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.add_view">[docs]</a>    <span class="k">def</span> <span class="nf">add_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_view</span><span class="p">:</span> <span class="n">ViewItem</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="n">NameView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add an item view with the given name to the collection.</span>
+
+<span class="sd">        When the collection contains a view with the given name,  log a</span>
+<span class="sd">        warning and do not change the collection.</span>
+
+<span class="sd">        :param p_view: item view to add.</span>
+<span class="sd">        :param p_name: name of view.  A name may appear at most once in</span>
+<span class="sd">            the collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s1">&#39;Duplicate view </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> for name </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_view</span><span class="p">,</span> <span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">add_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">add_named</span><span class="p">(</span><span class="n">p_view</span><span class="p">,</span> <span class="n">p_name</span><span class="p">)</span>
+        <span class="n">p_view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ViewStack.clear"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove all unpinned item views from collection.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">child_get_property</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_view</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return True when collection contains item view with given name.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="ViewStack.get_name_visible"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.get_name_visible">[docs]</a>    <span class="k">def</span> <span class="nf">get_name_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">NameView</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return name of visible item view or None when no view is visible.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ViewStack.pin_view"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.pin_view">[docs]</a>    <span class="k">def</span> <span class="nf">pin_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="n">NameView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Pin an item view name so that the view cannot be removed.</span>
+
+<span class="sd">        When the name does correspond to an item view in the collection</span>
+<span class="sd">        or when the named view is pinned, log a warning.</span>
+
+<span class="sd">        :param p_name: name of the item view to pin.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">pin_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">p_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pinned</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;View named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> already pinned (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">pin_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pinned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewStack.remove_view"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.remove_view">[docs]</a>    <span class="k">def</span> <span class="nf">remove_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="n">NameView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove an item view from the collection.</span>
+
+<span class="sd">        Log a warning when the name does correspond to an item view in</span>
+<span class="sd">        the collection or when the named view is pinned..</span>
+
+<span class="sd">        :param p_name: name of the item view to remove.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pinned</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Pinned item view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> cannot be removed &#39;</span>
+                           <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">remove_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="n">view_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">view_item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No item view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">remove_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">view_item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ViewStack.show_view"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.show_view">[docs]</a>    <span class="k">def</span> <span class="nf">show_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="n">NameView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">NameView</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Attempt to show an item view and return name of visible view.</span>
+
+<span class="sd">        Log a warning when no item view has given name.</span>
+
+<span class="sd">        :param p_name: name of item view to show.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_child_by_name</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">set_visible_child</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No item view named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">show_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="n">name_visible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_visible_child_name</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">name_visible</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ui_view</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiViewStack</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return user interface element of stack.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span>
+
+<div class="viewcode-block" id="ViewStack.unpin_view"><a class="viewcode-back" href="../../../src/factsheet.view.view_stack.html#factsheet.view.view_stack.ViewStack.unpin_view">[docs]</a>    <span class="k">def</span> <span class="nf">unpin_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="n">NameView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Unpin an item view so that it can be removed.</span>
+
+<span class="sd">        Log a warning when the named view is not pinned..</span>
+
+<span class="sd">        :param p_name: name of the item view to unpin.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pinned</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;View named </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> not pinned (</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">unpin_view</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

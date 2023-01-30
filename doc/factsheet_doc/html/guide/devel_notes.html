@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Development Notes &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Source Code" href="../src/toc_src.html" />
+    <link rel="prev" title="Conventions" href="conventions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="toc_guide.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions.html">Conventions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Development Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#purpose">Purpose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#beginning">Beginning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#feedback-strategies">Feedback Strategies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lessons-learned">Lessons Learned</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#asynchronous-behavior">Asynchronous Behavior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Model-View-Controller</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#initial-view-implementation-with-gtk">Initial View Implementation with GTK</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modularity">Modularity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#layering">Layering</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_guide.html">Documentation</a> &raquo;</li>
+        
+      <li>Development Notes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/guide/devel_notes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="development-notes">
+<h1>Development Notes<a class="headerlink" href="#development-notes" title="Permalink to this headline">¶</a></h1>
+<p>The Factsheet application evolves by exploration, review, and
+refactoring.  These notes record development decisions made as the
+project progresses.  The notes include some lessons learned along the
+way.  <em>Caveat emptor:</em> the notes are a work in progress and not
+comprehensive.</p>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">¶</a></h2>
+<p>The primary purpose of Factsheet is exploration.  First, to explore
+Python and current software development tools and techniques.  Second,
+to explore visualization of basic properties of small algebraic
+structures (for example, sets, operations, and groups).</p>
+</div>
+<div class="section" id="beginning">
+<h2>Beginning<a class="headerlink" href="#beginning" title="Permalink to this headline">¶</a></h2>
+<p>I am learning techniques and tools as I go.  I expect to make a lot
+mistakes and encounter many dead ends.  I am working on my own.
+Consequently, I need a resilient plan and feedback mechanisms to make
+progress.</p>
+<p>The plan needs to accommodate the following.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>A graphical user interface (GUI).</strong>  The look and behavior of the
+application will change considerably over time.  The underlying
+widget toolkit may change, too.</p></li>
+<li><p><strong>Calculations and persistent data.</strong>  The core of the application
+should be independent of the GUI to the extent possible.  It should
+be as easy as possible to extend content.</p></li>
+<li><p><strong>Document and window management.</strong>  Rich visualization entails the
+capability to compare data sets and to view a single data set in
+different ways.</p></li>
+</ul>
+</div></blockquote>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-View-Controller</a>
+presents a basic structure for an application that meets the initial
+needs.  Page <a class="reference external" href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-View-Controller</a> identifies variations that might
+be more appropriate as development progresses.  Thus, the plan starts
+with the following together with a willingness to adapt as needed.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Model</strong> – persistent data with supporting calculations.</p></li>
+<li><p><strong>View</strong> – widget toolkit display elements with supporting code.</p></li>
+<li><p><strong>Controller</strong> – create, track, store, and load multiple Model
+data sets as well as multiple Views for each data set,</p></li>
+</ul>
+</div></blockquote>
+<p>Ideally, change to any one component would have minimal effect on the
+other two.  Practicallly, I expect tradeoffs would be needed.  My
+emphasis will be on isolating the View, since the View is likely to
+change the most.  Moreover, I have little expreience with GUI
+development.</p>
+<p>A second aspect of the initial plan is layering to further decompose the
+components into more manageable pieces.  <a class="reference internal" href="intro.html"><span class="doc">Introduction</span></a> describes
+the orgnaization of a factsheet document.  A factsheet contains facts
+about one or more subjects.  Each fact is a statement about a specific
+subject.  A topic is a collection of facts related to the same subject.
+A factsheet is a collection of topics.  The initial plan partitions
+model, view, and control components into factsheet, topic, and fact
+layers.</p>
+<p>Using model-view-control structure and layering adds overhead to the
+project that may not be needed.  However, the primary purpose of the
+application is to explore techniques and tools.  Practice will show the
+benefits and costs of these techniques more clearly than only reading
+about them.</p>
+</div>
+<div class="section" id="feedback-strategies">
+<h2>Feedback Strategies<a class="headerlink" href="#feedback-strategies" title="Permalink to this headline">¶</a></h2>
+<p>Working alone and learning as I go mean mistakes and changes of
+direction are likely.  I use the following strategies to mimimize lost
+time.</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>Document intent</p>
+<blockquote>
+<div><p>Include docstrings for each module, class, method, and function
+to document purpose and intended behavior.  Automate
+documentation generation with <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>.  See
+<a class="reference internal" href="../src/toc_src.html"><span class="doc">Source Code</span></a>.</p>
+</div></blockquote>
+</li>
+<li><p>Confirm behavior frequently</p>
+<blockquote>
+<div><p>Include unit tests for each method and function.  Basic
+test-driven development (<a class="reference external" href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>) provides a means to continuously
+develop useful unit tests.  Implement and automate unit tests
+with <a class="reference external" href="https://docs.pytest.org/en/latest/">pytest</a>.  See <a class="reference internal" href="../test/toc_test.html"><span class="doc">Unit Test Code</span></a>.</p>
+<p>Include manual tests for compound behaviors as well as to assess
+look and feel of application interface.  See
+<a class="reference internal" href="../test_manual/toc_test_manual.html"><span class="doc">Manual Tests</span></a> .</p>
+</div></blockquote>
+</li>
+<li><p>Check consistency and clarity</p>
+<blockquote>
+<div><p>Include <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">type hints</a> in method, function, and data
+definitions.  Check type consistency with <a class="reference external" href="https://mypy.readthedocs.io/en/stable/">MyPy</a>, which is
+supported by <a class="reference external" href="https://www.pydev.org/index.html">PyDev</a> for <a class="reference external" href="https://www.eclipse.org/ide/">Eclipse</a>.</p>
+<p>Check code clarity with the <a class="reference external" href="https://www.pydev.org/index.html">PyDev</a>’s <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a> style
+checker.</p>
+</div></blockquote>
+</li>
+<li><p>Localize errors</p>
+<blockquote>
+<div><p>Write small, coherent methods and functions.  It is easier to
+write complete, effective unit tests for a small function than
+for a large function.</p>
+</div></blockquote>
+</li>
+<li><p>Foster consistency</p>
+<blockquote>
+<div><p>Establish and use naming and layout conventions. See
+<a class="reference internal" href="conventions.html"><span class="doc">Conventions</span></a>.</p>
+</div></blockquote>
+</li>
+<li><p>Facilitate recovery</p>
+<blockquote>
+<div><p>Use <a class="reference external" href="https://git-scm.com/">Git</a> version control to make it easier to try out ideas and
+recover from ones that do not work out.  See <a class="reference external" href="https://github.com/gary9204/Factsheet">Factsheet GitHub
+repository</a>.</p>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="lessons-learned">
+<h2>Lessons Learned<a class="headerlink" href="#lessons-learned" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="asynchronous-behavior">
+<h3>Asynchronous Behavior<a class="headerlink" href="#asynchronous-behavior" title="Permalink to this headline">¶</a></h3>
+<p>When a method evokes a GTK signal, GTK might not process the signal until
+after the method completes.  This may cause unexpected behavior
+especially when the method evokes the signal indirectly.</p>
+<p>One implementation of <a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_all_views" title="factsheet.control.control_sheet.ControlSheet.remove_all_views"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ControlSheet.remove_all_views()</span></code></a> serves as
+an example.  Method <a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_all_views" title="factsheet.control.control_sheet.ControlSheet.remove_all_views"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_all_views()</span></code></a> relied on a
+<a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet" title="factsheet.view.view_sheet.ViewSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewSheet</span></code></a> method both to destroy the GTK visual element and to
+stop tracking the sheet view.  The <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet" title="factsheet.view.view_sheet.ViewSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewSheet</span></code></a> method emitted a
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Widget.html#Gtk.Widget.signals.delete_event">Gtk.Window.delete-event</a> signal and the <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet" title="factsheet.view.view_sheet.ViewSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewSheet</span></code></a> signal
+handler called <a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_view" title="factsheet.control.control_sheet.ControlSheet.remove_view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ControlSheet.remove_view()</span></code></a> to stop tracking the
+sheet view.  The <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet" title="factsheet.view.view_sheet.ViewSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewSheet</span></code></a> method returned before the signal
+handler called <a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_view" title="factsheet.control.control_sheet.ControlSheet.remove_view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_view()</span></code></a> and
+<a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_all_views" title="factsheet.control.control_sheet.ControlSheet.remove_all_views"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_all_views()</span></code></a> would enter an infinite loop.</p>
+<p>The fix was to replace the original method with <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.erase" title="factsheet.view.view_sheet.ViewSheet.erase"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ViewSheet.erase()</span></code></a>
+and to have <a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_all_views" title="factsheet.control.control_sheet.ControlSheet.remove_all_views"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_all_views()</span></code></a> directly call
+<a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.ControlSheet.remove_view" title="factsheet.control.control_sheet.ControlSheet.remove_view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_view()</span></code></a> for each view.</p>
+</div>
+<div class="section" id="id1">
+<h3>Model-View-Controller<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>A variety of issues complicated implementation of <a class="reference external" href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">Model-View-Controller</a>.</p>
+<div class="section" id="circular-imports">
+<h4>Circular imports<a class="headerlink" href="#circular-imports" title="Permalink to this headline">¶</a></h4>
+<p>When a user makes a request in a view, view calls controller to
+service the request.   Contoller calls model to change state to complete
+the request.  Model calls the view to update the presentation to the
+user.  A fix is need to prevent circular imports view &lt;- controller &lt;-
+model &lt;- view.</p>
+<p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Observer_pattern">Observer pattern</a> provides a fix.  A view registers with its model
+to be notified when the model changes.  The model does not need to
+import from the view.</p>
+</div>
+<div class="section" id="gtk-observers-and-coupling">
+<h4>GTK, Observers, and Coupling<a class="headerlink" href="#gtk-observers-and-coupling" title="Permalink to this headline">¶</a></h4>
+<p>As described in <a class="reference external" href="https://en.wikipedia.org/wiki/Observer_pattern">Observer pattern</a>, a subject class provides a
+registration method for object classes to use. GTK widgets go beyond
+basic registration.</p>
+<p>For example, a <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html">Gtk.EntryBuffer</a> may provide storage for multiple
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html">Gtk.Entry</a> widgets.  A call to <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html#Gtk.Entry.set_buffer">Gtk.Entry.set_buffer</a> establishes the
+connection between an <code class="docutils literal notranslate"><span class="pre">Entry</span></code> and an <code class="docutils literal notranslate"><span class="pre">EntryBuffer</span></code>.  An <code class="docutils literal notranslate"><span class="pre">Entry</span></code>
+updates its <code class="docutils literal notranslate"><span class="pre">EntryBuffer</span></code> in response to user actions.  The
+<code class="docutils literal notranslate"><span class="pre">EntryBuffer</span></code> emits signals to notify connected <code class="docutils literal notranslate"><span class="pre">Entry</span></code> widgets of
+the changes.</p>
+<p>Initial versions of Factsheet wrapped <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html">Gtk.EntryBuffer</a> widgets in
+model classes and wrapped <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html">Gtk.Entry</a> widgets in view classes.
+Consequently, the model was explicitly coupled with the view.</p>
+<p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Bridge_pattern">Bridge pattern</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Factory_method_pattern">Factory method pattern</a> provide a means to
+isolate the coupling.  Now, Factsheet wraps <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html">Gtk.EntryBuffer</a> widgets
+in bridge classes and provides factories to produce <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html">Gtk.Entry</a>
+widgets.  See <a class="reference internal" href="../src/factsheet.bridge_gtk.html#module-factsheet.bridge_gtk" title="factsheet.bridge_gtk"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bridge_gtk</span></code></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The text after this point is under review. Portions of
+the text are inaccurate and incomplete.</p>
+</div>
+<p>The general flow of control is illustrated in the figure below.  A user
+takes action at the view.  The view translates an action into requests to
+a controller.  The controller updates the model based on the request.
+The model notifies the view of changes.  Finally, the view closes the
+loop by updating the presentation to the user.</p>
+<div class="figure align-center" id="id2">
+<img alt="Relation between model, view, and control components of design." src="../_images/mvc.png" />
+<p class="caption"><span class="caption-text">General Model-View-Control Design</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>In Factsheet, the control loop leads to an cycle of Python imports.
+Factsheet splits the view into an abstract interface and an
+implementation to break the cycle.  The model is written against the
+abstract interface.  The view implementation realizes the abstract
+interface.  The implementation calls on controller services.  In
+addition, the application itself initiates the control loop by calling
+on the view.  The figure below shows these additional details.</p>
+<div class="figure align-center" id="id3">
+<img alt="Model, view, and control components for Factsheet." src="../_images/mvc-factsheet.png" />
+<p class="caption"><span class="caption-text">Factsheet Model-View-Control Design</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="initial-view-implementation-with-gtk">
+<h2>Initial View Implementation with GTK<a class="headerlink" href="#initial-view-implementation-with-gtk" title="Permalink to this headline">¶</a></h2>
+<p>Two objectives for the <a class="reference internal" href="../src/factsheet.view.html#module-factsheet.view" title="factsheet.view"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet.view</span></code></a> implementation are 1)
+minimize user interface work by using a robust widget toolkit and 2)
+accommodate porting to more than one widget toolkit.</p>
+<p>For the first objective, the initial implementation of
+<a class="reference internal" href="../src/factsheet.view.html#module-factsheet.view" title="factsheet.view"><code class="xref py py-mod docutils literal notranslate"><span class="pre">view</span></code></a> makes use of the <a class="reference external" href="https://en.wikipedia.org/wiki/GTK">GTK widget toolkit</a>.  GTK is commonly used for <a class="reference external" href="https://en.wikipedia.org/wiki/GNOME">GNOME</a> applications running on Linux.  It is under active
+development with periodic stable releases.  GTK is well documented
+including its Python bindings.  GTK has a graphical user interface
+builder, the <a class="reference external" href="https://en.wikipedia.org/wiki/Glade_Interface_Designer">Glade Interface Designer</a>.</p>
+<p>For the second objective, the Factsheet implementation minimizes the
+dependencies of <a class="reference internal" href="../src/factsheet.control.html#module-factsheet.control" title="factsheet.control"><code class="xref py py-mod docutils literal notranslate"><span class="pre">control</span></code></a> and <a class="reference internal" href="../src/factsheet.model.html#module-factsheet.model" title="factsheet.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">model</span></code></a> on
+GTK.  However, GTK also is based on a MVC design.  There would be
+significant duplication if <a class="reference internal" href="../src/factsheet.model.html#module-factsheet.model" title="factsheet.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">model</span></code></a> did not use GTK model
+components.  The duplicate code would be less effective and less
+reliable.</p>
+<p>Consequently, the Factsheet model uses GTK classes and mechanisms to
+avoid duplication.  To accommodate porting, the implementation
+encapsulates dependencies via TBD.</p>
+</div>
+<div class="section" id="modularity">
+<h2>Modularity<a class="headerlink" href="#modularity" title="Permalink to this headline">¶</a></h2>
+<p>Python packages and modules partition Factsheet code.  The main
+partitions are packages <a class="reference internal" href="../src/factsheet.html#module-factsheet" title="factsheet"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet</span></code></a> and <a class="reference internal" href="../test/factsheet_test.html#module-factsheet_test" title="factsheet_test"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet_test</span></code></a>.  The
+former package contains source code while the latter contains unit test
+code.</p>
+<p>Each main package has a subpackage for model components
+(<a class="reference internal" href="../src/factsheet.model.html#module-factsheet.model" title="factsheet.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet.model</span></code></a> and <a class="reference internal" href="../test/factsheet_test.model.html#module-factsheet_test.model" title="factsheet_test.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet_test.model</span></code></a>), view
+components (<a class="reference internal" href="../src/factsheet.view.html#module-factsheet.view" title="factsheet.view"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet.view</span></code></a> and <a class="reference internal" href="../test/factsheet_test.view.html#module-factsheet_test.view" title="factsheet_test.view"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet_test.view</span></code></a>), and
+control components (<a class="reference internal" href="../src/factsheet.control.html#module-factsheet.control" title="factsheet.control"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet.control</span></code></a> and
+<a class="reference internal" href="../test/factsheet_test.control.html#module-factsheet_test.control" title="factsheet_test.control"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet_test.control</span></code></a>).  Package <a class="reference internal" href="../src/factsheet.spec.html#module-factsheet.spec" title="factsheet.spec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet.spec</span></code></a> contains
+specifications for model content with corresponding unit tests in
+<a class="reference internal" href="../test/factsheet_test.spec.html#module-factsheet_test.spec" title="factsheet_test.spec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factsheet_test.spec</span></code></a>.</p>
+</div>
+<div class="section" id="layering">
+<h2>Layering<a class="headerlink" href="#layering" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="intro.html"><span class="doc">Introduction</span></a> describes the orgnaization of a factsheet
+document.  A factsheet contains facts about one or more subjects.  Each
+fact is a statement about a specific subject.  A topic is a collection
+of facts related to the same subject.  A factsheet is a collection of
+topics.  The design partitions classes into factsheet, topic, and fact
+layers.</p>
+<p>The user interface follows the decomposition into factsheet, topics, and
+facts.  Each Factsheet window presents a factsheet document.  A window
+has a collection of views with one view for each topic in the factsheet.
+A window presents one topic view at a time.  A topic view has a
+collection of views with one view for each fact in the topic.  A topic
+view presents one fact view at a time.  A user may open more than one
+window for a factsheet to see multiple topics and facts simultaneously.</p>
+<p>Similarly, the model decomposes into factsheet, topic, and fact
+components.  A factsheet model contains a hierarchy of topics.  Each
+topic contains a hierarchy of facts.   Factsheet, topic, and fact
+controls mediate between each model component and the corresponding user
+interface component.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../src/toc_src.html" class="btn btn-neutral float-right" title="Source Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="conventions.html" class="btn btn-neutral float-left" title="Conventions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,703 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bridge_outline Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="bridge_text Module" href="factsheet.bridge_gtk.bridge_text.html" />
+    <link rel="prev" title="bridge_base Module" href="factsheet.bridge_gtk.bridge_base.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">bridge_outline</span></code> Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.bridge_gtk.bridge_outline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.bridge_gtk.bridge_outline">
+<span id="bridge-outline-module"></span><h1><code class="docutils literal notranslate"><span class="pre">bridge_outline</span></code> Module<a class="headerlink" href="#module-factsheet.bridge_gtk.bridge_outline" title="Permalink to this headline">¶</a></h1>
+<p>Defines bridge classes to encapsulate widget toolkit outline classes.</p>
+<p>An outline is an ordered list analogous to a bulleted list in a print
+document.  An outline contains lines, each of which identifies an item.
+Lines and items are analogous to bullets and text in a bulleted list.
+Like a bulleted list, an outline may be either single-level or multi-
+level.</p>
+<div class="section" id="constants-and-type-hints">
+<h2>Constants and Type Hints<a class="headerlink" href="#constants-and-type-hints" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.ChooserOutline">
+<code class="sig-name descname">ChooserOutline</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ChooserOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to view an outline and choose a line.
+See <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ComboBox.html">Gtk.ComboBox</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.ItemOpaque">
+<code class="sig-name descname">ItemOpaque</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ItemOpaque" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder type hint for an item at a line.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.LineOutline">
+<code class="sig-name descname">LineOutline</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.LineOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to store a line.  See <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeIter.html">Gtk.Treeiter</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.PersistOutline">
+<code class="sig-name descname">PersistOutline</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.PersistOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for outline representation suitable for persistent
+storage.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti">
+<code class="sig-name descname">UiModelOutlineMulti</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.UiModelOutlineMulti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to store a multi-level outline.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeStore.html">Gtk.TreeStore</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.UIModelOutlineSingle">
+<code class="sig-name descname">UIModelOutlineSingle</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.UIModelOutlineSingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to store a single-level outline.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ListStore.html">Gtk.ListStore</a> .</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.ViewOutline">
+<code class="sig-name descname">ViewOutline</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ViewOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to view an outline in columnar format.
+See <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeView.html">Gtk.TreeView</a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="classes-and-functions">
+<h2>Classes and Functions<a class="headerlink" href="#classes-and-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline">
+<em class="property">class </em><code class="sig-name descname">FactoryChooserOutline</code><span class="sig-paren">(</span><em class="sig-param">p_model_outline</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#FactoryChooserOutline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract" title="factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Chooser factory for an outline.</p>
+<p>A call to the factory takes no arguments and returns
+<a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ChooserOutline" title="factsheet.bridge_gtk.bridge_outline.ChooserOutline"><code class="xref py py-data docutils literal notranslate"><span class="pre">ChooserOutline</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_model_outline</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#FactoryChooserOutline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize outline for choosers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model_outline</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline" title="factsheet.bridge_gtk.bridge_outline.ModelOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutline</span></code></a>[~UiModelOutline, ~ItemOpaque]) – outline model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_outline.FactoryViewOutline">
+<em class="property">class </em><code class="sig-name descname">FactoryViewOutline</code><span class="sig-paren">(</span><em class="sig-param">p_model_outline</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#FactoryViewOutline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.FactoryViewOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract" title="factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>View factory for an outline.</p>
+<p>A call to the factory takes no arguments and returns <a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ViewOutline" title="factsheet.bridge_gtk.bridge_outline.ViewOutline"><code class="xref py py-data docutils literal notranslate"><span class="pre">ViewOutline</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.FactoryViewOutline.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_model_outline</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#FactoryViewOutline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.FactoryViewOutline.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize outline for views.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model_outline</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline" title="factsheet.bridge_gtk.bridge_outline.ModelOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutline</span></code></a>[~UiModelOutline, ~ItemOpaque]) – outline model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline">
+<em class="property">class </em><code class="sig-name descname">ModelOutline</code><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.BridgeBase" title="factsheet.bridge_gtk.bridge_base.BridgeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.BridgeBase</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Common ancestor of bridge classes for outlines.</p>
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.C_ITEM">
+<code class="sig-name descname">C_ITEM</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.C_ITEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Column containing outline items.</p>
+</dd></dl>
+
+<div class="admonition-about-equality admonition">
+<p class="admonition-title">About Equality</p>
+<p>Two outlines are equivalent when they have the same structure
+(fields, items, and sections) and corresponding items are equal.</p>
+</div>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">C_ITEM</code><em class="property"> = 0</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all items from outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.get_item">
+<code class="sig-name descname">get_item</code><span class="sig-paren">(</span><em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.get_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.get_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return item at given line or None when no item at line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of desired item.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[~ItemOpaque]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.get_item_direct">
+<em class="property">classmethod </em><code class="sig-name descname">get_item_direct</code><span class="sig-paren">(</span><em class="sig-param">p_model</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.get_item_direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.get_item_direct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return item at given line directly from outline storage element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_model</strong> (<em>~UiModelOutline</em>) – outline storage element.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line containing desired item.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[~ItemOpaque]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.insert_after">
+<em class="property">abstract </em><code class="sig-name descname">insert_after</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.insert_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.insert_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline after given line.</p>
+<p>If line is None, prepend item at beginning of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to precede new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.insert_before">
+<em class="property">abstract </em><code class="sig-name descname">insert_before</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.insert_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.insert_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline before given line.</p>
+<p>If line is None, append item at end of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to follow new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over items in outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[~ItemOpaque]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.lines">
+<em class="property">abstract </em><code class="sig-name descname">lines</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over lines in outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutline.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutline.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove item at given line from outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to remove along with all descendants.  If
+line is None or invalid, remove no items.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle">
+<em class="property">class </em><code class="sig-name descname">ModelOutlineSingle</code><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineSingle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline" title="factsheet.bridge_gtk.bridge_outline.ModelOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_outline.ModelOutline</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Encapsulate widget toolkit class for a single-level outline.</p>
+<div class="admonition-about-equality admonition">
+<p class="admonition-title">About Equality</p>
+<p>Two outlines are equivalent when they have the same structure
+(fields, items, and sections) and corresponding items are equal.</p>
+</div>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.insert_after">
+<code class="sig-name descname">insert_after</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineSingle.insert_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.insert_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline after given line.</p>
+<p>If line is None, prepend item at beginning of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to precede new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.insert_before">
+<code class="sig-name descname">insert_before</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineSingle.insert_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.insert_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline before given line.</p>
+<p>If line is None, append item at end of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to follow new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.lines">
+<code class="sig-name descname">lines</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineSingle.lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over lines in outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti">
+<em class="property">class </em><code class="sig-name descname">ModelOutlineMulti</code><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ModelOutline" title="factsheet.bridge_gtk.bridge_outline.ModelOutline"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_outline.ModelOutline</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Encapsulate widget toolkit class for a multi-level outline.</p>
+<div class="admonition-about-equality admonition">
+<p class="admonition-title">About Equality</p>
+<p>Two outlines are equivalent when they have the same structure
+(fields, items, and sections) and corresponding items are equal.
+Transient aspects of the outlines (like views) are not compared
+and may be different.</p>
+</div>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_after">
+<code class="sig-name descname">insert_after</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.insert_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline after given line.</p>
+<p>If line is None, prepend item at beginning of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to precede new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_before">
+<code class="sig-name descname">insert_before</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.insert_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline before given line.</p>
+<p>If line is None, append item at end of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to follow new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_child">
+<code class="sig-name descname">insert_child</code><span class="sig-paren">(</span><em class="sig-param">p_item</em>, <em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.insert_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add item to outline as child of given line.</p>
+<p>Add line after all existing children.  If line is None, append
+item at end of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_item</strong> (<em>~ItemOpaque</em>) – new item to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line of parent of new line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_section">
+<code class="sig-name descname">insert_section</code><span class="sig-paren">(</span><em class="sig-param">p_other</em>, <em class="sig-param">p_line_parent=None</em>, <em class="sig-param">p_line_section=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.insert_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert section into outline from other outline.</p>
+<p>Copy section of other outline under given line after all
+existing children.  If given line is None, append section at end
+of outline.  If line in other outline is None, copy all of other
+outline.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The new section is a shallow copy of the other
+outline’s section.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_other</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti" title="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutlineMulti</span></code></a>) – outline that contains section to copy.</p></li>
+<li><p><strong>p_line_parent</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line of parent for section copy.  Default
+is top level after existing top-level items.</p></li>
+<li><p><strong>p_line_section</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line to copy along with all descendants.
+Default is to copy all lines.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.items_section">
+<code class="sig-name descname">items_section</code><span class="sig-paren">(</span><em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.items_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.items_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over items in section at given line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – parent line of section.  Default iterates over
+entire outline.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[~ItemOpaque]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.lines">
+<code class="sig-name descname">lines</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over lines in outline.</p>
+<p>Iteration is depth first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.lines_section">
+<code class="sig-name descname">lines_section</code><span class="sig-paren">(</span><em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_outline.html#ModelOutlineMulti.lines_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.lines_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over lines in section at given line.</p>
+<p>Iteration is depth first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – parent line of section.  Default iterates over
+entire outline.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.bridge_gtk.bridge_text.html" class="btn btn-neutral float-right" title="bridge_text Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.bridge_gtk.bridge_base.html" class="btn btn-neutral float-left" title="bridge_base Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

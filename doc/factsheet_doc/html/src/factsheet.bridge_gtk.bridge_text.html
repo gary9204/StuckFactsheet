@@ -1,0 +1,601 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bridge_text Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="control Package" href="factsheet.control.html" />
+    <link rel="prev" title="bridge_outline Module" href="factsheet.bridge_gtk.bridge_outline.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">bridge_text</span></code> Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.bridge_gtk.bridge_text.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.bridge_gtk.bridge_text">
+<span id="bridge-text-module"></span><h1><code class="docutils literal notranslate"><span class="pre">bridge_text</span></code> Module<a class="headerlink" href="#module-factsheet.bridge_gtk.bridge_text" title="Permalink to this headline">¶</a></h1>
+<p>Defines bridge classes that encapsulate widget toolkit text classes.</p>
+<div class="section" id="constants-and-type-hints">
+<h2>Constants and Type Hints<a class="headerlink" href="#constants-and-type-hints" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.DisplayTextMarkup">
+<code class="sig-name descname">DisplayTextMarkup</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.DisplayTextMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to display a text attribute.  The element
+supports <a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a> but is not editable.  See <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html">Gtk.Label</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.DisplayTextStyled">
+<code class="sig-name descname">DisplayTextStyled</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.DisplayTextStyled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to display a text attribute.  The element
+supports rich, tag-based formatting but is not editable.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html">Gtk.TextView</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.EditorTextMarkup">
+<code class="sig-name descname">EditorTextMarkup</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.EditorTextMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to display a text attribute.  The element
+is editable and supports embedding <a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a>.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Entry.html">Gtk.Entry</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.EditorTextStyled">
+<code class="sig-name descname">EditorTextStyled</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.EditorTextStyled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to display a text attribute.  The element
+is editable and supports rich, tag-based formatting.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextView.html">Gtk.TextView</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelTextOpaque">
+<code class="sig-name descname">ModelTextOpaque</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelTextOpaque" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for placeholder GTK element to store a text attribute.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.UiTextMarkup">
+<code class="sig-name descname">UiTextMarkup</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.UiTextMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to store text formatted with
+<a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a>.  See <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.EditorTextMarkup" title="factsheet.bridge_gtk.bridge_text.EditorTextMarkup"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorTextMarkup</span></code></a> <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html">Gtk.EntryBuffer</a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.bridge_gtk.bridge_text.UiTextStyled">
+<code class="sig-name descname">UiTextStyled</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.UiTextStyled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for GTK element to store text formatted with
+externally-defined tags.  See <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.EditorTextStyled" title="factsheet.bridge_gtk.bridge_text.EditorTextStyled"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorTextStyled</span></code></a> and
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html">Gtk.TextBuffer</a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="classes-and-functions">
+<h2>Classes and Functions<a class="headerlink" href="#classes-and-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="factsheet.bridge_gtk.bridge_text.escape_text_markup">
+<code class="sig-name descname">escape_text_markup</code><span class="sig-paren">(</span><em class="sig-param">p_markup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#escape_text_markup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.escape_text_markup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return text without markup errors.</p>
+<p>Escape <a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a> errors.  Raise other GLib errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_markup</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – text that may contain markup errors.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup">
+<em class="property">class </em><code class="sig-name descname">FactoryEditorTextMarkup</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryEditorTextMarkup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract" title="factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract</span></code></a></p>
+<p>Editor factory for text stored in a given <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="factsheet.bridge_gtk.bridge_text.ModelTextMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextMarkup</span></code></a>.</p>
+<p>Views support editing both text and embedded <a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a>.</p>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryEditorTextMarkup.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize store for text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="factsheet.bridge_gtk.bridge_text.ModelTextMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextMarkup</span></code></a>) – model that contains storage for editors.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryEditorTextMarkup.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextMarkup.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return editor for text and markup formatting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Entry</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup">
+<em class="property">class </em><code class="sig-name descname">FactoryDisplayTextMarkup</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextMarkup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract" title="factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract</span></code></a></p>
+<p>Display factory for text stored in a given <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="factsheet.bridge_gtk.bridge_text.ModelTextMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextMarkup</span></code></a>.</p>
+<p>Views support text display formatted from embedded <a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a>.</p>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextMarkup.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return view to display text with markup formatting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextMarkup.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize store for text and collection of displays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="factsheet.bridge_gtk.bridge_text.ModelTextMarkup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextMarkup</span></code></a>) – model that contains storage for displays.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.on_change">
+<code class="sig-name descname">on_change</code><span class="sig-paren">(</span><em class="sig-param">*_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextMarkup.on_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.on_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh display views when text is inserted or deleted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.on_destroy">
+<code class="sig-name descname">on_destroy</code><span class="sig-paren">(</span><em class="sig-param">p_display</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextMarkup.on_destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextMarkup.on_destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop refreshing display view that is being destroyed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_display</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code>) – display view being destroyed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled">
+<em class="property">class </em><code class="sig-name descname">FactoryEditorTextStyled</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryEditorTextStyled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract" title="factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract</span></code></a></p>
+<p>Editor factory for text stored in a given <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextStyled" title="factsheet.bridge_gtk.bridge_text.ModelTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextStyled</span></code></a>.</p>
+<p>Views support editing text.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Editing and applying format tags is planned but not implemented yet.</p>
+</div>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryEditorTextStyled.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize store for text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextStyled" title="factsheet.bridge_gtk.bridge_text.ModelTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextStyled</span></code></a>) – model that contains storage for editors.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryEditorTextStyled.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return editor for text with tag-based formatting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TextView</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled">
+<em class="property">class </em><code class="sig-name descname">FactoryDisplayTextStyled</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextStyled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract" title="factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.FactoryUiViewAbstract</span></code></a></p>
+<p>Display factory for text stored in a given <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextStyled" title="factsheet.bridge_gtk.bridge_text.ModelTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextStyled</span></code></a>.</p>
+<p>Views support displaying text.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Applying format tags is planned but not implemented yet.  Class
+<a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled" title="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryDisplayTextStyled</span></code></a> is a wrapper for
+<a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled" title="factsheet.bridge_gtk.bridge_text.FactoryEditorTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactoryEditorTextStyled</span></code></a> until formatting is implemented.</p>
+</div>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextStyled.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize store for text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_model</strong> (<a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelTextStyled" title="factsheet.bridge_gtk.bridge_text.ModelTextStyled"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTextStyled</span></code></a>) – model that contains storage for displays.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#FactoryDisplayTextStyled.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.FactoryDisplayTextStyled.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return view to display text with tag-based formatting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TextView</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet.bridge_gtk.bridge_text.id_display">
+<code class="sig-name descname">id_display</code><span class="sig-paren">(</span><em class="sig-param">p_display</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#id_display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.id_display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return unique identifier for a display view.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_display</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code>) – display to identify.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">IdDisplay</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText">
+<em class="property">class </em><code class="sig-name descname">ModelText</code><span class="sig-paren">(</span><em class="sig-param">p_text=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.abc_types.abc_stalefile.InterfaceStaleFile</span></code>, <a class="reference internal" href="factsheet.bridge_gtk.bridge_base.html#factsheet.bridge_gtk.bridge_base.BridgeBase" title="factsheet.bridge_gtk.bridge_base.BridgeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_base.BridgeBase</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Common ancestor of bridge classes for text.</p>
+<p>Text bridge objects may have transient aspects associated with views in
+addition to persistant text content.
+Text bridge objects fhave persistent text content. In addition, a
+text bridge object may have transient aspects
+such as signal connections to views or change state with respect to file
+storage,</p>
+<div class="admonition-about-equality admonition">
+<p class="admonition-title">About Equality</p>
+<p>Each text bridge object has persistent text content.  In
+addition, a text bridge object may have transient aspects such
+as signal connections to views or change state with respect to
+file storage,</p>
+<p>Two text bridge objects are equivalent when their text content
+are equal.  Transient aspects of the objects are not compared
+and may be different.</p>
+</div>
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">p_text=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelText.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extend initialization with text and change state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – initial text content.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText.is_fresh">
+<code class="sig-name descname">is_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelText.is_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText.is_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there are no unsaved changes to content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText.is_stale">
+<code class="sig-name descname">is_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelText.is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText.is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there is at least one unsaved change to
+content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText.set_fresh">
+<code class="sig-name descname">set_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelText.set_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText.set_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark content in memory consistent with file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText.set_stale">
+<code class="sig-name descname">set_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelText.set_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText.set_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark content in memory changed from file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelText.text">
+<em class="property">property </em><code class="sig-name descname">text</code><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelText.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return model text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelTextMarkup">
+<em class="property">class </em><code class="sig-name descname">ModelTextMarkup</code><span class="sig-paren">(</span><em class="sig-param">p_text=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelTextMarkup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelTextMarkup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelText" title="factsheet.bridge_gtk.bridge_text.ModelText"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_text.ModelText</span></code></a></p>
+<p>Text storage with support for editing and <a class="reference external" href="https://docs.gtk.org/Pango/pango_markup.html">Pango markup</a>.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/EntryBuffer.html">Gtk.EntryBuffer</a>.</p>
+<p>See <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelText" title="factsheet.bridge_gtk.bridge_text.ModelText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelText</span></code></a> regarding equality.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.bridge_gtk.bridge_text.ModelTextStyled">
+<em class="property">class </em><code class="sig-name descname">ModelTextStyled</code><span class="sig-paren">(</span><em class="sig-param">p_text=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/bridge_gtk/bridge_text.html#ModelTextStyled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.bridge_gtk.bridge_text.ModelTextStyled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelText" title="factsheet.bridge_gtk.bridge_text.ModelText"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.bridge_gtk.bridge_text.ModelText</span></code></a></p>
+<p>Text bridge with support for editing and format tagging.  See
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TextBuffer.html">Gtk.TextBuffer</a>.</p>
+<p>See <a class="reference internal" href="#factsheet.bridge_gtk.bridge_text.ModelText" title="factsheet.bridge_gtk.bridge_text.ModelText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelText</span></code></a> regarding equality.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.control.html" class="btn btn-neutral float-right" title="control Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.bridge_gtk.bridge_outline.html" class="btn btn-neutral float-left" title="bridge_outline Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

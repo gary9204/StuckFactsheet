@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ui View Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="view_markup View Module" href="factsheet.view.view_markup.html" />
+    <link rel="prev" title="select_spec View Module" href="factsheet.view.select_spec.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">ui</span></code> View Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.view.ui.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.view.ui">
+<span id="ui-view-module"></span><h1><code class="docutils literal notranslate"><span class="pre">ui</span></code> View Module<a class="headerlink" href="#module-factsheet.view.ui" title="Permalink to this headline">¶</a></h1>
+<p>Defines constants, functions, and objects for user interface elements.</p>
+<div class="section" id="factsheet-level-definitions">
+<h2>Factsheet-level Definitions<a class="headerlink" href="#factsheet-level-definitions" title="Permalink to this headline">¶</a></h2>
+<p>Supporting deinitions for user interface elements for application and
+Factsheets.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.DIR_UI">
+<code class="sig-name descname">DIR_UI</code><a class="headerlink" href="#factsheet.view.ui.DIR_UI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to directory that contains user interface definition files.</p>
+</dd></dl>
+
+<div class="section" id="exceptions">
+<h3>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="factsheet.view.ui.ExceptionUi">
+<em class="property">exception </em><code class="sig-name descname">ExceptionUi</code><a class="reference internal" href="../_modules/factsheet/view/ui.html#ExceptionUi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.ExceptionUi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-exc docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for exceptions acessing user interface elements.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="factsheet.view.ui.UiDescriptionError">
+<em class="property">exception </em><code class="sig-name descname">UiDescriptionError</code><a class="reference internal" href="../_modules/factsheet/view/ui.html#UiDescriptionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.UiDescriptionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.view.ui.ExceptionUi" title="factsheet.view.ui.ExceptionUi"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ExceptionUi</span></code></a></p>
+<p>Raise when user interface description is not accessible.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="factsheet.view.ui.UiObjectNotFoundError">
+<em class="property">exception </em><code class="sig-name descname">UiObjectNotFoundError</code><a class="reference internal" href="../_modules/factsheet/view/ui.html#UiObjectNotFoundError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.UiObjectNotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.view.ui.ExceptionUi" title="factsheet.view.ui.ExceptionUi"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ExceptionUi</span></code></a></p>
+<p>Raise when no object found for a given user interface ID.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="sheet-dialogs">
+<h3>Sheet Dialogs<a class="headerlink" href="#sheet-dialogs" title="Permalink to this headline">¶</a></h3>
+<p>All factsheet pages share guidance dialogs.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.ABOUT_APP">
+<code class="sig-name descname">ABOUT_APP</code><a class="headerlink" href="#factsheet.view.ui.ABOUT_APP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application About dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_APP">
+<code class="sig-name descname">HELP_APP</code><a class="headerlink" href="#factsheet.view.ui.HELP_APP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application Help dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.INTRO_APP">
+<code class="sig-name descname">INTRO_APP</code><a class="headerlink" href="#factsheet.view.ui.INTRO_APP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application Introduction dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_SHEET">
+<code class="sig-name descname">HELP_SHEET</code><a class="headerlink" href="#factsheet.view.ui.HELP_SHEET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factsheet Help dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_SHEET_DISPLAY">
+<code class="sig-name descname">HELP_SHEET_DISPLAY</code><a class="headerlink" href="#factsheet.view.ui.HELP_SHEET_DISPLAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factsheet Display Menu Help dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_SHEET_FILE">
+<code class="sig-name descname">HELP_SHEET_FILE</code><a class="headerlink" href="#factsheet.view.ui.HELP_SHEET_FILE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factsheet File Menu Help dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_SHEET_TOPICS">
+<code class="sig-name descname">HELP_SHEET_TOPICS</code><a class="headerlink" href="#factsheet.view.ui.HELP_SHEET_TOPICS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factsheet Topics Menu Help dialog.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="sheet-types">
+<h3>Sheet Types<a class="headerlink" href="#sheet-types" title="Permalink to this headline">¶</a></h3>
+<p>Factsheet models and views use type aliases to minimize
+implementation-specific details.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.IndexOutline">
+<code class="sig-name descname">IndexOutline</code><a class="headerlink" href="#factsheet.view.ui.IndexOutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for index to item in an outline in a <a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Sheet" title="factsheet.model.sheet.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code></a> or
+<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.NewViewOutlineTopics">
+<code class="sig-name descname">NewViewOutlineTopics</code><a class="headerlink" href="#factsheet.view.ui.NewViewOutlineTopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for signature of constructor for a topic.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.OutlineTemplates">
+<code class="sig-name descname">OutlineTemplates</code><a class="headerlink" href="#factsheet.view.ui.OutlineTemplates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for <a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Sheet" title="factsheet.model.sheet.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code></a>’s outline of templates.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.OutlineTopics">
+<code class="sig-name descname">OutlineTopics</code><a class="headerlink" href="#factsheet.view.ui.OutlineTopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for <a class="reference internal" href="factsheet.model.sheet.html#factsheet.model.sheet.Sheet" title="factsheet.model.sheet.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code></a>’s outline of topics.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.ViewOutlineTemplates">
+<code class="sig-name descname">ViewOutlineTemplates</code><a class="headerlink" href="#factsheet.view.ui.ViewOutlineTemplates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for presentation element of an outline of templates.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.ViewOutlineTopics">
+<code class="sig-name descname">ViewOutlineTopics</code><a class="headerlink" href="#factsheet.view.ui.ViewOutlineTopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for presentation element of an outline of topics.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="topic-level-definitions">
+<h2>Topic-level Definitions<a class="headerlink" href="#topic-level-definitions" title="Permalink to this headline">¶</a></h2>
+<p>Supporting deinitions for user interface elements for topics.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.FACTORY_TOPIC">
+<code class="sig-name descname">FACTORY_TOPIC</code><a class="headerlink" href="#factsheet.view.ui.FACTORY_TOPIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory to produce factsheet components for classes <a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>
+and <code class="xref py py-class docutils literal notranslate"><span class="pre">PaneTopic</span></code>.   See <code class="xref py py-mod docutils literal notranslate"><span class="pre">abc_factory</span></code>.</p>
+</dd></dl>
+
+<div class="section" id="topic-dialogs">
+<h3>Topic Dialogs<a class="headerlink" href="#topic-dialogs" title="Permalink to this headline">¶</a></h3>
+<p>All topic forms share guidance dialogs.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_TOPIC">
+<code class="sig-name descname">HELP_TOPIC</code><a class="headerlink" href="#factsheet.view.ui.HELP_TOPIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Topic Help dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_TOPIC_DISPLAY">
+<code class="sig-name descname">HELP_TOPIC_DISPLAY</code><a class="headerlink" href="#factsheet.view.ui.HELP_TOPIC_DISPLAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Topic Display Menu Help dialog.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="topic-types">
+<h3>Topic Types<a class="headerlink" href="#topic-types" title="Permalink to this headline">¶</a></h3>
+<p>Topic models and views use type aliases to minimize
+implementation-specific details.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.IdTopic">
+<code class="sig-name descname">IdTopic</code><a class="headerlink" href="#factsheet.view.ui.IdTopic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for unique identifier of a topic.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.OutlineFacts">
+<code class="sig-name descname">OutlineFacts</code><a class="headerlink" href="#factsheet.view.ui.OutlineFacts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for <a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>’s outline of facts.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.ViewOutlineFacts">
+<code class="sig-name descname">ViewOutlineFacts</code><a class="headerlink" href="#factsheet.view.ui.ViewOutlineFacts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type hint for presentation element of an outline of facts.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="fact-level-definitions">
+<h2>Fact-level Definitions<a class="headerlink" href="#fact-level-definitions" title="Permalink to this headline">¶</a></h2>
+<p>Supporting deinitions for user interface elements for topics.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.FACTORY_FACT">
+<code class="sig-name descname">FACTORY_FACT</code><a class="headerlink" href="#factsheet.view.ui.FACTORY_FACT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory to produce factsheet components for classes <code class="xref py py-class docutils literal notranslate"><span class="pre">Fact</span></code>
+and <code class="xref py py-class docutils literal notranslate"><span class="pre">BlockFact</span></code>.   See <code class="xref py py-mod docutils literal notranslate"><span class="pre">abc_factory</span></code>.</p>
+</dd></dl>
+
+<div class="section" id="fact-dialogs">
+<h3>Fact Dialogs<a class="headerlink" href="#fact-dialogs" title="Permalink to this headline">¶</a></h3>
+<p>All fact blocks share guidance dialogs.</p>
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_FACT">
+<code class="sig-name descname">HELP_FACT</code><a class="headerlink" href="#factsheet.view.ui.HELP_FACT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fact Help dialog.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_FACT_DISPLAY">
+<code class="sig-name descname">HELP_FACT_DISPLAY</code><a class="headerlink" href="#factsheet.view.ui.HELP_FACT_DISPLAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fact Display Menu help.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.view.ui.HELP_FACT_VALUE">
+<code class="sig-name descname">HELP_FACT_VALUE</code><a class="headerlink" href="#factsheet.view.ui.HELP_FACT_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Help dialog for fact value.  See <code class="xref py py-class docutils literal notranslate"><span class="pre">AspectValue</span></code>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="fact-types">
+<h3>Fact Types<a class="headerlink" href="#fact-types" title="Permalink to this headline">¶</a></h3>
+<p>Factsheet models and views use type aliases to minimize
+implementation-specific details.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>No fact type aliases yet.</p>
+</div>
+<dl class="exception">
+<dt>
+<em class="property">exception </em><code class="sig-name descname">ExceptionUi</code><a class="reference internal" href="../_modules/factsheet/view/ui.html#ExceptionUi"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt>
+<em class="property">exception </em><code class="sig-name descname">UiDescriptionError</code><a class="reference internal" href="../_modules/factsheet/view/ui.html#UiDescriptionError"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.view.ui.ExceptionUi" title="factsheet.view.ui.ExceptionUi"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.view.ui.ExceptionUi</span></code></a></p>
+</dd></dl>
+
+<dl class="exception">
+<dt>
+<em class="property">exception </em><code class="sig-name descname">UiObjectNotFoundError</code><a class="reference internal" href="../_modules/factsheet/view/ui.html#UiObjectNotFoundError"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.view.ui.ExceptionUi" title="factsheet.view.ui.ExceptionUi"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.view.ui.ExceptionUi</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet.view.ui.new_action_active">
+<code class="sig-name descname">new_action_active</code><span class="sig-paren">(</span><em class="sig-param">p_group</em>, <em class="sig-param">p_name</em>, <em class="sig-param">p_handler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#new_action_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.new_action_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct action, add to group, and connect to
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals.activate">activate</a> signal handler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_group</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleActionGroup</span></code>) – action group to contain new action.</p></li>
+<li><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of new action.</p></li>
+<li><p><strong>p_handler</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>) – <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals.activate">activate</a> signal
+handler for new action.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet.view.ui.new_action_active_dialog">
+<code class="sig-name descname">new_action_active_dialog</code><span class="sig-paren">(</span><em class="sig-param">p_group</em>, <em class="sig-param">p_name</em>, <em class="sig-param">p_handler</em>, <em class="sig-param">p_dialog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#new_action_active_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.new_action_active_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct action, add to group, and connect to
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals.activate">activate</a> signal handler with dialog
+parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_group</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleActionGroup</span></code>) – action group to contain new action.</p></li>
+<li><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of new action.</p></li>
+<li><p><strong>p_handler</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>) – <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals.activate">activate</a> signal
+handler for new action.</p></li>
+<li><p><strong>p_dialog</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dialog</span></code>) – dialog passed to handler.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.view.ui.GetUiElement">
+<em class="property">class </em><code class="sig-name descname">GetUiElement</code><span class="sig-paren">(</span><em class="sig-param">**_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Get user interface element with supplemental failure information.</p>
+<p><a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html">Gtk.Builder</a> aborts if there is an error opening a user interface
+description file or parsing a description.
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html#Gtk.Builder.get_object">Gtk.Builder.get_object()</a> returns None when the method cannot find
+the object for a given ID.  Class <a class="reference internal" href="#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetUiElement</span></code></a> augments
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html">Gtk.Builder</a> to provide more information when a failure occurs.</p>
+<dl class="method">
+<dt id="factsheet.view.ui.GetUiElement.__init__">
+<em class="property">abstract </em><code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log start of user interface construction.</p>
+<p>Each subclass must extend this method by initializing the
+underlying builder attribute (<cite>_builder</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.ui.GetUiElement.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">p_id_ui</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElement.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElement.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return user interface element with given ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_id_ui</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – ID of desired element.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#factsheet.view.ui.UiObjectNotFoundError" title="factsheet.view.ui.UiObjectNotFoundError"><strong>UiObjectNotFoundError</strong></a> – when no element matches ID.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.view.ui.GetUiElementByPath">
+<em class="property">class </em><code class="sig-name descname">GetUiElementByPath</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_path_ui</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElementByPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElementByPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.view.ui.GetUiElement</span></code></a></p>
+<p>Extend <a class="reference internal" href="#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetUiElement</span></code></a> with <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html">Gtk.Builder</a> from file.</p>
+<dl class="method">
+<dt id="factsheet.view.ui.GetUiElementByPath.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_path_ui</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElementByPath.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElementByPath.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize underlying builder and log source of description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_path_ui</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – location of user interface description file.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#factsheet.view.ui.UiDescriptionError" title="factsheet.view.ui.UiDescriptionError"><strong>UiDescriptionError</strong></a> – when user interface description is
+missing or inaccessible.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.view.ui.GetUiElementByStr">
+<em class="property">class </em><code class="sig-name descname">GetUiElementByStr</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_string_ui</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElementByStr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElementByStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.view.ui.GetUiElement</span></code></a></p>
+<p>Extend <a class="reference internal" href="#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetUiElement</span></code></a> with <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html">Gtk.Builder</a> from string.</p>
+<dl class="method">
+<dt id="factsheet.view.ui.GetUiElementByStr.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_string_ui</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElementByStr.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElementByStr.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize underlying builder and log source of description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_string_ui</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – string containing user interface description.</p></li>
+<li><p><strong>kwargs</strong> – superclass keyword parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.ui.GetUiElementByStr.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">p_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#GetUiElementByStr.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.GetUiElementByStr.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return object with given ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – ID of desired object.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#factsheet.view.ui.UiObjectNotFoundError" title="factsheet.view.ui.UiObjectNotFoundError"><strong>UiObjectNotFoundError</strong></a> – when no object matches ID.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet.view.ui.new_column_stock">
+<code class="sig-name descname">new_column_stock</code><span class="sig-paren">(</span><em class="sig-param">p_title</em>, <em class="sig-param">p_data_func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/ui.html#new_column_stock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.ui.new_column_stock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return column with stock properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – title for column.</p></li>
+<li><p><strong>p_cell_data_func</strong> – function to format column contents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeViewColumn</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.view.view_markup.html" class="btn btn-neutral float-right" title="view_markup View Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.view.select_spec.html" class="btn btn-neutral float-left" title="select_spec View Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

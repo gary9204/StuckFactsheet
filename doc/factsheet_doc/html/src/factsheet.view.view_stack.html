@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>view_stack View Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="view_topic View Module" href="factsheet.view.view_topic.html" />
+    <link rel="prev" title="view_sheet View Module" href="factsheet.view.view_sheet.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">view_stack</span></code> View Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.view.view_stack.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.view.view_stack">
+<span id="view-stack-view-module"></span><h1><code class="docutils literal notranslate"><span class="pre">view_stack</span></code> View Module<a class="headerlink" href="#module-factsheet.view.view_stack" title="Permalink to this headline">¶</a></h1>
+<p>Defines classes to represent a collection of views.</p>
+<p>Factsheet uses outlines containing topics and facts.  ViewStack provides
+a collection to contain and display views of items in an
+outline.  ViewStack presents one view at a time.</p>
+<dl class="class">
+<dt id="factsheet.view.view_stack.ViewStack">
+<em class="property">class </em><code class="sig-name descname">ViewStack</code><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Displays view at a time from a collection of views.</p>
+<p>Each view is a presentation element for an item (such as a topic,
+fact, or fact value).  Each item view is identified by a name.
+Methods use view name to add, show, pin, or remove the item view.
+The class supports pinning names. When a name is pinned, the
+corresponding view cannot be removed.</p>
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.add_view">
+<code class="sig-name descname">add_view</code><span class="sig-paren">(</span><em class="sig-param">p_view</em>, <em class="sig-param">p_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.add_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.add_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an item view with the given name to the collection.</p>
+<p>When the collection contains a view with the given name,  log a
+warning and do not change the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_view</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Widget</span></code>) – item view to add.</p></li>
+<li><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of view.  A name may appear at most once in
+the collection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all unpinned item views from collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.get_name_visible">
+<code class="sig-name descname">get_name_visible</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.get_name_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.get_name_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return name of visible item view or None when no view is visible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.pin_view">
+<code class="sig-name descname">pin_view</code><span class="sig-paren">(</span><em class="sig-param">p_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.pin_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.pin_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pin an item view name so that the view cannot be removed.</p>
+<p>When the name does correspond to an item view in the collection
+or when the named view is pinned, log a warning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of the item view to pin.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.remove_view">
+<code class="sig-name descname">remove_view</code><span class="sig-paren">(</span><em class="sig-param">p_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.remove_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.remove_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an item view from the collection.</p>
+<p>Log a warning when the name does correspond to an item view in
+the collection or when the named view is pinned..</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of the item view to remove.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.show_view">
+<code class="sig-name descname">show_view</code><span class="sig-paren">(</span><em class="sig-param">p_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.show_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.show_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to show an item view and return name of visible view.</p>
+<p>Log a warning when no item view has given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of item view to show.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.ui_view">
+<em class="property">property </em><code class="sig-name descname">ui_view</code><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.ui_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return user interface element of stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stack</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_stack.ViewStack.unpin_view">
+<code class="sig-name descname">unpin_view</code><span class="sig-paren">(</span><em class="sig-param">p_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_stack.html#ViewStack.unpin_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_stack.ViewStack.unpin_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpin an item view so that it can be removed.</p>
+<p>Log a warning when the named view is not pinned..</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of the item view to unpin.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.view.view_topic.html" class="btn btn-neutral float-right" title="view_topic View Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.view.view_sheet.html" class="btn btn-neutral float-left" title="view_sheet View Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

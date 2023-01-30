@@ -1,0 +1,621 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.bridge_gtk.bridge_outline &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.bridge_gtk.bridge_outline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.bridge_gtk.bridge_outline</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines bridge classes to encapsulate widget toolkit outline classes.</span>
+
+<span class="sd">An outline is an ordered list analogous to a bulleted list in a print</span>
+<span class="sd">document.  An outline contains lines, each of which identifies an item.</span>
+<span class="sd">Lines and items are analogous to bullets and text in a bulleted list.</span>
+<span class="sd">Like a bulleted list, an outline may be either single-level or multi-</span>
+<span class="sd">level.</span>
+
+<span class="sd">Constants and Type Hints</span>
+<span class="sd">========================</span>
+
+<span class="sd">.. data:: ChooserOutline</span>
+
+<span class="sd">    Type hint for GTK element to view an outline and choose a line.</span>
+<span class="sd">    See `Gtk.ComboBox`_.</span>
+
+<span class="sd">.. _`Gtk.ComboBox`:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ComboBox.html</span>
+
+<span class="sd">.. data:: ItemOpaque</span>
+
+<span class="sd">    Placeholder type hint for an item at a line.</span>
+
+<span class="sd">.. data:: LineOutline</span>
+
+<span class="sd">    Type hint for GTK element to store a line.  See `Gtk.Treeiter`_.</span>
+
+<span class="sd">.. _`Gtk.TreeIter`:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeIter.html</span>
+
+<span class="sd">.. data:: PersistOutline</span>
+
+<span class="sd">    Type hint for outline representation suitable for persistent</span>
+<span class="sd">    storage.</span>
+
+<span class="sd">.. data:: UiModelOutlineMulti</span>
+
+<span class="sd">    Type hint for GTK element to store a multi-level outline.  See</span>
+<span class="sd">    `Gtk.TreeStore`_.</span>
+
+<span class="sd">.. _`Gtk.TreeStore`:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeStore.html</span>
+
+<span class="sd">.. data:: UIModelOutlineSingle</span>
+
+<span class="sd">    Type hint for GTK element to store a single-level outline.  See</span>
+<span class="sd">    `Gtk.ListStore`_ .</span>
+
+<span class="sd">.. _`Gtk.ListStore`:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ListStore.html</span>
+
+<span class="sd">.. data:: ViewOutline</span>
+
+<span class="sd">    Type hint for GTK element to view an outline in columnar format.</span>
+<span class="sd">    See `Gtk.TreeView`_.</span>
+
+<span class="sd">.. _`Gtk.TreeView`:</span>
+<span class="sd">    https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeView.html</span>
+
+<span class="sd">Classes and Functions</span>
+<span class="sd">=====================</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">bridge_base</span> <span class="k">as</span> <span class="n">BBASE</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<span class="n">ChooserOutline</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ComboBox</span><span class="p">]</span>
+<span class="n">ItemOpaque</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ItemOpaque&#39;</span><span class="p">)</span>
+<span class="n">LineOutline</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TreeIter</span><span class="p">]</span>
+<span class="n">PersistOutline</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ItemOpaque</span><span class="p">]</span>
+<span class="n">UiModelOutlineMulti</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TreeStore</span><span class="p">]</span>
+<span class="n">UiModelOutlineSingle</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ListStore</span><span class="p">]</span>
+<span class="n">UiModelOutline</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span>
+    <span class="s1">&#39;UiModelOutline&#39;</span><span class="p">,</span> <span class="n">UiModelOutlineMulti</span><span class="p">,</span> <span class="n">UiModelOutlineSingle</span><span class="p">)</span>
+<span class="n">ViewOutline</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="FactoryChooserOutline"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline">[docs]</a><span class="k">class</span> <span class="nc">FactoryChooserOutline</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">[</span><span class="n">UiModelOutline</span><span class="p">],</span>
+                            <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">UiModelOutline</span><span class="p">,</span> <span class="n">ItemOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Chooser factory for an outline.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns</span>
+<span class="sd">    :data:`.ChooserOutline`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FactoryChooserOutline.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.FactoryChooserOutline.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_model_outline</span><span class="p">:</span>
+                 <span class="s1">&#39;ModelOutline[UiModelOutline, ItemOpaque]&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize outline for choosers.</span>
+
+<span class="sd">        :param p_model_outline: outline model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_model_outline</span><span class="o">.</span><span class="n">ui_model</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChooserOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return chooser for outline.&quot;&quot;&quot;</span>
+        <span class="n">chooser</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ComboBox</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chooser</span></div>
+
+
+<div class="viewcode-block" id="FactoryViewOutline"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.FactoryViewOutline">[docs]</a><span class="k">class</span> <span class="nc">FactoryViewOutline</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">FactoryUiViewAbstract</span><span class="p">[</span><span class="n">UiModelOutline</span><span class="p">],</span>
+                         <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">UiModelOutline</span><span class="p">,</span> <span class="n">ItemOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;View factory for an outline.</span>
+
+<span class="sd">    A call to the factory takes no arguments and returns :data:`.ViewOutline`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FactoryViewOutline.__init__"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.FactoryViewOutline.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_model_outline</span><span class="p">:</span>
+                 <span class="s1">&#39;ModelOutline[UiModelOutline, ItemOpaque]&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize outline for views.</span>
+
+<span class="sd">        :param p_model_outline: outline model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span> <span class="o">=</span> <span class="n">p_model_outline</span><span class="o">.</span><span class="n">ui_model</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ViewOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return view for outline.&quot;&quot;&quot;</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">view</span></div>
+
+
+<div class="viewcode-block" id="ModelOutline"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline">[docs]</a><span class="k">class</span> <span class="nc">ModelOutline</span><span class="p">(</span><span class="n">BBASE</span><span class="o">.</span><span class="n">BridgeBase</span><span class="p">[</span><span class="n">UiModelOutline</span><span class="p">,</span> <span class="n">PersistOutline</span><span class="p">],</span>
+                   <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">UiModelOutline</span><span class="p">,</span> <span class="n">ItemOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Common ancestor of bridge classes for outlines.</span>
+
+<span class="sd">    .. data:: C_ITEM</span>
+
+<span class="sd">        Column containing outline items.</span>
+
+<span class="sd">    .. admonition:: About Equality</span>
+
+<span class="sd">        Two outlines are equivalent when they have the same structure</span>
+<span class="sd">        (fields, items, and sections) and corresponding items are equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">C_ITEM</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="ModelOutline.clear"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove all items from outline.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelOutline.get_item"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.get_item">[docs]</a>    <span class="k">def</span> <span class="nf">get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ItemOpaque</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return item at given line or None when no item at line.</span>
+
+<span class="sd">        :param p_line: line of desired item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_direct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">,</span> <span class="n">p_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelOutline.get_item_direct"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.get_item_direct">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_item_direct</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">p_model</span><span class="p">:</span> <span class="n">UiModelOutline</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span>
+                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ItemOpaque</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return item at given line directly from outline storage element.</span>
+
+<span class="sd">        :param p_model: outline storage element.</span>
+<span class="sd">        :param p_line: line containing desired item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">p_model</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">p_line</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">C_ITEM</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return outline in form suitable for persistent storage.&quot;&quot;&quot;</span>
+        <span class="n">persist</span><span class="p">:</span> <span class="n">PersistOutline</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_string_from_iter</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">persist</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="k">return</span> <span class="n">persist</span>
+
+<div class="viewcode-block" id="ModelOutline.insert_after"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.insert_after">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">insert_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                     <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline after given line.</span>
+
+<span class="sd">        If line is None, prepend item at beginning of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line to precede new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ModelOutline.insert_before"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.insert_before">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">insert_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                      <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline before given line.</span>
+
+<span class="sd">        If line is None, append item at end of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line to follow new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ModelOutline.items"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ItemOpaque</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over items in outline.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelOutline.lines"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.lines">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">LineOutline</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over lines in outline.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ModelOutline.remove"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutline.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">LineOutline</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove item at given line from outline.</span>
+
+<span class="sd">        :param p_line: line to remove along with all descendants.  If</span>
+<span class="sd">            line is None or invalid, remove no items.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span></div>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">:</span> <span class="n">PersistOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set outline storage element from content in persistent form.</span>
+
+<span class="sd">        :param p_persist: persistent form for outline content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="ModelOutlineSingle"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle">[docs]</a><span class="k">class</span> <span class="nc">ModelOutlineSingle</span><span class="p">(</span><span class="n">ModelOutline</span><span class="p">[</span><span class="n">UiModelOutlineSingle</span><span class="p">,</span> <span class="n">ItemOpaque</span><span class="p">],</span>
+                         <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">ItemOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encapsulate widget toolkit class for a single-level outline.</span>
+
+<span class="sd">    .. admonition:: About Equality</span>
+
+<span class="sd">        Two outlines are equivalent when they have the same structure</span>
+<span class="sd">        (fields, items, and sections) and corresponding items are equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ModelOutlineSingle.insert_after"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.insert_after">[docs]</a>    <span class="k">def</span> <span class="nf">insert_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                     <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline after given line.</span>
+
+<span class="sd">        If line is None, prepend item at beginning of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line to precede new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">p_line</span><span class="p">,</span> <span class="p">[</span><span class="n">p_item</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ModelOutlineSingle.insert_before"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.insert_before">[docs]</a>    <span class="k">def</span> <span class="nf">insert_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                      <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline before given line.</span>
+
+<span class="sd">        If line is None, append item at end of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line to follow new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_line</span><span class="p">,</span> <span class="p">[</span><span class="n">p_item</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ModelOutlineSingle.lines"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineSingle.lines">[docs]</a>    <span class="k">def</span> <span class="nf">lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">LineOutline</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over lines in outline.&quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_iter_first</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">line</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">iter_next</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiModelOutlineSingle</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return toolkit-specific outline storage element.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">UiModelOutlineSingle</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">TYPE_PYOBJECT</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">:</span> <span class="n">PersistOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set outline storage element from content in persistent form.</span>
+
+<span class="sd">        :param p_persist: persistent form for outline content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">path_str</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">p_persist</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">path_str</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ModelOutlineMulti"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti">[docs]</a><span class="k">class</span> <span class="nc">ModelOutlineMulti</span><span class="p">(</span><span class="n">ModelOutline</span><span class="p">[</span><span class="n">UiModelOutlineMulti</span><span class="p">,</span> <span class="n">ItemOpaque</span><span class="p">],</span>
+                        <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">ItemOpaque</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encapsulate widget toolkit class for a multi-level outline.</span>
+
+<span class="sd">    .. admonition:: About Equality</span>
+
+<span class="sd">        Two outlines are equivalent when they have the same structure</span>
+<span class="sd">        (fields, items, and sections) and corresponding items are equal.</span>
+<span class="sd">        Transient aspects of the outlines (like views) are not compared</span>
+<span class="sd">        and may be different.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ModelOutlineMulti.insert_after"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_after">[docs]</a>    <span class="k">def</span> <span class="nf">insert_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                     <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline after given line.</span>
+
+<span class="sd">        If line is None, prepend item at beginning of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line to precede new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PARENT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">PARENT</span><span class="p">,</span> <span class="n">p_line</span><span class="p">,</span> <span class="p">[</span><span class="n">p_item</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ModelOutlineMulti.insert_before"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_before">[docs]</a>    <span class="k">def</span> <span class="nf">insert_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                      <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline before given line.</span>
+
+<span class="sd">        If line is None, append item at end of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line to follow new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PARENT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">PARENT</span><span class="p">,</span> <span class="n">p_line</span><span class="p">,</span> <span class="p">[</span><span class="n">p_item</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ModelOutlineMulti.insert_child"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_child">[docs]</a>    <span class="k">def</span> <span class="nf">insert_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_item</span><span class="p">:</span> <span class="n">ItemOpaque</span><span class="p">,</span>
+                     <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineOutline</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add item to outline as child of given line.</span>
+
+<span class="sd">        Add line after all existing children.  If line is None, append</span>
+<span class="sd">        item at end of outline.</span>
+
+<span class="sd">        :param p_item: new item to add.</span>
+<span class="sd">        :param p_line: line of parent of new line.</span>
+<span class="sd">        :returns: line of newly-added item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_line</span><span class="p">,</span> <span class="p">[</span><span class="n">p_item</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ModelOutlineMulti.insert_section"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.insert_section">[docs]</a>    <span class="k">def</span> <span class="nf">insert_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_other</span><span class="p">:</span> <span class="s1">&#39;ModelOutlineMulti&#39;</span><span class="p">,</span>
+                       <span class="n">p_line_parent</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">p_line_section</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Insert section into outline from other outline.</span>
+
+<span class="sd">        Copy section of other outline under given line after all</span>
+<span class="sd">        existing children.  If given line is None, append section at end</span>
+<span class="sd">        of outline.  If line in other outline is None, copy all of other</span>
+<span class="sd">        outline.</span>
+
+<span class="sd">        .. note:: The new section is a shallow copy of the other</span>
+<span class="sd">           outline&#39;s section.</span>
+
+<span class="sd">        :param p_other: outline that contains section to copy.</span>
+<span class="sd">        :param p_line_parent: line of parent for section copy.  Default</span>
+<span class="sd">            is top level after existing top-level items.</span>
+<span class="sd">        :param p_line_section: line to copy along with all descendants.</span>
+<span class="sd">            Default is to copy all lines.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_line_section</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">it_to</span> <span class="o">=</span> <span class="n">p_line_parent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">p_other</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">p_line_section</span><span class="p">)</span>
+            <span class="n">it_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_line_parent</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">p_other</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">iter_children</span><span class="p">(</span><span class="n">p_line_section</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">insert_section</span><span class="p">(</span><span class="n">p_other</span><span class="p">,</span> <span class="n">it_to</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">p_other</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">iter_next</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelOutlineMulti.items_section"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.items_section">[docs]</a>    <span class="k">def</span> <span class="nf">items_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span>
+                      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ItemOpaque</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over items in section at given line.</span>
+
+<span class="sd">        :param p_line: parent line of section.  Default iterates over</span>
+<span class="sd">            entire outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines_section</span><span class="p">(</span><span class="n">p_line</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelOutlineMulti.lines"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.lines">[docs]</a>    <span class="k">def</span> <span class="nf">lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">LineOutline</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over lines in outline.</span>
+
+<span class="sd">        Iteration is depth first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines_section</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelOutlineMulti.lines_section"><a class="viewcode-back" href="../../../src/factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti.lines_section">[docs]</a>    <span class="k">def</span> <span class="nf">lines_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_line</span><span class="p">:</span> <span class="n">LineOutline</span> <span class="o">=</span> <span class="kc">None</span>
+                      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">LineOutline</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over lines in section at given line.</span>
+
+<span class="sd">        Iteration is depth first.</span>
+
+<span class="sd">        :param p_line: parent line of section.  Default iterates over</span>
+<span class="sd">            entire outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">p_line</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">iter_children</span><span class="p">(</span><span class="n">p_line</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines_section</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">iter_next</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_new_ui_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiModelOutlineMulti</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return toolkit-specific outline storage element.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">UiModelOutlineMulti</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">TYPE_PYOBJECT</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_persist</span><span class="p">:</span> <span class="n">PersistOutline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set outline storage element from content in persistent form.</span>
+
+<span class="sd">        :param p_persist: persistent form for outline content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TOP_LEVEL</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">path_str</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">p_persist</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreePath</span><span class="p">(</span><span class="n">path_str</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">TOP_LEVEL</span> <span class="o">==</span> <span class="n">path</span><span class="o">.</span><span class="n">get_depth</span><span class="p">():</span>
+                <span class="n">i_parent</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">up</span><span class="p">()</span>
+                <span class="n">i_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">get_iter</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ui_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_parent</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

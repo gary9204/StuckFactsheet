@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.control.test_control_topic &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.control.test_control_topic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.control.test_control_topic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for class that mediates topic-level interactions from</span>
+<span class="sd">:mod:`~factsheet.view` to :mod:`~factsheet.model`.  See</span>
+<span class="sd">:mod:`~.control_topic`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pytest</span>  <span class="c1"># type: ignore[import]</span>
+<span class="c1"># import typing</span>
+
+<span class="c1"># import factsheet.bridge_ui as BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.control.control_topic</span> <span class="k">as</span> <span class="nn">CTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+
+
+<div class="viewcode-block" id="TestControlTopic"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestControlTopic">[docs]</a><span class="k">class</span> <span class="nc">TestControlTopic</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`~.control_topic.ControlTopic`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestControlTopic.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestControlTopic.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization.</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="c1"># facts = list(TOPIC.facts())</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="n">MODEL</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">factory_display_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_display_name</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_display_name</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayName</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_display_name</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_name</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_editor_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_editor_name</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_editor_name</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorName</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_editor_name</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_name</span><span class="o">.</span><span class="n">_ui_model</span>
+
+        <span class="n">model_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">summary</span>
+        <span class="n">factory_display_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_display_summary</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">factory_display_summary</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_display_summary</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_summary</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_editor_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_editor_summary</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_editor_summary</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorSummary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_editor_summary</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_summary</span><span class="o">.</span><span class="n">_ui_model</span>
+
+        <span class="n">model_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">title</span>
+        <span class="n">factory_display_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_display_title</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_display_title</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayTitle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_display_title</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_title</span><span class="o">.</span><span class="n">_ui_model</span>
+        <span class="n">factory_editor_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_factory_editor_title</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">factory_editor_title</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorTitle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">factory_editor_title</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="n">model_title</span><span class="o">.</span><span class="n">_ui_model</span></div>
+
+        <span class="c1"># assert isinstance(target._controls_fact, dict)</span>
+        <span class="c1"># assert len(facts) == len(target._controls_fact)</span>
+        <span class="c1"># for fact in facts:</span>
+        <span class="c1">#     assert target._controls_fact[fact.tag]._fact is fact</span>
+
+<div class="viewcode-block" id="TestControlTopic.test_property"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestControlTopic.test_property">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_ATTR, NAME_PROP&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_display_name&#39;</span><span class="p">,</span> <span class="s1">&#39;new_display_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_editor_name&#39;</span><span class="p">,</span> <span class="s1">&#39;new_editor_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_display_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;new_display_summary&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_editor_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;new_editor_summary&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_display_title&#39;</span><span class="p">,</span> <span class="s1">&#39;new_display_title&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_factory_editor_title&#39;</span><span class="p">,</span> <span class="s1">&#39;new_editor_title&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm model property is get-only.</span>
+
+<span class="sd">        #. Case: get</span>
+<span class="sd">        #. Case: no set</span>
+<span class="sd">        #. Case: no delete</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute.</span>
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="n">value_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="n">value_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test: get</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_attr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_prop</span><span class="p">)</span>
+        <span class="c1"># Test: no set</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># Test: no delete</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestControlTopic.test_property_tag"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestControlTopic.test_property_tag">[docs]</a>    <span class="k">def</span> <span class="nf">test_property_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm values and access limits of tag property.</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestControlTopic.test_property_name"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestControlTopic.test_property_name">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME, TEXT, ESCAPED&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;/b&gt; Sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;/b&gt; Sketch&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;b Sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;lt;b&amp;gt;Parrot&amp;lt;b Sketch&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;/b&gt; Sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;/b&gt; Sketch&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;b&gt;Parrot&lt;b Sketch&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;lt;b&amp;gt;Parrot&amp;lt;b Sketch&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_topic</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">TEXT</span><span class="p">,</span> <span class="n">ESCAPED</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm model name property is get-only without markup errors.</span>
+<span class="sd">        | Case: name does not contain markup errors</span>
+
+<span class="sd">        #. Case: get</span>
+<span class="sd">        #. Case: no set</span>
+<span class="sd">        #. Case: no delete</span>
+
+<span class="sd">        :param new_model_topic: fixture :func:`.new_model_topic`.</span>
+<span class="sd">        :param NAME: name property to check.</span>
+<span class="sd">        :param TEXT: contents of property</span>
+<span class="sd">        :param ESCAPED: name of factsheet with markup errors escaped.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">MODEL</span> <span class="o">=</span> <span class="n">new_model_topic</span><span class="p">(</span><span class="n">N_FACTS</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">(</span><span class="n">p_model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="n">model_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+        <span class="n">model_prop</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test: get</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">ESCAPED</span> <span class="o">==</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: no set</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># Test: no delete</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div></div>
+
+    <span class="c1"># @pytest.mark.parametrize(&#39;NAME_ATTR, NAME_PROP, HAS_SETTER&#39;, [</span>
+    <span class="c1">#     (&#39;_topic&#39;, &#39;topic&#39;, False),</span>
+    <span class="c1">#     (&#39;_topic&#39;, &#39;idcore&#39;, False),</span>
+    <span class="c1">#     ])</span>
+    <span class="c1"># def test_property(self, NAME_ATTR, NAME_PROP, HAS_SETTER):</span>
+    <span class="c1">#     &quot;&quot;&quot;Confirm values and access limits of properties.&quot;&quot;&quot;</span>
+    <span class="c1">#     # Setup</span>
+    <span class="c1">#     TOPIC = MTOPIC.Topic()</span>
+    <span class="c1">#     target = CTOPIC.ControlTopic(p_topic=TOPIC)</span>
+    <span class="c1">#     target_prop = getattr(CTOPIC.ControlTopic, NAME_PROP)</span>
+    <span class="c1">#     value_attr = getattr(target, NAME_ATTR)</span>
+    <span class="c1">#     REPLACE = MTOPIC.Topic()</span>
+    <span class="c1">#     # Test</span>
+    <span class="c1">#     assert target_prop.fget is not None</span>
+    <span class="c1">#     assert value_attr is target_prop.fget(target)</span>
+    <span class="c1">#     if HAS_SETTER:</span>
+    <span class="c1">#         target_prop.fset(target, REPLACE)</span>
+    <span class="c1">#         value_attr = getattr(target, NAME_ATTR)</span>
+    <span class="c1">#         assert value_attr is REPLACE</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         assert target_prop.fset is None</span>
+    <span class="c1">#     assert target_prop.fdel is None</span>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.control_topic`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.control.test_control_topic.html#factsheet_test.control.test_control_topic.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="c1"># (CTOPIC.IdTopic.__qualname__, &#39;NewType.&lt;locals&gt;.new_type&#39;),</span>
+        <span class="c1"># (CTOPIC.IdTopic.__dict__[&#39;__supertype__&#39;], int),</span>
+        <span class="c1"># (CTOPIC.ViewNameTopic, BUI.ViewTextMarkup),</span>
+        <span class="c1"># (CTOPIC.ViewSummaryTopic, BUI.ViewTextTagged),</span>
+        <span class="c1"># (CTOPIC.ViewTitleTopic, BUI.ViewTextMarkup),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type alias definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type alias under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

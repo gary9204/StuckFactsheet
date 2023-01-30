@@ -1,0 +1,548 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.model.test_idcore &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.model.test_idcore</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.model.test_idcore</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for identity attributes common to Factsheet model components.</span>
+<span class="sd">See :class:`~.IdCore`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_gtk.bridge_text</span> <span class="k">as</span> <span class="nn">BTEXT</span>
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.idcore</span> <span class="k">as</span> <span class="nn">MIDCORE</span>
+
+
+<div class="viewcode-block" id="PatchIdCore"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.PatchIdCore">[docs]</a><span class="k">class</span> <span class="nc">PatchIdCore</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">IdCore</span><span class="p">[</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">,</span>
+                                 <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">,</span>
+                                 <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Stub subclass for testing :class:`.IdCore` methods.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">,</span> <span class="n">p_summary</span><span class="p">,</span> <span class="n">p_title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">(</span><span class="n">p_summary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">(</span><span class="n">p_title</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestIdCore"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore">[docs]</a><span class="k">class</span> <span class="nc">TestIdCore</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.IdCore`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestIdCore.test_eq"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_eq">[docs]</a>    <span class="k">def</span> <span class="nf">test_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm equivalence operator.</span>
+
+<span class="sd">        #. Case: type difference.</span>
+<span class="sd">        #. Case: name difference.</span>
+<span class="sd">        #. Case: summary difference.</span>
+<span class="sd">        #. Case: title difference.</span>
+<span class="sd">        #. Case: equivalent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;Something completely different.&#39;</span>
+        <span class="c1"># Test: type difference.</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="c1"># Test: name difference.</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: summary difference.</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: title difference.</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">_set_persist</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># Test: equivalent</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_get_set_state"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_get_set_state">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm conversion to and from pickle format.</span>
+
+<span class="sd">        :param tmp_path: built-in fixture `Pytest tmp_path`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;get_set.fsg&#39;</span><span class="p">))</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="n">source</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_out</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io_out</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io_in</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">io_in</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_name</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_summary</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span>
+        <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">_title</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_title</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: nominal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_stale</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_init_attr"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_init_attr">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ATTR, HINT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_name&#39;</span><span class="p">,</span> <span class="s1">&#39;~ModelName&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;~ModelSummary&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;~ModelTitle&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">,</span> <span class="n">HINT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: missing attribute definition.</span>
+
+<span class="sd">        :param ATTR: missing attribute.</span>
+<span class="sd">        :param HINT: type hint for missing attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchPartial</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">IdCore</span><span class="p">[</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">,</span>
+                                          <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">,</span>
+                                          <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">]):</span>
+            <span class="sd">&quot;&quot;&quot;Partially defines attributes for  :func:`.IdCore.__init__`.&quot;&quot;&quot;</span>
+
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_name</span><span class="p">,</span> <span class="n">p_summary</span><span class="p">,</span> <span class="n">p_title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">(</span><span class="n">p_name</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_summary</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">(</span><span class="n">p_summary</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">(</span><span class="n">p_title</span><span class="p">)</span>
+                <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">ERROR</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s1">&#39;PatchPartial: IdCore subclasses must define &#39;</span>
+                          <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> attribute with type </span><span class="si">{}</span><span class="s1"> and then call &#39;</span>
+                          <span class="s1">&#39;super().__init__()&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ATTR</span><span class="p">,</span> <span class="n">HINT</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">ERROR</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">PatchPartial</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_init_extra"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_init_extra">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_extra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: extra keyword argument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">ERROR</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s2">&quot;IdCore.__init__() called with extra &quot;</span>
+                          <span class="s2">&quot;argument(s): {&#39;extra&#39;: &#39;Oops!&#39;}&quot;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">ERROR</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">,</span>
+                            <span class="n">extra</span><span class="o">=</span><span class="s1">&#39;Oops!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_is_fresh"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_is_fresh">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;IS_STALE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">False</span><span class="p">,</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_is_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">IS_STALE</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm negation of :meth:`~.IdCore.is_stale`.</span>
+
+<span class="sd">        :param IS_STALE: state to report for sheet.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchIsStale</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_result</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">p_result</span>
+
+            <span class="k">def</span> <span class="nf">is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">PatchIsStale</span><span class="p">(</span><span class="n">IS_STALE</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">IdCore</span><span class="p">,</span> <span class="s1">&#39;is_stale&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">is_stale</span><span class="p">)</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">IS_STALE</span>
+        <span class="k">assert</span> <span class="n">patch</span><span class="o">.</span><span class="n">called</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_is_stale"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_is_stale">[docs]</a>    <span class="k">def</span> <span class="nf">test_is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm return is accurate.</span>
+
+<span class="sd">        #. Case: IdCore stale, name, summary, and title fresh</span>
+<span class="sd">        #. Case: IdCore fresh, name stale, summary fresh, title fresh</span>
+<span class="sd">        #. Case: IdCore fresh, name fresh, summary stale, title fresh</span>
+<span class="sd">        #. Case: IdCore fresh, name fresh, summary fresh, title stale</span>
+<span class="sd">        #. Case: IdCore fresh, name, summary, and title fresh</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="c1"># Test: IdCore stale, name, summary, and title fresh</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="c1"># Test: IdCore fresh, name stale, summary fresh, title fresh</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="c1"># Test: IdCore fresh, name fresh, summary stale, title fresh</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="c1"># Test: IdCore fresh, name fresh, summary fresh, title stale</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span>
+        <span class="c1"># Test: IdCore fresh, name, summary and title fresh</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">is_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_property_access"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_property_access">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_PROP, NAME_ATTR&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">,</span> <span class="s1">&#39;_summary&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;_title&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_access</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of each property.</span>
+
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">CLASS</span> <span class="o">=</span> <span class="n">MIDCORE</span><span class="o">.</span><span class="n">IdCore</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">is</span> <span class="n">attr</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_set_fresh"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_set_fresh">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_fresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm instance marked fresh.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_set_fresh_attr"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_set_fresh_attr">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ATTR&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_summary&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_title&#39;</span><span class="p">,</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_set_fresh_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm all attributes marked fresh.</span>
+
+<span class="sd">        :param ATTR: name of attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">)</span>
+        <span class="n">attribute</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_fresh</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">attribute</span><span class="o">.</span><span class="n">is_fresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestIdCore.test_set_stale"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCore.test_set_stale">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm instance marked stale and attributes unchanged.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchAttrSetStale</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">def</span> <span class="nf">set_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Parrot&#39;</span>
+        <span class="n">SUMMARY</span> <span class="o">=</span> <span class="s1">&#39;The parrot is a Norwegian Blue.&#39;</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;The Parrot Sketch&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">PatchIdCore</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">PatchAttrSetStale</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">BTEXT</span><span class="o">.</span><span class="n">ModelText</span><span class="p">,</span> <span class="s1">&#39;set_stale&#39;</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">set_stale</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">set_stale</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">patch</span><span class="o">.</span><span class="n">called</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_stale</span></div></div>
+
+
+<div class="viewcode-block" id="TestIdCoreTypes"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCoreTypes">[docs]</a><span class="k">class</span> <span class="nc">TestIdCoreTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for type hint definitions in :mod:`.idcore`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestIdCoreTypes.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.model.test_idcore.html#factsheet_test.model.test_idcore.TestIdCoreTypes.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">ModelName</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">ModelName</span><span class="o">.</span><span class="n">__constraints__</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">)),</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">ModelSummary</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">ModelSummary</span><span class="o">.</span><span class="n">__constraints__</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">)),</span>
+        <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">ModelTitle</span><span class="p">),</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MIDCORE</span><span class="o">.</span><span class="n">ModelTitle</span><span class="o">.</span><span class="n">__constraints__</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">)),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type hint definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

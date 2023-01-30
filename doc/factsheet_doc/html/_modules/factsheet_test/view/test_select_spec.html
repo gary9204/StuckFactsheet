@@ -1,0 +1,952 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.view.test_select_spec &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.view.test_select_spec</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.view.test_select_spec</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for class to select a topic specification.  See</span>
+<span class="sd">:mod:`.select_spec`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.spec</span> <span class="k">as</span> <span class="nn">SPECS</span>
+<span class="kn">import</span> <span class="nn">factsheet.spec.base_s</span> <span class="k">as</span> <span class="nn">SBASE</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.select_spec</span> <span class="k">as</span> <span class="nn">VSELECT_SPEC</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.ui</span> <span class="k">as</span> <span class="nn">UI</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="g_specs_empty"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.g_specs_empty">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">g_specs_empty</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture with teardown: Clear :data:`.g_specs`.&quot;&quot;&quot;</span>
+    <span class="n">g_specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+    <span class="n">g_specs_saved</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">BUI</span><span class="o">.</span><span class="n">ModelOutlineMulti</span><span class="p">[</span><span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">]()</span>
+    <span class="n">g_specs_saved</span><span class="o">.</span><span class="n">insert_section</span><span class="p">(</span><span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span><span class="p">)</span>
+    <span class="n">g_specs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">yield</span>
+    <span class="n">g_specs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">g_specs</span><span class="o">.</span><span class="n">insert_section</span><span class="p">(</span><span class="n">g_specs_saved</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="g_specs_stub"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.g_specs_stub">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">g_specs_stub</span><span class="p">(</span><span class="n">g_specs_empty</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture returns :data:`.g_specs` outline with stub specs.</span>
+
+<span class="sd">    The outline is as follows.</span>
+
+<span class="sd">        | name_0xx | title_0xx | summary_0xx</span>
+<span class="sd">        |     name_00x | title_00x | summary_00x</span>
+<span class="sd">        |         name_000 | title_000 | summary_000</span>
+<span class="sd">        |     name_01x | title_01x | summary_01x</span>
+<span class="sd">        | name_1xx | title_1xx | summary_1xx</span>
+<span class="sd">        |     name_10x | title_10x | summary_10x</span>
+<span class="sd">        |     name_11x | title_11x | summary_11x</span>
+<span class="sd">        |         name_110 | title_110 | summary_110</span>
+<span class="sd">        |         name_111 | title_111 | summary_111</span>
+<span class="sd">        |         name_112 | title_112 | summary_112</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_0xx&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_0xx&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_0xx&#39;</span><span class="p">)</span>
+    <span class="n">line_0xx</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_00x&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_00x&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_00x&#39;</span><span class="p">)</span>
+    <span class="n">line_00x</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_0xx</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_000&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_000&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_000&#39;</span><span class="p">)</span>
+    <span class="n">_line_000</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_00x</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_01x&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_01x&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_01x&#39;</span><span class="p">)</span>
+    <span class="n">_line_01x</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_0xx</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_1xx&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_1xx&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_1xx&#39;</span><span class="p">)</span>
+    <span class="n">line_1xx</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_0xx</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_10x&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_10x&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_10x&#39;</span><span class="p">)</span>
+    <span class="n">_line_10x</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_1xx</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_11x&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_11x&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_11x&#39;</span><span class="p">)</span>
+    <span class="n">line_11x</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_1xx</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_110&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_110&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_110&#39;</span><span class="p">)</span>
+    <span class="n">_line_110</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_11x</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_111&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_111&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_111&#39;</span><span class="p">)</span>
+    <span class="n">_line_111</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_11x</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+        <span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;name_112&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;title_112&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;summary_112&#39;</span><span class="p">)</span>
+    <span class="n">_line_112</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">line_11x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestFieldsIdCore"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestFieldsIdCore">[docs]</a><span class="k">class</span> <span class="nc">TestFieldsIdCore</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.FieldsId`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestFieldsIdCore.test_members"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestFieldsIdCore.test_members">[docs]</a>    <span class="k">def</span> <span class="nf">test_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm member definitions.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span>
+        <span class="k">assert</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span>
+        <span class="k">assert</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span></div></div>
+
+
+<div class="viewcode-block" id="TestSelectSpec"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec">[docs]</a><span class="k">class</span> <span class="nc">TestSelectSpec</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`.SelectSpec`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestSelectSpec.test_no_summary"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_no_summary">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm class attribute definition.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span>
+        <span class="n">EXPECT</span> <span class="o">=</span> <span class="s1">&#39;Please choose a specification for a new topic.&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization orchestration.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_specs</span> <span class="ow">is</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_dialog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_scope_search</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init_dialog"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of top-level visual element.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchCall</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_ui</span> <span class="o">=</span> <span class="s1">&#39;Oops!&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dialog</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">(</span><span class="n">use_header_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id_ui</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_ui</span> <span class="o">=</span> <span class="n">p_id_ui</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dialog</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">I_CANCEL</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">NAME_CANCEL</span> <span class="o">=</span> <span class="s1">&#39;Cancel&#39;</span>
+        <span class="n">I_SELECT</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">NAME_SELECT</span> <span class="o">=</span> <span class="s1">&#39;Select&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+
+        <span class="n">patch_call</span> <span class="o">=</span> <span class="n">PatchCall</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="n">get_ui_element</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_dialog</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">,</span> <span class="n">p_get_ui_element</span><span class="o">=</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patch_call</span><span class="o">.</span><span class="n">dialog</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">dialog</span><span class="o">.</span><span class="n">get_transient_for</span><span class="p">()</span> <span class="ow">is</span> <span class="n">WIN</span>
+        <span class="k">assert</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">dialog</span><span class="o">.</span><span class="n">get_destroy_with_parent</span><span class="p">()</span>
+
+        <span class="n">header_bar</span> <span class="o">=</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">dialog</span><span class="o">.</span><span class="n">get_header_bar</span><span class="p">()</span>
+        <span class="n">buttons</span> <span class="o">=</span> <span class="n">header_bar</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="n">button_cancel</span> <span class="o">=</span> <span class="n">buttons</span><span class="p">[</span><span class="n">I_CANCEL</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">button_cancel</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Button</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_CANCEL</span> <span class="o">==</span> <span class="n">button_cancel</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span>
+        <span class="n">button_select</span> <span class="o">=</span> <span class="n">buttons</span><span class="p">[</span><span class="n">I_SELECT</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Button</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span> <span class="ow">is</span> <span class="n">button_select</span>
+        <span class="k">assert</span> <span class="n">NAME_SELECT</span> <span class="o">==</span> <span class="n">button_select</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_style_context</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">style</span><span class="o">.</span><span class="n">has_class</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">STYLE_CLASS_SUGGESTED_ACTION</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_sensitive</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init_outline_specs"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init_outline_specs">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_outline_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of spec outline.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchCall</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_ui</span> <span class="o">=</span> <span class="s1">&#39;Oops!&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">site</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Viewport</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id_ui</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_ui</span> <span class="o">=</span> <span class="n">p_id_ui</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">site</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">UI_ID</span> <span class="o">=</span> <span class="s1">&#39;ui_site_outline_specs&#39;</span>
+        <span class="n">N_COLUMNS</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">C_NAME</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">TITLE_C_NAME</span> <span class="o">=</span> <span class="s1">&#39;Name&#39;</span>
+        <span class="n">C_TITLE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">TITLE_C_TITLE</span> <span class="o">=</span> <span class="s1">&#39;Title&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+
+        <span class="n">patch_call</span> <span class="o">=</span> <span class="n">PatchCall</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="n">get_ui_element</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_outline_specs</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="k">assert</span> <span class="n">UI_ID</span> <span class="o">==</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">id_ui</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span> <span class="ow">is</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">get_child</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_columns</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_name</span> <span class="ow">is</span> <span class="n">columns</span><span class="p">[</span><span class="n">C_NAME</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">TITLE_C_NAME</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_name</span><span class="o">.</span><span class="n">get_title</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_title</span> <span class="ow">is</span> <span class="n">columns</span><span class="p">[</span><span class="n">C_TITLE</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">TITLE_C_TITLE</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_column_title</span><span class="o">.</span><span class="n">get_title</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">N_COLUMNS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span> <span class="ow">is</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_selection</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init_search"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init_search">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of search bar.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchCall</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id_ui</span><span class="p">):</span>
+                <span class="n">stub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stubs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p_id_ui</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">stub</span>
+
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">binding</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">equal_func_args</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stubs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">ui_search</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">SearchBar</span><span class="p">(),</span>
+                    <span class="n">ui_header</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">HeaderBar</span><span class="p">(),</span>
+                    <span class="n">ui_search_in_name</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(),</span>
+                    <span class="n">ui_search_in_summary</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(),</span>
+                    <span class="n">ui_search_in_title</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(),</span>
+                    <span class="n">ui_search_entry</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(),</span>
+                    <span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">bind_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">binding_args</span> <span class="o">=</span> <span class="n">args</span>
+
+            <span class="k">def</span> <span class="nf">set_equal_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">equal_func_args</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+
+        <span class="n">patch_call</span> <span class="o">=</span> <span class="n">PatchCall</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">ToggleButton</span><span class="p">,</span> <span class="s1">&#39;bind_property&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">bind_property</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">,</span> <span class="s1">&#39;set_search_equal_func&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">set_equal_func</span><span class="p">)</span>
+        <span class="n">get_ui_element</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">PROP_SOURCE</span> <span class="o">=</span> <span class="s1">&#39;active&#39;</span>
+        <span class="n">PROP_TARGET</span> <span class="o">=</span> <span class="s1">&#39;search-mode-enabled&#39;</span>
+        <span class="n">I_FIND</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">LABEL_FIND</span> <span class="o">=</span> <span class="s1">&#39;Find&#39;</span>
+        <span class="n">C_FIRST</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_search</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_scope_search</span>
+        <span class="n">prop_source</span><span class="p">,</span> <span class="n">target_bind</span><span class="p">,</span> <span class="n">prop_target</span><span class="p">,</span> <span class="n">flags</span> <span class="o">=</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">binding_args</span>
+        <span class="k">assert</span> <span class="n">PROP_SOURCE</span> <span class="o">==</span> <span class="n">prop_source</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_bind</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">SearchBar</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PROP_TARGET</span> <span class="o">==</span> <span class="n">prop_target</span>
+        <span class="k">assert</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">BIDIRECTIONAL</span> <span class="o">==</span> <span class="n">flags</span>
+        <span class="n">header_bar</span> <span class="o">=</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">stubs</span><span class="p">[</span><span class="s1">&#39;ui_header&#39;</span><span class="p">]</span>
+        <span class="n">buttons</span> <span class="o">=</span> <span class="n">header_bar</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="n">button_find</span> <span class="o">=</span> <span class="n">buttons</span><span class="p">[</span><span class="n">I_FIND</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">LABEL_FIND</span> <span class="o">==</span> <span class="n">button_find</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">button_find</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ToggleButton</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">button_find</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_enable_search</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">C_FIRST</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_search_column</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">get_search_entry</span><span class="p">(</span>
+            <span class="p">)</span> <span class="ow">is</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">stubs</span><span class="p">[</span><span class="s1">&#39;ui_search_entry&#39;</span><span class="p">]</span>
+        <span class="n">equal_func</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">equal_func_args</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_match_spec_ne</span> <span class="o">==</span> <span class="n">equal_func</span>
+        <span class="k">assert</span> <span class="n">extra</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init_search_signals"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init_search_signals">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_SIGNAL, NAME_BUTTON, ORIGIN, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_search_in_name&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_search_in_summary&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;toggled&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_search_in_title&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_search_signals</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">NAME_BUTTON</span><span class="p">,</span> <span class="n">ORIGIN</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of signal connections.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param NAME_SIGNAL: name of signal.</span>
+<span class="sd">        :param NAME_BUTTON: name of scope button connected to signal.</span>
+<span class="sd">        :param ORIGIN: GTK class of connected button.</span>
+<span class="sd">        :param N_DEFAULT: number of default handlers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchCall</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id_ui</span><span class="p">):</span>
+                <span class="n">stub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stubs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p_id_ui</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">stub</span>
+
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stubs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">ui_search</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">SearchBar</span><span class="p">(),</span>
+                    <span class="n">ui_header</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">HeaderBar</span><span class="p">(),</span>
+                    <span class="n">ui_search_in_name</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(),</span>
+                    <span class="n">ui_search_in_summary</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(),</span>
+                    <span class="n">ui_search_in_title</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">CheckButton</span><span class="p">(),</span>
+                    <span class="n">ui_search_entry</span><span class="o">=</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(),</span>
+                    <span class="p">)</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+
+        <span class="n">patch_call</span> <span class="o">=</span> <span class="n">PatchCall</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="n">get_ui_element</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">ORIGIN</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_search</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">stubs</span><span class="p">[</span><span class="n">NAME_BUTTON</span><span class="p">]</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">button</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init_signals"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init_signals">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+        <span class="s1">&#39;NAME_SIGNAL, NAME_ATTRIBUTE, ORIGIN, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="s1">&#39;_ui_selection&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeSelection</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_init_signals</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">NAME_ATTRIBUTE</span><span class="p">,</span> <span class="n">ORIGIN</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of signal connections.</span>
+
+<span class="sd">        :param NAME_SIGNAL: name of signal.</span>
+<span class="sd">        :param NAME_ATTRIBUTE: name of attribute connected to signal.</span>
+<span class="sd">        :param ORIGIN: GTK class of connected attribute.</span>
+<span class="sd">        :param N_DEFAULT: number of default handlers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">ORIGIN</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTRIBUTE</span><span class="p">)</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">attribute</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_init_summary"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_init_summary">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of spec summary.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchCall</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_ui</span> <span class="o">=</span> <span class="s1">&#39;Oops!&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">site</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Viewport</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id_ui</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_ui</span> <span class="o">=</span> <span class="n">p_id_ui</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">site</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">UI_ID</span> <span class="o">=</span> <span class="s1">&#39;ui_site_summary&#39;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+
+        <span class="n">patch_call</span> <span class="o">=</span> <span class="n">PatchCall</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">,</span> <span class="n">patch_call</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="n">get_ui_element</span> <span class="o">=</span> <span class="n">UI</span><span class="o">.</span><span class="n">GetUiElementByStr</span><span class="p">(</span><span class="n">p_string_ui</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_init_summary</span><span class="p">(</span><span class="n">get_ui_element</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">UI_ID</span> <span class="o">==</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">id_ui</span>
+        <span class="n">view_summary</span> <span class="o">=</span> <span class="n">patch_call</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">get_child</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">view_summary</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">ui_model</span> <span class="ow">is</span> <span class="n">view_summary</span><span class="o">.</span><span class="n">get_buffer</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">view_summary</span><span class="o">.</span><span class="n">get_wrap_mode</span><span class="p">()</span> <span class="ow">is</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">WrapMode</span><span class="o">.</span><span class="n">WORD_CHAR</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patch_dialog_run</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm spec selection.</span>
+<span class="sd">        | Case: spec chosen.</span>
+
+<span class="sd">        :param patch_dialog_run: fixture :func:`.patch_dialog_run`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">patch_dialog</span> <span class="o">=</span> <span class="n">patch_dialog_run</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">N_SPECS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">I_CHOSEN</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_SPECS</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Title </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_item</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">I_CHOSEN</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">spec_chosen</span> <span class="o">=</span> <span class="n">spec</span>
+                <span class="n">line_chosen</span> <span class="o">=</span> <span class="n">line</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_chosen</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="p">()</span> <span class="ow">is</span> <span class="n">spec_chosen</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_call_cancel"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_call_cancel">[docs]</a>    <span class="k">def</span> <span class="nf">test_call_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patch_dialog_run</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm spec selection.</span>
+<span class="sd">        | Case: no spec chosen.</span>
+
+<span class="sd">        :param patch_dialog_run: fixture :func:`.patch_dialog_run`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">patch_dialog</span> <span class="o">=</span> <span class="n">patch_dialog_run</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">patch_dialog</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">N_SPECS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_SPECS</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Title </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">_line</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_item</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">line_chosen</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">get_iter_first</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_chosen</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_dialog</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_markup_cell"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_markup_cell">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD, I_LINE, EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_name&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Name 0&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_name&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Name 3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_title&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Title 2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_title&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Title 4&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_markup_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">,</span> <span class="n">I_LINE</span><span class="p">,</span> <span class="n">EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm cell data function updates column text.</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        :param METHOD: markup method under test.</span>
+<span class="sd">        :param I_LINE: index in outline of sample line.</span>
+<span class="sd">        :param EXPECT: text to expect in cell.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">N_SPECS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_SPECS</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Title </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_item</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">()</span>
+        <span class="n">render</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRendererText</span><span class="p">()</span>
+        <span class="n">column</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">render</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ui_model_specs</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">ui_model_specs</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">I_LINE</span><span class="p">))</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_method</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui_model_specs</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT</span> <span class="o">==</span> <span class="n">render</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_markup_cell_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_markup_cell_none">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_markup_cell_title&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_markup_cell_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm cell data function updates column text.</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        :param METHOD: markup method under test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">()</span>
+        <span class="n">render</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRendererText</span><span class="p">()</span>
+        <span class="n">column</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">render</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ui_model_specs</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="n">ui_model_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">ui_model_specs</span><span class="o">.</span><span class="n">get_iter_first</span><span class="p">()</span>
+        <span class="n">EXPECT</span> <span class="o">=</span> <span class="s1">&#39;Missing&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_method</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT</span> <span class="o">==</span> <span class="n">render</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_on_changed_selection"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_on_changed_selection">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm summary shown matches chosen spec.</span>
+<span class="sd">        | Case: a spec at line choosen.</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">N_SPECS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">I_SPEC</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_SPECS</span><span class="p">):</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;Summary </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_item</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">I_SPEC</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">summary_expect</span> <span class="o">=</span> <span class="n">summary</span>
+                <span class="n">line_spec</span> <span class="o">=</span> <span class="n">line</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line_spec</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_changed_selection</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">summary_expect</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_sensitive</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_on_changed_selection_absent"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_on_changed_selection_absent">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection_absent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm summary shown matches chosen spec.</span>
+<span class="sd">        | Case: no spec at line choosen.</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">select_iter</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_changed_selection</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_sensitive</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_on_changed_selection_none"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_on_changed_selection_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_changed_selection_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm summary shown matches chosen spec.</span>
+<span class="sd">        | Case: no spec is choosen.</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">N_SPECS</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_SPECS</span><span class="p">):</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;Summary </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">p_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">_line</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">p_item</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">p_line</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_outline_specs</span><span class="o">.</span><span class="n">expand_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_ui_selection</span><span class="o">.</span><span class="n">unselect_all</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_changed_selection</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_sensitive</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_on_changed_search_scope"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_on_changed_search_scope">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SCOPE, ACTIVE, FIELD, EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
+         <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">,</span>
+         <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span>
+         <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">),</span>
+        <span class="p">(</span><span class="o">~</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
+         <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span> <span class="o">|</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_on_changed_search_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SCOPE</span><span class="p">,</span> <span class="n">ACTIVE</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">,</span> <span class="n">EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm change in search scope.</span>
+
+<span class="sd">        :param SCOPE: fields identifying scope of search.</span>
+<span class="sd">        :param ACTIVE: True when scope button set to active.</span>
+<span class="sd">        :param FIELD: changed scope field.</span>
+<span class="sd">        :param EXPECT: expected result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">=</span> <span class="n">SCOPE</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ToggleButton</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="n">ACTIVE</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_changed_search_scope</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EXPECT</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_scope_search</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_set_no_spec"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_set_no_spec">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_no_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm summary content and Specify button state.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;Oops&#39;</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_set_no_spec</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">NO_SUMMARY</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">_button_select</span><span class="o">.</span><span class="n">get_sensitive</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestSelectSpec.test_match_spec_ne"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_match_spec_ne">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;SCOPE, PATH_ITEM, MATCH_KEY, EXPECT, EXPANDED&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="s1">&#39;1:0&#39;</span><span class="p">,</span> <span class="s1">&#39;name 01x&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="s1">&#39;0:1&#39;</span><span class="p">,</span> <span class="s1">&#39;name_01x&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;e_0x&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;$e_0x&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;summary_1xx&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;summary_1xx&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="s1">&#39;1:1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;y_111&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">SUMMARY</span><span class="p">,</span> <span class="s1">&#39;1:1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;y_11$&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">VOID</span><span class="p">,</span> <span class="s1">&#39;0:0:0&#39;</span><span class="p">,</span> <span class="s1">&#39;title_000&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span> <span class="s1">&#39;0:0:0&#39;</span><span class="p">,</span> <span class="s1">&#39;title_000&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span> <span class="s1">&#39;1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;le_1&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span> <span class="s1">&#39;1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;le_11&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FieldsId</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span> <span class="s1">&#39;1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;le$11&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_match_spec_ne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">g_specs_stub</span><span class="p">,</span>
+                           <span class="n">SCOPE</span><span class="p">,</span> <span class="n">PATH_ITEM</span><span class="p">,</span> <span class="n">MATCH_KEY</span><span class="p">,</span> <span class="n">EXPECT</span><span class="p">,</span> <span class="n">EXPANDED</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm method returns False when field matches search key.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param g_specs_stub: fixture :func:`.g_specs_stub`.</span>
+<span class="sd">        :param SCOPE: field identifying scope of search.</span>
+<span class="sd">        :param PATH_SPEC: path to spec to match.</span>
+<span class="sd">        :param MATCH_KEY: value to match in spec field.</span>
+<span class="sd">        :param EXPECT: expected result.</span>
+<span class="sd">        :param EXPANDED: True when method should expand spec outline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="k">class</span> <span class="nc">PatchExpand</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">def</span> <span class="nf">expand_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">_a</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="n">patch_expand</span> <span class="o">=</span> <span class="n">PatchExpand</span><span class="p">()</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span>
+            <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeView</span><span class="p">,</span> <span class="s1">&#39;expand_row&#39;</span><span class="p">,</span> <span class="n">patch_expand</span><span class="o">.</span><span class="n">expand_row</span><span class="p">)</span>
+
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">_scope_search</span> <span class="o">=</span> <span class="n">SCOPE</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span><span class="o">.</span><span class="n">get_iter_from_string</span><span class="p">(</span><span class="n">PATH_ITEM</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_match_spec_ne</span><span class="p">(</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MATCH_KEY</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">actual</span> <span class="ow">is</span> <span class="n">EXPECT</span>
+        <span class="k">assert</span> <span class="n">patch_expand</span><span class="o">.</span><span class="n">called</span> <span class="ow">is</span> <span class="n">EXPANDED</span>
+        <span class="k">if</span> <span class="n">EXPANDED</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">PATH_ITEM</span> <span class="o">==</span> <span class="n">patch_expand</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestSelectSpec.test_match_spec_ne_absent"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestSelectSpec.test_match_spec_ne_absent">[docs]</a>    <span class="k">def</span> <span class="nf">test_match_spec_ne_absent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_specs_empty</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm method returns True and logs warning when spec is None.</span>
+
+<span class="sd">        :param g_specs_empty: fixture :func:`.g_specs_empty`.</span>
+<span class="sd">        :param caplog: built-in fixture `Pytest caplog`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">WIN</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">g_specs</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">SelectSpec</span><span class="p">(</span><span class="n">p_parent</span><span class="o">=</span><span class="n">WIN</span><span class="p">)</span>
+        <span class="n">MATCH_KEY</span> <span class="o">=</span> <span class="s1">&#39;name&#39;</span>
+        <span class="n">ui_model_specs</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span>
+        <span class="n">ui_model_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">ui_model_specs</span><span class="o">.</span><span class="n">get_iter_first</span><span class="p">()</span>
+        <span class="n">N_LOGS</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">LAST</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Spec outline contains None for spec&#39;</span>
+                       <span class="s1">&#39; (SelectSpec._match_spec_ne)&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_match_spec_ne</span><span class="p">(</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">ui_model</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MATCH_KEY</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">actual</span>
+        <span class="k">assert</span> <span class="n">N_LOGS</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">LAST</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">log_message</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">assert</span> <span class="s1">&#39;WARNING&#39;</span> <span class="o">==</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span></div></div>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.select_spec`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_attributes"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestModule.test_attributes">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;ATTR, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm global attribute definitions.</span>
+
+<span class="sd">        :param ATTR: global attibute under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ATTR</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.view.test_select_spec.html#factsheet_test.view.test_select_spec.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="c1"># (VTOPICS.UiEditorTopics, Gtk.Frame),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">FactoryDisplayTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">ModelSummary</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">VSELECT_SPEC</span><span class="o">.</span><span class="n">ViewOutlineSpec</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ViewOutline</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type alias definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type alias under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

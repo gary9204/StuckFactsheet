@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>view_topic View Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="app Application" href="factsheet.app.html" />
+    <link rel="prev" title="view_stack View Module" href="factsheet.view.view_stack.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">view_topic</span></code> View Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.view.view_topic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.view.view_topic">
+<span id="view-topic-view-module"></span><h1><code class="docutils literal notranslate"><span class="pre">view_topic</span></code> View Module<a class="headerlink" href="#module-factsheet.view.view_topic" title="Permalink to this headline">¶</a></h1>
+<p>Defines class to display topic view in a Factsheet window pane.</p>
+<dl class="class">
+<dt id="factsheet.view.view_topic.ViewTopic">
+<em class="property">class </em><code class="sig-name descname">ViewTopic</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_control</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_topic.html#ViewTopic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_topic.ViewTopic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Display topic and translate user actions.</p>
+<p>Class <a class="reference internal" href="#factsheet.view.view_topic.ViewTopic" title="factsheet.view.view_topic.ViewTopic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewTopic</span></code></a> maintains presentation of a topic in a
+pane of a Factsheet window.  The class displays the content of a
+topic model. It translates a user’s actions at the user interface
+into requests to update the model and its presentation.</p>
+<dl class="attribute">
+<dt id="factsheet.view.view_topic.ViewTopic.NAME_FILE_TOPIC_UI">
+<code class="sig-name descname">NAME_FILE_TOPIC_UI</code><a class="headerlink" href="#factsheet.view.view_topic.ViewTopic.NAME_FILE_TOPIC_UI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to user interface defintion of topic pane.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_topic.ViewTopic.ui_view">
+<em class="property">property </em><code class="sig-name descname">ui_view</code><a class="headerlink" href="#factsheet.view.view_topic.ViewTopic.ui_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return underlying presentation element.</p>
+<p>This is a stub method. It is untested.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.view.view_topic.ViewTopic.on_show_dialog">
+<code class="sig-name descname">on_show_dialog</code><span class="sig-paren">(</span><em class="sig-param">_action</em>, <em class="sig-param">_target</em>, <em class="sig-param">p_dialog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/view/view_topic.html#ViewTopic.on_show_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.view.view_topic.ViewTopic.on_show_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display informational dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_dialog</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dialog</span></code>) – informational dialog.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Enhancement opportunity</strong></p>
+<p>Method <code class="docutils literal notranslate"><span class="pre">on_show_dialog</span></code> includes a top-level window check
+as per <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Widget.html#Gtk.Widget.get_toplevel">Gtk.Widget.get_toplevel</a>.
+During normal operation, this check should always confirm the
+topic pane is in a top-level window.</p>
+<p>The method silently patches a failure.  Consider adding a
+log message to the method to document abnormal behavior.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.app.html" class="btn btn-neutral float-right" title="app Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.view.view_stack.html" class="btn btn-neutral float-left" title="view_stack View Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

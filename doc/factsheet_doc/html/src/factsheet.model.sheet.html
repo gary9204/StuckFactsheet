@@ -1,0 +1,495 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sheet Model Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="topic Model Module" href="factsheet.model.topic.html" />
+    <link rel="prev" title="idcore Model Module" href="factsheet.model.idcore.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_src.html">Source Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_src.html">Source Code</a> &raquo;</li>
+        
+          <li><a href="factsheet.html"><code class="docutils literal notranslate"><span class="pre">factsheet</span></code> Package</a> &raquo;</li>
+        
+          <li><a href="factsheet.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">sheet</span></code> Model Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/factsheet.model.sheet.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet.model.sheet">
+<span id="sheet-model-module"></span><h1><code class="docutils literal notranslate"><span class="pre">sheet</span></code> Model Module<a class="headerlink" href="#module-factsheet.model.sheet" title="Permalink to this headline">¶</a></h1>
+<p>Defines factsheet-level model.</p>
+<p><a class="reference internal" href="../guide/devel_notes.html"><span class="doc">Development Notes</span></a> explains how application Factsheet is based
+on a Model-View-Controller (MVC) design.  The design is partitioned into
+factsheet, topic, and fact layers.  Module <code class="docutils literal notranslate"><span class="pre">sheet</span></code> defines
+class representing the model of a factsheet.</p>
+<dl class="data">
+<dt id="factsheet.model.sheet.Name">
+<code class="sig-name descname">Name</code><a class="headerlink" href="#factsheet.model.sheet.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for name of Factsheet.  See <a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.DisplayName" title="factsheet.control.control_sheet.DisplayName"><code class="xref py py-data docutils literal notranslate"><span class="pre">DisplayName</span></code></a>
+and <a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.EditorName" title="factsheet.control.control_sheet.EditorName"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorName</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.model.sheet.Summary">
+<code class="sig-name descname">Summary</code><a class="headerlink" href="#factsheet.model.sheet.Summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for summary of Factsheet.  See
+<a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.DisplaySummary" title="factsheet.control.control_sheet.DisplaySummary"><code class="xref py py-data docutils literal notranslate"><span class="pre">DisplaySummary</span></code></a> and
+<a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.EditorSummary" title="factsheet.control.control_sheet.EditorSummary"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorSummary</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.model.sheet.Title">
+<code class="sig-name descname">Title</code><a class="headerlink" href="#factsheet.model.sheet.Title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for title of Factsheet.  See
+<a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.DisplayTitle" title="factsheet.control.control_sheet.DisplayTitle"><code class="xref py py-data docutils literal notranslate"><span class="pre">DisplayTitle</span></code></a> and
+<a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.EditorTitle" title="factsheet.control.control_sheet.EditorTitle"><code class="xref py py-data docutils literal notranslate"><span class="pre">EditorTitle</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="factsheet.model.sheet.Topics">
+<code class="sig-name descname">Topics</code><a class="headerlink" href="#factsheet.model.sheet.Topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for topics of Factsheet.  See
+<a class="reference internal" href="factsheet.control.control_sheet.html#factsheet.control.control_sheet.ViewTopics" title="factsheet.control.control_sheet.ViewTopics"><code class="xref py py-data docutils literal notranslate"><span class="pre">ViewTopics</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet.model.sheet.Sheet">
+<em class="property">class </em><code class="sig-name descname">Sheet</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_name='Unnamed'</em>, <em class="sig-param">p_summary='Edit factsheet description here.'</em>, <em class="sig-param">p_title='New Factsheet'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="factsheet.model.idcore.html#factsheet.model.idcore.IdCore" title="factsheet.model.idcore.IdCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.model.idcore.IdCore</span></code></a></p>
+<p>Factsheet document <a class="reference internal" href="factsheet.model.html#module-factsheet.model" title="factsheet.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">model</span></code></a>.</p>
+<p>Class <code class="docutils literal notranslate"><span class="pre">Sheet</span></code> represents an entire Factsheet document.  A model
+factsheet consists of a outline of topics along with identification
+information (see <a class="reference internal" href="factsheet.model.idcore.html#factsheet.model.idcore.IdCore" title="factsheet.model.idcore.IdCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdCore</span></code></a>). Each topic represents a
+collection of facts about a specific subject.</p>
+<div class="admonition-about-equality admonition">
+<p class="admonition-title">About Equality</p>
+<p>Each factsheet model has persistent identification information
+and a topic outline.  In addition, a factsheet model may have
+transient aspects such as change state with respect to file
+storage,</p>
+<p>Two factsheet are equal when their identification information
+are equal and their topic outlines are equal.  Transient
+aspects of the factsheets are not compared and may be different.</p>
+</div>
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">p_name='Unnamed'</em>, <em class="sig-param">p_summary='Edit factsheet description here.'</em>, <em class="sig-param">p_title='New Factsheet'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize factsheet with given identity and no topics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of factsheet.</p></li>
+<li><p><strong>p_summary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – summary of factsheet.</p></li>
+<li><p><strong>p_title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – title of factsheet.</p></li>
+<li><p><strong>kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – superclass keyword parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark topics outline stale and remove all topics from outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.get_tag">
+<code class="sig-name descname">get_tag</code><span class="sig-paren">(</span><em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.get_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.get_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return tag of topic at given line in topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of desired topic.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">TagTopic</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.insert_topic_after">
+<code class="sig-name descname">insert_topic_after</code><span class="sig-paren">(</span><em class="sig-param">p_topic</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.insert_topic_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.insert_topic_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds topic to topics outline after topic at given line.</p>
+<p>If line is None, adds topic at beginning of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_topic</strong> (<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>) – new topic to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of topic to precede new topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added topic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.insert_topic_before">
+<code class="sig-name descname">insert_topic_before</code><span class="sig-paren">(</span><em class="sig-param">p_topic</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.insert_topic_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.insert_topic_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds topic to topics outline before topic at given line.</p>
+<p>If line is None, adds topic at end of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_topic</strong> (<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>) – new topic to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of topic to follow new topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added topic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.insert_topic_child">
+<code class="sig-name descname">insert_topic_child</code><span class="sig-paren">(</span><em class="sig-param">p_topic</em>, <em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.insert_topic_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.insert_topic_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds topic to topics outline as child of topic at given line.</p>
+<p>Adds topic after all existing children.  If line is None, it
+adds topic at end of outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_topic</strong> (<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>) – new topic to add.</p></li>
+<li><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of parent topic for new topic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>line of newly-added topic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.is_fresh">
+<code class="sig-name descname">is_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.is_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.is_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there are no unsaved changes to factsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.is_stale">
+<code class="sig-name descname">is_stale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True when there is at least one unsaved change to
+factsheet.</p>
+<p>Log warning when a topic is missing from the topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.outline_topics">
+<em class="property">property </em><code class="sig-name descname">outline_topics</code><a class="headerlink" href="#factsheet.model.sheet.Sheet.outline_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="factsheet.bridge_gtk.bridge_outline.html#factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti" title="factsheet.bridge_gtk.bridge_outline.ModelOutlineMulti"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOutlineMulti</span></code></a>[<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.remove_topic">
+<code class="sig-name descname">remove_topic</code><span class="sig-paren">(</span><em class="sig-param">p_line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.remove_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.remove_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark topics outline stale and remove topic from outline.</p>
+<p>Removes topic and all its descendents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>) – line of topic to remove.  If line is None or
+invalid, remove no topics but mark sheet as stale nonetheless.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.set_fresh">
+<code class="sig-name descname">set_fresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.set_fresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.set_fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark factsheet in memory consistent with file contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.tag">
+<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#factsheet.model.sheet.Sheet.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return unique identifier of sheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">TagSheet</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet.model.sheet.Sheet.topics">
+<code class="sig-name descname">topics</code><span class="sig-paren">(</span><em class="sig-param">p_line=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet/model/sheet.html#Sheet.topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet.model.sheet.Sheet.topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over topics in section of topics outline.</p>
+<p>The iterator is recursive (that is, includes topic at given
+line along with all its descendants).</p>
+<p>Log warning when a topic is missing from the topics outline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p_line</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TreeIter</span></code>]) – line of parent item of section.  Default
+iterates over entire outline.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="factsheet.model.topic.html#factsheet.model.topic.Topic" title="factsheet.model.topic.Topic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Topic</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet.model.topic.html" class="btn btn-neutral float-right" title="topic Model Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet.model.idcore.html" class="btn btn-neutral float-left" title="idcore Model Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

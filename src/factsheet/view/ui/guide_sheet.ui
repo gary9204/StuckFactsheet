@@ -7,7 +7,7 @@
     <property name="type_hint">dialog</property>
     <property name="program_name">Factsheet</property>
     <property name="version">Oops! Missing info</property>
-    <property name="copyright" translatable="yes">(c) 2020 Gary Grainger</property>
+    <property name="copyright" translatable="yes">(c) 2020, 2021 Gary Grainger</property>
     <property name="comments" translatable="yes">A demonstration application for
 investigating algebraic structures.</property>
     <property name="website">https://github.com/gary9204/Factsheet</property>
@@ -166,7 +166,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. Factsheet provides templates for constructing small sets, operations, and groups. The templates include forms to produce facts about the objects you construct.</property>
+                    <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures.  With Factsheet you can construct and explore small sets, operations, and groups.  You can view the structures you construct in a variety of formats and check their properties.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -184,7 +184,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics. &lt;/i&gt;Each topic is either a template to constuct structures (such as sets of integers modulo &lt;i&gt;n&lt;/i&gt;) or a specified structure (such as the set of integers modulo 6). A topic for a specific structure contains a collection &lt;i&gt;facts &lt;/i&gt;about the structure. Initially facts are undetermined. A topic includes a check for each fact to produce the value of the fact. For example, each set topic has a size fact with a corresponding check to calculate the set size.</property>
+                    <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet.  &lt;/i&gt;A factsheet consists of a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic includes a collection of &lt;i&gt;facts &lt;/i&gt;about the specific subject. The set of integers module 6 is an exmple of a topic. The subset of divisors of zero is an example of a fact.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -595,7 +595,7 @@ investigating algebraic structures.</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">A window for a factsheet consists of window header, factsheet header, and factsheet notebook.  The window header shows the factsheet name.  The factsheet header shows the sheet's title.  Both headers have icons to show menus of actions and options.  In addition, the sheet header has an icon to edit the sheet's name.  Please see &lt;b&gt;Symbols&lt;/b&gt; below.</property>
+                    <property name="label" translatable="yes">A window for a factsheet consists of window header, factsheet header, and factsheet notebook.  The window header shows the factsheet name.  The factsheet header shows the sheet's name and title.  Both headers have icons to show menus of actions and options.  In addition, the sheet header has as icons to edit the sheet's name and title.  Please see &lt;b&gt;Symbols&lt;/b&gt; below.</property>
                     <property name="use_markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
@@ -717,7 +717,7 @@ investigating algebraic structures.</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="hexpand">True</property>
-                            <property name="label" translatable="yes">Click to show and edit sheet name</property>
+                            <property name="label" translatable="yes">Click to edit sheet name or title</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1600,486 +1600,6 @@ investigating algebraic structures.</property>
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="ui_help_sheet_topics">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Factsheet Topics Help</property>
-    <property name="default_width">400</property>
-    <property name="type_hint">dialog</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">12</property>
-            <property name="margin_right">12</property>
-            <property name="margin_top">6</property>
-            <property name="margin_bottom">6</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">6</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="label" translatable="yes">The Topics toolbar and menu let you manage the outline of topics in a factsheet.</property>
-                <property name="use_markup">True</property>
-                <property name="justify">fill</property>
-                <property name="wrap">True</property>
-                <property name="width_chars">60</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="label" translatable="yes">The Topics toolbar provides buttons to search for a topic, specify a topic, move to the first topic in the factsheet, move to the last topic, expand the topic outline, collapse the outline, and show the Topics menu.</property>
-                <property name="use_markup">True</property>
-                <property name="justify">fill</property>
-                <property name="wrap">True</property>
-                <property name="width_chars">60</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkGrid">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_left">65</property>
-                <property name="row_spacing">6</property>
-                <property name="column_spacing">6</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Factsheet Topics Toolbar&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="icon_name">edit-find-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="icon_name">document-new-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="icon_name">go-top-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="icon_name">go-bottom-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="icon_name">format-justify-fill-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">7</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Search the topic collection for topic by name or title.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Specify new topic from a template.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Set the current topic to the first topic in the factsheet.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Set the current topic to the last topic in the factsheet.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Display the Factsheet Topics menu.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">7</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">format-indent-more-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">format-indent-less-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">Collapse the topics outline to top-level topics.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">Expand all levels of the topic outline.</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">5</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="padding">6</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="label" translatable="yes">The Topics menu provides options to search for a topic, specify a topic, delete a topic, and show a help dialog.</property>
-                <property name="use_markup">True</property>
-                <property name="justify">fill</property>
-                <property name="wrap">True</property>
-                <property name="width_chars">60</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkGrid">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="row_spacing">6</property>
-                <property name="column_spacing">6</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;&lt;b&gt;Find Topic&lt;/b&gt;&lt;/s&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;s&gt;Search the topic collection for topic with name you enter.&lt;/s&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;New topic ...&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">Specify a new topic from a template.</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Delete topic&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Help&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">Remove the current topic from the factsheet.</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">Display this help dialog.</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                    <property name="max_width_chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="valign">start</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Factsheet Topics Menu&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">fill</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">2</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="padding">6</property>
-                <property name="position">4</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkDialog" id="ui_intro_app">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Factsheet Introduction</property>
@@ -2145,7 +1665,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">Factsheet is an application to explore facts about algebraic structures.  Factsheet provides templates for constructing small sets, binary operations, and groups. The templates include forms to determine facts about the objects you construct.</property>
+                <property name="label" translatable="yes">Factsheet is an application to investigate algebraic structures. With Factsheet you can construct and explore small sets, operations, and groups. You can view the structures you construct in a variety of formats and check their properties.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2162,7 +1682,7 @@ investigating algebraic structures.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet. &lt;/i&gt;A factsheet contains a hierarchy of &lt;i&gt;topics. &lt;/i&gt;Each topic is either a template to constuct structures (such as sets of integers modulo &lt;i&gt;n&lt;/i&gt;) or a specified structure (such as the set of integers modulo 6). A topic for a specific structure contains a collection &lt;i&gt;facts &lt;/i&gt;about the structure. Initially, facts are undetermined. A topic includes a check for each fact to produce the value of the fact. For example, each set topic has a size fact with a corresponding check to calculate the set size.</property>
+                <property name="label" translatable="yes">A Factsheet application document is called a &lt;i&gt;factsheet.  &lt;/i&gt;A factsheet consists of a hierarchy of &lt;i&gt;topics.  &lt;/i&gt;Each topic includes a collection of &lt;i&gt;facts &lt;/i&gt;about the specific subject. The set of integers module 6 is an exmple of a topic. The subset of divisors of zero is an example of a fact.</property>
                 <property name="use_markup">True</property>
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
@@ -2171,6 +1691,38 @@ investigating algebraic structures.</property>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Factsheet includes a collection of templates, which you can use to construct topics and facts.  For example, Factsheet has a template for contructing a set of integers module &lt;i&gt;n.  &lt;/i&gt;You choose the value of &lt;i&gt;n&lt;/i&gt;, say 6, to construct the topic the set of intergers modulo 6.</property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+                <property name="label" translatable="yes">When you create a topic, all the topic’s facts are undetermined. You select which facts you wish to check. You also select how you want Factsheet to present results of each check.</property>
+                <property name="use_markup">True</property>
+                <property name="justify">fill</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -2187,7 +1739,7 @@ investigating algebraic structures.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>

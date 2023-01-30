@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Case Factsheet Save and Open &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Case Factsheet File Errors" href="case_sheet_file_error.html" />
+    <link rel="prev" title="Case Factsheet Open Window" href="case_sheet_open_view.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../toc_test_manual.html">Manual Tests</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../tests_manual.html">Manual Tests for Factsheet</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="toc_test_cases.html">Test Cases</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="toc_app_cases.html">Application-level Cases</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="toc_sheet_cases.html">Factsheet-level Cases</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_close_view.html">Case Factsheet Close Window</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_delete.html">Case Factsheet Delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_dialogs.html">Case Factsheet Dialogs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_name.html">Case Factsheet Name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_new.html">Case Factsheet New</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_open_view.html">Case Factsheet Open Window</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Case Factsheet Save and Open</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_file_error.html">Case Factsheet File Errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_summary.html">Case Factsheet Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="case_sheet_title.html">Case Factsheet Title</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_helpers/toc_test_helpers.html">Test Helpers</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../toc_test_manual.html">Manual Tests</a> &raquo;</li>
+        
+          <li><a href="toc_test_cases.html">Test Cases</a> &raquo;</li>
+        
+          <li><a href="toc_sheet_cases.html">Factsheet-level Cases</a> &raquo;</li>
+        
+      <li>Case Factsheet Save and Open</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/test_manual/test_cases/case_sheet_file.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="case-factsheet-save-and-open">
+<h1>Case Factsheet Save and Open<a class="headerlink" href="#case-factsheet-save-and-open" title="Permalink to this headline">¶</a></h1>
+<p><strong>Purpose:</strong> demonstrate Factsheet save to file and open from file.</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Create a test data directory (for example,
+<code class="docutils literal notranslate"><span class="pre">/home/Scratch/factsheet_test</span></code>).</p></li>
+<li><p>In the test data directory create a file <code class="docutils literal notranslate"><span class="pre">test.txt</span></code> containing a
+short text string (e.g., “The Spanish Inquisition.”</p></li>
+</ol>
+</div>
+<div class="section" id="steps-save-and-open">
+<h2>Steps – Save and Open<a class="headerlink" href="#steps-save-and-open" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Application</em> displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit (<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> icon on left) factsheet name “Unnamed” to
+“Alpha”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> “Alpha” appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit (<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> icon on right) factsheet title to “First
+factsheet”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> “First factsheet” appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click inside the <em>Factsheet Summary</em> frame after existing
+text.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> A blinking text cursor (|) appears after existing text.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit the summary to “This is the first factsheet.”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The text appears as entered.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Save button</strong> (window title on right
+near center).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog appears.</p></li>
+<li><p><em>Expect:</em> Dialog file <strong>Name</strong> field contains “factsheet.fsg”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit file <strong>Name</strong> field to “Alpha.fsg”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Field contains new file name.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Save button</strong> (dialog title on right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List test data directory contents (in shell or file
+browser).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> File <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code> appears with current time stamp.</p></li>
+<li><p><em>Take note of file time and size.</em></p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" /> (window title
+far right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+<li><p><em>Expect:</em> <em>Application</em> closes.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Application</em> displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Open button</strong> (window title on far
+left).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code> and click <strong>Open button</strong> (dialog
+title on right)</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog disappears.</p></li>
+<li><p><em>Expect:</em> Second window appears with window title “Alpha”.</p></li>
+<li><p><em>Expect:</em> Name is “Alpha”.</p></li>
+<li><p><em>Expect:</em> Title is “First factsheet”.</p></li>
+<li><p><em>Expect:</em> Summary contains “This is the first factsheet.”</p></li>
+<li><p>New window may cover first window.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit <em>Alpha</em> factsheet name to “Alpha Plus”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Updated title appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit the summary to “This is the first factsheet with
+additions.”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The text appears as entered.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <em>Factsheet</em> <strong>menu</strong> item <strong>File … &gt; Save.</strong>
+(<img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> icon on far right of <em>Factsheet</em> identity line).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Menu disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List test data directory contents.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> File <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code> appears with updated size and
+time stamp.</p></li>
+<li><p><em>Expect:</em> File <code class="docutils literal notranslate"><span class="pre">Alpha.fsg~</span></code> appears with size and time stamp of
+initial <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code> file.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> In original window, click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+<li><p><em>Expect:</em> <em>Application</em> closes.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Application</em> displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <em>Factsheet</em> <strong>menu</strong> <img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> item <strong>File … &gt; Open
+…</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog appears.</p></li>
+<li><p><em>Expect:</em> File <strong>filter button</strong> in lower right corner is labeled
+“Factsheet”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> In dialog, change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>filter button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> List of file filters pops up: “Factsheet” and “Any”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click “Any” filter.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Pop up collapses to “Any” on <strong>filter button</strong>.</p></li>
+<li><p><em>Expect:</em> File list includes <code class="docutils literal notranslate"><span class="pre">test.txt</span></code>.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>filter button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> List of file filters pops up: “Factsheet” and “Any”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click “Factsheet” filter.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Pop up collapses to “Factsheet” on <strong>filter button</strong>.</p></li>
+<li><p><em>Expect:</em> File list only includes files with <code class="docutils literal notranslate"><span class="pre">fsg</span></code> extension.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code> and click <strong>Open button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog disappears.</p></li>
+<li><p><em>Expect:</em> Second window appears with window title “Alpha Plus”.</p></li>
+<li><p><em>Expect:</em> Name is “Alpha Plus”.</p></li>
+<li><p><em>Expect:</em> Title is “First factsheet”.</p></li>
+<li><p><em>Expect:</em> Summary contains “This is the first factsheet with
+additions.”</p></li>
+<li><p>New window may cover first window.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> In original window, click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+<li><p><em>Expect:</em> <em>Application</em> closes.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="steps-save-as">
+<h2>Steps – Save as<a class="headerlink" href="#steps-save-as" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Application</em> displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit (<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> icon on left) factsheet name “Unnamed” to
+“Beta”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> “Beta” appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit (<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> icon on right) factsheet title to “Second
+factsheet”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> “Second factsheet” appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click inside the <em>Factsheet Summary</em> frame after existing
+test.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> A blinking text cursor (|) appears after existing text.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit the summary to “This is the second factsheet.”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The text appears as entered.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Save button</strong> (window title on right
+near center).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog appears.</p></li>
+<li><p><em>Expect:</em> Dialog file <strong>Name</strong> field contains “factsheet.fsg”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit file <strong>Name</strong> field to “Beta.fsg”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Field contains new file name.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Save button</strong> (dialog title on right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List test data directory contents.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Files <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code> and <code class="docutils literal notranslate"><span class="pre">Beta.fsg</span></code> appear is list.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit <em>Beta</em> factsheet name to “Gamma”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Updated name appears in field.</p></li>
+<li><p><em>Expect:</em> Window title changes to “Gamma”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit <em>Gamma</em> factsheet title to “Third factsheet”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Updated title appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit the summary to “This is the third factsheet.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> The text appears as entered.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Save as icon</strong> <img alt="(page with arrow down to file box)" src="../../_images/document-save-as-symbolic.svg" />
+(window title on right near <em>Save button</em>).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog appears.</p></li>
+<li><p><em>Expect:</em> Dialog file <strong>Name</strong> field contains “Beta.fsg”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit file <strong>Name</strong> field to “Gamma.fsg”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Field contains new file name.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Save button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List test data directory contents.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Files <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code>, <code class="docutils literal notranslate"><span class="pre">Beta.fsg</span></code>, and <code class="docutils literal notranslate"><span class="pre">Gamma.fsg</span></code>
+appear is list.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <em>Factsheet</em> <strong>menu</strong> item <strong>File … &gt; Save as</strong>.
+(<img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> icon on far right of <em>Factsheet</em> identity line).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog appears.</p></li>
+<li><p><em>Expect:</em> Dialog file <strong>Name</strong> field contains “Gamma.fsg”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit file <strong>Name</strong> field to “Delta.fsg”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Field contains new file name.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Save button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List test data directory contents.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Files <code class="docutils literal notranslate"><span class="pre">Alpha.fsg</span></code>, <code class="docutils literal notranslate"><span class="pre">Beta.fsg</span></code>, <code class="docutils literal notranslate"><span class="pre">Gamma.fsg</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">Delta.fsg</span></code> appear is list.</p></li>
+<li><p><em>Expect:</em> Files <code class="docutils literal notranslate"><span class="pre">Gamma.fsg</span></code> and <code class="docutils literal notranslate"><span class="pre">Delta.fsg</span></code> have the same
+size.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> in <em>Delta</em> window, click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+<li><p><em>Expect:</em> <em>Application</em> closes.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="steps-duplicate-open">
+<h2>Steps – Duplicate Open<a class="headerlink" href="#steps-duplicate-open" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Application</em> displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Open button</strong> (window title on far
+left).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <code class="docutils literal notranslate"><span class="pre">Beta.fsg</span></code> and click <strong>Open button</strong> (dialog
+title on right)</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog disappears.</p></li>
+<li><p><em>Expect:</em> Second window appears with window title “Beta”.</p></li>
+<li><p><em>Expect:</em> Name is “Beta”.</p></li>
+<li><p><em>Expect:</em> Title is “Second factsheet”.</p></li>
+<li><p><em>Expect:</em> Summary contains “This is the second factsheet.”</p></li>
+<li><p>New window may cover first window.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <em>Factsheet</em> <strong>menu</strong> item <strong>Display … &gt; Open
+window</strong> (<img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> icon on far right of <em>Factsheet</em> identity line).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> New <code class="docutils literal notranslate"><span class="pre">Beta</span></code> window appears.</p></li>
+<li><p>New window may cover existing windows.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Position windows so that <code class="docutils literal notranslate"><span class="pre">Unamed</span></code> window covers parts
+of both <code class="docutils literal notranslate"><span class="pre">Beta</span></code> windows.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <code class="docutils literal notranslate"><span class="pre">Unnamed</span></code> window obscures parts of <code class="docutils literal notranslate"><span class="pre">Beta</span></code> windows.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Open button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog appears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <code class="docutils literal notranslate"><span class="pre">Beta.fsg</span></code> and click <strong>Open button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Open dialog disappears.</p></li>
+<li><p><em>Expect:</em> Both <code class="docutils literal notranslate"><span class="pre">Beta</span></code> windows cover parts of <code class="docutils literal notranslate"><span class="pre">Unnamed</span></code> window.</p></li>
+<li><p><em>Expect:</em> No new windows appear.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> In <code class="docutils literal notranslate"><span class="pre">Beta</span></code> window, select <em>Factsheet</em> <strong>menu</strong> item
+<strong>File … &gt; Close.</strong> (<img alt="(three horizontal bars)" src="../../_images/format-justify-fill-symbolic.svg" /> icon on far right of <em>Factsheet</em>
+identity line).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Both <code class="docutils literal notranslate"><span class="pre">Beta</span></code> windows disappear.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> click <code class="docutils literal notranslate"><span class="pre">Unnamed</span></code> window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <code class="docutils literal notranslate"><span class="pre">Unnamed</span></code> window disappears.</p></li>
+<li><p><em>Expect:</em> <em>application</em> closes.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="steps-data-loss-and-overwrite-warnings">
+<h2>Steps – Data Loss and Overwrite Warnings<a class="headerlink" href="#steps-data-loss-and-overwrite-warnings" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Step:</strong> Start application with
+<a class="reference internal" href="../test_helpers/help_start_application.html"><span class="doc">Helper Start application</span></a></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Application</em> displays default factsheet.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit (<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> icon on left) factsheet name “Unnamed” to
+“&lt;b&gt;Guards&lt;/b&gt;”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> “<strong>Guards</strong>” appears in field.</p></li>
+<li><p><em>Expect:</em> “<strong>Guards</strong>” appears in window title.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <em>Factsheet</em> <strong>Save button</strong> (window title on right
+near center).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog appears.</p></li>
+<li><p><em>Expect:</em> Dialog <strong>Name</strong> field contains “factsheet.fsg”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Change to test data directory.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog shows directory contents.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit file <strong>Name</strong> to “guards.fsg”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Field contains new file name.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Save button</strong> (dialog title on right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List test data directory contents (in shell or file
+browser).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> File <code class="docutils literal notranslate"><span class="pre">guards.fsg</span></code> appears with current time stamp.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Edit (<img alt="(pencil)" src="../../_images/document-edit-symbolic.svg" /> icon on right) factsheet title to “Guard
+factsheet”.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> “Guard factsheet” appears in field.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" /> (window title
+far right).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> <em>Data Loss Warning</em> dialog appears.</p></li>
+<li><p><em>Expect:</em> First warning line is: “Factsheet <strong>Guards</strong> contains
+unsaved changes. All unsaved changes will be discarded if you
+close.”</p></li>
+<li><p><em>Expect:</em> Second warning line is: “Cancel close, or continue to
+close and discard changes?”</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Cancel button</strong></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog disappears.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> In the test data directory create a file <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code>
+containing a short test string (e.g., “And now the comfy chair!”</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Test data directory contains file <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code>.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>Save as icon</strong> <img alt="(page with arrow down to file box)" src="../../_images/document-save-as-symbolic.svg" /> (window
+title to right of <strong>Save button</strong>).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Save dialog appears.</p></li>
+<li><p><em>Expect:</em> Dialog <strong>Name</strong> field contains “guards.fsg”.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code> and click <strong>Save button</strong> (dialog
+title on right)</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog appears warning file already exists.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Cancel button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Warning dialog disappears.</p></li>
+<li><p><em>Expect:</em> Save dialog remains visible.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> List contents of <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code></p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Contents unchanged.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Select <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code> and click <strong>Save button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Dialog appears warning file already exists.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click <strong>Replace button</strong>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Warning dialog and save dialog disappear.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> From console, open file <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code> in hex editor
+(e.g. <code class="docutils literal notranslate"><span class="pre">ghex</span></code>).</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> File contains binary pickle data.</p></li>
+<li><p>Close hex editor after check.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> From console, display contents with <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span>
+<span class="pre">pickletools</span> <span class="pre">target.fsg</span></code>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Output includes factsheet class names.</p></li>
+<li><p><em>Expect:</em> Output includes factsheet name and title text.</p></li>
+<li><p>Return to application after check.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Click window <strong>close icon</strong> <img alt="(x)" src="../../_images/window-close-symbolic.svg" />.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Window disappears.</p></li>
+<li><p><em>Expect:</em> <em>Application</em> closes.</p></li>
+</ol>
+</li>
+<li><p><strong>Step:</strong> Delete file <code class="docutils literal notranslate"><span class="pre">target.fsg</span></code>.</p>
+<ol class="loweralpha simple">
+<li><p><em>Expect:</em> Test data directory does not contain the file.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="teardown">
+<h2>Teardown<a class="headerlink" href="#teardown" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Delete test data directory along with its contents.</p></li>
+<li><p>Check console for exceptions, GTK errors, and warning messages. There
+should be none.</p></li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="case_sheet_file_error.html" class="btn btn-neutral float-right" title="Case Factsheet File Errors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="case_sheet_open_view.html" class="btn btn-neutral float-left" title="Case Factsheet Open Window" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

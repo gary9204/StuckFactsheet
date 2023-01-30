@@ -1,0 +1,988 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_view_sheet View Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_view_stack View Test Module" href="factsheet_test.view.test_view_stack.html" />
+    <link rel="prev" title="test_view_markup View Test Module" href="factsheet_test.view.test_view_markup.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_view_sheet</span></code> View Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.view.test_view_sheet.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.view.test_view_sheet">
+<span id="test-view-sheet-view-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_view_sheet</span></code> View Test Module<a class="headerlink" href="#module-factsheet_test.view.test_view_sheet" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for class to display Factsheet document.  See
+<a class="reference internal" href="../src/factsheet.view.view_sheet.html#module-factsheet.view.view_sheet" title="factsheet.view.view_sheet"><code class="xref py py-mod docutils literal notranslate"><span class="pre">view_sheet</span></code></a>.</p>
+<dl class="function">
+<dt id="factsheet_test.view.test_view_sheet.gtk_app_window">
+<code class="sig-name descname">gtk_app_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#gtk_app_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.gtk_app_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture with teardown: return <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/ApplicationWindow.html#Gtk.ApplicationWindow">GTK.ApplicationWindow</a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.view.test_view_sheet.patch_dialog_choose">
+<code class="sig-name descname">patch_dialog_choose</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#patch_dialog_choose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.patch_dialog_choose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture returns stub
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/FileChooserDialog.html">GtkFileChooserDialog</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>request</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/reference/reference.html?#std-fixture-request">Pytest request</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.view.test_view_sheet.patch_g_control_app">
+<code class="sig-name descname">patch_g_control_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#patch_g_control_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.patch_g_control_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture with teardown: Reset <a class="reference internal" href="../src/factsheet.control.control_sheet.html#factsheet.control.control_sheet.g_control_app" title="factsheet.control.control_sheet.g_control_app"><code class="xref py py-data docutils literal notranslate"><span class="pre">g_control_app</span></code></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.view.test_view_sheet.patch_get_path">
+<code class="sig-name descname">patch_get_path</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">monkeypatch</em>, <em class="sig-param">tmp_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#patch_get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: patch <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet.get_path" title="factsheet.view.view_sheet.ViewSheet.get_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ViewSheet.get_path()</span></code></a> to return value
+set with pytest mark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>request</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/reference/reference.html?#std-fixture-request">Pytest request</a>.</p></li>
+<li><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.view.test_view_sheet.patch_is_stale">
+<code class="sig-name descname">patch_is_stale</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#patch_is_stale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.patch_is_stale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: patch <a class="reference internal" href="../src/factsheet.model.sheet.html#factsheet.model.sheet.Sheet.is_stale" title="factsheet.model.sheet.Sheet.is_stale"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sheet.is_stale()</span></code></a> to return value set
+with pytest mark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>request</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/reference/reference.html?#std-fixture-request">Pytest request</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_view_sheet.PatchSetApp">
+<em class="property">class </em><code class="sig-name descname">PatchSetApp</code><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#PatchSetApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.PatchSetApp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Patch for
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Window.html#Gtk.Window.set_application">Gtk.ApplicationWindow.set_application</a>.</p>
+<p>Tests cannot complete <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Application.html">Gtk.Application</a> setup in the test
+environment.  This class and fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_set_app" title="factsheet_test.view.test_view_sheet.patch_set_app"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_set_app()</span></code></a> patch
+around the incomplete setup.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.PatchSetApp.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#PatchSetApp.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.PatchSetApp.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initially, mark patch as not called.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.PatchSetApp.set_application">
+<code class="sig-name descname">set_application</code><span class="sig-paren">(</span><em class="sig-param">p_app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#PatchSetApp.set_application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.PatchSetApp.set_application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark patch as called and record application argument.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.view.test_view_sheet.patch_set_app">
+<code class="sig-name descname">patch_set_app</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#patch_set_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.patch_set_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: prevents call to
+<a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Window.html#Gtk.Window.set_application">Gtk.ApplicationWindow.set_application</a> in test
+environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet">
+<em class="property">class </em><code class="sig-name descname">TestAppFactsheet</code><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.AppFactsheet" title="factsheet.view.view_sheet.AppFactsheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppFactsheet</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_activate">
+<code class="sig-name descname">test_do_activate</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet.test_do_activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm activation with initial window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_open">
+<code class="sig-name descname">test_do_open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet.test_do_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_open" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm factsheet open with initial window.</div>
+<div class="line">Case: open succeeds</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_open_warn">
+<code class="sig-name descname">test_do_open_warn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet.test_do_open_warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_open_warn" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm factsheet open with initial window.</div>
+<div class="line">Case: open fails</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_shutdown">
+<code class="sig-name descname">test_do_shutdown</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet.test_do_shutdown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm extension of application shutdown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_startup">
+<code class="sig-name descname">test_do_startup</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet.test_do_startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet.test_do_startup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm extension of application startup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestAppFactsheet.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestAppFactsheet.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestAppFactsheet.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_view_sheet.TestNewDialogWarn">
+<em class="property">class </em><code class="sig-name descname">TestNewDialogWarn</code><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestNewDialogWarn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestNewDialogWarn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.new_dialog_warn_loss" title="factsheet.view.view_sheet.new_dialog_warn_loss"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_dialog_warn_loss()</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestNewDialogWarn.test_new_dialog_warn_loss">
+<code class="sig-name descname">test_new_dialog_warn_loss</code><span class="sig-paren">(</span><em class="sig-param">gtk_app_window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestNewDialogWarn.test_new_dialog_warn_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestNewDialogWarn.test_new_dialog_warn_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm data loss warning dialog construction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gtk_app_window</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.gtk_app_window" title="factsheet_test.view.test_view_sheet.gtk_app_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">gtk_app_window()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet">
+<em class="property">class </em><code class="sig-name descname">TestViewSheet</code><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet" title="factsheet.view.view_sheet.ViewSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewSheet</span></code></a>.</p>
+<p>The following manual tests are needed to confirm placement,
+appearance, and behavior of <a class="reference internal" href="../src/factsheet.view.view_sheet.html#factsheet.view.view_sheet.ViewSheet" title="factsheet.view.view_sheet.ViewSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViewSheet</span></code></a> components.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../test_manual/test_cases/case_sheet_name.html"><span class="doc">Case Factsheet Name</span></a> for Factsheet name</p></li>
+<li><p><a class="reference internal" href="../test_manual/test_cases/case_sheet_open_view.html"><span class="doc">Case Factsheet Open Window</span></a> for new
+Factsheet window.</p></li>
+<li><p><a class="reference internal" href="../test_manual/test_cases/case_sheet_summary.html"><span class="doc">Case Factsheet Summary</span></a> for Factsheet summary</p></li>
+<li><p><a class="reference internal" href="../test_manual/test_cases/case_sheet_title.html"><span class="doc">Case Factsheet Title</span></a> for Factsheet title</p></li>
+</ul>
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_class_constants">
+<code class="sig-name descname">test_class_constants</code><span class="sig-paren">(</span><em class="sig-param">NAME</em>, <em class="sig-param">TYPE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_class_constants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_class_constants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm class defines constants.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME</strong> – name of constant.</p></li>
+<li><p><strong>TYPE</strong> – type of constant.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">patch_set_app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: visual elements.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>patch_set_app</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_set_app" title="factsheet_test.view.test_view_sheet.patch_set_app"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_set_app()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_init_helpers">
+<code class="sig-name descname">test_init_helpers</code><span class="sig-paren">(</span><em class="sig-param">NAME_HELPER</em>, <em class="sig-param">monkeypatch</em>, <em class="sig-param">patch_set_app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_init_helpers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_init_helpers" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: helper function calls.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_HELPER</strong> – name of helper under test.</p></li>
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>patch_set_app</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_set_app" title="factsheet_test.view.test_view_sheet.patch_set_app"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_set_app()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_init_app_menu">
+<code class="sig-name descname">test_init_app_menu</code><span class="sig-paren">(</span><em class="sig-param">ACTION</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_init_app_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_init_app_menu" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: definition of app menu actions</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ACTION</strong> – name of action to show menu item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_init_factsheet_menu">
+<code class="sig-name descname">test_init_factsheet_menu</code><span class="sig-paren">(</span><em class="sig-param">ACTION</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_init_factsheet_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_init_factsheet_menu" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: definition of factsheet menu actions</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ACTION</strong> – name of action to show menu item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_helper_init_topics">
+<code class="sig-name descname">test_helper_init_topics</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_helper_init_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_helper_init_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm helper creates topics editor in sheet view.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_helper_init_summary">
+<code class="sig-name descname">test_helper_init_summary</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_helper_init_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_helper_init_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm helper creates summary field in sheet view.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_helper_init_view">
+<code class="sig-name descname">test_helper_init_view</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">HELPER</em>, <em class="sig-param">CONTENT</em>, <em class="sig-param">SITE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_helper_init_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_helper_init_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm helper creates name and title fields in sheet view.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>HELPER</strong> – initialization helper method under test.</p></li>
+<li><p><strong>CONTENT</strong> – name of view type.</p></li>
+<li><p><strong>SITE</strong> – expected locaton for new view.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_init_signals">
+<code class="sig-name descname">test_init_signals</code><span class="sig-paren">(</span><em class="sig-param">NAME_SIGNAL</em>, <em class="sig-param">NAME_ATTRIBUTE</em>, <em class="sig-param">ORIGIN</em>, <em class="sig-param">N_DEFAULT</em>, <em class="sig-param">gtk_app_window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_init_signals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_init_signals" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: signal connections</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_SIGNAL</strong> – name of signal.</p></li>
+<li><p><strong>NAME_ATTRIBUTE</strong> – name of attribute connected to signal.</p></li>
+<li><p><strong>ORIGIN</strong> – GTK class of connected attribute.</p></li>
+<li><p><strong>N_DEFAULT</strong> – number of default handlers</p></li>
+<li><p><strong>gtk_app_window</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.gtk_app_window" title="factsheet_test.view.test_view_sheet.gtk_app_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">gtk_app_window()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_confirm_close">
+<code class="sig-name descname">test_confirm_close</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">RESPONSE</em>, <em class="sig-param">RETURN</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_confirm_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_confirm_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm translation of GTK response types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_erases">
+<code class="sig-name descname">test_erases</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_erases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_erases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm view destroys its visual element.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_get_path">
+<code class="sig-name descname">test_get_path</code><span class="sig-paren">(</span><em class="sig-param">patch_dialog_choose</em>, <em class="sig-param">tmp_path</em>, <em class="sig-param">NAME_ACT</em>, <em class="sig-param">IS_SET</em>, <em class="sig-param">GET_FILE</em>, <em class="sig-param">SET_CURRENT</em>, <em class="sig-param">SET_FILE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_get_path" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm save to file.</div>
+<div class="line">Case: file path defined.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>patch_dialog_choose</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_dialog_choose" title="factsheet_test.view.test_view_sheet.patch_dialog_choose"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_dialog_choose()</span></code></a>.</p></li>
+<li><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p></li>
+<li><p><strong>NAME_ACT</strong> – name of dialog box action (Open, Save, etc.).</p></li>
+<li><p><strong>IS_SET</strong> – True when return value should not be None.</p></li>
+<li><p><strong>GET_FILE</strong> – True when method should use path from dialog.</p></li>
+<li><p><strong>SET_CURRENT</strong> – True when method should suggest default file
+name.</p></li>
+<li><p><strong>SET_FILE</strong> – True when method should suggest file name from
+parameter mark.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_get_path_action">
+<code class="sig-name descname">test_get_path_action</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">ACTION</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_get_path_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_get_path_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm file chooser dialog consistent with action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>ACTION</strong> – action for file chooser dialog.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_make_dialog_file">
+<code class="sig-name descname">test_make_dialog_file</code><span class="sig-paren">(</span><em class="sig-param">ACTION</em>, <em class="sig-param">LABEL</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_make_dialog_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_make_dialog_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm construction of dialog for file save and open.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ACTION</strong> – dialog box action (Open or Save)</p></li>
+<li><p><strong>LABEL</strong> – response button label</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_close_view_sheet_safe">
+<code class="sig-name descname">test_on_close_view_sheet_safe</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_close_view_sheet_safe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_close_view_sheet_safe" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm attempt to close view.</div>
+<div class="line">Case: no loss of unsaved changes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_close_view_sheet_unsafe_allow">
+<code class="sig-name descname">test_on_close_view_sheet_unsafe_allow</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_close_view_sheet_unsafe_allow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_close_view_sheet_unsafe_allow" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm attempt to close view.</div>
+<div class="line">Case: user allows loss of unsaved changes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_close_view_sheet_unsafe_deny">
+<code class="sig-name descname">test_on_close_view_sheet_unsafe_deny</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_close_view_sheet_unsafe_deny"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_close_view_sheet_unsafe_deny" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm attempt to close view.</div>
+<div class="line">Case: user denies loss of unsaved changes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_delete_sheet_safe">
+<code class="sig-name descname">test_on_delete_sheet_safe</code><span class="sig-paren">(</span><em class="sig-param">patch_is_stale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_delete_sheet_safe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_delete_sheet_safe" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm attempt to close factsheet.</div>
+<div class="line">Case: no loss of unsaved changes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_delete_sheet_unsafe_allow">
+<code class="sig-name descname">test_on_delete_sheet_unsafe_allow</code><span class="sig-paren">(</span><em class="sig-param">patch_is_stale</em>, <em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_delete_sheet_unsafe_allow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_delete_sheet_unsafe_allow" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm attempt to close factsheet.</div>
+<div class="line">Case: user allows loss of unsaved changes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_delete_sheet_unsafe_deny">
+<code class="sig-name descname">test_on_delete_sheet_unsafe_deny</code><span class="sig-paren">(</span><em class="sig-param">patch_is_stale</em>, <em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_delete_sheet_unsafe_deny"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_delete_sheet_unsafe_deny" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm attempt to close factsheet.</div>
+<div class="line">Case: user denies loss of unsaved changes</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_new_sheet">
+<code class="sig-name descname">test_on_new_sheet</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_new_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_new_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm factsheet creation with initial window.</div>
+<div class="line">Case: creation succeeds</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_new_sheet_fail">
+<code class="sig-name descname">test_on_new_sheet_fail</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_new_sheet_fail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_new_sheet_fail" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm factsheet creation with initial window.</div>
+<div class="line">Case: creation fails.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_sheet">
+<code class="sig-name descname">test_on_open_sheet</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_open_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm open from file.</div>
+<div class="line">Case: open file not in collection of open factsheets.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_sheet_cancel">
+<code class="sig-name descname">test_on_open_sheet_cancel</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_open_sheet_cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_sheet_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm open from file.</div>
+<div class="line">Case: cancel open.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_sheet_present">
+<code class="sig-name descname">test_on_open_sheet_present</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_open_sheet_present"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_sheet_present" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm open from file.</div>
+<div class="line">Case: present file already in collection of open factsheets.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_view_sheet">
+<code class="sig-name descname">test_on_open_view_sheet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_open_view_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_open_view_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm view created and added to control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_as_sheet">
+<code class="sig-name descname">test_on_save_as_sheet</code><span class="sig-paren">(</span><em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_save_as_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_as_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm file save with save as.</div>
+<div class="line">Case: user provides file path.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_as_sheet_cancel">
+<code class="sig-name descname">test_on_save_as_sheet_cancel</code><span class="sig-paren">(</span><em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_save_as_sheet_cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_as_sheet_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm file save with save as.</div>
+<div class="line">Case: user cancels save.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_sheet">
+<code class="sig-name descname">test_on_save_sheet</code><span class="sig-paren">(</span><em class="sig-param">tmp_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_save_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm file save.</div>
+<div class="line">Case: file path defined.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_sheet_cancel">
+<code class="sig-name descname">test_on_save_sheet_cancel</code><span class="sig-paren">(</span><em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_save_sheet_cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_sheet_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm file save.</div>
+<div class="line">Case: no file path and user does not provide one.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_sheet_none">
+<code class="sig-name descname">test_on_save_sheet_none</code><span class="sig-paren">(</span><em class="sig-param">patch_get_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_save_sheet_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_save_sheet_none" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm save to file.</div>
+<div class="line">Case: no file path and user provides one.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>patch_get_path</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.patch_get_path" title="factsheet_test.view.test_view_sheet.patch_get_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">patch_get_path()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_show_dialog">
+<code class="sig-name descname">test_on_show_dialog</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">gtk_app_window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_show_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_show_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm handler displays dialog.</p>
+<p>See manual tests for dialog content checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>gtk_app_window</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_view_sheet.gtk_app_window" title="factsheet_test.view.test_view_sheet.gtk_app_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">gtk_app_window()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_toggle_search_field_inactive">
+<code class="sig-name descname">test_on_toggle_search_field_inactive</code><span class="sig-paren">(</span><em class="sig-param">capfd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_toggle_search_field_inactive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_toggle_search_field_inactive" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm search field set.</div>
+<div class="line">Case: button inactive.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>capfd</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/capture-stdout-stderr.html#captures">Pytest capfd</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_on_toggle_search_field_active">
+<code class="sig-name descname">test_on_toggle_search_field_active</code><span class="sig-paren">(</span><em class="sig-param">capfd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_on_toggle_search_field_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_on_toggle_search_field_active" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm search field set.</div>
+<div class="line">Case: button inactive.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>capfd</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/capture-stdout-stderr.html#captures">Pytest capfd</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_present">
+<code class="sig-name descname">test_present</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_present"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_present" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm page becomes visible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_property">
+<code class="sig-name descname">test_property</code><span class="sig-paren">(</span><em class="sig-param">NAME_ATTR</em>, <em class="sig-param">NAME_PROP</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm properties are get-only.</p>
+<ol class="arabic simple">
+<li><p>Case: get</p></li>
+<li><p>Case: no set</p></li>
+<li><p>Case: no delete</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NAME_ATTR</strong> – name of attribute.</p></li>
+<li><p><strong>NAME_PROP</strong> – name of property.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_report_error_sheet">
+<code class="sig-name descname">test_report_error_sheet</code><span class="sig-paren">(</span><em class="sig-param">ERROR</em>, <em class="sig-param">CAUSE</em>, <em class="sig-param">TRACE</em>, <em class="sig-param">PRIME</em>, <em class="sig-param">SECOND</em>, <em class="sig-param">monkeypatch</em>, <em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_report_error_sheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_report_error_sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm dialog and logging for exceptions during file save.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ERROR</strong> – sheet error exception.</p></li>
+<li><p><strong>CAUSE</strong> – system exception cause of sheet error.</p></li>
+<li><p><strong>PRIME</strong> – primary text for error dialog.</p></li>
+<li><p><strong>TRACE</strong> – marks start of traceback copied to log.</p></li>
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_view_sheet.TestViewSheet.test_save_sheet_except">
+<code class="sig-name descname">test_save_sheet_except</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em>, <em class="sig-param">ERROR</em>, <em class="sig-param">PRIME</em>, <em class="sig-param">caplog</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_view_sheet.html#TestViewSheet.test_save_sheet_except"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_view_sheet.TestViewSheet.test_save_sheet_except" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm save to file.</div>
+<div class="line">Case: exceptions.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p></li>
+<li><p><strong>ERROR</strong> – exception test raises.</p></li>
+<li><p><strong>PRIME</strong> – primary text for notification.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.view.test_view_stack.html" class="btn btn-neutral float-right" title="test_view_stack View Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.view.test_view_markup.html" class="btn btn-neutral float-left" title="test_view_markup View Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

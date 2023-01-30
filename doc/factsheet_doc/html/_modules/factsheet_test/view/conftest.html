@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.view.conftest &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.view.conftest</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.view.conftest</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test fixtures for :mod:`~.factsheet.view` unit tests.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">dataclasses</span> <span class="k">as</span> <span class="nn">DC</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">pytest</span>   <span class="c1"># type: ignore[import]</span>
+<span class="c1"># import typing</span>
+
+<span class="c1"># from factsheet.model import element as MELEMENT</span>
+<span class="c1"># from factsheet.model import setindexed as MSET</span>
+<span class="c1"># from factsheet.model import table as MTABLE</span>
+<span class="c1"># from factsheet.model import topic as MTOPIC</span>
+<span class="c1"># from factsheet.view import ui as UI</span>
+<span class="c1"># from factsheet.model import types_model as MTYPES</span>
+
+<span class="c1"># gi.require_version(&#39;Gtk&#39;, &#39;3.0&#39;)</span>
+<span class="c1"># from gi.repository import GObject as GO  # type: ignore[import]  # noqa: E402</span>
+<span class="c1"># from gi.repository import Gtk   # type: ignore[import]    # noqa: E402</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def new_outline_topics():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture returns outline model factory.  The structure of</span>
+<span class="c1">#     each model is as follows.</span>
+<span class="c1">#</span>
+<span class="c1">#         | name_0xx | title_0xx | summary_0xx</span>
+<span class="c1">#         |     name_00x | title_00x | summary_00x</span>
+<span class="c1">#         |         name_000 | title_000 | summary_000</span>
+<span class="c1">#         |     name_01x | title_01x | summary_01x</span>
+<span class="c1">#         | name_1xx | title_1xx | summary_1xx</span>
+<span class="c1">#         |     name_10x | title_10x | summary_10x</span>
+<span class="c1">#         |     name_11x | title_11x | summary_11x</span>
+<span class="c1">#         |         name_110 | title_110 | summary_110</span>
+<span class="c1">#         |         name_111 | title_111 | summary_111</span>
+<span class="c1">#         |         name_112 | title_112 | summary_112</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def new_model():</span>
+<span class="c1">#         model = MTYPES.OutlineTopics()</span>
+<span class="c1">#         gtk_model = model._gtk_model</span>
+<span class="c1">#</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_0xx&#39;, p_title=&#39;title_0xx&#39;, p_summary=&#39;summary_0xx&#39;)</span>
+<span class="c1">#         i_0xx = gtk_model.append(None, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_00x&#39;, p_title=&#39;title_00x&#39;, p_summary=&#39;summary_00x&#39;)</span>
+<span class="c1">#         i_00x = gtk_model.append(</span>
+<span class="c1">#             i_0xx, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_000&#39;, p_title=&#39;title_000&#39;, p_summary=&#39;summary_000&#39;)</span>
+<span class="c1">#         _i_000 = gtk_model.append(i_00x, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_01x&#39;, p_title=&#39;title_01x&#39;, p_summary=&#39;summary_01x&#39;)</span>
+<span class="c1">#         i_0xx = gtk_model.append(i_0xx, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_1xx&#39;, p_title=&#39;title_1xx&#39;, p_summary=&#39;summary_1xx&#39;)</span>
+<span class="c1">#         i_1xx = gtk_model.append(None, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_10x&#39;, p_title=&#39;title_10x&#39;, p_summary=&#39;summary_10x&#39;)</span>
+<span class="c1">#         _i_10x = gtk_model.append(i_1xx, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_11x&#39;, p_title=&#39;title_11x&#39;, p_summary=&#39;summary_11x&#39;)</span>
+<span class="c1">#         i_11x = gtk_model.append(i_1xx, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_110&#39;, p_title=&#39;title_110&#39;, p_summary=&#39;summary_110&#39;)</span>
+<span class="c1">#         _i_110 = gtk_model.append(i_11x, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_111&#39;, p_title=&#39;title_111&#39;, p_summary=&#39;summary_111&#39;)</span>
+<span class="c1">#         _i_111 = gtk_model.append(i_11x, [item])</span>
+<span class="c1">#         item = MTOPIC.Topic(</span>
+<span class="c1">#             p_name=&#39;name_112&#39;, p_title=&#39;title_112&#39;, p_summary=&#39;summary_112&#39;)</span>
+<span class="c1">#         _i_112 = gtk_model.append(i_11x, [item])</span>
+<span class="c1">#         return model</span>
+<span class="c1">#</span>
+<span class="c1">#     return new_model</span>
+
+
+<div class="viewcode-block" id="patch_dialog_run"><a class="viewcode-back" href="../../../test/factsheet_test.view.conftest.html#factsheet_test.view.conftest.patch_dialog_run">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">patch_dialog_run</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture returns stub `GtkDialog &lt;GtkDialog_&gt;`_.</span>
+
+<span class="sd">    .. _GtkDialog: https://lazka.github.io/pgi-docs/</span>
+<span class="sd">       #Gtk-3.0/classes/Dialog.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">PatchDialog</span><span class="p">:</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_response</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">p_response</span>
+
+        <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">called</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="k">return</span> <span class="n">PatchDialog</span></div>
+
+
+<span class="c1"># @DC.dataclass</span>
+<span class="c1"># class ArgsInfoid:</span>
+<span class="c1">#     &quot;&quot;&quot;Convenience class for pytest fixture.</span>
+<span class="c1">#</span>
+<span class="c1">#     Class assembles arguments to :class:`.InfoId` method ``__init__``.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     p_name: str</span>
+<span class="c1">#     p_summary: str</span>
+<span class="c1">#     p_title: str</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_args_infoid():</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture returns set of argument values to construct</span>
+<span class="c1">#     a stock :class:`.InfoId` object.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return ArgsInfoid(</span>
+<span class="c1">#         p_name=&#39;Parrot&#39;,</span>
+<span class="c1">#         p_summary=&#39;The parrot is a Norwegian Blue.&#39;,</span>
+<span class="c1">#         p_title=&#39;The Parrot Sketch&#39;,</span>
+<span class="c1">#         )</span>
+
+
+<span class="c1"># @pytest.fixture</span>
+<span class="c1"># def patch_ui_infoid(patch_args_infoid):</span>
+<span class="c1">#     &quot;&quot;&quot;Pytest fixture returns stub builder defintion for</span>
+<span class="c1">#     :class:`.ViewInfoId`.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     ui_infoid = &#39;&#39;&#39;</span>
+<span class="c1">#         &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="c1">#         &lt;!-- Generated with glade 3.22.1 --&gt;</span>
+<span class="c1">#         &lt;interface&gt;</span>
+<span class="c1">#           &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span>
+<span class="c1">#           &lt;object class=&quot;GtkEntry&quot; id=&quot;ui_name_infoid&quot;&gt;</span>
+<span class="c1">#             &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="c1">#             &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span>
+<span class="c1">#             &lt;property name=&quot;text&quot; translatable=&quot;yes&quot;&gt;{p_name}&lt;/property&gt;</span>
+<span class="c1">#           &lt;/object&gt;</span>
+<span class="c1">#           &lt;object class=&quot;GtkTextBuffer&quot; id=&quot;buffer_summary&quot;&gt;</span>
+<span class="c1">#             &lt;property name=&quot;text&quot; translatable=&quot;yes&quot;&gt;{p_summary}&lt;/property&gt;</span>
+<span class="c1">#           &lt;/object&gt;</span>
+<span class="c1">#           &lt;object class=&quot;GtkTextView&quot; id=&quot;ui_summary_infoid&quot;&gt;</span>
+<span class="c1">#             &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="c1">#             &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span>
+<span class="c1">#             &lt;property name=&quot;buffer&quot;&gt;buffer_summary&lt;/property&gt;</span>
+<span class="c1">#           &lt;/object&gt;</span>
+<span class="c1">#           &lt;object class=&quot;GtkEntry&quot; id=&quot;ui_title_infoid&quot;&gt;</span>
+<span class="c1">#             &lt;property name=&quot;visible&quot;&gt;True&lt;/property&gt;</span>
+<span class="c1">#             &lt;property name=&quot;can_focus&quot;&gt;True&lt;/property&gt;</span>
+<span class="c1">#             &lt;property name=&quot;text&quot; translatable=&quot;yes&quot;&gt;{p_title}&lt;/property&gt;</span>
+<span class="c1">#           &lt;/object&gt;</span>
+<span class="c1">#         &lt;/interface&gt;</span>
+<span class="c1">#         &#39;&#39;&#39;.format(**DC.asdict(patch_args_infoid))</span>
+<span class="c1">#     #     &#39;&#39;&#39;.format(**text_ui_infoid)</span>
+<span class="c1">#     builder = Gtk.Builder.new_from_string(ui_infoid, -1)</span>
+<span class="c1">#     return builder.get_object</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

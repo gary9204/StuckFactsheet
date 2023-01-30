@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>test_ui View Test Module &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="test_view_markup View Test Module" href="factsheet_test.view.test_view_markup.html" />
+    <link rel="prev" title="test_select_spec View Test Module" href="factsheet_test.view.test_select_spec.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="toc_test.html">Unit Test Code</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="factsheet_test.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.bridge_gtk.html"><code class="docutils literal notranslate"><span class="pre">bridge_gtk</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.control.html"><code class="docutils literal notranslate"><span class="pre">control</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.model.html"><code class="docutils literal notranslate"><span class="pre">model</span></code> Test Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="factsheet_test.spec.html"><code class="docutils literal notranslate"><span class="pre">spec</span></code> Test Package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="factsheet_test.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_test.html">Unit Test Code</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.html"><code class="docutils literal notranslate"><span class="pre">factsheet_test</span></code> Test Package</a> &raquo;</li>
+        
+          <li><a href="factsheet_test.view.html"><code class="docutils literal notranslate"><span class="pre">view</span></code> Test Package</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">test_ui</span></code> View Test Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/test/factsheet_test.view.test_ui.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-factsheet_test.view.test_ui">
+<span id="test-ui-view-test-module"></span><h1><code class="docutils literal notranslate"><span class="pre">test_ui</span></code> View Test Module<a class="headerlink" href="#module-factsheet_test.view.test_ui" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests for functions and objects for user interface elements.  See
+<a class="reference internal" href="../src/factsheet.view.ui.html#module-factsheet.view.ui" title="factsheet.view.ui"><code class="xref py py-mod docutils literal notranslate"><span class="pre">view.ui</span></code></a>.</p>
+<dl class="function">
+<dt id="factsheet_test.view.test_ui.set_logger_debug">
+<code class="sig-name descname">set_logger_debug</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#set_logger_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.set_logger_debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture with teardown: temporarily set SBASE log level to
+DEBUG.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="factsheet_test.view.test_ui.ui_desc_minimal">
+<code class="sig-name descname">ui_desc_minimal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#ui_desc_minimal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.ui_desc_minimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytest fixture: Return minimal user interface description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>DESC - user interface description as string.</p></li>
+<li><p>ID_ELEMENT - ID of a <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Label.html">Gtk.Label</a> object.</p></li>
+<li><p>TEXT_ITEM - contents of label object.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestUiItems">
+<em class="property">class </em><code class="sig-name descname">TestUiItems</code><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestUiItems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestUiItems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for user interface constants and shared objects.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestUiItems.test_defined">
+<code class="sig-name descname">test_defined</code><span class="sig-paren">(</span><em class="sig-param">NAME</em>, <em class="sig-param">TYPE</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestUiItems.test_defined"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestUiItems.test_defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm module defines constants and shared objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestUiActions">
+<em class="property">class </em><code class="sig-name descname">TestUiActions</code><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestUiActions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestUiActions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for module functions defined in <a class="reference internal" href="../src/factsheet.view.ui.html#module-factsheet.view.ui" title="factsheet.view.ui"><code class="xref py py-mod docutils literal notranslate"><span class="pre">view.ui</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestUiActions.test_new_action_active">
+<code class="sig-name descname">test_new_action_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestUiActions.test_new_action_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestUiActions.test_new_action_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm activate signal for new action invokes handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestUiActions.test_new_action_active_dialog">
+<code class="sig-name descname">test_new_action_active_dialog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestUiActions.test_new_action_active_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestUiActions.test_new_action_active_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm activate signal for new action invokes handler with
+dialog to display.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestGetUiObject">
+<em class="property">class </em><code class="sig-name descname">TestGetUiObject</code><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetUiElement</span></code></a>.</p>
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestGetUiObject.PatchGetUiObject">
+<em class="property">class </em><code class="sig-name descname">PatchGetUiObject</code><span class="sig-paren">(</span><em class="sig-param">p_description</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObject.PatchGetUiObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObject.PatchGetUiObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElement" title="factsheet.view.ui.GetUiElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">factsheet.view.ui.GetUiElement</span></code></a></p>
+<p>Patch subclass for testing abstract :class;`.GetUiElement`.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObject.test_method_abstract">
+<code class="sig-name descname">test_method_abstract</code><span class="sig-paren">(</span><em class="sig-param">CLASS</em>, <em class="sig-param">NAME_METHOD</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObject.test_method_abstract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObject.test_method_abstract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm each abstract method is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CLASS</strong> – class that should be abstract.</p></li>
+<li><p><strong>NAME_METHOD</strong> – method that should be abstract.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObject.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">ui_desc_minimal</em>, <em class="sig-param">caplog</em>, <em class="sig-param">set_logger_debug</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObject.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObject.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui_desc_minimal</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_ui.ui_desc_minimal" title="factsheet_test.view.test_ui.ui_desc_minimal"><code class="xref py py-func docutils literal notranslate"><span class="pre">ui_desc_minimal()</span></code></a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+<li><p><strong>set_logger_debug</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_ui.set_logger_debug" title="factsheet_test.view.test_ui.set_logger_debug"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_logger_debug()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObject.test_call">
+<code class="sig-name descname">test_call</code><span class="sig-paren">(</span><em class="sig-param">ui_desc_minimal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObject.test_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObject.test_call" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm user interface element retrieval.</div>
+<div class="line">Case: ID matches an element.</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObject.test_call_no_element">
+<code class="sig-name descname">test_call_no_element</code><span class="sig-paren">(</span><em class="sig-param">ui_desc_minimal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObject.test_call_no_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObject.test_call_no_element" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm user interface element retrieval.</div>
+<div class="line">Case: ID does not matches an element.</div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestGetUiObjectPath">
+<em class="property">class </em><code class="sig-name descname">TestGetUiObjectPath</code><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObjectPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObjectPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByPath" title="factsheet.view.ui.GetUiElementByPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetUiElementByPath</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObjectPath.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">ui_desc_minimal</em>, <em class="sig-param">tmp_path</em>, <em class="sig-param">caplog</em>, <em class="sig-param">set_logger_debug</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObjectPath.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObjectPath.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: description provided by path.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui_desc_minimal</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_ui.ui_desc_minimal" title="factsheet_test.view.test_ui.ui_desc_minimal"><code class="xref py py-func docutils literal notranslate"><span class="pre">ui_desc_minimal()</span></code></a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+<li><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p></li>
+<li><p><strong>set_logger_debug</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_ui.set_logger_debug" title="factsheet_test.view.test_ui.set_logger_debug"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_logger_debug()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObjectPath.test_init_file_error">
+<code class="sig-name descname">test_init_file_error</code><span class="sig-paren">(</span><em class="sig-param">tmp_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObjectPath.test_init_file_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObjectPath.test_init_file_error" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: error accessing description provided by path.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p></li>
+<li><p><strong>set_logger_debug</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_ui.set_logger_debug" title="factsheet_test.view.test_ui.set_logger_debug"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_logger_debug()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestGetUiObjectStr">
+<em class="property">class </em><code class="sig-name descname">TestGetUiObjectStr</code><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObjectStr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObjectStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for <a class="reference internal" href="../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByStr" title="factsheet.view.ui.GetUiElementByStr"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetUiElementByStr</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestGetUiObjectStr.test_init">
+<code class="sig-name descname">test_init</code><span class="sig-paren">(</span><em class="sig-param">ui_desc_minimal</em>, <em class="sig-param">caplog</em>, <em class="sig-param">set_logger_debug</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestGetUiObjectStr.test_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestGetUiObjectStr.test_init" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Confirm initialization.</div>
+<div class="line">Case: description provided by path.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui_desc_minimal</strong> – fixture <a class="reference internal" href="#factsheet_test.view.test_ui.ui_desc_minimal" title="factsheet_test.view.test_ui.ui_desc_minimal"><code class="xref py py-func docutils literal notranslate"><span class="pre">ui_desc_minimal()</span></code></a>.</p></li>
+<li><p><strong>caplog</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/logging.html#logging">Pytest caplog</a>.</p></li>
+<li><p><strong>tmp_path</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/tmp_path.html#tmp-path">Pytest tmp_path</a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="factsheet_test.view.test_ui.TestModule">
+<em class="property">class </em><code class="sig-name descname">TestModule</code><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unit tests for module-level components of <a class="reference internal" href="../src/factsheet.view.ui.html#module-factsheet.view.ui" title="factsheet.view.ui"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ui</span></code></a>.</p>
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestModule.test_exceptions">
+<code class="sig-name descname">test_exceptions</code><span class="sig-paren">(</span><em class="sig-param">TARGET</em>, <em class="sig-param">SUPER</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestModule.test_exceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestModule.test_exceptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm presence of exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parem TARGET</dt>
+<dd class="field-odd"><p>exception under test.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>SUPER</strong> – super class of exception.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="factsheet_test.view.test_ui.TestModule.test_new_column_stock">
+<code class="sig-name descname">test_new_column_stock</code><span class="sig-paren">(</span><em class="sig-param">monkeypatch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/factsheet_test/view/test_ui.html#TestModule.test_new_column_stock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factsheet_test.view.test_ui.TestModule.test_new_column_stock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm column construction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monkeypatch</strong> – built-in fixture <a class="reference external" href="https://docs.pytest.org/en/latest/how-to/monkeypatch.html">Pytest monkeypatch</a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="factsheet_test.view.test_view_markup.html" class="btn btn-neutral float-right" title="test_view_markup View Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="factsheet_test.view.test_select_spec.html" class="btn btn-neutral float-left" title="test_select_spec View Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

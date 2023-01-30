@@ -1,0 +1,50 @@
+.. Commonly used symbols in Factsheet documentation.
+
+
+.. |apply| image::  /icons/emblem-default-symbolic.svg
+   :alt: (light check in dark disk)
+
+.. |cancel| image::  /icons/edit-delete-symbolic.svg
+   :alt: (light x in dark disk)
+
+.. |collapser| unicode:: U+25BE .. Black down-pointing small triangle
+
+.. |collapse-all| image:: /icons/format-indent-less-symbolic.svg
+   :alt: (three bars with left arrowhead after top two bars)
+
+.. |document-new| image::  /icons/document-new-symbolic.svg
+   :alt: (page outline with plus)
+
+.. |document-save-as| image::  /icons/document-save-as-symbolic.svg
+   :alt: (page with arrow down to file box)
+
+.. |edit| image::  /icons/document-edit-symbolic.svg
+   :alt: (pencil)
+
+.. |edit-find| image::  /icons/edit-find-symbolic.svg
+   :alt: (magnifying glass)
+
+.. |expander| unicode:: U+25B8 .. Black right-pointing small triangle
+
+.. |expand-all| image:: /icons/format-indent-more-symbolic.svg
+   :alt: (three bars with right arrowhead before top two bars)
+
+.. |go-first| image:: /icons/go-top-symbolic.svg
+   :alt: (arrowhead up under bar)
+
+.. |go-last| image:: /icons/go-bottom-symbolic.svg
+   :alt: (arrowhead down over bar)
+
+.. |help| image:: /icons/dialog-information-symbolic.svg
+   :alt: (lightbulb)
+
+.. |open-popup| image::  /icons/go-down-symbolic.svg
+   :alt: (arrowhead down)
+
+.. |menu| image::  /icons/format-justify-fill-symbolic.svg
+   :alt: (three horizontal bars)
+
+.. |window-close| image::  /icons/window-close-symbolic.svg
+   :alt: (x)
+
+

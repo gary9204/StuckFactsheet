@@ -5,267 +5,225 @@ Defines factsheet-level model.
 on a Model-View-Controller (MVC) design.  The design is partitioned into
 factsheet, topic, and fact layers.  Module ``sheet`` defines
 class representing the model of a factsheet.
+
+.. data:: Name
+
+    Type alias for name of Factsheet.  See :data:`~.control_sheet.DisplayName`
+    and :data:`~.control_sheet.EditorName`.
+
+.. data:: Summary
+
+    Type alias for summary of Factsheet.  See
+    :data:`~.control_sheet.DisplaySummary` and
+    :data:`~.control_sheet.EditorSummary`.
+
+.. data:: Title
+
+    Type alias for title of Factsheet.  See
+    :data:`~.control_sheet.DisplayTitle` and
+    :data:`~.control_sheet.EditorTitle`.
+
+.. data:: Topics
+
+    Type alias for topics of Factsheet.  See
+    :data:`~.control_sheet.ViewTopics`.
 """
 import logging
-import typing   # noqa
+import typing
 
-from factsheet.abc_types import abc_sheet as ABC_SHEET
-from factsheet.abc_types import abc_stalefile as ABC_STALE
-from factsheet.abc_types import abc_topic as ABC_TOPIC
-from factsheet.model import infoid as MINFOID
-from factsheet.view import ui as UI
+import factsheet.bridge_ui as BUI
+import factsheet.model.idcore as MIDCORE
+import factsheet.model.topic as MTOPIC
 
 logger = logging.getLogger('Main.model.sheet')
 
+Name = BUI.x_b_t_ModelTextMarkup
+Summary = BUI.ModelTextStyled
+OutlineTopics = BUI.ModelOutlineMulti[MTOPIC.Topic]
+Title = BUI.x_b_t_ModelTextMarkup
+TagSheet = typing.NewType('TagSheet', int)
 
-class Sheet(ABC_STALE.InterfaceStaleFile):
+
+class Sheet(MIDCORE.IdCore[Name, Summary, Title]):
     """Factsheet document :mod:`~factsheet.model`.
 
     Class ``Sheet`` represents an entire Factsheet document.  A model
-    factsheet consists of a hierarchy of topics along with
-    identification information (see :class:`.InfoId`.) Each topic
-    represents a collection of facts about a specific subject.
-
-    :param p_name: name of factsheet.
-    :param p_summary: summary of factsheet.
-    :param p_title: title of factsheet.
+    factsheet consists of a outline of topics along with identification
+    information (see :class:`.IdCore`). Each topic represents a
+    collection of facts about a specific subject.
 
     .. admonition:: About Equality
 
-        Two factsheet are equivalent when they have the same topic
-        outlines and identification information. Transient aspects of
-        the factsheets (like windows) are not compared and may be
-        different.
+        Each factsheet model has persistent identification information
+        and a topic outline.  In addition, a factsheet model may have
+        transient aspects such as change state with respect to file
+        storage,
 
-    .. attribute:: ASPECT
-
-       Identifies role of model component.
+        Two factsheet are equal when their identification information
+        are equal and their topic outlines are equal.  Transient
+        aspects of the factsheets are not compared and may be different.
     """
-    ASPECT = 'factsheet'
 
-    def __eq__(self, px_other: typing.Any) -> bool:
-        """Return True when px_other has same identification information.
+    def __eq__(self, p_other: typing.Any) -> bool:
+        """Return True when p_other has same topics and identity
+        information.
 
-        :param px_other: object to compare with self.
+        :param p_other: object to compare with self.
         """
-        if not isinstance(px_other, Sheet):
+        if not super().__eq__(p_other):
             return False
 
-        if self._infoid != px_other._infoid:
-            return False
-
-        if self._topics != px_other._topics:
+        if self._topics != p_other._topics:
             return False
 
         return True
 
-    def __getstate__(self) -> typing.Dict:
-        """Return factsheet model in form pickle can persist.
+    def __init__(self, *, p_name: str = 'Unnamed',
+                 p_summary: str = 'Edit factsheet description here.',
+                 p_title: str = 'New Factsheet',
+                 **kwargs: typing.Any) -> None:
+        """Initialize factsheet with given identity and no topics.
 
-        Persistent form of factsheet excludes run-time information .
+        :param p_name: name of factsheet.
+        :param p_summary: summary of factsheet.
+        :param p_title: title of factsheet.
+        :param kwargs: superclass keyword parameters.
         """
-        state = self.__dict__.copy()
-        del state['_pages']
-        del state['_stale']
-        return state
-
-    def __init__(self, *, p_name: str = 'Unnamed', p_summary: str = '',
-                 p_title: str = '') -> None:
-        self._infoid = MINFOID.InfoId(p_aspect=self.ASPECT, p_name=p_name,
-                                      p_summary=p_summary, p_title=p_title)
-        self._topics = UI.FACTORY_SHEET.new_model_outline_topics()
-        self._state_transient()
-
-    def __setstate__(self, px_state: typing.Dict) -> None:
-        """Reconstruct factsheet model from state pickle loads.
-
-        Reconstructed attribute is marked fresh and has no views.
-
-        :param px_state: unpickled state of stored factsheet model.
-        """
-        self.__dict__.update(px_state)
-        self._state_transient()
-
-    def _state_transient(self) -> None:
-        """Helper ensures __init__ and __setstate__ are consistent."""
-        self._stale = False
-        self._pages: typing.Dict[int, ABC_SHEET.InterfacePageSheet] = dict()
-
-    def attach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-        """Add page to update display when sheet changes.
-
-        Log warning when requested page is already attached.
-
-        :param pm_page: page to add.
-        """
-        id_page = id(pm_page)
-        if id_page in self._pages.keys():
-            logger.warning(
-                'Duplicate page: {} ({}.{})'.format(
-                    hex(id_page),
-                    self.__class__.__name__, self.attach_page.__name__))
-            return
-
-        self._infoid.attach_view(pm_page.get_infoid())
-        # See Factsheet project issue #95
-        self._topics.attach_view(
-            pm_page.get_view_topics())   # type: ignore[arg-type]
-        self._pages[id(pm_page)] = pm_page
+        self._name = Name(p_text=p_name)
+        self._summary = Summary(p_text=p_summary)
+        self._title = Title(p_text=p_title)
+        self._topics = OutlineTopics()
+        super().__init__(**kwargs)
 
     def clear(self) -> None:
-        """Remove all topics from the topics outline."""
+        """Mark topics outline stale and remove all topics from outline."""
         self.set_stale()
         self._topics.clear()
 
-    def detach_all(self) -> None:
-        """Detach all pages from sheet."""
-        while self._pages:
-            _id_page, page = self._pages.popitem()
-            self._detach_attribute_views(page)
-            page.close_page()
+    def get_tag(self, p_line: BUI.LineOutline) -> MTOPIC.TagTopic:
+        """Return tag of topic at given line in topics outline.
 
-    def detach_page(self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-        """Remove one page from sheet.
-
-        Log warning when requested page is not attached.
-
-        :param px_view: page to remove.
+        :param p_line: line of desired topic.
         """
-        id_page = id(pm_page)
-        try:
-            self._pages.pop(id_page)
-        except KeyError:
-            logger.warning(
-                'Missing page: {} ({}.{})'.format(
-                    hex(id_page),
-                    self.__class__.__name__, self.detach_page.__name__))
-            return
+        NO_TOPIC = 0
+        tag = MTOPIC.TagTopic(NO_TOPIC)
+        topic = self._topics.get_item(p_line)
+        if topic is not None:
+            tag = topic.tag
+        return tag
 
-        self._detach_attribute_views(pm_page)
+    def insert_topic_after(self, p_topic: MTOPIC.Topic,
+                           p_line: BUI.LineOutline) -> BUI.LineOutline:
+        """Adds topic to topics outline after topic at given line.
 
-    def _detach_attribute_views(
-            self, pm_page: ABC_SHEET.InterfacePageSheet) -> None:
-        """For each sheet attribute with a distinct view, remove the
-        view for the attribute.
+        If line is None, adds topic at beginning of outline.
 
-        :param pm_page: page for factsheet as a whole.
-        """
-        self._infoid.detach_view(pm_page.get_infoid())
-        # See Factsheet project issue #95
-        self._topics.detach_view(
-            pm_page.get_view_topics())   # type: ignore[arg-type]
-
-    def extract_topic(self, px_i: UI.IndexOutline) -> None:
-        """Remove topic and all its descendants from topic outline.
-
-        :param px_i: index of parent topic to remove along with all
-            descendants.  If index is None, remove no topics.
-        """
-        if px_i is not None:
-            self.set_stale()
-            self._topics.extract_section(px_i)
-
-    def insert_topic_after(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> UI.IndexOutline:
-        """Adds topic to topics outline after topic at given index.
-
-        If index is None, adds topic at beginning of outline.
-
-        :param px_topic: new topic to add.
-        :param px_i: index of topic to precede new topic.
-        :returns: index of newly-added topic.
+        :param p_topic: new topic to add.
+        :param p_line: line of topic to precede new topic.
+        :returns: line of newly-added topic.
         """
         self.set_stale()
-        return self._topics.insert_after(px_topic, px_i)
+        return self._topics.insert_after(p_topic, p_line)
 
-    def insert_topic_before(self, px_topic: ABC_TOPIC.AbstractTopic,
-                            px_i: UI.IndexOutline) -> UI.IndexOutline:
-        """Adds topic to topics outline before topic at given index.
+    def insert_topic_before(self, p_topic: MTOPIC.Topic,
+                            p_line: BUI.LineOutline) -> BUI.LineOutline:
+        """Adds topic to topics outline before topic at given line.
 
-        If index is None, adds topic at end of outline.
+        If line is None, adds topic at end of outline.
 
-        :param px_topic: new topic to add.
-        :param px_i: index of topic to follow new topic.
-        :returns: index of newly-added topic.
+        :param p_topic: new topic to add.
+        :param p_line: line of topic to follow new topic.
+        :returns: line of newly-added topic.
         """
         self.set_stale()
-        return self._topics.insert_before(px_topic, px_i)
+        return self._topics.insert_before(p_topic, p_line)
 
-    def insert_topic_child(self, px_topic: ABC_TOPIC.AbstractTopic,
-                           px_i: UI.IndexOutline) -> UI.IndexOutline:
-        """Adds topic to topic outline as child of topic at given index.
+    def insert_topic_child(self, p_topic: MTOPIC.Topic,
+                           p_line: BUI.LineOutline) -> BUI.LineOutline:
+        """Adds topic to topics outline as child of topic at given line.
 
-        Method adds topic after all existing children.  If index is
-        None, it adds topic at end of outline.
+        Adds topic after all existing children.  If line is None, it
+        adds topic at end of outline.
 
-        :param px_topic: new topic to add.
-        :param px_i: index of parent topic for new topic.
-        :returns: index of newly-added topic.
+        :param p_topic: new topic to add.
+        :param p_line: line of parent topic for new topic.
+        :returns: line of newly-added topic.
         """
         self.set_stale()
-        return self._topics.insert_child(px_topic, px_i)
+        return self._topics.insert_child(p_topic, p_line)
 
-    def is_fresh(self) -> bool:
+    def has_not_changed(self) -> bool:
         """Return True when there are no unsaved changes to factsheet."""
         return not self.is_stale()
 
     def is_stale(self) -> bool:
         """Return True when there is at least one unsaved change to
         factsheet.
+
+        Log warning when a topic is missing from the topics outline.
         """
-        if self._stale:
+        if super().is_stale():
             return True
 
-        if self._infoid.is_stale():
-            self._stale = True
-            return True
-
-        for index in self._topics.indices():
-            topic = self._topics.get_item(index)
-            assert topic is not None
-            if topic.is_stale():
+        for topic in self._topics.items():
+            if topic is None:
+                logger.warning(
+                    'Topics outline contains line with no topic ({}.{})'
+                    ''.format(self.__class__.__name__, self.is_stale.__name__))
+            elif topic.is_stale():
                 self._stale = True
                 return True
 
         return False
 
-    def n_pages(self) -> int:
-        """Return number of pages attached to factsheet."""
-        return len(self._pages)
+    @property
+    def outline_topics(self) -> OutlineTopics:
+        """Return topics outline."""
+        return self._topics
 
-    def present_pages(self, p_time: int) -> None:
-        """Notify all pages to make them visible to user.
+    def remove_topic(self, p_line: BUI.LineOutline) -> None:
+        """Mark topics outline stale and remove topic from outline.
 
-        :param p_time: timestamp of event requesting presentation.
+        Removes topic and all its descendents.
+
+        :param p_line: line of topic to remove.  If line is None or
+            invalid, remove no topics but mark sheet as stale nonetheless.
         """
-        for page in self._pages.values():
-            page.present(p_time)
+        self.set_stale()
+        self._topics.remove(p_line)
 
     def set_fresh(self) -> None:
         """Mark factsheet in memory consistent with file contents."""
-        self._stale = False
-        self._infoid.set_fresh()
-        for index in self._topics.indices():
-            topic = self._topics.get_item(index)
-            assert topic is not None
-            topic.set_fresh()
+        super().set_fresh()
+        for topic in self._topics.items():
+            if topic is None:
+                logger.warning('Topics outline contains line with no '
+                               'topic ({}.{})'.format(self.__class__.__name__,
+                                                      self.set_fresh.__name__))
+            else:
+                topic.set_fresh()
 
-    def set_stale(self) -> None:
-        """Mark factsheet in memory changed from file contents."""
-        self._stale = True
+    @property
+    def tag(self) -> TagSheet:
+        """Return unique identifier of sheet."""
+        return TagSheet(id(self))
 
-    def update_titles(self, p_subtitle_base: str) -> None:
-        """Notify each page to update titles in page's window.
+    def topics(self, p_line: BUI.LineOutline = None
+               ) -> typing.Iterator[MTOPIC.Topic]:
+        """Return iterator over topics in section of topics outline.
 
-        Each page receives a subtitle that identifies both the factsheet
-        and page.
+        The iterator is recursive (that is, includes topic at given
+        line along with all its descendants).
 
-        :param p_subtitle_base: common part of all subtitles.
+        Log warning when a topic is missing from the topics outline.
+
+        :param p_line: line of parent item of section.  Default
+            iterates over entire outline.
         """
-        id_model = self._infoid.id_model
-        text_model = hex(id_model)[-3:].upper()
-        for id_page, page in self._pages.items():
-            text_page = hex(id_page)[-3:].upper()
-            subtitle = '{} ({}:{})'.format(
-                p_subtitle_base, text_model, text_page)
-            page.set_titles(subtitle)
+        for topic in self._topics.items_section(p_line):
+            if topic is None:
+                logger.warning(
+                    'Topics outline contains line with no topic ({}.{})'
+                    ''.format(self.__class__.__name__, self.topics.__name__))
+            else:
+                yield topic

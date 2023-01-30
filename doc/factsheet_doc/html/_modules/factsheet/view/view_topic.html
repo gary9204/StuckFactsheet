@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.view.view_topic &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.view.view_topic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.view.view_topic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines class to display topic view in a Factsheet window pane.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">typing</span>   <span class="c1"># noqa</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.control.control_topic</span> <span class="k">as</span> <span class="nn">CTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.ui</span> <span class="k">as</span> <span class="nn">UI</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_markup</span> <span class="k">as</span> <span class="nn">VMARKUP</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gio</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GLib</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="ViewTopic"><a class="viewcode-back" href="../../../src/factsheet.view.view_topic.html#factsheet.view.view_topic.ViewTopic">[docs]</a><span class="k">class</span> <span class="nc">ViewTopic</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Display topic and translate user actions.</span>
+
+<span class="sd">    Class :class:`.ViewTopic` maintains presentation of a topic in a</span>
+<span class="sd">    pane of a Factsheet window.  The class displays the content of a</span>
+<span class="sd">    topic model. It translates a user&#39;s actions at the user interface</span>
+<span class="sd">    into requests to update the model and its presentation.</span>
+
+<span class="sd">    .. attribute:: NAME_FILE_TOPIC_UI</span>
+
+<span class="sd">       Path to user interface defintion of topic pane.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NAME_FILE_TOPIC_UI</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">UI</span><span class="o">.</span><span class="n">DIR_UI</span> <span class="o">/</span> <span class="s1">&#39;topic.ui&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_control</span><span class="p">:</span> <span class="n">CTOPIC</span><span class="o">.</span><span class="n">ControlTopic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param p_control: control for topic the view presents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span> <span class="o">=</span> <span class="n">p_control</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NAME_FILE_TOPIC_UI</span><span class="p">)</span>
+        <span class="n">get_object</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_object</span>
+
+        <span class="c1"># Components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="s1">&#39;ui_view_topic&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_name_topic</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_summary_topic</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_title_topic</span><span class="p">(</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_menu_display</span><span class="p">(</span><span class="n">p_get_object</span><span class="o">=</span><span class="n">get_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">show_all</span><span class="p">()</span>
+
+        <span class="c1"># Dialogs</span>
+        <span class="n">dialogs</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;show-help-topic&#39;</span><span class="p">,</span> <span class="n">UI</span><span class="o">.</span><span class="n">HELP_TOPIC</span><span class="p">),</span>
+                   <span class="p">(</span><span class="s1">&#39;show-help-topic-display&#39;</span><span class="p">,</span> <span class="n">UI</span><span class="o">.</span><span class="n">HELP_TOPIC_DISPLAY</span><span class="p">),</span>
+                   <span class="p">]</span>
+        <span class="n">actions_topic</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleActionGroup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">insert_action_group</span><span class="p">(</span><span class="s1">&#39;topic&#39;</span><span class="p">,</span> <span class="n">actions_topic</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dialog</span> <span class="ow">in</span> <span class="n">dialogs</span><span class="p">:</span>
+            <span class="n">UI</span><span class="o">.</span><span class="n">new_action_active_dialog</span><span class="p">(</span>
+                <span class="n">actions_topic</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_show_dialog</span><span class="p">,</span> <span class="n">dialog</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_menu_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Bind display menu buttons to topic components.</span>
+
+<span class="sd">        :param p_get_object: method to get topic user interface elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SYNC</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">BIDIRECTIONAL</span> <span class="o">|</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">SYNC_CREATE</span>
+        <span class="n">SYNC_ALL</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">BindingFlags</span><span class="o">.</span><span class="n">SYNC_CREATE</span>
+        <span class="n">button_all</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_show_all&#39;</span><span class="p">)</span>
+        <span class="n">names_ui</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;ui_show_summary&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_summary&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;ui_show_facts&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_facts&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;ui_show_fact_current&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_fact_current&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;ui_show_topics_related&#39;</span><span class="p">,</span> <span class="s1">&#39;ui_expander_topics_related&#39;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="k">for</span> <span class="n">name_button</span><span class="p">,</span> <span class="n">name_expander</span> <span class="ow">in</span> <span class="n">names_ui</span><span class="p">:</span>
+            <span class="n">button</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="n">name_button</span><span class="p">)</span>
+            <span class="n">expander</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="n">name_expander</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">button</span><span class="o">.</span><span class="n">bind_property</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="n">expander</span><span class="p">,</span> <span class="s1">&#39;visible&#39;</span><span class="p">,</span> <span class="n">SYNC</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">button_all</span><span class="o">.</span><span class="n">bind_property</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="n">SYNC_ALL</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_name_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize view for topic name.</span>
+
+<span class="sd">        :param p_get_object: method to get topic user interface elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+
+        <span class="n">display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_display_name</span><span class="p">()</span>
+        <span class="n">editor_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_editor_name</span><span class="p">()</span>
+        <span class="n">view_name</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_name</span><span class="p">,</span> <span class="n">editor_name</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+        <span class="n">site_name_sheet</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_name_topic&#39;</span><span class="p">)</span>
+        <span class="n">site_name_sheet</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">view_name</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_summary_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize view for topic summary.</span>
+
+<span class="sd">        :param p_get_object: method to get topic user interface elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_editor_summary</span><span class="p">()</span>
+        <span class="n">site_summary_topic</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_summary&#39;</span><span class="p">)</span>
+        <span class="n">site_summary_topic</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">editor_summary</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_title_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_get_object</span><span class="p">:</span> <span class="s1">&#39;gi.FunctionInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize view for topic title.</span>
+
+<span class="sd">        :param p_get_object: method to get topic user interface elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EXPAND_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">FILL_OKAY</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">N_PADDING</span> <span class="o">=</span> <span class="mi">6</span>
+
+        <span class="n">display_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_display_title</span><span class="p">()</span>
+        <span class="n">editor_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">new_editor_title</span><span class="p">()</span>
+        <span class="n">view_title</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_title</span><span class="p">,</span> <span class="n">editor_title</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">)</span>
+        <span class="n">site_title_sheet</span> <span class="o">=</span> <span class="n">p_get_object</span><span class="p">(</span><span class="s1">&#39;ui_site_title_topic&#39;</span><span class="p">)</span>
+        <span class="n">site_title_sheet</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span>
+            <span class="n">view_title</span><span class="o">.</span><span class="n">ui_view</span><span class="p">,</span> <span class="n">EXPAND_OKAY</span><span class="p">,</span> <span class="n">FILL_OKAY</span><span class="p">,</span> <span class="n">N_PADDING</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ui_view</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return underlying presentation element.</span>
+
+<span class="sd">        This is a stub method. It is untested.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span>
+
+<div class="viewcode-block" id="ViewTopic.on_show_dialog"><a class="viewcode-back" href="../../../src/factsheet.view.view_topic.html#factsheet.view.view_topic.ViewTopic.on_show_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">on_show_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_action</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="p">,</span>
+                       <span class="n">_target</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="p">,</span> <span class="n">p_dialog</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span>
+                       <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Display informational dialog.</span>
+
+<span class="sd">        :param p_dialog: informational dialog.</span>
+
+<span class="sd">        .. note:: **Enhancement opportunity**</span>
+
+<span class="sd">           Method ``on_show_dialog`` includes a top-level window check</span>
+<span class="sd">           as per `Gtk.Widget.get_toplevel &lt;GtkWidget.get_toplevel_&gt;`_.</span>
+<span class="sd">           During normal operation, this check should always confirm the</span>
+<span class="sd">           topic pane is in a top-level window.</span>
+
+<span class="sd">           The method silently patches a failure.  Consider adding a</span>
+<span class="sd">           log message to the method to document abnormal behavior.</span>
+
+<span class="sd">        .. _GtkWidget.get_toplevel: https://lazka.github.io/pgi-docs/</span>
+<span class="sd">           #Gtk-3.0/classes/Widget.html#Gtk.Widget.get_toplevel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">window_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ui_view</span><span class="o">.</span><span class="n">get_toplevel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">window_top</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">window_top</span><span class="o">.</span><span class="n">get_window_type</span><span class="p">()</span> <span class="ow">is</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">TOPLEVEL</span><span class="p">:</span>
+                <span class="n">p_dialog</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="n">window_top</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">p_dialog</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">p_dialog</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

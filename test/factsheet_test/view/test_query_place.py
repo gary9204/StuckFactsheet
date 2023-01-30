@@ -4,21 +4,21 @@ Unit tests for topic placement class.  See :mod:`.query_place`.
 import gi   # type: ignore[import]
 import pytest   # type: ignore[import]
 
-from factsheet.adapt_gtk import adapt_outline as AOUTLINE
-from factsheet.adapt_gtk import adapt_sheet as ASHEET
 from factsheet.view import query_place as QPLACE
-from factsheet.view import ui as UI
+from factsheet.view import types_view as VTYPES
+# from factsheet.view import ui as UI
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk   # type: ignore[import]    # noqa: E402
 
 
 @pytest.fixture
-def patch_donor_outline(new_outline_topics):
+def patch_view_topics(new_outline_topics):
     """Pytest fixture returns view of topic outline."""
-    outline = UI.FACTORY_SHEET.new_view_outline_topics()
-    gtk_model = new_outline_topics()
-    outline.gtk_view.set_model(gtk_model)
+    outline = VTYPES.ViewOutlineTopics()
+    topics = new_outline_topics()
+    ui_model = topics._ui_model
+    outline.gtk_view.set_model(ui_model)
     return outline
 
 
@@ -41,17 +41,17 @@ class TestQueryPlace:
         assert isinstance(target.NAME_FILE_QUERY_UI, str)
         assert target.NAME_FILE_QUERY_UI
 
-    def test_init(self, patch_donor_outline):
+    def test_init(self, patch_view_topics):
         """Confirm initialization."""
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
+        VIEW_TOPICS = patch_view_topics
         NAME_CANCEL = 'Cancel'
         NAME_PLACE = 'Place'
         NAME_SEARCH = 'edit-find-symbolic'
         NAME_INFO = 'dialog-information-symbolic'
         # Test
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=VIEW_TOPICS)
         assert isinstance(target._dialog, Gtk.Dialog)
         dialog = target._dialog
         assert dialog.get_transient_for() is WIN
@@ -83,11 +83,10 @@ class TestQueryPlace:
         name_image, _size_image = image.get_icon_name()
         assert NAME_INFO == name_image
 
-        assert isinstance(target._outline, ASHEET.AdaptTreeViewTopic)
-        assert target._outline.scope_search is ~ASHEET.FieldsTopic.VOID
-        gtk_view = target._outline.gtk_view
-        assert gtk_view is not DONOR.gtk_view
-        assert gtk_view.get_model() is DONOR.gtk_view.get_model()
+        assert isinstance(target._view_topics, ASHEET.AdaptTreeViewTopic)
+        assert target._view_topics.scope_search is ~ASHEET.FieldsTopic.VOID
+        gtk_view = target._view_topics.gtk_view
+        assert gtk_view is VIEW_TOPICS.gtk_view
         assert gtk_view.get_parent() is not None
         assert gtk_view.get_search_entry() is not None
         assert gtk_view.get_visible()
@@ -102,7 +101,7 @@ class TestQueryPlace:
         # Teardown
         del WIN
 
-    def test_call(self, patch_dialog_run, monkeypatch, patch_donor_outline):
+    def test_call(self, patch_dialog_run, monkeypatch, patch_view_topics):
         """| Confirm template selection.
         | Case: template selected.
         """
@@ -112,10 +111,10 @@ class TestQueryPlace:
             Gtk.Dialog, 'run', patch_dialog.run)
 
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
         target._dialog.show()
-        target._outline.gtk_view.expand_all()
+        target._view_topics.gtk_view.expand_all()
 
         PATH_ITEM = '1:1:1'
         model = DONOR.gtk_view.get_model()
@@ -136,7 +135,7 @@ class TestQueryPlace:
         del WIN
 
     def test_call_cancel(
-            self, patch_dialog_run, monkeypatch, patch_donor_outline):
+            self, patch_dialog_run, monkeypatch, patch_view_topics):
         """| Confirm template selection.
         | Case: selection canceled.
         """
@@ -146,10 +145,10 @@ class TestQueryPlace:
             Gtk.Dialog, 'run', patch_dialog.run)
 
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
         target._dialog.show()
-        target._outline.gtk_view.expand_all()
+        target._view_topics.gtk_view.expand_all()
 
         PATH_ITEM = '1:1:1'
         model = DONOR.gtk_view.get_model()
@@ -163,15 +162,15 @@ class TestQueryPlace:
         # Teardown
         del WIN
 
-    def test_on_changed_cursor(self, patch_donor_outline):
+    def test_on_changed_cursor(self, patch_view_topics):
         """| Confirm updates when current topic changes.
         | Case: change to topic.
         """
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
-        target._outline.gtk_view.expand_all()
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
+        target._view_topics.gtk_view.expand_all()
 
         PATH_ITEM = '0:1'
         model = DONOR.gtk_view.get_model()
@@ -189,15 +188,15 @@ class TestQueryPlace:
         # Teardown
         del WIN
 
-    def test_on_changed_cursor_to_none(self, patch_donor_outline):
+    def test_on_changed_cursor_to_none(self, patch_view_topics):
         """| Confirm updates when current topic changes.
         | Case: change to no current topic.
         """
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
-        target._outline.gtk_view.expand_all()
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
+        target._view_topics.gtk_view.expand_all()
 
         target._cursor.unselect_all()
         target._button_place.set_sensitive(True)
@@ -211,15 +210,15 @@ class TestQueryPlace:
         # Teardown
         del WIN
 
-    def test_on_changed_cursor_no_topic(self, patch_donor_outline):
+    def test_on_changed_cursor_no_topic(self, patch_view_topics):
         """| Confirm updates when current topic changes.
         | Case: change to a topic is that is None.
         """
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
-        target._outline.gtk_view.expand_all()
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
+        target._view_topics.gtk_view.expand_all()
 
         PATH_ITEM = '0:1'
         model = DONOR.gtk_view.get_model()
@@ -250,12 +249,12 @@ class TestQueryPlace:
              QPLACE.Order.CHILD),
             ])
     def test_on_toggle_order(self, ORDER_OLD, IS_ACTIVE, ORDER_NEW,
-                             ORDER_EXPECT, patch_donor_outline):
+                             ORDER_EXPECT, patch_view_topics):
         """Confirm order field set."""
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
         target._order = ORDER_OLD
         button = Gtk.ToggleButton(active=IS_ACTIVE)
         # Test
@@ -264,38 +263,38 @@ class TestQueryPlace:
         # Teardown
         del WIN
 
-    def test_on_toggle_search_field_inactive(self, patch_donor_outline):
+    def test_on_toggle_search_field_inactive(self, patch_view_topics):
         """| Confirm search field set.
         | Case: button inactive.
         """
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
         SEARCH_ALL = ~ASHEET.FieldsTopic.VOID
-        target._outline.scope_search = SEARCH_ALL
+        target._view_topics.scope_search = SEARCH_ALL
         button = Gtk.ToggleButton(active=False)
         # Test
         target.on_toggle_search_field(button, ASHEET.FieldsTopic.NAME)
-        assert not target._outline.scope_search & ASHEET.FieldsTopic.NAME
-        assert target._outline.scope_search & ASHEET.FieldsTopic.TITLE
+        assert not target._view_topics.scope_search & ASHEET.FieldsTopic.NAME
+        assert target._view_topics.scope_search & ASHEET.FieldsTopic.TITLE
         # Teardown
         del WIN
 
-    def test_on_toggle_search_field_active(self, patch_donor_outline):
+    def test_on_toggle_search_field_active(self, patch_view_topics):
         """| Confirm search field set.
         | Case: button inactive.
         """
         # Setup
         WIN = Gtk.Window()
-        DONOR = patch_donor_outline
-        target = QPLACE.QueryPlace(px_parent=WIN, px_donor_view=DONOR)
+        DONOR = patch_view_topics
+        target = QPLACE.QueryPlace(p_parent=WIN, p_view_topics=DONOR)
         SEARCH_NONE = ASHEET.FieldsTopic.VOID
-        target._outline.scope_search = SEARCH_NONE
+        target._view_topics.scope_search = SEARCH_NONE
         button = Gtk.ToggleButton(active=True)
         # Test - not active
         target.on_toggle_search_field(button, ASHEET.FieldsTopic.TITLE)
-        assert target._outline.scope_search & ASHEET.FieldsTopic.TITLE
-        assert not target._outline.scope_search & ASHEET.FieldsTopic.NAME
+        assert target._view_topics.scope_search & ASHEET.FieldsTopic.TITLE
+        assert not target._view_topics.scope_search & ASHEET.FieldsTopic.NAME
         # Teardown
         del WIN

@@ -1,0 +1,807 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet_test.spec.test_base_s &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet_test.spec.test_base_s</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet_test.spec.test_base_s</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for base classes for topic specification.  See</span>
+<span class="sd">:class:`~.spec.base_s.Base`.</span>
+
+<span class="sd">.. include:: /test/refs_include_pytest.txt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pytest</span>  <span class="c1"># type: ignore[import]</span>
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+
+<span class="kn">import</span> <span class="nn">factsheet.bridge_ui</span> <span class="k">as</span> <span class="nn">BUI</span>
+<span class="kn">import</span> <span class="nn">factsheet.model.topic</span> <span class="k">as</span> <span class="nn">MTOPIC</span>
+<span class="kn">import</span> <span class="nn">factsheet.spec.base_s</span> <span class="k">as</span> <span class="nn">SBASE</span>
+<span class="kn">import</span> <span class="nn">factsheet.view.view_markup</span> <span class="k">as</span> <span class="nn">VMARKUP</span>
+
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GObject</span> <span class="k">as</span> <span class="n">GO</span>  <span class="c1"># type: ignore[import]  # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+
+<div class="viewcode-block" id="new_identity_spec"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.new_identity_spec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">new_identity_spec</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Pytest fixture: returns specification identity factory.</span>
+
+<span class="sd">    Factory returns name, summary, and title for specification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">new_identity</span><span class="p">():</span>
+        <span class="n">NAME_SPEC</span> <span class="o">=</span> <span class="s1">&#39;Cheese Shop&#39;</span>
+        <span class="n">SUMMARY_SPEC</span> <span class="o">=</span> <span class="s1">&#39;Please select any cheese in the shop!&#39;</span>
+        <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="s1">&#39;Cheese Specification&#39;</span>
+        <span class="k">return</span> <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span>
+
+    <span class="k">return</span> <span class="n">new_identity</span></div>
+
+
+<div class="viewcode-block" id="TestBase"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase">[docs]</a><span class="k">class</span> <span class="nc">TestBase</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for :class:`~.spec.base_s.Base`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBase.test_call"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_call">[docs]</a>    <span class="k">def</span> <span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm orchestration for topic creation and placement.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_pages</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assistant</span><span class="p">)</span>
+
+        <span class="n">called_new_assistant</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">called_add_pages</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">assistant_add_pages</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">called_run_assistant</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">assistant_run</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="nf">patch_new_assistant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">called_new_assistant</span>
+            <span class="n">called_new_assistant</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># pylint: disable=unused-variable</span>
+            <span class="k">nonlocal</span> <span class="n">assistant</span>
+            <span class="k">return</span> <span class="n">assistant</span>
+
+        <span class="k">def</span> <span class="nf">patch_add_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">called_add_pages</span>
+            <span class="n">called_add_pages</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># pylint: disable=unused-variable</span>
+            <span class="k">nonlocal</span> <span class="n">assistant_add_pages</span>
+            <span class="n">assistant_add_pages</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># pylint: disable=unused-variable</span>
+                <span class="n">p_assistant</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">patch_run_assistant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_assistant</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">called_run_assistant</span>
+            <span class="n">called_run_assistant</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># pylint: disable=unused-variable</span>
+            <span class="k">nonlocal</span> <span class="n">assistant_run</span>
+            <span class="n">assistant_run</span> <span class="o">=</span> <span class="n">p_assistant</span>  <span class="c1"># pylint: disable=unused-variable</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">,</span> <span class="s1">&#39;new_assistant&#39;</span><span class="p">,</span> <span class="n">patch_new_assistant</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">,</span> <span class="s1">&#39;add_pages&#39;</span><span class="p">,</span> <span class="n">patch_add_pages</span><span class="p">)</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">,</span> <span class="s1">&#39;run_assistant&#39;</span><span class="p">,</span> <span class="n">patch_run_assistant</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">called_new_assistant</span>
+        <span class="k">assert</span> <span class="n">called_add_pages</span>
+        <span class="k">assert</span> <span class="n">assistant_add_pages</span> <span class="ow">is</span> <span class="n">assistant</span>
+        <span class="k">assert</span> <span class="n">called_run_assistant</span>
+        <span class="k">assert</span> <span class="n">assistant_run</span> <span class="ow">is</span> <span class="n">assistant</span></div>
+
+<div class="viewcode-block" id="TestBase.test_init"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_init">[docs]</a>    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: non-topic attributes</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_name_spec</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">NAME_SPEC</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_name_spec</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">SUMMARY_SPEC</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary_spec</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">TITLE_SPEC</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_title_spec</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestBase.test_init_name_topic"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_init_name_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_name_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: attributes for topic name and view factories.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_name_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_name_topic</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayName</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_name_topic</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_name_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorName</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_name_topic</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_name_topic</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_init_summary_topic"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_init_summary_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_summary_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: attributes for topic summary and view factories.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_summary_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Summary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_summary_topic</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_new_display_summary_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplaySummary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_summary_topic</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_summary_topic</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_summary_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorSummary</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_summary_topic</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_summary_topic</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_init_title_topic"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_init_title_topic">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_title_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;| Confirm initialization.</span>
+<span class="sd">        | Case: attributes for topic title and view factories.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">BLANK</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">_title_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">Title</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">BLANK</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">_title_topic</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryDisplayTitle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_title_topic</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_title_topic</span><span class="p">,</span> <span class="n">MTOPIC</span><span class="o">.</span><span class="n">FactoryEditorTitle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_title_topic</span><span class="o">.</span><span class="n">_ui_model</span> <span class="ow">is</span> <span class="p">(</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_title_topic</span><span class="o">.</span><span class="n">_ui_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_add_pages"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_add_pages">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;I_PAGE, TITLE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Introduction&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Identify&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Confirm&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_add_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">I_PAGE</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm pages added to assistant.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :param I_PAGE: index of page in assistant.</span>
+<span class="sd">        :param TITLE: assistant&#39;s title for page.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="n">N_PAGES</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">add_pages</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assistant</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_nth_page</span><span class="p">(</span><span class="n">I_PAGE</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TITLE</span> <span class="o">==</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_page_title</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N_PAGES</span> <span class="o">==</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_n_pages</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestBase.test_append_page"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_append_page">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;METHOD, TITLE, TYPE, COMPLETE&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;append_page_intro&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Introduction&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">AssistantPageType</span><span class="o">.</span><span class="n">INTRO</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;append_page_identify&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Identify&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">AssistantPageType</span><span class="o">.</span><span class="n">CONTENT</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;append_page_confirm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Confirm&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">AssistantPageType</span><span class="o">.</span><span class="n">CONFIRM</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_append_page</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">COMPLETE</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm pages added to assistant.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :parem METHOD: append method under test.</span>
+<span class="sd">        :param TITLE: assistant&#39;s title for page.</span>
+<span class="sd">        :param TYPE: `Gtk.AssistantPageType`_ of page.</span>
+
+<span class="sd">        .. _`Gtk.AssistantPageType`:</span>
+<span class="sd">            https://lazka.github.io/pgi-docs/#Gtk-3.0/</span>
+<span class="sd">            enums.html#Gtk.AssistantPageType</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="n">target_append</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">METHOD</span><span class="p">)</span>
+        <span class="n">FIRST</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">target_append</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assistant</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_nth_page</span><span class="p">(</span><span class="n">FIRST</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TITLE</span> <span class="o">==</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_page_title</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TYPE</span> <span class="o">==</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_page_type</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_page_complete</span><span class="p">(</span><span class="n">page</span><span class="p">)</span> <span class="ow">is</span> <span class="n">COMPLETE</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_assistant"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_assistant">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_assistant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm assistant construction.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">assist</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">assist</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_assistant_signals"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_assistant_signals">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_SIGNAL, ORIGIN, N_DEFAULT&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;apply&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;cancel&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;prepare&#39;</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Assistant</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_new_assistant_signals</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">ORIGIN</span><span class="p">,</span> <span class="n">N_DEFAULT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm initialization of signal connections.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :param NAME_SIGNAL: name of signal under test.</span>
+<span class="sd">        :param ORIGIN: source class of signal.</span>
+<span class="sd">        :param N_DEFAULT: number of default handlers for signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">origin_gtype</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">type_from_name</span><span class="p">(</span><span class="n">GO</span><span class="o">.</span><span class="n">type_name</span><span class="p">(</span><span class="n">ORIGIN</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_lookup</span><span class="p">(</span><span class="n">NAME_SIGNAL</span><span class="p">,</span> <span class="n">origin_gtype</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="n">n_handlers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_signal</span> <span class="o">=</span> <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_find</span><span class="p">(</span>
+                <span class="n">assistant</span><span class="p">,</span> <span class="n">GO</span><span class="o">.</span><span class="n">SignalMatchType</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">id_signal</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n_handlers</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">GO</span><span class="o">.</span><span class="n">signal_handler_disconnect</span><span class="p">(</span><span class="n">assistant</span><span class="p">,</span> <span class="n">id_signal</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">N_DEFAULT</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">n_handlers</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_page_confirm_sites"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_page_confirm_sites">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_page_confirm_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm builder populates page sites.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATCH_UI_PAGE_CONFIRM</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s2">        &lt;!-- Generated with glade 3.22.1 --&gt;</span>
+<span class="s2">        &lt;interface&gt;</span>
+<span class="s2">          &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span>
+<span class="s2">          &lt;object class=&quot;GtkBox&quot; id=&quot;ui_page_confirm&quot;&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot; id=&quot;ui_confirm_site_name&quot;&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkScrolledWindow&quot; id=&quot;ui_confirm_site_summary&quot;&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot; id=&quot;ui_confirm_site_title&quot;&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;2&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">          &lt;/object&gt;</span>
+<span class="s2">        &lt;/interface&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">SBASE</span><span class="p">,</span> <span class="s1">&#39;UI_PAGE_CONFIRM&#39;</span><span class="p">,</span> <span class="n">PATCH_UI_PAGE_CONFIRM</span><span class="p">)</span>
+
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">sites</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">display_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">()</span>
+        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="n">display_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_summary_topic</span><span class="p">()</span>
+        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">display_summary</span><span class="p">)</span>
+        <span class="n">display_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">()</span>
+        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">display_title</span><span class="p">)</span>
+        <span class="n">FIRST</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_page_confirm</span><span class="p">(</span>
+            <span class="n">display_name</span><span class="p">,</span> <span class="n">display_summary</span><span class="p">,</span> <span class="n">display_title</span><span class="p">)</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="n">new_page</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sites</span><span class="p">)):</span>
+            <span class="n">site</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="n">FIRST</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">view</span> <span class="ow">is</span> <span class="n">sites</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_page_confirm_parse"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_page_confirm_parse">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_page_confirm_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm builder can parse page description.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">display_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">()</span>
+        <span class="n">display_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_summary_topic</span><span class="p">()</span>
+        <span class="n">display_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">()</span>
+        <span class="c1"># Test</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_page_confirm</span><span class="p">(</span>
+            <span class="n">display_name</span><span class="p">,</span> <span class="n">display_summary</span><span class="p">,</span> <span class="n">display_title</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_page</span><span class="p">,</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">PageAssist</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_page_identify_sites"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_page_identify_sites">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_page_identify_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm builder populates page sites.</span>
+
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">PATCH_UI_PAGE_IDENTITY</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s2">        &lt;!-- Generated with glade 3.22.1 --&gt;</span>
+<span class="s2">        &lt;interface&gt;</span>
+<span class="s2">          &lt;requires lib=&quot;gtk+&quot; version=&quot;3.20&quot;/&gt;</span>
+<span class="s2">          &lt;object class=&quot;GtkBox&quot; id=&quot;ui_page_identify&quot;&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot; id=&quot;ui_identify_site_name&quot;&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;0&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkScrolledWindow&quot; id=&quot;ui_identify_site_summary&quot;&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;1&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">            &lt;child&gt;</span>
+<span class="s2">              &lt;object class=&quot;GtkBox&quot; id=&quot;ui_identify_site_title&quot;&gt;</span>
+<span class="s2">                &lt;child&gt;</span>
+<span class="s2">                  &lt;placeholder/&gt;</span>
+<span class="s2">                &lt;/child&gt;</span>
+<span class="s2">              &lt;/object&gt;</span>
+<span class="s2">              &lt;packing&gt;</span>
+<span class="s2">                &lt;property name=&quot;position&quot;&gt;2&lt;/property&gt;</span>
+<span class="s2">              &lt;/packing&gt;</span>
+<span class="s2">            &lt;/child&gt;</span>
+<span class="s2">          &lt;/object&gt;</span>
+<span class="s2">        &lt;/interface&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">SBASE</span><span class="p">,</span> <span class="s1">&#39;UI_PAGE_IDENTIFY&#39;</span><span class="p">,</span> <span class="n">PATCH_UI_PAGE_IDENTITY</span><span class="p">)</span>
+
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">sites</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">display_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">()</span>
+        <span class="n">editor_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_name_topic</span><span class="p">()</span>
+        <span class="n">view_name</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_name</span><span class="p">,</span> <span class="n">editor_name</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">view_name</span><span class="o">.</span><span class="n">ui_view</span><span class="p">)</span>
+        <span class="n">editor_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_summary_topic</span><span class="p">()</span>
+        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">editor_summary</span><span class="p">)</span>
+        <span class="n">display_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">()</span>
+        <span class="n">editor_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_title_topic</span><span class="p">()</span>
+        <span class="n">view_title</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_title</span><span class="p">,</span> <span class="n">editor_title</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">)</span>
+        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">view_title</span><span class="o">.</span><span class="n">ui_view</span><span class="p">)</span>
+        <span class="n">FIRST</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Test</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_page_identify</span><span class="p">(</span>
+            <span class="n">view_name</span><span class="p">,</span> <span class="n">editor_summary</span><span class="p">,</span> <span class="n">view_title</span><span class="p">)</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="n">new_page</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sites</span><span class="p">)):</span>
+            <span class="n">site</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="n">FIRST</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">view</span> <span class="ow">is</span> <span class="n">sites</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_page_identify_parse"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_page_identify_parse">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_page_identify_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm builder can parse page description.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">display_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_name_topic</span><span class="p">()</span>
+        <span class="n">editor_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_name_topic</span><span class="p">()</span>
+        <span class="n">view_name</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_name</span><span class="p">,</span> <span class="n">editor_name</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+        <span class="n">editor_summary</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_summary_topic</span><span class="p">()</span>
+        <span class="n">display_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_display_title_topic</span><span class="p">()</span>
+        <span class="n">editor_title</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_new_editor_title_topic</span><span class="p">()</span>
+        <span class="n">view_title</span> <span class="o">=</span> <span class="n">VMARKUP</span><span class="o">.</span><span class="n">ViewMarkup</span><span class="p">(</span><span class="n">display_title</span><span class="p">,</span> <span class="n">editor_title</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_page_identify</span><span class="p">(</span>
+            <span class="n">view_name</span><span class="p">,</span> <span class="n">editor_summary</span><span class="p">,</span> <span class="n">view_title</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_page</span><span class="p">,</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">PageAssist</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_new_page_intro_parse"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_new_page_intro_parse">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_page_intro_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm builder can parse page description.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">new_page</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_page_intro</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_page</span><span class="p">,</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">PageAssist</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBase.test_on_apply"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_on_apply">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm assistant hidden and response set.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="c1"># assistant.show()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_apply</span><span class="p">(</span><span class="n">assistant</span><span class="p">)</span>
+        <span class="c1"># assert not assistant.get_visible()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span></div>
+
+<div class="viewcode-block" id="TestBase.test_on_cancel"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_on_cancel">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm assistant hidden and response set.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="c1"># assistant.show()</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_cancel</span><span class="p">(</span><span class="n">assistant</span><span class="p">)</span>
+        <span class="c1"># assert not assistant.get_visible()</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">CANCEL</span></div>
+
+<div class="viewcode-block" id="TestBase.test_on_prepare"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_on_prepare">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm class defines method.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">()</span>
+        <span class="n">_i_page</span> <span class="o">=</span> <span class="n">assistant</span><span class="o">.</span><span class="n">append_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+        <span class="n">called_show_all</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">def</span> <span class="nf">patch_show_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">called_show_all</span>
+            <span class="n">called_show_all</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># pylint: disable=unused-variable</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">,</span> <span class="s1">&#39;show_all&#39;</span><span class="p">,</span> <span class="n">patch_show_all</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">on_prepare</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assistant</span><span class="p">,</span> <span class="n">p_page</span><span class="o">=</span><span class="n">page</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">called_show_all</span></div>
+
+<div class="viewcode-block" id="TestBase.test_property_access"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_property_access">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;NAME_PROP, NAME_ATTR&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;_name_spec&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">,</span> <span class="s1">&#39;_summary_spec&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;_title_spec&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_property_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm access limits of each property.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :param NAME_PROP: name of property.</span>
+<span class="sd">        :param NAME_ATTR: name of attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">NAME_ATTR</span><span class="p">)</span>
+        <span class="n">CLASS</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span>
+        <span class="n">target_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">CLASS</span><span class="p">,</span> <span class="n">NAME_PROP</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">is</span> <span class="n">attr</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">target_prop</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TestBase.test_run_assistant"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestBase.test_run_assistant">[docs]</a>    <span class="k">def</span> <span class="nf">test_run_assistant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identity_spec</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm presentation of assistant.</span>
+
+<span class="sd">        :param new_identity_spec: fixture :func:`.new_identity_spec`.</span>
+<span class="sd">        :param monkeypatch: built-in fixture `Pytest monkeypatch`_.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">TITLE_SPEC</span> <span class="o">=</span> <span class="n">new_identity_spec</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span>
+            <span class="n">p_name</span><span class="o">=</span><span class="n">NAME_SPEC</span><span class="p">,</span> <span class="n">p_summary</span><span class="o">=</span><span class="n">SUMMARY_SPEC</span><span class="p">,</span> <span class="n">p_title</span><span class="o">=</span><span class="n">TITLE_SPEC</span><span class="p">)</span>
+        <span class="n">assistant</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">new_assistant</span><span class="p">()</span>
+        <span class="n">assistant</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">patch_main_iteration</span><span class="p">():</span>
+            <span class="k">nonlocal</span> <span class="n">target</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span>
+
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">Gtk</span><span class="p">,</span> <span class="s1">&#39;main_iteration&#39;</span><span class="p">,</span> <span class="n">patch_main_iteration</span><span class="p">)</span>
+        <span class="c1"># Test</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">run_assistant</span><span class="p">(</span><span class="n">p_assistant</span><span class="o">=</span><span class="n">assistant</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ResponseType</span><span class="o">.</span><span class="n">APPLY</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">assistant</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="TestModule"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestModule">[docs]</a><span class="k">class</span> <span class="nc">TestModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Unit tests for module-level components of :mod:`.base_s`.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestModule.test_g_spec_basic"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestModule.test_g_spec_basic">[docs]</a>    <span class="k">def</span> <span class="nf">test_g_spec_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm specification fo Basic Topic.&quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">g_spec_basic</span>
+        <span class="n">TITLE</span> <span class="o">=</span> <span class="s1">&#39;Basic Topic&#39;</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">SBASE</span><span class="o">.</span><span class="n">Base</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TITLE</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span></div>
+
+<div class="viewcode-block" id="TestModule.test_types"><a class="viewcode-back" href="../../../test/factsheet_test.spec.test_base_s.html#factsheet_test.spec.test_base_s.TestModule.test_types">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;TYPE_TARGET, TYPE_EXPECT&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">NameSpec</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">PageAssist</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">SummarySpec</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextStyled</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">SBASE</span><span class="o">.</span><span class="n">TitleSpec</span><span class="p">,</span> <span class="n">BUI</span><span class="o">.</span><span class="n">ModelTextMarkup</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TYPE_TARGET</span><span class="p">,</span> <span class="n">TYPE_EXPECT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm type hint definitions.</span>
+
+<span class="sd">        :param TYPE_TARGET: type hint under test.</span>
+<span class="sd">        :param TYPE_EXPECT: type expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="c1"># Test</span>
+        <span class="k">assert</span> <span class="n">TYPE_TARGET</span> <span class="o">==</span> <span class="n">TYPE_EXPECT</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

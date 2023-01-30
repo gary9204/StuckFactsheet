@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Conventions &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Development Notes" href="devel_notes.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="toc_guide.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#names">Names</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="devel_notes.html">Development Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="toc_guide.html">Documentation</a> &raquo;</li>
+        
+      <li>Conventions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/guide/conventions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="conventions">
+<h1>Conventions<a class="headerlink" href="#conventions" title="Permalink to this headline">¶</a></h1>
+<p>In general, Factsheet code follows <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a> style.</p>
+<div class="section" id="names">
+<h2>Names<a class="headerlink" href="#names" title="Permalink to this headline">¶</a></h2>
+<p>Names reflect usage with most important feature first. (A bit like nouns
+and adjectives in Spanish.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">outline_names</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># An outline that contains names</span>
+<span class="n">name_outline</span> <span class="o">=</span> <span class="s1">&#39;Eric&#39;</span>   <span class="c1"># Name of an outline</span>
+</pre></div>
+</div>
+<p>A prefix in a name identifies a column (C_, c_), index (I_, i_),
+(N_, n_) number, or function parameter (p_).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C_TITLE</span> <span class="o">=</span> <span class="mi">0</span>     <span class="c1"># Identifies title column</span>
+<span class="n">i_topic_old</span> <span class="o">=</span> <span class="mi">2</span>     <span class="c1"># Index of old topic</span>
+<span class="n">N_FACTS</span> <span class="o">=</span> <span class="mi">42</span>    <span class="c1"># Number of facts</span>
+<span class="n">add</span><span class="p">(</span><span class="n">p_sheet</span><span class="p">)</span>    <span class="c1"># Sheet parameter of add function</span>
+</pre></div>
+</div>
+<p>A name of an Internal, helper method of a class begins with an
+underscore.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Topic</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_attributes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_signals</span><span class="p">()</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>A model component class is named for its content.  Corresponding control
+and view classes have the same name with a component prefix.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Sheet</span><span class="p">:</span>    <span class="c1"># Factsheet model</span>
+    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">ControlSheet</span><span class="p">:</span>    <span class="c1"># Factsheet control</span>
+    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">ViewSheet</span><span class="p">:</span>    <span class="c1"># Factsheet view</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>A view class name beginning with <code class="docutils literal notranslate"><span class="pre">Display</span></code> is for a static visual element.
+<code class="docutils literal notranslate"><span class="pre">Editor</span></code> identifies an editable visual element.  <code class="docutils literal notranslate"><span class="pre">Chooser</span></code> identifies a
+visual element for selecting from a collection of options.  <code class="docutils literal notranslate"><span class="pre">View</span></code>
+identifies a compound or general visual element.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="devel_notes.html" class="btn btn-neutral float-right" title="Development Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

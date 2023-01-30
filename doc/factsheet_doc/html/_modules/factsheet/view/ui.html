@@ -1,0 +1,601 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factsheet.view.ui &mdash; Factsheet 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Factsheet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/toc_guide.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src/toc_src.html">Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test/toc_test.html">Unit Test Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_manual/toc_test_manual.html">Manual Tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Factsheet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>factsheet.view.ui</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for factsheet.view.ui</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defines constants, functions, and objects for user interface elements.</span>
+
+<span class="sd">Factsheet-level Definitions</span>
+<span class="sd">===========================</span>
+<span class="sd">Supporting deinitions for user interface elements for application and</span>
+<span class="sd">Factsheets.</span>
+
+<span class="sd">.. _delete-event:</span>
+<span class="sd">   https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Widget.html</span>
+<span class="sd">   #Gtk.Widget.signals.delete_event</span>
+
+<span class="sd">.. data:: DIR_UI</span>
+
+<span class="sd">   Path to directory that contains user interface definition files.</span>
+
+<span class="sd">Exceptions</span>
+<span class="sd">----------</span>
+
+<span class="sd">.. exception:: ExceptionUi</span>
+
+<span class="sd">    Bases: :exc:`.Exception`</span>
+
+<span class="sd">    Base class for exceptions acessing user interface elements.</span>
+
+<span class="sd">.. exception:: UiDescriptionError</span>
+
+<span class="sd">    Bases: :exc:`.ExceptionUi`</span>
+
+<span class="sd">    Raise when user interface description is not accessible.</span>
+
+<span class="sd">.. exception:: UiObjectNotFoundError</span>
+
+<span class="sd">    Bases: :exc:`.ExceptionUi`</span>
+
+<span class="sd">    Raise when no object found for a given user interface ID.</span>
+
+<span class="sd">Sheet Dialogs</span>
+<span class="sd">-------------</span>
+<span class="sd">All factsheet pages share guidance dialogs.</span>
+
+<span class="sd">.. data:: ABOUT_APP</span>
+
+<span class="sd">   Application About dialog.</span>
+
+<span class="sd">.. data:: HELP_APP</span>
+
+<span class="sd">   Application Help dialog.</span>
+
+<span class="sd">.. data:: INTRO_APP</span>
+
+<span class="sd">   Application Introduction dialog.</span>
+
+<span class="sd">.. data:: HELP_SHEET</span>
+
+<span class="sd">    Factsheet Help dialog.</span>
+
+<span class="sd">.. data:: HELP_SHEET_DISPLAY</span>
+
+<span class="sd">    Factsheet Display Menu Help dialog.</span>
+
+<span class="sd">.. data:: HELP_SHEET_FILE</span>
+
+<span class="sd">    Factsheet File Menu Help dialog.</span>
+
+<span class="sd">.. data:: HELP_SHEET_TOPICS</span>
+
+<span class="sd">    Factsheet Topics Menu Help dialog.</span>
+
+<span class="sd">Sheet Types</span>
+<span class="sd">-----------</span>
+<span class="sd">Factsheet models and views use type aliases to minimize</span>
+<span class="sd">implementation-specific details.</span>
+
+<span class="sd">.. data:: IndexOutline</span>
+
+<span class="sd">    Type hint for index to item in an outline in a :class:`.Sheet` or</span>
+<span class="sd">    :class:`.Topic`.</span>
+
+<span class="sd">.. data:: NewViewOutlineTopics</span>
+
+<span class="sd">    Type hint for signature of constructor for a topic.</span>
+
+<span class="sd">.. data:: OutlineTemplates</span>
+
+<span class="sd">    Type hint for :class:`.Sheet`&#39;s outline of templates.</span>
+
+<span class="sd">.. data:: OutlineTopics</span>
+
+<span class="sd">    Type hint for :class:`.Sheet`&#39;s outline of topics.</span>
+
+<span class="sd">.. data:: ViewOutlineTemplates</span>
+
+<span class="sd">    Type hint for presentation element of an outline of templates.</span>
+
+<span class="sd">.. data:: ViewOutlineTopics</span>
+
+<span class="sd">    Type hint for presentation element of an outline of topics.</span>
+
+<span class="sd">Topic-level Definitions</span>
+<span class="sd">===========================</span>
+<span class="sd">Supporting deinitions for user interface elements for topics.</span>
+
+<span class="sd">.. data:: FACTORY_TOPIC</span>
+
+<span class="sd">    Factory to produce factsheet components for classes :class:`.Topic`</span>
+<span class="sd">    and :class:`.PaneTopic`.   See :mod:`.abc_factory`.</span>
+
+<span class="sd">Topic Dialogs</span>
+<span class="sd">-------------</span>
+<span class="sd">All topic forms share guidance dialogs.</span>
+
+<span class="sd">.. data:: HELP_TOPIC</span>
+
+<span class="sd">    Topic Help dialog.</span>
+
+<span class="sd">.. data:: HELP_TOPIC_DISPLAY</span>
+
+<span class="sd">    Topic Display Menu Help dialog.</span>
+
+<span class="sd">Topic Types</span>
+<span class="sd">-----------</span>
+<span class="sd">Topic models and views use type aliases to minimize</span>
+<span class="sd">implementation-specific details.</span>
+
+<span class="sd">.. data:: IdTopic</span>
+
+<span class="sd">    Type hint for unique identifier of a topic.</span>
+
+<span class="sd">.. data:: OutlineFacts</span>
+
+<span class="sd">    Type hint for :class:`.Topic`&#39;s outline of facts.</span>
+
+<span class="sd">.. data:: ViewOutlineFacts</span>
+
+<span class="sd">    Type hint for presentation element of an outline of facts.</span>
+
+<span class="sd">Fact-level Definitions</span>
+<span class="sd">===========================</span>
+<span class="sd">Supporting deinitions for user interface elements for topics.</span>
+
+<span class="sd">.. data:: FACTORY_FACT</span>
+
+<span class="sd">    Factory to produce factsheet components for classes :class:`.Fact`</span>
+<span class="sd">    and :class:`.BlockFact`.   See :mod:`.abc_factory`.</span>
+
+<span class="sd">Fact Dialogs</span>
+<span class="sd">-------------</span>
+<span class="sd">All fact blocks share guidance dialogs.</span>
+
+<span class="sd">.. data:: HELP_FACT</span>
+
+<span class="sd">    Fact Help dialog.</span>
+
+<span class="sd">.. data:: HELP_FACT_DISPLAY</span>
+
+<span class="sd">    Fact Display Menu help.</span>
+
+<span class="sd">.. data:: HELP_FACT_VALUE</span>
+
+<span class="sd">    Help dialog for fact value.  See :class:`AspectValue`.</span>
+
+<span class="sd">Fact Types</span>
+<span class="sd">-----------</span>
+<span class="sd">Factsheet models and views use type aliases to minimize</span>
+<span class="sd">implementation-specific details.</span>
+
+<span class="sd">.. note:: No fact type aliases yet.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">factsheet</span> <span class="k">as</span> <span class="nn">FS</span>
+
+<span class="kn">import</span> <span class="nn">gi</span>   <span class="c1"># type: ignore[import]</span>
+<span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gio</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GLib</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+<span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">Gtk</span>   <span class="c1"># type: ignore[import]    # noqa: E402</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Main.UI&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ExceptionUi"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.ExceptionUi">[docs]</a><span class="k">class</span> <span class="nc">ExceptionUi</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="UiDescriptionError"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.UiDescriptionError">[docs]</a><span class="k">class</span> <span class="nc">UiDescriptionError</span><span class="p">(</span><span class="n">ExceptionUi</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="UiObjectNotFoundError"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.UiObjectNotFoundError">[docs]</a><span class="k">class</span> <span class="nc">UiObjectNotFoundError</span><span class="p">(</span><span class="n">ExceptionUi</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<span class="c1"># Factshet-level Definitions</span>
+<span class="c1"># CLOSE_GTK = False</span>
+<span class="c1"># CANCEL_GTK = not CLOSE_GTK</span>
+<span class="n">DIR_UI</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;ui&#39;</span>
+
+<span class="c1"># Application/Sheet dialogs</span>
+<span class="n">NAME_FILE_GUIDE_SHEET_UI</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">DIR_UI</span> <span class="o">/</span> <span class="s1">&#39;guide_sheet.ui&#39;</span><span class="p">)</span>
+<span class="n">builder_guide_sheet</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_file</span><span class="p">(</span><span class="n">NAME_FILE_GUIDE_SHEET_UI</span><span class="p">)</span>
+<span class="n">get_object_guide_sheet</span> <span class="o">=</span> <span class="n">builder_guide_sheet</span><span class="o">.</span><span class="n">get_object</span>
+
+<span class="n">ABOUT_APP</span> <span class="o">=</span> <span class="n">get_object_guide_sheet</span><span class="p">(</span><span class="s1">&#39;ui_about_app&#39;</span><span class="p">)</span>
+<span class="n">ABOUT_APP</span><span class="o">.</span><span class="n">set_version</span><span class="p">(</span><span class="n">FS</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="n">HELP_APP</span> <span class="o">=</span> <span class="n">get_object_guide_sheet</span><span class="p">(</span><span class="s1">&#39;ui_help_app&#39;</span><span class="p">)</span>
+<span class="n">INTRO_APP</span> <span class="o">=</span> <span class="n">get_object_guide_sheet</span><span class="p">(</span><span class="s1">&#39;ui_intro_app&#39;</span><span class="p">)</span>
+
+<span class="n">HELP_SHEET</span> <span class="o">=</span> <span class="n">get_object_guide_sheet</span><span class="p">(</span><span class="s1">&#39;ui_help_sheet&#39;</span><span class="p">)</span>
+<span class="c1"># HELP_SHEET_DISPLAY = get_object_guide_sheet(&#39;ui_help_sheet_display&#39;)</span>
+<span class="c1"># HELP_SHEET_FILE = get_object_guide_sheet(&#39;ui_help_sheet_file&#39;)</span>
+<span class="c1"># HELP_SHEET_TOPICS = get_object_guide_sheet(&#39;ui_help_sheet_topics&#39;)</span>
+
+<span class="k">del</span> <span class="n">get_object_guide_sheet</span>
+<span class="k">del</span> <span class="n">builder_guide_sheet</span>
+
+<span class="c1"># Topic-level definitions</span>
+
+<span class="c1"># Topic-level guidance dialogs</span>
+<span class="n">NAME_FILE_GUIDE_TOPIC_UI</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">DIR_UI</span> <span class="o">/</span> <span class="s1">&#39;guide_topic.ui&#39;</span><span class="p">)</span>
+<span class="n">builder_guide_topic</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_file</span><span class="p">(</span><span class="n">NAME_FILE_GUIDE_TOPIC_UI</span><span class="p">)</span>
+<span class="n">get_object_guide_topic</span> <span class="o">=</span> <span class="n">builder_guide_topic</span><span class="o">.</span><span class="n">get_object</span>
+
+<span class="n">HELP_TOPIC</span> <span class="o">=</span> <span class="n">get_object_guide_topic</span><span class="p">(</span><span class="s1">&#39;ui_help_topic&#39;</span><span class="p">)</span>
+<span class="n">HELP_TOPIC_DISPLAY</span> <span class="o">=</span> <span class="n">get_object_guide_topic</span><span class="p">(</span><span class="s1">&#39;ui_help_topic_display&#39;</span><span class="p">)</span>
+
+<span class="k">del</span> <span class="n">get_object_guide_topic</span>
+<span class="k">del</span> <span class="n">builder_guide_topic</span>
+
+
+<span class="c1"># Fact-level definitions</span>
+
+<span class="c1"># # Fact dialogs</span>
+<span class="c1"># NAME_FILE_GUIDE_FACT_UI = str(DIR_UI / &#39;guide_fact.ui&#39;)</span>
+<span class="c1"># builder_guide_fact = Gtk.Builder.new_from_file(NAME_FILE_GUIDE_FACT_UI)</span>
+<span class="c1"># get_object_guide_fact = builder_guide_fact.get_object</span>
+<span class="c1">#</span>
+<span class="c1"># HELP_FACT = get_object_guide_fact(&#39;ui_help_fact&#39;)</span>
+<span class="c1"># HELP_FACT_DISPLAY = get_object_guide_fact(&#39;ui_help_fact_display&#39;)</span>
+<span class="c1"># HELP_FACT_VALUE = get_object_guide_fact(&#39;ui_help_fact_value&#39;)</span>
+<span class="c1">#</span>
+<span class="c1"># del builder_guide_fact</span>
+<span class="c1"># del get_object_guide_fact</span>
+
+<span class="c1"># Fact Types</span>
+<span class="c1"># Not defined yet.</span>
+
+
+<div class="viewcode-block" id="new_action_active"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.new_action_active">[docs]</a><span class="k">def</span> <span class="nf">new_action_active</span><span class="p">(</span><span class="n">p_group</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleActionGroup</span><span class="p">,</span> <span class="n">p_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">p_handler</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Construct action, add to group, and connect to</span>
+<span class="sd">    `activate &lt;GioSimpleActionActivate_&gt;`_ signal handler.</span>
+
+<span class="sd">    :param p_group: action group to contain new action.</span>
+<span class="sd">    :param p_name: name of new action.</span>
+<span class="sd">    :param p_handler: `activate &lt;GioSimpleActionActivate_&gt;`_ signal</span>
+<span class="sd">       handler for new action.</span>
+
+<span class="sd">    .. _GioSimpleActionActivate: https://lazka.github.io/pgi-docs/</span>
+<span class="sd">       #Gio-2.0/classes/SimpleAction.html#Gio.SimpleAction.signals</span>
+<span class="sd">       .activate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">p_group</span><span class="o">.</span><span class="n">add_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">action</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;activate&#39;</span><span class="p">,</span> <span class="n">p_handler</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="new_action_active_dialog"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.new_action_active_dialog">[docs]</a><span class="k">def</span> <span class="nf">new_action_active_dialog</span><span class="p">(</span><span class="n">p_group</span><span class="p">:</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleActionGroup</span><span class="p">,</span>
+                             <span class="n">p_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">p_handler</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span>
+                             <span class="n">p_dialog</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Dialog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Construct action, add to group, and connect to</span>
+<span class="sd">    `activate &lt;GioSimpleActionActivate_&gt;`_ signal handler with dialog</span>
+<span class="sd">    parameter.</span>
+
+<span class="sd">    :param p_group: action group to contain new action.</span>
+<span class="sd">    :param p_name: name of new action.</span>
+<span class="sd">    :param p_handler: `activate &lt;GioSimpleActionActivate_&gt;`_ signal</span>
+<span class="sd">       handler for new action.</span>
+<span class="sd">    :param p_dialog: dialog passed to handler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">p_group</span><span class="o">.</span><span class="n">add_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">action</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;activate&#39;</span><span class="p">,</span> <span class="n">p_handler</span><span class="p">,</span> <span class="n">p_dialog</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GetUiElement"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElement">[docs]</a><span class="k">class</span> <span class="nc">GetUiElement</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get user interface element with supplemental failure information.</span>
+
+<span class="sd">    `Gtk.Builder`_ aborts if there is an error opening a user interface</span>
+<span class="sd">    description file or parsing a description.</span>
+<span class="sd">    `Gtk.Builder.get_object()`_ returns None when the method cannot find</span>
+<span class="sd">    the object for a given ID.  Class :class:`GetUiElement` augments</span>
+<span class="sd">    `Gtk.Builder`_ to provide more information when a failure occurs.</span>
+
+<span class="sd">    .. _`Gtk.Builder`:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Builder.html</span>
+
+<span class="sd">    .. _`Gtk.Builder.get_object()`:</span>
+<span class="sd">        https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/</span>
+<span class="sd">        Builder.html#Gtk.Builder.get_object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_builder</span><span class="p">:</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span>
+
+<div class="viewcode-block" id="GetUiElement.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElement.__init__">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Log start of user interface construction.</span>
+
+<span class="sd">        Each subclass must extend this method by initializing the</span>
+<span class="sd">        underlying builder attribute (`_builder`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Building UI description ...&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GetUiElement.__call__"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElement.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id_ui</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return user interface element with given ID.</span>
+
+<span class="sd">        :param p_id_ui: ID of desired element.</span>
+<span class="sd">        :raises UiObjectNotFoundError: when no element matches ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ui_element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_builder</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">p_id_ui</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ui_element</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;No element found for ID </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_id_ui</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UiObjectNotFoundError</span><span class="p">(</span><span class="n">MESSAGE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ui_element</span></div></div>
+
+
+<div class="viewcode-block" id="GetUiElementByPath"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByPath">[docs]</a><span class="k">class</span> <span class="nc">GetUiElementByPath</span><span class="p">(</span><span class="n">GetUiElement</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extend :class:`.GetUiElement` with `Gtk.Builder`_ from file.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GetUiElementByPath.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByPath.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_path_ui</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize underlying builder and log source of description.</span>
+
+<span class="sd">        :param p_path_ui: location of user interface description file.</span>
+<span class="sd">        :raises UiDescriptionError: when user interface description is</span>
+<span class="sd">            missing or inaccessible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;... from file </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p_path_ui</span><span class="p">)))</span>
+        <span class="k">try</span><span class="p">:</span>    <span class="c1"># Reduce potential for new_from_file() abort.</span>
+            <span class="k">with</span> <span class="n">p_path_ui</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">_io_none</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err_access</span><span class="p">:</span>
+            <span class="n">MESSAGE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Could not access description file &quot;</span><span class="si">{}</span><span class="s1">&quot;.&#39;</span>
+                       <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_path_ui</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">UiDescriptionError</span><span class="p">(</span><span class="n">MESSAGE</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err_access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_builder</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_file</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p_path_ui</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="GetUiElementByStr"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByStr">[docs]</a><span class="k">class</span> <span class="nc">GetUiElementByStr</span><span class="p">(</span><span class="n">GetUiElement</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extend :class:`.GetUiElement` with `Gtk.Builder`_ from string.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GetUiElementByStr.__init__"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByStr.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">p_string_ui</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize underlying builder and log source of description.</span>
+
+<span class="sd">        :param p_string_ui: string containing user interface description.</span>
+<span class="sd">        :param kwargs: superclass keyword parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;... from string.&#39;</span><span class="p">)</span>
+        <span class="n">ALL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_builder</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Builder</span><span class="o">.</span><span class="n">new_from_string</span><span class="p">(</span><span class="n">p_string_ui</span><span class="p">,</span> <span class="n">ALL</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GetUiElementByStr.__call__"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.GetUiElementByStr.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return object with given ID.</span>
+
+<span class="sd">        :param p_id: ID of desired object.</span>
+<span class="sd">        :raises UiObjectNotFoundError: when no object matches ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ui_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_builder</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ui_object</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;No object found for ID </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UiObjectNotFoundError</span><span class="p">(</span><span class="n">MESSAGE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ui_object</span></div></div>
+
+
+<div class="viewcode-block" id="new_column_stock"><a class="viewcode-back" href="../../../src/factsheet.view.ui.html#factsheet.view.ui.new_column_stock">[docs]</a><span class="k">def</span> <span class="nf">new_column_stock</span><span class="p">(</span><span class="n">p_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">p_data_func</span>  <span class="c1"># : &#39;Gtk.TreeCellDataFunc&#39;</span>
+                     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return column with stock properties.</span>
+
+<span class="sd">    :param p_title: title for column.</span>
+<span class="sd">    :param p_cell_data_func: function to format column contents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">column</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumn</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">p_title</span><span class="p">)</span>
+    <span class="n">render</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">CellRendererText</span><span class="p">()</span>
+    <span class="n">column</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">render</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">column</span><span class="o">.</span><span class="n">set_cell_data_func</span><span class="p">(</span><span class="n">render</span><span class="p">,</span> <span class="n">p_data_func</span><span class="p">)</span>
+    <span class="n">column</span><span class="o">.</span><span class="n">set_clickable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">WIDTH_MIN</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">column</span><span class="o">.</span><span class="n">set_min_width</span><span class="p">(</span><span class="n">WIDTH_MIN</span><span class="p">)</span>
+    <span class="n">column</span><span class="o">.</span><span class="n">set_reorderable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">column</span><span class="o">.</span><span class="n">set_sizing</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">TreeViewColumnSizing</span><span class="o">.</span><span class="n">AUTOSIZE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">column</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, 2021, 2022 Gary Grainger
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

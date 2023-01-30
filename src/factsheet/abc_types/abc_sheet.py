@@ -5,7 +5,7 @@ Defines abstract interfaces for factsheet documents.
 ``import`` cycles and to encapsulate dependencies of
 :mod:`~factsheet.model` on a user interface widget toolkit.  Module
 ``abc_sheet`` defines an abstract interface for factsheet control
-(:class:`~.control.sheet.Sheet`) to break an ``import`` cycle. It
+(:class:`~.ControlSheet`) to break an ``import`` cycle. It
 defines an interface for factsheet view (:class:`.PageSheet`) for
 encapsulation. In addition, the module defines an enumeration for
 factsheet control method results.
@@ -15,9 +15,6 @@ import enum
 from pathlib import Path
 import typing
 
-from factsheet.abc_types import abc_infoid as ABC_INFOID
-from factsheet.abc_types import abc_outline as ABC_OUTLINE
-from factsheet.abc_types import abc_topic as ABC_TOPIC
 
 
 class AbstractTemplate(abc.ABC):
@@ -63,7 +60,7 @@ class EffectSafe(enum.Enum):
 
 class InterfaceControlSheet(abc.ABC):
     """Defines interface class to break import cycle between control
-    :class:`~.control.sheet.Sheet` and view :class:`.PoolSheets`.
+    :class:`~.ControlSheet` and view :class:`.PoolSheets`.
     """
 
     @property
@@ -81,7 +78,8 @@ class InterfaceControlSheet(abc.ABC):
         raise NotImplementedError
 
 
-class InterfacePageSheet(abc.ABC):
+class InterfacePageSheet(
+        abc.ABC, typing.Generic[ABC_OUTLINE.ViewOutlineOpaque]):
     """Defines interface for :class:`~.model.sheet.Sheet` model to
     signal :class:`~.view.page_sheet.PageSheet`.
     """
@@ -92,12 +90,22 @@ class InterfacePageSheet(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def close_topic(self, p_id: ABC_TOPIC.TagTopic) -> None:
+        """Close topic form in response to notice from model.
+
+        Closing a topic form removes the form from the factsheet page.
+
+        :param p_id: identity of topic form to close.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_infoid(self) -> ABC_INFOID.InterfaceViewInfoId:
         """Return view of factsheet identification information."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_view_topics(self) -> ABC_OUTLINE.AbstractViewOutline:
+    def get_view_topics(self) -> ABC_OUTLINE.ViewOutlineOpaque:
         """Return view of factsheet's topic outline."""
         raise NotImplementedError
 
