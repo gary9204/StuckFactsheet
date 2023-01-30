@@ -19,9 +19,7 @@ Subpackages
    factsheet_test.spec
    factsheet_test.ui_bricks
    factsheet_test.view
-..   :maxdepth: 1
-..   factsheet_test.abc_types
-..   factsheet_test.adapt_gtk
+   factsheet_test.view_gtk3
 
 Submodules
 ----------
@@ -32,4 +30,3 @@ Submodules
    factsheet_test.conftest
    factsheet_test.test_app
    factsheet_test.test_bridge_ui
-..   :maxdepth: 1
